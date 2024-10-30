@@ -79,7 +79,7 @@ public interface IRawOutboundEnvelope : IRawBrokerEnvelope
     IRawOutboundEnvelope AddHeaderIfNotExists(string name, object? newValue);
 
     /// <summary>
-    ///     Sets the message id header (<see cref="DefaultMessageHeaders.MessageId" />.
+    ///     Sets the message id header (<see cref="DefaultMessageHeaders.MessageId" />).
     /// </summary>
     /// <param name="value">
     ///     The message id.

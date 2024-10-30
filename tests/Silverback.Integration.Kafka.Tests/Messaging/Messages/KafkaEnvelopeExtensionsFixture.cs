@@ -21,10 +21,7 @@ public class KafkaEnvelopeExtensionsFixture
     {
         InboundEnvelope envelope = new(
             null,
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.MessageId, "test" }
-            },
+            [new MessageHeader(DefaultMessageHeaders.MessageId, "test")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
@@ -39,10 +36,7 @@ public class KafkaEnvelopeExtensionsFixture
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.MessageId, "test" }
-            },
+            [new MessageHeader(DefaultMessageHeaders.MessageId, "test")],
             TestProducerEndpoint.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -87,10 +81,7 @@ public class KafkaEnvelopeExtensionsFixture
     {
         InboundEnvelope envelope = new(
             null,
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.Timestamp, 23.June(1984).At(02, 42, 42) }
-            },
+            [new MessageHeader(KafkaMessageHeaders.Timestamp, 23.June(1984).At(02, 42, 42))],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));

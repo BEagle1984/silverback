@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// <typeparam name="TMessage">
 ///     The type of the messages being produced.
 /// </typeparam>
-public class MqttProducerEndpointConfigurationBuilder<TMessage>
+public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     : ProducerEndpointConfigurationBuilder<TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder<TMessage>>
     where TMessage : class
 {
@@ -126,48 +126,6 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
 
         return this;
     }
-
-    /// <summary>
-    ///     Specifies the desired quality of service level.
-    /// </summary>
-    /// <param name="qosLevel">
-    ///     The <see cref="MqttQualityOfServiceLevel" />.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttProducerEndpointConfigurationBuilder<TMessage> WithQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)
-    {
-        _qualityOfServiceLevel = qosLevel;
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies that the messages have to be sent with the <i>at most once</i> quality of service level.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttProducerEndpointConfigurationBuilder<TMessage> WithAtMostOnceQoS() =>
-        WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce);
-
-    /// <summary>
-    ///     Specifies that the messages have to be sent with the <i>at least once</i> quality of service level.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttProducerEndpointConfigurationBuilder<TMessage> WithAtLeastOnceQoS() =>
-        WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
-
-    /// <summary>
-    ///     Specifies that the messages have to be sent with the <i>exactly once</i> quality of service level.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttProducerEndpointConfigurationBuilder<TMessage> WithExactlyOnceQoS() =>
-        WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce);
 
     /// <summary>
     ///     Specifies that the messages have to be sent with the retain flag, causing them to be persisted on the  broker.

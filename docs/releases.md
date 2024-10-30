@@ -43,6 +43,7 @@ uid: releases
 * Add `IgnoreNoMatchingSubscribersError` setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message
 * Add `CancellationToken` support to in-memory message bus (TODO: see...)
 * Increase default `KafkaConsumer` backpressure limit to 50
+* Basic support for MQTT 5 request-response
   
 ### Breaking Changes
 

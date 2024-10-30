@@ -68,7 +68,7 @@ public static class MessageHeaderEnumerableExtensions
     ///         Returns the value of the header with the specified name.
     ///     </para>
     ///     <para>
-    ///         By default it will return <c>null</c> if no header with that name is found in the collection but
+    ///         By default, it will return <c>null</c> if no header with that name is found in the collection but
     ///         this behavior can be changed setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
     ///     </para>
     /// </summary>
@@ -97,7 +97,7 @@ public static class MessageHeaderEnumerableExtensions
     ///         <typeparamref name="T" />.
     ///     </para>
     ///     <para>
-    ///         By default it will return <c>null</c> if no header with that name is found in the collection but
+    ///         By default, it will return <c>null</c> if no header with that name is found in the collection but
     ///         this behavior can be changed setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
     ///     </para>
     /// </summary>
@@ -126,7 +126,7 @@ public static class MessageHeaderEnumerableExtensions
     ///         Returns the value of the header with the specified name, casting it to the specified type.
     ///     </para>
     ///     <para>
-    ///         By default it will return <c>null</c> if no header with that name is found in the collection but
+    ///         By default, it will return <c>null</c> if no header with that name is found in the collection but
     ///         this behavior can be changed setting the <paramref name="throwIfNotFound" /> parameter to <c>true</c>.
     ///     </para>
     /// </summary>

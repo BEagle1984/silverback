@@ -12,8 +12,7 @@ public partial interface ITestingHelper
     ///     Gets the <see cref="IIntegrationSpy" />.
     /// </summary>
     /// <remarks>
-    ///     The <see cref="IIntegrationSpy" /> must be enabled calling <c>AddIntegrationSpy</c> or
-    ///     <c>AddIntegrationSpyAndSubscriber</c>.
+    ///     The <see cref="IIntegrationSpy" /> must be enabled calling <c>AddIntegrationSpy</c> or <c>AddIntegrationSpyAndSubscriber</c>.
     /// </remarks>
     IIntegrationSpy Spy { get; }
 }

@@ -26,7 +26,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder SetMessageId(Func<TMessage?, object?> valueProvider)
     {
         Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessage>(valueProvider));
+        return AddMessageEnricher(new MessageIdOutboundHeadersEnricher<TMessage>(valueProvider));
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
         where TMessageChildType : TMessage
     {
         Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessageChildType>(valueProvider));
+        return AddMessageEnricher(new MessageIdOutboundHeadersEnricher<TMessageChildType>(valueProvider));
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// </returns>
     public TBuilder SetMessageId(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
     {
-        AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessage>(valueProvider));
+        AddMessageEnricher(new MessageIdOutboundHeadersEnricher<TMessage>(valueProvider));
         return This;
     }
 
@@ -81,7 +81,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder SetMessageId<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
         where TMessageChildType : TMessage
     {
-        AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessageChildType>(valueProvider));
+        AddMessageEnricher(new MessageIdOutboundHeadersEnricher<TMessageChildType>(valueProvider));
         return This;
     }
 }

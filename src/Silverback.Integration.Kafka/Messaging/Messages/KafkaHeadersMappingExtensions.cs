@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Silverback.Util;
 
@@ -14,14 +15,9 @@ internal static class KafkaHeadersMappingExtensions
     public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
     {
         Confluent.Kafka.Headers kafkaHeaders = [];
-        headers.ForEach(
-            header =>
-            {
-                if (header.Name == DefaultMessageHeaders.MessageId)
-                    return;
-
-                kafkaHeaders.Add(header.Name, Encode(header.Value));
-            });
+        headers
+            .Where(header => header.Name != DefaultMessageHeaders.MessageId)
+            .ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
         return kafkaHeaders;
     }
 

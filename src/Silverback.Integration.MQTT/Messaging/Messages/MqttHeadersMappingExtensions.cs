@@ -13,7 +13,11 @@ internal static class MqttHeadersMappingExtensions
     public static List<MqttUserProperty> ToUserProperties(this IReadOnlyCollection<MessageHeader> headers)
     {
         List<MqttUserProperty> userProperties = new(headers.Count);
-        headers.Where(header => header.Value != null).ForEach(header => userProperties.Add(new MqttUserProperty(header.Name, header.Value)));
+        headers.Where(
+                header => header.Value != null &&
+                          header.Name != MqttMessageHeaders.ResponseTopic &&
+                          header.Name != MqttMessageHeaders.CorrelationData)
+            .ForEach(header => userProperties.Add(new MqttUserProperty(header.Name, header.Value)));
         return userProperties;
     }
 

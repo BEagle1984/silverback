@@ -76,4 +76,26 @@ public class RawOutboundEnvelopeFixture
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "two"));
     }
+
+    [Fact]
+    public void GetMessageId_ShouldReturnHeaderValue()
+    {
+        RawOutboundEnvelope envelope = new(
+            [new MessageHeader("x-message-id", "test-id")],
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.GetMessageId().Should().Be("test-id");
+    }
+
+    [Fact]
+    public void GetMessageId_ShouldReturnNull_WhenHeaderNotSet()
+    {
+        RawOutboundEnvelope envelope = new(
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.GetMessageId().Should().BeNull();
+    }
 }

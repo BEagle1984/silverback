@@ -269,11 +269,16 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             PayloadSegment = queuedMessage.Content ?? EmptyBuffer.ArraySegment,
             QualityOfServiceLevel = queuedMessage.Endpoint.Configuration.QualityOfServiceLevel,
             Retain = queuedMessage.Endpoint.Configuration.Retain,
-            MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval
+            MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval,
+            ResponseTopic = queuedMessage.Headers?.GetValue(MqttMessageHeaders.ResponseTopic)
         };
 
-        if (queuedMessage.Headers != null && Configuration.AreHeadersSupported)
-            mqttApplicationMessage.UserProperties = queuedMessage.Headers.ToUserProperties();
+        string? correlationData = queuedMessage.Headers?.GetValue(MqttMessageHeaders.CorrelationData);
+        if (correlationData != null)
+            mqttApplicationMessage.CorrelationData = Convert.FromBase64String(correlationData);
+
+        if (Configuration.AreHeadersSupported)
+            mqttApplicationMessage.UserProperties = queuedMessage.Headers?.ToUserProperties();
 
         while (!_mqttClient.IsConnected)
         {

@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
-using MQTTnet.Protocol;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -14,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt;
 
-public class MqttProducerEndpointConfigurationBuilderFixture
+public partial class MqttProducerEndpointConfigurationBuilderFixture
 {
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
@@ -36,11 +35,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttStaticProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().Be("some-topic");
-        MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
             null,
             endpointConfiguration,
             Substitute.For<IServiceProvider>());
-        endpoint.Topic.Should().Be("some-topic");
+        configuration.Topic.Should().Be("some-topic");
     }
 
     [Fact]
@@ -53,11 +52,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-");
-        MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
             null,
             endpointConfiguration,
             Substitute.For<IServiceProvider>());
-        endpoint.Topic.Should().Be("some-topic");
+        configuration.Topic.Should().Be("some-topic");
     }
 
     [Fact]
@@ -70,11 +69,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().Be("some-topic/{0}");
-        MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
             null,
             endpointConfiguration,
             Substitute.For<IServiceProvider>());
-        endpoint.Topic.Should().Be("some-topic/123");
+        configuration.Topic.Should().Be("some-topic/123");
     }
 
     [Fact]
@@ -88,39 +87,6 @@ public class MqttProducerEndpointConfigurationBuilderFixture
 
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
-    }
-
-    [Fact]
-    public void WithQualityOfServiceLevel_ShouldSetQualityOfServiceLevel()
-    {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
-
-        builder.ProduceTo("some-topic").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
-
-        MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
-    }
-
-    [Fact]
-    public void WithAtMostOnceQoS_ShouldSetQualityOfServiceLevel()
-    {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
-
-        builder.ProduceTo("some-topic").WithAtMostOnceQoS();
-
-        MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
-    }
-
-    [Fact]
-    public void WithAtLeastOnceQoS_ShouldSetQualityOfServiceLevel()
-    {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
-
-        builder.ProduceTo("some-topic").WithAtLeastOnceQoS();
-
-        MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]

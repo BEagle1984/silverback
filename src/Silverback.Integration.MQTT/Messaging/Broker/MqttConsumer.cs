@@ -105,6 +105,12 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
+            if (message.ApplicationMessage.ResponseTopic != null)
+                headers.AddIfNotExists(MqttMessageHeaders.ResponseTopic, message.ApplicationMessage.ResponseTopic);
+
+            if (message.ApplicationMessage.CorrelationData != null)
+                headers.AddIfNotExists(MqttMessageHeaders.CorrelationData, message.ApplicationMessage.CorrelationData.ToBase64String());
+
             // If another message is still pending, cancel its task (might happen in case of timeout)
             if (!_inProcessingMessages.TryAdd(message.Id, message))
                 throw new InvalidOperationException("The message has been processed already.");

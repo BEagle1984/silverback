@@ -19,9 +19,11 @@ internal abstract record RawBrokerEnvelope : IRawBrokerEnvelope
         Endpoint = Check.NotNull(endpoint, nameof(endpoint));
     }
 
-    public MessageHeaderCollection Headers { get; init; }
-
     public Endpoint Endpoint { get; }
 
+    public MessageHeaderCollection Headers { get; init; }
+
     public Stream? RawMessage { get; set; }
+
+    public string? GetMessageId() => Headers.GetValue(DefaultMessageHeaders.MessageId);
 }

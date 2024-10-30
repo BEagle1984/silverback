@@ -19,12 +19,12 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SetMessageId(message => message?.Content)
             .Build();
 
-        endpoint.MessageEnrichers.Should().HaveCount(1);
-        endpoint.MessageEnrichers.Single().Should().BeOfType<OutboundMessageIdHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Should().HaveCount(1);
+        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -32,12 +32,12 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<IIntegrationEvent> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SetMessageId<TestEventOne>(message => message?.Content)
             .Build();
 
-        endpoint.MessageEnrichers.Should().HaveCount(1);
-        endpoint.MessageEnrichers.Single().Should().BeOfType<OutboundMessageIdHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Should().HaveCount(1);
+        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -45,12 +45,12 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SetMessageId(envelope => envelope.Headers.Count)
             .Build();
 
-        endpoint.MessageEnrichers.Should().HaveCount(1);
-        endpoint.MessageEnrichers.Single().Should().BeOfType<OutboundMessageIdHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Should().HaveCount(1);
+        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -58,11 +58,11 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<IIntegrationEvent> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SetMessageId<TestEventOne>(envelope => envelope.Headers.Count)
             .Build();
 
-        endpoint.MessageEnrichers.Should().HaveCount(1);
-        endpoint.MessageEnrichers.Single().Should().BeOfType<OutboundMessageIdHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Should().HaveCount(1);
+        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 }

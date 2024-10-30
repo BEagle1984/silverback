@@ -19,10 +19,10 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.Build();
+        TestProducerEndpointConfiguration configuration = builder.Build();
 
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
+        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -30,10 +30,10 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<BinaryMessage> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.Build();
+        TestProducerEndpointConfiguration configuration = builder.Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer>();
-        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Binary);
+        configuration.Serializer.Should().BeOfType<BinaryMessageSerializer>();
+        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Binary);
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.SerializeAsJson().Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJson().Build();
 
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
+        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -52,15 +52,15 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.SerializeAsJson(
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJson(
             serializer => serializer.Configure(
                 options =>
                 {
                     options.MaxDepth = 42;
                 })).Build();
 
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint.Serializer.As<JsonMessageSerializer>().Options!.MaxDepth.Should().Be(42);
+        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        configuration.Serializer.As<JsonMessageSerializer>().Options!.MaxDepth.Should().Be(42);
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.ProduceBinaryMessages().Build();
+        TestProducerEndpointConfiguration configuration = builder.ProduceBinaryMessages().Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer>();
+        configuration.Serializer.Should().BeOfType<BinaryMessageSerializer>();
     }
 }

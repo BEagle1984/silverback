@@ -34,9 +34,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             Substitute.For<IServiceProvider>(),
             "display-name");
 
-        TestProducerEndpointConfiguration endpoint = builder.Build();
+        TestProducerEndpointConfiguration configuration = builder.Build();
 
-        endpoint.DisplayName.Should().Be("display-name (test)");
+        configuration.DisplayName.Should().Be("display-name (test)");
     }
 
     [Fact]
@@ -45,9 +45,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
         BinaryMessageSerializer serializer = new();
 
-        TestProducerEndpointConfiguration endpoint = builder.SerializeUsing(serializer).Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeUsing(serializer).Build();
 
-        endpoint.Serializer.Should().BeSameAs(serializer);
+        configuration.Serializer.Should().BeSameAs(serializer);
     }
 
     [Fact]
@@ -60,9 +60,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             Key = new byte[10]
         };
 
-        TestProducerEndpointConfiguration endpoint = builder.Encrypt(encryptionSettings).Build();
+        TestProducerEndpointConfiguration configuration = builder.Encrypt(encryptionSettings).Build();
 
-        endpoint.Encryption.Should().BeSameAs(encryptionSettings);
+        configuration.Encryption.Should().BeSameAs(encryptionSettings);
     }
 
     [Fact]
@@ -70,12 +70,12 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(
             Substitute.For<IServiceProvider>(),
-            "my-endpoint");
+            "my-configuration");
         OutboxProduceStrategy strategy = new(new InMemoryOutboxSettings());
 
-        TestProducerEndpointConfiguration endpoint = builder.UseStrategy(strategy).Build();
+        TestProducerEndpointConfiguration configuration = builder.UseStrategy(strategy).Build();
 
-        endpoint.Strategy.Should().BeSameAs(strategy);
+        configuration.Strategy.Should().BeSameAs(strategy);
     }
 
     [Fact]
@@ -83,9 +83,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.ProduceDirectly().Build();
+        TestProducerEndpointConfiguration configuration = builder.ProduceDirectly().Build();
 
-        endpoint.Strategy.Should().BeOfType<DefaultProduceStrategy>();
+        configuration.Strategy.Should().BeOfType<DefaultProduceStrategy>();
     }
 
     [Fact]
@@ -93,13 +93,13 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(
             Substitute.For<IServiceProvider>(),
-            "my-endpoint");
+            "my-configuration");
 
         InMemoryOutboxSettings settings = new();
-        TestProducerEndpointConfiguration endpoint = builder.StoreToOutbox(settings).Build();
+        TestProducerEndpointConfiguration configuration = builder.StoreToOutbox(settings).Build();
 
-        endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
-        endpoint.Strategy.As<OutboxProduceStrategy>().Settings.Should().Be(settings);
+        configuration.Strategy.Should().BeOfType<OutboxProduceStrategy>();
+        configuration.Strategy.As<OutboxProduceStrategy>().Settings.Should().Be(settings);
     }
 
     [Fact]
@@ -107,14 +107,14 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(
             Substitute.For<IServiceProvider>(),
-            "my-endpoint");
+            "my-configuration");
 
-        TestProducerEndpointConfiguration endpoint = builder
+        TestProducerEndpointConfiguration configuration = builder
             .StoreToOutbox(outbox => outbox.UseMemory().WithName("test-outbox"))
             .Build();
 
-        endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
-        endpoint.Strategy.As<OutboxProduceStrategy>().Settings.As<InMemoryOutboxSettings>().OutboxName.Should().Be("test-outbox");
+        configuration.Strategy.Should().BeOfType<OutboxProduceStrategy>();
+        configuration.Strategy.As<OutboxProduceStrategy>().Settings.As<InMemoryOutboxSettings>().OutboxName.Should().Be("test-outbox");
     }
 
     [Fact]
@@ -122,11 +122,11 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.EnableChunking(42, false).Build();
+        TestProducerEndpointConfiguration configuration = builder.EnableChunking(42, false).Build();
 
-        endpoint.Chunk.Should().NotBeNull();
-        endpoint.Chunk!.Size.Should().Be(42);
-        endpoint.Chunk!.AlwaysAddHeaders.Should().BeFalse();
+        configuration.Chunk.Should().NotBeNull();
+        configuration.Chunk!.Size.Should().Be(42);
+        configuration.Chunk!.AlwaysAddHeaders.Should().BeFalse();
     }
 
     [Fact]
@@ -134,9 +134,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.Build();
+        TestProducerEndpointConfiguration configuration = builder.Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        configuration.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -144,9 +144,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.DisableMessageValidation().Build();
+        TestProducerEndpointConfiguration configuration = builder.DisableMessageValidation().Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.None);
+        configuration.MessageValidationMode.Should().Be(MessageValidationMode.None);
     }
 
     [Fact]
@@ -154,9 +154,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.ValidateMessage(false).Build();
+        TestProducerEndpointConfiguration configuration = builder.ValidateMessage(false).Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        configuration.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -164,8 +164,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration endpoint = builder.ValidateMessage(true).Build();
+        TestProducerEndpointConfiguration configuration = builder.ValidateMessage(true).Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.ThrowException);
+        configuration.MessageValidationMode.Should().Be(MessageValidationMode.ThrowException);
     }
 }

@@ -7,31 +7,31 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Producing.Enrichers;
 
 /// <summary>
-///     A generic enricher that sets the message id header according to a value provider function.
+///     The enricher that sets the message id header according to a value provider function.
 /// </summary>
 /// <typeparam name="TMessage">
 ///     The type of the messages to be enriched.
 /// </typeparam>
-public class OutboundMessageIdHeadersEnricher<TMessage> : GenericOutboundHeadersEnricher<TMessage>
+public class MessageIdOutboundHeadersEnricher<TMessage> : GenericOutboundHeadersEnricher<TMessage>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="OutboundMessageIdHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="MessageIdOutboundHeadersEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="valueProvider">
     ///     The header value provider function.
     /// </param>
-    public OutboundMessageIdHeadersEnricher(Func<TMessage?, object?> valueProvider)
+    public MessageIdOutboundHeadersEnricher(Func<TMessage?, object?> valueProvider)
         : base(DefaultMessageHeaders.MessageId, valueProvider)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="OutboundMessageIdHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="MessageIdOutboundHeadersEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="valueProvider">
     ///     The header value provider function.
     /// </param>
-    public OutboundMessageIdHeadersEnricher(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+    public MessageIdOutboundHeadersEnricher(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
         : base(DefaultMessageHeaders.MessageId, valueProvider)
     {
     }
