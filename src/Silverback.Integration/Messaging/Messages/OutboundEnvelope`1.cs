@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
@@ -13,10 +14,10 @@ internal sealed record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundE
     public OutboundEnvelope(
         TMessage? message,
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
         ISilverbackContext? context = null)
-        : base(message, headers, endpoint, producer, context)
+        : base(message, headers, endpointConfiguration, producer, context)
     {
         Message = message;
     }

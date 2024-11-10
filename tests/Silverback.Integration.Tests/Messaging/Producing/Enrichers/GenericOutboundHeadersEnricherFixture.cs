@@ -20,7 +20,7 @@ public class GenericOutboundHeadersEnricherFixture
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "content" },
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new(
@@ -39,12 +39,12 @@ public class GenericOutboundHeadersEnricherFixture
         OutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
         OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new("x-test", "value");
@@ -62,17 +62,17 @@ public class GenericOutboundHeadersEnricherFixture
         OutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
         OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
         OutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
             new BinaryMessage(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<IIntegrationEvent> enricher = new("x-test", "value");

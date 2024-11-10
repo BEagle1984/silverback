@@ -39,7 +39,7 @@ public class ChunkSequenceWriter : ISequenceWriter
     {
         Check.NotNull(envelope, nameof(envelope));
 
-        ChunkSettings? chunkSettings = envelope.Endpoint.Configuration.Chunk;
+        ChunkSettings? chunkSettings = envelope.EndpointConfiguration.Chunk;
         if (chunkSettings == null || chunkSettings.Size == int.MaxValue)
             return false;
 
@@ -63,7 +63,7 @@ public class ChunkSequenceWriter : ISequenceWriter
         if (envelope.RawMessage == null)
             throw new InvalidOperationException("RawMessage is null");
 
-        ChunkSettings? settings = envelope.Endpoint.Configuration.Chunk;
+        ChunkSettings? settings = envelope.EndpointConfiguration.Chunk;
         int chunkSize = settings?.Size ?? int.MaxValue;
         byte[] bufferArray = ArrayPool<byte>.Shared.Rent(chunkSize);
         Memory<byte> bufferMemory = bufferArray.AsMemory(0, chunkSize);
@@ -101,7 +101,7 @@ public class ChunkSequenceWriter : ISequenceWriter
             if (chunkIndex == 0)
             {
                 firstChunkMessageHeader = _chunkEnricherFactory
-                    .GetEnricher(chunkEnvelope.Endpoint, _serviceProvider)
+                    .GetEnricher(chunkEnvelope.EndpointConfiguration, _serviceProvider)
                     .GetFirstChunkMessageHeader(chunkEnvelope);
             }
 

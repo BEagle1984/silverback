@@ -88,6 +88,38 @@ public interface IProducer
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
+    /// <typeparam name="TState">
+    ///     The type of the state object to be passed to the callbacks.
+    /// </typeparam>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="headers">
+    ///     The optional message headers.
+    /// </param>
+    /// <param name="onSuccess">
+    ///     The callback to be invoked when the message is successfully produced.
+    /// </param>
+    /// <param name="onError">
+    ///     The callback to be invoked when the produce fails.
+    /// </param>
+    /// <param name="state">
+    ///     The state object to be passed to the callbacks.
+    /// </param>
+    void Produce<TState>(
+        object? message,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state);
+
+    /// <summary>
+    ///     Publishes the specified message.
+    /// </summary>
+    /// <remarks>
+    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+    ///     are called when the message is actually produced (or the produce failed).
+    /// </remarks>
     /// <param name="envelope">
     ///     The envelope containing the message to be produced.
     /// </param>
@@ -103,6 +135,34 @@ public interface IProducer
         Action<Exception> onError);
 
     /// <summary>
+    ///     Publishes the specified message.
+    /// </summary>
+    /// <remarks>
+    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+    ///     are called when the message is actually produced (or the produce failed).
+    /// </remarks>
+    /// <typeparam name="TState">
+    ///     The type of the state object to be passed to the callbacks.
+    /// </typeparam>
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
+    /// </param>
+    /// <param name="onSuccess">
+    ///     The callback to be invoked when the message is successfully produced.
+    /// </param>
+    /// <param name="onError">
+    ///     The callback to be invoked when the produce fails.
+    /// </param>
+    /// <param name="state">
+    ///     The state object to be passed to the callbacks.
+    /// </param>
+    void Produce<TState>(
+        IOutboundEnvelope envelope,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state);
+
+    /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <param name="messageContent">
@@ -137,46 +197,6 @@ public interface IProducer
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageContent">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    IBrokerMessageIdentifier? RawProduce(
-        ProducerEndpoint endpoint,
-        byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers = null);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageStream">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    IBrokerMessageIdentifier? RawProduce(
-        ProducerEndpoint endpoint,
-        Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
     /// <remarks>
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
@@ -194,60 +214,6 @@ public interface IProducer
     ///     The callback to be invoked when the produce fails.
     /// </param>
     void RawProduce(
-        byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="messageStream">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    void RawProduce(
-        Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageContent">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    void RawProduce(
-        ProducerEndpoint endpoint,
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -263,9 +229,6 @@ public interface IProducer
     /// <typeparam name="TState">
     ///     The type of the state object to be passed to the callbacks.
     /// </typeparam>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
     /// <param name="messageContent">
     ///     The message.
     /// </param>
@@ -282,7 +245,6 @@ public interface IProducer
     ///     The state object to be passed to the callbacks.
     /// </param>
     void RawProduce<TState>(
-        ProducerEndpoint endpoint,
         byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
@@ -296,9 +258,6 @@ public interface IProducer
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
     /// <param name="messageStream">
     ///     The message.
     /// </param>
@@ -312,7 +271,6 @@ public interface IProducer
     ///     The callback to be invoked when the produce fails.
     /// </param>
     void RawProduce(
-        ProducerEndpoint endpoint,
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -328,9 +286,6 @@ public interface IProducer
     /// <typeparam name="TState">
     ///     The type of the state object to be passed to the callbacks.
     /// </typeparam>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
     /// <param name="messageStream">
     ///     The message.
     /// </param>
@@ -347,7 +302,6 @@ public interface IProducer
     ///     The state object to be passed to the callbacks.
     /// </param>
     void RawProduce<TState>(
-        ProducerEndpoint endpoint,
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
@@ -428,56 +382,6 @@ public interface IProducer
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
-        Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageContent">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="cancellationToken">
-    ///     The cancellation token that can be used to cancel the operation.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
-    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
-        ProducerEndpoint endpoint,
-        byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageStream">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="cancellationToken">
-    ///     The cancellation token that can be used to cancel the operation.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
-    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
-        ProducerEndpoint endpoint,
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null,
         CancellationToken cancellationToken = default);

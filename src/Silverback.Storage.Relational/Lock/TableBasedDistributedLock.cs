@@ -136,6 +136,7 @@ public abstract class TableBasedDistributedLock : DistributedLock
 
         public override CancellationToken LockLostToken => _lockLostTokenSource.Token;
 
+        [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Reviewed")]
         protected override void Dispose(bool disposing)
         {
             if (disposing)

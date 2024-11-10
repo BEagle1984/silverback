@@ -38,9 +38,7 @@ internal static class MessageValidator
         return false;
     }
 
-    private static bool TryValidateObject(
-        object obj,
-        out IReadOnlyList<ValidationResult> validationResults)
+    private static bool TryValidateObject(object obj, out IReadOnlyList<ValidationResult> validationResults)
     {
         ValidationContext validationContext = new(obj);
 
@@ -110,7 +108,7 @@ internal static class MessageValidator
 
     private static bool NestedTypeMustBeValidated(Type type)
     {
-        if (type == typeof(string) || type.IsValueType)
+        if (type == typeof(string) || type.IsValueType || type == typeof(Type))
             return false;
 
         if (type.IsArray && type.HasElementType)

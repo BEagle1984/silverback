@@ -52,7 +52,7 @@ public partial class ErrorPoliciesFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
 
         Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].Endpoint.RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);
@@ -145,7 +145,7 @@ public partial class ErrorPoliciesFixture
         tryCount.Should().Be(2);
 
         Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].Endpoint.RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);

@@ -19,8 +19,6 @@ namespace Silverback.Tests.Storage.EntityFramework.Messaging.Producing.Transacti
 
 public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
 {
-    private static readonly OutboxMessageEndpoint Endpoint = new("test", null);
-
     private readonly SqliteConnection _sqliteConnection;
 
     private readonly EntityFrameworkOutboxSettings _outboxSettings;
@@ -55,10 +53,10 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        DbOutboxMessage outboxMessage1 = new(1, [0x01], null, Endpoint);
-        DbOutboxMessage outboxMessage2 = new(2, [0x02], null, Endpoint);
-        DbOutboxMessage outboxMessage3 = new(3, [0x03], null, Endpoint);
-        DbOutboxMessage outboxMessage4 = new(4, [0x04], null, Endpoint);
+        DbOutboxMessage outboxMessage1 = new(1, [0x01], null, "test");
+        DbOutboxMessage outboxMessage2 = new(2, [0x02], null, "test");
+        DbOutboxMessage outboxMessage3 = new(3, [0x03], null, "test");
+        DbOutboxMessage outboxMessage4 = new(4, [0x04], null, "test");
         await _outboxWriter.AddAsync(outboxMessage1);
         await _outboxWriter.AddAsync(outboxMessage2);
         await _outboxWriter.AddAsync(outboxMessage3);
@@ -81,11 +79,11 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x04], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x05], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x04], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x05], null, "test"));
 
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);
@@ -123,11 +121,11 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x04], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x05], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x04], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x05], null, "test"));
 
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);
@@ -145,9 +143,9 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
 
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);
@@ -171,9 +169,9 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
 
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);
@@ -205,9 +203,9 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
         await Task.Delay(100);
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
 
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);

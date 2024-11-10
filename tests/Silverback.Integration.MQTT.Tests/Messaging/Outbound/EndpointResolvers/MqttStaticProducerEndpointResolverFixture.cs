@@ -3,21 +3,31 @@
 
 using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Outbound.EndpointResolvers;
 
 public class MqttStaticProducerEndpointResolverFixture
 {
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+        new TestEventOne(),
+        null,
+        new MqttProducerEndpointConfiguration(),
+        Substitute.For<IProducer>());
+
     [Fact]
     public void GetEndpoint_ShouldReturnTopicFromTopicName()
     {
         MqttStaticProducerEndpointResolver endpointResolver = new("topic");
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new MqttProducerEndpointConfiguration(), null!);
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
         endpoint.Should().NotBeNull();
         endpoint.Should().BeOfType<MqttProducerEndpoint>();

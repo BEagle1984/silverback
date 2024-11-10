@@ -16,8 +16,6 @@ namespace Silverback.Tests.Storage.Memory.Messaging.Producing.TransactionalOutbo
 
 public class InMemoryOutboxWriterFixture
 {
-    private static readonly OutboxMessageEndpoint Endpoint = new("test", null);
-
     [Fact]
     public async Task AddAsync_ShouldAddItemToStorage()
     {
@@ -30,9 +28,9 @@ public class InMemoryOutboxWriterFixture
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
-        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
-        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync(outboxMessage1);
         await outboxWriter.AddAsync(outboxMessage2);
         await outboxWriter.AddAsync(outboxMessage3);
@@ -54,9 +52,9 @@ public class InMemoryOutboxWriterFixture
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
-        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
-        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync([outboxMessage1, outboxMessage2, outboxMessage3]);
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
@@ -76,9 +74,9 @@ public class InMemoryOutboxWriterFixture
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
-        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
-        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 }.ToAsyncEnumerable());
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
@@ -100,8 +98,8 @@ public class InMemoryOutboxWriterFixture
         IOutboxWriter outboxWriter1 = writerFactory.GetWriter(outboxSettings1, serviceProvider);
         IOutboxWriter outboxWriter2 = writerFactory.GetWriter(outboxSettings2, serviceProvider);
 
-        await outboxWriter1.AddAsync(new OutboxMessage([0x01], null, Endpoint));
-        await outboxWriter2.AddAsync(new OutboxMessage([0x02], null, Endpoint));
+        await outboxWriter1.AddAsync(new OutboxMessage([0x01], null, "test"));
+        await outboxWriter2.AddAsync(new OutboxMessage([0x02], null, "test"));
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox1 = outboxFactory.GetOutbox(outboxSettings1);

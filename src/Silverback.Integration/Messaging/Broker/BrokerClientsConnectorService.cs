@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -52,6 +53,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
             _connector.ConnectAllAsync(_applicationStoppingToken).FireAndForget();
     }
 
+    [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
     private void OnApplicationStopping() =>
         Task.Run(
                 async () =>

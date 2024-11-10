@@ -23,7 +23,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_BinaryMessage_RawContentProduced()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -48,7 +48,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_InheritedBinaryMessage_RawContentProduced()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -77,7 +77,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
         {
             Serializer = new BinaryMessageSerializer()
         };
-        OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint(), Substitute.For<IProducer>());
+        OutboundEnvelope envelope = new(message, null, endpointConfiguration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -102,7 +102,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_EndpointWithBinaryMessageSerializer_EnvelopeUntouched()
     {
         TestEventOne message = new() { Content = "hey!" };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(

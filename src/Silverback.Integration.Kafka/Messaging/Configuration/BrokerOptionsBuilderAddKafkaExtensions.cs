@@ -71,8 +71,8 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
         ChunkEnricherFactory factory = brokerOptionsBuilder.SilverbackBuilder.Services.GetSingletonServiceInstance<ChunkEnricherFactory>() ??
                                        throw new InvalidOperationException("ChunkEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
 
-        if (!factory.HasFactory<KafkaProducerEndpoint>())
-            factory.AddFactory<KafkaProducerEndpoint>(_ => new KafkaChunkEnricher());
+        if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
+            factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new KafkaChunkEnricher());
     }
 
     private static void AddBrokerLogEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)

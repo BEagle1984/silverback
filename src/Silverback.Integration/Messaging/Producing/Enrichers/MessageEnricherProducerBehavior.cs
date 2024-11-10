@@ -22,7 +22,7 @@ public class MessageEnricherProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        foreach (IOutboundMessageEnricher enricher in context.Envelope.Endpoint.Configuration.MessageEnrichers)
+        foreach (IOutboundMessageEnricher enricher in context.Envelope.EndpointConfiguration.MessageEnrichers)
         {
             enricher.Enrich(context.Envelope);
         }

@@ -24,7 +24,7 @@ public class OutboundEnvelopeBuilder<TMessage>
 
     private MessageHeaderCollection? _headers;
 
-    private ProducerEndpoint? _endpoint;
+    private ProducerEndpointConfiguration? _endpointConfiguration;
 
     private IProducer? _producer;
 
@@ -96,15 +96,15 @@ public class OutboundEnvelopeBuilder<TMessage>
     /// <summary>
     ///     Sets the endpoint to be used to produce the message.
     /// </summary>
-    /// <param name="endpoint">
-    ///     The endpoint.
+    /// <param name="endpointConfiguration">
+    ///     The endpoint configuration.
     /// </param>
     /// <returns>
     ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> WithEndpoint(ProducerEndpoint? endpoint)
+    public OutboundEnvelopeBuilder<TMessage> WithEndpointConfiguration(ProducerEndpointConfiguration? endpointConfiguration)
     {
-        _endpoint = endpoint;
+        _endpointConfiguration = endpointConfiguration;
         return this;
     }
 
@@ -133,10 +133,8 @@ public class OutboundEnvelopeBuilder<TMessage>
         new OutboundEnvelope<TMessage>(
             _message,
             _headers,
-            _endpoint ?? new MockProducerEndpoint(),
+            _endpointConfiguration ?? new MockProducerEndpointConfiguration(),
             _producer ?? new MockProducer());
-
-    internal record MockProducerEndpoint() : ProducerEndpoint("mock", new MockProducerEndpointConfiguration());
 
     internal record MockProducerEndpointConfiguration : ProducerEndpointConfiguration;
 
@@ -156,27 +154,23 @@ public class OutboundEnvelopeBuilder<TMessage>
 
         public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
 
+        public void Produce<TState>(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
+
         public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void Produce<TState>(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
 
         public IBrokerMessageIdentifier RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 
         public IBrokerMessageIdentifier RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 
-        public IBrokerMessageIdentifier RawProduce(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
-        public IBrokerMessageIdentifier RawProduce(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
         public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void RawProduce<TState>(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
 
         public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
 
-        public void RawProduce(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void RawProduce<TState>(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
-
-        public void RawProduce(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void RawProduce<TState>(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
+        public void RawProduce<TState>(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
 
         public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 

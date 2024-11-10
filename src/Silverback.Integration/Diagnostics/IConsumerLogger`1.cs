@@ -13,7 +13,7 @@ namespace Silverback.Diagnostics;
 ///     An <see cref="ILogger{TCategoryName}" /> with some specific methods to log consumed messages related events.
 /// </summary>
 /// <typeparam name="TCategoryName">
-///     The type who's name is used for the logger category name.
+///     The type whose name is used for the logger category name.
 /// </typeparam>
 public interface IConsumerLogger<out TCategoryName> : ISilverbackLogger<TCategoryName>
 {

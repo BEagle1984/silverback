@@ -38,13 +38,11 @@ public class SqliteOutboxWriter : IOutboxWriter
                      "Content," +
                      "Headers," +
                      "EndpointName," +
-                     "DynamicEndpoint," +
                      "Created" +
                      ") VALUES (" +
                      "@Content," +
                      "@Headers," +
                      "@EndpointName," +
-                     "@DynamicEndpoint," +
                      "@Created)";
     }
 
@@ -66,11 +64,7 @@ public class SqliteOutboxWriter : IOutboxWriter
                 },
                 new SqliteParameter("@EndpointName", SqliteType.Text)
                 {
-                    Value = outboxMessage.Endpoint.FriendlyName
-                },
-                new SqliteParameter("@DynamicEndpoint", SqliteType.Text)
-                {
-                    Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
+                    Value = outboxMessage.EndpointName
                 },
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
@@ -97,7 +91,6 @@ public class SqliteOutboxWriter : IOutboxWriter
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
-                new SqliteParameter("@DynamicEndpoint", SqliteType.Text),
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
                     Value = DateTime.UtcNow
@@ -107,8 +100,7 @@ public class SqliteOutboxWriter : IOutboxWriter
             {
                 parameters[0].Value = outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
-                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+                parameters[2].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,
@@ -130,7 +122,6 @@ public class SqliteOutboxWriter : IOutboxWriter
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
-                new SqliteParameter("@DynamicEndpoint", SqliteType.Text),
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
                     Value = DateTime.UtcNow
@@ -140,8 +131,7 @@ public class SqliteOutboxWriter : IOutboxWriter
             {
                 parameters[0].Value = outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
-                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+                parameters[2].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,

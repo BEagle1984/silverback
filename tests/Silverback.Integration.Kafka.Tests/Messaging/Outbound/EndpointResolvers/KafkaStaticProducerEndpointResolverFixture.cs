@@ -4,21 +4,31 @@
 using System;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers;
 
 public class KafkaStaticProducerEndpointResolverFixture
 {
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+        new TestEventOne(),
+        null,
+        new KafkaProducerEndpointConfiguration(),
+        Substitute.For<IProducer>());
+
     [Fact]
     public void GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName()
     {
         KafkaStaticProducerEndpointResolver endpointResolver = new("topic");
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new KafkaProducerEndpointConfiguration(), null!);
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
         endpoint.Should().NotBeNull();
         endpoint.Should().BeOfType<KafkaProducerEndpoint>();
@@ -31,7 +41,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         KafkaStaticProducerEndpointResolver endpointResolver = new("topic", 42);
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new KafkaProducerEndpointConfiguration(), null!);
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
         endpoint.Should().NotBeNull();
         endpoint.Should().BeOfType<KafkaProducerEndpoint>();

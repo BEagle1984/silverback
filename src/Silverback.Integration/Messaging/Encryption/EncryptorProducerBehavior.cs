@@ -43,12 +43,12 @@ public class EncryptorProducerBehavior : IProducerBehavior
 
     private void EncryptIfNeeded(IRawOutboundEnvelope envelope)
     {
-        if (envelope.Endpoint.Configuration.Encryption == null || envelope.RawMessage == null)
+        if (envelope.EndpointConfiguration.Encryption == null || envelope.RawMessage == null)
             return;
 
-        envelope.RawMessage = _streamFactory.GetEncryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption);
+        envelope.RawMessage = _streamFactory.GetEncryptStream(envelope.RawMessage, envelope.EndpointConfiguration.Encryption);
 
-        if (envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings { KeyIdentifier: not null } settings)
+        if (envelope.EndpointConfiguration.Encryption is SymmetricEncryptionSettings { KeyIdentifier: not null } settings)
             envelope.Headers.AddOrReplace(DefaultMessageHeaders.EncryptionKeyId, settings.KeyIdentifier);
     }
 }

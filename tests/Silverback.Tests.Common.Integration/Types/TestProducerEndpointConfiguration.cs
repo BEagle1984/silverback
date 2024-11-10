@@ -4,7 +4,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Tests.Types.Domain;
 
 namespace Silverback.Tests.Types;
 
@@ -16,23 +19,23 @@ public sealed record TestProducerEndpointConfiguration : ProducerEndpointConfigu
 
     public TestProducerEndpointConfiguration(string topic, Type? messageType = null)
     {
-        Endpoint = new TestStaticProducerEndpointResolver(topic);
+        EndpointResolver = new TestStaticProducerEndpointResolver(topic);
 
         if (messageType != null)
             MessageType = messageType;
     }
 
-    public TestProducerEndpointConfiguration(params string[] topic)
-    {
-        Endpoint = new TestDynamicProducerEndpointResolver<object>(topic[0]);
-    }
-
     [SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "A new instance is desired")]
     public static TestProducerEndpointConfiguration GetDefault() => new()
     {
-        Endpoint = new TestStaticProducerEndpointResolver("test")
+        EndpointResolver = new TestStaticProducerEndpointResolver("test")
     };
 
     public TestProducerEndpoint GetDefaultEndpoint() =>
-        (TestProducerEndpoint)Endpoint.GetEndpoint(null, this, Substitute.For<IServiceProvider>());
+        (TestProducerEndpoint)EndpointResolver.GetEndpoint(
+            new OutboundEnvelope<TestEventOne>(
+                new TestEventOne(),
+                null,
+                this,
+                Substitute.For<IProducer>()));
 }

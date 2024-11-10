@@ -4,6 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Protocol;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
@@ -77,7 +78,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
 
-        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFunction.Invoke);
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFunction);
 
         return this;
     }
@@ -102,7 +103,30 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
-        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction.Invoke);
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the target topic and, optionally, the target partition will be specified per each message using the envelope's
+    ///     <see cref="MqttEnvelopeExtensions.SetMqttDestinationTopic" /> extension method.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttProducerEndpointConfigurationBuilder<TMessage> ProduceToDynamicTopic()
+    {
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(
+            envelope =>
+            {
+                string? destinationTopic = envelope.GetMqttDestinationTopic();
+
+                if (string.IsNullOrEmpty(destinationTopic))
+                    throw new InvalidOperationException("The destination topic is not set.");
+
+                return destinationTopic;
+            });
 
         return this;
     }
@@ -122,7 +146,9 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(
             typeof(TResolver),
-            (message, serviceProvider) => serviceProvider.GetRequiredService<TResolver>().GetTopic(message));
+            envelope => envelope.Context?.ServiceProvider == null
+                ? throw new InvalidOperationException("The service provider is not available. The endpoint resolver requires a service provider to be resolved.")
+                : envelope.Context.ServiceProvider.GetRequiredService<TResolver>().GetTopic(envelope));
 
         return this;
     }
@@ -193,7 +219,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
 
         return configuration with
         {
-            Endpoint = _endpointResolver ?? NullProducerEndpointResolver<MqttProducerEndpoint>.Instance,
+            EndpointResolver = _endpointResolver ?? NullProducerEndpointResolver<MqttProducerEndpoint>.Instance,
             QualityOfServiceLevel = _qualityOfServiceLevel ?? configuration.QualityOfServiceLevel,
             Retain = _retain ?? configuration.Retain,
             MessageExpiryInterval = _messageExpiryInterval ?? configuration.MessageExpiryInterval,

@@ -159,7 +159,7 @@ public class ConsumerLoggerFixture
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
         KafkaProducerEndpointConfiguration endpointConfiguration = new()
         {
-            Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+            EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
         };
 
         _consumerLogger.LogMoved(envelope, endpointConfiguration);

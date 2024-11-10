@@ -99,13 +99,13 @@ public class KafkaProducerConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenEndpointIsNotValid()
+    public void Validate_ShouldThrow_WhenEndpointResolverIsNotValid()
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
             Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(
             [
-                new KafkaProducerEndpointConfiguration { Endpoint = null! }
+                new KafkaProducerEndpointConfiguration { EndpointResolver = null! }
             ])
         };
 
@@ -197,7 +197,7 @@ public class KafkaProducerConfigurationFixture
         [
             new KafkaProducerEndpointConfiguration
             {
-                Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
             }
         ])
     };

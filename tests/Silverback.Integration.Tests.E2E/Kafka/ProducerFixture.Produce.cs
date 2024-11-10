@@ -9,7 +9,6 @@ using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -118,7 +117,7 @@ public partial class ProducerFixture
                 OutboundEnvelopeFactory.CreateEnvelope(
                     new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
                     new MessageHeaderCollection { { "x-custom", $"test {i}" }, { "two", "2" } },
-                    new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.EndpointConfiguration),
+                    producer.EndpointConfiguration,
                     producer));
         }
 
@@ -210,7 +209,7 @@ public partial class ProducerFixture
                 OutboundEnvelopeFactory.CreateEnvelope(
                     new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
                     new MessageHeaderCollection { { "x-custom", $"test {i}" } },
-                    new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.EndpointConfiguration),
+                    producer.EndpointConfiguration,
                     producer),
                 _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));

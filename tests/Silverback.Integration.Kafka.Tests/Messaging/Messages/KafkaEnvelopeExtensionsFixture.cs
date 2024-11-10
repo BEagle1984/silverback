@@ -37,7 +37,7 @@ public class KafkaEnvelopeExtensionsFixture
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             [new MessageHeader(DefaultMessageHeaders.MessageId, "test")],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
@@ -67,7 +67,7 @@ public class KafkaEnvelopeExtensionsFixture
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             [],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
@@ -120,5 +120,66 @@ public class KafkaEnvelopeExtensionsFixture
         KafkaOffset kafkaOffset = envelope.GetKafkaOffset();
 
         kafkaOffset.Should().Be(offset);
+    }
+
+    [Fact]
+    public void GetKafkaDestinationTopic_ShouldReturnDestinationTopic()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1")],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        string? destinationTopic = envelope.GetKafkaDestinationTopic();
+
+        destinationTopic.Should().Be("topic/1");
+    }
+
+    [Fact]
+    public void GetKafkaDestinationPartition_ShouldReturnDestinationPartition()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42)],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        int? destinationPartition = envelope.GetKafkaDestinationPartition();
+
+        destinationPartition.Should().Be(42);
+    }
+
+    [Fact]
+    public void SetKafkaDestinationTopic_ShouldSetHeader()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKafkaDestinationTopic("topic/1");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
+    }
+
+    [Fact]
+    public void SetKafkaDestinationTopic_ShouldSetTopicAndPartitionHeaders()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKafkaDestinationTopic("topic/1", 42);
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42));
     }
 }

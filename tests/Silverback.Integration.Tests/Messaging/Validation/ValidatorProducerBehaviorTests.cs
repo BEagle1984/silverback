@@ -131,11 +131,11 @@ public class ValidatorProducerBehaviorTests
     [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
     public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
     {
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
+        TestProducerEndpointConfiguration configuration = new("topic1")
         {
             MessageValidationMode = MessageValidationMode.None
-        }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
+        };
+        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
@@ -164,11 +164,11 @@ public class ValidatorProducerBehaviorTests
     public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
+        TestProducerEndpointConfiguration configuration = new("topic1")
         {
             MessageValidationMode = validationMode
-        }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
+        };
+        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(
@@ -197,11 +197,11 @@ public class ValidatorProducerBehaviorTests
         IIntegrationMessage message,
         string expectedValidationMessage)
     {
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
+        TestProducerEndpointConfiguration configuration = new("topic1")
         {
             MessageValidationMode = MessageValidationMode.LogWarning
-        }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
+        };
+        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
@@ -230,11 +230,11 @@ public class ValidatorProducerBehaviorTests
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =
             $"The message is not valid: {Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
+        TestProducerEndpointConfiguration configuration = new("topic1")
         {
             MessageValidationMode = MessageValidationMode.ThrowException
-        }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
+        };
+        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(

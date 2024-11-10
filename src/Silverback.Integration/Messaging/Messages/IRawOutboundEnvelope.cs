@@ -9,13 +9,14 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Wraps the message that is being produced to an outbound endpoint.
 /// </summary>
+
+// TODO: Merge IRawOutboundEnvelope and IOutboundEnvelope (same for related classes)
 public interface IRawOutboundEnvelope : IRawBrokerEnvelope
 {
     /// <summary>
-    ///     Gets the target endpoint for the specific message. It is mostly relevant when the <see cref="EndpointConfiguration" /> is
-    ///     configured to determine a dynamic target endpoint for each message.
+    ///     Gets the destination endpoint configuration.
     /// </summary>
-    new ProducerEndpoint Endpoint { get; }
+    ProducerEndpointConfiguration EndpointConfiguration { get; }
 
     /// <summary>
     ///     Gets the <see cref="IProducer" /> that will be or was used to produce this message.

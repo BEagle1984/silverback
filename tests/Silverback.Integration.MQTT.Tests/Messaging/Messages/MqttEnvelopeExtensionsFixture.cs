@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Messages;
 public class MqttEnvelopeExtensionsFixture
 {
     [Fact]
-    public void GetResponseTopic_ShouldReturnResponseTopic()
+    public void GetMqttResponseTopic_ShouldReturnResponseTopic()
     {
         InboundEnvelope envelope = new(
             null,
@@ -24,13 +24,13 @@ public class MqttEnvelopeExtensionsFixture
             Substitute.For<IConsumer>(),
             new MqttMessageIdentifier("client1", "1234"));
 
-        string? responseTopic = envelope.GetResponseTopic();
+        string? responseTopic = envelope.GetMqttResponseTopic();
 
         responseTopic.Should().Be("topic/1");
     }
 
     [Fact]
-    public void GetResponseTopic_ShouldReturnNull_WhenHeaderNotSet()
+    public void GetMqttResponseTopic_ShouldReturnNull_WhenHeaderNotSet()
     {
         InboundEnvelope envelope = new(
             null,
@@ -39,28 +39,28 @@ public class MqttEnvelopeExtensionsFixture
             Substitute.For<IConsumer>(),
             new MqttMessageIdentifier("client1", "1234"));
 
-        string? responseTopic = envelope.GetResponseTopic();
+        string? responseTopic = envelope.GetMqttResponseTopic();
 
         responseTopic.Should().BeNull();
     }
 
     [Fact]
-    public void SetResponseTopic_ShouldSetHeader()
+    public void SetMqttResponseTopic_ShouldSetHeader()
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             [],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
-        envelope.SetResponseTopic("topic/1");
+        envelope.SetMqttResponseTopic("topic/1");
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.ResponseTopic, "topic/1"));
     }
 
     [Fact]
-    public void GetCorrelationData_ShouldReturnCorrelationDataAsByteArray()
+    public void GetMqttCorrelationData_ShouldReturnCorrelationDataAsByteArray()
     {
         InboundEnvelope envelope = new(
             null,
@@ -69,13 +69,13 @@ public class MqttEnvelopeExtensionsFixture
             Substitute.For<IConsumer>(),
             new MqttMessageIdentifier("client1", "1234"));
 
-        byte[]? correlationData = envelope.GetCorrelationData();
+        byte[]? correlationData = envelope.GetMqttCorrelationData();
 
         correlationData.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
     }
 
     [Fact]
-    public void GetCorrelationDataAsString_ShouldReturnCorrelationData()
+    public void GetMqttCorrelationDataAsString_ShouldReturnCorrelationData()
     {
         InboundEnvelope envelope = new(
             null,
@@ -84,13 +84,13 @@ public class MqttEnvelopeExtensionsFixture
             Substitute.For<IConsumer>(),
             new MqttMessageIdentifier("client1", "1234"));
 
-        string? correlationData = envelope.GetCorrelationDataAsString();
+        string? correlationData = envelope.GetMqttCorrelationDataAsString();
 
         correlationData.Should().Be("{correlation-data}");
     }
 
     [Fact]
-    public void GetCorrelationDataAsString_ShouldReturnNull_WhenHeaderNotSet()
+    public void GetMqttCorrelationDataAsString_ShouldReturnNull_WhenHeaderNotSet()
     {
         InboundEnvelope envelope = new(
             null,
@@ -99,38 +99,68 @@ public class MqttEnvelopeExtensionsFixture
             Substitute.For<IConsumer>(),
             new MqttMessageIdentifier("client1", "1234"));
 
-        string? correlationData = envelope.GetCorrelationDataAsString();
+        string? correlationData = envelope.GetMqttCorrelationDataAsString();
 
         correlationData.Should().BeNull();
     }
 
     [Fact]
-    public void SetCorrelationData_ShouldSetHeader()
+    public void SetMqttCorrelationData_ShouldSetHeader()
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             [],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
-        envelope.SetCorrelationData([1, 2, 3, 4]);
+        envelope.SetMqttCorrelationData([1, 2, 3, 4]);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.CorrelationData, "AQIDBA=="));
     }
 
     [Fact]
-    public void SetCorrelationData_ShouldSetHeaderFromString()
+    public void SetMqttCorrelationData_ShouldSetHeaderFromString()
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             [],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
-        envelope.SetCorrelationData("{correlation-data}");
+        envelope.SetMqttCorrelationData("{correlation-data}");
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.CorrelationData, "e2NvcnJlbGF0aW9uLWRhdGF9"));
+    }
+
+    [Fact]
+    public void GetMqttDestinationTopic_ShouldReturnDestinationTopic()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [new MessageHeader(MqttMessageHeaders.DestinationTopic, "topic/1")],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        string? destinationTopic = envelope.GetMqttDestinationTopic();
+
+        destinationTopic.Should().Be("topic/1");
+    }
+
+    [Fact]
+    public void SetMqttDestinationTopic_ShouldSetHeader()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetMqttDestinationTopic("topic/1");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.DestinationTopic, "topic/1"));
     }
 }

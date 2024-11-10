@@ -54,7 +54,7 @@ public class EntityFrameworkOutboxReader : IOutboxReader
                     message.Id,
                     message.Content,
                     message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                    new OutboxMessageEndpoint(message.EndpointName, message.DynamicEndpoint)))
+                    message.EndpointName))
             .ToList();
     }
 

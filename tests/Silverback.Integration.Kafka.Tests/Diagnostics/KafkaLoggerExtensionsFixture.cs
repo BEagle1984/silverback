@@ -62,7 +62,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
                 [
                     new KafkaProducerEndpointConfiguration
                     {
-                        Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+                        EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
                     }
                 ])
             },

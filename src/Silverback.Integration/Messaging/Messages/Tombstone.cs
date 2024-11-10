@@ -1,6 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
@@ -19,9 +21,10 @@ public class Tombstone : ITombstone
         MessageId = messageId;
     }
 
-    /// <summary>
-    ///     Gets the message identifier.
-    /// </summary>
+    /// <inheritdoc cref="ITombstone.MessageId" />
     [Header(DefaultMessageHeaders.MessageId)]
     public string? MessageId { get; }
+
+    /// <inheritdoc cref="ITombstone.MessageType" />
+    public virtual Type MessageType { get; } = typeof(object);
 }

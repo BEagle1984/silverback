@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Diagnostics;
@@ -14,7 +14,7 @@ namespace Silverback.Diagnostics;
 ///     related events.
 /// </summary>
 /// <typeparam name="TCategoryName">
-///     The type who's name is used for the logger category name.
+///     The type whose name is used for the logger category name.
 /// </typeparam>
 public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategoryName>
 {
@@ -29,8 +29,8 @@ public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     /// <summary>
     ///     Logs the <see cref="IntegrationLogEvents.MessageProduced" /> event.
     /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
+    /// <param name="endpointConfiguration">
+    ///     The destination endpoint configuration.
     /// </param>
     /// <param name="headers">
     ///     The message headers.
@@ -39,7 +39,7 @@ public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     ///     The <see cref="IBrokerMessageIdentifier" />.
     /// </param>
     void LogProduced(
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier);
 
@@ -57,8 +57,8 @@ public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     /// <summary>
     ///     Logs the <see cref="IntegrationLogEvents.ErrorProducingMessage" /> event.
     /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
+    /// <param name="endpointConfiguration">
+    ///     The destination endpoint configuration.
     /// </param>
     /// <param name="headers">
     ///     The message headers.
@@ -66,7 +66,10 @@ public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     /// <param name="exception">
     ///     The <see cref="Exception" />.
     /// </param>
-    void LogProduceError(ProducerEndpoint endpoint, IReadOnlyCollection<MessageHeader>? headers, Exception exception);
+    void LogProduceError(
+        ProducerEndpointConfiguration endpointConfiguration,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Exception exception);
 
     /// <summary>
     ///     Logs the <see cref="IntegrationLogEvents.OutboundMessageFiltered" /> event.

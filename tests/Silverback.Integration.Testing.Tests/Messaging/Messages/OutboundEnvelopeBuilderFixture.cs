@@ -68,15 +68,15 @@ public class OutboundEnvelopeBuilderFixture
     }
 
     [Fact]
-    public void WithEndpoint_ShouldSetEndpoint()
+    public void WithEndpointConfiguration_ShouldSetEndpointConfiguration()
     {
         OutboundEnvelopeBuilder<TestEventOne> builder = new();
-        OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpoint endpoint = new();
+        OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration endpointConfiguration = new();
 
-        builder.WithEndpoint(endpoint);
+        builder.WithEndpointConfiguration(endpointConfiguration);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Endpoint.Should().BeSameAs(endpoint);
+        envelope.EndpointConfiguration.Should().BeSameAs(endpointConfiguration);
     }
 
     [Fact]
@@ -92,14 +92,13 @@ public class OutboundEnvelopeBuilderFixture
     }
 
     [Fact]
-    public void Build_ShouldSetMockEndpoint_WhenEndpointNotSpecified()
+    public void Build_ShouldSetMockEndpointConfiguration_WhenEndpointNotSpecified()
     {
         OutboundEnvelopeBuilder<TestEventOne> builder = new();
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.Endpoint.Should().BeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpoint>();
-        envelope.Endpoint.Configuration.Should().BeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration>();
+        envelope.EndpointConfiguration.Should().BeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration>();
     }
 
     [Fact]

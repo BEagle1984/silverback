@@ -21,15 +21,15 @@ public class DbOutboxMessage : OutboxMessage
     /// <param name="headers">
     ///     The message headers.
     /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint information.
+    /// <param name="endpointName">
+    ///     The endpoint name.
     /// </param>
     public DbOutboxMessage(
         long id,
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
-        OutboxMessageEndpoint endpoint)
-        : base(content, headers, endpoint)
+        string endpointName)
+        : base(content, headers, endpointName)
     {
         Id = id;
     }

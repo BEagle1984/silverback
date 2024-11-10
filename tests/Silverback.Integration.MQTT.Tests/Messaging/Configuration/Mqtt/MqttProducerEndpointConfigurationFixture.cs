@@ -36,7 +36,7 @@ public class MqttProducerEndpointConfigurationFixture
     [Fact]
     public void Validate_ShouldThrow_WhenEndpointIsNull()
     {
-        MqttProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
+        MqttProducerEndpointConfiguration configuration = GetValidConfiguration() with { EndpointResolver = null! };
 
         Action act = configuration.Validate;
 
@@ -60,6 +60,6 @@ public class MqttProducerEndpointConfigurationFixture
     private static MqttProducerEndpointConfiguration GetValidConfiguration() =>
         new()
         {
-            Endpoint = new MqttStaticProducerEndpointResolver("topic")
+            EndpointResolver = new MqttStaticProducerEndpointResolver("topic")
         };
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
@@ -23,20 +24,20 @@ public class SerializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Message is not Tombstone)
+        if (context.Envelope.Message is ITombstone tombstone)
+        {
+            MethodInfo method = context.Envelope.GetType().GetMethod(nameof(IOutboundEnvelope.CloneReplacingMessage))!;
+            MethodInfo genericMethod = method.MakeGenericMethod(tombstone.MessageType);
+            context.Envelope = (IOutboundEnvelope)genericMethod.Invoke(context.Envelope, [null])!;
+        }
+        else
         {
             context.Envelope.RawMessage ??=
-                await context.Envelope.Endpoint.Configuration.Serializer.SerializeAsync(
+                await context.Envelope.EndpointConfiguration.Serializer.SerializeAsync(
                         context.Envelope.Message,
                         context.Envelope.Headers,
-                        context.Envelope.Endpoint)
+                        context.Envelope.GetEndpoint())
                     .ConfigureAwait(false);
-        }
-        else if (context.Envelope.Message.GetType().GenericTypeArguments.Length == 1)
-        {
-            context.Envelope.Headers.AddOrReplace(
-                DefaultMessageHeaders.MessageType,
-                context.Envelope.Message.GetType().GenericTypeArguments[0].AssemblyQualifiedName);
         }
 
         await next(context, cancellationToken).ConfigureAwait(false);

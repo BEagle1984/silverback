@@ -37,13 +37,13 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
     }
 
     /// <summary>
-    ///     Gets the target endpoint name. It could be either the topic/queue name or the friendly name of an endpoint that is already
+    ///     Gets the destination endpoint name. It could be either the topic/queue name or the friendly name of an endpoint that is already
     ///     configured with a producer.
     /// </summary>
     public string EndpointName { get; }
 
     /// <summary>
-    ///     Gets an <see cref="Action{T1,T2}" /> to be used to modify the message before moving it to the target endpoint.
+    ///     Gets an <see cref="Action{T1,T2}" /> to be used to modify the message before moving it to the destination endpoint.
     /// </summary>
     public Action<IOutboundEnvelope, Exception>? TransformMessageAction { get; init; }
 
@@ -122,14 +122,14 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             Check.NotNull(context, nameof(context));
             Check.NotNull(exception, nameof(exception));
 
-            await PublishToNewEndpointAsync(context.Envelope, context.ServiceProvider, exception).ConfigureAwait(false);
+            await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
 
             await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 
             return true;
         }
 
-        private async ValueTask PublishToNewEndpointAsync(IRawInboundEnvelope envelope, IServiceProvider serviceProvider, Exception exception)
+        private async ValueTask PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
         {
             _producer ??= _producers.GetProducerForEndpoint(_endpointName);
 
@@ -138,18 +138,12 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
                     ? OutboundEnvelopeFactory.CreateEnvelope(
                         deserializedEnvelope.Message,
                         deserializedEnvelope.Headers,
-                        _producer.EndpointConfiguration.Endpoint.GetEndpoint(
-                            deserializedEnvelope.Message,
-                            _producer.EndpointConfiguration,
-                            serviceProvider),
+                        _producer.EndpointConfiguration,
                         _producer)
                     : OutboundEnvelopeFactory.CreateEnvelope(
                         envelope.RawMessage,
                         envelope.Headers,
-                        _producer.EndpointConfiguration.Endpoint.GetEndpoint(
-                            envelope.RawMessage,
-                            _producer.EndpointConfiguration,
-                            serviceProvider),
+                        _producer.EndpointConfiguration,
                         _producer);
 
             IMovePolicyMessageEnricher enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);

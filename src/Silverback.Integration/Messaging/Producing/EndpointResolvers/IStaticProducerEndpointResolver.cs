@@ -6,12 +6,12 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Producing.EndpointResolvers;
 
 /// <summary>
-///     Statically resolves to the same target endpoint (e.g. the target topic and partition) for every message being produced.
+///     Statically resolves to the same destination endpoint (e.g. the target topic and partition) for every message being produced.
 /// </summary>
 public interface IStaticProducerEndpointResolver : IProducerEndpointResolver
 {
     /// <summary>
-    ///     Gets the static target endpoint.
+    ///     Gets the static destination endpoint.
     /// </summary>
     /// <param name="configuration">
     ///     The producer endpoint configuration.

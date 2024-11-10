@@ -11,7 +11,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -78,16 +77,6 @@ public class OutboxWorker : IOutboxWorker
     /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
     public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
 
-    private static ProducerEndpoint GetEndpoint(OutboxMessage outboxMessage, ProducerEndpointConfiguration configuration) =>
-        configuration.Endpoint switch
-        {
-            IStaticProducerEndpointResolver staticEndpointProvider => staticEndpointProvider.GetEndpoint(configuration),
-            IDynamicProducerEndpointResolver dynamicEndpointProvider => dynamicEndpointProvider.Deserialize(
-                outboxMessage.Endpoint.DynamicEndpoint ?? throw new InvalidOperationException("SerializedEndpoint is null"),
-                configuration),
-            _ => throw new InvalidOperationException("The IEndpointProvider is neither an IStaticEndpointProvider nor an IDynamicEndpointProvider.")
-        };
-
     private async Task<bool> TryProcessOutboxAsync(CancellationToken stoppingToken)
     {
         _logger.LogReadingMessagesFromOutbox(_settings.BatchSize);
@@ -133,12 +122,11 @@ public class OutboxWorker : IOutboxWorker
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
-    private void ProcessMessage(OutboxMessage message)
+    private void ProcessMessage(OutboxMessage outboxMessage)
     {
         try
         {
-            IProducer producer = GetProducer(message);
-            ProducerEndpoint endpoint = GetEndpoint(message, producer.EndpointConfiguration);
+            IProducer producer = GetProducer(outboxMessage);
 
             Interlocked.Increment(ref _pendingProduceOperations);
 
@@ -149,12 +137,11 @@ public class OutboxWorker : IOutboxWorker
             }
 
             producer.RawProduce(
-                endpoint,
-                message.Content,
-                message.Headers,
+                outboxMessage.Content,
+                outboxMessage.Headers,
                 OnProduceSuccess,
                 OnProduceError,
-                new ProduceState(producer, endpoint, message));
+                new ProduceState(producer, producer.EndpointConfiguration, outboxMessage));
         }
         catch (Exception ex)
         {
@@ -171,7 +158,7 @@ public class OutboxWorker : IOutboxWorker
 
     private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, ProduceState state)
     {
-        _producedMessages.Add(state.Message);
+        _producedMessages.Add(state.OutboxMessage);
         Interlocked.Decrement(ref _pendingProduceOperations);
     }
 
@@ -181,19 +168,18 @@ public class OutboxWorker : IOutboxWorker
         Interlocked.Decrement(ref _pendingProduceOperations);
 
         _logger.LogErrorProducingOutboxStoredMessage(
-            new OutboundEnvelope(state.Message.Content, state.Message.Headers, state.Endpoint, state.Producer),
+            new OutboundEnvelope(state.OutboxMessage.Content, state.OutboxMessage.Headers, state.EndpointConfiguration, state.Producer),
             exception);
     }
 
-    private async ValueTask BlockingProcessMessageAsync(OutboxMessage message)
+    private async ValueTask BlockingProcessMessageAsync(OutboxMessage outboxMessage)
     {
         try
         {
-            IProducer producer = GetProducer(message);
-            ProducerEndpoint endpoint = GetEndpoint(message, producer.EndpointConfiguration);
+            IProducer producer = GetProducer(outboxMessage);
 
-            await producer.RawProduceAsync(endpoint, message.Content, message.Headers).ConfigureAwait(false);
-            _producedMessages.Add(message);
+            await producer.RawProduceAsync(outboxMessage.Content, outboxMessage.Headers).ConfigureAwait(false);
+            _producedMessages.Add(outboxMessage);
         }
         catch (Exception ex)
         {
@@ -207,7 +193,7 @@ public class OutboxWorker : IOutboxWorker
         }
     }
 
-    private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.Endpoint.FriendlyName);
+    private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.EndpointName);
 
     private Task AcknowledgeAllAsync() => _outboxReader.AcknowledgeAsync(_producedMessages);
 
@@ -219,5 +205,5 @@ public class OutboxWorker : IOutboxWorker
         }
     }
 
-    internal record struct ProduceState(IProducer Producer, ProducerEndpoint Endpoint, OutboxMessage Message);
+    internal record struct ProduceState(IProducer Producer, ProducerEndpointConfiguration EndpointConfiguration, OutboxMessage OutboxMessage);
 }

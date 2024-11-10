@@ -727,9 +727,9 @@ public class MqttClientsConfigurationBuilderFixture
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
-        producers[0].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");
+        producers[0].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic2");
         producers[1].EndpointConfiguration.MessageType.Should().Be<TestEventTwo>();
-        producers[1].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic4");
+        producers[1].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic4");
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(2);
         consumers[0].As<MqttConsumer>().Configuration.ConsumerEndpoints.Should().HaveCount(1);
@@ -767,11 +767,11 @@ public class MqttClientsConfigurationBuilderFixture
         MqttProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<MqttProducer>().ToArray();
         producers.Should().HaveCount(2);
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
-        producers[0].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");
+        producers[0].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic2");
         producers[0].As<MqttProducer>().Configuration.ClientId.Should().Be("client42");
         producers[0].As<MqttProducer>().Configuration.MaximumPacketSize.Should().Be(42);
         producers[1].EndpointConfiguration.MessageType.Should().Be<TestEventTwo>();
-        producers[1].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic4");
+        producers[1].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic4");
         producers[1].As<MqttProducer>().Configuration.ClientId.Should().Be("client42");
         producers[1].As<MqttProducer>().Configuration.MaximumPacketSize.Should().Be(42);
         producers[1].Client.Should().BeSameAs(producers[0].Client);

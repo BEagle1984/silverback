@@ -66,9 +66,9 @@ public class KafkaClientsConfigurationBuilderFixture
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
-        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic1");
+        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic1");
         producers[1].EndpointConfiguration.MessageType.Should().Be<TestEventTwo>();
-        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");
+        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic2");
     }
 
     [Fact]
@@ -94,10 +94,10 @@ public class KafkaClientsConfigurationBuilderFixture
         producers.Should().HaveCount(2);
         producers[0].Should().BeOfType<KafkaProducer>();
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
-        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic1");
+        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic1");
         producers[1].Should().BeOfType<KafkaTransactionalProducer>();
         producers[1].EndpointConfiguration.MessageType.Should().Be<TestEventTwo>();
-        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");
+        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic2");
     }
 
     [Fact]
@@ -128,11 +128,11 @@ public class KafkaClientsConfigurationBuilderFixture
         KafkaProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<KafkaProducer>().ToArray();
         producers.Should().HaveCount(2);
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
-        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic1");
+        producers[0].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic1");
         producers[0].Configuration.BatchSize.Should().Be(42);
         producers[0].Configuration.LingerMs.Should().Be(42);
         producers[1].EndpointConfiguration.MessageType.Should().Be<TestEventTwo>();
-        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");
+        producers[1].EndpointConfiguration.As<KafkaProducerEndpointConfiguration>().EndpointResolver.RawName.Should().Be("topic2");
         producers[1].Configuration.BatchSize.Should().Be(42);
         producers[1].Configuration.LingerMs.Should().Be(42);
         producers[1].Client.Should().BeSameAs(producers[0].Client);

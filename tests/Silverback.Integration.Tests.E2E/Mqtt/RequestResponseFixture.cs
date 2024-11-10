@@ -44,10 +44,10 @@ public class RequestResponseFixture : MqttFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetResponseTopic("response/one").SetCorrelationData("data"));
+            envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetResponseTopic("response/two").SetCorrelationData([1, 2, 3, 4]));
+            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttCorrelationData([1, 2, 3, 4]));
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
         messages.Should().HaveCount(2);
@@ -82,17 +82,17 @@ public class RequestResponseFixture : MqttFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetResponseTopic("response/one").SetCorrelationData("data"));
+            envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetResponseTopic("response/two").SetCorrelationData([1, 2, 3, 4]));
+            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttCorrelationData([1, 2, 3, 4]));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].GetResponseTopic().Should().Be("response/one");
-        Helper.Spy.InboundEnvelopes[0].GetCorrelationData().Should().BeEquivalentTo("data"u8.ToArray());
-        Helper.Spy.InboundEnvelopes[1].GetResponseTopic().Should().Be("response/two");
-        Helper.Spy.InboundEnvelopes[1].GetCorrelationData().Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
+        Helper.Spy.InboundEnvelopes[0].GetMqttResponseTopic().Should().Be("response/one");
+        Helper.Spy.InboundEnvelopes[0].GetMqttCorrelationData().Should().BeEquivalentTo("data"u8.ToArray());
+        Helper.Spy.InboundEnvelopes[1].GetMqttResponseTopic().Should().Be("response/two");
+        Helper.Spy.InboundEnvelopes[1].GetMqttCorrelationData().Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
     }
 }

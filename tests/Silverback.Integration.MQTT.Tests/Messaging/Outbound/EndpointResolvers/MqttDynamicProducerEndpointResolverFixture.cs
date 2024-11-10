@@ -3,10 +3,11 @@
 
 using System;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -15,26 +16,56 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Outbound.EndpointResolvers
 
 public class MqttDynamicProducerEndpointResolverFixture
 {
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+        new TestEventOne(),
+        null,
+        new MqttProducerEndpointConfiguration(),
+        Substitute.For<IProducer>());
+
     [Fact]
-    public void GetEndpoint_ShouldReturnTopicFromTopicNameFunction()
+    public void GetEndpoint_ShouldReturnTopicFromEnvelopeBasedTopicNameFunction()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(_ => "topic");
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new MqttProducerEndpointConfiguration(), Substitute.For<IServiceProvider>());
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
         endpoint.Should().BeOfType<MqttProducerEndpoint>();
         endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
     }
 
     [Fact]
-    public void GetEndpoint_ShouldReturnTopicFromTopicNameFormat()
+    public void GetEndpoint_ShouldReturnTopicFromMessageBasedTopicNameFunction()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic-{0}", _ => ["123"]);
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => "topic");
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new MqttProducerEndpointConfiguration(), Substitute.For<IServiceProvider>());
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
+        endpoint.Should().BeOfType<MqttProducerEndpoint>();
+        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
+    }
+
+    [Fact]
+    public void GetEndpoint_ShouldReturnTopicFromEnvelopeBasedTopicNameFormat()
+    {
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
+            "topic-{0}",
+            (IOutboundEnvelope<TestEventOne> _) => ["123"]);
+
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
+
+        endpoint.Should().BeOfType<MqttProducerEndpoint>();
+        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic-123");
+    }
+
+    [Fact]
+    public void GetEndpoint_ShouldReturnTopicFromMessageBasedTopicNameFormat()
+    {
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
+            "topic-{0}",
+            (TestEventOne? _) => ["123"]);
+
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
+
         endpoint.Should().BeOfType<MqttProducerEndpoint>();
         endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic-123");
     }
@@ -44,30 +75,49 @@ public class MqttDynamicProducerEndpointResolverFixture
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
             typeof(TestEndpointResolver),
-            (message, serviceProvider) => serviceProvider.GetRequiredService<TestEndpointResolver>().GetTopic(message));
+            envelope => new TestEndpointResolver().GetTopic(envelope));
 
         IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
         serviceProvider.GetService(typeof(TestEndpointResolver)).Returns(new TestEndpointResolver());
 
-        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new MqttProducerEndpointConfiguration(), serviceProvider);
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
         endpoint.Should().BeOfType<MqttProducerEndpoint>();
         endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
     }
 
     [Fact]
-    public void RawName_ShouldReturnPlaceholderFromTopicNameFunction()
+    public void RawName_ShouldReturnPlaceholderFromEnvelopeBasedTopicNameFunction()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(_ => "topic");
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
 
         endpointResolver.RawName.Should().StartWith("dynamic-");
     }
 
     [Fact]
-    public void RawName_ShouldReturnFormatStringFromTopicFormat()
+    public void RawName_ShouldReturnPlaceholderFromMessageBasedTopicNameFunction()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic-{0}", _ => ["123"]);
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => "topic");
+
+        endpointResolver.RawName.Should().StartWith("dynamic-");
+    }
+
+    [Fact]
+    public void RawName_ShouldReturnFormatStringFromEnvelopeBasedTopicFormat()
+    {
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
+            "topic-{0}",
+            (IOutboundEnvelope<TestEventOne> _) => ["123"]);
+
+        endpointResolver.RawName.Should().StartWith("topic-{0}");
+    }
+
+    [Fact]
+    public void RawName_ShouldReturnFormatStringFromMessageBasedTopicFormat()
+    {
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
+            "topic-{0}",
+            (TestEventOne? _) => ["123"]);
 
         endpointResolver.RawName.Should().StartWith("topic-{0}");
     }
@@ -77,35 +127,39 @@ public class MqttDynamicProducerEndpointResolverFixture
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
             typeof(TestEndpointResolver),
-            (message, serviceProvider) => serviceProvider.GetRequiredService<TestEndpointResolver>().GetTopic(message));
+            envelope => new TestEndpointResolver().GetTopic(envelope));
 
         endpointResolver.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
     }
 
     [Fact]
-    public void Serialize_ShouldSerializeTargetTopic()
+    public void GetSerializedEndpoint_ShouldSerializeDestinationTopic()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(_ => "abc");
-        MqttProducerEndpoint endpoint = new("topic", new MqttProducerEndpointConfiguration());
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
 
-        string result = endpointResolver.Serialize(endpoint);
+        string result = endpointResolver.GetSerializedEndpoint(_envelope);
 
         result.Should().Be("topic");
     }
 
     [Fact]
-    public void Deserialize_ShouldDeserializeEndpoint()
+    public void GetEndpoint_ShouldDeserializeEndpoint()
     {
-        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(_ => "abc");
-        string serialized = "topic";
+        MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
+        IOutboundEnvelope envelope = new OutboundEnvelope(
+            null,
+            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, "serialized")],
+            new MqttProducerEndpointConfiguration(),
+            Substitute.For<IProducer>());
 
-        MqttProducerEndpoint result = endpointResolver.Deserialize(serialized, new MqttProducerEndpointConfiguration());
-        result.Should().NotBeNull();
-        result.Topic.Should().Be("topic");
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
+
+        endpoint.Should().BeOfType<MqttProducerEndpoint>();
+        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("serialized");
     }
 
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {
-        public string GetTopic(TestEventOne? message) => "topic";
+        public string GetTopic(IOutboundEnvelope<TestEventOne> envelope) => "topic";
     }
 }

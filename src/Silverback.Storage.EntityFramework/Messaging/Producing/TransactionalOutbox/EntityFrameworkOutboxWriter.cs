@@ -101,8 +101,7 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
         {
             Content = outboxMessage.Content,
             Headers = outboxMessage.Headers == null ? null : JsonSerializer.Serialize(outboxMessage.Headers),
-            EndpointName = outboxMessage.Endpoint.FriendlyName,
-            DynamicEndpoint = outboxMessage.Endpoint.DynamicEndpoint,
+            EndpointName = outboxMessage.EndpointName,
             Created = DateTime.UtcNow
         };
 }

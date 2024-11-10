@@ -37,30 +37,6 @@ public partial class ProducerEndpointFixture
     }
 
     [Fact]
-    public async Task ProducerEndpoint_ShouldProduceTombstone_WhenUsingDynamicEndpoint()
-    {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(_ => DefaultTopicName)))));
-
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
-
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Value.Should().BeNull();
-        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("42"u8.ToArray());
-    }
-
-    [Fact]
     public async Task ProducerEndpoint_ShouldProduceTombstoneFromNull()
     {
         await Host.ConfigureServicesAndRunAsync(

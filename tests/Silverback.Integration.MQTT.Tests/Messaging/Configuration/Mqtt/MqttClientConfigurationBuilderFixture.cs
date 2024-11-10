@@ -92,10 +92,10 @@ public class MqttClientConfigurationBuilderFixture
         configuration.Should().NotBeNull();
         configuration.ProducerEndpoints.Should().HaveCount(2);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
+        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
         endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         MqttProducerEndpointConfiguration endpoint2 = configuration.ProducerEndpoints.Skip(1).First();
-        endpoint2.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic2");
+        endpoint2.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic2");
         endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
@@ -111,7 +111,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.ProducerEndpoints.Should().HaveCount(1);
         MqttProducerEndpointConfiguration endpoint = configuration.ProducerEndpoints.Single();
         endpoint.MessageType.Should().Be<object>();
-        endpoint.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
+        endpoint.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
@@ -128,7 +128,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.Should().NotBeNull();
         configuration.ProducerEndpoints.Should().HaveCount(1);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
+        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
         endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
@@ -145,7 +145,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.Should().NotBeNull();
         configuration.ProducerEndpoints.Should().HaveCount(1);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
+        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
         endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         endpoint1.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
     }

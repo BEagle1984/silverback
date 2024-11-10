@@ -38,7 +38,7 @@ public class ActivityProducerBehavior : IProducerBehavior
 
         using Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
 
-        _activityEnricherFactory.GetEnricher(context.Envelope.Endpoint.Configuration, context.ServiceProvider)
+        _activityEnricherFactory.GetEnricher(context.Envelope.EndpointConfiguration, context.ServiceProvider)
             .EnrichOutboundActivity(activity, context);
 
         await next(context, cancellationToken).ConfigureAwait(false);

@@ -48,21 +48,21 @@ public partial class IntegrationPublisherExtensionsFixture
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes1[0].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[0].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes1[1].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[1].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[2].Message.Should().Be(null);
-        capturedEnvelopes1[2].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[2].EndpointConfiguration.RawName.Should().Be("one");
 
         await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes2[0].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[0].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes2[1].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[1].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[2].Message.Should().Be(null);
-        capturedEnvelopes2[2].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[2].EndpointConfiguration.RawName.Should().Be("two");
     }
 
     [Fact]
@@ -91,23 +91,23 @@ public partial class IntegrationPublisherExtensionsFixture
             (envelope, source) => envelope
                 .SetKafkaKey($"{++count}")
                 .AddHeader("x-source", source ?? -1)
-                .AddHeader("x-topic", envelope.Endpoint.RawName));
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName));
 
         await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes1[0].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[0].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[0].GetKafkaKey().Should().Be("1");
         capturedEnvelopes1[0].Headers["x-source"].Should().Be("1");
         capturedEnvelopes1[0].Headers["x-topic"].Should().Be("one");
         capturedEnvelopes1[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes1[1].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[1].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[1].GetKafkaKey().Should().Be("2");
         capturedEnvelopes1[1].Headers["x-source"].Should().Be("2");
         capturedEnvelopes1[1].Headers["x-topic"].Should().Be("one");
         capturedEnvelopes1[2].Message.Should().Be(null);
-        capturedEnvelopes1[2].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[2].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[2].GetKafkaKey().Should().Be("3");
         capturedEnvelopes1[2].Headers["x-source"].Should().Be("-1");
         capturedEnvelopes1[2].Headers["x-topic"].Should().Be("one");
@@ -116,17 +116,17 @@ public partial class IntegrationPublisherExtensionsFixture
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes2[0].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[0].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[0].GetKafkaKey().Should().Be("4");
         capturedEnvelopes2[0].Headers["x-source"].Should().Be("1");
         capturedEnvelopes2[0].Headers["x-topic"].Should().Be("two");
         capturedEnvelopes2[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes2[1].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[1].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[1].GetKafkaKey().Should().Be("5");
         capturedEnvelopes2[1].Headers["x-source"].Should().Be("2");
         capturedEnvelopes2[1].Headers["x-topic"].Should().Be("two");
         capturedEnvelopes2[2].Message.Should().Be(null);
-        capturedEnvelopes2[2].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[2].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[2].GetKafkaKey().Should().Be("6");
         capturedEnvelopes2[2].Headers["x-source"].Should().Be("-1");
         capturedEnvelopes2[2].Headers["x-topic"].Should().Be("two");
@@ -161,24 +161,24 @@ public partial class IntegrationPublisherExtensionsFixture
             static (envelope, source, counter) => envelope
                 .SetKafkaKey($"{counter.Value}")
                 .AddHeader("x-source", source ?? -1)
-                .AddHeader("x-topic", envelope.Endpoint.RawName),
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             new Counter());
 
         await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1-1" });
-        capturedEnvelopes1[0].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[0].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[0].GetKafkaKey().Should().Be("1");
         capturedEnvelopes1[0].Headers["x-source"].Should().Be("1");
         capturedEnvelopes1[0].Headers["x-topic"].Should().Be("one");
         capturedEnvelopes1[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2-2" });
-        capturedEnvelopes1[1].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[1].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[1].GetKafkaKey().Should().Be("2");
         capturedEnvelopes1[1].Headers["x-source"].Should().Be("2");
         capturedEnvelopes1[1].Headers["x-topic"].Should().Be("one");
         capturedEnvelopes1[2].Message.Should().Be(null);
-        capturedEnvelopes1[2].Endpoint.RawName.Should().Be("one");
+        capturedEnvelopes1[2].EndpointConfiguration.RawName.Should().Be("one");
         capturedEnvelopes1[2].GetKafkaKey().Should().Be("3");
         capturedEnvelopes1[2].Headers["x-source"].Should().Be("-1");
         capturedEnvelopes1[2].Headers["x-topic"].Should().Be("one");
@@ -187,17 +187,17 @@ public partial class IntegrationPublisherExtensionsFixture
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1-4" });
-        capturedEnvelopes2[0].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[0].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[0].GetKafkaKey().Should().Be("4");
         capturedEnvelopes2[0].Headers["x-source"].Should().Be("1");
         capturedEnvelopes2[0].Headers["x-topic"].Should().Be("two");
         capturedEnvelopes2[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2-5" });
-        capturedEnvelopes2[1].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[1].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[1].GetKafkaKey().Should().Be("5");
         capturedEnvelopes2[1].Headers["x-source"].Should().Be("2");
         capturedEnvelopes2[1].Headers["x-topic"].Should().Be("two");
         capturedEnvelopes2[2].Message.Should().Be(null);
-        capturedEnvelopes2[2].Endpoint.RawName.Should().Be("two");
+        capturedEnvelopes2[2].EndpointConfiguration.RawName.Should().Be("two");
         capturedEnvelopes2[2].GetKafkaKey().Should().Be("6");
         capturedEnvelopes2[2].Headers["x-source"].Should().Be("-1");
         capturedEnvelopes2[2].Headers["x-topic"].Should().Be("two");

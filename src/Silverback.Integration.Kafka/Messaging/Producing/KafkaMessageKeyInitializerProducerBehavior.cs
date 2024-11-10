@@ -42,7 +42,7 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
         string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
         // Ensure a key is set if the message is chunked to make sure all chunks are produced to the same partition
-        if (keyFromMessage == null && context.Envelope.Endpoint.Configuration.Chunk != null)
+        if (keyFromMessage == null && context.Envelope.EndpointConfiguration.Chunk != null)
             return Guid.NewGuid().ToString();
 
         return keyFromMessage;

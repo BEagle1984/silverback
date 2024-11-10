@@ -50,4 +50,14 @@ public static class KafkaMessageHeaders
     ///     The <see cref="KafkaOffset" /> value of the first chunk of the same message, set when producing a chunked message.
     /// </summary>
     public const string FirstChunkOffset = "x-chunk-first-offset";
+
+    /// <summary>
+    ///     The header containing the dynamic destination topic the message should be produced to.
+    /// </summary>
+    public const string DestinationTopic = DefaultMessageHeaders.InternalHeadersPrefix + "kafka-destination-topic";
+
+    /// <summary>
+    ///     The header containing the dynamic destination partition the message should be produced to.
+    /// </summary>
+    public const string DestinationPartition = DefaultMessageHeaders.InternalHeadersPrefix + "kafka-destination-partition";
 }

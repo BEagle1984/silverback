@@ -44,7 +44,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));
@@ -64,15 +64,16 @@ public class ProducerLoggerFixture
     [Fact]
     public void LogProduced_ShouldLogWithoutEnvelope()
     {
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint();
-        MessageHeaderCollection headers = new()
-        {
-            { DefaultMessageHeaders.MessageType, "Message.Type" },
-            { DefaultMessageHeaders.MessageId, "1234" }
-        };
         TestOffset brokerMessageIdentifier = new("a", "42");
 
-        _producerLogger.LogProduced(endpoint, headers, brokerMessageIdentifier);
+        _producerLogger.LogProduced(
+            new TestProducerEndpointConfiguration("test1"),
+            new MessageHeaderCollection()
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            brokerMessageIdentifier);
 
         string expectedMessage =
             "Message produced. | " +
@@ -94,7 +95,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));
@@ -114,14 +115,14 @@ public class ProducerLoggerFixture
     [Fact]
     public void LogProduceError_ShouldLogWithoutEnvelope()
     {
-        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint();
-        MessageHeaderCollection headers = new()
-        {
-            { DefaultMessageHeaders.MessageType, "Message.Type" },
-            { DefaultMessageHeaders.MessageId, "1234" }
-        };
-
-        _producerLogger.LogProduceError(endpoint, headers, new InvalidDataException());
+        _producerLogger.LogProduceError(
+            new TestProducerEndpointConfiguration("test1"),
+            new MessageHeaderCollection()
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new InvalidDataException());
 
         string expectedMessage =
             "Error occurred producing the message. | " +
@@ -143,7 +144,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));
@@ -170,7 +171,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));
@@ -197,7 +198,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));
@@ -228,7 +229,7 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test1"),
             Substitute.For<IProducer>(),
             null,
             new TestOffset("a", "42"));

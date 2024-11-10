@@ -17,7 +17,6 @@ internal sealed class KafkaLogEnricher
     protected override string AdditionalPropertyName2 => "kafkaKey";
 
     public override (string? Value1, string? Value2) GetAdditionalValues(
-        Endpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier) =>
         (brokerMessageIdentifier?.ToLogString(), headers?.GetValue(DefaultMessageHeaders.MessageId));

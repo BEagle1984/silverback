@@ -20,7 +20,7 @@ public class StaticOutboundHeadersEnricherFixture
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         StaticOutboundHeadersEnricher enricher = new("x-test", "value");
@@ -40,7 +40,7 @@ public class StaticOutboundHeadersEnricherFixture
             {
                 { "x-test", "old-value" }
             },
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         StaticOutboundHeadersEnricher enricher = new("x-test", "value");

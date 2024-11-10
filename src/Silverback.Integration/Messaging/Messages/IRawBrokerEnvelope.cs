@@ -16,11 +16,6 @@ public interface IRawBrokerEnvelope
     MessageHeaderCollection Headers { get; }
 
     /// <summary>
-    ///     Gets the source or destination endpoint.
-    /// </summary>
-    Endpoint Endpoint { get; }
-
-    /// <summary>
     ///     Gets or sets the serialized message body.
     /// </summary>
     Stream? RawMessage { get; set; }

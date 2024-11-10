@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -11,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing.EndpointResolvers;
 
 /// <summary>
-///     Dynamically resolves the target endpoint (e.g. the target topic and partition) for each message being produced.
+///     Dynamically resolves the destination endpoint (e.g. the target topic and partition) for each message being produced.
 /// </summary>
 /// <typeparam name="TMessage">
 ///     The type of the message being produced.
@@ -42,46 +40,65 @@ public abstract record DynamicProducerEndpointResolver<TMessage, TEndpoint, TCon
     public string RawName { get; }
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
-    public ProducerEndpoint GetEndpoint(object? message, ProducerEndpointConfiguration configuration, IServiceProvider serviceProvider) =>
-        GetEndpoint(message, (TConfiguration)configuration, serviceProvider);
+    public ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope) =>
+        GetEndpoint(envelope, (TConfiguration)Check.NotNull(envelope, nameof(envelope)).EndpointConfiguration);
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
-    [SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "False positive")]
-    public TEndpoint GetEndpoint(object? message, TConfiguration configuration, IServiceProvider serviceProvider)
+    public TEndpoint GetEndpoint(IOutboundEnvelope envelope, TConfiguration configuration)
     {
-        if (message is null or ITombstone)
-            return GetEndpointCore(null, configuration, serviceProvider);
+        Check.NotNull(envelope, nameof(envelope));
 
-        if (message is not TMessage castedMessage)
+        if (envelope is IOutboundEnvelope<TMessage> castedEnvelope)
+            return GetEndpointCore(castedEnvelope, configuration);
+
+        if (envelope.Headers.TryGetValue(DefaultMessageHeaders.SerializedEndpoint, out string? serializedEndpoint))
         {
-            if (message is ICollection<TMessage> or IEnumerable<TMessage> or IAsyncEnumerable<TMessage>)
-            {
-                throw new SilverbackConfigurationException(
-                    "Dynamic endpoint resolvers cannot be used to produce message batches. " +
-                    "Please use a static endpoint resolver instead.");
-            }
-
-            throw new InvalidOperationException(
-                $"The message type ({message.GetType().Name}) doesn't match the expected type " +
-                $"({typeof(TMessage).Name}).");
+            return DeserializeEndpoint(serializedEndpoint, configuration);
         }
 
-        return GetEndpointCore(castedMessage, configuration, serviceProvider);
+        throw new InvalidOperationException($"The envelope must be of type {typeof(IOutboundEnvelope<TMessage>).FullName}.");
     }
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.Serialize" />
-    public string Serialize(ProducerEndpoint endpoint) => Serialize((TEndpoint)endpoint);
+    /// <inheritdoc cref="IDynamicProducerEndpointResolver.GetSerializedEndpoint" />
+    public string GetSerializedEndpoint(IOutboundEnvelope envelope) =>
+        SerializeEndpoint((TEndpoint)GetEndpoint(envelope));
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.Serialize" />
-    public abstract string Serialize(TEndpoint endpoint);
+    /// <summary>
+    ///     Gets the computed actual destination endpoint for the message being produced.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
+    /// </param>
+    /// <param name="configuration">
+    ///     The endpoint configuration.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ProducerEndpoint" /> for the specified message.
+    /// </returns>
+    protected abstract TEndpoint GetEndpointCore(IOutboundEnvelope<TMessage> envelope, TConfiguration configuration);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.Deserialize" />
-    public ProducerEndpoint Deserialize(string serializedEndpoint, ProducerEndpointConfiguration configuration) =>
-        Deserialize(serializedEndpoint, (TConfiguration)configuration);
+    /// <summary>
+    ///     Serializes the endpoint to a string.
+    /// </summary>
+    /// <param name="endpoint">
+    ///     The endpoint to be serialized.
+    /// </param>
+    /// <returns>
+    ///     The serialized endpoint.
+    /// </returns>
+    protected abstract string SerializeEndpoint(TEndpoint endpoint);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.Deserialize" />
-    public abstract TEndpoint Deserialize(string serializedEndpoint, TConfiguration configuration);
-
-    /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
-    protected abstract TEndpoint GetEndpointCore(TMessage? message, TConfiguration configuration, IServiceProvider serviceProvider);
+    /// <summary>
+    ///     Deserializes the endpoint from a string.
+    /// </summary>
+    /// <param name="serializedEndpoint">
+    ///     The serialized endpoint.
+    /// </param>
+    /// <param name="configuration">
+    ///     The endpoint configuration.
+    /// </param>
+    /// <returns>
+    ///     The deserialized endpoint.
+    /// </returns>
+    protected abstract TEndpoint DeserializeEndpoint(string serializedEndpoint, TConfiguration configuration);
 }

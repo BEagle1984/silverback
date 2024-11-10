@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -23,8 +24,8 @@ public static class OutboundEnvelopeFactory
     /// <param name="headers">
     ///     The message headers.
     /// </param>
-    /// <param name="endpoint">
-    ///     The destination endpoint.
+    /// <param name="endpointConfiguration">
+    ///     The destination endpoint configuration.
     /// </param>
     /// <param name="producer">
     ///     The producer to be used to produce this message.
@@ -38,22 +39,20 @@ public static class OutboundEnvelopeFactory
     public static IOutboundEnvelope CreateEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
         ISilverbackContext? context = null)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
-
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Check.NotNull(producer, nameof(producer));
 
         return message == null
-            ? new OutboundEnvelope(null, headers, endpoint, producer, context)
+            ? new OutboundEnvelope(null, headers, endpointConfiguration, producer, context)
             : (IOutboundEnvelope)Activator.CreateInstance(
                 typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                 message,
                 headers,
-                endpoint,
+                endpointConfiguration,
                 producer,
                 context)!;
     }
@@ -78,7 +77,7 @@ public static class OutboundEnvelopeFactory
         return CreateEnvelope(
             message,
             originalEnvelope.Headers,
-            originalEnvelope.Endpoint,
+            originalEnvelope.EndpointConfiguration,
             originalEnvelope.Producer,
             originalEnvelope.Context);
     }

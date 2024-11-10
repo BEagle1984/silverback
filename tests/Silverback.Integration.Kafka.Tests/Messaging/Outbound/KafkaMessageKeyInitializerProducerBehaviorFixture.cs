@@ -8,7 +8,6 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Collections;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
@@ -38,7 +37,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 [
                     new KafkaProducerEndpointConfiguration
                     {
-                        Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+                        EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
                     }
                 ])
             },
@@ -59,7 +58,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 Three = "3"
             },
             null,
-            new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
@@ -87,7 +86,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 Three = "3"
             },
             null,
-            new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
@@ -115,7 +114,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 Three = "3"
             },
             null,
-            new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
@@ -146,7 +145,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             {
                 { DefaultMessageHeaders.MessageId, "Heidi!" }
             },
-            new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
@@ -174,13 +173,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 Three = "3"
             },
             null,
-            new KafkaProducerEndpoint(
-                "test-endpoint",
-                1,
-                new KafkaProducerEndpointConfiguration
-                {
-                    Chunk = new ChunkSettings { Size = 42 }
-                }),
+            new KafkaProducerEndpointConfiguration
+            {
+                Chunk = new ChunkSettings { Size = 42 }
+            },
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
@@ -208,13 +204,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 Three = "3"
             },
             null,
-            new KafkaProducerEndpoint(
-                "test-endpoint",
-                1,
-                new KafkaProducerEndpointConfiguration
-                {
-                    Chunk = new ChunkSettings { Size = 42 }
-                }),
+            new KafkaProducerEndpointConfiguration
+            {
+                Chunk = new ChunkSettings { Size = 42 }
+            },
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(

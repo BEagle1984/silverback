@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -138,10 +139,41 @@ public partial class ProducerEndpointFixture
         Helper.GetMessages("topic3").Should().HaveCount(2);
     }
 
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceToDynamicEndpointSetViaEnvelopeExtensions()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttClients(
+                    clients => clients
+                        .ConnectViaTcp("e2e-mqtt-broker")
+                        .AddClient(client => client.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceToDynamicTopic()))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishAsync(
+            new TestEventOne(),
+            envelope => envelope.SetMqttDestinationTopic("topic1"));
+        await publisher.WrapAndPublishBatchAsync(
+            new IIntegrationEvent?[]
+            {
+                new TestEventOne(),
+                null,
+                new TestEventTwo(),
+                new TestEventOne()
+            },
+            envelope => envelope.SetMqttDestinationTopic(envelope.MessageType == typeof(TestEventOne) ? "topic1" : "topic2"));
+
+        Helper.GetMessages("topic1").Should().HaveCount(3);
+        Helper.GetMessages("topic2").Should().HaveCount(2);
+    }
+
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {
-        public string GetTopic(TestEventOne? message) =>
-            message?.ContentEventOne switch
+        public string GetTopic(IOutboundEnvelope<TestEventOne> envelope) =>
+            envelope.Message?.ContentEventOne switch
             {
                 "1" => "topic1",
                 "2" => "topic2",

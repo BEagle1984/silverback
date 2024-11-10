@@ -86,7 +86,7 @@ public class MqttClientConfigurationFixture
             [
                 new MqttProducerEndpointConfiguration
                 {
-                    Endpoint = null!
+                    EndpointResolver = null!
                 }
             ])
         };
@@ -227,7 +227,7 @@ public class MqttClientConfigurationFixture
             [
                 new MqttProducerEndpointConfiguration
                 {
-                    Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
+                    EndpointResolver = new MqttStaticProducerEndpointResolver("topic1"),
                     Serializer = new JsonMessageSerializer()
                 }
             ])
@@ -415,7 +415,7 @@ public class MqttClientConfigurationFixture
             [
                 new MqttProducerEndpointConfiguration
                 {
-                    Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
+                    EndpointResolver = new MqttStaticProducerEndpointResolver("topic1"),
                     Serializer = new JsonMessageSerializer()
                 }
             ])

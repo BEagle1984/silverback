@@ -35,7 +35,7 @@ public class KafkaProducerEndpointConfigurationFixture
     [Fact]
     public void Validate_ShouldThrow_WhenEndpointIsNull()
     {
-        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { EndpointResolver = null! };
 
         Action act = configuration.Validate;
 
@@ -54,6 +54,6 @@ public class KafkaProducerEndpointConfigurationFixture
 
     private static KafkaProducerEndpointConfiguration GetValidConfiguration() => new()
     {
-        Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+        EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
     };
 }

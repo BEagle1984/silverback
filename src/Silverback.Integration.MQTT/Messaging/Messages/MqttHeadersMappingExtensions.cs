@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MQTTnet.Packets;
@@ -15,8 +16,7 @@ internal static class MqttHeadersMappingExtensions
         List<MqttUserProperty> userProperties = new(headers.Count);
         headers.Where(
                 header => header.Value != null &&
-                          header.Name != MqttMessageHeaders.ResponseTopic &&
-                          header.Name != MqttMessageHeaders.CorrelationData)
+                          !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
             .ForEach(header => userProperties.Add(new MqttUserProperty(header.Name, header.Value)));
         return userProperties;
     }

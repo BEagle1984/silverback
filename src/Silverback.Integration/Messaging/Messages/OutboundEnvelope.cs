@@ -5,19 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
 internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 {
+    private ProducerEndpoint? _endpoint;
+
     public OutboundEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
         ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(headers, endpoint, producer, context, brokerMessageIdentifier)
+        : base(headers, endpointConfiguration, producer, context, brokerMessageIdentifier)
     {
         Message = message;
 
@@ -34,9 +37,20 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 
     public bool IsTombstone => Message is null or ITombstone;
 
+    public ProducerEndpoint GetEndpoint() => _endpoint ??= EndpointConfiguration.EndpointResolver.GetEndpoint(this);
+
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,
         Headers = new MessageHeaderCollection(Headers)
     };
+
+    public IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)
+        where TNewMessage : class =>
+        new OutboundEnvelope<TNewMessage>(
+            newMessage,
+            Headers,
+            EndpointConfiguration,
+            Producer,
+            Context);
 }

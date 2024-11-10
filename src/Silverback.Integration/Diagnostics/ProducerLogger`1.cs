@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -23,43 +23,38 @@ internal sealed class ProducerLogger<TCategoryName> : SilverbackLogger<TCategory
     }
 
     public void LogProduced(IOutboundEnvelope envelope) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
-            .LogProduced(this, envelope);
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration).LogProduced(this, envelope);
 
     public void LogProduced(
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-        _loggerFactory.GetProducerLogger(endpoint.Configuration)
-            .LogProduced(this, endpoint, headers, brokerMessageIdentifier);
+        _loggerFactory.GetProducerLogger(endpointConfiguration)
+            .LogProduced(this, endpointConfiguration, headers, brokerMessageIdentifier);
 
     public void LogProduceError(IOutboundEnvelope envelope, Exception exception) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration)
             .LogProduceError(this, envelope, exception);
 
     public void LogProduceError(
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IReadOnlyCollection<MessageHeader>? headers,
         Exception exception) =>
-        _loggerFactory.GetProducerLogger(endpoint.Configuration)
-            .LogProduceError(
-                this,
-                endpoint,
-                headers,
-                exception);
+        _loggerFactory.GetProducerLogger(endpointConfiguration)
+            .LogProduceError(this, endpointConfiguration, headers, exception);
 
     public void LogFiltered(IOutboundEnvelope envelope) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration)
             .LogFiltered(this, envelope);
 
     public void LogStoringIntoOutbox(IOutboundEnvelope envelope) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration)
             .LogStoringIntoOutbox(this, envelope);
 
     public void LogErrorProducingOutboxStoredMessage(IOutboundEnvelope envelope, Exception exception) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration)
             .LogErrorProducingOutboxStoredMessage(this, envelope, exception);
 
     public void LogInvalidMessage(IOutboundEnvelope envelope, string validationErrors) =>
-        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration).LogInvalidMessage(this, envelope, validationErrors);
+        _loggerFactory.GetProducerLogger(envelope.EndpointConfiguration).LogInvalidMessage(this, envelope, validationErrors);
 }

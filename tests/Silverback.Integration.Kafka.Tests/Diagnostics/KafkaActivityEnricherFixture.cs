@@ -7,7 +7,6 @@ using Confluent.Kafka;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration.Kafka;
@@ -53,7 +52,7 @@ public class KafkaActivityEnricherFixture
         OutboundEnvelope<SingleKeyMemberMessage> envelope = new(
             new SingleKeyMemberMessage(),
             [new MessageHeader(DefaultMessageHeaders.MessageId, "MyKey")],
-            new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration(),
             Substitute.For<IProducer>());
 
         ProducerPipelineContext context = new(

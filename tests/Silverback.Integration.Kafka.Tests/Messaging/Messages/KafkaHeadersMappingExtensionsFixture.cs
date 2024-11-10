@@ -22,11 +22,10 @@ public class KafkaHeadersMappingExtensionsFixture
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
         confluentHeaders.Should().BeEquivalentTo(
-            new[]
-            {
-                new Header("one", "1"u8.ToArray()),
-                new Header("two", "2"u8.ToArray())
-            });
+        [
+            new Header("one", "1"u8.ToArray()),
+            new Header("two", "2"u8.ToArray())
+        ]);
     }
 
     [Fact]
@@ -42,10 +41,49 @@ public class KafkaHeadersMappingExtensionsFixture
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
         confluentHeaders.Should().BeEquivalentTo(
-            new[]
-            {
-                new Header("one", "1"u8.ToArray()),
-                new Header("two", "2"u8.ToArray())
-            });
+        [
+            new Header("one", "1"u8.ToArray()),
+            new Header("two", "2"u8.ToArray())
+        ]);
+    }
+
+    [Fact]
+    public void ToConfluentHeaders_ShouldIgnoreDestinationTopicHeaders()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { "one", "1" },
+            { KafkaMessageHeaders.DestinationTopic, "topic1" },
+            { KafkaMessageHeaders.DestinationPartition, "0" },
+            { "two", "2" }
+        };
+
+        Headers confluentHeaders = headers.ToConfluentHeaders();
+
+        confluentHeaders.Should().BeEquivalentTo(
+        [
+            new Header("one", "1"u8.ToArray()),
+            new Header("two", "2"u8.ToArray())
+        ]);
+    }
+
+    [Fact]
+    public void ToConfluentHeaders_ShouldIgnoreInternalHeaders()
+    {
+        MessageHeaderCollection headers = new()
+        {
+            { "one", "1" },
+            { DefaultMessageHeaders.InternalHeadersPrefix + "aaa", "aaa" },
+            { DefaultMessageHeaders.InternalHeadersPrefix + "bbb", "bbb" },
+            { "two", "2" }
+        };
+
+        Headers confluentHeaders = headers.ToConfluentHeaders();
+
+        confluentHeaders.Should().BeEquivalentTo(
+        [
+            new Header("one", "1"u8.ToArray()),
+            new Header("two", "2"u8.ToArray())
+        ]);
     }
 }

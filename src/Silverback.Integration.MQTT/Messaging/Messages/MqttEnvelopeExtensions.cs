@@ -19,7 +19,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The response topic.
     /// </returns>
-    public static string? GetResponseTopic(this IBrokerEnvelope envelope) =>
+    public static string? GetMqttResponseTopic(this IBrokerEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.ResponseTopic);
 
     /// <summary>
@@ -34,7 +34,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetResponseTopic(this IRawOutboundEnvelope envelope, string responseTopic)
+    public static IRawOutboundEnvelope SetMqttResponseTopic(this IRawOutboundEnvelope envelope, string responseTopic)
     {
         Check.NotNull(envelope, nameof(envelope));
         envelope.Headers.AddOrReplace(MqttMessageHeaders.ResponseTopic, responseTopic);
@@ -50,7 +50,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The correlation data.
     /// </returns>
-    public static byte[]? GetCorrelationData(this IBrokerEnvelope envelope) =>
+    public static byte[]? GetMqttCorrelationData(this IBrokerEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.CorrelationData).FromBase64String();
 
     /// <summary>
@@ -62,8 +62,8 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The correlation data.
     /// </returns>
-    public static string? GetCorrelationDataAsString(this IBrokerEnvelope envelope) =>
-        GetCorrelationData(envelope).ToUtf8String();
+    public static string? GetMqttCorrelationDataAsString(this IBrokerEnvelope envelope) =>
+        GetMqttCorrelationData(envelope).ToUtf8String();
 
     /// <summary>
     ///     Sets the correlation data.
@@ -77,7 +77,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetCorrelationData(this IRawOutboundEnvelope envelope, byte[]? correlationData)
+    public static IRawOutboundEnvelope SetMqttCorrelationData(this IRawOutboundEnvelope envelope, byte[]? correlationData)
     {
         Check.NotNull(envelope, nameof(envelope));
         envelope.Headers.AddOrReplace(MqttMessageHeaders.CorrelationData, correlationData.ToBase64String());
@@ -96,6 +96,37 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetCorrelationData(this IRawOutboundEnvelope envelope, string? correlationData) =>
-        SetCorrelationData(envelope, correlationData.ToUtf8Bytes());
+    public static IRawOutboundEnvelope SetMqttCorrelationData(this IRawOutboundEnvelope envelope, string? correlationData) =>
+        SetMqttCorrelationData(envelope, correlationData.ToUtf8Bytes());
+
+    /// <summary>
+    ///     Gets destination topic.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <returns>
+    ///     The destination topic.
+    /// </returns>
+    public static string? GetMqttDestinationTopic(this IRawOutboundEnvelope envelope) =>
+        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(MqttMessageHeaders.DestinationTopic);
+
+    /// <summary>
+    ///     Sets the destination topic.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <param name="destinationTopic">
+    ///     The destination topic.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    public static IRawOutboundEnvelope SetMqttDestinationTopic(this IRawOutboundEnvelope envelope, string destinationTopic)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+        envelope.Headers.AddOrReplace(MqttMessageHeaders.DestinationTopic, destinationTopic);
+        return envelope;
+    }
 }

@@ -102,11 +102,11 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             _producer ??= new DelegatedProducer<DelegatedProducerState>(
                 static (finalEnvelope, state, finalCancellationToken) => state.OutboxWriter.AddAsync(
-                    MapToOutboxMessage(finalEnvelope, state.Configuration),
+                    MapToOutboxMessage(finalEnvelope),
                     state.Context,
                     finalCancellationToken),
                 _configuration,
-                new DelegatedProducerState(_outboxWriter, _configuration, _context),
+                new DelegatedProducerState(_outboxWriter, _context),
                 _serviceProvider);
 
             await _producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -169,25 +169,23 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         public void Dispose() => _producer?.Dispose();
 
-        private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope, ProducerEndpointConfiguration configuration) =>
+        private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
             new(
                 envelope.RawMessage.ReadAll(),
-                envelope.Headers,
-                new OutboxMessageEndpoint(
-                    configuration.FriendlyName ?? string.Empty,
-                    GetSerializedEndpoint(envelope.Endpoint, configuration)));
+                GetHeaders(envelope),
+                envelope.EndpointConfiguration.FriendlyName ?? throw new InvalidOperationException("FriendlyName not set."));
 
-        private static string? GetSerializedEndpoint(ProducerEndpoint endpoint, ProducerEndpointConfiguration configuration) =>
-            configuration.Endpoint is IDynamicProducerEndpointResolver dynamicEndpointProvider
-                ? dynamicEndpointProvider.Serialize(endpoint)
-                : null;
+        private static IEnumerable<MessageHeader> GetHeaders(IOutboundEnvelope envelope)
+        {
+            if (envelope.EndpointConfiguration.EndpointResolver is IDynamicProducerEndpointResolver dynamicEndpointProvider)
+            {
+                return envelope.Headers
+                    .Append(new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, dynamicEndpointProvider.GetSerializedEndpoint(envelope)));
+            }
 
-        private OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
-            MapToOutboxMessage(envelope, _configuration);
+            return envelope.Headers;
+        }
 
-        private record struct DelegatedProducerState(
-            IOutboxWriter OutboxWriter,
-            ProducerEndpointConfiguration Configuration,
-            ISilverbackContext Context);
+        private record struct DelegatedProducerState(IOutboxWriter OutboxWriter, ISilverbackContext Context);
     }
 }

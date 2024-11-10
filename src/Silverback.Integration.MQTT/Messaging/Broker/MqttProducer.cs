@@ -87,7 +87,7 @@ public sealed class MqttProducer : Producer
         Client.Produce(
             envelope.RawMessage.ReadAll(),
             envelope.Headers,
-            (MqttProducerEndpoint)envelope.Endpoint,
+            (MqttProducerEndpoint)envelope.GetEndpoint(),
             identifier => onSuccess.Invoke(identifier, state),
             exception => onError.Invoke(exception, state));
     }
@@ -106,7 +106,7 @@ public sealed class MqttProducer : Producer
         Client.Produce(
             await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
             envelope.Headers,
-            (MqttProducerEndpoint)envelope.Endpoint,
+            (MqttProducerEndpoint)envelope.GetEndpoint(),
             taskCompletionSource.SetResult,
             taskCompletionSource.SetException);
 

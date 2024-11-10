@@ -82,7 +82,9 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <returns>
     ///     A value indicating whether a factory for the specified discriminator type is registered.
     /// </returns>
-    public bool HasFactory<TDiscriminator>() => _factories.ContainsKey(typeof(TDiscriminator));
+    public bool HasFactory<TDiscriminator>()
+        where TDiscriminator : TDiscriminatorBase =>
+        _factories.ContainsKey(typeof(TDiscriminator));
 
     /// <summary>
     ///     Overrides all registered factories with the specified factory.

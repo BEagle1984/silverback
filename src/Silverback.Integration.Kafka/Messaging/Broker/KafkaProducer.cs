@@ -92,7 +92,7 @@ public sealed class KafkaProducer : Producer
         Check.NotNull(onSuccess, nameof(onSuccess));
         Check.NotNull(onError, nameof(onError));
 
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.Endpoint;
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.GetEndpoint();
 
         Message<byte[]?, byte[]?> kafkaMessage = new()
         {
@@ -134,7 +134,7 @@ public sealed class KafkaProducer : Producer
 
         try
         {
-            KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.Endpoint;
+            KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.GetEndpoint();
 
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {

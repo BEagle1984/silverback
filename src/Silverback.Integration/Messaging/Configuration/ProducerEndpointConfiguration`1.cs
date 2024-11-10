@@ -11,10 +11,10 @@ public abstract record ProducerEndpointConfiguration<TEndpoint> : ProducerEndpoi
 {
     private readonly IProducerEndpointResolver<TEndpoint> _endpoint = NullProducerEndpointResolver<TEndpoint>.Instance;
 
-    /// <inheritdoc cref="ProducerEndpointConfiguration.Endpoint" />
-    public new IProducerEndpointResolver<TEndpoint> Endpoint
+    /// <inheritdoc cref="ProducerEndpointConfiguration.EndpointResolver" />
+    public new IProducerEndpointResolver<TEndpoint> EndpointResolver
     {
         get => _endpoint;
-        init => base.Endpoint = _endpoint = value;
+        init => base.EndpointResolver = _endpoint = value;
     }
 }

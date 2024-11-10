@@ -22,17 +22,17 @@ public class OutboxMessage
     /// <param name="headers">
     ///     The message headers.
     /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint information.
+    /// <param name="endpointName">
+    ///     The endpoint name.
     /// </param>
     public OutboxMessage(
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
-        OutboxMessageEndpoint endpoint)
+        string endpointName)
     {
         Content = content;
         Headers = headers?.AsReadOnlyCollection();
-        Endpoint = endpoint;
+        EndpointName = endpointName;
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class OutboxMessage
     public IReadOnlyCollection<MessageHeader>? Headers { get; }
 
     /// <summary>
-    ///     Gets the target endpoint.
+    ///     Gets the destination endpoint name.
     /// </summary>
-    public OutboxMessageEndpoint Endpoint { get; }
+    public string EndpointName { get; }
 }

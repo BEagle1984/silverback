@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
@@ -44,9 +43,6 @@ public interface IBrokerLogEnricher
     /// <summary>
     ///     Returns the values for the two additional properties.
     /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
     /// <param name="headers">
     ///     The message headers.
     /// </param>
@@ -57,7 +53,6 @@ public interface IBrokerLogEnricher
     ///     Returns a tuple containing the values for the two additional properties.
     /// </returns>
     (string? Value1, string? Value2) GetAdditionalValues(
-        Endpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier);
 

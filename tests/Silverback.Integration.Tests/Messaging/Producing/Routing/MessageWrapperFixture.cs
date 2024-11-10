@@ -42,7 +42,7 @@ public partial class MessageWrapperFixture
             {
                 Strategy = Substitute.For<IProduceStrategy>(),
                 EnableSubscribing = enableSubscribing,
-                Endpoint = new TestStaticProducerEndpointResolver(topic)
+                EndpointResolver = new TestStaticProducerEndpointResolver(topic)
             });
         IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
         producer.EndpointConfiguration.Strategy.Build(

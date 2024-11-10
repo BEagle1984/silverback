@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Producing.EndpointResolvers;
 
@@ -16,11 +17,11 @@ public interface IKafkaProducerEndpointResolver<in TMessage>
     /// <summary>
     ///     Gets the target topic and partition for the message being produced.
     /// </summary>
-    /// <param name="message">
-    ///     The message being produced.
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     The target <see cref="TopicPartition" />.
     /// </returns>
-    TopicPartition GetTopicPartition(TMessage? message);
+    TopicPartition GetTopicPartition(IOutboundEnvelope<TMessage> envelope);
 }

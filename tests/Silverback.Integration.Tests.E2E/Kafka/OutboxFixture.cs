@@ -164,12 +164,12 @@ public class OutboxFixture : KafkaFixture
                                 .Produce<TestEventOne>(
                                     "my-topic",
                                     endpoint => endpoint
-                                        .ProduceTo(_ => "topic1")
+                                        .ProduceTo((TestEventOne? _) => "topic1")
                                         .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventOne>(
                                     "other-topic",
                                     endpoint => endpoint
-                                        .ProduceTo(_ => "topic2")
+                                        .ProduceTo((IOutboundEnvelope<TestEventOne> _) => "topic2")
                                         .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
@@ -21,7 +20,6 @@ internal sealed class NullBrokerLogEnricher : BrokerLogEnricher
     protected override string AdditionalPropertyName2 => "unused2";
 
     public override (string? Value1, string? Value2) GetAdditionalValues(
-        Endpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier) =>
         (null, null);

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -30,10 +29,6 @@ public class OutboxWorkerFixture
     private readonly IProducer _producer2 = Substitute.For<IProducer>();
 
     private readonly IProducerLogger<OutboxWorker> _producerLogger = Substitute.For<IProducerLogger<OutboxWorker>>();
-
-    private readonly OutboxMessageEndpoint _outboxEndpoint1 = new("one", null);
-
-    private readonly OutboxMessageEndpoint _outboxEndpoint2 = new("two", null);
 
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public OutboxWorkerFixture()
@@ -57,7 +52,6 @@ public class OutboxWorkerFixture
         _producer1
             .When(
                 producer => producer.RawProduce(
-                    Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
@@ -67,7 +61,6 @@ public class OutboxWorkerFixture
         _producer2
             .When(
                 producer => producer.RawProduce(
-                    Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
@@ -79,9 +72,9 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenNotEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "one"));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
@@ -98,9 +91,9 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "one"));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
@@ -297,7 +290,7 @@ public class OutboxWorkerFixture
     //
     //     for (int i = 0; i < 10; i++)
     //     {
-    //         await outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+    //         await outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, "one"));
     //     }
     //
     //     await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -310,7 +303,7 @@ public class OutboxWorkerFixture
     // {
     //     for (int i = 0; i < 10; i++)
     //     {
-    //         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+    //         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, "one"));
     //     }
     //
     //     int tries = 0;
@@ -345,14 +338,13 @@ public class OutboxWorkerFixture
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
         }
 
         int tries = 0;
         _producer1
             .When(
                 producer => producer.RawProduceAsync(
-                    Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>()))
             .Do(
@@ -382,7 +374,6 @@ public class OutboxWorkerFixture
 
     private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduce(
-            Arg.Any<ProducerEndpoint>(),
             Arg.Any<byte[]>(),
             Arg.Any<IReadOnlyCollection<MessageHeader>>(),
             Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
@@ -391,7 +382,6 @@ public class OutboxWorkerFixture
 
     private static ValueTask<IBrokerMessageIdentifier?> AssertReceivedBlockingCallsAsync(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduceAsync(
-            Arg.Any<ProducerEndpoint>(),
             Arg.Any<byte[]>(),
             Arg.Any<IReadOnlyCollection<MessageHeader>?>());
 }

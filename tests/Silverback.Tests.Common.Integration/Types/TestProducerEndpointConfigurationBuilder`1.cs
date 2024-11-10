@@ -26,6 +26,6 @@ public class TestProducerEndpointConfigurationBuilder<TMessage>
 
     protected override TestProducerEndpointConfiguration CreateConfiguration() => new()
     {
-        Endpoint = new TestStaticProducerEndpointResolver(_topic)
+        EndpointResolver = new TestStaticProducerEndpointResolver(_topic)
     };
 }

@@ -47,8 +47,7 @@ public class SqliteOutboxReader : IOutboxReader
                        "Id," +
                        "Content," +
                        "Headers," +
-                       "EndpointName," +
-                       "DynamicEndpoint " +
+                       "EndpointName " +
                        $"FROM {settings.TableName} " +
                        "ORDER BY Created LIMIT @Limit";
 
@@ -111,12 +110,11 @@ public class SqliteOutboxReader : IOutboxReader
         byte[]? content = reader.GetNullableFieldValue<byte[]>(1);
         string? headers = reader.GetNullableFieldValue<string>(2);
         string endpointName = reader.GetFieldValue<string>(3);
-        string? dynamicEndpoint = reader.GetNullableFieldValue<string>(4);
 
         return new DbOutboxMessage(
             id,
             content,
             headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(headers),
-            new OutboxMessageEndpoint(endpointName, dynamicEndpoint));
+            endpointName);
     }
 }

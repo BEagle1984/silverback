@@ -27,7 +27,7 @@ internal static class ActivitySources
             null,
             null);
 
-        activity.AddEndpointName(envelope.Endpoint.RawName);
+        activity.AddEndpointName(envelope.EndpointConfiguration.RawName);
         activity.SetMessageHeaders(envelope.Headers);
 
         return activity;

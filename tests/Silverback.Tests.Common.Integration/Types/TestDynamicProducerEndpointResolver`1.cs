@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
@@ -18,14 +19,11 @@ public sealed record TestDynamicProducerEndpointResolver<TMessage> : DynamicProd
         _topicName = Check.NotNullOrEmpty(topic, nameof(topic));
     }
 
-    public override string Serialize(TestProducerEndpoint endpoint) => throw new NotSupportedException();
-
-    public override TestProducerEndpoint Deserialize(string serializedEndpoint, TestProducerEndpointConfiguration configuration) =>
-        throw new NotSupportedException();
-
-    protected override TestProducerEndpoint GetEndpointCore(
-        TMessage? message,
-        TestProducerEndpointConfiguration configuration,
-        IServiceProvider serviceProvider) =>
+    protected override TestProducerEndpoint GetEndpointCore(IOutboundEnvelope<TMessage> envelope, TestProducerEndpointConfiguration configuration) =>
         new(_topicName, configuration);
+
+    protected override string SerializeEndpoint(TestProducerEndpoint endpoint) => throw new NotSupportedException();
+
+    protected override TestProducerEndpoint DeserializeEndpoint(string serializedEndpoint, TestProducerEndpointConfiguration configuration)
+        => throw new NotSupportedException();
 }

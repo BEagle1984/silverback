@@ -56,10 +56,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessage))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _processing.Invoke(
             logger.InnerLogger,
@@ -76,10 +73,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageError))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _processingError.Invoke(
             logger.InnerLogger,
@@ -99,10 +93,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageFatalError))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _processingFatalError.Invoke(
             logger.InnerLogger,
@@ -119,10 +110,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.RetryMessageProcessing))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _retryMessageProcessing.Invoke(
             logger.InnerLogger,
@@ -139,10 +127,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.MessageMoved))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _messageMoved.Invoke(
             logger.InnerLogger,
@@ -160,10 +145,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.MessageSkipped))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _messageSkipped.Invoke(
             logger.InnerLogger,
@@ -180,10 +162,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _cannotMoveSequences.Invoke(
             logger.InnerLogger,
@@ -201,10 +180,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.RollbackToRetryFailed))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _rollbackToRetryFailed.Invoke(
             logger.InnerLogger,
@@ -221,10 +197,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.RollbackToSkipFailed))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _rollbackToSkipFailed.Invoke(
             logger.InnerLogger,
@@ -241,10 +214,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.InvalidMessageConsumed))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _invalidMessageConsumed.Invoke(
             logger.InnerLogger,
@@ -272,10 +242,7 @@ internal sealed class ConsumerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Headers, envelope.BrokerMessageIdentifier);
 
         object?[] args =
         [

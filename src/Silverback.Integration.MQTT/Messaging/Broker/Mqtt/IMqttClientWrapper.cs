@@ -51,7 +51,7 @@ public interface IMqttClientWrapper : IBrokerClient
     ///     The message headers.
     /// </param>
     /// <param name="endpoint">
-    ///     The target endpoint (topic).
+    ///     The destination endpoint (topic).
     /// </param>
     /// <param name="onSuccess">
     ///     A callback to be invoked when the message is successfully produced.

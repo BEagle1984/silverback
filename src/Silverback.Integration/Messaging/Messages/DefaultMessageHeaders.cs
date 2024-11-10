@@ -26,7 +26,7 @@ public static class DefaultMessageHeaders
     public const string MessageType = "x-message-type";
 
     /// <summary>
-    ///     If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the error policies
+    ///     If an exception is thrown the failed attempts will be incremented and stored as header. This is necessary for the error policies
     ///     to work.
     /// </summary>
     public const string FailedAttempts = "x-failed-attempts";
@@ -48,10 +48,9 @@ public static class DefaultMessageHeaders
     public const string IsLastChunk = "x-chunk-last";
 
     /// <summary>
-    ///     Used for distributed tracing. It is set by the <see cref="IProducer" /> using the current
-    ///     <c>Activity.Id</c>. The <see cref="IConsumer" /> uses it's value to set the
-    ///     <c>Activity.ParentId</c>. Note that an <c>Activity</c> is automatically started by the default
-    ///     <see cref="IProducer" /> implementation.
+    ///     Used for distributed tracing. It is set by the <see cref="IProducer" /> using the current <c>Activity.Id</c>.
+    ///     The <see cref="IConsumer" /> uses it's value to set the <c>Activity.ParentId</c>. Note that an <c>Activity</c> is automatically
+    ///     started by the default <see cref="IProducer" /> implementation.
     /// </summary>
     /// <remarks>
     ///     The header is implemented according to the W3C Trace Context proposal
@@ -69,8 +68,7 @@ public static class DefaultMessageHeaders
     public const string TraceState = "tracestate";
 
     /// <summary>
-    ///     Used for distributed tracing. It corresponds to the string representation of the
-    ///     <c>Activity.Baggage</c> dictionary.
+    ///     Used for distributed tracing. It corresponds to the string representation of the <c>Activity.Baggage</c> dictionary.
     /// </summary>
     /// <remarks>
     ///     This is not part of the w3c standard.
@@ -78,7 +76,7 @@ public static class DefaultMessageHeaders
     public const string TraceBaggage = "tracebaggage";
 
     /// <summary>
-    ///     The MIME type of a binary message. See <see cref="IBinaryMessage" />.
+    ///     The MIME type of the binary message. See <see cref="IBinaryMessage" />.
     /// </summary>
     public const string ContentType = "content-type";
 
@@ -96,4 +94,14 @@ public static class DefaultMessageHeaders
     ///     the message failed to be processed.
     /// </summary>
     public const string FailureReason = "x-failure-reason";
+
+    /// <summary>
+    ///     The header containing the serialized endpoint stored in the outbox.
+    /// </summary>
+    internal const string SerializedEndpoint = DefaultMessageHeaders.InternalHeadersPrefix + "serialized-endpoint";
+
+    /// <summary>
+    ///     The prefix used for the internal headers that are not supposed to be produced to the broker.
+    /// </summary>
+    internal const string InternalHeadersPrefix = "xx-";
 }

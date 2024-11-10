@@ -1,13 +1,13 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Producing.EndpointResolvers;
 
 /// <summary>
-///     Resolves the target endpoint (e.g. the target topic and partition) for a message being produced.
+///     Resolves the destination endpoint (e.g. the target topic and partition) for a message being produced.
 /// </summary>
 public interface IProducerEndpointResolver
 {
@@ -17,19 +17,13 @@ public interface IProducerEndpointResolver
     string RawName { get; }
 
     /// <summary>
-    ///     Gets the computed actual target endpoint for the message being produced.
+    ///     Gets the computed actual destination endpoint for the message being produced.
     /// </summary>
-    /// <param name="message">
-    ///     The message being produced.
-    /// </param>
-    /// <param name="configuration">
-    ///     The producer configuration.
-    /// </param>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" />.
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     The <see cref="ProducerEndpoint" /> for the specified message.
     /// </returns>
-    ProducerEndpoint GetEndpoint(object? message, ProducerEndpointConfiguration configuration, IServiceProvider serviceProvider);
+    ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope);
 }

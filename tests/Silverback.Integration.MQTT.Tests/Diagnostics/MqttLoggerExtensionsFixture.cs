@@ -78,7 +78,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                     [
                         new MqttProducerEndpointConfiguration
                         {
-                            Endpoint = new MqttStaticProducerEndpointResolver("topic1")
+                            EndpointResolver = new MqttStaticProducerEndpointResolver("topic1")
                         }
                     ])
             },

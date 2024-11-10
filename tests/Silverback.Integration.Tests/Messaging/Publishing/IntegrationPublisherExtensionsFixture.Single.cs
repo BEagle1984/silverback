@@ -30,12 +30,12 @@ public partial class IntegrationPublisherExtensionsFixture
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one"),
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "one"),
             CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two"),
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "two"),
             CancellationToken.None);
     }
 
@@ -52,12 +52,12 @@ public partial class IntegrationPublisherExtensionsFixture
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one"),
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two"),
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "two"),
             cancellationToken);
     }
 
@@ -73,12 +73,12 @@ public partial class IntegrationPublisherExtensionsFixture
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "one"),
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "two"),
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "two"),
             cancellationToken);
     }
 
@@ -94,20 +94,20 @@ public partial class IntegrationPublisherExtensionsFixture
             message,
             static envelope => envelope
                 .SetKafkaKey("key")
-                .AddHeader("x-topic", envelope.Endpoint.RawName),
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             cancellationToken: cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one" &&
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two" &&
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             cancellationToken);
@@ -123,19 +123,19 @@ public partial class IntegrationPublisherExtensionsFixture
             null,
             static envelope => envelope
                 .SetKafkaKey("key")
-                .AddHeader("x-topic", envelope.Endpoint.RawName));
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName));
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "one" &&
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "two" &&
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             CancellationToken.None);
@@ -153,21 +153,21 @@ public partial class IntegrationPublisherExtensionsFixture
             message,
             static (envelope, key) => envelope
                 .SetKafkaKey(key)
-                .AddHeader("x-topic", envelope.Endpoint.RawName),
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             "key",
             cancellationToken: cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one" &&
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two" &&
+                    envelope.Message == message && envelope.EndpointConfiguration.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             cancellationToken);
@@ -183,20 +183,20 @@ public partial class IntegrationPublisherExtensionsFixture
             (TestEventOne?)null,
             static (envelope, key) => envelope
                 .SetKafkaKey(key)
-                .AddHeader("x-topic", envelope.Endpoint.RawName),
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             "key");
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "one" &&
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "two" &&
+                    envelope.Message == null && envelope.EndpointConfiguration.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             CancellationToken.None);

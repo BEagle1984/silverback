@@ -22,7 +22,7 @@ public class ProducerEndpointConfigurationFixture
 
         TestProducerEndpointConfiguration configuration = new()
         {
-            Endpoint = endpointResolver
+            EndpointResolver = endpointResolver
         };
 
         configuration.RawName.Should().Be("raw-name");
@@ -51,7 +51,7 @@ public class ProducerEndpointConfigurationFixture
     [Fact]
     public void Validate_ShouldThrow_WhenEndpointIsNull()
     {
-        TestProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
+        TestProducerEndpointConfiguration configuration = GetValidConfiguration() with { EndpointResolver = null! };
 
         Action act = configuration.Validate;
 

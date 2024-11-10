@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -51,7 +50,6 @@ public abstract class BrokerLogEnricher : IBrokerLogEnricher
 
     /// <inheritdoc cref="IBrokerLogEnricher.GetAdditionalValues" />
     public abstract (string? Value1, string? Value2) GetAdditionalValues(
-        Endpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier);
 }

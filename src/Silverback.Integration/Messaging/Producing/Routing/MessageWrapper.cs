@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
@@ -28,13 +29,16 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(message, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                message,
+                producer,
+                producer.EndpointConfiguration,
+                publisher.Context);
             envelopeConfigurationAction?.Invoke(envelope);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
                 await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
             await produceStrategy.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -52,13 +56,16 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(message, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                message,
+                producer,
+                producer.EndpointConfiguration,
+                publisher.Context);
             envelopeConfigurationAction.Invoke(envelope, argument);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
                 await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
             await produceStrategy.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -75,16 +82,19 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
             {
                 await produceStrategy.ProduceAsync(
                     messages.ToAsyncEnumerable().SelectAwait(
                         async message =>
                         {
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope);
 
                             await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -99,7 +109,11 @@ internal class MessageWrapper : IMessageWrapper
                     messages.Select(
                         message =>
                         {
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope);
                             return envelope;
                         }),
@@ -119,16 +133,19 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
             {
                 await produceStrategy.ProduceAsync(
                     messages.ToAsyncEnumerable().SelectAwait(
                         async message =>
                         {
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, argument);
 
                             await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -143,7 +160,11 @@ internal class MessageWrapper : IMessageWrapper
                     messages.Select(
                         message =>
                         {
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, argument);
                             return envelope;
                         }),
@@ -163,17 +184,20 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
             {
                 await produceStrategy.ProduceAsync(
                     sources.ToAsyncEnumerable().SelectAwait(
                         async source =>
                         {
                             TMessage? message = mapperFunction.Invoke(source);
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope, source);
 
                             await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -189,7 +213,11 @@ internal class MessageWrapper : IMessageWrapper
                         source =>
                         {
                             TMessage? message = mapperFunction.Invoke(source);
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope, source);
                             return envelope;
                         }),
@@ -210,17 +238,20 @@ internal class MessageWrapper : IMessageWrapper
     {
         foreach (IProducer producer in producers)
         {
-            ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-            if (endpoint.Configuration.EnableSubscribing)
+            if (producer.EndpointConfiguration.EnableSubscribing)
             {
                 await produceStrategy.ProduceAsync(
                     sources.ToAsyncEnumerable().SelectAwait(
                         async source =>
                         {
                             TMessage? message = mapperFunction.Invoke(source, argument);
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, source, argument);
 
                             await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -236,7 +267,11 @@ internal class MessageWrapper : IMessageWrapper
                         source =>
                         {
                             TMessage? message = mapperFunction.Invoke(source, argument);
-                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                                message,
+                                producer,
+                                producer.EndpointConfiguration,
+                                publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, source, argument);
                             return envelope;
                         }),
@@ -262,16 +297,19 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 messages.ToAsyncEnumerable().SelectAwait(
                     async message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -286,7 +324,11 @@ internal class MessageWrapper : IMessageWrapper
                 messages.Select(
                     message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
                         return envelope;
                     }),
@@ -312,16 +354,19 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 messages.ToAsyncEnumerable().SelectAwait(
                     async message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -336,7 +381,11 @@ internal class MessageWrapper : IMessageWrapper
                 messages.Select(
                     message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
                         return envelope;
                     }),
@@ -362,17 +411,20 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 sources.ToAsyncEnumerable().SelectAwait(
                     async source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -388,7 +440,11 @@ internal class MessageWrapper : IMessageWrapper
                     source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
                         return envelope;
                     }),
@@ -415,17 +471,20 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 sources.ToAsyncEnumerable().SelectAwait(
                     async source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source, argument);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -441,7 +500,11 @@ internal class MessageWrapper : IMessageWrapper
                     source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source, argument);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
                     }),
@@ -466,16 +529,19 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 messages.SelectAwait(
                     async message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -490,7 +556,11 @@ internal class MessageWrapper : IMessageWrapper
                 messages.Select(
                     message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
                         return envelope;
                     }),
@@ -516,16 +586,19 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(messages, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 messages.SelectAwait(
                     async message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -540,7 +613,11 @@ internal class MessageWrapper : IMessageWrapper
                 messages.Select(
                     message =>
                     {
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
                         return envelope;
                     }),
@@ -566,17 +643,20 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 sources.SelectAwait(
                     async source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -592,7 +672,11 @@ internal class MessageWrapper : IMessageWrapper
                     source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
                         return envelope;
                     }),
@@ -619,17 +703,20 @@ internal class MessageWrapper : IMessageWrapper
 
         IProducer producer = producers.First();
 
-        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(producer.EndpointConfiguration, publisher.Context);
 
-        if (endpoint.Configuration.EnableSubscribing)
+        if (producer.EndpointConfiguration.EnableSubscribing)
         {
             await produceStrategy.ProduceAsync(
                 sources.SelectAwait(
                     async source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source, argument);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
 
                         await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -645,7 +732,11 @@ internal class MessageWrapper : IMessageWrapper
                     source =>
                     {
                         TMessage? message = mapperFunction.Invoke(source, argument);
-                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(
+                            message,
+                            producer,
+                            producer.EndpointConfiguration,
+                            publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
                     }),
@@ -656,14 +747,13 @@ internal class MessageWrapper : IMessageWrapper
     private static OutboundEnvelope<TMessage> CreateOutboundEnvelope<TMessage>(
         TMessage? message,
         IProducer producer,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext context)
         where TMessage : class =>
-        new(message, null, endpoint, producer, context);
+        new(message, null, endpointConfiguration, producer, context);
 
-    private static ProducerEndpoint GetProducerEndpoint(object? message, IProducer producer, ISilverbackContext context) =>
-        producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider);
-
-    private static IProduceStrategyImplementation GetProduceStrategy(ProducerEndpoint endpoint, ISilverbackContext context) =>
-        endpoint.Configuration.Strategy.Build(context.ServiceProvider, endpoint.Configuration);
+    private static IProduceStrategyImplementation GetProduceStrategy(
+        ProducerEndpointConfiguration endpointConfiguration,
+        ISilverbackContext context) =>
+        endpointConfiguration.Strategy.Build(context.ServiceProvider, endpointConfiguration);
 }

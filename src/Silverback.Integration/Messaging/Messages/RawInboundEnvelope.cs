@@ -32,14 +32,14 @@ internal record RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(rawMessage, headers, endpoint)
+        : base(rawMessage, headers)
     {
         Endpoint = Check.NotNull(endpoint, nameof(endpoint));
         BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
         Consumer = Check.NotNull(consumer, nameof(consumer));
     }
 
-    public new ConsumerEndpoint Endpoint { get; }
+    public ConsumerEndpoint Endpoint { get; }
 
     public IConsumer Consumer { get; }
 

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
@@ -13,30 +14,30 @@ internal record RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
 {
     public RawOutboundEnvelope(
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
         ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : this(null, headers, endpoint, producer, context, brokerMessageIdentifier)
+        : this(null, headers, endpointConfiguration, producer, context, brokerMessageIdentifier)
     {
     }
 
     public RawOutboundEnvelope(
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
+        ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
         ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(rawMessage, headers, endpoint)
+        : base(rawMessage, headers)
     {
-        Endpoint = Check.NotNull(endpoint, nameof(endpoint));
+        EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Producer = Check.NotNull(producer, nameof(producer));
         Context = context;
         BrokerMessageIdentifier = brokerMessageIdentifier;
     }
 
-    public new ProducerEndpoint Endpoint { get; }
+    public ProducerEndpointConfiguration EndpointConfiguration { get; }
 
     public IProducer Producer { get; }
 

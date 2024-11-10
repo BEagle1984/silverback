@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -169,7 +168,6 @@ public class BrokerLogEnricherFactoryFixture
         protected override string AdditionalPropertyName2 => string.Empty;
 
         public override (string? Value1, string? Value2) GetAdditionalValues(
-            Endpoint endpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier? brokerMessageIdentifier) =>
             throw new NotSupportedException();
@@ -182,7 +180,6 @@ public class BrokerLogEnricherFactoryFixture
         protected override string AdditionalPropertyName2 => string.Empty;
 
         public override (string? Value1, string? Value2) GetAdditionalValues(
-            Endpoint endpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier? brokerMessageIdentifier) =>
             throw new NotSupportedException();
@@ -195,7 +192,6 @@ public class BrokerLogEnricherFactoryFixture
         protected override string AdditionalPropertyName2 => string.Empty;
 
         public override (string? Value1, string? Value2) GetAdditionalValues(
-            Endpoint endpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier? brokerMessageIdentifier) =>
             throw new NotSupportedException();

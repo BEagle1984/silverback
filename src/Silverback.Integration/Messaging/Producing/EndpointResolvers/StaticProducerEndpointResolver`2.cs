@@ -3,12 +3,13 @@
 
 using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.EndpointResolvers;
 
 /// <summary>
-///     Statically resolves to the same target endpoint (e.g. the target topic and partition) for every message being produced.
+///     Statically resolves to the same destination endpoint (e.g. the target topic and partition) for every message being produced.
 /// </summary>
 /// <typeparam name="TEndpoint">
 ///     The type of the endpoint being resolved.
@@ -68,8 +69,8 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
         GetEndpoint((TConfiguration)configuration);
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
-    public ProducerEndpoint GetEndpoint(object? message, ProducerEndpointConfiguration configuration, IServiceProvider serviceProvider) =>
-        GetEndpoint((TConfiguration)configuration);
+    public ProducerEndpoint GetEndpoint(IOutboundEnvelope envelope) =>
+        GetEndpoint((TConfiguration)Check.NotNull(envelope, nameof(envelope)).EndpointConfiguration);
 
     /// <inheritdoc cref="IStaticProducerEndpointResolver.GetEndpoint(ProducerEndpointConfiguration)" />
     public TEndpoint GetEndpoint(TConfiguration configuration) =>
@@ -80,8 +81,10 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
     {
         if (other is null)
             return false;
+
         if (ReferenceEquals(this, other))
             return true;
+
         return RawName == other.RawName;
     }
 
@@ -90,10 +93,13 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
     {
         if (obj is null)
             return false;
+
         if (ReferenceEquals(this, obj))
             return true;
+
         if (obj.GetType() != GetType())
             return false;
+
         return Equals((StaticProducerEndpointResolver<TEndpoint, TConfiguration>)obj);
     }
 

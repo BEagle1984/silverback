@@ -96,7 +96,65 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Check.NotNull(topic, nameof(topic));
         Check.NotNull(partitionFunction, nameof(partitionFunction));
 
-        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topic, partitionFunction.Invoke);
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topic, partitionFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the target topic and the function returning the target partition for each message being produced.
+    /// </summary>
+    /// <param name="topic">
+    ///     The target topic.
+    /// </param>
+    /// <param name="partitionFunction">
+    ///     The function returning the target partition index for the message being produced.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic, Func<IOutboundEnvelope<TMessage>, int> partitionFunction)
+    {
+        Check.NotNull(topic, nameof(topic));
+        Check.NotNull(partitionFunction, nameof(partitionFunction));
+
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topic, partitionFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the function returning the target topic and partition for each message being produced.
+    /// </summary>
+    /// <param name="topicPartitionFunction">
+    ///     The function returning the target topic and partition index for the message being produced.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<TMessage?, TopicPartition> topicPartitionFunction)
+    {
+        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicPartitionFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the function returning the target topic and partition for each message being produced.
+    /// </summary>
+    /// <param name="topicPartitionFunction">
+    ///     The function returning the target topic and partition index for the message being produced.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<IOutboundEnvelope<TMessage>, TopicPartition> topicPartitionFunction)
+    {
+        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicPartitionFunction);
 
         return this;
     }
@@ -122,26 +180,35 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Check.NotNull(topicFunction, nameof(topicFunction));
 
         _endpointResolver = partitionFunction == null
-            ? new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction.Invoke)
-            : new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction.Invoke, partitionFunction.Invoke);
+            ? new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction)
+            : new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction, partitionFunction);
 
         return this;
     }
 
     /// <summary>
-    ///     Specifies the function returning the target topic and partition for each message being produced.
+    ///     Specifies the functions returning the target topic and partition for each message being produced.
     /// </summary>
-    /// <param name="topicPartitionFunction">
-    ///     The function returning the target topic and partition index for the message being produced.
+    /// <param name="topicFunction">
+    ///     The function returning the target topic for the message being produced.
+    /// </param>
+    /// <param name="partitionFunction">
+    ///     The optional function returning the target partition index for the message being produced. If <c>null</c> the partition is
+    ///     automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a
+    ///     random one will be generated).
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<TMessage?, TopicPartition> topicPartitionFunction)
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(
+        Func<IOutboundEnvelope<TMessage>, string> topicFunction,
+        Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
     {
-        Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
+        Check.NotNull(topicFunction, nameof(topicFunction));
 
-        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicPartitionFunction.Invoke);
+        _endpointResolver = partitionFunction == null
+            ? new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction)
+            : new KafkaDynamicProducerEndpointResolver<TMessage>(topicFunction, partitionFunction);
 
         return this;
     }
@@ -172,10 +239,62 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction, partitionFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the target topic format and an optional function returning the target partition for each message being produced.
+    /// </summary>
+    /// <param name="topicFormatString">
+    ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
+    ///     using a <see cref="string.Format(string,object[])" />.
+    /// </param>
+    /// <param name="topicArgumentsFunction">
+    ///     The function returning the arguments to be used to format the string.
+    /// </param>
+    /// <param name="partitionFunction">
+    ///     The optional function returning the target partition index for the message being produced. If <c>null</c> the partition is
+    ///     automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a
+    ///     random one will be generated).
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(
+        string topicFormatString,
+        Func<IOutboundEnvelope<TMessage>, string[]> topicArgumentsFunction,
+        Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
+    {
+        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
+        Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
+
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction, partitionFunction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the target topic and, optionally, the target partition will be specified per each message using the envelope's
+    ///     <see cref="KafkaEnvelopeExtensions.SetKafkaDestinationTopic" /> extension method.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceToDynamicTopic()
+    {
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(
-            topicFormatString,
-            topicArgumentsFunction.Invoke,
-            partitionFunction == null ? null : partitionFunction.Invoke);
+            envelope =>
+            {
+                string? destinationTopic = envelope.GetKafkaDestinationTopic();
+
+                if (string.IsNullOrEmpty(destinationTopic))
+                    throw new InvalidOperationException("The destination topic is not set.");
+
+                return destinationTopic;
+            },
+            envelope => envelope.GetKafkaDestinationPartition() ?? Partition.Any);
 
         return this;
     }
@@ -195,7 +314,9 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     {
         _endpointResolver = new KafkaDynamicProducerEndpointResolver<TMessage>(
             typeof(TResolver),
-            (message, serviceProvider) => serviceProvider.GetRequiredService<TResolver>().GetTopicPartition(message));
+            envelope => envelope.Context?.ServiceProvider == null
+                ? throw new InvalidOperationException("The service provider is not available. The endpoint resolver requires a service provider to be resolved.")
+                : envelope.Context.ServiceProvider.GetRequiredService<TResolver>().GetTopicPartition(envelope));
 
         return this;
     }
@@ -258,6 +379,6 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>
         new()
         {
-            Endpoint = _endpointResolver ?? NullProducerEndpointResolver<KafkaProducerEndpoint>.Instance
+            EndpointResolver = _endpointResolver ?? NullProducerEndpointResolver<KafkaProducerEndpoint>.Instance
         };
 }

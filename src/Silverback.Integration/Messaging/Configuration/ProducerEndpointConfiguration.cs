@@ -19,21 +19,21 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public abstract record ProducerEndpointConfiguration : EndpointConfiguration
 {
-    private readonly IProducerEndpointResolver _endpoint = NullProducerEndpointResolver.Instance;
+    private readonly IProducerEndpointResolver _endpointResolver = NullProducerEndpointResolver.Instance;
 
     /// <summary>
-    ///     Gets the <see cref="IProducerEndpointResolver" /> to be used to resolve the target endpoint (e.g. the target topic and
+    ///     Gets the <see cref="IProducerEndpointResolver" /> to be used to resolve the destination endpoint (e.g. the target topic and
     ///     partition) for the message being produced.
     /// </summary>
-    public IProducerEndpointResolver Endpoint
+    public IProducerEndpointResolver EndpointResolver
     {
-        get => _endpoint;
+        get => _endpointResolver;
         init
         {
-            _endpoint = value;
+            _endpointResolver = value;
 
-            if (_endpoint != null)
-                RawName = _endpoint.RawName;
+            if (_endpointResolver != null)
+                RawName = _endpointResolver.RawName;
         }
     }
 
@@ -88,11 +88,11 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     {
         base.ValidateCore();
 
-        if (Endpoint == null || Equals(Endpoint, NullProducerEndpointResolver.Instance))
+        if (EndpointResolver == null || Equals(EndpointResolver, NullProducerEndpointResolver.Instance))
         {
             throw new BrokerConfigurationException(
                 "An endpoint resolver is required. " +
-                $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.");
+                $"Set the {nameof(EndpointResolver)} property or use ProduceTo or UseEndpointResolver to set it.");
         }
 
         if (Serializer == null)

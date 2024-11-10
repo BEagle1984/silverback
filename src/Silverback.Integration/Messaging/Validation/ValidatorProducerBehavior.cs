@@ -37,10 +37,10 @@ public class ValidatorProducerBehavior : IProducerBehavior
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Message != null &&
-            context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
+            context.Envelope.EndpointConfiguration.MessageValidationMode != MessageValidationMode.None &&
             !MessageValidator.IsValid(
                 context.Envelope.Message,
-                context.Envelope.Endpoint.Configuration.MessageValidationMode,
+                context.Envelope.EndpointConfiguration.MessageValidationMode,
                 out string? validationErrors))
         {
             _logger.LogInvalidMessage(context.Envelope, validationErrors);

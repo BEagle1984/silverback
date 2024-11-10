@@ -15,7 +15,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void AddHeader_ShouldAddHeader()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.AddHeader("one", "1").AddHeader("two", "2");
 
@@ -26,7 +26,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void AddOrReplaceHeader_ShouldAddHeader()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("two", "2");
 
@@ -37,7 +37,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void AddOrReplaceHeader_ShouldReplaceHeader()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("one", "2");
 
@@ -48,7 +48,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void AddHeaderIfNotExists_ShouldAddHeader()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("two", "2");
 
@@ -59,7 +59,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void AddHeaderIfNotExists_ShouldNotReplaceHeader()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("one", "2");
 
@@ -70,7 +70,7 @@ public class RawOutboundEnvelopeFixture
     [Fact]
     public void SetMessageId_ShouldSetMessageId()
     {
-        RawOutboundEnvelope envelope = new(null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        RawOutboundEnvelope envelope = new(null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         envelope.SetMessageId("one").SetMessageId("two");
 
@@ -82,7 +82,7 @@ public class RawOutboundEnvelopeFixture
     {
         RawOutboundEnvelope envelope = new(
             [new MessageHeader("x-message-id", "test-id")],
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         envelope.GetMessageId().Should().Be("test-id");
@@ -93,7 +93,7 @@ public class RawOutboundEnvelopeFixture
     {
         RawOutboundEnvelope envelope = new(
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         envelope.GetMessageId().Should().BeNull();

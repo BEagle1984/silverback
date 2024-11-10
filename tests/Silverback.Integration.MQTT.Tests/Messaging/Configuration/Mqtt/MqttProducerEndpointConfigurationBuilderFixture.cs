@@ -5,8 +5,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -15,6 +17,12 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt;
 
 public partial class MqttProducerEndpointConfigurationBuilderFixture
 {
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+        new TestEventOne(),
+        null,
+        new MqttProducerEndpointConfiguration(),
+        Substitute.For<IProducer>());
+
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
@@ -33,12 +41,9 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic");
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttStaticProducerEndpointResolver>();
+        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttStaticProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().Be("some-topic");
-        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
-            null,
-            endpointConfiguration,
-            Substitute.For<IServiceProvider>());
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
         configuration.Topic.Should().Be("some-topic");
     }
 
@@ -50,12 +55,9 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => "some-topic");
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-");
-        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
-            null,
-            endpointConfiguration,
-            Substitute.For<IServiceProvider>());
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
         configuration.Topic.Should().Be("some-topic");
     }
 
@@ -67,12 +69,9 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic/{0}", _ => ["123"]);
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().Be("some-topic/{0}");
-        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
-            null,
-            endpointConfiguration,
-            Substitute.For<IServiceProvider>());
+        MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
         configuration.Topic.Should().Be("some-topic/123");
     }
 
@@ -85,7 +84,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
     }
 
@@ -136,6 +135,6 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {
-        public string GetTopic(TestEventOne? message) => "some-topic";
+        public string GetTopic(IOutboundEnvelope<TestEventOne> envelope) => "some-topic";
     }
 }

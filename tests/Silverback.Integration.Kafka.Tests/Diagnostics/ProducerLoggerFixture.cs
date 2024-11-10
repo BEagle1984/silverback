@@ -9,11 +9,11 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -47,7 +47,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
@@ -67,15 +70,18 @@ public class ProducerLoggerFixture
     [Fact]
     public void LogProduced_ShouldLogWithoutEnvelope()
     {
-        KafkaProducerEndpoint endpoint = new("topic2", 42, new KafkaProducerEndpointConfiguration());
         MessageHeaderCollection headers = new()
         {
             { DefaultMessageHeaders.MessageType, "Message.Type" },
             { DefaultMessageHeaders.MessageId, "1234" }
         };
         KafkaOffset brokerMessageIdentifier = new(new TopicPartitionOffset("topic2", 2, 42));
+        KafkaProducerEndpointConfiguration endpointConfiguration = new()
+        {
+            EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+        };
 
-        _producerLogger.LogProduced(endpoint, headers, brokerMessageIdentifier);
+        _producerLogger.LogProduced(endpointConfiguration, headers, brokerMessageIdentifier);
 
         string expectedMessage =
             "Message produced. | " +
@@ -97,7 +103,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
@@ -117,14 +126,17 @@ public class ProducerLoggerFixture
     [Fact]
     public void LogProduceError_ShouldLogWithoutEnvelope()
     {
-        KafkaProducerEndpoint endpoint = new("topic2", 42, new KafkaProducerEndpointConfiguration());
         MessageHeaderCollection headers = new()
         {
             { DefaultMessageHeaders.MessageType, "Message.Type" },
             { DefaultMessageHeaders.MessageId, "1234" }
         };
+        KafkaProducerEndpointConfiguration endpointConfiguration = new()
+        {
+            EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+        };
 
-        _producerLogger.LogProduceError(endpoint, headers, new InvalidDataException());
+        _producerLogger.LogProduceError(endpointConfiguration, headers, new InvalidDataException());
 
         string expectedMessage =
             "Error occurred producing the message. | " +
@@ -146,7 +158,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
@@ -173,7 +188,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
@@ -200,7 +218,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
@@ -231,7 +252,10 @@ public class ProducerLoggerFixture
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             },
-            new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
+            new KafkaProducerEndpointConfiguration
+            {
+                EndpointResolver = new KafkaStaticProducerEndpointResolver("topic2")
+            },
             Substitute.For<IProducer>(),
             null,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));

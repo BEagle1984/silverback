@@ -18,7 +18,7 @@ public class OutboundEnvelopeFixture
     public void Constructor_ShouldSetRawMessageFromByteArray()
     {
         byte[] message = [1, 2, 3];
-        OutboundEnvelope outboundEnvelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        OutboundEnvelope outboundEnvelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         outboundEnvelope.Message.Should().BeSameAs(message);
         outboundEnvelope.RawMessage.As<MemoryStream>().ToArray().Should().BeEquivalentTo(message);
@@ -28,7 +28,7 @@ public class OutboundEnvelopeFixture
     public void Constructor_ShouldSetRawMessageFromStream()
     {
         MemoryStream stream = new([1, 2, 3]);
-        OutboundEnvelope outboundEnvelope = new(stream, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
+        OutboundEnvelope outboundEnvelope = new(stream, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
         outboundEnvelope.Message.Should().BeSameAs(stream);
         outboundEnvelope.RawMessage.Should().BeSameAs(stream);
@@ -40,7 +40,7 @@ public class OutboundEnvelopeFixture
         OutboundEnvelope envelope = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         envelope.MessageType.Should().Be(typeof(TestEventOne));
@@ -52,7 +52,7 @@ public class OutboundEnvelopeFixture
         OutboundEnvelope envelope = new(
             null,
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         envelope.MessageType.Should().Be(typeof(object));
@@ -64,7 +64,7 @@ public class OutboundEnvelopeFixture
         OutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         envelope.MessageType.Should().Be(typeof(TestEventOne));
@@ -76,7 +76,7 @@ public class OutboundEnvelopeFixture
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "old" },
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>())
         {
             RawMessage = new MemoryStream()
@@ -90,12 +90,38 @@ public class OutboundEnvelopeFixture
     }
 
     [Fact]
+    public void CloneReplacingMessage_ShouldChangeTypeAndClone()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            new TestEventOne { Content = "old" },
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>())
+        {
+            RawMessage = new MemoryStream()
+        };
+
+        IOutboundEnvelope<TestEventTwo> newEnvelope = envelope.CloneReplacingMessage(new TestEventTwo());
+
+        newEnvelope.Should().NotBeSameAs(envelope);
+        newEnvelope.Should().BeEquivalentTo(
+            envelope,
+            options => options
+                .Excluding(e => e.Message)
+                .Excluding(e => e.MessageType)
+                .Excluding(e => e.RawMessage));
+        newEnvelope.Message.Should().BeOfType<TestEventTwo>();
+        newEnvelope.MessageType.Should().Be(typeof(TestEventTwo));
+        newEnvelope.RawMessage.Should().BeNull();
+    }
+
+    [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
     {
         OutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>())
         {
             RawMessage = null
@@ -110,7 +136,7 @@ public class OutboundEnvelopeFixture
         OutboundEnvelope<Tombstone<TestEventOne>> envelope = new(
             new Tombstone<TestEventOne>("key"),
             null,
-            TestProducerEndpoint.GetDefault(),
+            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>())
         {
             RawMessage = new MemoryStream()

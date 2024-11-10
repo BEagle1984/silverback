@@ -39,13 +39,11 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                      "Content," +
                      "Headers," +
                      "EndpointName," +
-                     "DynamicEndpoint," +
                      "Created" +
                      ") VALUES (" +
                      "@Content," +
                      "@Headers," +
                      "@EndpointName," +
-                     "@DynamicEndpoint," +
                      "@Created)";
     }
 
@@ -67,11 +65,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 },
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text)
                 {
-                    Value = outboxMessage.Endpoint.FriendlyName
-                },
-                new NpgsqlParameter("@DynamicEndpoint", NpgsqlDbType.Text)
-                {
-                    Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
+                    Value = outboxMessage.EndpointName
                 },
                 new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
@@ -98,7 +92,6 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
-                new NpgsqlParameter("@DynamicEndpoint", NpgsqlDbType.Text),
                 new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
                     Value = DateTime.UtcNow
@@ -108,8 +101,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             {
                 parameters[0].Value = outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
-                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+                parameters[2].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,
@@ -131,7 +123,6 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
-                new NpgsqlParameter("@DynamicEndpoint", NpgsqlDbType.Text),
                 new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
                     Value = DateTime.UtcNow
@@ -141,8 +132,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             {
                 parameters[0].Value = outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
-                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+                parameters[2].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,

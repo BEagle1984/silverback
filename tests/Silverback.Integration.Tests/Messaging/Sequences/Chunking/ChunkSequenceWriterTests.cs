@@ -32,7 +32,7 @@ public class ChunkSequenceWriterTests
                 {
                     Size = 3
                 }
-            }.GetDefaultEndpoint(),
+            },
             Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
@@ -58,7 +58,7 @@ public class ChunkSequenceWriterTests
                     Size = 10,
                     AlwaysAddHeaders = alwaysAddHeaders
                 }
-            }.GetDefaultEndpoint(),
+            },
             Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
@@ -75,7 +75,7 @@ public class ChunkSequenceWriterTests
         OutboundEnvelope envelope = new(
             rawMessage,
             null,
-            new TestProducerEndpointConfiguration("test").GetDefaultEndpoint(),
+            new TestProducerEndpointConfiguration("test"),
             Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
@@ -102,7 +102,7 @@ public class ChunkSequenceWriterTests
                 {
                     Size = 3
                 }
-            }.GetDefaultEndpoint(),
+            },
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
@@ -110,7 +110,7 @@ public class ChunkSequenceWriterTests
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
         envelopes.Should().HaveCount(4);
-        envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));
+        envelopes.ForEach(envelope => envelope.EndpointConfiguration.Should().BeSameAs(sourceEnvelope.EndpointConfiguration));
         envelopes.ForEach(envelope => envelope.Headers.Should().Contain(sourceEnvelope.Headers));
         envelopes[0].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[..3]);
         envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));

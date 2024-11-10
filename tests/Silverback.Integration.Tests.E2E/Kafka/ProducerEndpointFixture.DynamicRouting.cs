@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -176,12 +177,12 @@ public partial class ProducerEndpointFixture
     }
 
     [Fact]
-    public async Task ProducerEndpoint_ShouldProduce_WhenCustomEndpointResolverIsSet()
+    public async Task ProducerEndpoint_ShouldProduce_WhenMessageBasedEndpointResolverIsSet()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .AddSingleton<TestEndpointResolver>()
+                .AddSingleton<MessageBasedEndpointResolver>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -191,7 +192,7 @@ public partial class ProducerEndpointFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(
                             producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
+                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<MessageBasedEndpointResolver>()))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -221,9 +222,183 @@ public partial class ProducerEndpointFixture
         partition2.TotalMessagesCount.Should().Be(1);
     }
 
-    private sealed class TestEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduce_WhenHeadersBasedEndpointResolverIsSet()
     {
-        public TopicPartition GetTopicPartition(TestEventOne? message) => new(GetTopic(message), GetPartition(message));
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSingleton<HeaderBasedEndpointResolver>()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<HeaderBasedEndpointResolver>()))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(
+            new TestEventOne(),
+            envelope => envelope
+                .AddHeader("x-where-to-go-topic", "topic1")
+                .AddHeader("x-where-to-go-partition", 2));
+        await publisher.WrapAndPublishAsync(
+            new TestEventOne(),
+            envelope => envelope
+                .AddHeader("x-where-to-go-topic", "topic2")
+                .AddHeader("x-where-to-go-partition", 3));
+
+        IInMemoryPartition partition1 = Helper.GetTopic("topic1").Partitions[2];
+        IInMemoryPartition partition2 = Helper.GetTopic("topic2").Partitions[3];
+
+        partition1.TotalMessagesCount.Should().Be(1);
+        partition2.TotalMessagesCount.Should().Be(1);
+
+        await publisher.WrapAndPublishBatchAsync(
+            new[]
+            {
+                new TestEventOne(),
+                new TestEventOne()
+            },
+            envelope => envelope
+                .AddHeader("x-where-to-go-topic", "topic1")
+                .AddHeader("x-where-to-go-partition", 2));
+
+        partition1.TotalMessagesCount.Should().Be(3);
+        partition2.TotalMessagesCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceToDynamicEndpointSetViaEnvelopeExtensions()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer.Produce<IIntegrationEvent>(
+                                endpoint => endpoint.ProduceToDynamicTopic()))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishAsync(
+            new TestEventOne(),
+            envelope => envelope.SetKafkaDestinationTopic("topic1"));
+        await publisher.WrapAndPublishBatchAsync(
+            new IIntegrationEvent?[]
+            {
+                new TestEventOne(),
+                null,
+                new TestEventTwo(),
+                new TestEventOne()
+            },
+            envelope => envelope.SetKafkaDestinationTopic(envelope.MessageType == typeof(TestEventOne) ? "topic1" : "topic2"));
+
+        Helper.GetTopic("topic1").MessagesCount.Should().Be(3);
+        Helper.GetTopic("topic2").MessagesCount.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceTombstoneToDynamicEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer.Produce<IIntegrationEvent>(
+                                endpoint => endpoint
+                                    .ProduceTo((IIntegrationEvent? _) => DefaultTopicName)))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
+
+        DefaultTopic.MessagesCount.Should().Be(1);
+        DefaultTopic.GetAllMessages()[0].Value.Should().BeNull();
+        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("42"u8.ToArray());
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceCollectionToDynamicEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer.Produce<IIntegrationEvent>(
+                                endpoint => endpoint
+                                    .ProduceTo(
+                                        (IIntegrationEvent? message) =>
+                                            message is TestEventOne ? "topic1" : "topic2")))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishBatchAsync(
+            new IIntegrationEvent[]
+            {
+                new TestEventOne(),
+                new TestEventTwo(),
+                new TestEventOne()
+            });
+
+        Helper.GetTopic("topic1").MessagesCount.Should().Be(2);
+        Helper.GetTopic("topic2").MessagesCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceCollectionWithTombstonesToDynamicEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer.Produce<IIntegrationEvent>(
+                                endpoint => endpoint
+                                    .ProduceTo(
+                                        (IIntegrationEvent? message) =>
+                                            message == null ? "tombstones" : "events")))));
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishBatchAsync(
+            new IIntegrationEvent?[]
+            {
+                new TestEventOne(),
+                null,
+                new TestEventTwo(),
+                null,
+                null
+            });
+
+        Helper.GetTopic("events").MessagesCount.Should().Be(2);
+        Helper.GetTopic("tombstones").MessagesCount.Should().Be(3);
+    }
+
+    private sealed class MessageBasedEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>
+    {
+        public TopicPartition GetTopicPartition(IOutboundEnvelope<TestEventOne> envelope) => new(
+            GetTopic(envelope.Message),
+            GetPartition(envelope.Message));
 
         private static string GetTopic(TestEventOne? message) =>
             message?.ContentEventOne switch
@@ -241,5 +416,12 @@ public partial class ProducerEndpointFixture
                 "2" => 3,
                 _ => Partition.Any
             };
+    }
+
+    private sealed class HeaderBasedEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>
+    {
+        public TopicPartition GetTopicPartition(IOutboundEnvelope<TestEventOne> envelope) => new(
+            envelope.Headers.GetValue("x-where-to-go-topic"),
+            envelope.Headers.GetValueOrDefault<int>("x-where-to-go-partition"));
     }
 }

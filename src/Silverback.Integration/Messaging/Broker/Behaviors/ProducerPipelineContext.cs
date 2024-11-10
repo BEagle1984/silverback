@@ -77,10 +77,6 @@ public class ProducerPipelineContext
 
     internal IBrokerMessageIdentifier? BrokerMessageIdentifier { get; set; }
 
-    internal Action<IBrokerMessageIdentifier?>? OnSuccess { get; set; }
-
-    internal Action<Exception>? OnError { get; set; }
-
     /// <summary>
     ///     Clones the current context, optionally replacing the envelope.
     /// </summary>
@@ -90,12 +86,10 @@ public class ProducerPipelineContext
     /// <returns>
     ///     The cloned context.
     /// </returns>
-    public ProducerPipelineContext Clone(IOutboundEnvelope? newEnvelope = null) =>
+    public virtual ProducerPipelineContext Clone(IOutboundEnvelope? newEnvelope = null) =>
         new(newEnvelope ?? Envelope, Producer, Pipeline, FinalAction, ServiceProvider)
         {
             CurrentStepIndex = CurrentStepIndex,
-            BrokerMessageIdentifier = BrokerMessageIdentifier,
-            OnSuccess = OnSuccess,
-            OnError = OnError
+            BrokerMessageIdentifier = BrokerMessageIdentifier
         };
 }
