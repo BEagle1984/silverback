@@ -23,6 +23,20 @@ namespace Silverback.Messaging.Configuration.Kafka
         IMockedKafkaOptionsBuilder WithDefaultPartitionsCount(int partitionsCount);
 
         /// <summary>
+        ///     Specify the default number of partitions to be created for the topic.
+        /// </summary>
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="partitionsCount">
+        ///     The number of partitions.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMockedKafkaOptionsBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMockedKafkaOptionsBuilder WithPartitionsCount(string topicName, int partitionsCount);
+
+        /// <summary>
         ///     Specifies the value to be used instead of the default 5 seconds or the configured
         ///     <see cref="ConfluentConsumerConfigProxy.AutoCommitIntervalMs" /> for the inbound topics. Set it to
         ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
