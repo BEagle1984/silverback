@@ -26,6 +26,12 @@ internal sealed class MockedKafkaOptionsBuilder : IMockedKafkaOptionsBuilder
         return this;
     }
 
+    public IMockedKafkaOptionsBuilder WithPartitionsCount(string topicName, int partitionsCount)
+    {
+        MockedKafkaOptions.TopicPartitionsCount[topicName] = partitionsCount;
+        return this;
+    }
+
     public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
     {
         MockedKafkaOptions.OverriddenAutoCommitIntervalMs = intervalMs;

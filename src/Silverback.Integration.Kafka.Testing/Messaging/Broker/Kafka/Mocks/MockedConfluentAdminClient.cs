@@ -33,8 +33,12 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
 
     public Metadata GetMetadata(string topic, TimeSpan timeout)
     {
+        int partitionsCount = _options.TopicPartitionsCount.TryGetValue(topic, out int topicPartitionsCount)
+            ? topicPartitionsCount
+            : _options.DefaultPartitionsCount;
+
         List<PartitionMetadata> partitionsMetadata =
-            Enumerable.Range(0, _options.DefaultPartitionsCount)
+            Enumerable.Range(0, partitionsCount)
                 .Select(
                     i => new PartitionMetadata(
                         i,
