@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -33,16 +34,16 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         }
 
         /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
-        public bool CanHandle(object returnValue) =>
+        public bool CanHandle(object? returnValue) =>
             returnValue != null &&
             _busOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
 
         /// <inheritdoc cref="IReturnValueHandler.Handle" />
-        public void Handle(object returnValue) =>
-            _publisher.Publish<object>(returnValue);
+        public void Handle(object? returnValue) =>
+            _publisher.Publish<object?>(returnValue!);
 
         /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-        public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(returnValue);
+        public Task HandleAsync(object? returnValue, CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync<object?>(returnValue!, cancellationToken);
     }
 }

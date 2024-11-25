@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
@@ -32,7 +33,8 @@ namespace Silverback.Messaging.Serialization
         public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
@@ -58,7 +60,8 @@ namespace Silverback.Messaging.Serialization
         public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
@@ -73,7 +76,7 @@ namespace Silverback.Messaging.Serialization
             if (type == null)
                 throw new MessageSerializerException("Missing type header.");
 
-            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
+            var buffer = await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false);
             var jsonString = SystemEncoding.GetString(buffer!);
 
             var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings);

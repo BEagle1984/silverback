@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
@@ -23,7 +24,10 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         }
 
         [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-        public async Task<bool> HandleReturnValuesAsync(object? returnValue, bool executeAsync)
+        public async Task<bool> HandleReturnValuesAsync(
+            object? returnValue,
+            bool executeAsync,
+            CancellationToken cancellationToken = default)
         {
             if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
                 return false;
@@ -33,7 +37,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             if (handler != null)
             {
                 if (executeAsync)
-                    await handler.HandleAsync(returnValue).ConfigureAwait(false);
+                    await handler.HandleAsync(returnValue, cancellationToken).ConfigureAwait(false);
                 else
                     handler.Handle(returnValue);
 

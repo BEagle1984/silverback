@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -80,10 +81,13 @@ namespace Silverback.Messaging.Publishing
         /// <param name="commandMessage">
         ///     The command to be executed.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ExecuteAsync(ICommand commandMessage);
+        Task ExecuteAsync(ICommand commandMessage, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
@@ -98,10 +102,13 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ExecuteAsync(ICommand commandMessage, bool throwIfUnhandled);
+        Task ExecuteAsync(ICommand commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
@@ -115,11 +122,14 @@ namespace Silverback.Messaging.Publishing
         /// <param name="commandMessage">
         ///     The command to be executed.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     command result.
         /// </returns>
-        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
+        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to
@@ -137,10 +147,13 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     command result.
         /// </returns>
-        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled);
+        Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default);
     }
 }

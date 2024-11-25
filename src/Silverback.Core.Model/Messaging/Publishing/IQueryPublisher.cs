@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -58,11 +59,16 @@ namespace Silverback.Messaging.Publishing
         /// <param name="queryMessage">
         ///     The query to be executed.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     query result.
         /// </returns>
-        Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage);
+        Task<TResult> ExecuteAsync<TResult>(
+            IQuery<TResult> queryMessage,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Executes the specified query publishing it to the internal bus. The message will be forwarded to its
@@ -79,10 +85,16 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     query result.
         /// </returns>
-        Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage, bool throwIfUnhandled);
+        Task<TResult> ExecuteAsync<TResult>(
+            IQuery<TResult> queryMessage,
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default);
     }
 }
