@@ -117,6 +117,22 @@ public class InboundEnvelopeBuilder<TMessage>
     /// <summary>
     ///     Adds a header to the envelope.
     /// </summary>
+    /// <param name="header">
+    ///     The header to be added.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public InboundEnvelopeBuilder<TMessage> AddHeader(MessageHeader header)
+    {
+        _headers ??= [];
+        _headers.Add(header);
+        return this;
+    }
+
+    /// <summary>
+    ///     Adds a header to the envelope.
+    /// </summary>
     /// <param name="name">
     ///     The name of the header.
     /// </param>
@@ -149,22 +165,6 @@ public class InboundEnvelopeBuilder<TMessage>
     {
         _headers ??= [];
         _headers.AddOrReplace(name, value);
-        return this;
-    }
-
-    /// <summary>
-    ///     Adds a header to the envelope.
-    /// </summary>
-    /// <param name="header">
-    ///     The header to be added.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddHeader(MessageHeader header)
-    {
-        _headers ??= [];
-        _headers.Add(header);
         return this;
     }
 

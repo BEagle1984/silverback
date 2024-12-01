@@ -188,6 +188,15 @@ internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvok
         return (services, scope);
     }
 
+    private IEnumerable<TCallback> GetCallbacks<TCallback>(IServiceProvider scopedServiceProvider)
+    {
+        List<IBrokerClientCallback> callbacks = scopedServiceProvider.GetServices<IBrokerClientCallback>().ToList();
+
+        _callbackTypes ??= callbacks.Select(callback => callback.GetType()).ToList();
+
+        return callbacks.OfType<TCallback>().SortBySortIndex();
+    }
+
     private IServiceScope? TryCreateServiceScope()
     {
         try
@@ -199,15 +208,6 @@ internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvok
             // The application is probably being shutdown. Ignore the error to avoid polluting the logs.
             return null;
         }
-    }
-
-    private IEnumerable<TCallback> GetCallbacks<TCallback>(IServiceProvider scopedServiceProvider)
-    {
-        List<IBrokerClientCallback> callbacks = scopedServiceProvider.GetServices<IBrokerClientCallback>().ToList();
-
-        _callbackTypes ??= callbacks.Select(callback => callback.GetType()).ToList();
-
-        return callbacks.OfType<TCallback>().SortBySortIndex();
     }
 
     private bool HasAny<TCallback>()

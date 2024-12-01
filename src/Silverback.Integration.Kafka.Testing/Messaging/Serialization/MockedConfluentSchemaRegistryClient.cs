@@ -14,7 +14,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization;
 
-internal class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
+internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
 {
     private readonly Dictionary<string, List<RegisteredSchema>> _schemas = [];
 
@@ -157,7 +157,7 @@ internal class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
     }
 
     private RegisteredSchema? GetLatestSchema(string subject) =>
-        _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas.Last() : null;
+        _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas[^1] : null;
 
     private int GetNextId() => _schemas.Values.Sum(schema => schema.Count);
 }

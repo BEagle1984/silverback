@@ -144,5 +144,5 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
         }
     }
 
-    private record GroupPendingOffsets(IEnumerable<TopicPartitionOffset> Offsets, MockedConsumerGroupMetadata GroupMetadata);
+    private sealed record GroupPendingOffsets(IEnumerable<TopicPartitionOffset> Offsets, MockedConsumerGroupMetadata GroupMetadata);
 }

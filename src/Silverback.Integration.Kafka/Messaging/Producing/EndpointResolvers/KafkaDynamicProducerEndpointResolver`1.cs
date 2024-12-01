@@ -91,7 +91,7 @@ public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
     public KafkaDynamicProducerEndpointResolver(
         Func<TMessage?, string> topicFunction,
         Func<TMessage?, int> partitionFunction)
-        : this(envelope => new TopicPartition(topicFunction.Invoke(envelope.Message), partitionFunction.Invoke(envelope?.Message)))
+        : this(envelope => new TopicPartition(topicFunction.Invoke(envelope.Message), partitionFunction.Invoke(envelope.Message)))
     {
     }
 

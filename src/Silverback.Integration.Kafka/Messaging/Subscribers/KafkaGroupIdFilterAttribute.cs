@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -12,6 +13,7 @@ namespace Silverback.Messaging.Subscribers;
 ///     id that consumed them. This is used when having multiple consumer groups for the same topic running
 ///     in the same process.
 /// </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public sealed class KafkaGroupIdFilterAttribute : MessageFilterAttribute
 {
     /// <summary>

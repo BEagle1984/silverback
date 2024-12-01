@@ -19,5 +19,6 @@ public sealed class BinaryMessageSerializerBuilder
     ///     The <see cref="IMessageSerializer" />.
     /// </returns>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Ready for extension")]
+    [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global", Justification = "Ready for extension")]
     public IMessageSerializer Build() => new BinaryMessageSerializer();
 }

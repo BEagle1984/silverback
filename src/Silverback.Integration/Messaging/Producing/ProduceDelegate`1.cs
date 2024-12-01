@@ -13,4 +13,4 @@ namespace Silverback.Messaging.Producing;
 /// <typeparam name="T">
 ///     The type of the state object that can be passed to the delegate.
 /// </typeparam>
-internal delegate Task ProduceDelegate<T>(IOutboundEnvelope envelope, T state, CancellationToken cancellationToken);
+internal delegate Task ProduceDelegate<in T>(IOutboundEnvelope envelope, T state, CancellationToken cancellationToken);

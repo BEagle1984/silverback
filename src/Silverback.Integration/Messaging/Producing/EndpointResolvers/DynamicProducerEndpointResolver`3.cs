@@ -51,7 +51,8 @@ public abstract record DynamicProducerEndpointResolver<TMessage, TEndpoint, TCon
         if (envelope is IOutboundEnvelope<TMessage> castedEnvelope)
             return GetEndpointCore(castedEnvelope, configuration);
 
-        if (envelope.Headers.TryGetValue(DefaultMessageHeaders.SerializedEndpoint, out string? serializedEndpoint))
+        if (envelope.Headers.TryGetValue(DefaultMessageHeaders.SerializedEndpoint, out string? serializedEndpoint) &&
+            serializedEndpoint != null)
         {
             return DeserializeEndpoint(serializedEndpoint, configuration);
         }

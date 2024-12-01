@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util;
 
-internal class DynamicCountdownEvent : IDisposable
+internal sealed class DynamicCountdownEvent : IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(0);
 
