@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Testing;
 
 /// <summary>
-///     Added at the very end of the producer pipeline, forwards the produced <see cref="IRawOutboundEnvelope" />
+///     Added at the very end of the producer pipeline, forwards the produced <see cref="IOutboundEnvelope" />
 ///     to the <see cref="IIntegrationSpy" />.
 /// </summary>
 public class RawOutboundSpyBrokerBehavior : IProducerBehavior

@@ -148,14 +148,128 @@ public class OutboundEnvelopeFixture
     [Fact]
     public void IsTombstone_ShouldReturnFalse_WhenMessageIsNotNull()
     {
-        InboundEnvelope envelope = new(
+        OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>())
+        {
+            RawMessage = new MemoryStream()
+        };
 
         envelope.IsTombstone.Should().BeFalse();
+    }
+
+    [Fact]
+    public void AddHeader_ShouldAddHeader()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.AddHeader("one", "1").AddHeader("two", "2");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+    }
+
+    [Fact]
+    public void AddOrReplaceHeader_ShouldAddHeader()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("two", "2");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+    }
+
+    [Fact]
+    public void AddOrReplaceHeader_ShouldReplaceHeader()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("one", "2");
+
+        envelope.Headers.Should().NotContainEquivalentOf(new MessageHeader("one", "1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "2"));
+    }
+
+    [Fact]
+    public void AddHeaderIfNotExists_ShouldAddHeader()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("two", "2");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+    }
+
+    [Fact]
+    public void AddHeaderIfNotExists_ShouldNotReplaceHeader()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("one", "2");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+        envelope.Headers.Should().NotContainEquivalentOf(new MessageHeader("one", "2"));
+    }
+
+    [Fact]
+    public void SetMessageId_ShouldSetMessageId()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.SetMessageId("one").SetMessageId("two");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "two"));
+    }
+
+    [Fact]
+    public void GetMessageId_ShouldReturnHeaderValue()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            [new MessageHeader("x-message-id", "test-id")],
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.GetMessageId().Should().Be("test-id");
+    }
+
+    [Fact]
+    public void GetMessageId_ShouldReturnNull_WhenHeaderNotSet()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpointConfiguration.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.GetMessageId().Should().BeNull();
     }
 }

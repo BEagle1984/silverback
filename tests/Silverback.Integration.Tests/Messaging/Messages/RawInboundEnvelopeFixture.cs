@@ -51,4 +51,21 @@ public class RawInboundEnvelopeFixture
 
         envelope.GetMessageId().Should().BeNull();
     }
+
+    [Fact]
+    public void CloneReplacingRawMessage_ShouldClone()
+    {
+        RawInboundEnvelope envelope = new(
+            new MemoryStream(),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "b"));
+
+        IRawInboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
+
+        newEnvelope.Should().NotBeSameAs(envelope);
+        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(e => e.RawMessage));
+        newEnvelope.RawMessage.Should().NotBeSameAs(envelope.RawMessage);
+    }
 }

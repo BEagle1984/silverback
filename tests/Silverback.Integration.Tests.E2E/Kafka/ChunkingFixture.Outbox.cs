@@ -72,8 +72,8 @@ public partial class ChunkingFixture
         for (int i = 0; i < Helper.Spy.RawOutboundEnvelopes.Count; i++)
         {
             int firstEnvelopeIndex = i / chunksPerMessage * chunksPerMessage;
-            IRawOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
-            IRawOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
+            IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
+            IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should()
                 .Be(chunksPerMessage.ToString(CultureInfo.InvariantCulture));

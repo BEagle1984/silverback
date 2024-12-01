@@ -41,7 +41,7 @@ public class EncryptorProducerBehavior : IProducerBehavior
         await next(context, cancellationToken).ConfigureAwait(false);
     }
 
-    private void EncryptIfNeeded(IRawOutboundEnvelope envelope)
+    private void EncryptIfNeeded(IOutboundEnvelope envelope)
     {
         if (envelope.EndpointConfiguration.Encryption == null || envelope.RawMessage == null)
             return;

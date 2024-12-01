@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -47,6 +48,7 @@ public class ChunkSequenceReader : SequenceReaderBase
     }
 
     /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Stream ownership is transferred to the envelope")]
     protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
@@ -57,7 +59,7 @@ public class ChunkSequenceReader : SequenceReaderBase
 
         // Replace the envelope with the stream that will be pushed with all the chunks.
         ChunkStream chunkStream = new(sequence.CreateStream<IRawInboundEnvelope>());
-        context.Envelope = context.Envelope.CloneReplacingStream(chunkStream);
+        context.Envelope = context.Envelope.CloneReplacingRawMessage(chunkStream);
 
         return sequence;
     }

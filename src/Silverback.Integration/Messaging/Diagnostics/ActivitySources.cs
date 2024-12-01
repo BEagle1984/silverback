@@ -19,7 +19,7 @@ internal static class ActivitySources
 
     private static readonly ActivitySource ConsumeActivitySource = new(ConsumeActivityName);
 
-    public static Activity StartProduceActivity(IRawOutboundEnvelope envelope)
+    public static Activity StartProduceActivity(IOutboundEnvelope envelope)
     {
         Activity activity = ProduceActivitySource.ForceStartActivity(
             ProduceActivityName,

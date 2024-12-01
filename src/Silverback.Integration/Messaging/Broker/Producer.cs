@@ -95,7 +95,7 @@ public abstract class Producer : IProducer, IDisposable
                 _behaviors,
                 static (finalContext, _) =>
                 {
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                    ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         finalContext.BrokerMessageIdentifier =
                             ((Producer)finalContext.Producer).ProduceCore(finalContext.Envelope);
 
@@ -159,7 +159,7 @@ public abstract class Producer : IProducer, IDisposable
                     static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
                     {
                         ProducerPipelineContext<TState> finalContextWithCallbacks = (ProducerPipelineContext<TState>)finalContext;
-                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
+                        ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
                         finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
                         finalContextWithCallbacks.OnSuccess!.Invoke(identifier, finalContextWithCallbacks.CallbackState!);
                     }
@@ -285,7 +285,7 @@ public abstract class Producer : IProducer, IDisposable
                 _behaviors,
                 static async (finalContext, finalCancellationToken) =>
                 {
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                    ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         finalContext.BrokerMessageIdentifier =
                             await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope, finalCancellationToken).ConfigureAwait(false);
 

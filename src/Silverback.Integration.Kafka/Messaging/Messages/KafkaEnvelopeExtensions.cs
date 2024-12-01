@@ -34,9 +34,9 @@ public static class KafkaEnvelopeExtensions
     ///     The Kafka message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetKafkaKey(this IRawOutboundEnvelope envelope, string key)
+    public static IOutboundEnvelope SetKafkaKey(this IOutboundEnvelope envelope, string key)
     {
         Check.NotNull(envelope, nameof(envelope));
         envelope.SetMessageId(key);
@@ -76,7 +76,7 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The destination topic.
     /// </returns>
-    public static string? GetKafkaDestinationTopic(this IRawOutboundEnvelope envelope) =>
+    public static string? GetKafkaDestinationTopic(this IOutboundEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(KafkaMessageHeaders.DestinationTopic);
 
     /// <summary>
@@ -88,7 +88,7 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The destination partition.
     /// </returns>
-    public static int? GetKafkaDestinationPartition(this IRawOutboundEnvelope envelope) =>
+    public static int? GetKafkaDestinationPartition(this IOutboundEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<int>(KafkaMessageHeaders.DestinationPartition);
 
     /// <summary>
@@ -104,9 +104,9 @@ public static class KafkaEnvelopeExtensions
     ///     The destination partition.
     /// </param>
     /// <returns>
-    ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetKafkaDestinationTopic(this IRawOutboundEnvelope envelope, string destinationTopic, int? destinationPartition = null)
+    public static IOutboundEnvelope SetKafkaDestinationTopic(this IOutboundEnvelope envelope, string destinationTopic, int? destinationPartition = null)
     {
         Check.NotNull(envelope, nameof(envelope));
         envelope.Headers.AddOrReplace(KafkaMessageHeaders.DestinationTopic, destinationTopic);
@@ -127,9 +127,9 @@ public static class KafkaEnvelopeExtensions
     ///     The destination partition.
     /// </param>
     /// <returns>
-    ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IRawOutboundEnvelope SetKafkaDestinationPartition(this IRawOutboundEnvelope envelope, int destinationPartition)
+    public static IOutboundEnvelope SetKafkaDestinationPartition(this IOutboundEnvelope envelope, int destinationPartition)
     {
         Check.NotNull(envelope, nameof(envelope));
         envelope.Headers.AddOrReplace(KafkaMessageHeaders.DestinationPartition, destinationPartition);

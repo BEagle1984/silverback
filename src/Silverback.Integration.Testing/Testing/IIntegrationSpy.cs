@@ -15,20 +15,20 @@ public interface IIntegrationSpy
     ///     Gets the list of <see cref="IOutboundEnvelope" /> corresponding to all the outbound messages.
     /// </summary>
     /// <remarks>
-    ///     The messages produces via <c>RawProduce</c> or <c>RawProduceAsync</c> will not go through the Silverback
+    ///     The messages produced via <c>RawProduce</c> or <c>RawProduceAsync</c> will not go through the Silverback
     ///     pipeline and will therefore not show up in this collection.
     /// </remarks>
     IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes { get; }
 
     /// <summary>
-    ///     Gets the list of <see cref="IRawOutboundEnvelope" /> corresponding to all the actual outbound messages
+    ///     Gets the list of <see cref="IOutboundEnvelope" /> corresponding to all the actual outbound messages
     ///     being produced (these may differ from the <see cref="OutboundEnvelopes" />, e.g. if chunking is applied).
     /// </summary>
     /// <remarks>
-    ///     The messages produces via <c>RawProduce</c> or <c>RawProduceAsync</c> will not go through the Silverback
+    ///     The messages produced via <c>RawProduce</c> or <c>RawProduceAsync</c> will not go through the Silverback
     ///     pipeline and will therefore not show up in this collection.
     /// </remarks>
-    IReadOnlyList<IRawOutboundEnvelope> RawOutboundEnvelopes { get; }
+    IReadOnlyList<IOutboundEnvelope> RawOutboundEnvelopes { get; }
 
     /// <summary>
     ///     Gets the list of <see cref="IRawInboundEnvelope" /> corresponding to all the inbound messages, before

@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
+internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
 {
     private ProducerEndpoint? _endpoint;
 
@@ -20,8 +21,12 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
         IProducer producer,
         ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(headers, endpointConfiguration, producer, context, brokerMessageIdentifier)
+        : base(null, headers)
     {
+        EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
+        Producer = Check.NotNull(producer, nameof(producer));
+        Context = context;
+        BrokerMessageIdentifier = brokerMessageIdentifier;
         Message = message;
 
         if (message is byte[] rawMessage)
@@ -31,11 +36,43 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
             RawMessage = stream;
     }
 
-    public object? Message { get; init; }
+    public ProducerEndpointConfiguration EndpointConfiguration { get; }
+
+    public IProducer Producer { get; }
+
+    public ISilverbackContext? Context { get; }
 
     public virtual Type MessageType => Message?.GetType() ?? typeof(object);
 
     public bool IsTombstone => Message is null or ITombstone;
+
+    public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
+
+    public object? Message { get; init; }
+
+    public IOutboundEnvelope AddHeader(string name, object value)
+    {
+        Headers.Add(name, value);
+        return this;
+    }
+
+    public IOutboundEnvelope AddOrReplaceHeader(string name, object? newValue)
+    {
+        Headers.AddOrReplace(name, newValue);
+        return this;
+    }
+
+    public IOutboundEnvelope AddHeaderIfNotExists(string name, object? newValue)
+    {
+        Headers.AddIfNotExists(name, newValue);
+        return this;
+    }
+
+    public IOutboundEnvelope SetMessageId(object? value)
+    {
+        Headers.AddOrReplace(DefaultMessageHeaders.MessageId, value);
+        return this;
+    }
 
     public ProducerEndpoint GetEndpoint() => _endpoint ??= EndpointConfiguration.EndpointResolver.GetEndpoint(this);
 
