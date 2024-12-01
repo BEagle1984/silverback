@@ -45,6 +45,9 @@ internal record RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
 
     public IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
 
-    public IRawInboundEnvelope CloneReplacingRawMessage(Stream? rawMessage) =>
-        new InboundEnvelope(rawMessage, Headers, Endpoint, Consumer, BrokerMessageIdentifier);
+    public IRawInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
+    {
+        RawMessage = newRawMessage,
+        Headers = new MessageHeaderCollection(Headers)
+    };
 }
