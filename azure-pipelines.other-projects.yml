@@ -1,0 +1,35 @@
+name: other-projects.$(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+  buildConfiguration: 'Release'
+  enableLegacyVersionTests: false
+
+steps:
+  # Install .NET SDK
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '8.0.x'
+    displayName: 'Install SDK 8.0.x'
+  # Build nuget packages
+  - script: |
+      cd nuget
+      pwsh ./Update.ps1
+    displayName: 'Build Silverback packages'
+  - script: |
+      dotnet nuget add source "$(pwd)/nuget" --name local
+      echo "$(pwd)/nuget added as package source"
+    displayName: 'Set package source'
+  # Build
+  - script: |
+      dotnet build ./samples/Silverback.Samples.sln --configuration $(buildConfiguration) | tee build.log && grep -q 'Build succeeded' build.log
+    displayName: 'Build Samples ($(buildConfiguration))'
+  - script: |
+      dotnet build ./benchmarks/SilverbackBenchmarks.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
+    displayName: 'Build Benchmarks ($(buildConfiguration))'
+  - script: |
+      dotnet build ./testbench/SilverbackTestBench.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
+    displayName: 'Build Test Bench ($(buildConfiguration))'
