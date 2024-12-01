@@ -15,11 +15,11 @@ steps:
       version: '8.0.x'
     displayName: 'Install SDK 8.0.x'
   # Build, test and analyze
-  - task: SonarCloudPrepare@2
+  - task: SonarCloudPrepare@3
     inputs:
       SonarCloud: 'Silverback SonarCloud'
       organization: 'silverback'
-      scannerMode: 'MSBuild'
+      scannerMode: 'dotnet'
       projectKey: 'silverback'
       projectName: 'silverback'
       projectVersion: '5.0.0'
@@ -85,10 +85,10 @@ steps:
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
     displayName: 'Run E2E tests (.NET 6)'
     condition: eq(variables.enableLegacyVersionTests, true)
-  - task: SonarCloudAnalyze@2
+  - task: SonarCloudAnalyze@3
     condition: succeededOrFailed()
     displayName: 'Run SonarCloud analysis'
-  - task: SonarCloudPublish@2
+  - task: SonarCloudPublish@3
     condition: succeededOrFailed()
     displayName: 'Publish SonarCloud quality gate result'
   # Publish results
@@ -98,7 +98,7 @@ steps:
       testRunner: 'VSTest'
       testResultsFiles: '**/*.trx'
     displayName: 'Publish test results'
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     condition: succeededOrFailed()
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.*.cobertura.xml'
