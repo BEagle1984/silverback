@@ -74,7 +74,10 @@ public class Publisher : IPublisher
         PublishAsync<TResult>(message, false, cancellationToken);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool, CancellationToken)" />
-    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken) =>
+    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
+        object message,
+        bool throwIfUnhandled,
+        CancellationToken cancellationToken = default) =>
         CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false)).ToList();
 
     private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
