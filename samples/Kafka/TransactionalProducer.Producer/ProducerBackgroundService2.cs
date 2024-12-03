@@ -57,7 +57,8 @@ public class ProducerBackgroundService2 : BackgroundService
                     new() { Number = number + 3 },
                     new() { Number = number + 4 },
                     new() { Number = number + 5 }
-                });
+                },
+                stoppingToken);
 
             _logger.LogInformation("Produced {Number} in transaction '{TransactionalIdSuffix}'", 5, transaction.TransactionalIdSuffix);
             await Task.Delay(3000, stoppingToken);
