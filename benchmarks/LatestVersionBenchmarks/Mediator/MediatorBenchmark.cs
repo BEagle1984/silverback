@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Benchmarks.Latest.Common;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
