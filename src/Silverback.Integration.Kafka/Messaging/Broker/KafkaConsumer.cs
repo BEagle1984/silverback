@@ -106,6 +106,24 @@ namespace Silverback.Messaging.Broker
         public override IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() =>
             _channelsManager?.SequenceStores ?? Array.Empty<ISequenceStore>();
 
+        /// <summary>
+        ///     Look up the offsets for the given partitions by timestamp. The returned offset for each partition
+        ///     is the earliest offset for which the timestamp is greater than or equal to the given timestamp.
+        ///     If the provided timestamp exceeds that of the last message in the partition, a value of
+        ///     <c>Offset.End</c> (-1) will be returned.
+        /// </summary>
+        /// <param name="topicPartitionTimestamps">
+        ///     The list of partitions with the target timestamps.
+        /// </param>
+        /// <param name="timeout">
+        ///     The maximum amount of time to block waiting for the requested offsets.
+        /// </param>
+        /// <returns>
+        ///     The list of offsets for each partition.
+        /// </returns>
+        public IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamp(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout) =>
+            ConfluentConsumer.OffsetsForTimes(topicPartitionTimestamps, timeout);
+
         internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
         {
             if (IsDisconnecting)
@@ -135,6 +153,8 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
 
             CommitOffsets();
+
+            _consumeLoopHandler?.OffsetsTracker?.UntrackAllPartitions();
 
             // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
             // reassigned only if Consume is called again.
@@ -224,6 +244,15 @@ namespace Silverback.Messaging.Broker
                     _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
                 {
                     InitAndStartChannelsManager(ConfluentConsumer.Assignment);
+
+                    foreach (TopicPartition topicPartition in ConfluentConsumer.Assignment)
+                    {
+                        _consumeLoopHandler?.OffsetsTracker?.TrackOffset(
+                            new KafkaOffset(
+                                topicPartition.Topic,
+                                topicPartition.Partition,
+                                Offset.Unset));
+                    }
                 }
 
                 // The consume loop must start immediately because the partitions assignment is received
@@ -262,13 +291,14 @@ namespace Silverback.Messaging.Broker
                         .First()
                         .AsTopicPartitionOffset());
 
-            StoreOffset(
-                lastOffsets
-                    .Select(
-                        topicPartitionOffset => new TopicPartitionOffset(
-                            topicPartitionOffset.TopicPartition,
-                            topicPartitionOffset.Offset + 1)) // Commit next offset (+1)
-                    .ToArray());
+            foreach (TopicPartitionOffset topicPartitionOffset in lastOffsets)
+            {
+                _consumeLoopHandler?.OffsetsTracker?.Commit(topicPartitionOffset);
+                StoreOffset(
+                    new TopicPartitionOffset(
+                        topicPartitionOffset.TopicPartition,
+                        topicPartitionOffset.Offset + 1)); // Commit next offset (+1)
+            }
 
             CommitOffsetsIfNeeded();
 
@@ -284,6 +314,10 @@ namespace Silverback.Messaging.Broker
             // TODO: review for incremental rebalance
             if (IsRebalancing || IsStopping)
                 return Task.CompletedTask;
+
+            // If the partitions are being processed together we must rollback them all
+            if (!Endpoint.ProcessPartitionsIndependently && _consumeLoopHandler?.OffsetsTracker != null)
+                brokerMessageIdentifiers = _consumeLoopHandler.OffsetsTracker.GetRollbackOffSets().AsReadOnlyCollection();
 
             var latestTopicPartitionOffsets =
                 brokerMessageIdentifiers
@@ -333,9 +367,13 @@ namespace Silverback.Messaging.Broker
 
                 lock (_channelsLock)
                 {
+                    if (!Endpoint.ProcessPartitionsIndependently)
+                        _channelsManager?.ResetAllChannels();
+
                     foreach (var topicPartition in topicPartitions)
                     {
-                        _channelsManager?.ResetChannel(topicPartition);
+                        if (Endpoint.ProcessPartitionsIndependently)
+                            _channelsManager?.ResetChannel(topicPartition);
 
                         if (IsConsuming)
                         {
@@ -526,21 +564,18 @@ namespace Silverback.Messaging.Broker
             _confluentConsumer = null;
         }
 
-        private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
+        private void StoreOffset(TopicPartitionOffset offset)
         {
-            foreach (var offset in offsets)
-            {
-                _logger.LogConsumerLowLevelTrace(
-                    this,
-                    "Storing offset {topic}[{partition}]@{offset}.",
-                    () => new object[]
-                    {
-                        offset.Topic,
-                        offset.Partition.Value,
-                        offset.Offset.Value
-                    });
-                ConfluentConsumer.StoreOffset(offset);
-            }
+            _logger.LogConsumerLowLevelTrace(
+                this,
+                "Storing offset {topic}[{partition}]@{offset}.",
+                () => new object[]
+                {
+                    offset.Topic,
+                    offset.Partition.Value,
+                    offset.Offset.Value
+                });
+            ConfluentConsumer.StoreOffset(offset);
         }
 
         private void CommitOffsetsIfNeeded()

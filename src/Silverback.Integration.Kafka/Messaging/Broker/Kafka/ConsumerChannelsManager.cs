@@ -122,6 +122,14 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public void ResetChannel(TopicPartition topicPartition) => ResetChannel(GetChannelIndex(topicPartition));
 
+        public void ResetAllChannels()
+        {
+            for (int i = 0; i < Channels.Length; i++)
+            {
+                ResetChannel(i);
+            }
+        }
+
         // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
         // synchronously to stay within a single long-running thread with the Consume loop.
         public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)

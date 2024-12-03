@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public Metadata GetMetadata(string topic, TimeSpan timeout)
         {
             var partitionsMetadata =
-                Enumerable.Range(0, _options.DefaultPartitionsCount)
+                Enumerable.Range(0, _options.TopicPartitionsCount.TryGetValue(topic, out int partitionsCount) ? partitionsCount : _options.DefaultPartitionsCount)
                     .Select(
                         i => new PartitionMetadata(
                             i,

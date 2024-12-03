@@ -27,6 +27,12 @@ namespace Silverback.Messaging.Configuration.Kafka
             return this;
         }
 
+        public IMockedKafkaOptionsBuilder WithPartitionsCount(string topicName, int partitionsCount)
+        {
+            MockedKafkaOptions.TopicPartitionsCount[topicName] = partitionsCount;
+            return this;
+        }
+
         public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
         {
             MockedKafkaOptions.OverriddenAutoCommitIntervalMs = intervalMs;

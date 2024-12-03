@@ -224,7 +224,7 @@ The mocked topics can be retrieved and inspected via the `GetTopic` method of th
 
 ### Partitioning
 
-By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. The setting is per broker and there's currently no way to configure each topic independently.
+By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. One can also specify the number of partitions per topic.
 
 ```csharp
 public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
@@ -239,7 +239,9 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
             {
                 services
                     .UseMockedKafka(options => options
-                        .WithDefaultPartitionsCount(10));
+                        .WithDefaultPartitionsCount(10)
+                        .WithPartitionsCount("my-topic", 3)
+                        .WithPartitionsCount("my-other-topic", 1);
             });
         });
     }

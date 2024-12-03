@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Silverback.Diagnostics;
 using Silverback.Util;
 
@@ -34,9 +35,14 @@ namespace Silverback.Messaging.Broker.Kafka
             _consumer = Check.NotNull(consumer, nameof(consumer));
             _channelsManager = channelsManager;
             _logger = Check.NotNull(logger, nameof(logger));
+
+            if (!consumer.Endpoint.ProcessPartitionsIndependently)
+                OffsetsTracker = new OffsetsTracker();
         }
 
         public InstanceIdentifier Id { get; } = new();
+
+        public OffsetsTracker? OffsetsTracker { get; }
 
         public Task Stopping => _consumeTaskCompletionSource?.Task ?? Task.CompletedTask;
 
@@ -158,6 +164,8 @@ namespace Silverback.Messaging.Broker.Kafka
                     return true;
 
                 _logger.LogConsuming(consumeResult, _consumer);
+
+                OffsetsTracker?.TrackOffset(consumeResult.TopicPartitionOffset);
 
                 if (_channelsManager == null)
                     throw new InvalidOperationException("The ChannelsManager is not initialized.");

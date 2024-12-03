@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 _ => new InMemoryTopic(
                     name,
                     bootstrapServers,
-                    _options.DefaultPartitionsCount,
+                    _options.TopicPartitionsCount.TryGetValue(name, out int partitionsCount) ? partitionsCount : _options.DefaultPartitionsCount,
                     _consumersLock));
 
         public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
