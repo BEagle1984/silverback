@@ -40,8 +40,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     /// <returns>
     ///     The <see cref="SqliteKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review method name (With...)
-    public SqliteKafkaOffsetStoreSettingsBuilder WithTableName(string tableName)
+    public SqliteKafkaOffsetStoreSettingsBuilder UseTable(string tableName)
     {
         _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
         return this;

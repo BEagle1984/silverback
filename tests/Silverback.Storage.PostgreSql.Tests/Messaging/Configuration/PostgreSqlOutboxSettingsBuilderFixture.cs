@@ -23,11 +23,11 @@ public class PostgreSqlOutboxSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithTableName_ShouldSetOutboxTableName()
+    public void UseTable_ShouldSetOutboxTableName()
     {
         PostgreSqlOutboxSettingsBuilder builder = new("connection-string");
 
-        OutboxSettings settings = builder.WithTableName("test-outbox").Build();
+        OutboxSettings settings = builder.UseTable("test-outbox").Build();
 
         settings.As<PostgreSqlOutboxSettings>().TableName.Should().Be("test-outbox");
     }

@@ -21,11 +21,11 @@ public class PostgreSqlTableLockSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithTableName_ShouldSetLocksTableName()
+    public void UseTable_ShouldSetLocksTableName()
     {
         PostgreSqlTableLockSettingsBuilder builder = new("my-lock", "connection-string");
 
-        DistributedLockSettings settings = builder.WithTableName("test-locks").Build();
+        DistributedLockSettings settings = builder.UseTable("test-locks").Build();
 
         settings.As<PostgreSqlTableLockSettings>().TableName.Should().Be("test-locks");
     }

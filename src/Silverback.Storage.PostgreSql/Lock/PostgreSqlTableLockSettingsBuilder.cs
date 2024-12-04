@@ -52,8 +52,7 @@ public class PostgreSqlTableLockSettingsBuilder : IDistributedLockSettingsImplem
     /// <returns>
     ///     The <see cref="PostgreSqlTableLockSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review method name (With...)
-    public PostgreSqlTableLockSettingsBuilder WithTableName(string tableName)
+    public PostgreSqlTableLockSettingsBuilder UseTable(string tableName)
     {
         _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
         return this;

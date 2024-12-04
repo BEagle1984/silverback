@@ -23,11 +23,11 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithTableName_ShouldSetOffsetStoreTableName()
+    public void UseTable_ShouldSetOffsetStoreTableName()
     {
         PostgreSqlKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
 
-        KafkaOffsetStoreSettings settings = builder.WithTableName("test-offsetStore").Build();
+        KafkaOffsetStoreSettings settings = builder.UseTable("test-offsetStore").Build();
 
         settings.As<PostgreSqlKafkaOffsetStoreSettings>().TableName.Should().Be("test-offsetStore");
     }

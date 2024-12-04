@@ -40,8 +40,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     /// <returns>
     ///     The <see cref="PostgreSqlKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review method name (With...)
-    public PostgreSqlKafkaOffsetStoreSettingsBuilder WithTableName(string tableName)
+    public PostgreSqlKafkaOffsetStoreSettingsBuilder UseTable(string tableName)
     {
         _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
         return this;

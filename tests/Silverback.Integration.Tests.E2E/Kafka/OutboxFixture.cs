@@ -221,11 +221,11 @@ public class OutboxFixture : KafkaFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).WithTableName("outbox1"))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox1"))
                                 .WithInterval(TimeSpan.FromMilliseconds(50)))
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).WithTableName("outbox2"))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox2"))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -239,7 +239,7 @@ public class OutboxFixture : KafkaFixture
                                         .StoreToOutbox(
                                             outbox => outbox
                                                 .UseSqlite(database.ConnectionString)
-                                                .WithTableName("outbox1")))
+                                                .UseTable("outbox1")))
                                 .Produce<TestEventTwo>(
                                     "my-endpoint-2",
                                     endpoint => endpoint
@@ -247,7 +247,7 @@ public class OutboxFixture : KafkaFixture
                                         .StoreToOutbox(
                                             outbox => outbox
                                                 .UseSqlite(database.ConnectionString)
-                                                .WithTableName("outbox2"))))
+                                                .UseTable("outbox2"))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)

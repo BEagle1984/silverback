@@ -23,11 +23,11 @@ public class SqliteOutboxSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithTableName_ShouldSetOutboxTableName()
+    public void UseTable_ShouldSetOutboxTableName()
     {
         SqliteOutboxSettingsBuilder builder = new("connection-string");
 
-        OutboxSettings settings = builder.WithTableName("test-outbox").Build();
+        OutboxSettings settings = builder.UseTable("test-outbox").Build();
 
         settings.As<SqliteOutboxSettings>().TableName.Should().Be("test-outbox");
     }

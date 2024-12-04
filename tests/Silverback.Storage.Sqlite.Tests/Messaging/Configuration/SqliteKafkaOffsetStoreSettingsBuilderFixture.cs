@@ -23,11 +23,11 @@ public class SqliteKafkaOffsetStoreSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithTableName_ShouldSetOffsetStoreTableName()
+    public void UseTable_ShouldSetOffsetStoreTableName()
     {
         SqliteKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
 
-        KafkaOffsetStoreSettings settings = builder.WithTableName("test-offsetStore").Build();
+        KafkaOffsetStoreSettings settings = builder.UseTable("test-offsetStore").Build();
 
         settings.As<SqliteKafkaOffsetStoreSettings>().TableName.Should().Be("test-offsetStore");
     }

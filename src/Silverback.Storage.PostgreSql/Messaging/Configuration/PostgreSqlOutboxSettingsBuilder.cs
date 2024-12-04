@@ -40,8 +40,7 @@ public class PostgreSqlOutboxSettingsBuilder : IOutboxSettingsImplementationBuil
     /// <returns>
     ///     The <see cref="PostgreSqlOutboxSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review method name (With...)
-    public PostgreSqlOutboxSettingsBuilder WithTableName(string tableName)
+    public PostgreSqlOutboxSettingsBuilder UseTable(string tableName)
     {
         _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
         return this;

@@ -40,8 +40,7 @@ public class SqliteOutboxSettingsBuilder : IOutboxSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="SqliteOutboxSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review method name (With...)
-    public SqliteOutboxSettingsBuilder WithTableName(string tableName)
+    public SqliteOutboxSettingsBuilder UseTable(string tableName)
     {
         _tableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
         return this;
