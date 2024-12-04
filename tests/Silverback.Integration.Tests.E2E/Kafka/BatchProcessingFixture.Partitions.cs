@@ -72,6 +72,70 @@ public partial class BatchProcessingFixture
     }
 
     [Fact]
+    public async Task Batch_ShouldCreateConcurrentBatchPerPartition_WhenSubscribingMultipleTopicsFromSameConsumer()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    "consumer1",
+                                    endpoint => endpoint
+                                        .ConsumeFrom("topic1", "topic2")
+                                        .EnableBatchProcessing(10))))
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+            }
+        }
+
+        IProducer producer1 = Helper.GetProducer(
+            producer => producer
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .Produce<TestEventOne>(
+                    endpoint => endpoint
+                        .ProduceTo("topic1")
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+        IProducer producer2 = Helper.GetProducer(
+            producer => producer
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .Produce<TestEventOne>(
+                    endpoint => endpoint
+                        .ProduceTo("topic2")
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+
+        for (int i = 1; i <= 10; i++)
+        {
+            await producer1.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await producer2.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 20);
+
+        receivedBatches.Sum(messages => messages.Count).Should().Be(20);
+        receivedBatches.Count.Should().Be(6);
+    }
+
+    [Fact]
     public async Task Batch_ShouldCreateSingleBatch_WhenPartitionsProcessedTogether()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
