@@ -4,4 +4,4 @@
 using BenchmarkDotNet.Running;
 using Silverback.Benchmarks.Latest.Producer;
 
-BenchmarkRunner.Run<KafkaProducerBenchmark>();
+BenchmarkRunner.Run<KafkaConsumerPipelineBenchmark>();

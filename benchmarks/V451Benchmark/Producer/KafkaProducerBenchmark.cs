@@ -14,7 +14,6 @@ namespace Silverback.Benchmarks.V451.Producer;
 
 [SimpleJob]
 [MemoryDiagnoser]
-[SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Benchmark methods")]
 [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test code")]
 public class KafkaProducerBenchmark : Benchmark
 {

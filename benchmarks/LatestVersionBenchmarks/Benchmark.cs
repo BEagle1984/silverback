@@ -15,14 +15,16 @@ public abstract class Benchmark
 {
     private IPublisher? _publisher;
 
+    private IHost? _host;
+
     protected IPublisher Publisher => _publisher ?? throw new InvalidOperationException("The publisher is not initialized yet.");
 
-    protected IHost? Host { get; private set; }
+    protected IHost Host => _host ?? throw new InvalidOperationException("Not yet initialized.");
 
     [GlobalSetup]
     public virtual void Setup()
     {
-        Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+        _host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
             .ConfigureServices(
                 services =>
                 {
@@ -38,7 +40,7 @@ public abstract class Benchmark
     }
 
     [GlobalCleanup]
-    public virtual void Cleanup() => Host?.Dispose();
+    public virtual void Cleanup() => _host?.Dispose();
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
