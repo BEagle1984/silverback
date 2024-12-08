@@ -46,12 +46,12 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
     public Task StopReadingAsync(TopicPartition topicPartition)
     {
-        Check.ThrowObjectDisposedIf(_isDisposed, this);
-
         PartitionChannel? channel = GetChannel(topicPartition);
 
         if (channel == null)
             return Task.CompletedTask;
+
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         return StopReadingAsync(channel);
     }
