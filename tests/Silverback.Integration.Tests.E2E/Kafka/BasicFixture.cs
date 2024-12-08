@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -41,6 +42,7 @@ public class BasicFixture : KafkaFixture
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(_ => Task.CompletedTask)
                 .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();

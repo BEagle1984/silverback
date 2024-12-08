@@ -155,7 +155,7 @@ public class Publisher : IPublisher
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetExclusiveMethods(message);
+        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetExclusiveMethods(message, _serviceProvider);
 
         if (methods.Count == 0)
             return [];
@@ -177,7 +177,7 @@ public class Publisher : IPublisher
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetNonExclusiveMethods(message);
+        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetNonExclusiveMethods(message, _serviceProvider);
 
         if (methods.Count == 0)
             return [];

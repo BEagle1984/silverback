@@ -30,7 +30,7 @@ public class SubscribedMethodsLoaderService : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         IServiceScope scope = _serviceScopeFactory.CreateScope();
-        scope.ServiceProvider.GetRequiredService<SubscribedMethodsCacheSingleton>()
+        scope.ServiceProvider.GetRequiredService<SubscribedMethodsCache>()
             .Preload(scope.ServiceProvider);
 
         return Task.CompletedTask;

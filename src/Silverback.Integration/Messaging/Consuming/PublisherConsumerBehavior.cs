@@ -26,8 +26,6 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 {
     private readonly IConsumerLogger<PublisherConsumerBehavior> _logger;
 
-    private bool? _hasAnyMessageStreamSubscriber;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
     /// </summary>
@@ -64,13 +62,13 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         {
             bool throwIfUnhandled = context.Envelope.Endpoint.Configuration.ThrowIfUnhandled;
 
-            if (HasAnyMessageStreamSubscriber(context) && context.Envelope is IInboundEnvelope envelope)
+            if (context.Envelope is IInboundEnvelope envelope && HasMessageStreamSubscriber(context))
             {
                 UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
                 AddToSequenceResult result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
 
-                if (unboundedSequence.IsAborted && unboundedSequence.AbortException != null)
+                if (unboundedSequence is { IsAborted: true, AbortException: not null })
                     throw unboundedSequence.AbortException;
 
                 throwIfUnhandled &= result.PushedStreamsCount == 0;
@@ -88,6 +86,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         CancellationToken cancellationToken) =>
         await context.ServiceProvider.GetRequiredService<IPublisher>()
             .PublishAsync(context.Envelope, throwIfUnhandled, cancellationToken).ConfigureAwait(false);
+
+    private static bool HasMessageStreamSubscriber(ConsumerPipelineContext context) =>
+        context.ServiceProvider.GetRequiredService<SubscribedMethodsCache>()
+            .HasMessageStreamSubscriber(context.Envelope, context.ServiceProvider);
 
     private async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
@@ -220,7 +222,4 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
             },
             CancellationToken.None); // Let this task run until completion
     }
-
-    private bool HasAnyMessageStreamSubscriber(ConsumerPipelineContext context) =>
-        _hasAnyMessageStreamSubscriber ??= context.ServiceProvider.GetRequiredService<SubscribedMethodsCache>().HasAnyMessageStreamSubscriber;
 }
