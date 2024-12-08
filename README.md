@@ -20,8 +20,8 @@ Discover more in the [project's website][docs-site].
 
 ### Continuous Build
 
-[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
-[![.NET Tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
+[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=release%2F5.0.0)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=release%2F5.0.0)
+[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/release%2F5.0.0)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=release%2F5.0.0)
 
 ### Sonar Build
 
