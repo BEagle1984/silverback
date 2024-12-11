@@ -2,13 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Util;
 
-public class TypesCacheFixture
+public partial class TypesCacheFixture
 {
     [Theory]
     [InlineData(null)]
@@ -72,17 +73,25 @@ public class TypesCacheFixture
     }
 
     [Theory]
-    [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2")]
-    [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests")]
-    [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests")]
-    [InlineData("Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], Silverback.Core.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2, Silverback.Core.Tests")]
-    [InlineData("Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]", "Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2")]
-    public void CleanAssemblyQualifiedName_ShouldReturnCorrectGenericType(string typeAssemblyQualifiedName, string expected)
+    [MemberData(nameof(GetType_ShouldReturnCorrectGenericType_TestData))]
+    [SuppressMessage("Performance", "CA1825:Avoid zero-length array allocations", Justification = "Unit test member data.")]
+    public void GetType_ShouldReturnCorrectGenericType(string assemblyQualifiedName, Type expected)
     {
-        string cleanedName = TypesCache.CleanAssemblyQualifiedName(typeAssemblyQualifiedName);
+        Type? type = TypesCache.GetType(assemblyQualifiedName);
 
-        cleanedName.Should().Be(expected);
+        type.Should().NotBeNull();
+        type.Should().Be(expected);
     }
 
     private class TestObject;
+
+    private class GenericTypeTest<T1, T2>
+        where T2 : class
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing")]
+        public T1? P1 { get; set; }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing")]
+        public T2? P2 { get; set; }
+    }
 }
