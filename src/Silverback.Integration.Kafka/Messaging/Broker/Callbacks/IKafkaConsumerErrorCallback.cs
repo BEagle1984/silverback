@@ -27,5 +27,5 @@ public interface IKafkaConsumerErrorCallback : IBrokerClientCallback
     ///     A value whether the error was handled. When <c>true</c> the error will not be logged nor handled in
     ///     any other way by Silverback.
     /// </returns>
-    bool OnConsumerError(Error error, KafkaConsumer consumer);
+    bool OnConsumerError(Error error, IKafkaConsumer consumer);
 }

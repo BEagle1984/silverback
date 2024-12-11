@@ -23,5 +23,5 @@ public interface IKafkaConsumerLogCallback : IBrokerClientCallback
     ///     A value whether the log message was handled/written. When <c>true</c> the message will not be logged nor
     ///     handled in any other way by Silverback.
     /// </returns>
-    bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer);
+    bool OnConsumerLog(LogMessage logMessage, IKafkaConsumer consumer);
 }

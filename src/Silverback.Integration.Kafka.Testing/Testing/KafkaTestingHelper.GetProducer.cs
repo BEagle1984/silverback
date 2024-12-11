@@ -42,7 +42,7 @@ public partial class KafkaTestingHelper
     {
         (KafkaConsumerConfiguration? consumerConfiguration, KafkaConsumerEndpointConfiguration? endpointConfiguration) =
             consumers
-                .OfType<KafkaConsumer>()
+                .OfType<IKafkaConsumer>()
                 .SelectMany(
                     consumer => consumer.Configuration.Endpoints.Select(
                         endpoint =>

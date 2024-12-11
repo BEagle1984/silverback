@@ -17,7 +17,7 @@ public class TestKafkaOffsetCommittedCallback : IKafkaOffsetCommittedCallback
 
     public int CallsCount => _callsCount;
 
-    public void OnOffsetsCommitted(CommittedOffsets offsets, KafkaConsumer consumer)
+    public void OnOffsetsCommitted(CommittedOffsets offsets, IKafkaConsumer consumer)
     {
         foreach (TopicPartitionOffsetError? offset in offsets.Offsets)
         {

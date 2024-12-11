@@ -29,5 +29,5 @@ public interface IKafkaPartitionEofCallback : IBrokerClientCallback
     ///     The <see cref="KafkaConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
     ///     <see cref="KafkaConsumerConfiguration" />, otherwise the underlying library will not emit this event.
     /// </remarks>
-    void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer);
+    void OnEndOfTopicPartitionReached(TopicPartition topicPartition, IKafkaConsumer consumer);
 }

@@ -100,7 +100,7 @@ public partial class BrokerClientCallbacksFixture
     {
         public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
             IReadOnlyCollection<TopicPartition> topicPartitions,
-            KafkaConsumer consumer) =>
+            IKafkaConsumer consumer) =>
             topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
     }
 
@@ -108,6 +108,6 @@ public partial class BrokerClientCallbacksFixture
     {
         public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(
             IReadOnlyCollection<TopicPartition> topicPartitions,
-            KafkaConsumer consumer) => null;
+            IKafkaConsumer consumer) => null;
     }
 }

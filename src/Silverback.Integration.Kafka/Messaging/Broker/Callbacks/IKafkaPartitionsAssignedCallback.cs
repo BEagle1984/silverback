@@ -34,5 +34,5 @@ public interface IKafkaPartitionsAssignedCallback : IBrokerClientCallback
     ///         considered <c>Unset</c>.
     ///     </para>
     /// </returns>
-    IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> topicPartitions, KafkaConsumer consumer);
+    IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> topicPartitions, IKafkaConsumer consumer);
 }

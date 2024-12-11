@@ -41,5 +41,5 @@ public interface IKafkaOffsetCommittedCallback : IBrokerClientCallback
     /// <param name="consumer">
     ///     The related consumer instance.
     /// </param>
-    void OnOffsetsCommitted(CommittedOffsets offsets, KafkaConsumer consumer);
+    void OnOffsetsCommitted(CommittedOffsets offsets, IKafkaConsumer consumer);
 }

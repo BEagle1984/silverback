@@ -83,7 +83,7 @@ public partial class BrokerClientCallbacksFixture
 
         private ConcurrentDictionary<TopicPartition, int> PartitionEofCallbacksDictionary { get; } = new();
 
-        public void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer) =>
+        public void OnEndOfTopicPartitionReached(TopicPartition topicPartition, IKafkaConsumer consumer) =>
             PartitionEofCallbacksDictionary.AddOrUpdate(topicPartition, 1, (_, value) => value + 1);
     }
 }

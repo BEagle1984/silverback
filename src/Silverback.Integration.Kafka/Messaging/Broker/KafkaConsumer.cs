@@ -21,7 +21,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker;
 
 /// <inheritdoc cref="Consumer{TIdentifier}" />
-public class KafkaConsumer : Consumer<KafkaOffset>
+public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
@@ -104,39 +104,22 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         Client.Initialized.AddHandler(OnClientConnectedAsync);
     }
 
-    /// <inheritdoc cref="Consumer{TIdentifier}.Client" />
+    /// <inheritdoc cref="IKafkaConsumer.Client" />
     public new IConfluentConsumerWrapper Client { get; }
 
-    /// <summary>
-    ///     Gets the consumer configuration.
-    /// </summary>
+    /// <inheritdoc cref="IKafkaConsumer.Configuration" />
     public KafkaConsumerConfiguration Configuration { get; }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.EndpointsConfiguration" />
     public new IReadOnlyCollection<KafkaConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.Endpoints;
 
-    /// <summary>
-    ///     Pauses the consumption of the specified partitions.
-    /// </summary>
-    /// <param name="partitions">
-    ///     The list of <see cref="TopicPartition" /> to be paused.
-    /// </param>
+    /// <inheritdoc cref="IKafkaConsumer.Pause" />
     public void Pause(IEnumerable<TopicPartition> partitions) => Client.Pause(partitions);
 
-    /// <summary>
-    ///     Resumes the consumption of the specified partitions.
-    /// </summary>
-    /// <param name="partitions">
-    ///     The list of <see cref="TopicPartition" /> to be paused.
-    /// </param>
+    /// <inheritdoc cref="IKafkaConsumer.Resume" />
     public void Resume(IEnumerable<TopicPartition> partitions) => Client.Resume(partitions);
 
-    /// <summary>
-    ///     Seeks the specified partition to the specified offset.
-    /// </summary>
-    /// <param name="topicPartitionOffset">
-    ///     The offset.
-    /// </param>
+    /// <inheritdoc cref="IKafkaConsumer.Seek" />
     public void Seek(TopicPartitionOffset topicPartitionOffset) => Client.Seek(topicPartitionOffset);
 
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
@@ -172,12 +155,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         if (_offsets != null)
             topicPartitionOffsets.ForEach(topicPartitionOffset => _offsets.UntrackPartition(topicPartitionOffset.TopicPartition));
 
-        // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
-        // reassigned only if Consume is called again.
-        // Furthermore the ConsumeLoopHandler stopping Task cannot be awaited in the
-        // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
-        // "frozen" during that operation and will never return, therefore the stopping Task would never
-        // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
+        // The ConsumeLoopHandler must be restarted immediately because partition reassignment only occurs when Consume is called again.
+        // Additionally, the Task responsible for stopping the ConsumeLoopHandler cannot be awaited within the OnPartitionsRevoked callback
+        // before the partitions are revoked. This is because the Consume method is "frozen" during that operation and will not return,
+        // causing the stopping Task to never complete. To address this, we start an asynchronous Task to await the stopping Task and restart
+        // the ChannelManager.
         Task.Run(RestartConsumeLoopHandlerAsync).FireAndForget();
     }
 

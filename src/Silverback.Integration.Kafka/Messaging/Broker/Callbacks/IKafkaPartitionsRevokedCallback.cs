@@ -21,5 +21,5 @@ public interface IKafkaPartitionsRevokedCallback : IBrokerClientCallback
     /// <param name="consumer">
     ///     The related consumer instance.
     /// </param>
-    void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, KafkaConsumer consumer);
+    void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, IKafkaConsumer consumer);
 }

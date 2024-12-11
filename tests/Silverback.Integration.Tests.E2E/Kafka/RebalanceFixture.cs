@@ -301,13 +301,13 @@ public class RebalanceFixture : KafkaFixture
 
     private sealed class PartitionCallbacksHandler : IKafkaPartitionsAssignedCallback, IKafkaPartitionsRevokedCallback
     {
-        public ConcurrentDictionary<KafkaConsumer, List<TopicPartition>> CurrentPartitions { get; } = new();
+        public ConcurrentDictionary<IKafkaConsumer, List<TopicPartition>> CurrentPartitions { get; } = new();
 
-        public ConcurrentDictionary<KafkaConsumer, List<TopicPartition>> RevokedPartitions { get; } = new();
+        public ConcurrentDictionary<IKafkaConsumer, List<TopicPartition>> RevokedPartitions { get; } = new();
 
         public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(
             IReadOnlyCollection<TopicPartition> topicPartitions,
-            KafkaConsumer consumer)
+            IKafkaConsumer consumer)
         {
             List<TopicPartition> consumerPartitions = CurrentPartitions.GetOrAdd(
                 consumer,
@@ -318,7 +318,7 @@ public class RebalanceFixture : KafkaFixture
             return null;
         }
 
-        public void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, KafkaConsumer consumer)
+        public void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, IKafkaConsumer consumer)
         {
             CurrentPartitions.TryGetValue(consumer, out List<TopicPartition>? consumerPartitions);
 

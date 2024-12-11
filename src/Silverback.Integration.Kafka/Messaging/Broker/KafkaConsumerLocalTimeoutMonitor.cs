@@ -14,14 +14,14 @@ namespace Silverback.Messaging.Broker;
 public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback
 {
     /// <inheritdoc cref="IKafkaConsumerLogCallback.OnConsumerLog" />
-    public bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer)
+    public bool OnConsumerLog(LogMessage logMessage, IKafkaConsumer consumer)
     {
-        if (consumer == null || logMessage == null)
+        if (logMessage == null || logMessage.Facility != "MAXPOLL")
             return false;
 
-        if (logMessage.Facility == "MAXPOLL")
-            return consumer.OnPollTimeout(logMessage);
+        if (consumer is not KafkaConsumer kafkaConsumer)
+            return false;
 
-        return false;
+        return kafkaConsumer.OnPollTimeout(logMessage);
     }
 }

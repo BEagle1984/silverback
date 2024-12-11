@@ -26,5 +26,5 @@ public interface IKafkaConsumerStatisticsCallback : IBrokerClientCallback
     /// <param name="consumer">
     ///     The related consumer instance.
     /// </param>
-    void OnConsumerStatistics(KafkaStatistics? statistics, string rawStatistics, KafkaConsumer consumer);
+    void OnConsumerStatistics(KafkaStatistics? statistics, string rawStatistics, IKafkaConsumer consumer);
 }
