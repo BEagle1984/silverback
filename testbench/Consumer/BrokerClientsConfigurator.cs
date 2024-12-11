@@ -43,13 +43,13 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             .ConnectViaTcp("haproxy")
                             .Consume<SingleMessage>(
                                 endpoint => endpoint
-                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Topic1}")
+                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Single}")
                                     .WithAtLeastOnceQoS()
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
                                     .OnError(policy => policy.Retry(5).ThenSkip()))
                             .Consume<UnboundedMessage>(
                                 endpoint => endpoint
-                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Topic2}")
+                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Unbounded}")
                                     .WithAtLeastOnceQoS()
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
                                     .OnError(policy => policy.Retry(5).ThenSkip()))));

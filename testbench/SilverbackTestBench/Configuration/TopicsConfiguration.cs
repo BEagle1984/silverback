@@ -19,8 +19,8 @@ public static class TopicsConfiguration
 
     public static IReadOnlyCollection<MqttTopicConfiguration> Mqtt { get; } =
     [
-        new(Topics.Mqtt.Topic1, TimeSpan.FromMilliseconds(200)),
-        new(Topics.Mqtt.Topic2, TimeSpan.FromMilliseconds(50))
+        new(Topics.Mqtt.Single, TimeSpan.FromMilliseconds(200)),
+        new(Topics.Mqtt.Unbounded, TimeSpan.FromMilliseconds(50))
     ];
 
     public static IReadOnlyCollection<TopicConfiguration> All { get; } = Kafka.Cast<TopicConfiguration>().Union(Mqtt).ToArray();
