@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util
 {
-    public class TypesCacheTests
+    public partial class TypesCacheTests
     {
         [Fact]
         public void GetType_ExistingType_TypeReturned()
@@ -64,16 +64,14 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Theory]
-        [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2")]
-        [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests")]
-        [InlineData("Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Silverback.Tests.Core.TestTypes.Messages.TestEventOne2, Silverback.Core.Tests")]
-        [InlineData("Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], Silverback.Core.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2, Silverback.Core.Tests")]
-        [InlineData("Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2[[System.Int32, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int64, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]", "Silverback.Tests.Core.Util.TypesCacheTests+MyMessage`2")]
-        public void GetType_GenericType_TypeReturned(string typeAssemblyQualifiedName, string expected)
+        [MemberData(nameof(AssemblyQualifiedNameType_ReturnType))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1825:Avoid zero-length array allocations", Justification = "Unit test member data.")]
+        public void GetType_GenericType_TypeReturned(string typeAssemblyQualifiedName, AssemblyQualifiedGenericTypeResult expectedResult)
         {
-            string cleanedName = TypesCache.CleanAssemblyQualifiedName(typeAssemblyQualifiedName);
+            var type = TypesCache.GetType(typeAssemblyQualifiedName);
 
-            cleanedName.Should().Be(expected);
+            type.Should().NotBeNull();
+            expectedResult.MatchingType.IsAssignableFrom(type).Should().BeTrue();
         }
     }
 }

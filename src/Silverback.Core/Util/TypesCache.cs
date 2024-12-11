@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Silverback.Util
 {
@@ -30,29 +31,14 @@ namespace Silverback.Util
             return type;
         }
 
-        internal static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
+        private static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
         {
-            if (string.IsNullOrEmpty(typeAssemblyQualifiedName))
+            if (string.IsNullOrWhiteSpace(typeAssemblyQualifiedName))
                 return typeAssemblyQualifiedName;
 
-            int endGenericType = typeAssemblyQualifiedName.LastIndexOf(']');
-            if (endGenericType == -1)
-            {
-                string[] split = typeAssemblyQualifiedName.Split(',', 3, StringSplitOptions.RemoveEmptyEntries);
-                return split.Length >= 2 ? $"{split[0].Trim()}, {split[1].Trim()}" : typeAssemblyQualifiedName;
-            }
+            var cleanAssemblyQualifiedName = Regex.Replace(typeAssemblyQualifiedName, @", (Version=\d+\.\d+\.\d+\.\d+|Culture=\w+|PublicKeyToken=\w+)", string.Empty);
 
-            int startGenericType = typeAssemblyQualifiedName.IndexOf('[', StringComparison.InvariantCulture);
-            if (startGenericType == -1)
-                return typeAssemblyQualifiedName;
-
-            string type = typeAssemblyQualifiedName[..startGenericType].Trim();
-            if (endGenericType + 1 >= typeAssemblyQualifiedName.Length)
-                return type;
-
-            string next = typeAssemblyQualifiedName[(endGenericType + 1)..];
-            string assemblyName = next.Split(",", 2, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
-            return $"{type}, {assemblyName}";
+            return cleanAssemblyQualifiedName;
         }
 
         [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
