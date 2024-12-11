@@ -4,15 +4,16 @@ uid: releases
 
 # Releases
 
-## [4.5.2](https://github.com/BEagle1984/silverback/releases/tag/v4.6.0)
+## [4.6.0](https://github.com/BEagle1984/silverback/releases/tag/v4.6.0)
 
 ### What's new
 
 * Add `GetOffsetsForTimestamp` to `KafkaConsumer`
+* Allow specifying the number of partitions per topic in the mocked Kafka
 
 ### Fixes
 
-* Fix retry policy when batch processing all partitions together
+* Further improve assembly qualified name parsing for generic types
 
 ## [4.5.1](https://github.com/BEagle1984/silverback/releases/tag/v4.5.1)
 
