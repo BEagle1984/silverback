@@ -20,4 +20,4 @@ using Silverback.Tests.Performance;
 * await BenchmarkRunner.Run(typeof(MessageValidatorBenchmark));
 */
 
-BenchmarkRunner.Run(typeof(LockBenchmark));
+BenchmarkRunner.Run(typeof(AsyncEventBenchmark));
