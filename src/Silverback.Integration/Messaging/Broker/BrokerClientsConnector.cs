@@ -19,6 +19,8 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
 
     private readonly BrokerClientConnectionOptions _clientConnectionOptions;
 
+    private readonly ConsumerCollection _consumers;
+
     private readonly ISilverbackLogger<BrokerClientsConnectorService> _logger;
 
     private bool _isInitialized;
@@ -27,11 +29,13 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
         BrokerClientCollection brokerClients,
         BrokerClientsBootstrapper brokerClientsBootstrapper,
         BrokerClientConnectionOptions clientConnectionOptions,
+        ConsumerCollection consumers,
         ISilverbackLogger<BrokerClientsConnectorService> logger)
     {
         _brokerClients = Check.NotNull(brokerClients, nameof(brokerClients));
         _brokerClientsBootstrapper = Check.NotNull(brokerClientsBootstrapper, nameof(brokerClientsBootstrapper));
         _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
+        _consumers = Check.NotNull(consumers, nameof(consumers));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -75,7 +79,13 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.DisconnectAllAsync" />
-    public ValueTask DisconnectAllAsync() => _brokerClients.DisconnectAllAsync();
+    public async ValueTask DisconnectAllAsync()
+    {
+        await _consumers.StopAllAsync().ConfigureAwait(false);
+        _logger.LogLowLevelTrace("All consumers stopped.", () => []);
+        await _brokerClients.DisconnectAllAsync().ConfigureAwait(false);
+        _logger.LogLowLevelTrace("All clients disconnected.", () => []);
+    }
 
     private async Task DelayRetryAsync(CancellationToken cancellationToken)
     {

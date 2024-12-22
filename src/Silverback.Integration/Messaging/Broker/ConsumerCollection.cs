@@ -33,6 +33,8 @@ internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
         _consumers.Add(consumer);
     }
 
+    public ValueTask StopAllAsync() => _consumers.ForEachAsync(consumer => consumer.StopAsync());
+
     public IEnumerator<IConsumer> GetEnumerator() => _consumers.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

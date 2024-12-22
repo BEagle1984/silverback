@@ -228,8 +228,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
                 await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
 
             IsStarted = false;
-
-            _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
         }
         catch (Exception ex)
         {

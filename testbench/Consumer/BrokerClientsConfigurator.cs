@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Confluent.Kafka;
 using Silverback.Messaging.Configuration;
 using Silverback.TestBench.Consumer.Models;
 
@@ -20,6 +21,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                         consumer => consumer
                             .WithGroupId(ClientId)
                             .WithClientId(ClientId)
+                            .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
                             .AutoResetOffsetToEarliest()
                             .Consume<SingleMessage>(
                                 endpoint => endpoint
@@ -34,7 +36,12 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             .Consume<UnboundedMessage>(
                                 endpoint => endpoint.ConsumeFrom(Topics.Kafka.Unbounded)
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))))
+                                    .OnError(policy => policy.Retry(5).ThenSkip())))
+                    .AddProducer(
+                        producer => producer
+                            .Produce<KafkaResponseMessage>(
+                                endpoint => endpoint
+                                    .ProduceTo("testbench-responses"))))
             .AddMqttClients(
                 clients => clients
                     .AddClient(
@@ -52,5 +59,9 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                     .ConsumeFrom($"$share/group/{Topics.Mqtt.Unbounded}")
                                     .WithAtLeastOnceQoS()
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))));
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                            .Produce<MqttResponseMessage>(
+                                endpoint => endpoint
+                                    .ProduceTo("testbench/mqtt/responses")
+                                    .WithAtMostOnceQoS())));
 }

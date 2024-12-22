@@ -5,7 +5,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.TestBench.Consumer.Models;
 using Silverback.TestBench.Models;
 
@@ -13,12 +16,15 @@ namespace Silverback.TestBench.Consumer;
 
 public class Subscriber
 {
+    private readonly IPublisher _publisher;
+
     private readonly ILogger<Subscriber> _logger;
 
     private readonly ConcurrentDictionary<string, int> _failedAttemptsDictionary = new();
 
-    public Subscriber(ILogger<Subscriber> logger)
+    public Subscriber(IPublisher publisher, ILogger<Subscriber> logger)
     {
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -65,6 +71,16 @@ public class Subscriber
                     $"(SimulatedFailuresCount={envelope.Message.SimulatedFailuresCount}, " +
                     $"FailedAttempts={envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts)})");
             }
+        }
+
+        switch (envelope.Endpoint)
+        {
+            case KafkaConsumerEndpoint:
+                await _publisher.PublishAsync(new KafkaResponseMessage { MessageId = envelope.Message.MessageId });
+                break;
+            case MqttConsumerEndpoint:
+                await _publisher.PublishAsync(new MqttResponseMessage { MessageId = envelope.Message.MessageId });
+                break;
         }
 
         _logger.LogInformation(

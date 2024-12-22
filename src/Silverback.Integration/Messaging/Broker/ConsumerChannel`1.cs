@@ -16,15 +16,13 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private readonly ISilverbackLogger _logger;
 
-    private readonly object _readingLock = new();
-
     private Channel<T> _channel;
 
     private TaskCompletionSource<bool> _readTaskCompletionSource = new();
 
     private CancellationTokenSource _readCancellationTokenSource = new();
 
-    private bool _isReading;
+    private int _isReading; // Using an integer instead of a bool to be able to use it with Interlocked
 
     private bool _isDisposed;
 
@@ -64,13 +62,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public bool StartReading()
     {
-        lock (_readingLock)
-        {
-            if (_isReading)
-                return false;
-
-            _isReading = true;
-        }
+        if (Interlocked.CompareExchange(ref _isReading, 1, 0) == 1)
+            return false;
 
         if (_readCancellationTokenSource.IsCancellationRequested)
         {
@@ -79,7 +72,9 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         }
 
         if (_readTaskCompletionSource.Task.IsCompleted)
+        {
             _readTaskCompletionSource = new TaskCompletionSource<bool>();
+        }
 
         return true;
     }
@@ -95,26 +90,18 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 #endif
         }
 
-        lock (_readingLock)
-        {
-            if (!_isReading)
-                _readTaskCompletionSource.TrySetResult(true);
-        }
+        if (Volatile.Read(ref _isReading) == 0)
+            _readTaskCompletionSource.TrySetResult(true);
 
         await _readTaskCompletionSource.Task.ConfigureAwait(false);
     }
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)
     {
-        lock (_readingLock)
-        {
-            if (!_isReading)
-                return;
+        if (Interlocked.CompareExchange(ref _isReading, 0, 1) == 0)
+            return;
 
-            _isReading = false;
-
-            _readTaskCompletionSource.TrySetResult(!hasThrown);
-        }
+        _readTaskCompletionSource.TrySetResult(!hasThrown);
 
         await SequenceStore.AbortAllAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
     }

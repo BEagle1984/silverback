@@ -111,7 +111,7 @@ public class ClientIdFilterFixture : MqttFixture
                         .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
                         .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddDelegateSubscriber<IEvent>(
-                    HandleEventclient1,
+                    HandleEventClient1,
                     new DelegateSubscriptionOptions
                     {
                         Filters =
@@ -120,7 +120,7 @@ public class ClientIdFilterFixture : MqttFixture
                         ]
                     })
                 .AddDelegateSubscriber<IEvent>(
-                    HandleEventclient2,
+                    HandleEventClient2,
                     new DelegateSubscriptionOptions
                     {
                         Filters =
@@ -130,8 +130,8 @@ public class ClientIdFilterFixture : MqttFixture
                     })
                 .AddIntegrationSpy());
 
-        void HandleEventclient1(IEvent message) => Interlocked.Increment(ref received1);
-        void HandleEventclient2(IEvent message) => Interlocked.Increment(ref received2);
+        void HandleEventClient1(IEvent message) => Interlocked.Increment(ref received1);
+        void HandleEventClient2(IEvent message) => Interlocked.Increment(ref received2);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
