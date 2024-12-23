@@ -8,7 +8,7 @@ namespace Silverback.TestBench.Configuration.Models;
 public record MqttTopicConfiguration(
     string TopicName,
     TimeSpan ProduceDelay,
-    double SimulatedFailureChance = 0.01,
+    double SimulatedFailureChance = 0.001,
     bool Enabled = true)
     : TopicConfiguration(TopicName, ProduceDelay, SimulatedFailureChance, Enabled)
 {

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -36,6 +37,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     private readonly KafkaConsumerEndpointsCache _endpointsCache;
 
     private readonly OffsetsTracker? _offsets; // tracked only when processing partitions together
+
+    private readonly ConcurrentDictionary<TopicPartition, byte> _revokedPartitions = new();
 
     private int _messagesSinceCommit;
 
@@ -132,6 +135,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {
+            _revokedPartitions.TryRemove(topicPartitionOffset.TopicPartition, out _);
             _offsets?.TrackOffset(topicPartitionOffset);
             _channelsManager.StartReading(topicPartitionOffset.TopicPartition);
         }
@@ -143,10 +147,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
     {
+        // Track the removed partitions to avoid pausing and seeking in the rollback or committing (necessary for cooperative rebalances)
+        topicPartitionOffsets.ForEach(topicPartitionOffset => _revokedPartitions.TryAdd(topicPartitionOffset.TopicPartition, 0));
+
         RevertConnectedStatus();
 
         _consumeLoopHandler.StopAsync().FireAndForget();
-
         Task.WhenAll(topicPartitionOffsets.Select(offset => _channelsManager.StopReadingAsync(offset.TopicPartition))).SafeWait();
 
         if (!Configuration.EnableAutoCommit)
@@ -246,10 +252,30 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        foreach (KafkaOffset offset in brokerMessageIdentifiers)
+        // Filter out the partitions that have been revoked (during the cooperative rebalance the partitions are handled slightly differently,
+        // and they are reassigned before the commit is over)
+        IEnumerable<KafkaOffset> topicPartitionOffsets = brokerMessageIdentifiers
+            .Where(kafkaOffset => IsNotRevoked(kafkaOffset.TopicPartition));
+
+        foreach (KafkaOffset offset in topicPartitionOffsets)
         {
-            _offsets?.Commit(offset);
-            StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1)); // Commit next offset (+1)
+            if (IsNotRevoked(offset.TopicPartition))
+            {
+                _offsets?.Commit(offset);
+                StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1)); // Commit next offset (+1)
+            }
+            else
+            {
+                _logger.LogConsumerLowLevelTrace(
+                    this,
+                    "Skipping commit of revoked partition: {topic}[{partition}]@{offset}.",
+                    () =>
+                    [
+                        offset.TopicPartition.Topic,
+                        offset.TopicPartition.Partition.Value,
+                        offset.Offset.Value
+                    ]);
+            }
         }
 
         CommitOffsetsIfNeeded();
@@ -270,11 +296,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
             brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
 
-        // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the
-        // pending sequences but we don't want to pause/resume the partitions we aren't processing)
+        // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the pending
+        // sequences, but we don't want to pause/resume the partitions we aren't processing) and the ones that have been revoked (during the
+        // cooperative rebalance the partitions are handled slightly differently, and they are reassigned before the rollback is over)
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
-            .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition))
+            .Where(
+                topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition) &&
+                                        IsNotRevoked(topicPartitionOffset.TopicPartition))
             .AsReadOnlyCollection();
 
         if (IsStarted)
@@ -447,4 +476,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             Client.Commit();
         }
     }
+
+    private bool IsNotRevoked(TopicPartition topicPartition) => !_revokedPartitions.ContainsKey(topicPartition);
 }

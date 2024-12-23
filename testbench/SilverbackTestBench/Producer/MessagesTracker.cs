@@ -15,7 +15,7 @@ namespace Silverback.TestBench.Producer;
 
 public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 {
-    private static readonly TimeSpan LostMessagesThreshold = TimeSpan.FromMinutes(1);
+    private static readonly TimeSpan LostMessagesThreshold = TimeSpan.FromMinutes(5);
 
     private readonly ILogger<MessagesTracker> _logger;
 

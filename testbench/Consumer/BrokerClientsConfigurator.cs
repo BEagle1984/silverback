@@ -19,7 +19,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                     .WithBootstrapServers("PLAINTEXT://kafka:29092")
                     .AddConsumer(
                         consumer => consumer
-                            .WithGroupId(ClientId)
+                            .WithGroupId("testbench")
                             .WithClientId(ClientId)
                             .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
                             .AutoResetOffsetToEarliest()

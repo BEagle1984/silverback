@@ -15,7 +15,7 @@ public static class Topics
 
         public const string Batch = "testbench-kafka-batch";
 
-        public const string Unbounded = "testbench--kafka-unbounded";
+        public const string Unbounded = "testbench-kafka-unbounded";
     }
 
     public static class Mqtt

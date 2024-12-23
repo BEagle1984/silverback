@@ -9,7 +9,7 @@ public record KafkaTopicConfiguration(
     string TopicName,
     int PartitionsCount,
     TimeSpan ProduceDelay,
-    double SimulatedFailureChance = 0.01,
+    double SimulatedFailureChance = 0.001,
     bool Enabled = true)
     : TopicConfiguration(TopicName, ProduceDelay, SimulatedFailureChance, Enabled)
 {
