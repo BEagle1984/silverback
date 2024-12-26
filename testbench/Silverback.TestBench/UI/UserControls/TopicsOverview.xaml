@@ -1,0 +1,122 @@
+﻿<UserControl x:Class="Silverback.TestBench.UI.UserControls.TopicsOverview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:Silverback.TestBench.ViewModel"
+             xmlns:converters="clr-namespace:Silverback.TestBench.UI.Converters"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="500" d:DesignWidth="500">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/DefaultStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TopicViewModelTypeToStringConverter x:Key="TopicViewModelTypeToString" />
+            <converters:TopicViewModelTypeToBrushConverter x:Key="TopicViewModelTypeToBrush" />
+            <converters:StatisticValueToBrush x:Key="StatisticValueToBrush" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <GroupBox Header="Live statistics">
+            <DataGrid ItemsSource="{Binding TopicsPlusOverall }"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      HeadersVisibility="Column"
+                      CanUserSortColumns="False"
+                      SelectionUnit="Cell"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Type">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Converter={StaticResource TopicViewModelTypeToString}, Mode=OneWay}"
+                                         Foreground="{Binding Converter={StaticResource TopicViewModelTypeToBrush}}"
+                                         HorizontalAlignment="Center"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Topic">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding TopicName, Mode=OneWay}"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Produced">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.ProducedCount, Mode=OneWay}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Produce Errors">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.ProduceErrorsCount, Mode=OneWay}"
+                                         Foreground="{Binding Statistics.ProduceErrorsCount, Converter={StaticResource StatisticValueToBrush}}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Consumed">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.ConsumedCount, Mode=OneWay}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Processed">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.ProcessedCount, Mode=OneWay}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Skipped">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.SkippedCount, Mode=OneWay}"
+                                         Foreground="{Binding Statistics.SkippedCount, Converter={StaticResource StatisticValueToBrush}}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Lag">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.LagCount, Mode=OneWay}"
+                                         Foreground="{Binding Statistics.LagCount, Converter={StaticResource StatisticValueToBrush}, ConverterParameter=50}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Lost">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Statistics.LostCount, Mode=OneWay}"
+                                         Foreground="{Binding Statistics.LostCount, Converter={StaticResource StatisticValueToBrush}}"
+                                         HorizontalAlignment="Right"
+                                         Style="{StaticResource ReadOnlyTextBox}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

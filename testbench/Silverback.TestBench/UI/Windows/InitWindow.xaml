@@ -1,0 +1,51 @@
+﻿<Window x:Class="Silverback.TestBench.UI.Windows.InitWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:viewModel="clr-namespace:Silverback.TestBench.ViewModel"
+        xmlns:converters="clr-namespace:Silverback.TestBench.UI.Converters"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewModel:InitViewModel, IsDesignTimeCreatable=True}"
+        Title="Silverback Test Bench"
+        SizeToContent="WidthAndHeight"
+        MinWidth="400"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource {x:Type Window}}"
+        FocusManager.FocusedElement="{Binding ElementName=StartButton}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/DefaultStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BooleanNotConverter x:Key="BooleanNotConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <StackPanel>
+
+        <GroupBox IsEnabled="{Binding IsInitializing, Converter={StaticResource BooleanNotConverter}}"
+                  Header="Initialization options">
+            <StackPanel>
+                <CheckBox IsChecked="{Binding RebuildDockerImages}" Content="Rebuild docker images" />
+                <CheckBox IsChecked="{Binding RecreateAllTopics}" Content="Recreate all topics" />
+                <CheckBox IsChecked="{Binding ClearLogs}" Content="Clear logs" />
+            </StackPanel>
+        </GroupBox>
+
+        <Grid>
+            <Button x:Name="StartButton"
+                    Content="Start 🚀"
+                    IsDefault="True"
+                    Command="{Binding StartCommand}" />
+        </Grid>
+
+        <Grid>
+            <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}" />
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Text="{Binding ProgressMessage}" />
+        </Grid>
+    </StackPanel>
+</Window>

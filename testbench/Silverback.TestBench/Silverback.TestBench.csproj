@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(CurrentLatestFramework)-windows</TargetFramework>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RootNamespace>Silverback.TestBench</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\..\graphics\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ductus.FluentDocker" Version="2.10.59" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog" Version="4.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Activity" Version="1.0.0.3" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.MQTT" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.TestBench.Shared\Silverback.TestBench.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Windows\InitWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\Style\DefaultStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Windows\InitWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\graphics\Icon.png">
+      <Link>Icon.png</Link>
+    </None>
+  </ItemGroup>
+</Project>

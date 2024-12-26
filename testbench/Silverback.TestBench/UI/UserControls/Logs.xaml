@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="Silverback.TestBench.UI.UserControls.Logs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:Silverback.TestBench.ViewModel.Logs"
+             xmlns:converters="clr-namespace:Silverback.TestBench.UI.Converters"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodel:LogsViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/DefaultStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TimestampToStringConverter x:Key="TimestampToString" />
+            <converters:ContainerNameShortenerConverter x:Key="ContainerNameShortener" />
+            <converters:ContainerNameToBrushConverter x:Key="ContainerNameToBrush" />
+            <converters:LogLevelToBrushConverter x:Key="LogLevelToBrush" />
+            <converters:StringShortenerConverter x:Key="StringShortener" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Entries">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <!-- TODO: Filter -->
+                </StackPanel>
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Entries}"
+                          SelectedItem="{Binding SelectedEntry}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          CanUserSortColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Container">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Container.ContainerService.Name, Converter={StaticResource ContainerNameShortener}, Mode=OneWay}"
+                                             Foreground="{Binding Container.ContainerService.Name, Converter={StaticResource ContainerNameToBrush}}"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Timestamp">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Timestamp, Converter={StaticResource TimestampToString}, Mode=OneWay}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Level">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Level, Mode=OneWay}"
+                                             Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Message">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Message, Converter={StaticResource StringShortener}, Mode=OneWay}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Details">
+            <Grid DataContext="{Binding SelectedEntry}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Container:" Style="{StaticResource Label}" />
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Text="{Binding Container.ContainerService.Name, Mode=OneWay}"
+                         Foreground="{Binding Container.ContainerService.Name, Converter={StaticResource ContainerNameToBrush}}"
+                         Style="{StaticResource ReadOnlyTextBox}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Timestamp:" Style="{StaticResource Label}" />
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding Timestamp, Converter={StaticResource TimestampToString}, Mode=OneWay}"
+                         Style="{StaticResource ReadOnlyTextBox}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Level:" Style="{StaticResource Label}" />
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Text="{Binding Level, Mode=OneWay}"
+                            Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}"
+                         Style="{StaticResource ReadOnlyTextBox}" />
+                <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                         Text="{Binding Message, Mode=OneWay}"
+                         Style="{StaticResource ReadOnlyTextArea}" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

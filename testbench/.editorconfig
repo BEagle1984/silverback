@@ -44,6 +44,8 @@ dotnet_diagnostic.SA1503.severity = none
 dotnet_diagnostic.SA1600.severity = none
 # SA1601: A C# partial element is missing a documentation header.
 dotnet_diagnostic.SA1601.severity = none
+# SA1602: Enumeration items should be documented
+dotnet_diagnostic.SA1602.severity = none
 
 # Microsoft.CodeAnalysis.NetAnalyzers
 # CA1062: Validate arguments of public methods
@@ -62,6 +64,8 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA5394.severity = none
 
 # Threading
+# VSTHRD001: Avoid legacy thread switching APIs
+dotnet_diagnostic.vsthrd001.severity = none
 # VSTHRD002: Avoid problematic synchronous waits
 dotnet_diagnostic.vsthrd002.severity = none
 # VSTHRD003: Avoid awaiting foreign Tasks

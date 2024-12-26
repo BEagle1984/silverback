@@ -31,5 +31,5 @@ steps:
       dotnet build ./benchmarks/SilverbackBenchmarks.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
     displayName: 'Build Benchmarks ($(buildConfiguration))'
   - script: |
-      dotnet build ./testbench/SilverbackTestBench.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
+      dotnet build ./testbench/Silverback.TestBench.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
     displayName: 'Build Test Bench ($(buildConfiguration))'

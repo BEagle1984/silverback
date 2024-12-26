@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Silverback.TestBench.UI.UserControls.Controls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:Silverback.TestBench.UI.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="200">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/DefaultStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:DoubleToMagnitudeStringConverter x:Key="DoubleToMagnitudeString" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel MinWidth="200">
+        <GroupBox Header="Producer">
+            <StackPanel>
+                <TextBlock Style="{StaticResource FirstTopLabel}">Speed [F2]</TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0"
+                            Orientation="Horizontal" Minimum="0" Maximum="10" SmallChange="0.1" LargeChange="1"
+                            Value="{Binding ProduceSpeedMultiplier, Mode=TwoWay}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding ProduceSpeedMultiplier, Converter={StaticResource DoubleToMagnitudeString}}" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Consumers scaling">
+            <StackPanel>
+                <Button Content="Scale in [F4]"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding ScaleInCommand}" />
+                <Button Content="Scale out [F5]"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding ScaleOutCommand}" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Consumers auto scaling">
+            <StackPanel>
+                <TextBlock Text="Enabled [F3]" Style="{StaticResource FirstTopLabel}" />
+                <CheckBox IsChecked="{Binding AutoScaling.IsEnabled}" />
+                <TextBlock Text="Minimum instances" Style="{StaticResource TopLabel}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0"
+                            Orientation="Horizontal" Minimum="0" Maximum="100" SmallChange="1" LargeChange="10"
+                            Value="{Binding AutoScaling.MinInstances, Mode=TwoWay}" />
+                    <TextBlock Grid.Column="1" Text="{Binding AutoScaling.MinInstances}" />
+                </Grid>
+                <TextBlock Text="Maximum instances" Style="{StaticResource TopLabel}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0"
+                            Orientation="Horizontal" Minimum="0" Maximum="100" SmallChange="1" LargeChange="10"
+                            Value="{Binding AutoScaling.MaxInstances, Mode=TwoWay}" />
+                    <TextBlock Grid.Column="1" Text="{Binding AutoScaling.MaxInstances}" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Logs">
+            <StackPanel>
+                <Button Content="Open logs in VS Code [F12]"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding OpenLogsInVsCodeCommand}" />
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,57 @@
+﻿<Window x:Class="Silverback.TestBench.UI.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:Silverback.TestBench.ViewModel"
+        xmlns:userControls="clr-namespace:Silverback.TestBench.UI.UserControls"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel, IsDesignTimeCreatable=True}"
+        Title="Silverback Test Bench"
+        Width="1200"
+        Height="800"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource {x:Type Window}}"
+        KeyDown="OnKeyDown">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style/DefaultStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="F2" Command="{Binding ToggleProducingCommand}" />
+        <KeyBinding Key="F3" Command="{Binding AutoScaling.ToggleEnabledCommand}" />
+        <KeyBinding Key="F4" Command="{Binding ScaleInCommand}" />
+        <KeyBinding Key="F5" Command="{Binding ScaleOutCommand}" />
+        <KeyBinding Key="F12" Command="{Binding OpenLogsInVsCodeCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.Column="0" x:Name="Tabs">
+            <TabItem Header="Overview">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <userControls:TopicsOverview Grid.Row="0" DataContext="{Binding}" />
+                    <userControls:ContainersOverview Grid.Row="1" DataContext="{Binding}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tracing">
+            </TabItem>
+            <TabItem Header="Logs">
+                <userControls:Logs DataContext="{Binding Logs}" />
+            </TabItem>
+        </TabControl>
+        <userControls:Controls Grid.Column="1" DataContext="{Binding}" />
+    </Grid>
+</Window>
