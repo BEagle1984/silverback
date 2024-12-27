@@ -47,11 +47,12 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Tracing">
+                <userControls:TraceViewer DataContext="{Binding Trace}" />
             </TabItem>
             <TabItem Header="Logs">
-                <userControls:Logs DataContext="{Binding Logs}" />
+                <userControls:LogsViewer DataContext="{Binding Logs}" />
             </TabItem>
         </TabControl>
-        <userControls:Controls Grid.Column="1" DataContext="{Binding}" />
+        <userControls:ControlsSideBar Grid.Column="1" DataContext="{Binding}" />
     </Grid>
 </Window>

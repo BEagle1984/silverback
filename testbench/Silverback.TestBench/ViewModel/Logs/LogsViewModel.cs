@@ -24,18 +24,19 @@ public class LogsViewModel : ViewModelBase
         set => SetProperty(ref _selectedEntry, value, nameof(SelectedEntry));
     }
 
-    public void AddWarning(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
-        AddEntry(new LogEntry(timestamp, LogLevel.Warning, message, container));
+    public LogEntry AddWarning(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
+        AddEntry(new LogEntry(timestamp, message, container, LogLevel.Warning));
 
-    public void AddError(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
-        AddEntry(new LogEntry(timestamp, LogLevel.Error, message, container));
+    public LogEntry AddError(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
+        AddEntry(new LogEntry(timestamp, message, container, LogLevel.Error));
 
-    public void AddFatal(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
-        AddEntry(new LogEntry(timestamp, LogLevel.Fatal, message, container));
+    public LogEntry AddFatal(DateTime timestamp, string message, ContainerInstanceViewModel? container) =>
+        AddEntry(new LogEntry(timestamp, message, container, LogLevel.Fatal));
 
-    public void AddEntry(LogEntry entry)
+    public LogEntry AddEntry(LogEntry entry)
     {
         _entries.Add(entry);
         NotifyPropertyChanged(nameof(Entries));
+        return entry;
     }
 }

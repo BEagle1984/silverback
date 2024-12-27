@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Publishing;
 using Silverback.TestBench.ViewModel;
+using Silverback.TestBench.ViewModel.Logs;
 using Silverback.TestBench.ViewModel.Topics;
 
 namespace Silverback.TestBench.Producer;
@@ -67,6 +68,10 @@ public class ProducerBackgroundService : BackgroundService
             {
                 await _publisher.PublishAsync(message, stoppingToken);
                 _messagesTracker.TrackProduced(message);
+                _mainViewModel.Trace.TraceProduced(
+                    message.MessageId,
+                    message.TargetTopicViewModel,
+                    new LogEntry(DateTime.UtcNow, "Message produced", null));
 
                 TimeSpan produceDelay = topic.ProduceDelay;
                 double speedMultiplier = _mainViewModel.ProduceSpeedMultiplier;
@@ -80,7 +85,7 @@ public class ProducerBackgroundService : BackgroundService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Produce of message {MessageId} failed", message.MessageId);
-                _mainViewModel.Logs.AddError(DateTime.Now, $"Produce of message {message.MessageId} failed: {ex}", null);
+                _mainViewModel.Logs.AddError(DateTime.UtcNow, $"Produce of message {message.MessageId} failed: {ex}", null);
                 _messagesTracker.TrackProduceError(message);
             }
         }

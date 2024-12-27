@@ -3,9 +3,9 @@
 
 namespace Silverback.TestBench.UI.UserControls;
 
-public partial class Controls
+public partial class ControlsSideBar
 {
-    public Controls()
+    public ControlsSideBar()
     {
         InitializeComponent();
     }

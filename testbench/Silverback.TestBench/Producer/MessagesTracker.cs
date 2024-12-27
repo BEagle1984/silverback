@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.TestBench.ViewModel;
+using Silverback.TestBench.ViewModel.Logs;
 using Silverback.TestBench.ViewModel.Topics;
 
 namespace Silverback.TestBench.Producer;
@@ -46,23 +47,27 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
         message.TargetTopicViewModel.Statistics.IncrementProduceErrorsCount();
     }
 
-    public void TrackConsumed(string subscribedTopicName)
+    public TopicViewModel? TrackConsumed(string subscribedTopicName)
     {
         _mainViewModel.OverallMessagesStatistics.IncrementConsumedCount();
 
         if (_mainViewModel.TryGetTopic(subscribedTopicName, out TopicViewModel? topicViewModel))
             topicViewModel.Statistics.IncrementConsumedCount();
+
+        return topicViewModel;
     }
 
-    public void TrackProcessed(string subscribedTopicName, string messageId)
+    public TopicViewModel? TrackProcessed(string subscribedTopicName, string messageId)
     {
         if (!_pendingMessages.TryRemove(messageId, out _))
-            return;
+            return null;
 
         _mainViewModel.OverallMessagesStatistics.IncrementProcessedCount();
 
         if (_mainViewModel.TryGetTopic(subscribedTopicName, out TopicViewModel? topicViewModel))
             topicViewModel.Statistics.IncrementProcessedCount();
+
+        return topicViewModel;
     }
 
     public bool TrackLost(TopicViewModel topicViewModel, string messageId)
@@ -82,7 +87,7 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
     private void CheckLostMessages()
     {
-        DateTime threshold = DateTime.Now - LostMessagesThreshold;
+        DateTime threshold = DateTime.UtcNow - LostMessagesThreshold;
 
         List<RoutableTestBenchMessage> lostMessages =
             _pendingMessages.Where(pair => pair.Value.CreatedAt <= threshold).Select(pair => pair.Value).ToList();
@@ -98,10 +103,12 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
                     message.TargetTopicViewModel.TopicName,
                     LostMessagesThreshold);
 
-                _mainViewModel.Logs.AddFatal(
-                    DateTime.Now,
+                LogEntry logEntry = _mainViewModel.Logs.AddFatal(
+                    DateTime.UtcNow,
                     $"Message {message.MessageId} produced on topic {message.TargetTopicViewModel.TopicName} was not consumed within the expected time ({LostMessagesThreshold}) and is considered lost",
                     null);
+
+                _mainViewModel.Trace.TraceLost(message.MessageId, message.TargetTopicViewModel, logEntry);
             }
         }
     }

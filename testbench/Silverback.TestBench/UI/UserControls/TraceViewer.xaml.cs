@@ -3,9 +3,9 @@
 
 namespace Silverback.TestBench.UI.UserControls;
 
-public partial class Logs
+public partial class TraceViewer
 {
-    public Logs()
+    public TraceViewer()
     {
         InitializeComponent();
     }

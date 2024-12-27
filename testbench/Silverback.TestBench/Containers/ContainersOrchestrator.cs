@@ -3,9 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Common;
@@ -153,32 +151,33 @@ public sealed class ContainersOrchestrator : IDisposable
                              container.Status == ContainerStatus.Running)
             .ToArray();
 
-    [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "Intentional to run in background")]
-    private void IncrementInstances(DockerImage dockerImage, int count, ContainerInstanceViewModel[] existingContainers) =>
-        Task.Run(
-            () =>
-            {
-                _logger.LogInformation(
-                    "Increasing {ImageName} instances from {CurrentCount} to {DesiredCount}",
-                    dockerImage.Name,
-                    existingContainers.Length,
-                    count);
+    private void IncrementInstances(DockerImage dockerImage, int count, ContainerInstanceViewModel[] existingContainers)
+    {
+        _logger.LogInformation(
+            "Increasing {ImageName} instances from {CurrentCount} to {DesiredCount}",
+            dockerImage.Name,
+            existingContainers.Length,
+            count);
 
-                for (int i = 0; i < count - existingContainers.Length; i++)
-                {
-                    string containerName = $"{dockerImage.Name}-{GetNextContainerIndex(dockerImage.Name)}";
-                    IContainerService containerService = StartContainer(dockerImage.Name, dockerImage.Tag, containerName);
+        for (int i = 0; i < count - existingContainers.Length; i++)
+        {
+            string containerName = $"{dockerImage.Name}-{GetNextContainerIndex(dockerImage.Name)}";
+            IContainerService containerService = StartContainer(dockerImage.Name, dockerImage.Tag, containerName);
 
-                    Application.Current.Dispatcher.Invoke(
-                        () => _mainViewModel.ContainerInstances.Insert(
-                            0,
-                            new ContainerInstanceViewModel(containerService, _messagesTracker, _mainViewModel.Logs, _loggerFactory)));
+            Application.Current.Dispatcher.Invoke(
+                () => _mainViewModel.ContainerInstances.Insert(
+                    0,
+                    new ContainerInstanceViewModel(
+                        containerService,
+                        _messagesTracker,
+                        _mainViewModel.Logs,
+                        _mainViewModel.Trace,
+                        _loggerFactory)));
 
-                    _logger.LogInformation("Started container {ContainerName}", containerService.Name);
-                }
-            });
+            _logger.LogInformation("Started container {ContainerName}", containerService.Name);
+        }
+    }
 
-    [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "Intentional to run in background")]
     private void DecrementInstances(DockerImage dockerImage, int count, ContainerInstanceViewModel[] existingContainers)
     {
         _logger.LogInformation(
@@ -189,7 +188,7 @@ public sealed class ContainersOrchestrator : IDisposable
 
         foreach (ContainerInstanceViewModel container in existingContainers.Take(existingContainers.Length - count))
         {
-            Task.Run(() => StopContainer(container));
+            StopContainer(container);
         }
     }
 

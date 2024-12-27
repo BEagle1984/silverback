@@ -14,6 +14,7 @@ using Silverback.TestBench.ViewModel.Containers;
 using Silverback.TestBench.ViewModel.Framework;
 using Silverback.TestBench.ViewModel.Logs;
 using Silverback.TestBench.ViewModel.Topics;
+using Silverback.TestBench.ViewModel.Trace;
 
 namespace Silverback.TestBench.ViewModel;
 
@@ -25,9 +26,10 @@ public class MainViewModel : ViewModelBase
 
     private double _produceSpeedMultiplier;
 
-    public MainViewModel(IPublisher publisher, LogsViewModel logsViewModel)
+    public MainViewModel(IPublisher publisher, LogsViewModel logsViewModel, TraceViewModel traceViewModel)
     {
         Logs = logsViewModel;
+        Trace = traceViewModel;
 
         ToggleProducingCommand = new RelayCommand(() => IsProducing = !IsProducing);
         ScaleOutCommand = new AsyncRelayCommand(() => publisher.ExecuteCommandAsync(new ScaleOutCommand()));
@@ -99,6 +101,8 @@ public class MainViewModel : ViewModelBase
     public AutoScalingViewModel AutoScaling { get; } = new();
 
     public LogsViewModel Logs { get; }
+
+    public TraceViewModel Trace { get; }
 
     public TopicViewModel GetTopic(string name) => _topicsDictionary[name];
 

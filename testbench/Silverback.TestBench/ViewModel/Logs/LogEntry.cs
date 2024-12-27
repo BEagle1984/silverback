@@ -8,6 +8,6 @@ namespace Silverback.TestBench.ViewModel.Logs;
 
 public record LogEntry(
     DateTime Timestamp,
-    LogLevel Level,
     string Message,
-    ContainerInstanceViewModel? Container);
+    ContainerInstanceViewModel? Container,
+    LogLevel Level = LogLevel.Information);

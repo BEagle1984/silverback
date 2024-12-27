@@ -8,6 +8,7 @@ using Silverback.TestBench.Containers;
 using Silverback.TestBench.Producer;
 using Silverback.TestBench.ViewModel.Framework;
 using Silverback.TestBench.ViewModel.Logs;
+using Silverback.TestBench.ViewModel.Trace;
 
 namespace Silverback.TestBench.ViewModel.Containers;
 
@@ -23,10 +24,16 @@ public class ContainerInstanceViewModel : ViewModelBase
         IContainerService containerService,
         MessagesTracker messagesTracker,
         LogsViewModel logsViewModel,
+        TraceViewModel traceViewModel,
         ILoggerFactory loggerFactory)
     {
         ContainerService = containerService;
-        LogParser = new ContainerLogParser(this, logsViewModel, messagesTracker, loggerFactory.CreateLogger<ContainerLogParser>());
+        LogParser = new ContainerLogParser(
+            this,
+            logsViewModel,
+            traceViewModel,
+            messagesTracker,
+            loggerFactory.CreateLogger<ContainerLogParser>());
     }
 
     public IContainerService ContainerService { get; }

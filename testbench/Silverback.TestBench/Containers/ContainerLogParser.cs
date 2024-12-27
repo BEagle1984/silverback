@@ -14,6 +14,8 @@ using Silverback.TestBench.Producer;
 using Silverback.TestBench.Utils;
 using Silverback.TestBench.ViewModel.Containers;
 using Silverback.TestBench.ViewModel.Logs;
+using Silverback.TestBench.ViewModel.Topics;
+using Silverback.TestBench.ViewModel.Trace;
 
 namespace Silverback.TestBench.Containers;
 
@@ -25,6 +27,8 @@ public sealed partial class ContainerLogParser : IDisposable
 
     private readonly LogsViewModel _logsViewModel;
 
+    private readonly TraceViewModel _traceViewModel;
+
     private readonly MessagesTracker _messagesTracker;
 
     private readonly ILogger<ContainerLogParser> _logger;
@@ -35,12 +39,14 @@ public sealed partial class ContainerLogParser : IDisposable
     public ContainerLogParser(
         ContainerInstanceViewModel containerInstance,
         LogsViewModel logsViewModel,
+        TraceViewModel traceViewModel,
         MessagesTracker messagesTracker,
         ILogger<ContainerLogParser> logger)
     {
         _containerService = containerInstance.ContainerService;
         _container = containerInstance;
         _logsViewModel = logsViewModel;
+        _traceViewModel = traceViewModel;
         _messagesTracker = messagesTracker;
         _logger = logger;
 
@@ -149,10 +155,10 @@ public sealed partial class ContainerLogParser : IDisposable
 
     private void ParseInfoMessage(string message, DateTime timestamp)
     {
-        if (MatchProcessing(message))
+        if (MatchProcessing(message, timestamp))
             return;
 
-        if (MatchProcessed(message))
+        if (MatchProcessed(message, timestamp))
             return;
 
         if (MatchStarted(message, timestamp))
@@ -161,7 +167,7 @@ public sealed partial class ContainerLogParser : IDisposable
         MatchStopped(message, timestamp);
     }
 
-    private bool MatchProcessing(string message)
+    private bool MatchProcessing(string message, DateTime timestamp)
     {
         Match match = MessageProcessingRegex().Match(message);
 
@@ -169,18 +175,36 @@ public sealed partial class ContainerLogParser : IDisposable
             return false;
 
         _container.Statistics.IncrementConsumedMessagesCount();
-        _messagesTracker.TrackConsumed(match.Groups["topicName"].Value);
+        TopicViewModel? topicViewModel = _messagesTracker.TrackConsumed(match.Groups["topicName"].Value);
+
+        if (topicViewModel != null)
+        {
+            _traceViewModel.TraceProcessing(
+                match.Groups["messageId"].Value,
+                topicViewModel,
+                new LogEntry(timestamp, message, _container));
+        }
+
         return true;
     }
 
-    private bool MatchProcessed(string message)
+    private bool MatchProcessed(string message, DateTime timestamp)
     {
         Match match = MessageProcessedRegex().Match(message);
         if (!match.Success)
             return false;
 
         _container.Statistics.IncrementProcessedMessagesCount();
-        _messagesTracker.TrackProcessed(match.Groups["topicName"].Value, match.Groups["messageId"].Value);
+        TopicViewModel? topicViewModel = _messagesTracker.TrackProcessed(match.Groups["topicName"].Value, match.Groups["messageId"].Value);
+
+        if (topicViewModel != null)
+        {
+            _traceViewModel.TraceProcessed(
+                match.Groups["messageId"].Value,
+                topicViewModel,
+                new LogEntry(timestamp, message, _container));
+        }
+
         return true;
     }
 

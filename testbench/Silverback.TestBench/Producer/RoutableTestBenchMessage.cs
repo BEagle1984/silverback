@@ -24,7 +24,7 @@ public class RoutableTestBenchMessage : TestBenchMessage
 
         MessageId = Guid.NewGuid().ToString("N");
 
-        CreatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
     }
 
     [JsonIgnore]

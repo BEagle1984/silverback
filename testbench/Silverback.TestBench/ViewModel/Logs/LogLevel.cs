@@ -9,5 +9,7 @@ public enum LogLevel
 
     Error,
 
-    Fatal
+    Fatal,
+
+    Information
 }
