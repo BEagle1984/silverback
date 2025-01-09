@@ -1807,6 +1807,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Silverback.Messaging.Broker.Kafka.yml",
       "output": {
         ".html": {

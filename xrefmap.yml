@@ -12905,6 +12905,96 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.PartitionsAssigned
   nameWithType: IMockedConfluentConsumer.PartitionsAssigned
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker
+  name: OffsetsTracker
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html
+  commentId: T:Silverback.Messaging.Broker.Kafka.OffsetsTracker
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker
+  nameWithType: OffsetsTracker
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit(Confluent.Kafka.TopicPartitionOffset)
+  name: Commit(TopicPartitionOffset)
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_Commit_Confluent_Kafka_TopicPartitionOffset_
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit(Confluent.Kafka.TopicPartitionOffset)
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit(Confluent.Kafka.TopicPartitionOffset)
+  nameWithType: OffsetsTracker.Commit(TopicPartitionOffset)
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit*
+  name: Commit
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_Commit_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.Commit
+  nameWithType: OffsetsTracker.Commit
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets
+  name: GetCommitOffsets()
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_GetCommitOffsets
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets()
+  nameWithType: OffsetsTracker.GetCommitOffsets()
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets*
+  name: GetCommitOffsets
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_GetCommitOffsets_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetCommitOffsets
+  nameWithType: OffsetsTracker.GetCommitOffsets
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets
+  name: GetRollbackOffSets()
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_GetRollbackOffSets
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets()
+  nameWithType: OffsetsTracker.GetRollbackOffSets()
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets*
+  name: GetRollbackOffSets
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_GetRollbackOffSets_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.GetRollbackOffSets
+  nameWithType: OffsetsTracker.GetRollbackOffSets
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Confluent.Kafka.TopicPartitionOffset)
+  name: TrackOffset(TopicPartitionOffset)
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_TrackOffset_Confluent_Kafka_TopicPartitionOffset_
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Confluent.Kafka.TopicPartitionOffset)
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Confluent.Kafka.TopicPartitionOffset)
+  nameWithType: OffsetsTracker.TrackOffset(TopicPartitionOffset)
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Silverback.Messaging.Broker.KafkaOffset)
+  name: TrackOffset(KafkaOffset)
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_TrackOffset_Silverback_Messaging_Broker_KafkaOffset_
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Silverback.Messaging.Broker.KafkaOffset)
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset(Silverback.Messaging.Broker.KafkaOffset)
+  nameWithType: OffsetsTracker.TrackOffset(KafkaOffset)
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset*
+  name: TrackOffset
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_TrackOffset_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.TrackOffset
+  nameWithType: OffsetsTracker.TrackOffset
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions
+  name: UntrackAllPartitions()
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_UntrackAllPartitions
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions()
+  nameWithType: OffsetsTracker.UntrackAllPartitions()
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions*
+  name: UntrackAllPartitions
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_UntrackAllPartitions_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackAllPartitions
+  nameWithType: OffsetsTracker.UntrackAllPartitions
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition(Confluent.Kafka.TopicPartition)
+  name: UntrackPartition(TopicPartition)
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_UntrackPartition_Confluent_Kafka_TopicPartition_
+  commentId: M:Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition(Confluent.Kafka.TopicPartition)
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition(Confluent.Kafka.TopicPartition)
+  nameWithType: OffsetsTracker.UntrackPartition(TopicPartition)
+- uid: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition*
+  name: UntrackPartition
+  href: api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.html#Silverback_Messaging_Broker_Kafka_OffsetsTracker_UntrackPartition_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.OffsetsTracker.UntrackPartition
+  nameWithType: OffsetsTracker.UntrackPartition
 - uid: Silverback.Messaging.Broker.KafkaBroker
   name: KafkaBroker
   href: api/Silverback.Messaging.Broker.KafkaBroker.html
@@ -13102,6 +13192,22 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaConsumer.GetCurrentSequenceStores
   nameWithType: KafkaConsumer.GetCurrentSequenceStores
+- uid: Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)
+  name: GetOffsetsForTimestamp(IEnumerable<TopicPartitionTimestamp>, TimeSpan)
+  href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamp_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_
+  commentId: M:Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)
+  name.vb: GetOffsetsForTimestamp(IEnumerable(Of TopicPartitionTimestamp), TimeSpan)
+  fullName: Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionTimestamp>, System.TimeSpan)
+  fullName.vb: Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionTimestamp), System.TimeSpan)
+  nameWithType: KafkaConsumer.GetOffsetsForTimestamp(IEnumerable<TopicPartitionTimestamp>, TimeSpan)
+  nameWithType.vb: KafkaConsumer.GetOffsetsForTimestamp(IEnumerable(Of TopicPartitionTimestamp), TimeSpan)
+- uid: Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp*
+  name: GetOffsetsForTimestamp
+  href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamp_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp
+  nameWithType: KafkaConsumer.GetOffsetsForTimestamp
 - uid: Silverback.Messaging.Broker.KafkaConsumer.MemberId
   name: MemberId
   href: api/Silverback.Messaging.Broker.KafkaConsumer.html#Silverback_Messaging_Broker_KafkaConsumer_MemberId
@@ -20689,6 +20795,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
   nameWithType: IMockedKafkaOptions.PartitionsAssignmentDelay
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount
+  name: TopicPartitionsCount
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_TopicPartitionsCount
+  commentId: P:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount
+  nameWithType: IMockedKafkaOptions.TopicPartitionsCount
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount*
+  name: TopicPartitionsCount
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_TopicPartitionsCount_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.TopicPartitionsCount
+  nameWithType: IMockedKafkaOptions.TopicPartitionsCount
 - uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder
   name: IMockedKafkaOptionsBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html
@@ -20740,6 +20859,22 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithDefaultPartitionsCount
   nameWithType: IMockedKafkaOptionsBuilder.WithDefaultPartitionsCount
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount(System.String,System.Int32)
+  name: WithPartitionsCount(string, int)
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_WithPartitionsCount_System_String_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount(System.String,System.Int32)
+  name.vb: WithPartitionsCount(String, Integer)
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount(string, int)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount(String, Integer)
+  nameWithType: IMockedKafkaOptionsBuilder.WithPartitionsCount(string, int)
+  nameWithType.vb: IMockedKafkaOptionsBuilder.WithPartitionsCount(String, Integer)
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount*
+  name: WithPartitionsCount
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_WithPartitionsCount_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.WithPartitionsCount
+  nameWithType: IMockedKafkaOptionsBuilder.WithPartitionsCount
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaClientConfig
   name: KafkaClientConfig
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html
