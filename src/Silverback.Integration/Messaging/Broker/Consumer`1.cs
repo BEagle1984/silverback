@@ -239,6 +239,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             IsStopping = false;
             _startStopSemaphore.Release();
         }
+
+        _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />

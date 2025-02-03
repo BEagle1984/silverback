@@ -68,10 +68,7 @@ public partial class BatchProcessingFixture
         IProducer producer = Helper.GetProducer(
             producer => producer
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)));
 
         for (int i = 1; i <= 3; i++)
         {
@@ -85,6 +82,81 @@ public partial class BatchProcessingFixture
         receivedMessages.Should().HaveCount(3);
         batchesCount.Should().Be(1);
         abortedCount.Should().Be(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldAbortEnumerationOfMultipleBatches_WhenDisconnecting()
+    {
+        int batchesCount = 0;
+        int abortedCount = 0;
+        TestingCollection<TestEventOne> receivedMessages = [];
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(10))))
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            Interlocked.Increment(ref batchesCount);
+
+            try
+            {
+                await foreach (TestEventOne message in batch)
+                {
+                    receivedMessages.Add(message);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Simulate something going on in the subscribed method
+                await Task.Delay(300);
+
+                Interlocked.Increment(ref abortedCount);
+            }
+        }
+
+        IProducer producer = Helper.GetProducer(
+            producer => producer
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)));
+
+        for (int i = 1; i <= 3; i++)
+        {
+            await producer.ProduceAsync(
+                new TestEventOne { ContentEventOne = $"{i}" },
+                [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 0)]);
+            await producer.ProduceAsync(
+                new TestEventOne { ContentEventOne = $"{i}" },
+                [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 1)]);
+            await producer.ProduceAsync(
+                new TestEventOne { ContentEventOne = $"{i}" },
+                [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 2)]);
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count == 9);
+        await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
+        await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
+
+        receivedMessages.Should().HaveCount(9);
+        batchesCount.Should().Be(3);
+        abortedCount.Should().Be(3);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
     }
 
@@ -134,10 +206,7 @@ public partial class BatchProcessingFixture
         IProducer producer = Helper.GetProducer(
             producer => producer
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)));
 
         for (int i = 1; i <= 3; i++)
         {

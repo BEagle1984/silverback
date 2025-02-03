@@ -292,6 +292,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         if (Client.Status is ClientStatus.Disconnecting or ClientStatus.Disconnected)
             return default;
 
+        if (IsStopping)
+            return default;
+
         // If the partitions are being processed together we must rollback them all
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
             brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
