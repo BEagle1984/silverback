@@ -143,6 +143,9 @@ public sealed class ContainersOrchestrator : IDisposable
         }
     }
 
+    private static void StopContainer(ContainerInstanceViewModel container) =>
+        container.Stop();
+
     private ContainerInstanceViewModel[] GetExistingContainers(string imageName, string imageTag) =>
         _mainViewModel.ContainerInstances
             .Reverse()
@@ -170,8 +173,7 @@ public sealed class ContainersOrchestrator : IDisposable
                     new ContainerInstanceViewModel(
                         containerService,
                         _messagesTracker,
-                        _mainViewModel.Logs,
-                        _mainViewModel.Trace,
+                        _mainViewModel,
                         _loggerFactory)));
 
             _logger.LogInformation("Started container {ContainerName}", containerService.Name);
@@ -196,13 +198,5 @@ public sealed class ContainersOrchestrator : IDisposable
     {
         _containersCounters.TryGetValue(imageName, out int currentCount);
         return _containersCounters[imageName] = currentCount + 1;
-    }
-
-    private void StopContainer(ContainerInstanceViewModel container)
-    {
-        container.SetStopping();
-        container.ContainerService.Dispose();
-
-        _logger.LogInformation("Stopped container {ContainerName}", container.ContainerService.Name);
     }
 }

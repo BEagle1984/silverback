@@ -3,13 +3,15 @@
 
 namespace Silverback.TestBench.ViewModel.Logs;
 
-public enum LogLevel
+public enum LogLevelFilter
 {
-    Information,
+    Any,
 
-    Warning,
+    Fatal,
 
     Error,
 
-    Fatal
+    Warning,
+
+    Information
 }

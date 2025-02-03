@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Input;
@@ -22,6 +23,8 @@ public class MainViewModel : ViewModelBase
 {
     private readonly Dictionary<string, TopicViewModel> _topicsDictionary;
 
+    private ContainerInstanceViewModel? _selectedContainerInstance;
+
     private bool _isProducing;
 
     private double _produceSpeedMultiplier;
@@ -39,15 +42,22 @@ public class MainViewModel : ViewModelBase
         InitTopics();
         _topicsDictionary = Topics.Where(topic => topic is not OverallTopicViewModel).ToDictionary(topic => topic.TopicName);
 
-        // Add the overall stats as first topic to be displayed in the same grid
+        // Wrap overall statistics in a collection to allow binding to a data grid
         OverallTopicViewModel overallTopic = new();
-        TopicsPlusOverall.Add(overallTopic);
+        OverallTopicsStatistics = [overallTopic];
         OverallMessagesStatistics = overallTopic.Statistics;
 
-        foreach (TopicViewModel topic in Topics)
+        // Keep log viewer filters in sync with the container instances
+        ContainerInstances.CollectionChanged += (_, args) =>
         {
-            TopicsPlusOverall.Add(topic);
-        }
+            if (args.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            foreach (ContainerInstanceViewModel container in args.NewItems!)
+            {
+                logsViewModel.ContainerFilterValues.Add(container.ContainerService.Name);
+            }
+        };
     }
 
     public ICommand ToggleProducingCommand { get; }
@@ -60,9 +70,9 @@ public class MainViewModel : ViewModelBase
 
     public TopicStatisticsViewModel OverallMessagesStatistics { get; }
 
-    public ObservableCollection<TopicViewModel> TopicsPlusOverall { get; } = [];
-
     public ObservableCollection<TopicViewModel> Topics { get; } = [];
+
+    public IEnumerable<OverallTopicViewModel> OverallTopicsStatistics { get; }
 
     public IEnumerable<KafkaTopicViewModel> KafkaTopics => Topics.OfType<KafkaTopicViewModel>();
 
@@ -97,6 +107,12 @@ public class MainViewModel : ViewModelBase
     }
 
     public ObservableCollection<ContainerInstanceViewModel> ContainerInstances { get; } = [];
+
+    public ContainerInstanceViewModel? SelectedContainerInstance
+    {
+        get => _selectedContainerInstance;
+        set => SetProperty(ref _selectedContainerInstance, value, nameof(SelectedContainerInstance));
+    }
 
     public AutoScalingViewModel AutoScaling { get; } = new();
 

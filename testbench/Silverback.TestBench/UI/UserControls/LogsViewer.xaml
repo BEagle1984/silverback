@@ -32,9 +32,26 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <!-- TODO: Filter -->
-                </StackPanel>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Level:" Style="{StaticResource Label}" />
+                    <ComboBox Grid.Column="1"
+                              SelectedValue="{Binding LevelFilter}"
+                              ItemsSource="{Binding LevelFilterValues}" />
+                    <TextBlock Grid.Column="2" Text="Container:" Style="{StaticResource HorizontallyStackedLabel}" />
+                    <ComboBox Grid.Column="3"
+                              SelectedValue="{Binding ContainerFilter}"
+                              ItemsSource="{Binding ContainerFilterValues}" />
+                    <TextBlock Grid.Column="4" Text="Text:" Style="{StaticResource HorizontallyStackedLabel}" />
+                    <TextBox Grid.Column="5" Text="{Binding TextFilter, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" />
+                </Grid>
                 <DataGrid Grid.Row="1"
                           ItemsSource="{Binding Entries}"
                           SelectedItem="{Binding SelectedEntry}"
@@ -107,7 +124,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Level:" Style="{StaticResource Label}" />
                 <TextBox Grid.Row="2" Grid.Column="1"
                          Text="{Binding Level, Mode=OneWay}"
-                            Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}"
+                         Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}"
                          Style="{StaticResource ReadOnlyTextBox}" />
                 <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                          Text="{Binding Message, Mode=OneWay}"

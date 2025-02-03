@@ -21,101 +21,175 @@
     </UserControl.Resources>
 
     <Grid>
-        <GroupBox Header="Containers">
-            <DataGrid ItemsSource="{Binding ContainerInstances}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      HeadersVisibility="Column"
-                      CanUserSortColumns="False"
-                      SelectionUnit="Cell"
-                      SelectionMode="Single">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Container">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding ContainerService.Name, Converter={StaticResource ContainerNameShortener} , Mode=OneWay}"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Status">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Status, Mode=OneWay}"
-                                         Foreground="{Binding Status, Converter={StaticResource ContainerStatusToBrush}}"
-                                         HorizontalAlignment="Center"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Started">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Started, Converter={StaticResource TimestampToString}, Mode=OneWay}"
-                                         HorizontalAlignment="Center"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Stopped">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Stopped, Converter={StaticResource TimestampToString}, Mode=OneWay}"
-                                         HorizontalAlignment="Center"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Consumed">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Statistics.ConsumedCount, Mode=OneWay}"
-                                         HorizontalAlignment="Right"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Processed">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Statistics.ProcessedCount, Mode=OneWay}"
-                                         HorizontalAlignment="Right"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Errors">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Statistics.ErrorsCount, Mode=OneWay}"
-                                         Foreground="{Binding Statistics.ErrorsCount, Converter={StaticResource StatisticValueToBrush}}"
-                                         HorizontalAlignment="Right"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Fatals">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Statistics.FatalErrorsCount, Mode=OneWay}"
-                                         Foreground="{Binding Statistics.FatalErrorsCount, Converter={StaticResource StatisticValueToBrush}}"
-                                         HorizontalAlignment="Right"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Warnings">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Statistics.WarningsCount, Mode=OneWay}"
-                                         Foreground="{Binding Statistics.WarningsCount, Converter={StaticResource StatisticValueToBrush}, ConverterParameter=50}"
-                                         HorizontalAlignment="Right"
-                                         Style="{StaticResource ReadOnlyTextBox}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </GroupBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Containers">
+                <DataGrid ItemsSource="{Binding ContainerInstances}"
+                          SelectedItem="{Binding SelectedContainerInstance}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          CanUserSortColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Container">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ContainerService.Name, Converter={StaticResource ContainerNameShortener} , Mode=OneWay}"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Status">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Status, Mode=OneWay}"
+                                             Foreground="{Binding Status, Converter={StaticResource ContainerStatusToBrush}}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Started">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Started, Converter={StaticResource TimestampToString}, Mode=OneWay}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Stopped">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Stopped, Converter={StaticResource TimestampToString}, Mode=OneWay}"
+                                             HorizontalAlignment="Center"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Consumed">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Statistics.ConsumedCount, Mode=OneWay}"
+                                             HorizontalAlignment="Right"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Processed">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Statistics.ProcessedCount, Mode=OneWay}"
+                                             HorizontalAlignment="Right"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Errors">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Statistics.ErrorsCount, Mode=OneWay}"
+                                             Foreground="{Binding Statistics.ErrorsCount, Converter={StaticResource StatisticValueToBrush}}"
+                                             HorizontalAlignment="Right"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Fatals">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Statistics.FatalErrorsCount, Mode=OneWay}"
+                                             Foreground="{Binding Statistics.FatalErrorsCount, Converter={StaticResource StatisticValueToBrush}}"
+                                             HorizontalAlignment="Right"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Warnings">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Statistics.WarningsCount, Mode=OneWay}"
+                                             Foreground="{Binding Statistics.WarningsCount, Converter={StaticResource StatisticValueToBrush}, ConverterParameter=50}"
+                                             HorizontalAlignment="Right"
+                                             Style="{StaticResource ReadOnlyTextBox}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Container Details">
+                <Grid DataContext="{Binding SelectedContainerInstance}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <Button Content="Stop"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding StopCommand}" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1"
+                               Text="Assigned Kafka partitions"
+                               Style="{StaticResource Label}" />
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding AssignedKafkaPartitions}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              SelectionUnit="Cell"
+                              SelectionMode="Single"
+                              CanUserSortColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Topic">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Topic, Mode=OneWay}"
+                                                 Style="{StaticResource ReadOnlyTextBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Partition">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Partition.Value, Mode=OneWay}"
+                                                 HorizontalAlignment="Right"
+                                                 Style="{StaticResource ReadOnlyTextBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock Grid.Row="3"
+                               Text="MQTT subscriptions"
+                               Style="{StaticResource Label}" />
+                    <DataGrid Grid.Row="4"
+                              ItemsSource="{Binding SubscribedMqttTopics}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              SelectionUnit="Cell"
+                              SelectionMode="Single"
+                              CanUserSortColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Topic">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding ., Mode=OneWay}"
+                                                 Style="{StaticResource ReadOnlyTextBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </GroupBox>
+        </Grid>
     </Grid>
 </UserControl>

@@ -36,7 +36,7 @@ public class TraceViewModel : ViewModelBase
                          (string.IsNullOrEmpty(TopicFilter) || trace.Topic.TopicName == TopicFilter) &&
                          (string.IsNullOrEmpty(MessageIdFilter) || trace.MessageId.Contains(MessageIdFilter, StringComparison.Ordinal)))
             .OrderByDescending(trace => trace.Entries.Last().Timestamp)
-            .Take(100)
+            .Take(200)
             .Reverse();
 
     public MessageTraceViewModel? SelectedTrace

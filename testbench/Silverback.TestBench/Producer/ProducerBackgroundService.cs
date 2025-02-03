@@ -42,8 +42,7 @@ public class ProducerBackgroundService : BackgroundService
     {
         foreach (TopicViewModel topic in _mainViewModel.Topics)
         {
-            if (topic.IsEnabled)
-                Task.Run(() => ProduceAsync(topic, stoppingToken), stoppingToken);
+            Task.Run(() => ProduceAsync(topic, stoppingToken), stoppingToken);
         }
 
         return Task.CompletedTask;
@@ -54,7 +53,7 @@ public class ProducerBackgroundService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (!_mainViewModel.IsProducing)
+            if (!_mainViewModel.IsProducing || !topic.IsEnabled)
             {
                 await Task.Delay(1000, stoppingToken);
                 continue;

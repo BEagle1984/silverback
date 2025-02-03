@@ -2,18 +2,22 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Confluent.Kafka;
 using Ductus.FluentDocker.Services;
 using Microsoft.Extensions.Logging;
 using Silverback.TestBench.Containers;
 using Silverback.TestBench.Producer;
 using Silverback.TestBench.ViewModel.Framework;
-using Silverback.TestBench.ViewModel.Logs;
-using Silverback.TestBench.ViewModel.Trace;
 
 namespace Silverback.TestBench.ViewModel.Containers;
 
 public class ContainerInstanceViewModel : ViewModelBase
 {
+    private readonly ILogger<ContainerInstanceViewModel> _logger;
+
     private DateTime? _started;
 
     private DateTime? _stopped;
@@ -23,24 +27,34 @@ public class ContainerInstanceViewModel : ViewModelBase
     public ContainerInstanceViewModel(
         IContainerService containerService,
         MessagesTracker messagesTracker,
-        LogsViewModel logsViewModel,
-        TraceViewModel traceViewModel,
+        MainViewModel mainViewModel,
         ILoggerFactory loggerFactory)
     {
         ContainerService = containerService;
         LogParser = new ContainerLogParser(
             this,
-            logsViewModel,
-            traceViewModel,
+            mainViewModel,
             messagesTracker,
             loggerFactory.CreateLogger<ContainerLogParser>());
+
+        _logger = loggerFactory.CreateLogger<ContainerInstanceViewModel>();
+
+        StopCommand = new AsyncRelayCommand(
+            () => Task.Run(Stop),
+            () => Status == ContainerStatus.Running);
     }
+
+    public ICommand StopCommand { get; }
 
     public IContainerService ContainerService { get; }
 
     public ContainerLogParser LogParser { get; }
 
     public ContainerStatisticsViewModel Statistics { get; } = new();
+
+    public ObservableCollection<TopicPartition> AssignedKafkaPartitions { get; } = [];
+
+    public ObservableCollection<string> SubscribedMqttTopics { get; } = [];
 
     public DateTime? Started
     {
@@ -66,7 +80,13 @@ public class ContainerInstanceViewModel : ViewModelBase
         Status = ContainerStatus.Running;
     }
 
-    public void SetStopping() => Status = ContainerStatus.Stopping;
+    public void Stop()
+    {
+        Status = ContainerStatus.Stopping;
+        ContainerService.Dispose();
+
+        _logger.LogInformation("Stopped container {ContainerName}", ContainerService.Name);
+    }
 
     public void SetStopped(DateTime stopped)
     {

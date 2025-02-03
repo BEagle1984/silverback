@@ -8,8 +8,8 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel, IsDesignTimeCreatable=True}"
         Title="Silverback Test Bench"
-        Width="1200"
-        Height="800"
+        Width="1400"
+        Height="1000"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource {x:Type Window}}"
         KeyDown="OnKeyDown">

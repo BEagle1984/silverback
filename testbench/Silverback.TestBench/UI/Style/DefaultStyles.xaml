@@ -105,7 +105,7 @@
     <Style TargetType="TabPanel">
         <Setter Property="Background" Value="Transparent" />
     </Style>
-    
+
     <Style TargetType="DataGrid">
         <Setter Property="HorizontalGridLinesBrush" Value="Gray" />
         <Setter Property="VerticalGridLinesBrush" Value="Gray" />
@@ -137,5 +137,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
+    <Style TargetType="CheckBox" x:Key="DataGridCheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+        <Setter Property="Margin" Value="0" />
+    </Style>
 </ResourceDictionary>

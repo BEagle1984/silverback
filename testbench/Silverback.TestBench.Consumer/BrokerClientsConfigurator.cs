@@ -12,6 +12,9 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     private static readonly string ClientId = $"testbench-consumer-{Environment.GetEnvironmentVariable("CONTAINER_NAME")}";
 
+    private static readonly Action<IErrorPolicyBuilder> DefaultErrorPolicy =
+        policy => policy.Retry(5).ThenSkip();
+
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder
             .AddKafkaClients(
@@ -27,16 +30,16 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                 endpoint => endpoint
                                     .ConsumeFrom(TopicNames.Kafka.Single)
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                                    .OnError(DefaultErrorPolicy))
                             .Consume<BatchMessage>(
                                 endpoint => endpoint.ConsumeFrom(TopicNames.Kafka.Batch)
                                     .EnableBatchProcessing(100, TimeSpan.FromSeconds(2))
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                                    .OnError(DefaultErrorPolicy))
                             .Consume<UnboundedMessage>(
                                 endpoint => endpoint.ConsumeFrom(TopicNames.Kafka.Unbounded)
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip())))
+                                    .OnError(DefaultErrorPolicy)))
                     .AddProducer(
                         producer => producer
                             .Produce<KafkaResponseMessage>(
@@ -53,13 +56,13 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                     .ConsumeFrom($"$share/group/{TopicNames.Mqtt.Single}")
                                     .WithAtLeastOnceQoS()
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                                    .OnError(DefaultErrorPolicy))
                             .Consume<UnboundedMessage>(
                                 endpoint => endpoint
                                     .ConsumeFrom($"$share/group/{TopicNames.Mqtt.Unbounded}")
                                     .WithAtLeastOnceQoS()
                                     .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                                    .OnError(DefaultErrorPolicy))
                             .Produce<MqttResponseMessage>(
                                 endpoint => endpoint
                                     .ProduceTo("testbench/mqtt/responses")
