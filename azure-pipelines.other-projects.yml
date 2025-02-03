@@ -1,7 +1,7 @@
 name: other-projects.$(date:yyyyMMdd)$(rev:.r)
 
 pool:
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'windows-latest'
 
 variables:
   buildConfiguration: 'Release'
@@ -15,11 +15,11 @@ steps:
       version: '8.0.x'
     displayName: 'Install SDK 8.0.x'
   # Build nuget packages
-  - script: |
+  - pwsh: |
       cd nuget
-      pwsh ./Update.ps1
+      ./Update.ps1
     displayName: 'Build Silverback packages'
-  - script: |
+  - pwsh: |
       dotnet nuget add source "$(pwd)/nuget" --name local
       echo "$(pwd)/nuget added as package source"
     displayName: 'Set package source'
