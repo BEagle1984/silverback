@@ -439,7 +439,11 @@ public partial class ErrorPoliciesFixture
                 {
                     // Read first chunk only
                     byte[] buffer = new byte[10];
+#if NET6_0
                     binaryMessage.Content!.Read(buffer, 0, 10);
+#else
+                    binaryMessage.Content!.ReadExactly(buffer, 0, 10);
+#endif
                     throw new InvalidOperationException("Retry!");
                 }
             }
