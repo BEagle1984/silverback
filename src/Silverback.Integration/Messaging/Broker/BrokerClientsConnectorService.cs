@@ -58,8 +58,14 @@ internal sealed class BrokerClientsConnectorService : IHostedService
         Task.Run(
                 async () =>
                 {
-                    await _connector.DisconnectAllAsync().ConfigureAwait(false);
-                    _brokerDisconnectedTaskCompletionSource.SetResult(true);
+                    try
+                    {
+                        await _connector.DisconnectAllAsync().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        _brokerDisconnectedTaskCompletionSource.SetResult(true);
+                    }
                 })
             .FireAndForget();
 
