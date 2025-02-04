@@ -262,7 +262,8 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                         .AddPostgreSqlOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .ProcessOutbox(outbox => outbox
+                                    .UsePostgreSql(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Storage;
 using Silverback.TestBench.Containers;
 using Silverback.TestBench.Containers.Commands;
 using Silverback.TestBench.Producer;
@@ -23,6 +24,8 @@ namespace Silverback.TestBench;
 
 public partial class App
 {
+    public const string PostgreSqlConnectionString = "Host=localhost;Database=silverback;Username=dbadmin;Password=Si1v3rbacK";
+
     private IHost? _host;
 
     private ILogger<App>? _logger;
@@ -41,21 +44,31 @@ public partial class App
                         .AddSingleton(this)
                         .AddSerilog(Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"));
 
+                    services.AddSilverback()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddKafka()
+                                .AddMqtt()
+                                .AddPostgreSqlOutbox()
+                                .AddOutboxWorker(
+                                    worker => worker
+                                        .ProcessOutbox(outbox => outbox.UsePostgreSql(PostgreSqlConnectionString))
+                                        .WithInterval(TimeSpan.FromMilliseconds(50))))
+                        .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
+
                     AddUtils(services);
                     AddWindows(services);
 
                     AddProducer(services);
                     AddContainers(services);
                     AddLogsAndTrace(services);
-
-                    services.AddSilverback()
-                        .WithConnectionToMessageBroker(options => options.AddKafka().AddMqtt())
-                        .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
                 })
             .Build();
 
         _logger = _host.Services.GetRequiredService<ILogger<App>>();
         _logger.LogInformation("Application started");
+
+        _host.Services.GetRequiredService<SilverbackStorageInitializer>().CreatePostgreSqlOutboxAsync(PostgreSqlConnectionString).Wait();
 
         _host.Services.GetRequiredService<InitWindow>().Show();
     }

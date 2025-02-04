@@ -24,6 +24,28 @@ public class DynamicCountdownEventFixture
         countdownEvent.CurrentCount.Should().Be(4);
     }
 
+    [Fact]
+    public void Reset_ShouldResetCurrentCount()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(3);
+        countdownEvent.Reset();
+
+        countdownEvent.CurrentCount.Should().Be(0);
+    }
+
+    [Fact]
+    public void Reset_ShouldResetCurrentCountToSpecifiedValue()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(3);
+        countdownEvent.Reset(5);
+
+        countdownEvent.CurrentCount.Should().Be(5);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]

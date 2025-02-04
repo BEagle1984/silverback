@@ -16,7 +16,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <inheritdoc cref="IOutboxWorker" />
-public class OutboxWorker : IOutboxWorker
+public sealed class OutboxWorker : IOutboxWorker, IDisposable
 {
     private readonly OutboxWorkerSettings _settings;
 
@@ -28,7 +28,7 @@ public class OutboxWorker : IOutboxWorker
 
     private readonly ConcurrentBag<OutboxMessage> _producedMessages = [];
 
-    private int _pendingProduceOperations;
+    private readonly DynamicCountdownEvent _pendingProduceCountdown = new();
 
     private bool _failed;
 
@@ -77,12 +77,17 @@ public class OutboxWorker : IOutboxWorker
     /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
     public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
 
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    public void Dispose() => _pendingProduceCountdown.Dispose();
+
     private async Task<bool> TryProcessOutboxAsync(CancellationToken stoppingToken)
     {
         _logger.LogReadingMessagesFromOutbox(_settings.BatchSize);
 
+        _pendingProduceCountdown.Reset();
         _producedMessages.Clear();
         _failed = false;
+
         IReadOnlyCollection<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
         if (outboxMessages.Count == 0)
@@ -98,10 +103,7 @@ public class OutboxWorker : IOutboxWorker
             {
                 _logger.LogProcessingOutboxStoredMessage(++index, outboxMessages.Count);
 
-                if (_settings.EnforceMessageOrder)
-                    await BlockingProcessMessageAsync(outboxMessage).ConfigureAwait(false);
-                else
-                    ProcessMessage(outboxMessage);
+                ProcessMessage(outboxMessage);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -113,7 +115,7 @@ public class OutboxWorker : IOutboxWorker
         }
         finally
         {
-            await WaitAllAsync().ConfigureAwait(false);
+            await WaitAllAsync().ConfigureAwait(false); // Stopping token not forwarded to prevent inconsistencies
             await AcknowledgeAllAsync().ConfigureAwait(false);
         }
 
@@ -128,13 +130,10 @@ public class OutboxWorker : IOutboxWorker
         {
             IProducer producer = GetProducer(outboxMessage);
 
-            Interlocked.Increment(ref _pendingProduceOperations);
-
             if (_failed && _settings.EnforceMessageOrder)
-            {
-                Interlocked.Decrement(ref _pendingProduceOperations);
                 return;
-            }
+
+            _pendingProduceCountdown.AddCount();
 
             producer.RawProduce(
                 outboxMessage.Content,
@@ -146,7 +145,7 @@ public class OutboxWorker : IOutboxWorker
         catch (Exception ex)
         {
             _failed = true;
-            Interlocked.Decrement(ref _pendingProduceOperations);
+            _pendingProduceCountdown.Signal();
 
             _logger.LogErrorProducingOutboxStoredMessage(ex);
 
@@ -159,51 +158,24 @@ public class OutboxWorker : IOutboxWorker
     private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, ProduceState state)
     {
         _producedMessages.Add(state.OutboxMessage);
-        Interlocked.Decrement(ref _pendingProduceOperations);
+        _pendingProduceCountdown.Signal();
     }
 
     private void OnProduceError(Exception exception, ProduceState state)
     {
         _failed = true;
-        Interlocked.Decrement(ref _pendingProduceOperations);
+        _pendingProduceCountdown.Signal();
 
         _logger.LogErrorProducingOutboxStoredMessage(
             new OutboundEnvelope(state.OutboxMessage.Content, state.OutboxMessage.Headers, state.EndpointConfiguration, state.Producer),
             exception);
     }
 
-    private async ValueTask BlockingProcessMessageAsync(OutboxMessage outboxMessage)
-    {
-        try
-        {
-            IProducer producer = GetProducer(outboxMessage);
-
-            await producer.RawProduceAsync(outboxMessage.Content, outboxMessage.Headers).ConfigureAwait(false);
-            _producedMessages.Add(outboxMessage);
-        }
-        catch (Exception ex)
-        {
-            _failed = true;
-
-            _logger.LogErrorProducingOutboxStoredMessage(ex);
-
-            // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
-            if (_settings.EnforceMessageOrder)
-                throw;
-        }
-    }
-
     private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.EndpointName);
 
     private Task AcknowledgeAllAsync() => _outboxReader.AcknowledgeAsync(_producedMessages);
 
-    private async Task WaitAllAsync()
-    {
-        while (_pendingProduceOperations > 0)
-        {
-            await Task.Delay(50).ConfigureAwait(false);
-        }
-    }
+    private Task WaitAllAsync() => _pendingProduceCountdown.WaitAsync();
 
     internal record struct ProduceState(IProducer Producer, ProducerEndpointConfiguration EndpointConfiguration, OutboxMessage OutboxMessage);
 }

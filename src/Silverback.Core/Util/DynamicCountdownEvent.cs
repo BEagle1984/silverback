@@ -15,6 +15,13 @@ internal sealed class DynamicCountdownEvent : IDisposable
 
     public int CurrentCount => Volatile.Read(ref _currentCount);
 
+    public void Reset(int count = 0)
+    {
+        Check.GreaterOrEqualTo(count, nameof(count), 0);
+
+        _currentCount = count;
+    }
+
     public void AddCount(int count = 1)
     {
         Check.GreaterOrEqualTo(count, nameof(count), 1);

@@ -30,8 +30,10 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             foreach (KafkaTopicViewModel topic in _mainViewModel.KafkaTopics)
                             {
                                 producer.Produce<RoutableTestBenchMessage>(
+                                    $"kafka-{topic.TopicName}",
                                     endpoint => endpoint
                                         .ProduceTo(topic.TopicName)
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
                                         .Filter(message => message?.TargetTopicViewModel.TopicName == topic.TopicName)
                                         .SetMessageId(message => message?.MessageId));
                             }
@@ -46,8 +48,10 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             foreach (MqttTopicViewModel topic in _mainViewModel.MqttTopics)
                             {
                                 client.Produce<RoutableTestBenchMessage>(
+                                    $"mqtt-{topic.TopicName}",
                                     endpoint => endpoint
                                         .ProduceTo(topic.TopicName)
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
                                         .WithAtLeastOnceQoS()
                                         .Filter(message => message?.TargetTopicViewModel.TopicName == topic.TopicName)
                                         .SetMessageId(message => message?.MessageId));

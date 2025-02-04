@@ -23,6 +23,7 @@
     <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.MQTT" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Storage.PostgreSql" Version="$(BaseVersion)" />
   </ItemGroup>
 
   <ItemGroup>

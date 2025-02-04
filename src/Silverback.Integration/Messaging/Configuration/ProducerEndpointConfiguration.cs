@@ -105,7 +105,7 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
             throw new BrokerConfigurationException("A produce strategy is required.");
 
         if (Strategy is OutboxProduceStrategy && string.IsNullOrEmpty(FriendlyName))
-            throw new BrokerConfigurationException("A friendly unique name for the endpoint is required when using the outbox produce strategy.");
+            throw new BrokerConfigurationException("A unique friendly name for the endpoint is required when using the outbox produce strategy.");
 
         Chunk?.Validate();
         Encryption?.Validate();

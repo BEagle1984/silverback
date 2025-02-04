@@ -81,7 +81,7 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("A friendly unique name for the endpoint is required when using the outbox produce strategy.");
+        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("A unique friendly name for the endpoint is required when using the outbox produce strategy.");
     }
 
     private static TestProducerEndpointConfiguration GetValidConfiguration() => new("test");
