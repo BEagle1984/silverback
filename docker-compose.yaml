@@ -1,6 +1,7 @@
-# Kafka dashboard (AKHQ): http://localhost:8080
-# MQTT dashboard (EMQX): http://localhost:18083 (user: admin / pwd: public)
+# Conduktor: http://localhost:8080
+# EMQX dashboard: http://localhost:18083 (user: admin / pwd: public)
 # MQTTX: http://localhost:8084
+# PGAdmin: http://localhost:8082 (database password: Si1v3rbacK)
 
 services:
   
@@ -10,7 +11,7 @@ services:
     image: apache/kafka-native:3.9.0
     hostname: kafka-1
     ports:
-      - 19092:19092
+      - "19092:19092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
@@ -31,7 +32,7 @@ services:
     image: apache/kafka-native:3.9.0
     hostname: kafka-2
     ports:
-      - 29092:29092
+      - "29092:29092"
     environment:
       KAFKA_NODE_ID: 2
       KAFKA_PROCESS_ROLES: 'broker,controller'
@@ -60,21 +61,24 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka-1:9092,kafka-2:9092"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
-  akhq:
-    container_name: silverback-akhq
-    image: tchiotludo/akhq:latest
-    environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            silverback-kafka:
-              properties:
-                bootstrap.servers: "kafka-1:19092,kafka-2:29092"
+  conduktor:
+    container_name: silverback-conduktor
+    image: conduktor/conduktor-console:1.26.0
     ports:
       - "8080:8080"
+    environment:
+      CDK_DATABASE_URL: "postgresql://dbadmin:Si1v3rbacK@postgresql:5432/silverback"
+      CDK_CLUSTERS_0_ID: "default"
+      CDK_CLUSTERS_0_NAME: "Silverback Kafka Cluster"
+      CDK_CLUSTERS_0_COLOR: "#5388f4"
+      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: "PLAINTEXT://kafka-1:19092,PLAINTEXT://kafka-2:29092"
+      CDK_CLUSTERS_0_SCHEMAREGISTRY_URL: "http://schema-registry:8081"
+      CDK_ADMIN_EMAIL: "admin@silverback-messaging.net"
+      CDK_ADMIN_PASSWORD: "admin"
     depends_on:
       - kafka-1
       - kafka-2
+      - postgresql
   
   # MQTT (emqx)
   emqx1:
@@ -117,7 +121,7 @@ services:
     container_name: silverback-mqttx-web
     image: emqx/mqttx-web:latest
     ports:
-      - 8084:80
+      - "8084:80"
     depends_on:
       - emqx1
       - emqx2
@@ -137,6 +141,53 @@ services:
       - emqx1
       - emqx2
 
+  # PostgreSQL
+  postgresql:
+    image: postgres:17.0
+    container_name: silverback-postgresql
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "dbadmin"
+      POSTGRES_DB: "silverback"
+      POSTGRES_PASSWORD: "Si1v3rbacK"
+  pgadmin:
+    container_name: silverback-pgadmin
+    image: dpage/pgadmin4:6.21
+    restart: always
+    ports:
+      - "8082:80"
+    depends_on:
+      - postgresql
+    links:
+      - postgresql
+    configs:
+      - source: servers.json
+        target: /pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@silverback-messaging.net"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+
+configs:
+  servers.json:
+    content: |
+      {
+        "Servers": {
+          "1": {
+            "Name": "postgresql",
+            "Group": "Servers",
+            "Host": "postgresql",
+            "Port": 5432,
+            "MaintenanceDB": "silverback",
+            "Username": "dbadmin"
+          }
+        }
+      }
+      
 networks:
   default:
     driver: bridge
