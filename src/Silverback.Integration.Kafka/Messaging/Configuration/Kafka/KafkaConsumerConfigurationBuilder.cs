@@ -488,7 +488,7 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     Sets the partition assignment strategy: <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the partitions
     ///     of several topics, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute the partitions among
     ///     the consumer group members, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute the
-    ///     partitions and limit minimize the partitions movements. The default is <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" />.
+    ///     partitions and minimize the partitions movements. The default is <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" />.
     /// </summary>
     /// <param name="partitionAssignmentStrategy">
     ///     The partition assignment strategy.
@@ -497,6 +497,33 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public partial KafkaConsumerConfigurationBuilder WithPartitionAssignmentStrategy(PartitionAssignmentStrategy? partitionAssignmentStrategy);
+
+    /// <summary>
+    ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the
+    ///     partitions of several topics.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithRangePartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.Range);
+
+    /// <summary>
+    ///   Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute
+    ///  the partitions among the consumer group members.
+    /// </summary>
+    /// <returns>
+    ///    The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithRoundRobinPartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.RoundRobin);
+
+    /// <summary>
+    ///   Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute
+    ///  the partitions and minimize the partitions movements.
+    /// </summary>
+    /// <returns>
+    ///   The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithCooperativeStickyPartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky);
 
     /// <summary>
     ///     Sets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats

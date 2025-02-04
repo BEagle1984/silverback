@@ -448,6 +448,39 @@ public class KafkaConsumerConfigurationBuilderFixture
         configuration.GetMetadataTimeout.Should().Be(TimeSpan.FromSeconds(42));
     }
 
+    [Fact]
+    public void WithRangePartitionAssignmentStrategy_ShouldSetPartitionAssignmentStrategy()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithRangePartitionAssignmentStrategy();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.Range);
+    }
+
+    [Fact]
+    public void WithRoundRobinPartitionAssignmentStrategy_ShouldSetPartitionAssignmentStrategy()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithRoundRobinPartitionAssignmentStrategy();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.RoundRobin);
+    }
+
+    [Fact]
+    public void WithCooperativeStickyPartitionAssignmentStrategy_ShouldSetPartitionAssignmentStrategy()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithCooperativeStickyPartitionAssignmentStrategy();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.CooperativeSticky);
+    }
+
     private static KafkaConsumerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>
         GetBuilderWithValidConfiguration().Consume(endpoint => endpoint.ConsumeFrom("topic"));
 

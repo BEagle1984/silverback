@@ -115,12 +115,12 @@ public class RebalanceFixture : KafkaFixture
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
+                                .WithCooperativeStickyPartitionAssignmentStrategy()
                                 .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
+                                .WithCooperativeStickyPartitionAssignmentStrategy()
                                 .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddSingletonBrokerClientCallback(partitionCallbacksHandler)
                 .AddIntegrationSpyAndSubscriber());
