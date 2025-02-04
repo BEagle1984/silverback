@@ -30,7 +30,9 @@ public class KafkaTopicsCreator
 
     public async Task RecreateAllTopicsAsync()
     {
-        IAdminClient adminClient = _adminClientFactory.GetClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"));
+        IAdminClient adminClient = _adminClientFactory.GetClient(
+            configuration => configuration
+                .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092"));
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 

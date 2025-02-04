@@ -19,7 +19,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
         builder
             .AddKafkaClients(
                 clients => clients
-                    .WithBootstrapServers("PLAINTEXT://kafka:29092")
+                    .WithBootstrapServers("PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9092")
                     .AddConsumer(
                         consumer => consumer
                             .WithGroupId("testbench")

@@ -23,7 +23,9 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                     .AddProducer(
                         producer =>
                         {
-                            producer.WithBootstrapServers("PLAINTEXT://localhost:9092").WithClientId("testbench-producer");
+                            producer
+                                .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092")
+                                .WithClientId("testbench-producer");
 
                             foreach (KafkaTopicViewModel topic in _mainViewModel.KafkaTopics)
                             {
