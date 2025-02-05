@@ -35,17 +35,29 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return Map(reader, projection).ToList();
     }
 
-    public async Task<IReadOnlyCollection<T>> ExecuteQueryAsync<T>(
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in the returned enumerable")]
+    public async Task<IDisposableAsyncEnumerable<T>> ExecuteQueryAsync<T>(
         Func<DbDataReader, T> projection,
         string sql,
         TParameter[]? parameters,
         TimeSpan timeout,
         CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
-        using DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
+        DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
-        return await MapAsync(reader, projection, cancellationToken).ToListAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            IAsyncEnumerable<T> asyncEnumerable = MapAsync(reader, projection, cancellationToken);
+
+            return new DataReaderAsyncEnumerable<T>(asyncEnumerable, reader, wrapper);
+        }
+        catch
+        {
+            await reader.DisposeAsync().ConfigureAwait(false);
+            wrapper.Dispose();
+            throw;
+        }
     }
 
     public T? ExecuteScalar<T>(string sql, TParameter[]? parameters, TimeSpan timeout)
@@ -328,5 +340,26 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
         public ValueTask RollbackOwnedTransactionAsync(CancellationToken cancellationToken = default) =>
             _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync(cancellationToken)) : default;
+    }
+
+    private class DataReaderAsyncEnumerable<T> : DisposableAsyncEnumerable<T>
+    {
+        private readonly DbDataReader _reader;
+
+        private readonly DbCommandWrapper _commandWrapper;
+
+        public DataReaderAsyncEnumerable(IAsyncEnumerable<T> wrappedAsyncEnumerable, DbDataReader reader, DbCommandWrapper commandWrapper)
+            : base(wrappedAsyncEnumerable)
+        {
+            _reader = reader;
+            _commandWrapper = commandWrapper;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _reader.Dispose();
+            _commandWrapper.Dispose();
+        }
     }
 }

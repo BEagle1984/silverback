@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
@@ -26,7 +27,7 @@ public interface IOutboxReader
     ///     A <see cref="Task" /> representing the result of the asynchronous operation. The task result
     ///     contains the collection of <see cref="OutboxMessage" />.
     /// </returns>
-    Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count);
+    Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count);
 
     /// <summary>
     ///     Returns the total number of messages in the outbox.

@@ -9,6 +9,7 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
@@ -188,7 +189,7 @@ public class OutboxReaderFactoryFixture
 
     private class OutboxReader1 : IOutboxReader
     {
-        public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
+        public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
 
         public Task<int> GetLengthAsync() => throw new NotSupportedException();
 
@@ -199,7 +200,7 @@ public class OutboxReaderFactoryFixture
 
     private class OutboxReader2 : IOutboxReader
     {
-        public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
+        public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
 
         public Task<int> GetLengthAsync() => throw new NotSupportedException();
 
@@ -210,7 +211,7 @@ public class OutboxReaderFactoryFixture
 
     private class OverrideOutboxReader : IOutboxReader
     {
-        public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
+        public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
 
         public Task<int> GetLengthAsync() => throw new NotSupportedException();
 

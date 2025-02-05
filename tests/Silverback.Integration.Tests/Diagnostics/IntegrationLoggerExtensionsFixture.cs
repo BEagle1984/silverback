@@ -351,9 +351,9 @@ public class IntegrationLoggerExtensionsFixture
     [Fact]
     public void LogProcessingOutboxStoredMessage_ShouldLog()
     {
-        _silverbackLogger.LogProcessingOutboxStoredMessage(13, 42);
+        _silverbackLogger.LogProcessingOutboxStoredMessage(13);
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13 of 42.", 1076);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13.", 1076);
     }
 
     [Fact]

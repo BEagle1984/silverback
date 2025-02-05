@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -38,24 +40,34 @@ public class EntityFrameworkOutboxReader : IOutboxReader
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
-    public async Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count)
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in the returned enumerable")]
+    public async Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count)
     {
-        using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
+        IServiceScope scope = _serviceScopeFactory.CreateScope();
+        DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        List<SilverbackOutboxMessage> messages = await dbContext.Set<SilverbackOutboxMessage>()
-            .AsNoTracking()
-            .OrderBy(message => message.Created)
-            .Take(count)
-            .ToListAsync().ConfigureAwait(false);
+        try
+        {
+            IAsyncEnumerable<DbOutboxMessage> asyncEnumerable = dbContext.Set<SilverbackOutboxMessage>()
+                .AsNoTracking()
+                .OrderBy(message => message.Created)
+                .Take(count)
+                .AsAsyncEnumerable()
+                .Select(
+                    message => new DbOutboxMessage(
+                        message.Id,
+                        message.Content,
+                        message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
+                        message.EndpointName));
 
-        return messages.Select(
-                message => new DbOutboxMessage(
-                    message.Id,
-                    message.Content,
-                    message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                    message.EndpointName))
-            .ToList();
+            return new DbContextAsyncEnumerable<OutboxMessage>(asyncEnumerable, dbContext, scope);
+        }
+        catch
+        {
+            await dbContext.DisposeAsync().ConfigureAwait(false);
+            scope.Dispose();
+            throw;
+        }
     }
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />

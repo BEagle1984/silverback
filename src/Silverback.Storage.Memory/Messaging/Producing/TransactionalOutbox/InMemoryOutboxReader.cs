@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Util;
 
@@ -27,7 +28,11 @@ public class InMemoryOutboxReader : IOutboxReader
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
-    public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => Task.FromResult(_outbox.Get(count));
+    public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count)
+    {
+        DisposableAsyncEnumerable<OutboxMessage> disposableAsyncEnumerable = new(_outbox.Get(count).ToAsyncEnumerable());
+        return Task.FromResult<IDisposableAsyncEnumerable<OutboxMessage>>(disposableAsyncEnumerable);
+    }
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
     public Task<int> GetLengthAsync() => Task.FromResult(_outbox.ItemsCount);

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,20 +87,14 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         _producedMessages.Clear();
         _failed = false;
 
-        IReadOnlyCollection<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
-
-        if (outboxMessages.Count == 0)
-        {
-            _logger.LogOutboxEmpty();
-            return false;
-        }
+        using IDisposableAsyncEnumerable<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
         try
         {
             int index = 0;
-            foreach (OutboxMessage outboxMessage in outboxMessages)
+            await foreach (OutboxMessage outboxMessage in outboxMessages)
             {
-                _logger.LogProcessingOutboxStoredMessage(++index, outboxMessages.Count);
+                _logger.LogProcessingOutboxStoredMessage(++index);
 
                 ProcessMessage(outboxMessage);
 
@@ -112,6 +105,12 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
                 if (_failed && _settings.EnforceMessageOrder)
                     break;
             }
+
+            if (index == 0)
+            {
+                _logger.LogOutboxEmpty();
+                return false;
+            }
         }
         finally
         {
@@ -119,7 +118,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
             await AcknowledgeAllAsync().ConfigureAwait(false);
         }
 
-        return true;
+        return !_failed;
     }
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]

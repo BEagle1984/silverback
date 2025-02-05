@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,6 +12,7 @@ using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Storage.DataAccess;
 using Silverback.Tests.Logging;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Messaging.Producing.TransactionalOutbox;
@@ -84,15 +84,14 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
-        IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
+        IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        messages.Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                [0x01],
+        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
+        [
+            [0x01],
                 [0x02],
                 new byte[] { 0x03 }
-            });
+        ]);
     }
 
     [Fact]
@@ -110,9 +109,9 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
-        IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
+        IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        messages.Should().BeEmpty();
+        (await messages.ToListAsync()).Should().BeEmpty();
     }
 
     [Fact]
@@ -136,10 +135,10 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
-        IReadOnlyCollection<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
-        IReadOnlyCollection<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
+        IDisposableAsyncEnumerable<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
+        IDisposableAsyncEnumerable<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
 
-        batch2.Should().BeEquivalentTo(batch1);
+        (await batch2.ToListAsync()).Should().BeEquivalentTo(await batch1.ToListAsync());
     }
 
     [Fact]
@@ -161,15 +160,14 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
-        IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
+        IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        messages.Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
+        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
+            [
                 [0x01],
                 [0x02],
                 new byte[] { 0x03 }
-            },
+            ],
             options => options.WithStrictOrdering());
     }
 

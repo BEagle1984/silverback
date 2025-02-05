@@ -93,8 +93,8 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, Exception?> OutboxEmpty =
         SilverbackLoggerMessage.Define(IntegrationLogEvents.OutboxEmpty);
 
-    private static readonly Action<ILogger, int, int, Exception?> ProcessingOutboxStoredMessage =
-        SilverbackLoggerMessage.Define<int, int>(IntegrationLogEvents.ProcessingOutboxStoredMessage);
+    private static readonly Action<ILogger, int, Exception?> ProcessingOutboxStoredMessage =
+        SilverbackLoggerMessage.Define<int>(IntegrationLogEvents.ProcessingOutboxStoredMessage);
 
     private static readonly Action<ILogger, Exception?> ErrorProducingOutboxStoredMessage =
         SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProducingOutboxStoredMessage);
@@ -305,8 +305,8 @@ internal static class IntegrationLoggerExtensions
     public static void LogOutboxEmpty(this ISilverbackLogger logger) =>
         OutboxEmpty(logger.InnerLogger, null);
 
-    public static void LogProcessingOutboxStoredMessage(this ISilverbackLogger logger, int currentIndex, int count) =>
-        ProcessingOutboxStoredMessage(logger.InnerLogger, currentIndex, count, null);
+    public static void LogProcessingOutboxStoredMessage(this ISilverbackLogger logger, int currentIndex) =>
+        ProcessingOutboxStoredMessage(logger.InnerLogger, currentIndex, null);
 
     public static void LogErrorProducingOutboxStoredMessage(this ISilverbackLogger logger, Exception exception) =>
         ErrorProducingOutboxStoredMessage(logger.InnerLogger, exception);

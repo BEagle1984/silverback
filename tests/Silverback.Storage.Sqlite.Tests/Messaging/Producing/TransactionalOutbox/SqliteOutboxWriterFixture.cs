@@ -57,7 +57,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await outboxWriter.AddAsync(outboxMessage2);
         await outboxWriter.AddAsync(outboxMessage3);
 
-        (await _outboxReader.GetAsync(10)).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync([outboxMessage1, outboxMessage2, outboxMessage3]);
 
-        (await _outboxReader.GetAsync(10)).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 }.ToAsyncEnumerable());
 
-        (await _outboxReader.GetAsync(10)).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
     }
 
     [Fact]
@@ -139,14 +139,14 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.RollbackAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(
             new OutboxMessage([0x99], null, "test"),
             context);
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -159,7 +159,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.CommitAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
     }
 
     [Fact]
@@ -200,14 +200,14 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.RollbackAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(
             new OutboxMessage([0x99], null, "test"),
             context);
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -224,7 +224,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.CommitAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
     }
 
     [Fact]
@@ -266,14 +266,14 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.RollbackAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(
             new OutboxMessage([0x99], null, "test"),
             context);
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -291,7 +291,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
             await transaction.CommitAsync();
         }
 
-        (await _outboxReader.GetAsync(10)).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
     }
 
     public void Dispose() => _sqliteConnection.Dispose();

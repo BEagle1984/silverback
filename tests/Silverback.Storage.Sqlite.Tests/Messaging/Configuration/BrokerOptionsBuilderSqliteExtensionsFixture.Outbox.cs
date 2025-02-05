@@ -12,6 +12,7 @@ using Silverback.Lock;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Logging;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Configuration;
@@ -83,7 +84,7 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         public Task<TimeSpan> GetMaxAgeAsync() => throw new NotSupportedException();
 
-        public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
+        public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
 
         public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) => throw new NotSupportedException();
     }
@@ -94,7 +95,7 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         public Task<TimeSpan> GetMaxAgeAsync() => throw new NotSupportedException();
 
-        public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
+        public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) => throw new NotSupportedException();
 
         public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) => throw new NotSupportedException();
     }

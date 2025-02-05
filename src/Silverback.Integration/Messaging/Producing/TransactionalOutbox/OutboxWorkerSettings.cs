@@ -54,7 +54,7 @@ public record OutboxWorkerSettings : IValidatableSettings
 
     /// <summary>
     ///     Gets the settings for the optional <see cref="IDistributedLock" /> to be used to ensure that only one instance is running at
-    ///     the same time. By default it will be automatically inferred from the <see cref="Outbox" /> settings.
+    ///     the same time. By default, it will be automatically inferred from the <see cref="Outbox" /> settings.
     /// </summary>
     public DistributedLockSettings? DistributedLock { get; }
 
@@ -70,7 +70,7 @@ public record OutboxWorkerSettings : IValidatableSettings
     public bool EnforceMessageOrder { get; init; } = true;
 
     /// <summary>
-    ///     Gets the number of messages to be retrieved from the outbox and processed at once. The default is 1000.
+    ///     Gets the number of messages to be handled and acknowledged at once. The default is 1000.
     /// </summary>
     public int BatchSize { get; init; } = 1000;
 

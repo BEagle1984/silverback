@@ -59,7 +59,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
-    public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) =>
+    public Task<IDisposableAsyncEnumerable<OutboxMessage>> GetAsync(int count) =>
         _dataAccess.ExecuteQueryAsync(
             MapOutboxMessage,
             _getQuerySql,

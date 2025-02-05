@@ -432,13 +432,12 @@ public static class IntegrationLogEvents
         "The outbox is empty.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message stored in the
-    ///     outbox is being processed.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message stored in the outbox is being processed.
     /// </summary>
     public static LogEvent ProcessingOutboxStoredMessage { get; } = new(
         LogLevel.Debug,
         GetEventId(76, nameof(ProcessingOutboxStoredMessage)),
-        "Processing outbox message {currentMessageIndex} of {totalMessages}.");
+        "Processing outbox message {currentMessageIndex}.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs  producing the message stored in the
