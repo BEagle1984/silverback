@@ -19,7 +19,7 @@ public interface IOutboxWorker
     /// </param>
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a value indicating whether
-    ///     the outbox contained at least 1 message and it was processed successfully. The caller should ideally keep invoking this method
+    ///     the outbox contained at least 1 message, and it was successfully processed. The caller should ideally keep invoking this method
     ///     in a loop, until <c>false</c> is returned.
     /// </returns>
     Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken);

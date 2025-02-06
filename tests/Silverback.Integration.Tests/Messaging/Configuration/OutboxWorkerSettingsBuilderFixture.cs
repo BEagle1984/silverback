@@ -73,6 +73,130 @@ public class OutboxWorkerSettingsBuilderFixture
     }
 
     [Fact]
+    public void WithIncrementalRetryDelay_ShouldSetInitialDelayAndIncrement()
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        OutboxWorkerSettings settings = builder
+            .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
+            .WithIncrementalRetryDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42))
+            .Build();
+
+        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.Should().Be(TimeSpan.FromDays(42));
+        settings.RetryDelayFactor.Should().Be(1.0);
+        settings.MaxRetryDelay.Should().BeNull();
+    }
+
+    [Fact]
+    public void WithIncrementalRetryDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay()
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        OutboxWorkerSettings settings = builder
+            .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
+            .WithIncrementalRetryDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42), TimeSpan.FromHours(42))
+            .Build();
+
+        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.Should().Be(TimeSpan.FromDays(42));
+        settings.RetryDelayFactor.Should().Be(1.0);
+        settings.MaxRetryDelay.Should().Be(TimeSpan.FromHours(42));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithIncrementalRetryDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.FromMinutes(value), TimeSpan.MaxValue);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithIncrementalRetryDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int value)
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(value));
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithIncrementalRetryDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(int value)
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(42), TimeSpan.FromMinutes(value));
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void WithExponentialRetryDelay_ShouldSetInitialDelayAndFactor()
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        OutboxWorkerSettings settings = builder
+            .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
+            .WithExponentialRetryDelay(TimeSpan.FromMinutes(42), 2.0)
+            .Build();
+
+        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.Should().Be(TimeSpan.Zero);
+        settings.RetryDelayFactor.Should().Be(2.0);
+        settings.MaxRetryDelay.Should().BeNull();
+    }
+
+    [Fact]
+    public void WithExponentialRetryDelay_ShouldSetInitialDelayAndFactorAndMaxDelay()
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        OutboxWorkerSettings settings = builder
+            .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
+            .WithExponentialRetryDelay(TimeSpan.FromMinutes(42), 2.0, TimeSpan.FromHours(42))
+            .Build();
+
+        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.Should().Be(TimeSpan.Zero);
+        settings.RetryDelayFactor.Should().Be(2.0);
+        settings.MaxRetryDelay.Should().Be(TimeSpan.FromHours(42));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithExponentialRetryDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        Action act = () => builder.WithExponentialRetryDelay(TimeSpan.FromMinutes(value), 2.0);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithExponentialRetryDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(int value)
+    {
+        OutboxWorkerSettingsBuilder builder = new();
+
+        Action act = () => builder.WithExponentialRetryDelay(TimeSpan.FromMinutes(42), value);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public void EnforceMessageOrder_ShouldSetEnforceMessageOrder()
     {
         OutboxWorkerSettingsBuilder builder = new();

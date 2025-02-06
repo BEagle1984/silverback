@@ -18,6 +18,8 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
 
     private double _delayFactor = 1.0;
 
+    private TimeSpan? _maxDelay;
+
     private int? _maxFailedAttempts;
 
     /// <inheritdoc cref="ErrorPolicyBaseBuilder{TBuilder}.This" />
@@ -49,14 +51,18 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// <param name="delayIncrement">
     ///     The increment to be added at each subsequent retry.
     /// </param>
+    /// <param name="maxDelay">
+    ///     The maximum delay to be applied.
+    /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public RetryErrorPolicyBuilder WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement)
+    public RetryErrorPolicyBuilder WithIncrementalDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)
     {
         _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
         _delayIncrement = Check.GreaterThan(delayIncrement, nameof(delayIncrement), TimeSpan.Zero);
         _delayFactor = 1.0;
+        _maxDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
         return this;
     }
 
@@ -69,14 +75,18 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     /// <param name="delayFactor">
     ///     The factor to be applied at each retry.
     /// </param>
+    /// <param name="maxDelay">
+    ///     The maximum delay to be applied.
+    /// </param>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public RetryErrorPolicyBuilder WithExponentialDelay(TimeSpan initialDelay, double delayFactor)
+    public RetryErrorPolicyBuilder WithExponentialDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)
     {
         _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
         _delayIncrement = TimeSpan.Zero;
         _delayFactor = Check.GreaterThan(delayFactor, nameof(delayFactor), 0);
+        _maxDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
         return this;
     }
 
@@ -102,6 +112,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
             InitialDelay = _initialDelay,
             DelayIncrement = _delayIncrement,
             DelayFactor = _delayFactor,
+            MaxDelay = _maxDelay,
             MaxFailedAttempts = _maxFailedAttempts
         };
 }

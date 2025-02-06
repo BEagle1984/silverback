@@ -62,25 +62,6 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken)
     {
-        try
-        {
-            return await TryProcessOutboxAsync(stoppingToken).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogErrorProcessingOutbox(ex);
-            return false;
-        }
-    }
-
-    /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
-    public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
-
-    /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose() => _pendingProduceCountdown.Dispose();
-
-    private async Task<bool> TryProcessOutboxAsync(CancellationToken stoppingToken)
-    {
         _logger.LogReadingMessagesFromOutbox(_settings.BatchSize);
 
         _pendingProduceCountdown.Reset();
@@ -98,12 +79,11 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
                 ProcessMessage(outboxMessage);
 
-                if (stoppingToken.IsCancellationRequested)
-                    break;
+                stoppingToken.ThrowIfCancellationRequested();
 
                 // Break on failure if message order has to be preserved
                 if (_failed && _settings.EnforceMessageOrder)
-                    break;
+                    throw new OutboxProcessingException("Failed to produce message, aborting the outbox processing.");
             }
 
             if (index == 0)
@@ -112,14 +92,28 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
                 return false;
             }
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new OutboxProcessingException("Failed to process the outbox.", ex);
+        }
         finally
         {
             await WaitAllAsync().ConfigureAwait(false); // Stopping token not forwarded to prevent inconsistencies
             await AcknowledgeAllAsync().ConfigureAwait(false);
         }
 
-        return !_failed;
+        return true;
     }
+
+    /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
+    public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    public void Dispose() => _pendingProduceCountdown.Dispose();
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]

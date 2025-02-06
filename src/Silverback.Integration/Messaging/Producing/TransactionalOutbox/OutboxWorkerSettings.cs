@@ -59,9 +59,30 @@ public record OutboxWorkerSettings : IValidatableSettings
     public DistributedLockSettings? DistributedLock { get; }
 
     /// <summary>
-    ///     Gets the interval between each run. The default is 500 milliseconds.
+    ///     Gets the delay between the outbox processing iterations. The default is 500 milliseconds.
     /// </summary>
     public TimeSpan Interval { get; init; } = TimeSpan.FromMilliseconds(500);
+
+    /// <summary>
+    ///     Gets the delay to be applied to the first retry in case of an error. If the specified delay (after taking increment and factor
+    ///     into account) is less than the <see cref="Interval" />,  the <see cref="Interval" /> will be used.
+    /// </summary>
+    public TimeSpan InitialRetryDelay { get; init; } = TimeSpan.Zero;
+
+    /// <summary>
+    ///     Gets the increment to the delay to be applied at each retry.
+    /// </summary>
+    public TimeSpan RetryDelayIncrement { get; init; } = TimeSpan.Zero;
+
+    /// <summary>
+    ///     Gets the factor to be applied to the delay to be applied at each retry.
+    /// </summary>
+    public double RetryDelayFactor { get; init; } = 1.0;
+
+    /// <summary>
+    ///     Gets the maximum delay to be applied.
+    /// </summary>
+    public TimeSpan? MaxRetryDelay { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the message order should be preserved, meaning that a failure in the produce of a message will

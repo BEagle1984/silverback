@@ -64,7 +64,14 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
 
             await using (lockHandle)
             {
-                await ExecuteWhileLockedAsync(linkedCancellationTokenSource).ConfigureAwait(false);
+                try
+                {
+                    await ExecuteWhileLockedAsync(linkedCancellationTokenSource).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ignored
+                }
             }
         }
 

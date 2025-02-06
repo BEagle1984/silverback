@@ -18,6 +18,14 @@ public class OutboxWorkerSettingsBuilder
 
     private TimeSpan? _interval;
 
+    private TimeSpan? _initialRetryDelay;
+
+    private TimeSpan? _retryDelayIncrement;
+
+    private double? _retryDelayFactor;
+
+    private TimeSpan? _maxRetryDelay;
+
     private bool? _enforceMessageOrder;
 
     private int? _batchSize;
@@ -53,6 +61,54 @@ public class OutboxWorkerSettingsBuilder
     public OutboxWorkerSettingsBuilder WithInterval(TimeSpan interval)
     {
         _interval = Check.Range(interval, nameof(interval), TimeSpan.Zero, TimeSpan.MaxValue);
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies an initial delay before the first retry and an increment to be added at each subsequent retry.
+    /// </summary>
+    /// <param name="initialDelay">
+    ///     The initial delay before the first retry.
+    /// </param>
+    /// <param name="delayIncrement">
+    ///     The increment to be added at each subsequent retry.
+    /// </param>
+    /// <param name="maxDelay">
+    ///     The maximum delay to be applied.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public OutboxWorkerSettingsBuilder WithIncrementalRetryDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)
+    {
+        _initialRetryDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
+        _retryDelayIncrement = Check.GreaterThan(delayIncrement, nameof(delayIncrement), TimeSpan.Zero);
+        _retryDelayFactor = 1.0;
+        _maxRetryDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry.
+    /// </summary>
+    /// <param name="initialDelay">
+    ///     The initial delay before the first retry.
+    /// </param>
+    /// <param name="delayFactor">
+    ///     The factor to be applied at each retry.
+    /// </param>
+    /// <param name="maxDelay">
+    ///     The maximum delay to be applied.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="OutboxWorkerSettingsBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public OutboxWorkerSettingsBuilder WithExponentialRetryDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)
+    {
+        _initialRetryDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
+        _retryDelayIncrement = TimeSpan.Zero;
+        _retryDelayFactor = Check.GreaterThan(delayFactor, nameof(delayFactor), 0);
+        _maxRetryDelay = maxDelay.HasValue ? Check.GreaterThan(maxDelay.Value, nameof(maxDelay), TimeSpan.Zero) : null;
         return this;
     }
 
@@ -144,6 +200,17 @@ public class OutboxWorkerSettingsBuilder
 
         if (_interval.HasValue)
             workerSettings = workerSettings with { Interval = _interval.Value };
+
+        if (_initialRetryDelay.HasValue)
+        {
+            workerSettings = workerSettings with
+            {
+                InitialRetryDelay = _initialRetryDelay.Value,
+                RetryDelayIncrement = _retryDelayIncrement ?? TimeSpan.Zero,
+                RetryDelayFactor = _retryDelayFactor ?? 1.0,
+                MaxRetryDelay = _maxRetryDelay
+            };
+        }
 
         if (_enforceMessageOrder.HasValue)
             workerSettings = workerSettings with { EnforceMessageOrder = _enforceMessageOrder.Value };

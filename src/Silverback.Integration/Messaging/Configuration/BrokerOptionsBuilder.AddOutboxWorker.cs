@@ -63,7 +63,7 @@ public sealed partial class BrokerOptionsBuilder
                     IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock, serviceProvider);
 
                     return new OutboxWorkerService(
-                        settings.Interval,
+                        settings,
                         outboxWorker,
                         distributedLock,
                         serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorkerService>>());

@@ -38,12 +38,18 @@ public record RetryErrorPolicy : ErrorPolicyBase
     /// </summary>
     public double DelayFactor { get; init; } = 1.0;
 
+    /// <summary>
+    ///   Gets the maximum delay to be applied.
+    /// </summary>
+    public TimeSpan? MaxDelay { get; init; }
+
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new RetryErrorPolicyImplementation(
             InitialDelay,
             DelayIncrement,
             DelayFactor,
+            MaxDelay,
             MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
@@ -60,12 +66,15 @@ public record RetryErrorPolicy : ErrorPolicyBase
 
         private readonly double _delayFactor;
 
+        private readonly TimeSpan? _maxDelay;
+
         private readonly IConsumerLogger<RetryErrorPolicy> _logger;
 
         public RetryErrorPolicyImplementation(
             TimeSpan initialDelay,
             TimeSpan delayIncrement,
             double delayFactor,
+            TimeSpan? maxDelay,
             int? maxFailedAttempts,
             IReadOnlyCollection<Type> excludedExceptions,
             IReadOnlyCollection<Type> includedExceptions,
@@ -85,6 +94,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
             _initialDelay = initialDelay;
             _delayIncrement = delayIncrement;
             _delayFactor = delayFactor;
+            _maxDelay = maxDelay;
             _logger = logger;
         }
 
@@ -128,7 +138,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
         {
             int failedAttempts = context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 
-            TimeSpan delay = IncrementalDelayHelper.Compute(failedAttempts, _initialDelay, _delayIncrement, _delayFactor);
+            TimeSpan delay = IncrementalDelayHelper.Compute(failedAttempts, _initialDelay, _delayIncrement, _delayFactor, _maxDelay);
 
             if (delay <= TimeSpan.Zero)
                 return;

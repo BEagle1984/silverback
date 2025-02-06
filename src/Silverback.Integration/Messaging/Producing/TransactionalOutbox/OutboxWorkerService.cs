@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Lock;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
@@ -16,11 +18,15 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class OutboxWorkerService : RecurringDistributedBackgroundService
 {
+    private readonly OutboxWorkerSettings _settings;
+
+    private int _failedAttempts;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorkerService" /> class.
     /// </summary>
-    /// <param name="interval">
-    ///     The interval between each execution.
+    /// <param name="settings">
+    ///     The <see cref="OutboxWorkerSettings" />.
     /// </param>
     /// <param name="outboxWorker">
     ///     The <see cref="IOutboxWorker" /> implementation.
@@ -32,13 +38,14 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
     public OutboxWorkerService(
-        TimeSpan interval,
+        OutboxWorkerSettings settings,
         IOutboxWorker outboxWorker,
         IDistributedLock distributedLock,
         ISilverbackLogger<OutboxWorkerService> logger)
-        : base(interval, distributedLock, logger)
+        : base(Check.NotNull(settings, nameof(settings)).Interval, distributedLock, logger)
     {
-        OutboxWorker = outboxWorker;
+        _settings = Check.NotNull(settings, nameof(settings));
+        OutboxWorker = Check.NotNull(outboxWorker, nameof(outboxWorker));
     }
 
     /// <summary>
@@ -50,11 +57,32 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     ///     Calls the <see cref="IOutboxWorker" /> to process the queue.
     /// </summary>
     /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Handle any exception from any broker type")]
     protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
     {
-        while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
+        try
         {
-            // Run in loop until empty, to process in batches
+            while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
+            {
+                _failedAttempts = 0;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            _failedAttempts++;
+            TimeSpan delay = IncrementalDelayHelper.Compute(
+                _failedAttempts,
+                _settings.InitialRetryDelay,
+                _settings.RetryDelayIncrement,
+                _settings.RetryDelayFactor,
+                _settings.MaxRetryDelay) - _settings.Interval;
+
+            if (delay > TimeSpan.Zero)
+                await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
         }
     }
 }

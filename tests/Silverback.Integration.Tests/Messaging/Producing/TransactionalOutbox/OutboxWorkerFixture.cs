@@ -102,8 +102,9 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
 
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 2);
         AssertReceivedCalls(_producer2, 1);
     }
@@ -141,14 +142,21 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await act.Should().ThrowAsync<OutboxProcessingException>();
         AssertReceivedCalls(_producer1, 2);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await act.Should().ThrowAsync<OutboxProcessingException>();
         AssertReceivedCalls(_producer1, 5);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
+
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeFalse();
+        AssertReceivedCalls(_producer1, 12);
     }
 
     [Fact]
@@ -184,11 +192,17 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 10);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
+
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeFalse();
+        AssertReceivedCalls(_producer1, 12);
     }
 
     [Fact]
@@ -229,14 +243,21 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await act.Should().ThrowAsync<OutboxProcessingException>();
         AssertReceivedCalls(_producer1, 2);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await act.Should().ThrowAsync<OutboxProcessingException>();
         AssertReceivedCalls(_producer1, 5);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
+
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeFalse();
+        AssertReceivedCalls(_producer1, 12);
     }
 
     [Fact]
@@ -277,17 +298,23 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 10);
 
-        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeTrue();
         AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
+
+        result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        result.Should().BeFalse();
+        AssertReceivedCalls(_producer1, 12);
     }
 
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task ProcessQueue_ShouldHandleCancellation_WhenEnforcingOrder(bool enforceMessageOrder)
+    public async Task ProcessQueue_ShouldHandleCancellation(bool enforceMessageOrder)
     {
         CancellationTokenSource cancellationTokenSource = new();
 
@@ -326,7 +353,8 @@ public class OutboxWorkerFixture
             _producerCollection,
             _producerLogger);
 
-        await outboxWorker.ProcessOutboxAsync(cancellationTokenSource.Token);
+        Func<Task> act = () => outboxWorker.ProcessOutboxAsync(cancellationTokenSource.Token);
+        await act.Should().ThrowAsync<OperationCanceledException>();
         AssertReceivedCalls(_producer1, 5);
 
         cancellationTokenSource.IsCancellationRequested.Should().BeTrue();

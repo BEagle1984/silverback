@@ -182,6 +182,22 @@ public class RetryErrorPolicyBuilderFixture
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
         policy.DelayIncrement.Should().Be(TimeSpan.FromDays(42));
+        policy.DelayFactor.Should().Be(1.0);
+        policy.MaxDelay.Should().BeNull();
+    }
+
+    [Fact]
+    public void WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay()
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        builder.WithIncrementalDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42), TimeSpan.FromHours(42));
+
+        RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
+        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.Should().Be(TimeSpan.FromDays(42));
+        policy.DelayFactor.Should().Be(1.0);
+        policy.MaxDelay.Should().Be(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -208,6 +224,18 @@ public class RetryErrorPolicyBuilderFixture
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(int value)
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        Action act = () => builder.WithIncrementalDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(42), TimeSpan.FromMinutes(value));
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
     [Fact]
     public void WithExponentialDelay_ShouldSetInitialDelayAndFactor()
     {
@@ -217,7 +245,23 @@ public class RetryErrorPolicyBuilderFixture
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.Should().Be(TimeSpan.Zero);
         policy.DelayFactor.Should().Be(2.0);
+        policy.MaxDelay.Should().BeNull();
+    }
+
+    [Fact]
+    public void WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay()
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        builder.WithExponentialDelay(TimeSpan.FromMinutes(42), 2.0, TimeSpan.FromHours(42));
+
+        RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
+        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.Should().Be(TimeSpan.Zero);
+        policy.DelayFactor.Should().Be(2.0);
+        policy.MaxDelay.Should().Be(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -228,6 +272,18 @@ public class RetryErrorPolicyBuilderFixture
         RetryErrorPolicyBuilder builder = new();
 
         Action act = () => builder.WithExponentialDelay(TimeSpan.FromMinutes(value), 2.0);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(int value)
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        Action act = () => builder.WithExponentialDelay(TimeSpan.FromMinutes(42), value);
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }

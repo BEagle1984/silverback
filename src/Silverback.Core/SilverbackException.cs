@@ -20,8 +20,7 @@ public abstract class SilverbackException : Exception
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SilverbackException" /> class with the specified
-    ///     message.
+    ///     Initializes a new instance of the <see cref="SilverbackException" /> class with the specified message.
     /// </summary>
     /// <param name="message">
     ///     The exception message.
@@ -32,8 +31,7 @@ public abstract class SilverbackException : Exception
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SilverbackException" /> class with the specified
-    ///     message and inner exception.
+    ///     Initializes a new instance of the <see cref="SilverbackException" /> class with the specified message and inner exception.
     /// </summary>
     /// <param name="message">
     ///     The exception message.
