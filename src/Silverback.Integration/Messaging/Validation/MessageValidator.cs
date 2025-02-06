@@ -63,16 +63,12 @@ namespace Silverback.Messaging.Validation
                 {
                     foreach (object? valueItem in valueEnumerable)
                     {
-                        bool nextResult = ValidateNestedObject(valueItem, results);
-                        if (result)
-                            result = nextResult;
+                        result &= ValidateNestedObject(valueItem, results);
                     }
                 }
                 else
                 {
-                    bool nextResult = ValidateNestedObject(value, results);
-                    if (result)
-                        result = nextResult;
+                    result &= ValidateNestedObject(value, results);
                 }
             }
 

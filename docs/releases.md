@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [4.6.1](https://github.com/BEagle1984/silverback/releases/tag/v4.6.1)
+
+### Fixes
+
+* Fix validation of nested messages
+
 ## [4.6.0](https://github.com/BEagle1984/silverback/releases/tag/v4.6.0)
 
 ### What's new
