@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Serialization | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Serialization | Silverback ">
-    <meta name="generator" content="docfx ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
   
-
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-
+  
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-  
-  <meta property="docfx:rel" content="../../">
-  
+    
+    <meta property="docfx:rel" content="../../">
+    
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-
+        
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-
+              
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-
+        
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-
+        
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-
+        
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -99,16 +99,16 @@
 <h2 id="fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</h2>
 <p>If you are consuming a message coming from another system (not based on Silverback), chances are that the message type name is not being delivered as header.</p>
 <p>In that case you can resort to the typed <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>. This serializer works like the default one seen in the previous chapter, but the message type is hard-coded, instead of being resolved according to the message header.</p>
-<div class="tabGroup" id="tabgroup_1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_1_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_1_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_1_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_1_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_1_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
+<section id="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -148,7 +148,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_1_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -179,16 +179,16 @@
 </div>
 <h2 id="json-using-newtonsoftjson">JSON using Newtonsoft.Json</h2>
 <p>Prior to release 3.0.0 the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> was based on <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> instead of <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a>. For backward compatibility reasons and since <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> may not support all use cases covered by <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a>, the old serializers have been renamed to <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a> and moved into the dedicated <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package.</p>
-<div class="tabGroup" id="tabgroup_2">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_2_newtonsoft-fluent" role="tab" aria-controls="tabpanel_2_newtonsoft-fluent" data-tab="newtonsoft-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" data-tab="newtonsoft-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_2_newtonsoft-legacy" role="tab" aria-controls="tabpanel_2_newtonsoft-legacy" data-tab="newtonsoft-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" data-tab="newtonsoft-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_2_newtonsoft-fluent" role="tabpanel" data-tab="newtonsoft-fluent">
+<section id="tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" role="tabpanel" data-tab="newtonsoft-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -223,7 +223,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_2_newtonsoft-legacy" role="tabpanel" data-tab="newtonsoft-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" role="tabpanel" data-tab="newtonsoft-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -254,16 +254,16 @@
 </div>
 <h2 id="apache-avro">Apache Avro</h2>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a> contained in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry">Silverback.Integration.Kafka.SchemaRegistry</a> package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
-<div class="tabGroup" id="tabgroup_3">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_3_avro-fluent" role="tab" aria-controls="tabpanel_3_avro-fluent" data-tab="avro-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-2_avro-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_avro-fluent" data-tab="avro-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_3_avro-legacy" role="tab" aria-controls="tabpanel_3_avro-legacy" data-tab="avro-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-2_avro-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_avro-legacy" data-tab="avro-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_3_avro-fluent" role="tabpanel" data-tab="avro-fluent">
+<section id="tabpanel_bHGHmlrG6S-2_avro-fluent" role="tabpanel" data-tab="avro-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -307,7 +307,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_3_avro-legacy" role="tabpanel" data-tab="avro-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-2_avro-legacy" role="tabpanel" data-tab="avro-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -367,16 +367,16 @@
 </div>
 <h2 id="custom-serializer">Custom serializer</h2>
 <p>In some cases you may want to build your very own custom serializer implementing <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> directly.</p>
-<div class="tabGroup" id="tabgroup_4">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_4_custom-fluent" role="tab" aria-controls="tabpanel_4_custom-fluent" data-tab="custom-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-3_custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_custom-fluent" data-tab="custom-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_4_custom-legacy" role="tab" aria-controls="tabpanel_4_custom-legacy" data-tab="custom-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-3_custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_custom-legacy" data-tab="custom-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_4_custom-fluent" role="tabpanel" data-tab="custom-fluent">
+<section id="tabpanel_bHGHmlrG6S-3_custom-fluent" role="tabpanel" data-tab="custom-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -400,7 +400,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_4_custom-legacy" role="tabpanel" data-tab="custom-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-3_custom-legacy" role="tabpanel" data-tab="custom-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -438,7 +438,7 @@
 <p>Please refer to the <a class="xref" href="binary-files.html">Binary Files</a> page if you need to produce or consume raw binary files.</p>
 </article>
           </div>
-
+          
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -455,7 +455,7 @@
           </div>
         </div>
       </div>
-
+      
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -466,13 +466,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
-      
+            © 2020 Sergio Aquilini
+            
           </div>
         </div>
       </footer>
     </div>
-
+    
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>
