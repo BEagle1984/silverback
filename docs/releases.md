@@ -8,7 +8,7 @@ uid: releases
 
 ### Fixes
 
-* Fix validation of nested messages
+* Fix message validation [[#246](https://github.com/BEagle1984/silverback/pull/246)]
 
 ## [4.6.0](https://github.com/BEagle1984/silverback/releases/tag/v4.6.0)
 
