@@ -44,6 +44,8 @@ uid: releases
 * Add `CancellationToken` support to in-memory message bus (TODO: see...)
 * Increase default `KafkaConsumer` backpressure limit to 50
 * Basic support for MQTT 5 request-response
+* Improved outbox worker reliability
+* Improved `ITestingHelper` to allow waiting for specific topics to be consumed
   
 ### Breaking Changes
 

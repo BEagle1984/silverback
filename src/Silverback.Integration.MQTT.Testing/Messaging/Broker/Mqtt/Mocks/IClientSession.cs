@@ -11,5 +11,19 @@ public interface IClientSession
     /// <summary>
     ///     Gets the number of pending messages ready to be pushed to the client.
     /// </summary>
-    int PendingMessagesCount { get; }
+    /// <returns>
+    ///     The number of pending messages.
+    /// </returns>
+    int GetPendingMessagesCount();
+
+    /// <summary>
+    ///     Gets the number of pending messages ready to be pushed to the client from the specified topic.
+    /// </summary>
+    /// <param name="topicName">
+    ///     The topic name.
+    /// </param>
+    /// <returns>
+    ///     The number of pending messages.
+    /// </returns>
+    int GetPendingMessagesCount(string topicName);
 }

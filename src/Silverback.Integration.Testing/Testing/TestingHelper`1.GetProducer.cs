@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Testing;
 
@@ -32,6 +33,20 @@ public abstract partial class TestingHelper
 
         return newProducer;
     }
+
+    /// <summary>
+    ///     Returns the <see cref="ProducerEndpointConfiguration" /> for the specified endpoint.
+    /// </summary>
+    /// <param name="endpointName">
+    ///     The endpoint name. It could be either the topic/queue name or the friendly name.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ProducerEndpointConfiguration" />.
+    /// </returns>
+    protected ProducerEndpointConfiguration? GetProducerEndpointConfiguration(string endpointName) =>
+        _producers?
+            .Select(producer => producer.EndpointConfiguration)
+            .FirstOrDefault(configuration => configuration.RawName == endpointName || configuration.FriendlyName == endpointName);
 
     /// <summary>
     ///     Gets an existing producer for the endpoint consumed by the specified consumer or initializes a new one mirroring the

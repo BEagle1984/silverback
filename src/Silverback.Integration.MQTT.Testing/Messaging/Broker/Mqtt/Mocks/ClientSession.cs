@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,9 +23,9 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private readonly List<Subscription> _subscriptions = [];
 
-    private CancellationTokenSource _readCancellationTokenSource = new();
+    private readonly ConcurrentDictionary<string, int> _pendingMessagesCountByTopic = new();
 
-    private int _pendingMessagesCount;
+    private CancellationTokenSource _readCancellationTokenSource = new();
 
     public ClientSession(MockedMqttClient client, SharedSubscriptionsManager sharedSubscriptionsManager)
     {
@@ -33,8 +34,6 @@ internal sealed class ClientSession : IDisposable, IClientSession
     }
 
     public MockedMqttClient Client { get; }
-
-    public int PendingMessagesCount => _pendingMessagesCount;
 
     public bool IsConnected { get; private set; }
 
@@ -106,8 +105,16 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
         await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
 
-        Interlocked.Increment(ref _pendingMessagesCount);
+        _pendingMessagesCountByTopic.AddOrUpdate(
+            message.Topic,
+            _ => 1,
+            (_, count) => count + 1);
     }
+
+    public int GetPendingMessagesCount() => _pendingMessagesCountByTopic.Values.Sum();
+
+    public int GetPendingMessagesCount(string topicName) =>
+        _pendingMessagesCountByTopic.GetValueOrDefault(topicName, 0);
 
     public void Dispose()
     {
@@ -129,7 +136,12 @@ internal sealed class ClientSession : IDisposable, IClientSession
                 (args, _) =>
                 {
                     if (!args.AutoAcknowledge)
-                        Interlocked.Decrement(ref _pendingMessagesCount);
+                    {
+                        _pendingMessagesCountByTopic.AddOrUpdate(
+                            message.Topic,
+                            _ => 0,
+                            (_, count) => count - 1);
+                    }
 
                     return Task.CompletedTask;
                 });
@@ -137,7 +149,12 @@ internal sealed class ClientSession : IDisposable, IClientSession
             await Client.HandleMessageReceivedAsync(eventArgs).ConfigureAwait(false);
 
             if (eventArgs.AutoAcknowledge)
-                Interlocked.Decrement(ref _pendingMessagesCount);
+            {
+                _pendingMessagesCountByTopic.AddOrUpdate(
+                    message.Topic,
+                    _ => 0,
+                    (_, count) => count - 1);
+            }
         }
     }
 }

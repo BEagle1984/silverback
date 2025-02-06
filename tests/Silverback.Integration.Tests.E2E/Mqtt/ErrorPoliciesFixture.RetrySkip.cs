@@ -51,6 +51,6 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         tryCount.Should().Be(11);
-        DefaultClientSession.PendingMessagesCount.Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
     }
 }

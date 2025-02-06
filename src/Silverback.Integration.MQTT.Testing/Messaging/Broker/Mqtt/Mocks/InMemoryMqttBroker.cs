@@ -106,12 +106,14 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     }
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
-    public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
+    public async Task WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
             if (_sessions.Values.All(
-                session => session.PendingMessagesCount == 0 ||
+                session => (topicNames.Count > 0
+                               ? topicNames.All(topicName => session.GetPendingMessagesCount(topicName) == 0)
+                               : session.GetPendingMessagesCount() == 0) ||
                            !session.Client.IsConnected ||
                            !session.IsConnected))
             {

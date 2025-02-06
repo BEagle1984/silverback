@@ -97,9 +97,19 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         }
     }
 
-    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
-    protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
-        _groups == null
-            ? Task.CompletedTask
-            : Task.WhenAll(_groups.Select(group => group.WaitUntilAllMessagesAreConsumedAsync(cancellationToken)));
+    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection{string},CancellationToken)" />
+    protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string> endpointNames, CancellationToken cancellationToken)
+    {
+        Check.NotNull(endpointNames, nameof(endpointNames));
+
+        if (_groups == null)
+            return Task.CompletedTask;
+
+        return Task.WhenAll(
+            _groups.Select(
+                group => group.WaitUntilAllMessagesAreConsumedAsync(
+                        endpointNames.Select(GetEndpointRawName).ToArray(),
+                        cancellationToken)
+                    .AsTask()));
+    }
 }

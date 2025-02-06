@@ -47,4 +47,19 @@ public abstract partial class TestingHelper : ITestingHelper
     public IIntegrationSpy Spy => _integrationSpy ?? throw new InvalidOperationException(
         "The IIntegrationSpy couldn't be resolved. " +
         "Register it calling AddIntegrationSpy or AddIntegrationSpyAndSubscriber.");
+
+    /// <summary>
+    ///     Resolves the raw name (topic/queue name) of the specified endpoint. If the endpoint is not found in the producers or consumers
+    ///     configurations an <see cref="InvalidOperationException" /> is thrown.
+    /// </summary>
+    /// <param name="endpointName">
+    ///     The endpoint name. It could be either the topic/queue name or the friendly name.
+    /// </param>
+    /// <returns>
+    ///     The raw name (topic/queue).
+    /// </returns>
+    protected string GetEndpointRawName(string endpointName) =>
+        GetProducerEndpointConfiguration(endpointName)?.RawName ??
+        GetConsumerEndpointConfiguration(endpointName)?.RawName ??
+        throw new InvalidOperationException($"Endpoint '{endpointName}' not found.");
 }

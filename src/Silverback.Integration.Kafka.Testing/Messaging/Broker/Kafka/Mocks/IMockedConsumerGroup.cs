@@ -148,14 +148,16 @@ public interface IMockedConsumerGroup
     long GetCommittedOffsetsCount(string topic);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-    ///     processed and committed.
+    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been processed and committed.
     /// </summary>
+    /// <param name="topicNames">
+    ///     The names of the topics to wait for. If not specified, all topics are considered.
+    /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all messages have been processed.
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
-    Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default);
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default);
 }

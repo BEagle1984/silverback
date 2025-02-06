@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading;
 using Silverback.Testing;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -43,10 +42,8 @@ public interface IMockedKafkaOptionsBuilder
     ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
     /// </summary>
     /// <remarks>
-    ///     This is necessary to speed up the tests, since the
-    ///     <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> and
-    ///     <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" /> methods wait until
-    ///     the offsets are committed.
+    ///     This is necessary to speed up the tests, since the <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[])" />
+    ///     method and its overloads wait until the offsets are committed.
     /// </remarks>
     /// <param name="intervalMs">
     ///     The desired auto commit interval in milliseconds.

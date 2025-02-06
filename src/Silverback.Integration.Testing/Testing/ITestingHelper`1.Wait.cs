@@ -13,48 +13,48 @@ namespace Silverback.Testing;
 public partial interface ITestingHelper
 {
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all consumers are connected and ready.
+    ///     Returns a <see cref="ValueTask" /> that completes when all consumers are connected and ready.
     /// </summary>
     /// <param name="timeout">
     ///     The time to wait for the consumers to connect. The default is 30 seconds.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all consumers are successfully connected and ready.
+    ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
     ValueTask WaitUntilConnectedAsync(TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all consumers are connected and ready.
+    ///     Returns a <see cref="ValueTask" /> that completes when all consumers are connected and ready.
     /// </summary>
     /// <param name="throwTimeoutException">
-    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the connection
-    ///     isn't established before the timeout expires.
+    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the connection isn't established before the
+    ///     timeout elapses.
     /// </param>
     /// <param name="timeout">
     ///     The time to wait for the consumers to connect. The default is 30 seconds.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all consumers are successfully connected and ready.
+    ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
     ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all consumers are connected and ready.
+    ///     Returns a <see cref="ValueTask" /> that completes when all consumers are connected and ready.
     /// </summary>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all consumers are successfully connected and ready.
+    ///     A <see cref="ValueTask" /> that completes when all consumers are successfully connected and ready.
     /// </returns>
     ValueTask WaitUntilConnectedAsync(CancellationToken cancellationToken);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all consumers are connected and ready.
+    ///     Returns a <see cref="ValueTask" /> that completes when all consumers are connected and ready.
     /// </summary>
     /// <param name="throwTimeoutException">
-    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the connection
-    ///     isn't established before the <see cref="CancellationToken" /> is canceled.
+    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the connection isn't established before the
+    /// <see cref="CancellationToken" /> is canceled.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
@@ -65,8 +65,21 @@ public partial interface ITestingHelper
     ValueTask WaitUntilConnectedAsync(bool throwTimeoutException, CancellationToken cancellationToken);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-    ///     processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    /// </summary>
+    /// <remarks>
+    ///     This method works with the mocked brokers only.
+    /// </remarks>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
+    /// </returns>
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(params string[] endpointNames);
+
+    /// <summary>
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -74,33 +87,73 @@ public partial interface ITestingHelper
     /// <param name="timeout">
     ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
     /// </param>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all messages have been processed.
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
-    ValueTask WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null);
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-    ///     processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
     /// </remarks>
     /// <param name="throwTimeoutException">
-    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages
-    ///     aren't consumed before the timeout expires.
+    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
+    /// timeout elapses.
+    /// </param>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
+    /// </returns>
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, params string[] endpointNames);
+
+    /// <summary>
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    /// </summary>
+    /// <remarks>
+    ///     This method works with the mocked brokers only.
+    /// </remarks>
+    /// <param name="throwTimeoutException">
+    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
+    /// timeout elapses.
     /// </param>
     /// <param name="timeout">
     ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all messages have been processed.
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
     ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-    ///     processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
+    /// </summary>
+    /// <remarks>
+    ///     This method works with the mocked brokers only.
+    /// </remarks>
+    /// <param name="throwTimeoutException">
+    ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
+    /// timeout elapses.
+    /// </param>
+    /// <param name="timeout">
+    ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
+    /// </param>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
+    /// </returns>
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout, params string[] endpointNames);
+
+    /// <summary>
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -108,14 +161,16 @@ public partial interface ITestingHelper
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all messages have been processed.
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
-    ValueTask WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken);
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken, params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-    ///     processed and committed.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages routed to the consumers have been processed and committed.
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked brokers only.
@@ -127,30 +182,36 @@ public partial interface ITestingHelper
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
+    /// <param name="endpointNames">
+    ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
+    /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when all messages have been processed.
+    ///     A <see cref="ValueTask" /> that completes when all messages have been processed.
     /// </returns>
-    ValueTask WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, CancellationToken cancellationToken);
+    ValueTask WaitUntilAllMessagesAreConsumedAsync(
+        bool throwTimeoutException,
+        CancellationToken cancellationToken,
+        params string[] endpointNames);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages stored in the outbox have been produced.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages stored in the outbox have been produced.
     /// </summary>
     /// <param name="timeout">
     ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when the outbox is empty.
+    ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
     ValueTask WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null);
 
     /// <summary>
-    ///     Returns a <see cref="Task" /> that completes when all messages stored in the outbox have been produced.
+    ///     Returns a <see cref="ValueTask" /> that completes when all messages stored in the outbox have been produced.
     /// </summary>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that completes when the outbox is empty.
+    ///     A <see cref="ValueTask" /> that completes when the outbox is empty.
     /// </returns>
     ValueTask WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken);
 
@@ -158,7 +219,7 @@ public partial interface ITestingHelper
     ///     Checks whether the outbox (table) is empty.
     /// </summary>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains
     ///     <c>true</c> if the outbox is empty, otherwise <c>false</c>.
     /// </returns>
     ValueTask<bool> IsOutboxEmptyAsync();

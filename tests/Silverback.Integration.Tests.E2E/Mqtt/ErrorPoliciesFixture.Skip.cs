@@ -52,7 +52,7 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-        DefaultClientSession.PendingMessagesCount.Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
 
         await producer.RawProduceAsync(
             rawMessage,
@@ -63,6 +63,6 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultClientSession.PendingMessagesCount.Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
     }
 }

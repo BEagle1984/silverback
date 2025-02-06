@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,9 +61,16 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
         return _inMemoryMqttBroker.GetMessages(topic);
     }
 
-    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
-    protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
-        _inMemoryMqttBroker == null
-            ? Task.CompletedTask
-            : _inMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(cancellationToken);
+    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection{string},CancellationToken)" />
+    protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(IReadOnlyCollection<string> endpointNames, CancellationToken cancellationToken)
+    {
+        Check.NotNull(endpointNames, nameof(endpointNames));
+
+        if (_inMemoryMqttBroker == null)
+            return Task.CompletedTask;
+
+        return _inMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(
+            endpointNames.Select(GetEndpointRawName).ToArray(),
+            cancellationToken);
+    }
 }

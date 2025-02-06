@@ -232,12 +232,12 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
     public long GetCommittedOffsetsCount(string topic) =>
         _committedOffsets.Values.Where(offset => offset.Topic == topic).Sum(offset => offset.Offset);
 
-    public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
+    public async ValueTask WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_subscribedConsumers.Select(subscribedConsumer => subscribedConsumer.Consumer).All(HasFinishedConsuming) &&
-                _manuallyAssignedConsumers.TrueForAll(HasFinishedConsuming))
+            if (_subscribedConsumers.All(consumer => HasFinishedConsuming(consumer.Consumer, topicNames)) &&
+                _manuallyAssignedConsumers.TrueForAll(consumer => HasFinishedConsuming(consumer, topicNames)))
             {
                 return;
             }
@@ -328,9 +328,9 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         Task.WhenAll(
             _subscribedConsumers.Select(
                 consumer =>
-                    Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(1000))));
+                    Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
 
-    private bool HasFinishedConsuming(IMockedConfluentConsumer consumer)
+    private bool HasFinishedConsuming(IMockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames)
     {
         if (consumer.IsDisposed)
             return true;
@@ -338,21 +338,23 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         if (!consumer.PartitionsAssigned)
             return false;
 
-        return consumer.Assignment.TrueForAll(
-            topicPartition =>
-            {
-                IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
-                Offset lastOffset = topic.Partitions[topicPartition.Partition].LastOffset;
+        return consumer.Assignment
+            .Where(partition => topicNames.Count == 0 || topicNames.Contains(partition.Topic, StringComparer.Ordinal))
+            .All(
+                topicPartition =>
+                {
+                    IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
+                    Offset lastOffset = topic.Partitions[topicPartition.Partition].LastOffset;
 
-                if (lastOffset < 0)
-                    return true;
+                    if (lastOffset < 0)
+                        return true;
 
-                if (string.IsNullOrEmpty(consumer.Config.GroupId))
-                    return consumer.GetStoredOffset(topicPartition).Offset > lastOffset;
+                    if (string.IsNullOrEmpty(consumer.Config.GroupId))
+                        return consumer.GetStoredOffset(topicPartition).Offset > lastOffset;
 
-                return _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? committedOffset) &&
-                       committedOffset.Offset > lastOffset;
-            });
+                    return _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? committedOffset) &&
+                           committedOffset.Offset > lastOffset;
+                });
     }
 
     private sealed class SubscribedConsumer

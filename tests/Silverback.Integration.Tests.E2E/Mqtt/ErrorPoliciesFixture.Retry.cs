@@ -98,7 +98,7 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         tryCount.Should().Be(3);
-        DefaultClientSession.PendingMessagesCount.Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         tryCount.Should().Be(11);
-        DefaultClientSession.PendingMessagesCount.Should().Be(1);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(1);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public partial class ErrorPoliciesFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
 
-        DefaultClientSession.PendingMessagesCount.Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
     }
 
     [Fact]

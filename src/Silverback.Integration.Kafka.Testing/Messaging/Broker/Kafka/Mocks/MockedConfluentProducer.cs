@@ -22,7 +22,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     private readonly object _roundRobinLockObject = new();
 
-    private int _lastPushedPartition = -1;
+    private readonly Dictionary<string, int> _lastPushedPartitionByTopic = [];
 
     private Guid _transactionalUniqueId = Guid.Empty;
 
@@ -190,10 +190,9 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
     {
         lock (_roundRobinLockObject)
         {
-            if (++_lastPushedPartition >= topic.Partitions.Count)
-                _lastPushedPartition = 0;
-
-            return _lastPushedPartition;
+            return _lastPushedPartitionByTopic.TryGetValue(topic.Name, out int lastPushedPartition)
+                ? _lastPushedPartitionByTopic[topic.Name] = (lastPushedPartition + 1) % topic.Partitions.Count
+                : _lastPushedPartitionByTopic[topic.Name] = 0;
         }
     }
 }
