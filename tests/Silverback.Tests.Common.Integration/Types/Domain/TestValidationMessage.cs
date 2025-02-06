@@ -28,6 +28,8 @@ namespace Silverback.Tests.Types.Domain
         [RegularExpression("^[0-9]*$")]
         public string NumbersOnly { get; set; } = null!;
 
-        public ValidationMessageNestedModel? Nested { get; set; }
+        public ValidationMessageNestedModel? FirstNested { get; set; }
+
+        public ValidationMessageNestedModel? SecondNested { get; set; }
     }
 }
