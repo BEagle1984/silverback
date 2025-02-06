@@ -162,12 +162,50 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                         String10 = "123456",
                         IntRange = 5,
                         NumbersOnly = "123",
-                        Nested = new ValidationMessageNestedModel
+                        FirstNested = new ValidationMessageNestedModel
                         {
                             String5 = "123456"
                         }
                     },
                     $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+                };
+                yield return new object[]
+{
+                    new TestValidationMessage
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "123",
+                        FirstNested = new ValidationMessageNestedModel
+                        {
+                            String5 = "123456"
+                        },
+                        SecondNested = new ValidationMessageNestedModel
+                        {
+                            String5 = "12345"
+                        }
+                    },
+                    $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+};
+                yield return new object[]
+                {
+                    new TestValidationMessage
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "123",
+                        FirstNested = new ValidationMessageNestedModel
+                        {
+                            String5 = "123456"
+                        },
+                        SecondNested = new ValidationMessageNestedModel
+                        {
+                            String5 = "123456"
+                        }
+                    },
+                    $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5.{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
                 };
             }
         }
@@ -207,7 +245,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
         public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
         {
             var message = new TestValidationMessage
-                { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
+            { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
             var endpoint = TestConsumerEndpoint.GetDefault();
             endpoint.MessageValidationMode = validationMode;
 
@@ -266,7 +304,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
         public async Task HandleAsync_ThrowException_ExceptionIsThrown()
         {
             var message = new TestValidationMessage
-                { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
+            { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
             var expectedMessage =
                 $"The message is not valid:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
             var endpoint = TestConsumerEndpoint.GetDefault();
