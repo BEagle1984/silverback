@@ -12,6 +12,7 @@ internal static partial class TaskExtensions
     private static readonly TaskFactory TaskFactory =
         new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static void SafeWait(this Task task, CancellationToken cancellationToken = default)
     {
         if (task.IsCompletedSuccessfully)
@@ -39,6 +40,7 @@ internal static partial class TaskExtensions
             .GetResult();
     }
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static void SafeWait(this ValueTask valueTask, CancellationToken cancellationToken = default)
     {
         if (valueTask.IsCompletedSuccessfully)
