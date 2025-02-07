@@ -4,6 +4,7 @@
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using NJsonSchema.Generation;
+using NJsonSchema.NewtonsoftJson.Generation;
 
 namespace Silverback.Messaging.Serialization;
 
@@ -31,7 +32,7 @@ public class JsonSchemaRegistryMessageSerializer<TMessage> : SchemaRegistryMessa
     public JsonSchemaRegistryMessageSerializer(
         ISchemaRegistryClient schemaRegistryClient,
         JsonSerializerConfig? jsonSerializerConfig = null,
-        JsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
+        NewtonsoftJsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
         : base(
             schemaRegistryClient,
             new JsonSerializer<TMessage>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings))

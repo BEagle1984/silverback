@@ -46,7 +46,9 @@ uid: releases
 * Basic support for MQTT 5 request-response
 * Improved outbox worker reliability
 * Improved `ITestingHelper` to allow waiting for specific topics to be consumed
-  
+
+* Upgrade to [Confluent.Kafka 2.8.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.2.0)
+
 ### Breaking Changes
 
 * Changed some details in <xref:Silverback.Messaging.Broker.IBroker>/<xref:Silverback.Messaging.Broker.IConsumer> and their implementations

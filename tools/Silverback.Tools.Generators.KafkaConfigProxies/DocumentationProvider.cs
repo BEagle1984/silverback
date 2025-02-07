@@ -579,6 +579,15 @@ public static class DocumentationProvider
             case nameof(SchemaRegistryConfig.LatestCacheTtlSecs):
                 builder.AppendLine("    ///     Gets the TTL in seconds for caches holding latest schemas, or -1 for no TTL.");
                 break;
+            case nameof(SchemaRegistryConfig.MaxRetries):
+                builder.AppendLine("    ///     Gets the maximum number of retries for a request.");
+                break;
+            case nameof(SchemaRegistryConfig.RetriesWaitMs):
+                builder.AppendLine("    ///     Gets the time to wait for the first retry in milliseconds.");
+                break;
+            case nameof(SchemaRegistryConfig.RetriesMaxWaitMs):
+                builder.AppendLine("    ///     Gets the time to wait for any retry in milliseconds.");
+                break;
         }
     }
 }

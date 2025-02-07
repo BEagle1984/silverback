@@ -33,4 +33,8 @@
       <_Parameter1>Silverback.Integration.Kafka.SchemaRegistry.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageSerializer`1.cs" />
+    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageDeserializer`1.cs" />
+  </ItemGroup>
 </Project>

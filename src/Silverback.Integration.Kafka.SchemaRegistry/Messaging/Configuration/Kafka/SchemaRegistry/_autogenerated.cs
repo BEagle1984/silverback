@@ -31,6 +31,21 @@ public partial record KafkaSchemaRegistryConfiguration
     public int? RequestTimeoutMs { get; init; }
 
     /// <summary>
+    ///     Gets the maximum number of retries for a request.
+    /// </summary>
+    public int? MaxRetries { get; init; }
+
+    /// <summary>
+    ///     Gets the time to wait for the first retry in milliseconds.
+    /// </summary>
+    public int? RetriesWaitMs { get; init; }
+
+    /// <summary>
+    ///     Gets the time to wait for any retry in milliseconds.
+    /// </summary>
+    public int? RetriesMaxWaitMs { get; init; }
+
+    /// <summary>
     ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
     ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package.
     ///     If OpenSSL is statically linked or <see cref="SslCaLocation" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
@@ -80,6 +95,9 @@ public partial record KafkaSchemaRegistryConfiguration
             BasicAuthCredentialsSource = BasicAuthCredentialsSource,
             Url = Url,
             RequestTimeoutMs = RequestTimeoutMs,
+            MaxRetries = MaxRetries,
+            RetriesWaitMs = RetriesWaitMs,
+            RetriesMaxWaitMs = RetriesMaxWaitMs,
             SslCaLocation = SslCaLocation,
             SslKeystoreLocation = SslKeystoreLocation,
             SslKeystorePassword = SslKeystorePassword,
@@ -104,6 +122,12 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     private string? _url;
 
     private int? _requestTimeoutMs;
+
+    private int? _maxRetries;
+
+    private int? _retriesWaitMs;
+
+    private int? _retriesMaxWaitMs;
 
     private string? _sslCaLocation;
 
@@ -134,6 +158,24 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     public partial KafkaSchemaRegistryConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs)
     {
         _requestTimeoutMs = requestTimeoutMs;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithMaxRetries(int? maxRetries)
+    {
+        _maxRetries = maxRetries;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesWaitMs(int? retriesWaitMs)
+    {
+        _retriesWaitMs = retriesWaitMs;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesMaxWaitMs(int? retriesMaxWaitMs)
+    {
+        _retriesMaxWaitMs = retriesMaxWaitMs;
         return this;
     }
 
@@ -185,6 +227,9 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
             BasicAuthCredentialsSource = _basicAuthCredentialsSource,
             Url = _url,
             RequestTimeoutMs = _requestTimeoutMs,
+            MaxRetries = _maxRetries,
+            RetriesWaitMs = _retriesWaitMs,
+            RetriesMaxWaitMs = _retriesMaxWaitMs,
             SslCaLocation = _sslCaLocation,
             SslKeystoreLocation = _sslKeystoreLocation,
             SslKeystorePassword = _sslKeystorePassword,

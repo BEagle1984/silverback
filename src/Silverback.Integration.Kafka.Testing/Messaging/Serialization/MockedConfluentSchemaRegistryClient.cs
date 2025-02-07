@@ -20,7 +20,15 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public IEnumerable<KeyValuePair<string, string>> Config { get; } = [];
 
+    [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty", Justification = "Mock")]
+    public IAuthenticationHeaderValueProvider? AuthHeaderProvider { get; }
+
+    [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty", Justification = "Mock")]
+    public IWebProxy? Proxy { get; }
+
     public int MaxCachedSchemas => 42;
+
+    public void ClearCaches() => throw new NotSupportedException();
 
     public Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false) =>
         RegisterSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize);
@@ -47,6 +55,8 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
     }
 
     public Task<RegisteredSchema> LookupSchemaAsync(string subject, Schema schema, bool ignoreDeletedSchemas, bool normalize = false) => throw new NotSupportedException();
+
+    public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version, bool ignoreDeletedSchemas) => throw new NotSupportedException();
 
     public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
@@ -78,6 +88,8 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
     public Task<Compatibility> GetCompatibilityAsync(string? subject = null) => throw new NotSupportedException();
 
     public Task<Compatibility> UpdateCompatibilityAsync(Compatibility compatibility, string? subject = null) => throw new NotSupportedException();
+
+    public void ClearLatestCaches() => throw new NotSupportedException();
 
     public void Dispose()
     {

@@ -47,6 +47,39 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     public partial KafkaSchemaRegistryConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs);
 
     /// <summary>
+    ///   Sets the maximum number of retries for a request.
+    /// </summary>
+    /// <param name="maxRetries">
+    ///  The maximum number of retries for a request.
+    /// </param>
+    /// <returns>
+    ///   The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithMaxRetries(int? maxRetries);
+
+    /// <summary>
+    ///  Sets the time to wait for the first retry in milliseconds.
+    /// </summary>
+    /// <param name="retriesWaitMs">
+    ///  The time to wait for the first retry in milliseconds.
+    /// </param>
+    /// <returns>
+    ///  The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesWaitMs(int? retriesWaitMs);
+
+    /// <summary>
+    ///   Sets the time to wait for any retry in milliseconds.
+    /// </summary>
+    /// <param name="retriesMaxWaitMs">
+    ///  The time to wait for any retry in milliseconds.
+    /// </param>
+    /// <returns>
+    ///  The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithRetriesMaxWaitMs(int? retriesMaxWaitMs);
+
+    /// <summary>
     ///     Sets the file or directory path to the CA certificate(s) for verifying the registry's key.
     /// </summary>
     /// <param name="sslCaLocation">

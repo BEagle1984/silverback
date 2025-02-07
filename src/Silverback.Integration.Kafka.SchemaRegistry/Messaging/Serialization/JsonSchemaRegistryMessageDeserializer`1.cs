@@ -3,7 +3,7 @@
 
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
-using NJsonSchema.Generation;
+using NJsonSchema.NewtonsoftJson.Generation;
 
 namespace Silverback.Messaging.Serialization;
 
@@ -31,7 +31,7 @@ public class JsonSchemaRegistryMessageDeserializer<TMessage> : SchemaRegistryMes
     public JsonSchemaRegistryMessageDeserializer(
         ISchemaRegistryClient schemaRegistryClient,
         JsonDeserializerConfig? jsonDeserializerConfig = null,
-        JsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
+        NewtonsoftJsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
         : base(
             schemaRegistryClient,
             new JsonDeserializer<TMessage>(schemaRegistryClient, jsonDeserializerConfig, jsonSchemaGeneratorSettings))
@@ -48,7 +48,7 @@ public class JsonSchemaRegistryMessageDeserializer<TMessage> : SchemaRegistryMes
     /// <summary>
     ///     Gets the JSON schema generator settings.
     /// </summary>
-    public JsonSchemaGeneratorSettings? JsonSchemaGeneratorSettings { get; }
+    public NewtonsoftJsonSchemaGeneratorSettings? JsonSchemaGeneratorSettings { get; }
 
     /// <inheritdoc cref="SchemaRegistryMessageDeserializer{TMessage}.GetCompatibleSerializer" />
     public override IMessageSerializer GetCompatibleSerializer() => new JsonSchemaRegistryMessageSerializer<TMessage>(

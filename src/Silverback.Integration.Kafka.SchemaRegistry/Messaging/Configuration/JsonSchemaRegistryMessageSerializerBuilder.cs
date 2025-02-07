@@ -5,6 +5,7 @@ using System;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using NJsonSchema.Generation;
+using NJsonSchema.NewtonsoftJson.Generation;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -17,7 +18,7 @@ public class JsonSchemaRegistryMessageSerializerBuilder : SchemaRegistrySerializ
 {
     private JsonSerializerConfig? _jsonSerializerConfig;
 
-    private JsonSchemaGeneratorSettings? _jsonSchemaGeneratorSettings;
+    private NewtonsoftJsonSchemaGeneratorSettings? _jsonSchemaGeneratorSettings;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="JsonSchemaRegistryMessageSerializerBuilder" /> class.
@@ -65,7 +66,7 @@ public class JsonSchemaRegistryMessageSerializerBuilder : SchemaRegistrySerializ
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        _jsonSchemaGeneratorSettings = new JsonSchemaGeneratorSettings();
+        _jsonSchemaGeneratorSettings = new NewtonsoftJsonSchemaGeneratorSettings();
         configureAction.Invoke(_jsonSchemaGeneratorSettings);
 
         return this;
