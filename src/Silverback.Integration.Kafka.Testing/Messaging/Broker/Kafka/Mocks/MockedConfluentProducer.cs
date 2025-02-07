@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -20,9 +21,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     private readonly IInMemoryTransactionManager _transactionManager;
 
-    private readonly object _roundRobinLockObject = new();
-
-    private readonly Dictionary<string, int> _lastPushedPartitionByTopic = [];
+    private readonly ConcurrentDictionary<string, int> _lastPushedPartitionByTopic = [];
 
     private Guid _transactionalUniqueId = Guid.Empty;
 
@@ -186,13 +185,9 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         return partitionIndex;
     }
 
-    private int GetNextRoundRobinPartition(IInMemoryTopic topic)
-    {
-        lock (_roundRobinLockObject)
-        {
-            return _lastPushedPartitionByTopic.TryGetValue(topic.Name, out int lastPushedPartition)
-                ? _lastPushedPartitionByTopic[topic.Name] = (lastPushedPartition + 1) % topic.Partitions.Count
-                : _lastPushedPartitionByTopic[topic.Name] = 0;
-        }
-    }
+    private int GetNextRoundRobinPartition(IInMemoryTopic topic) =>
+        _lastPushedPartitionByTopic.AddOrUpdate(
+            topic.Name,
+            _ => 0,
+            (_, lastPushedPartition) => (lastPushedPartition + 1) % topic.Partitions.Count);
 }
