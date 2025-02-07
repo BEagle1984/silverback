@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client;
 using MQTTnet.Internal;
 using MQTTnet.Packets;
 using Silverback.Diagnostics;

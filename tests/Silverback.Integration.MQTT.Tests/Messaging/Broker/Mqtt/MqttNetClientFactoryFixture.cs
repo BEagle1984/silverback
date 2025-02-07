@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
-using MQTTnet.Client;
-using MQTTnet.Diagnostics;
+using MQTTnet;
+using MQTTnet.Diagnostics.Logger;
 using NSubstitute;
 using Silverback.Messaging.Broker.Mqtt;
 using Xunit;

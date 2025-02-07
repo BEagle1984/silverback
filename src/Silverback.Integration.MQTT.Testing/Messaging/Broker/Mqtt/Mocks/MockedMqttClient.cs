@@ -7,8 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Diagnostics;
+using MQTTnet.Diagnostics.PacketInspection;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -100,6 +99,10 @@ public sealed class MockedMqttClient : IMqttClient
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc cref="IMqttClient.SendEnhancedAuthenticationExchangeDataAsync" />
+    public Task SendEnhancedAuthenticationExchangeDataAsync(MqttEnhancedAuthenticationExchangeData data, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
     /// <inheritdoc cref="IMqttClient.SubscribeAsync" />
     public Task<MqttClientSubscribeResult> SubscribeAsync(MqttClientSubscribeOptions options, CancellationToken cancellationToken = default)
     {
@@ -143,11 +146,6 @@ public sealed class MockedMqttClient : IMqttClient
 
     /// <inheritdoc cref="IMqttClient.PingAsync" />
     public Task PingAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-
-    /// <inheritdoc cref="IMqttClient.SendExtendedAuthenticationExchangeDataAsync" />
-    public Task SendExtendedAuthenticationExchangeDataAsync(
-        MqttExtendedAuthenticationExchangeData data,
-        CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose() => _isDisposed = true;

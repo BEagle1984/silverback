@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MQTTnet.Client;
+using MQTTnet;
 using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
@@ -143,11 +143,7 @@ public class ProxyClassGenerator
                                 and not nameof(MqttClientTlsOptions.TrustChain))
             .Where(
                 property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
-                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions)
-#pragma warning disable CS0618 // Type or member is obsolete
-                                and not nameof(MqttClientTcpOptions.Server)
-                                and not nameof(MqttClientTcpOptions.Port))
-#pragma warning restore CS0618 // Type or member is obsolete
+                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
             .Where(
                 property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
                             property.Name

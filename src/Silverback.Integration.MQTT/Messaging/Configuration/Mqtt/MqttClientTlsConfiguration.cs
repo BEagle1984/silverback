@@ -4,7 +4,7 @@
 using System.Linq;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using MQTTnet.Client;
+using MQTTnet;
 using Silverback.Collections;
 using Silverback.Configuration;
 

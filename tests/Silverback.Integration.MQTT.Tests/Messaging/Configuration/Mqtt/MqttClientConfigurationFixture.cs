@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using FluentAssertions;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;

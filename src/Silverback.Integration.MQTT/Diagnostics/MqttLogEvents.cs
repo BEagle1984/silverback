@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using MQTTnet.Client;
+using MQTTnet;
 
 namespace Silverback.Diagnostics;
 

@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
-using MQTTnet.Client;
+using MQTTnet;
 using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
@@ -52,7 +52,7 @@ public class BuilderGenerator
             or "WithSessionExpiryInterval"
             or "WithUserProperty"
             or "WithCredentials"
-            or "WithExtendedAuthenticationExchangeHandler"
+            or "WithEnhancedAuthenticationHandler"
             or "WithTcpServer"
             or "WithProxy"
             or "WithWebSocketServer"

@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using MQTTnet.Client;
+using MQTTnet;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 

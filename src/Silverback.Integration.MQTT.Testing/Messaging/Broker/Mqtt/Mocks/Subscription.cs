@@ -3,7 +3,6 @@
 
 using System;
 using MQTTnet;
-using MQTTnet.Client;
 using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;

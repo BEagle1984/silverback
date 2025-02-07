@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;

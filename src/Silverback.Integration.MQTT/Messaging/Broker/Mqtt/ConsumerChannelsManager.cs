@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MQTTnet.Client;
+using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Util;
 

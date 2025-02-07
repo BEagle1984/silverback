@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -53,7 +54,7 @@ public partial class ProducerEndpointFixture : MqttFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
         messages.Should().HaveCount(1);
-        messages[0].PayloadSegment.Should().BeEquivalentTo(rawMessage);
+        messages[0].Payload.ToArray().Should().BeEquivalentTo(rawMessage);
     }
 
     [Fact]

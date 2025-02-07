@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using MQTTnet.Client;
+using MQTTnet;
 using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging.Broker.Callbacks;

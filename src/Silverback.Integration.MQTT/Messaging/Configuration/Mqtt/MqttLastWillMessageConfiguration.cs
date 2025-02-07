@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Protocol;
 using Silverback.Collections;
 using Silverback.Configuration;

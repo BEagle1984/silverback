@@ -8,7 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 using Silverback.Collections;
@@ -43,8 +43,7 @@ public partial class MqttClientConfigurationBuilder
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the required services (e.g. the
-    ///     <see cref="IMqttExtendedAuthenticationExchangeHandler" />).
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
     public MqttClientConfigurationBuilder(IServiceProvider serviceProvider)
     {
@@ -73,7 +72,7 @@ public partial class MqttClientConfigurationBuilder
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name and the message type.
+    ///     By default, the name will be generated concatenating the topic name and the message type.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
@@ -168,7 +167,7 @@ public partial class MqttClientConfigurationBuilder
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s).
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
@@ -190,7 +189,7 @@ public partial class MqttClientConfigurationBuilder
     /// </typeparam>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s).
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
@@ -406,7 +405,7 @@ public partial class MqttClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public partial MqttClientConfigurationBuilder WithAuthentication(string? method, byte[]? data)
+    public partial MqttClientConfigurationBuilder WithEnhancedAuthentication(string? method, byte[]? data)
     {
         _configuration = _configuration with
         {
@@ -636,52 +635,52 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <param name="handler">
-    ///     The <see cref="IMqttExtendedAuthenticationExchangeHandler" /> instance to be used.
+    ///     The <see cref="IMqttEnhancedAuthenticationHandler" /> instance to be used.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler handler)
+    public MqttClientConfigurationBuilder UseEnhancedAuthenticationHandler(IMqttEnhancedAuthenticationHandler handler)
     {
         Check.NotNull(handler, nameof(handler));
 
-        _configuration = _configuration with { ExtendedAuthenticationExchangeHandler = handler };
+        _configuration = _configuration with { EnhancedAuthenticationHandler = handler };
         return this;
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <typeparam name="THandler">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the
     ///     <see cref="IServiceProvider" />.
     /// </typeparam>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder UseExtendedAuthenticationExchangeHandler<THandler>()
-        where THandler : IMqttExtendedAuthenticationExchangeHandler =>
-        UseExtendedAuthenticationExchangeHandler(typeof(THandler));
+    public MqttClientConfigurationBuilder UseEnhancedAuthenticationHandler<THandler>()
+        where THandler : IMqttEnhancedAuthenticationHandler =>
+        UseEnhancedAuthenticationHandler(typeof(THandler));
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <param name="handlerType">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the
     ///     <see cref="IServiceProvider" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder UseExtendedAuthenticationExchangeHandler(Type handlerType)
+    public MqttClientConfigurationBuilder UseEnhancedAuthenticationHandler(Type handlerType)
     {
         if (ServiceProvider == null)
             throw new InvalidOperationException("The service provider is not set.");
 
-        UseExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)ServiceProvider.GetRequiredService(handlerType));
+        UseEnhancedAuthenticationHandler((IMqttEnhancedAuthenticationHandler)ServiceProvider.GetRequiredService(handlerType));
         return this;
     }
 
@@ -989,30 +988,6 @@ public partial class MqttClientConfigurationBuilder
     public MqttClientConfigurationBuilder DisablePacketFragmentation()
     {
         _configuration = _configuration with { AllowPacketFragmentation = false };
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies that the client must throw an exception when the server replies with a non success ACK packet.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder ThrowOnNonSuccessfulConnectResponse()
-    {
-        _configuration = _configuration with { ThrowOnNonSuccessfulConnectResponse = true };
-        return this;
-    }
-
-    /// <summary>
-    ///     Disables the exception throwing when the server replies with a non success ACK packet.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder DisableThrowOnNonSuccessfulConnectResponse()
-    {
-        _configuration = _configuration with { ThrowOnNonSuccessfulConnectResponse = false };
         return this;
     }
 

@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
-using MQTTnet.Client;
+using MQTTnet;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
 
@@ -50,9 +50,6 @@ public static class DocumentationProvider
                 break;
             case nameof(MqttClientOptions.Credentials):
                 builder.AppendLine("    ///     Gets the credentials to be used to authenticate with the message broker.");
-                break;
-            case nameof(MqttClientOptions.ExtendedAuthenticationExchangeHandler):
-                builder.AppendLine("    ///     Gets the handler to be used to handle the custom authentication data exchange.");
                 break;
             case nameof(MqttClientOptions.ProtocolVersion):
                 builder.AppendLine("    ///     Gets the MQTT protocol version. The default is <see cref=\"MQTTnet.Formatter.MqttProtocolVersion.V500\" />.");
@@ -116,13 +113,12 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     If such a service is used this flag must be set to <c>false</c>.");
                 builder.AppendLine("    ///     The default is <c>true</c>.");
                 break;
-            case nameof(MqttClientOptions.ThrowOnNonSuccessfulConnectResponse):
-                builder.AppendLine("    ///     Gets a value indicating whether an exception should be thrown when the server replies with a non success ACK packet.");
-                builder.AppendLine("    ///     The default is <c>true</c>.");
-                break;
             case nameof(MqttClientOptions.ValidateFeatures):
                 builder.AppendLine("    ///     Gets a value indicating whether the client should check if the configuration is valid for the selected protocol version.");
                 builder.AppendLine("    ///     The default is <c>true</c>.");
+                break;
+            case nameof(MqttClientOptions.EnhancedAuthenticationHandler):
+                builder.AppendLine("    ///     Gets the handler for AUTH packets. This can happen when connecting or at any time while being already connected.");
                 break;
         }
     }
@@ -184,6 +180,9 @@ public static class DocumentationProvider
             case nameof(MqttClientWebSocketOptions.KeepAliveInterval):
                 builder.AppendLine("    ///     Gets the keep alive interval for the web socket connection. This is not related to the keep alive interval for the MQTT protocol.");
                 builder.AppendLine("    ///     The default is <see cref=\"WebSocket.DefaultKeepAliveInterval\" />.");
+                break;
+            case nameof(MqttClientWebSocketOptions.DangerousDeflateOptions):
+                builder.AppendLine("    ///     Gets the <see cref=\"WebSocketDeflateOptions\" />.");
                 break;
         }
     }

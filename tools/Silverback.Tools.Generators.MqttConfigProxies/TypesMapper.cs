@@ -3,7 +3,6 @@
 
 using System;
 using MQTTnet;
-using MQTTnet.Client;
 using MQTTnet.Packets;
 using Silverback.Tools.Generators.Common;
 

@@ -2,19 +2,18 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Diagnostics;
+using MQTTnet.Diagnostics.Logger;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 
 /// <summary>
-///     Wraps the <see cref="MQTTnet.MqttFactory" />.
+///     Wraps the <see cref="MQTTnet.MqttClientFactory" />.
 /// </summary>
 public class MqttNetClientFactory : IMqttNetClientFactory
 {
     private readonly IMqttNetLogger _mqttNetLogger;
 
-    private readonly MqttFactory _factory = new();
+    private readonly MqttClientFactory _factory = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttNetClientFactory" /> class.

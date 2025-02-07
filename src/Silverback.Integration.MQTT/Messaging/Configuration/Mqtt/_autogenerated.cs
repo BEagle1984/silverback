@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using MQTTnet.Client;
+using MQTTnet;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
@@ -51,9 +51,9 @@ public partial record MqttClientConfiguration
     public IMqttClientCredentialsProvider? Credentials { get; init; }
 
     /// <summary>
-    ///     Gets the handler to be used to handle the custom authentication data exchange.
+    ///     Gets the handler for AUTH packets. This can happen when connecting or at any time while being already connected.
     /// </summary>
-    public IMqttExtendedAuthenticationExchangeHandler? ExtendedAuthenticationExchangeHandler { get; init; }
+    public IMqttEnhancedAuthenticationHandler? EnhancedAuthenticationHandler { get; init; }
 
     /// <summary>
     ///     Gets the communication timeout. The default is 10 seconds.
@@ -88,12 +88,6 @@ public partial record MqttClientConfiguration
     ///     <see cref="uint.MaxValue" /> indicates that the session will never expire. The default is 0.
     /// </summary>
     public uint SessionExpiryInterval { get; init; } = DefaultInstance.SessionExpiryInterval;
-
-    /// <summary>
-    ///     Gets a value indicating whether an exception should be thrown when the server replies with a non success ACK packet.
-    ///     The default is <c>true</c>.
-    /// </summary>
-    public bool ThrowOnNonSuccessfulConnectResponse { get; init; } = DefaultInstance.ThrowOnNonSuccessfulConnectResponse;
 
     /// <summary>
     ///     Gets the timeout which will be applied at socket level and internal operations.
@@ -141,14 +135,13 @@ public partial record MqttClientConfiguration
             AuthenticationMethod = AuthenticationMethod,
             CleanSession = CleanSession,
             Credentials = Credentials,
-            ExtendedAuthenticationExchangeHandler = ExtendedAuthenticationExchangeHandler,
+            EnhancedAuthenticationHandler = EnhancedAuthenticationHandler,
             KeepAlivePeriod = KeepAlivePeriod,
             MaximumPacketSize = MaximumPacketSize,
             ReceiveMaximum = ReceiveMaximum,
             RequestProblemInformation = RequestProblemInformation,
             RequestResponseInformation = RequestResponseInformation,
             SessionExpiryInterval = SessionExpiryInterval,
-            ThrowOnNonSuccessfulConnectResponse = ThrowOnNonSuccessfulConnectResponse,
             Timeout = Timeout,
             TopicAliasMaximum = TopicAliasMaximum,
             TryPrivate = TryPrivate,
@@ -237,9 +230,20 @@ public partial record MqttClientWebSocketConfiguration
     public CookieContainer? CookieContainer { get; init; }
 
     /// <summary>
+    ///     Gets the <see cref="WebSocketDeflateOptions" />.
+    /// </summary>
+    public WebSocketDeflateOptions? DangerousDeflateOptions { get; init; }
+
+    /// <summary>
     ///     Gets the credentials to be used.
     /// </summary>
     public ICredentials? Credentials { get; init; }
+
+    /// <summary>
+    ///     Gets the keep alive interval for the web socket connection. This is not related to the keep alive interval for the MQTT protocol.
+    ///     The default is <see cref="WebSocket.DefaultKeepAliveInterval" />.
+    /// </summary>
+    public TimeSpan KeepAliveInterval { get; init; } = DefaultInstance.KeepAliveInterval;
 
     /// <summary>
     ///     Gets the request headers.
@@ -258,12 +262,6 @@ public partial record MqttClientWebSocketConfiguration
     public string? Uri { get; init; }
 
     /// <summary>
-    ///     Gets the keep alive interval for the web socket connection. This is not related to the keep alive interval for the MQTT protocol.
-    ///     The default is <see cref="WebSocket.DefaultKeepAliveInterval" />.
-    /// </summary>
-    public TimeSpan KeepAliveInterval { get; init; } = DefaultInstance.KeepAliveInterval;
-
-    /// <summary>
     ///     Gets a value indicating whether the default (system) credentials should be used. The default is <c>false</c>.
     /// </summary>
     public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
@@ -272,11 +270,12 @@ public partial record MqttClientWebSocketConfiguration
         new()
         {
             CookieContainer = CookieContainer,
+            DangerousDeflateOptions = DangerousDeflateOptions,
             Credentials = Credentials,
+            KeepAliveInterval = KeepAliveInterval,
             RequestHeaders = RequestHeaders,
             SubProtocols = SubProtocols,
             Uri = Uri,
-            KeepAliveInterval = KeepAliveInterval,
             UseDefaultCredentials = UseDefaultCredentials
         };
 }
@@ -371,19 +370,9 @@ public partial record MqttClientWebSocketProxyConfiguration
     public string? Address { get; init; }
 
     /// <summary>
-    ///     Gets the username to be used to authenticate with the proxy server.
+    ///     Gets the bypass list.
     /// </summary>
-    public string? Username { get; init; }
-
-    /// <summary>
-    ///     Gets the password to be used to authenticate with the proxy server.
-    /// </summary>
-    public string? Password { get; init; }
-
-    /// <summary>
-    ///     Gets proxy server domain.
-    /// </summary>
-    public string? Domain { get; init; }
+    public string[]? BypassList { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the proxy should be bypassed for local calls.
@@ -391,25 +380,35 @@ public partial record MqttClientWebSocketProxyConfiguration
     public bool BypassOnLocal { get; init; } = DefaultInstance.BypassOnLocal;
 
     /// <summary>
+    ///     Gets proxy server domain.
+    /// </summary>
+    public string? Domain { get; init; }
+
+    /// <summary>
+    ///     Gets the password to be used to authenticate with the proxy server.
+    /// </summary>
+    public string? Password { get; init; }
+
+    /// <summary>
     ///     Gets a value indicating whether the default (system) credentials should be used.
     /// </summary>
     public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
 
     /// <summary>
-    ///     Gets the bypass list.
+    ///     Gets the username to be used to authenticate with the proxy server.
     /// </summary>
-    public string[]? BypassList { get; init; }
+    public string? Username { get; init; }
 
     private MqttClientWebSocketProxyOptions MapCore() =>
         new()
         {
             Address = Address,
-            Username = Username,
-            Password = Password,
-            Domain = Domain,
+            BypassList = BypassList,
             BypassOnLocal = BypassOnLocal,
+            Domain = Domain,
+            Password = Password,
             UseDefaultCredentials = UseDefaultCredentials,
-            BypassList = BypassList
+            Username = Username
         };
 }
 
@@ -423,7 +422,7 @@ public partial class MqttClientConfigurationBuilder
 {
     public partial MqttClientConfigurationBuilder WithAddressFamily(AddressFamily addressFamily);
 
-    public partial MqttClientConfigurationBuilder WithAuthentication(string? method, byte[]? data);
+    public partial MqttClientConfigurationBuilder WithEnhancedAuthentication(string? method, byte[]? data);
 
     public partial MqttClientConfigurationBuilder WithTimeout(TimeSpan value);
 }
@@ -438,7 +437,7 @@ public partial class MqttClientsConfigurationBuilder
 {
     public partial MqttClientsConfigurationBuilder WithAddressFamily(AddressFamily addressFamily);
 
-    public partial MqttClientsConfigurationBuilder WithAuthentication(string? method, byte[]? data);
+    public partial MqttClientsConfigurationBuilder WithEnhancedAuthentication(string? method, byte[]? data);
 
     public partial MqttClientsConfigurationBuilder WithTimeout(TimeSpan value);
 }

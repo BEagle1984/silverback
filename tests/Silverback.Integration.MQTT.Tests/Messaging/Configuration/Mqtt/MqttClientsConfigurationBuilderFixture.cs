@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Formatter;
 using NSubstitute;
 using Silverback.Configuration;
@@ -136,11 +136,11 @@ public class MqttClientsConfigurationBuilderFixture
     }
 
     [Fact]
-    public void WithAuthentication_ShouldSetAuthenticationMethodAndData()
+    public void WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.WithAuthentication("method", [0x01, 0x02, 0x03]);
+        builder.WithEnhancedAuthentication("method", [0x01, 0x02, 0x03]);
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
@@ -393,56 +393,56 @@ public class MqttClientsConfigurationBuilderFixture
     }
 
     [Fact]
-    public void UseExtendedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance()
+    public void UseEnhancedAuthenticationHandler_ShouldSetHandlerFromInstance()
     {
-        TestExtendedAuthenticationExchangeHandler instance = new();
+        TestEnhancedAuthenticationHandler instance = new();
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.UseExtendedAuthenticationExchangeHandler(instance);
+        builder.UseEnhancedAuthenticationHandler(instance);
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
-        config.ExtendedAuthenticationExchangeHandler.Should().BeSameAs(instance);
+        config.EnhancedAuthenticationHandler.Should().BeSameAs(instance);
     }
 
     [Fact]
-    public void UseExtendedAuthenticationExchangeHandler_ShouldSetHandlerFromGenericTypeArgument()
+    public void UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument()
     {
         IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(TestExtendedAuthenticationExchangeHandler))
-            .Returns(new TestExtendedAuthenticationExchangeHandler());
+        serviceProvider.GetService(typeof(TestEnhancedAuthenticationHandler))
+            .Returns(new TestEnhancedAuthenticationHandler());
 
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
         builder
             .ConnectViaTcp("tests-server")
-            .UseExtendedAuthenticationExchangeHandler<TestExtendedAuthenticationExchangeHandler>();
+            .UseEnhancedAuthenticationHandler<TestEnhancedAuthenticationHandler>();
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint(serviceProvider);
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
-        config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
+        config.EnhancedAuthenticationHandler.Should().BeOfType<TestEnhancedAuthenticationHandler>();
     }
 
     [Fact]
-    public void UseExtendedAuthenticationExchangeHandler_ShouldSetHandlerFromType()
+    public void UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType()
     {
         IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(TestExtendedAuthenticationExchangeHandler))
-            .Returns(new TestExtendedAuthenticationExchangeHandler());
+        serviceProvider.GetService(typeof(TestEnhancedAuthenticationHandler))
+            .Returns(new TestEnhancedAuthenticationHandler());
 
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.UseExtendedAuthenticationExchangeHandler(typeof(TestExtendedAuthenticationExchangeHandler));
+        builder.UseEnhancedAuthenticationHandler(typeof(TestEnhancedAuthenticationHandler));
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint(serviceProvider);
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
-        config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
+        config.EnhancedAuthenticationHandler.Should().BeOfType<TestEnhancedAuthenticationHandler>();
     }
 
     [Fact]
@@ -803,8 +803,8 @@ public class MqttClientsConfigurationBuilderFixture
         new MqttClientConfigurationBuilder(serviceProvider ?? Substitute.For<IServiceProvider>())
             .ConnectViaTcp("test");
 
-    private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
+    private sealed class TestEnhancedAuthenticationHandler : IMqttEnhancedAuthenticationHandler
     {
-        public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) => Task.CompletedTask;
+        public Task HandleEnhancedAuthenticationAsync(MqttEnhancedAuthenticationEventArgs eventArgs) => Task.CompletedTask;
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Formatter;
 using Silverback.Util;
 
@@ -188,9 +188,9 @@ public sealed partial class MqttClientsConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public partial MqttClientsConfigurationBuilder WithAuthentication(string? method, byte[]? data)
+    public partial MqttClientsConfigurationBuilder WithEnhancedAuthentication(string? method, byte[]? data)
     {
-        _sharedConfigurationActions.Add(builder => builder.WithAuthentication(method, data));
+        _sharedConfigurationActions.Add(builder => builder.WithEnhancedAuthentication(method, data));
         return this;
     }
 
@@ -411,49 +411,49 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <param name="handler">
-    ///     The <see cref="IMqttExtendedAuthenticationExchangeHandler" /> instance to be used.
+    ///     The <see cref="IMqttEnhancedAuthenticationHandler" /> instance to be used.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler handler)
+    public MqttClientsConfigurationBuilder UseEnhancedAuthenticationHandler(IMqttEnhancedAuthenticationHandler handler)
     {
         Check.NotNull(handler, nameof(handler));
 
-        _sharedConfigurationActions.Add(builder => builder.UseExtendedAuthenticationExchangeHandler(handler));
+        _sharedConfigurationActions.Add(builder => builder.UseEnhancedAuthenticationHandler(handler));
         return this;
     }
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <typeparam name="THandler">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the
     ///     <see cref="IServiceProvider" />.
     /// </typeparam>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder UseExtendedAuthenticationExchangeHandler<THandler>()
-        where THandler : IMqttExtendedAuthenticationExchangeHandler =>
-        UseExtendedAuthenticationExchangeHandler(typeof(THandler));
+    public MqttClientsConfigurationBuilder UseEnhancedAuthenticationHandler<THandler>()
+        where THandler : IMqttEnhancedAuthenticationHandler =>
+        UseEnhancedAuthenticationHandler(typeof(THandler));
 
     /// <summary>
-    ///     Sets the handler to be used to handle the custom authentication data exchange.
+    ///     Sets the handler to be used to handle the authentication.
     /// </summary>
     /// <param name="handlerType">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     The type of the <see cref="IMqttEnhancedAuthenticationHandler" /> to be used. The instance will be resolved via the
     ///     <see cref="IServiceProvider" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder UseExtendedAuthenticationExchangeHandler(Type handlerType)
+    public MqttClientsConfigurationBuilder UseEnhancedAuthenticationHandler(Type handlerType)
     {
-        _sharedConfigurationActions.Add(builder => builder.UseExtendedAuthenticationExchangeHandler(handlerType));
+        _sharedConfigurationActions.Add(builder => builder.UseEnhancedAuthenticationHandler(handlerType));
         return this;
     }
 
@@ -600,7 +600,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     The proxy address.
     /// </param>
     /// <param name="username">
-    ///     The user name to be used to authenticate against the proxy.
+    ///     The username to be used to authenticate against the proxy.
     /// </param>
     /// <param name="password">
     ///     The password to be used to authenticate against the proxy.
@@ -708,30 +708,6 @@ public sealed partial class MqttClientsConfigurationBuilder
     public MqttClientsConfigurationBuilder DisablePacketFragmentation()
     {
         _sharedConfigurationActions.Add(builder => builder.DisablePacketFragmentation());
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies that the client must throw an exception when the server replies with a non success ACK packet.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder ThrowOnNonSuccessfulConnectResponse()
-    {
-        _sharedConfigurationActions.Add(builder => builder.ThrowOnNonSuccessfulConnectResponse());
-        return this;
-    }
-
-    /// <summary>
-    ///     Disables the exception throwing when the server replies with a non success ACK packet.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder DisableThrowOnNonSuccessfulConnectResponse()
-    {
-        _sharedConfigurationActions.Add(builder => builder.DisableThrowOnNonSuccessfulConnectResponse());
         return this;
     }
 

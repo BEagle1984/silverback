@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -56,7 +57,7 @@ public partial class ErrorPoliciesFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);
-        messages[0].PayloadSegment.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages[0].Payload.ToArray().Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 
     [Fact]
@@ -149,6 +150,6 @@ public partial class ErrorPoliciesFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);
-        messages[0].PayloadSegment.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages[0].Payload.ToArray().Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 }

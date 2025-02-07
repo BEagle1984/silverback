@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +117,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
                 throw new InvalidOperationException("The message has been processed already.");
 
             await HandleMessageAsync(
-                    [.. message.ApplicationMessage.PayloadSegment],
+                    message.ApplicationMessage.Payload.ToArray(),
                     headers,
                     endpoint,
                     new MqttMessageIdentifier(Configuration.ClientId, message.Id),

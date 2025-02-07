@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.Extensions.Logging;
-using MQTTnet.Diagnostics;
+using MQTTnet.Diagnostics.Logger;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Tests.Types;
 using Xunit;

@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using FluentAssertions;
-using MQTTnet.Client;
+using MQTTnet;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;

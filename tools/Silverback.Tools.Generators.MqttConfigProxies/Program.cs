@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using MQTTnet.Client;
+using MQTTnet;
 using MQTTnet.Packets;
 using Silverback.Tools.Generators.MqttConfigProxies;
 
