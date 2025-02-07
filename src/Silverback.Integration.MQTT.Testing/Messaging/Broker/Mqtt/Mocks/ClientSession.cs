@@ -24,6 +24,8 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private readonly ConcurrentDictionary<string, int> _pendingMessagesCountByTopic = new();
 
+    private int _pendingMessagesCount;
+
     private CancellationTokenSource _readCancellationTokenSource = new();
 
     public ClientSession(MockedMqttClient client, SharedSubscriptionsManager sharedSubscriptionsManager)
@@ -104,13 +106,14 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
         await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
 
+        Interlocked.Increment(ref _pendingMessagesCount);
         _pendingMessagesCountByTopic.AddOrUpdate(
             message.Topic,
             _ => 1,
             (_, count) => count + 1);
     }
 
-    public int GetPendingMessagesCount() => _pendingMessagesCountByTopic.Values.Sum();
+    public int GetPendingMessagesCount() => _pendingMessagesCount;
 
     public int GetPendingMessagesCount(string topicName) =>
         _pendingMessagesCountByTopic.GetValueOrDefault(topicName, 0);
@@ -136,6 +139,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
                 {
                     if (!args.AutoAcknowledge)
                     {
+                        Interlocked.Decrement(ref _pendingMessagesCount);
                         _pendingMessagesCountByTopic.AddOrUpdate(
                             message.Topic,
                             _ => 0,
@@ -149,6 +153,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
             if (eventArgs.AutoAcknowledge)
             {
+                Interlocked.Decrement(ref _pendingMessagesCount);
                 _pendingMessagesCountByTopic.AddOrUpdate(
                     message.Topic,
                     _ => 0,
