@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <RootNamespace>$(RootNamespace)</RootNamespace>
@@ -20,26 +19,22 @@
     <PackageId>Silverback.Integration.Kafka.Testing</PackageId>
     <Product>Silverback.Integration.Kafka.Testing</Product>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.26.1">
+    <PackageReference Include="Google.Protobuf">
       <Aliases>GoogleProtobuf</Aliases>
     </PackageReference>
-    <PackageReference Include="protobuf-net.Reflection" Version="3.2.12">
+    <PackageReference Include="protobuf-net.Reflection">
       <Aliases>ProtobufNet</Aliases>
     </PackageReference>
   </ItemGroup>
-  
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Silverback.Integration.Kafka.Testing.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>

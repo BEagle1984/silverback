@@ -148,12 +148,7 @@ public abstract class TableBasedDistributedLock : DistributedLock
             if (_isDisposed)
                 return;
 
-#if NETSTANDARD
-            _disposeTokenSource.Cancel();
-#else
             await _disposeTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-
             await ReleaseLockAsync().ConfigureAwait(false);
 
             _isDisposed = true;
@@ -186,11 +181,7 @@ public abstract class TableBasedDistributedLock : DistributedLock
                 {
                     _logger.LogLockLost(_settings.LockName, ex);
 
-#if NETSTANDARD
-                    _lockLostTokenSource.Cancel();
-#else
                     await _lockLostTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
                 }
 
                 return false;

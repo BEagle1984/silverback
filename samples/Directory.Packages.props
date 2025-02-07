@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" />
+    <PackageVersion Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Integration.Kafka.SchemaRegistry" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+</Project>

@@ -167,13 +167,7 @@ public abstract class BrokerClient : IBrokerClient
     private async ValueTask DisconnectAsync(bool isRestarting)
     {
         if (!isRestarting && !_disconnectCancellationTokenSource.IsCancellationRequested)
-        {
-#if NETSTANDARD
-            _disconnectCancellationTokenSource.Cancel();
-#else
             await _disconnectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-        }
 
         if (Status != ClientStatus.Initialized)
             return;

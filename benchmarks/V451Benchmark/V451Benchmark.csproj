@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <RootNamespace>Silverback.Benchmarks.V451</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
@@ -8,16 +7,13 @@
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Silverback.Core" Version="4.5.1" />
-    <PackageReference Include="Silverback.Core.Model" Version="4.5.1" />
-    <PackageReference Include="Silverback.Integration.Kafka" Version="4.5.1" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Silverback.Core" VersionOverride="4.5.1" />
+    <PackageReference Include="Silverback.Core.Model" VersionOverride="4.5.1" />
+    <PackageReference Include="Silverback.Integration.Kafka" VersionOverride="4.5.1" />
   </ItemGroup>
-
 </Project>
-

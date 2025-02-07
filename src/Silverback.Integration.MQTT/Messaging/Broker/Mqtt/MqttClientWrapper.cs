@@ -123,16 +123,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             callback => callback
                 .OnClientDisconnectingAsync(Configuration)).ConfigureAwait(false);
 
-#if NETSTANDARD
-        _connectCancellationTokenSource?.Cancel();
-        _publishCancellationTokenSource?.Cancel();
-#else
         if (_connectCancellationTokenSource != null)
             await _connectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
         if (_publishCancellationTokenSource != null)
             await _publishCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
 
         WaitFlushingCompletes();
 

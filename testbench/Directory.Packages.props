@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Ductus.FluentDocker" Version="2.10.59" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" />
+    <PackageVersion Include="Serilog" Version="4.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Activity" Version="1.0.0.3" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Silverback.Core.Model" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Integration" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Integration.MQTT" Version="$(BaseVersion)" />
+    <PackageVersion Include="Silverback.Storage.PostgreSql" Version="$(BaseVersion)" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+  </ItemGroup>
+</Project>

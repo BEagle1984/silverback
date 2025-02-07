@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -156,16 +155,8 @@ internal static class Check
         return value;
     }
 
-    [SuppressMessage("Style", "IDE0022:Use expression body for method", Justification = "False positive")]
-    public static void ThrowObjectDisposedIf(bool condition, object instance)
-    {
-#if NETSTANDARD
-        if (condition)
-            throw new ObjectDisposedException(instance.GetType().FullName);
-#else
+    public static void ThrowObjectDisposedIf(bool condition, object instance) =>
         ObjectDisposedException.ThrowIf(condition, instance);
-#endif
-    }
 
     [AttributeUsage(AttributeTargets.Parameter)]
     private sealed class ValidatedNotNullAttribute : Attribute;

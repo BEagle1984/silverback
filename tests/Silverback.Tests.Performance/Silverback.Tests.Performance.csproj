@@ -1,17 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <RootNamespace>Silverback.Tests.Performance</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>  </PropertyGroup>
-
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="BenchmarkDotNet" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
@@ -20,5 +18,4 @@
     <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
   </ItemGroup>
-
 </Project>

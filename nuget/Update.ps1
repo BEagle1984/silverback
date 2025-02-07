@@ -109,21 +109,23 @@ function Pack-All()
 
 function Remove-ProjectReferences([string]$projectFilePath)
 {
+    Write-Host "Replace projects references..." -NoNewline
+
     foreach ($sourceProjectName in $global:sourceProjectNames)
     {
-        Remove-ProjectReference $projectFilePath $sourceProjectName $sourceProjectName '$(BaseVersion)'
+        Remove-ProjectReference $projectFilePath $sourceProjectName $sourceProjectName
     }
+
+    Write-Host "OK" -ForegroundColor Green
 
     Test-ProjectReferenceReplaced $projectFilePath
 }
 
-function Remove-ProjectReference([string] $projectFilePath, [string]$projectToReplace, [string]$packageName, [string]$packageVersion)
+function Remove-ProjectReference([string] $projectFilePath, [string]$projectToReplace, [string]$packageName)
 {
-    Write-Host "Replace $projectToReplace reference..." -NoNewline
     $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`" />"
-    $replace = "<PackageReference Include=`"$projectToReplace`" Version=`"$packageVersion`" />"
+    $replace = "<PackageReference Include=`"$projectToReplace`" />"
     ((Get-Content -path $projectFilePath -Raw) -replace $find, $replace) | Set-Content -Path $projectFilePath
-    Write-Host "OK" -ForegroundColor Green
 }
 
 function Test-ProjectReferenceReplaced([string]$projectFilePath)

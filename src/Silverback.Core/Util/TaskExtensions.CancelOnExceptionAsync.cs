@@ -29,11 +29,7 @@ internal static partial class TaskExtensions
         {
             try
             {
-#if NETSTANDARD
-                cancellationTokenSource.Cancel();
-#else
                 await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
             }
             catch (ObjectDisposedException)
             {
@@ -64,11 +60,7 @@ internal static partial class TaskExtensions
         {
             try
             {
-#if NETSTANDARD
-                cancellationTokenSource.Cancel();
-#else
                 await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
             }
             catch (ObjectDisposedException)
             {

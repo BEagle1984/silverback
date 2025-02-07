@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <RootNamespace>$(RootNamespace)</RootNamespace>
@@ -20,13 +19,10 @@
     <PackageId>Silverback.Integration.Newtonsoft</PackageId>
     <Product>Silverback.Integration.Newtonsoft</Product>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
-
 </Project>

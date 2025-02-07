@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
     <RootNamespace>Silverback.Samples.Kafka.BatchWithTombstone.Producer</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\BatchWithTombstone.Common\BatchWithTombstone.Common.csproj" />
   </ItemGroup>
-
 </Project>

@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <RootNamespace>$(RootNamespace)</RootNamespace>
@@ -20,17 +19,14 @@
     <PackageId>Silverback.Storage.Relational</PackageId>
     <Product>Silverback.Storage.Relational</Product>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
-  
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Silverback.Storage.Relational.Tests</_Parameter1>
@@ -48,5 +44,4 @@
       <_Parameter1>Silverback.Storage.Sqlite.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>

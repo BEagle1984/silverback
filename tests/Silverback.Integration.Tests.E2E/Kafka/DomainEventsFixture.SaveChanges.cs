@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-#if NET8_0
-
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -271,5 +269,3 @@ public partial class DomainEventsFixture
         }
     }
 }
-
-#endif

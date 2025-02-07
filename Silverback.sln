@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		azure-pipelines.sonar.yml = azure-pipelines.sonar.yml
 		.editorconfig = .editorconfig
 		azure-pipelines.other-projects.yml = azure-pipelines.other-projects.yml
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka.SchemaRegistry", "src\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj", "{521B782C-7D00-4489-879C-7FA666CC6474}"

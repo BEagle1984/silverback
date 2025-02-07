@@ -1,19 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>Silverback.TestBench</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="4.0.1" />
-    <PackageReference Include="Serilog.Enrichers.Activity" Version="1.0.0.3" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="Silverback.Integration" Version="5.0.0-beta.1" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Activity" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Silverback.Integration" />
   </ItemGroup>
-
 </Project>

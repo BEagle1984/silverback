@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <RootNamespace>$(RootNamespace)</RootNamespace>
@@ -20,19 +19,15 @@
     <PackageId>Silverback.Core.Rx</PackageId>
     <Product>Silverback.Core.Rx</Product>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="6.0.1" />
+    <PackageReference Include="System.Reactive" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Silverback.Core.Rx.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-  
 </Project>

@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
@@ -7,16 +6,13 @@
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="2.5.0" />
-    <PackageReference Include="Confluent.SchemaRegistry" Version="2.5.0" />
+    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="Confluent.SchemaRegistry" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj" />
   </ItemGroup>
-
   <!-- Workaround for xml documentation not being copied to output folder -->
   <Target Name="CopyXMLFromPackagesForBuild" AfterTargets="Build">
     <ItemGroup>

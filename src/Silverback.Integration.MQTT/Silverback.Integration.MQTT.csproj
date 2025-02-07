@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <RootNamespace>$(RootNamespace)</RootNamespace>
@@ -20,15 +19,12 @@
     <PackageId>Silverback.Integration.MQTT</PackageId>
     <Product>Silverback.Integration.MQTT</Product>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="4.3.6.1152" />
+    <PackageReference Include="MQTTnet" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Silverback.Integration.MQTT.Tests</_Parameter1>
@@ -37,5 +33,4 @@
       <_Parameter1>Silverback.Integration.MQTT.Testing</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>

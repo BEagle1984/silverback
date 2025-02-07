@@ -1,6 +1,5 @@
 <Project>
   <Import Project="../Directory.Build.props" />
-
   <PropertyGroup Label="Package information">
     <Authors>Sergio Aquilini</Authors>
     <Company>Silverback</Company>
@@ -11,18 +10,17 @@
     <Tags>Bus Mediator CQRS Kafka Rabbit RabbitMQ MQTT Microservices</Tags>
     <PackageIcon>icon.png</PackageIcon>
     <!-- Reset warnings -->
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <!-- SourceLink -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>false</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\..\graphics\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>

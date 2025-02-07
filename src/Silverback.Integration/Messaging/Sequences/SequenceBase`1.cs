@@ -581,13 +581,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             LogAbort();
 
         _streamProvider.AbortIfPending();
-
-#if NETSTANDARD
-        _abortCancellationTokenSource.Cancel();
-#else
         await _abortCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-
         _abortingTaskCompletionSource?.SetResult(true);
     }
 

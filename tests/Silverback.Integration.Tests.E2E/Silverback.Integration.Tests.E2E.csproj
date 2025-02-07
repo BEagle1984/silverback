@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>$(TestsTargetFrameworks)</TargetFrameworks>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
@@ -8,33 +7,31 @@
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Ductus.FluentDocker" Version="2.10.59" />
-    <PackageReference Include="FluentAssertions" Version="6.12.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.28" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.28" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.28" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="Ductus.FluentDocker" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj" />
@@ -50,11 +47,9 @@
     <ProjectReference Include="..\..\src\Silverback.Storage.Sqlite\Silverback.Storage.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Storage.PostgreSql\Silverback.Storage.PostgreSql.csproj" />
   </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'">
     <ProjectReference Include="..\..\src\Silverback.Storage.EntityFramework\Silverback.Storage.EntityFramework.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\xunit.runner.json">
       <Link>xunit.runner.json</Link>

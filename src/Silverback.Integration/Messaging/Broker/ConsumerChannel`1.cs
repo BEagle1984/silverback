@@ -82,13 +82,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     public async Task StopReadingAsync()
     {
         if (!_readCancellationTokenSource.IsCancellationRequested)
-        {
-#if NETSTANDARD
-            _readCancellationTokenSource.Cancel();
-#else
             await _readCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-        }
 
         if (Volatile.Read(ref _isReading) == 0)
             _readTaskCompletionSource.TrySetResult(true);

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-#if NET8_0
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -402,5 +400,3 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
         public DbSet<SilverbackStoredOffset> KafkaOffsets { get; set; } = null!;
     }
 }
-
-#endif

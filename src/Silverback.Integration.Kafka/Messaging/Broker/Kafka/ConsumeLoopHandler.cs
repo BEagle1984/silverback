@@ -93,11 +93,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             "Stopping ConsumeLoopHandler... | instanceId: {instanceId}",
             () => [Id]);
 
-#if NETSTANDARD
-        _cancellationTokenSource.Cancel();
-#else
         await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
 
         IsConsuming = false;
 

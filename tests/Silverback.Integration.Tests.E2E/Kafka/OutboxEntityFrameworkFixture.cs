@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-#if NET8_0
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -374,5 +372,3 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
         public DbSet<SilverbackLock> Locks { get; set; } = null!;
     }
 }
-
-#endif

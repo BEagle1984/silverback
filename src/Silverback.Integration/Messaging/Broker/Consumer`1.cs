@@ -216,12 +216,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         try
         {
-#if NETSTANDARD
-            _processingCancellationTokenSource.Cancel();
-#else
             await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-
             await StopCoreAsync().ConfigureAwait(false);
 
             if (waitUntilStopped)

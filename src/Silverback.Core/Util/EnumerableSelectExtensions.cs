@@ -53,12 +53,7 @@ internal static class EnumerableSelectExtensions
             }
             catch (Exception)
             {
-#if NETSTANDARD
-                cancellationTokenSource.Cancel();
-#else
                 await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
-#endif
-
                 throw;
             }
         }

@@ -1,18 +1,12 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-#if !NETSTANDARD
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-#endif
-using MQTTnet.Client;
-#if !NETSTANDARD
-using Silverback.Collections;
-#endif
-using Silverback.Configuration;
-#if !NETSTANDARD
 using System.Net.Security;
-#endif
+using System.Security.Cryptography.X509Certificates;
+using MQTTnet.Client;
+using Silverback.Collections;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
@@ -21,7 +15,6 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public partial record MqttClientTlsConfiguration : IValidatableSettings
 {
-#if !NETSTANDARD
     /// <summary>
     ///     Gets the TLS protocols to use.
     /// </summary>
@@ -33,7 +26,7 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
     public CipherSuitesPolicy? CipherSuitesPolicy { get; init; }
 
     /// <summary>
-    ///   Gets the <see cref="EncryptionPolicy" />.
+    ///     Gets the <see cref="EncryptionPolicy" />.
     /// </summary>
     public EncryptionPolicy EncryptionPolicy { get; init; } = DefaultInstance.EncryptionPolicy;
 
@@ -46,7 +39,6 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
     ///     Gets the <see cref="X509Certificate2Collection" /> containing the trust chain.
     /// </summary>
     public X509Certificate2Collection? TrustChain { get; init; }
-#endif
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
@@ -58,12 +50,10 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
     {
         MqttClientTlsOptions options = MapCore();
 
-#if !NETSTANDARD
         options.ApplicationProtocols = ApplicationProtocols?.ToList();
         options.CipherSuitesPolicy = CipherSuitesPolicy;
         options.EncryptionPolicy = EncryptionPolicy;
         options.AllowRenegotiation = AllowRenegotiation;
-#endif
 
         return options;
     }

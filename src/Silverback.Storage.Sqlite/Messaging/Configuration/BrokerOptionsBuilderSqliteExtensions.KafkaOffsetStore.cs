@@ -71,12 +71,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         if (settings is SqliteKafkaOffsetStoreSettings sqliteSettings)
             return sqliteSettings;
 
-#if NETSTANDARD
-        using MD5 md5 = MD5.Create();
-        string settingsHash = BitConverter.ToString(md5.ComputeHash(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
-#else
         string settingsHash = BitConverter.ToString(MD5.HashData(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
-#endif
 
         sqliteSettings = new SqliteKafkaOffsetStoreSettings(connectionString)
         {

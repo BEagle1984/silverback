@@ -5,7 +5,6 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  enableLegacyVersionTests: false
 
 steps:
   # Install .NET SDK
@@ -37,54 +36,24 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --framework net8.0 \
         --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
         --collect "Code coverage" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run unit tests (.NET 8)'
+    displayName: 'Run unit tests'
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --framework net8.0 \
         --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
         --collect "Code coverage" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run E2E tests (.NET 8)'
-  - script: |
-      dotnet test Silverback.sln \
-      --configuration $(buildConfiguration) \
-      --no-build \
-      --verbosity Normal \
-      --logger trx \
-      --framework net6.0 \
-      --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
-      --collect "Code coverage" \
-      -p:CollectCoverage=true \
-      -p:CoverletOutputFormat=opencover%2ccobertura \
-      -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run unit tests (.NET 6)'
-    condition: eq(variables.enableLegacyVersionTests, true)
-  - script: |
-      dotnet test Silverback.sln \
-        --configuration $(buildConfiguration) \
-        --no-build \
-        --verbosity Normal \
-        --logger trx \
-        --framework net6.0 \
-        --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
-        --collect "Code coverage" \
-        -p:CollectCoverage=true \
-        -p:CoverletOutputFormat=opencover%2ccobertura \
-        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run E2E tests (.NET 6)'
-    condition: eq(variables.enableLegacyVersionTests, true)
+    displayName: 'Run E2E tests'
   - task: SonarCloudAnalyze@3
     condition: succeededOrFailed()
     displayName: 'Run SonarCloud analysis'

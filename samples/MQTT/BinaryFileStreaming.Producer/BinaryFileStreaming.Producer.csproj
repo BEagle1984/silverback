@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
     <RootNamespace>Silverback.Samples.Mqtt.BinaryFileStreaming.Producer</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Silverback.Integration.Mqtt" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
-
 </Project>

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-#if NET8_0
-
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,5 +76,3 @@ public partial class DomainEventsFixture : KafkaFixture
 
     private class ValueChangedDomainEvent : DomainEvent<TestDomainEntity>;
 }
-
-#endif

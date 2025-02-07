@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		README.md = README.md
 								.dockerignore = ../.dockerignore
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.TestBench.Shared", "Silverback.TestBench.Shared\Silverback.TestBench.Shared.csproj", "{E7942A33-026E-4B1B-9D58-887E244E75F8}"

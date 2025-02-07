@@ -52,11 +52,7 @@ public partial class ChunkingFixture
             {
                 // Read first chunk only
                 byte[] buffer = new byte[10];
-#if NET6_0
-                binaryMessage.Content!.Read(buffer, 0, 10);
-#else
                 binaryMessage.Content!.ReadExactly(buffer, 0, 10);
-#endif
                 return;
             }
 
@@ -134,11 +130,7 @@ public partial class ChunkingFixture
             {
                 // Read only part of first chunk
                 byte[] buffer = new byte[5];
-#if NET6_0
-                binaryMessage.Content!.Read(buffer, 0, 5);
-#else
                 binaryMessage.Content!.ReadExactly(buffer, 0, 5);
-#endif
                 return;
             }
 
@@ -216,11 +208,7 @@ public partial class ChunkingFixture
             {
                 // Partially read first chunk only
                 byte[] buffer = new byte[10];
-#if NET6_0
-                binaryMessage.Content!.Read(buffer, 0, 10);
-#else
                 binaryMessage.Content!.ReadExactly(buffer, 0, 10);
-#endif
                 return;
             }
 

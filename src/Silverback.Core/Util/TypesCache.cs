@@ -8,11 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Silverback.Util;
 
-#if NETSTANDARD
-internal static class TypesCache
-#else
 internal static partial class TypesCache
-#endif
 {
     private static readonly ConcurrentDictionary<string, Type?> Cache = new();
 
@@ -62,17 +58,9 @@ internal static partial class TypesCache
         if (string.IsNullOrWhiteSpace(typeAssemblyQualifiedName))
             return typeAssemblyQualifiedName;
 
-#if NETSTANDARD
-        string cleanAssemblyQualifiedName = Regex.Replace(typeAssemblyQualifiedName, @", (Version=\d+\.\d+\.\d+\.\d+|Culture=\w+|PublicKeyToken=\w+)", string.Empty);
-#else
-        string cleanAssemblyQualifiedName = CleanAssemblyQualifiedNameRegex().Replace(typeAssemblyQualifiedName, string.Empty);
-#endif
-
-        return cleanAssemblyQualifiedName;
+        return CleanAssemblyQualifiedNameRegex().Replace(typeAssemblyQualifiedName, string.Empty);
     }
 
-#if !NETSTANDARD
     [GeneratedRegex(@", (Version=\d+\.\d+\.\d+\.\d+|Culture=\w+|PublicKeyToken=\w+)")]
     private static partial Regex CleanAssemblyQualifiedNameRegex();
-#endif
 }
