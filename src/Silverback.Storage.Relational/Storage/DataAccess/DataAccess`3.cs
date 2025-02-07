@@ -342,7 +342,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
             _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync(cancellationToken)) : default;
     }
 
-    private class DataReaderAsyncEnumerable<T> : DisposableAsyncEnumerable<T>
+    private sealed class DataReaderAsyncEnumerable<T> : DisposableAsyncEnumerable<T>
     {
         private readonly DbDataReader _reader;
 
