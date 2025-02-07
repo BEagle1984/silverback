@@ -369,4 +369,4 @@ healthchecksdb
 samples/temp/
 
 # Testbench dockerfile which is copied to the root folder when building the image
-Dockerfile
+/Dockerfile
