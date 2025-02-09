@@ -56,9 +56,8 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public Task<RegisteredSchema> LookupSchemaAsync(string subject, Schema schema, bool ignoreDeletedSchemas, bool normalize = false) => throw new NotSupportedException();
 
-    public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version, bool ignoreDeletedSchemas) => throw new NotSupportedException();
-
-    public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version) => throw new NotSupportedException();
+    [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter", Justification = "Same as in the implemented interface")]
+    public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version, bool ignoreDeletedSchemas = true) => throw new NotSupportedException();
 
     public Task<string> GetSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
