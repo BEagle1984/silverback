@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -16,8 +16,8 @@ public class PostgreSqlTableLockSettingsBuilderFixture
 
         DistributedLockSettings settings = builder.Build();
 
-        settings.Should().BeOfType<PostgreSqlTableLockSettings>();
-        settings.Should().BeEquivalentTo(new PostgreSqlTableLockSettings("my-lock", "connection-string"));
+        settings.ShouldBeOfType<PostgreSqlTableLockSettings>();
+        settings.ShouldBe(new PostgreSqlTableLockSettings("my-lock", "connection-string"));
     }
 
     [Fact]
@@ -27,6 +27,6 @@ public class PostgreSqlTableLockSettingsBuilderFixture
 
         DistributedLockSettings settings = builder.UseTable("test-locks").Build();
 
-        settings.As<PostgreSqlTableLockSettings>().TableName.Should().Be("test-locks");
+        settings.ShouldBeOfType<PostgreSqlTableLockSettings>().TableName.ShouldBe("test-locks");
     }
 }

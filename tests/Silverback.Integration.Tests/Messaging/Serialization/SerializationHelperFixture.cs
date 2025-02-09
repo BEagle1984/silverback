@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -29,7 +29,7 @@ public class SerializationHelperFixture
 
         Type? type = SerializationHelper.GetTypeFromHeaders(headers);
 
-        type.Should().Be(typeof(ChildClass));
+        type.ShouldBe(typeof(ChildClass));
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class SerializationHelperFixture
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers, typeof(BaseClass));
 
-        type.Should().Be(typeof(ChildClass));
+        type.ShouldBe(typeof(ChildClass));
     }
 
     [Fact]
@@ -61,8 +61,8 @@ public class SerializationHelperFixture
 
         Type? type = SerializationHelper.GetTypeFromHeaders(headers);
 
-        type.Should().NotBeNull();
-        type!.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+        type.ShouldNotBeNull();
+        type.AssemblyQualifiedName.ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class SerializationHelperFixture
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers, typeof(object));
 
-        type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+        type.AssemblyQualifiedName.ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class SerializationHelperFixture
 
         Action act = () => SerializationHelper.GetTypeFromHeaders(headers);
 
-        act.Should().Throw<TypeLoadException>();
+        act.ShouldThrow<TypeLoadException>();
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class SerializationHelperFixture
 
         Action act = () => SerializationHelper.GetTypeFromHeaders(headers, typeof(object));
 
-        act.Should().Throw<TypeLoadException>();
+        act.ShouldThrow<TypeLoadException>();
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public class SerializationHelperFixture
 
         Type? type = SerializationHelper.GetTypeFromHeaders(headers);
 
-        type.Should().Be(typeof(TestEventOne));
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class SerializationHelperFixture
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers, typeof(object));
 
-        type.Should().Be(typeof(TestEventOne));
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class SerializationHelperFixture
     {
         Type? type = SerializationHelper.GetTypeFromHeaders([]);
 
-        type.Should().BeNull();
+        type.ShouldBeNull();
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public class SerializationHelperFixture
     {
         Type type = SerializationHelper.GetTypeFromHeaders([], typeof(object));
 
-        type.Should().Be(typeof(object));
+        type.ShouldBe(typeof(object));
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class SerializationHelperFixture
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers, typeof(ChildClass));
 
-        type.Should().Be(typeof(ChildClass));
+        type.ShouldBe(typeof(ChildClass));
     }
 
     [Fact]
@@ -191,11 +191,11 @@ public class SerializationHelperFixture
 
         IRawInboundEnvelope envelope = SerializationHelper.CreateTypedInboundEnvelope(rawEnvelope, message, typeof(TestEventOne));
 
-        envelope.Should().BeOfType<InboundEnvelope<TestEventOne>>();
-        envelope.As<InboundEnvelope<TestEventOne>>().Message.Should().Be(message);
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.Endpoint.Should().Be(endpoint);
+        InboundEnvelope<TestEventOne> eventOneEnvelope = envelope.ShouldBeOfType<InboundEnvelope<TestEventOne>>();
+        eventOneEnvelope.Message.ShouldBe(message);
+        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        envelope.Endpoint.ShouldBe(endpoint);
     }
 
     private class BaseClass;

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -18,6 +18,6 @@ public class TypeExtensionsFixture
     {
         object? result = Type.GetType(typeName)!.GetDefaultValue();
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 }

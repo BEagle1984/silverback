@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class ServiceCollectionExtensionsFixture
 
         bool result = services.ContainsAny(typeof(IService));
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class ServiceCollectionExtensionsFixture
 
         bool result = services.ContainsAny<IService>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class ServiceCollectionExtensionsFixture
 
         bool result = services.ContainsAny(typeof(IOtherService));
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ServiceCollectionExtensionsFixture
 
         bool result = services.ContainsAny<IOtherService>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -66,8 +66,8 @@ public class ServiceCollectionExtensionsFixture
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
 
-        result.Should().NotBeNull();
-        result.Should().BeOfType<Service>();
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<Service>();
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class ServiceCollectionExtensionsFixture
 
         IService? result = services.GetSingletonServiceInstance<IService>();
 
-        result.Should().NotBeNull();
-        result.Should().BeOfType<Service>();
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<Service>();
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class ServiceCollectionExtensionsFixture
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class ServiceCollectionExtensionsFixture
 
         IService? result = services.GetSingletonServiceInstance<IService>();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class ServiceCollectionExtensionsFixture
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class ServiceCollectionExtensionsFixture
 
         IService? result = services.GetSingletonServiceInstance<IService>();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public class ServiceCollectionExtensionsFixture
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class ServiceCollectionExtensionsFixture
 
         IService? result = services.GetSingletonServiceInstance<IService>();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     private class Service : IService;

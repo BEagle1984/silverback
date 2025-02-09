@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
@@ -22,7 +22,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         bool canResolve = resolver.CanResolve(typeof(Tombstone));
 
-        canResolve.Should().BeTrue();
+        canResolve.ShouldBeTrue();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         bool canResolve = resolver.CanResolve(typeof(ITombstone));
 
-        canResolve.Should().BeTrue();
+        canResolve.ShouldBeTrue();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         bool canResolve = resolver.CanResolve(typeof(Tombstone<TestEventOne>));
 
-        canResolve.Should().BeTrue();
+        canResolve.ShouldBeTrue();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         bool canResolve = resolver.CanResolve(typeof(ITombstone<TestEventOne>));
 
-        canResolve.Should().BeTrue();
+        canResolve.ShouldBeTrue();
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         bool canResolve = resolver.CanResolve(typeof(TestEventOne));
 
-        canResolve.Should().BeFalse();
+        canResolve.ShouldBeFalse();
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         Type messageType = resolver.GetMessageType(typeof(Tombstone));
 
-        messageType.Should().Be(typeof(IInboundEnvelope));
+        messageType.ShouldBe(typeof(IInboundEnvelope));
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         Type messageType = resolver.GetMessageType(typeof(ITombstone));
 
-        messageType.Should().Be(typeof(IInboundEnvelope));
+        messageType.ShouldBe(typeof(IInboundEnvelope));
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         Type messageType = resolver.GetMessageType(typeof(Tombstone<TestEventOne>));
 
-        messageType.Should().Be(typeof(IInboundEnvelope<TestEventOne>));
+        messageType.ShouldBe(typeof(IInboundEnvelope<TestEventOne>));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         Type messageType = resolver.GetMessageType(typeof(ITombstone<TestEventOne>));
 
-        messageType.Should().Be(typeof(IInboundEnvelope<TestEventOne>));
+        messageType.ShouldBe(typeof(IInboundEnvelope<TestEventOne>));
     }
 
     [Fact]
@@ -120,8 +120,8 @@ public class TombstoneMessageArgumentResolverFixture
 
         object value = resolver.GetValue(envelope, typeof(Tombstone));
 
-        value.Should().BeOfType<Tombstone>();
-        value.As<Tombstone>().MessageId.Should().Be("42");
+        Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
+        tombstone.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -139,8 +139,8 @@ public class TombstoneMessageArgumentResolverFixture
 
         object value = resolver.GetValue(envelope, typeof(ITombstone));
 
-        value.Should().BeOfType<Tombstone>();
-        value.As<Tombstone>().MessageId.Should().Be("42");
+        Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
+        tombstone.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -158,8 +158,8 @@ public class TombstoneMessageArgumentResolverFixture
 
         object value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
 
-        value.Should().BeOfType<Tombstone<TestEventOne>>();
-        value.As<Tombstone<TestEventOne>>().MessageId.Should().Be("42");
+        Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
+        tombstone.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class TombstoneMessageArgumentResolverFixture
 
         object value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
 
-        value.Should().BeOfType<Tombstone<TestEventOne>>();
-        value.As<Tombstone<TestEventOne>>().MessageId.Should().Be("42");
+        Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
+        tombstone.MessageId.ShouldBe("42");
     }
 }

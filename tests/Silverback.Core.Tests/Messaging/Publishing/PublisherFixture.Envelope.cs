@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -33,8 +33,8 @@ public partial class PublisherFixture
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<TestEnvelope>();
+        messages.Count.ShouldBe(2);
+        messages.ShouldAllBe(message => message is TestEnvelope);
     }
 
     [Fact]
@@ -54,8 +54,8 @@ public partial class PublisherFixture
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<TestCommandOne>();
+        messages.Count.ShouldBe(2);
+        messages.ShouldAllBe(message => message is TestCommandOne);
     }
 
     // This test simulates the case where the IRawInboundEnvelope isn't really an IEnvelope
@@ -76,7 +76,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<TestEnvelope>();
+        messages.Count.ShouldBe(2);
+        messages.ShouldAllBe(message => message is TestEnvelope);
     }
 }

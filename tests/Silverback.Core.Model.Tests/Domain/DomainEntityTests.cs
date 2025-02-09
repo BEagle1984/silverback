@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using System.Linq;
+using Shouldly;
 using Silverback.Tests.Core.Model.TestTypes.Domain;
 using Xunit;
 
@@ -18,9 +19,9 @@ public class DomainEntityTests
         entity.AddEvent(new TestDomainEventTwo());
         entity.AddEvent(new TestDomainEventOne());
 
-        entity.DomainEvents.Should().NotBeNull();
-        entity.DomainEvents.Should().HaveCount(3);
-        entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
+        entity.DomainEvents.ShouldNotBeNull();
+        entity.DomainEvents.Count().ShouldBe(3);
+        entity.DomainEvents.ShouldAllBe(domainEvent => domainEvent.Source == entity);
     }
 
     [Fact]
@@ -32,9 +33,9 @@ public class DomainEntityTests
         entity.AddEvent<TestDomainEventTwo>();
         entity.AddEvent<TestDomainEventOne>();
 
-        entity.DomainEvents.Should().NotBeNull();
-        entity.DomainEvents.Should().HaveCount(3);
-        entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
+        entity.DomainEvents.ShouldNotBeNull();
+        entity.DomainEvents.Count().ShouldBe(3);
+        entity.DomainEvents.ShouldAllBe(domainEvent => domainEvent.Source == entity);
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public class DomainEntityTests
         entity.AddEvent<TestDomainEventTwo>(false);
         entity.AddEvent<TestDomainEventOne>(false);
 
-        entity.DomainEvents.Should().HaveCount(2);
+        entity.DomainEvents.Count().ShouldBe(2);
     }
 
     [Fact]
@@ -59,7 +60,7 @@ public class DomainEntityTests
         entity.AddEvent<TestDomainEventOne>();
         entity.ClearMessages();
 
-        entity.DomainEvents.Should().NotBeNull();
-        entity.DomainEvents.Should().BeEmpty();
+        entity.DomainEvents.ShouldNotBeNull();
+        entity.DomainEvents.ShouldBeEmpty();
     }
 }

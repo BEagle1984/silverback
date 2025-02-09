@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -17,7 +17,7 @@ public class OutboundEnvelopeBuilderFixture
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
+        envelope.ShouldBeOfType<OutboundEnvelope<TestEventOne>>();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.WithMessage(message);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Message.Should().BeSameAs(message);
+        envelope.Message.ShouldBeSameAs(message);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.WithHeaders(headers);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Headers.Should().BeEquivalentTo(headers);
+        envelope.Headers.ShouldBe(headers);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.AddHeader("one", "1");
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Headers.Should().Contain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.AddHeader(header);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Headers.Should().Contain(header);
+        envelope.Headers.ShouldContain(header);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.WithEndpointConfiguration(endpointConfiguration);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.EndpointConfiguration.Should().BeSameAs(endpointConfiguration);
+        envelope.EndpointConfiguration.ShouldBeSameAs(endpointConfiguration);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class OutboundEnvelopeBuilderFixture
         builder.WithProducer(producer);
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.Producer.Should().BeSameAs(producer);
+        envelope.Producer.ShouldBeSameAs(producer);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class OutboundEnvelopeBuilderFixture
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.EndpointConfiguration.Should().BeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration>();
+        envelope.EndpointConfiguration.ShouldBeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration>();
     }
 
     [Fact]
@@ -108,6 +108,6 @@ public class OutboundEnvelopeBuilderFixture
 
         IOutboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.Producer.Should().BeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducer>();
+        envelope.Producer.ShouldBeOfType<OutboundEnvelopeBuilder<TestEventOne>.MockProducer>();
     }
 }

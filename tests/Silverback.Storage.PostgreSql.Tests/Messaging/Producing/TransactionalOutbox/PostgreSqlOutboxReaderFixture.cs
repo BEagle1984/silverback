@@ -2,10 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -53,14 +54,14 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(outboxMessage3);
         await _outboxWriter.AddAsync(outboxMessage4);
 
-        (await GetOutboxLengthAsync()).Should().Be(4);
+        (await GetOutboxLengthAsync()).ShouldBe(4);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         await outboxReader.AcknowledgeAsync([outboxMessage1, outboxMessage3]);
 
-        (await GetOutboxLengthAsync()).Should().Be(2);
+        (await GetOutboxLengthAsync()).ShouldBe(2);
     }
 
     [Fact]
@@ -86,11 +87,11 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
+        (await messages.ToListAsync()).Select(message => message.Content).ShouldBe(
         [
             [0x01],
-                [0x02],
-                new byte[] { 0x03 }
+            [0x02],
+            [0x03]
         ]);
     }
 
@@ -111,7 +112,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Should().BeEmpty();
+        (await messages.ToListAsync()).ShouldBeEmpty();
     }
 
     [Fact]
@@ -138,7 +139,9 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         IDisposableAsyncEnumerable<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
         IDisposableAsyncEnumerable<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
 
-        (await batch2.ToListAsync()).Should().BeEquivalentTo(await batch1.ToListAsync());
+        List<OutboxMessage> batch1Messages = await batch1.ToListAsync();
+        List<OutboxMessage> batch2Messages = await batch2.ToListAsync();
+        batch2Messages.ShouldBeEquivalentTo(batch1Messages);
     }
 
     [Fact]
@@ -162,13 +165,12 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
-            [
-                [0x01],
-                [0x02],
-                new byte[] { 0x03 }
-            ],
-            options => options.WithStrictOrdering());
+        (await messages.ToListAsync()).Select(message => message.Content).ShouldBe(
+        [
+            [0x01],
+            [0x02],
+            [0x03]
+        ]);
     }
 
     [Fact]
@@ -192,7 +194,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         int count = await outboxReader.GetLengthAsync();
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -212,7 +214,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         int count = await outboxReader.GetLengthAsync();
 
-        count.Should().Be(0);
+        count.ShouldBe(0);
     }
 
     [Fact]
@@ -236,7 +238,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
-        maxAge.Should().BeGreaterThan(TimeSpan.FromMilliseconds(100));
+        maxAge.ShouldBeGreaterThan(TimeSpan.FromMilliseconds(100));
     }
 
     [Fact]
@@ -256,7 +258,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
-        maxAge.Should().Be(TimeSpan.Zero);
+        maxAge.ShouldBe(TimeSpan.Zero);
     }
 
     private Task<long> GetOutboxLengthAsync() =>

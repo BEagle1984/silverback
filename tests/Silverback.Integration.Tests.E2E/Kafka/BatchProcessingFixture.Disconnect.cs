@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -79,10 +79,10 @@ public partial class BatchProcessingFixture
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
 
-        receivedMessages.Should().HaveCount(3);
-        batchesCount.Should().Be(1);
-        abortedCount.Should().Be(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        receivedMessages.Count.ShouldBe(3);
+        batchesCount.ShouldBe(1);
+        abortedCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 
     [Fact]
@@ -154,10 +154,10 @@ public partial class BatchProcessingFixture
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
 
-        receivedMessages.Should().HaveCount(9);
-        batchesCount.Should().Be(3);
-        abortedCount.Should().Be(3);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        receivedMessages.Count.ShouldBe(9);
+        batchesCount.ShouldBe(3);
+        abortedCount.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 
     [Fact]
@@ -218,9 +218,9 @@ public partial class BatchProcessingFixture
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
 
-        batchesCount.Should().Be(1);
-        abortedCount.Should().Be(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        batchesCount.ShouldBe(1);
+        abortedCount.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 
     [Fact]
@@ -276,13 +276,13 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 10);
 
-        receivedMessages.Should().HaveCount(10);
-        hasSubscriberReturned.Should().BeFalse();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        receivedMessages.Count.ShouldBe(10);
+        hasSubscriberReturned.ShouldBeFalse();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
 
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
-        hasSubscriberReturned.Should().BeTrue();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
+        hasSubscriberReturned.ShouldBeTrue();
     }
 }

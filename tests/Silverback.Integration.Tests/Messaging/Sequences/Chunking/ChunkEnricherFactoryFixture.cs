@@ -3,8 +3,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
@@ -28,8 +28,8 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration2("topic1"),
             Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<ChunkEnricher1>();
-        enricher2.Should().BeOfType<ChunkEnricher2>();
+        enricher1.ShouldBeOfType<ChunkEnricher1>();
+        enricher2.ShouldBeOfType<ChunkEnricher2>();
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class ChunkEnricherFactoryFixture
 
         Action act = () => factory.GetEnricher(null!, Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration2("topic2"),
             Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<NullChunkEnricher>();
-        enricher2.Should().BeSameAs(enricher1);
+        enricher1.ShouldBeOfType<NullChunkEnricher>();
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration1("topic1"),
             Substitute.For<IServiceProvider>());
 
-        enricher2.Should().BeSameAs(enricher1);
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class ChunkEnricherFactoryFixture
         IChunkEnricher enricher1 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
         IChunkEnricher enricher2 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<OverrideChunkEnricher>();
-        enricher2.Should().BeSameAs(enricher1);
+        enricher1.ShouldBeOfType<OverrideChunkEnricher>();
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -119,11 +119,11 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration2("A"),
             Substitute.For<IServiceProvider>());
 
-        enricher1A1.Should().BeSameAs(enricher1A2);
-        enricher1B1.Should().BeSameAs(enricher1B2);
-        enricher1A1.Should().BeSameAs(enricher1B1);
-        enricher2A1.Should().BeSameAs(enricher2A2);
-        enricher2A1.Should().NotBeSameAs(enricher1A1);
+        enricher1A1.ShouldBeSameAs(enricher1A2);
+        enricher1B1.ShouldBeSameAs(enricher1B2);
+        enricher1A1.ShouldBeSameAs(enricher1B1);
+        enricher2A1.ShouldBeSameAs(enricher2A2);
+        enricher2A1.ShouldNotBeSameAs(enricher1A1);
     }
 
     [Fact]
@@ -153,11 +153,11 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration2("A"),
             Substitute.For<IServiceProvider>());
 
-        enricher1A1.Should().BeSameAs(enricher1A2);
-        enricher1B1.Should().BeSameAs(enricher1B2);
-        enricher1A1.Should().BeSameAs(enricher1B1);
-        enricher2A1.Should().BeSameAs(enricher2A2);
-        enricher2A1.Should().NotBeSameAs(enricher1A1);
+        enricher1A1.ShouldBeSameAs(enricher1A2);
+        enricher1B1.ShouldBeSameAs(enricher1B2);
+        enricher1A1.ShouldBeSameAs(enricher1B1);
+        enricher2A1.ShouldBeSameAs(enricher2A2);
+        enricher2A1.ShouldNotBeSameAs(enricher1A1);
     }
 
     [Fact]
@@ -168,8 +168,8 @@ public class ChunkEnricherFactoryFixture
 
         Action act = () => factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified discriminator type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified discriminator type is already registered.");
     }
 
     [Fact]
@@ -188,8 +188,8 @@ public class ChunkEnricherFactoryFixture
             new ProducerEndpointConfiguration2("topic2"),
             Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<OverrideChunkEnricher>();
-        enricher2.Should().BeOfType<OverrideChunkEnricher>();
+        enricher1.ShouldBeOfType<OverrideChunkEnricher>();
+        enricher2.ShouldBeOfType<OverrideChunkEnricher>();
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public class ChunkEnricherFactoryFixture
 
         bool result = factory.HasFactory<ProducerEndpointConfiguration1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -211,7 +211,7 @@ public class ChunkEnricherFactoryFixture
 
         bool result = factory.HasFactory<ProducerEndpointConfiguration2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test class")]

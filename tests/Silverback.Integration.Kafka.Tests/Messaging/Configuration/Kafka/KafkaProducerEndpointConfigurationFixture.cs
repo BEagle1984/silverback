@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Producing.EndpointResolvers;
@@ -19,7 +19,7 @@ public class KafkaProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class KafkaProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class KafkaProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class KafkaProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     private static KafkaProducerEndpointConfiguration GetValidConfiguration() => new()

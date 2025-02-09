@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -16,6 +16,6 @@ public class HashExtensionsFixture
     {
         string actualHash = input.GetSha256Hash();
 
-        actualHash.Should().Be(expectedHash);
+        actualHash.ShouldBe(expectedHash);
     }
 }

@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -77,12 +77,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(rawMessage2);
-        aborted.Should().Be(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(rawMessage2);
+        aborted.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
     }
 
     [Fact]
@@ -134,15 +134,15 @@ public partial class ChunkingFixture
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 1);
 
         await Task.Delay(200);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
 
         await producer.RawProduceAsync(
             rawMessage.Skip(10).Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 1));
 
         await AsyncTestingUtil.WaitAsync(() => aborted && DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2);
-        aborted.Should().BeTrue();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        aborted.ShouldBeTrue();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -156,10 +156,10 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(rawMessage);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(rawMessage);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
     }
 
     [Fact]
@@ -209,10 +209,10 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(rawMessage2);
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(rawMessage2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
     }
 
     [Fact]
@@ -268,10 +268,10 @@ public partial class ChunkingFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => enumerationAborted);
 
-        enumerationAborted.Should().BeTrue();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        enumerationAborted.ShouldBeTrue();
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 
     [Fact]
@@ -320,11 +320,11 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 1, 3));
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 2);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(2);
 
         await DefaultConsumerGroup.RebalanceAsync();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
-        aborted.Should().Be(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        aborted.ShouldBe(1);
 
         await producer.RawProduceAsync(
             rawMessage.Skip(10).ToArray(),
@@ -332,9 +332,9 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
-        aborted.Should().Be(1);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+        aborted.ShouldBe(1);
     }
 }

@@ -4,8 +4,8 @@
 using System;
 using System.Linq;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -24,7 +24,7 @@ public class KafkaConsumerConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithGroupId("group2");
         KafkaConsumerConfiguration configuration2 = builder.Build();
 
-        configuration1.GroupId.Should().Be("group1");
-        configuration2.GroupId.Should().Be("group2");
+        configuration1.GroupId.ShouldBe("group1");
+        configuration2.GroupId.ShouldBe("group2");
     }
 
     [Fact]
@@ -52,16 +52,16 @@ public class KafkaConsumerConfigurationBuilderFixture
             .Consume(endpoint => endpoint.ConsumeFrom("topic2"));
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(2);
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.TopicPartitions.Should().HaveCount(1);
-        endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        endpoint1.TopicPartitions.Count.ShouldBe(1);
+        endpoint1.TopicPartitions.First().ShouldBe(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
         KafkaConsumerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
-        endpoint2.TopicPartitions.Should().HaveCount(1);
-        endpoint2.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
-        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        endpoint2.TopicPartitions.Count.ShouldBe(1);
+        endpoint2.TopicPartitions.First().ShouldBe(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
+        endpoint2.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -74,16 +74,16 @@ public class KafkaConsumerConfigurationBuilderFixture
             .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"));
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(2);
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.TopicPartitions.Should().HaveCount(1);
-        endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint1.TopicPartitions.Count.ShouldBe(1);
+        endpoint1.TopicPartitions.First().ShouldBe(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
         KafkaConsumerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
-        endpoint2.TopicPartitions.Should().HaveCount(1);
-        endpoint2.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
-        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventTwo>>();
+        endpoint2.TopicPartitions.Count.ShouldBe(1);
+        endpoint2.TopicPartitions.First().ShouldBe(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
+        endpoint2.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventTwo>>();
     }
 
     [Fact]
@@ -96,15 +96,14 @@ public class KafkaConsumerConfigurationBuilderFixture
             .Consume<TestEventTwo>("id1", endpoint => endpoint.ConsumeFrom("topic2"));
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(1);
-        configuration.Endpoints.First().TopicPartitions.Should().HaveCount(1);
-        configuration.Endpoints.First().TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
-            });
-        configuration.Endpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(1);
+        configuration.Endpoints.First().TopicPartitions.Count.ShouldBe(1);
+        configuration.Endpoints.First().TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+        ]);
+        configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -117,13 +116,13 @@ public class KafkaConsumerConfigurationBuilderFixture
             .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic1").EnableBatchProcessing(1000));
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(1);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(1);
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.TopicPartitions.Should().HaveCount(1);
-        endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
-        endpoint1.Batch!.Size.Should().Be(42);
+        endpoint1.TopicPartitions.Count.ShouldBe(1);
+        endpoint1.TopicPartitions.First().ShouldBe(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint1.Batch!.Size.ShouldBe(42);
     }
 
     [Fact]
@@ -137,8 +136,8 @@ public class KafkaConsumerConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>()
-            .WithMessage("Cannot connect to the same topic in different endpoints in the same consumer.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("Cannot connect to the same topic in different endpoints in the same consumer.");
     }
 
     [Fact]
@@ -149,7 +148,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithGroupId("group1");
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.GroupId.Should().Be("group1");
+        configuration.GroupId.ShouldBe("group1");
     }
 
     [Fact]
@@ -160,8 +159,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.EnableOffsetsCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsets.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsets.ShouldBe(true);
     }
 
     [Fact]
@@ -173,8 +172,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisableOffsetsCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsets.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsets.ShouldBe(false);
     }
 
     [Fact]
@@ -186,9 +185,9 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisableOffsetsCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsets.Should().BeFalse();
-        configuration.EnableAutoCommit.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsets.ShouldBe(false);
+        configuration.EnableAutoCommit.ShouldBe(false);
     }
 
     [Fact]
@@ -200,10 +199,10 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisableOffsetsCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsets.Should().BeFalse();
-        configuration.EnableAutoCommit.Should().BeFalse();
-        configuration.CommitOffsetEach.Should().BeNull();
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsets.ShouldBe(false);
+        configuration.EnableAutoCommit.ShouldBe(false);
+        configuration.CommitOffsetEach.ShouldBeNull();
     }
 
     [Fact]
@@ -214,8 +213,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.CommitOffsetEach(42);
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsetEach.Should().Be(42);
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsetEach.ShouldBe(42);
     }
 
     [Fact]
@@ -227,9 +226,9 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.CommitOffsetEach(42);
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.CommitOffsetEach.Should().Be(42);
-        configuration.EnableAutoCommit.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.CommitOffsetEach.ShouldBe(42);
+        configuration.EnableAutoCommit.ShouldBe(false);
     }
 
     [Fact]
@@ -241,7 +240,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.StoreOffsetsClientSide(settings).Build();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.ClientSideOffsetStore.Should().Be(settings);
+        configuration.ClientSideOffsetStore.ShouldBe(settings);
     }
 
     [Fact]
@@ -252,8 +251,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory().WithName("test-store")).Build();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.ClientSideOffsetStore.Should().BeOfType<InMemoryKafkaOffsetStoreSettings>();
-        configuration.ClientSideOffsetStore.As<InMemoryKafkaOffsetStoreSettings>().OffsetStoreName.Should().Be("test-store");
+        InMemoryKafkaOffsetStoreSettings offsetStoreSettings = configuration.ClientSideOffsetStore.ShouldBeOfType<InMemoryKafkaOffsetStoreSettings>();
+        offsetStoreSettings.OffsetStoreName.ShouldBe("test-store");
     }
 
     [Fact]
@@ -264,10 +263,10 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.SendOffsetsToTransaction();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.SendOffsetsToTransaction.Should().BeTrue();
-        configuration.CommitOffsets.Should().BeFalse();
-        configuration.EnableAutoCommit.Should().BeFalse();
-        configuration.CommitOffsetEach.Should().BeNull();
+        configuration.SendOffsetsToTransaction.ShouldBe(true);
+        configuration.CommitOffsets.ShouldBe(false);
+        configuration.EnableAutoCommit.ShouldBe(false);
+        configuration.CommitOffsetEach.ShouldBeNull();
     }
 
     [Fact]
@@ -279,7 +278,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisableSendOffsetsToTransaction();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.SendOffsetsToTransaction.Should().BeFalse();
+        configuration.SendOffsetsToTransaction.ShouldBe(false);
     }
 
     [Fact]
@@ -290,8 +289,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.EnableAutoRecovery();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnableAutoRecovery.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnableAutoRecovery.ShouldBe(true);
     }
 
     [Fact]
@@ -302,8 +301,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisableAutoRecovery();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnableAutoRecovery.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.EnableAutoRecovery.ShouldBe(false);
     }
 
     [Fact]
@@ -314,8 +313,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.EnableAutoCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnableAutoCommit.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnableAutoCommit.ShouldBe(true);
     }
 
     [Fact]
@@ -327,9 +326,9 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.EnableAutoCommit();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnableAutoCommit.Should().BeTrue();
-        configuration.CommitOffsetEach.Should().BeNull();
+        configuration.ShouldNotBeNull();
+        configuration.EnableAutoCommit.ShouldBe(true);
+        configuration.CommitOffsetEach.ShouldBeNull();
     }
 
     [Fact]
@@ -341,8 +340,8 @@ public class KafkaConsumerConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>()
-            .WithMessage("CommitOffsetEach must be greater or equal to 1 when auto-commit is disabled.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("CommitOffsetEach must be greater or equal to 1 when auto-commit is disabled.");
     }
 
     [Fact]
@@ -353,8 +352,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.EnablePartitionEof();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnablePartitionEof.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnablePartitionEof.ShouldBe(true);
     }
 
     [Fact]
@@ -365,8 +364,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisablePartitionEof();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.EnablePartitionEof.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.EnablePartitionEof.ShouldBe(false);
     }
 
     [Fact]
@@ -377,8 +376,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.AllowAutoCreateTopics();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.AllowAutoCreateTopics.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.AllowAutoCreateTopics.ShouldBe(true);
     }
 
     [Fact]
@@ -389,8 +388,8 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.DisallowAutoCreateTopics();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.AllowAutoCreateTopics.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.AllowAutoCreateTopics.ShouldBe(false);
     }
 
     [Fact]
@@ -401,7 +400,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.ProcessPartitionsIndependently();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.ProcessPartitionsIndependently.Should().BeTrue();
+        configuration.ProcessPartitionsIndependently.ShouldBe(true);
     }
 
     [Fact]
@@ -412,7 +411,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.ProcessAllPartitionsTogether();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.ProcessPartitionsIndependently.Should().BeFalse();
+        configuration.ProcessPartitionsIndependently.ShouldBe(false);
     }
 
     [Fact]
@@ -423,7 +422,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.LimitParallelism(42);
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.MaxDegreeOfParallelism.Should().Be(42);
+        configuration.MaxDegreeOfParallelism.ShouldBe(42);
     }
 
     [Fact]
@@ -434,7 +433,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.LimitBackpressure(42);
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.BackpressureLimit.Should().Be(42);
+        configuration.BackpressureLimit.ShouldBe(42);
     }
 
     [Fact]
@@ -445,7 +444,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithGetMetadataTimeout(TimeSpan.FromSeconds(42));
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.GetMetadataTimeout.Should().Be(TimeSpan.FromSeconds(42));
+        configuration.GetMetadataTimeout.ShouldBe(TimeSpan.FromSeconds(42));
     }
 
     [Fact]
@@ -456,7 +455,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithRangePartitionAssignmentStrategy();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.Range);
+        configuration.PartitionAssignmentStrategy.ShouldBe(PartitionAssignmentStrategy.Range);
     }
 
     [Fact]
@@ -467,7 +466,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithRoundRobinPartitionAssignmentStrategy();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.RoundRobin);
+        configuration.PartitionAssignmentStrategy.ShouldBe(PartitionAssignmentStrategy.RoundRobin);
     }
 
     [Fact]
@@ -478,7 +477,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         builder.WithCooperativeStickyPartitionAssignmentStrategy();
 
         KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.PartitionAssignmentStrategy.Should().Be(PartitionAssignmentStrategy.CooperativeSticky);
+        configuration.PartitionAssignmentStrategy.ShouldBe(PartitionAssignmentStrategy.CooperativeSticky);
     }
 
     private static KafkaConsumerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>

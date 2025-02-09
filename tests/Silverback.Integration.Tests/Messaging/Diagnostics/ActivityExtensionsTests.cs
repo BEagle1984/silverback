@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -32,13 +32,14 @@ public class ActivityExtensionsTests
 
         activity.AddBaggageRange(itemsToAdd);
 
-        activity.Baggage.Should().BeEquivalentTo(
-        [
-            new KeyValuePair<string, string>("key0", "value0"),
-            new KeyValuePair<string, string>("key1", "value1"),
-            new KeyValuePair<string, string>("key2", "value2"),
-            new KeyValuePair<string, string>("key3", "value3")
-        ]);
+        activity.Baggage.ShouldBe(
+            [
+                new KeyValuePair<string, string?>("key0", "value0"),
+                new KeyValuePair<string, string?>("key1", "value1"),
+                new KeyValuePair<string, string?>("key2", "value2"),
+                new KeyValuePair<string, string?>("key3", "value3")
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -50,8 +51,7 @@ public class ActivityExtensionsTests
         activity.Start();
         activity.SetMessageHeaders(headers);
 
-        headers.Should()
-            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
+        headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ActivityExtensionsTests
         activity.TraceStateString = "Test";
         activity.SetMessageHeaders(headers);
 
-        headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceState, "Test"));
+        headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.TraceState, "Test"));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class ActivityExtensionsTests
         activity.Start();
         activity.SetMessageHeaders(headers);
 
-        headers.Should().NotContain(h => h.Name == DefaultMessageHeaders.TraceState);
+        headers.ShouldNotContain(h => h.Name == DefaultMessageHeaders.TraceState);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class ActivityExtensionsTests
         activity.AddBaggage("key1", "value1");
         activity.SetMessageHeaders(headers);
 
-        headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
+        headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class ActivityExtensionsTests
         activity.Start();
         activity.SetMessageHeaders(headers);
 
-        headers.Should().NotContain(h => h.Name == DefaultMessageHeaders.TraceBaggage);
+        headers.ShouldNotContain(h => h.Name == DefaultMessageHeaders.TraceBaggage);
     }
 
     [Fact]
@@ -111,9 +111,9 @@ public class ActivityExtensionsTests
         activity.SetTraceIdAndState("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01", "state=1");
         activity.Start();
 
-        activity.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-        activity.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
-        activity.TraceStateString.Should().Be("state=1");
+        activity.ParentId.ShouldBe("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+        activity.Id.ShouldStartWith("00-0af7651916cd43dd8448eb211c80319c");
+        activity.TraceStateString.ShouldBe("state=1");
     }
 
     [Fact]
@@ -122,6 +122,6 @@ public class ActivityExtensionsTests
         Activity activity = new("test");
         activity.AddEndpointName("MyEndpoint");
 
-        activity.Tags.Should().ContainSingle(kv => kv.Key == ActivityTagNames.MessageDestination && kv.Value == "MyEndpoint");
+        activity.Tags.ShouldContain(kv => kv.Key == ActivityTagNames.MessageDestination && kv.Value == "MyEndpoint");
     }
 }

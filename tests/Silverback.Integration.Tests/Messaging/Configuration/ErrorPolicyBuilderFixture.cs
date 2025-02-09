@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Xunit;
@@ -19,8 +19,7 @@ public class ErrorPolicyBuilderFixture
         builder.Stop();
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<StopConsumerErrorPolicy>();
-        policy.Should().BeEquivalentTo(new StopConsumerErrorPolicy());
+        policy.ShouldBeEquivalentTo(new StopConsumerErrorPolicy());
     }
 
     [Fact]
@@ -31,8 +30,8 @@ public class ErrorPolicyBuilderFixture
         builder.Stop(stopPolicy => stopPolicy.Exclude<InvalidOperationException>());
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<StopConsumerErrorPolicy>();
-        policy.As<StopConsumerErrorPolicy>().ExcludedExceptions.Should().BeEquivalentTo(new[] { typeof(InvalidOperationException) });
+        StopConsumerErrorPolicy stopPolicy = policy.ShouldBeOfType<StopConsumerErrorPolicy>();
+        stopPolicy.ExcludedExceptions.ShouldBe([typeof(InvalidOperationException)]);
     }
 
     [Fact]
@@ -43,8 +42,7 @@ public class ErrorPolicyBuilderFixture
         builder.Skip();
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.Should().BeEquivalentTo(new SkipMessageErrorPolicy());
+        policy.ShouldBeEquivalentTo(new SkipMessageErrorPolicy());
     }
 
     [Fact]
@@ -55,8 +53,8 @@ public class ErrorPolicyBuilderFixture
         builder.Skip(policy => policy.ApplyTo<TimeoutException>());
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<SkipMessageErrorPolicy>().IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException) });
+        SkipMessageErrorPolicy skipPolicy = policy.ShouldBeOfType<SkipMessageErrorPolicy>();
+        skipPolicy.IncludedExceptions.ShouldBe([typeof(TimeoutException)]);
     }
 
     [Fact]
@@ -65,10 +63,9 @@ public class ErrorPolicyBuilderFixture
         ErrorPolicyBuilder builder = new();
 
         builder.Retry();
-        IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<RetryErrorPolicy>();
-        policy.Should().BeEquivalentTo(new RetryErrorPolicy());
+        IErrorPolicy policy = builder.Build();
+        policy.ShouldBeEquivalentTo(new RetryErrorPolicy());
     }
 
     [Fact]
@@ -79,8 +76,8 @@ public class ErrorPolicyBuilderFixture
         builder.Retry(policy => policy.WithInterval(TimeSpan.FromDays(42)));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<RetryErrorPolicy>();
-        policy.As<RetryErrorPolicy>().InitialDelay.Should().Be(TimeSpan.FromDays(42));
+        RetryErrorPolicy retryPolicy = policy.ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.InitialDelay.ShouldBe(TimeSpan.FromDays(42));
     }
 
     [Fact]
@@ -91,8 +88,8 @@ public class ErrorPolicyBuilderFixture
         builder.Retry(42);
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<RetryErrorPolicy>();
-        policy.As<RetryErrorPolicy>().MaxFailedAttempts.Should().Be(42);
+        RetryErrorPolicy retryPolicy = policy.ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.MaxFailedAttempts.ShouldBe(42);
     }
 
     [Fact]
@@ -103,9 +100,9 @@ public class ErrorPolicyBuilderFixture
         builder.Retry(42, policy => policy.WithInterval(TimeSpan.FromDays(42)));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<RetryErrorPolicy>();
-        policy.As<RetryErrorPolicy>().MaxFailedAttempts.Should().Be(42);
-        policy.As<RetryErrorPolicy>().InitialDelay.Should().Be(TimeSpan.FromDays(42));
+        RetryErrorPolicy retryPolicy = policy.ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.MaxFailedAttempts.ShouldBe(42);
+        retryPolicy.InitialDelay.ShouldBe(TimeSpan.FromDays(42));
     }
 
     [Fact]
@@ -116,8 +113,8 @@ public class ErrorPolicyBuilderFixture
         builder.MoveTo("topic1");
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
+        MoveMessageErrorPolicy movePolicy = policy.ShouldBeOfType<MoveMessageErrorPolicy>();
+        movePolicy.EndpointName.ShouldBe("topic1");
     }
 
     [Fact]
@@ -128,8 +125,8 @@ public class ErrorPolicyBuilderFixture
         builder.MoveTo("topic1", policy => policy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
-        policy.As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
+        MoveMessageErrorPolicy movePolicy = policy.ShouldBeOfType<MoveMessageErrorPolicy>();
+        movePolicy.EndpointName.ShouldBe("topic1");
+        movePolicy.MaxFailedAttempts.ShouldBe(42);
     }
 }

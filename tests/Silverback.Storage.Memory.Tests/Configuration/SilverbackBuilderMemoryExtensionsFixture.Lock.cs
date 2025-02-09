@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
@@ -29,7 +29,7 @@ public class SilverbackBuilderMemoryExtensionsFixture
             new InMemoryLockSettings("lock"),
             serviceProvider);
 
-        distributedLock.Should().BeOfType<InMemoryLock>();
+        distributedLock.ShouldBeOfType<InMemoryLock>();
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class SilverbackBuilderMemoryExtensionsFixture
         IDistributedLock distributedLock1 = lockFactory.GetDistributedLock(new LockSettings1(), serviceProvider);
         IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(new LockSettings2(), serviceProvider);
 
-        distributedLock1.Should().BeOfType<InMemoryLock>();
-        distributedLock2.Should().BeOfType<InMemoryLock>();
+        distributedLock1.ShouldBeOfType<InMemoryLock>();
+        distributedLock2.ShouldBeOfType<InMemoryLock>();
     }
 
     private record LockSettings1() : DistributedLockSettings("lock");

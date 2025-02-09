@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
@@ -34,7 +34,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestCommandOne());
         await publisher.PublishAsync(new TestCommandOne());
 
-        subscriber.ReceivedMessages.Should().HaveCount(2);
+        subscriber.ReceivedMessages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -55,9 +55,9 @@ public partial class PublisherFixture
         publisher.Publish(new TestCommandOne());
         await publisher.PublishAsync(new TestCommandOne());
 
-        behavior1.EnterCount.Should().Be(2);
-        behavior2.EnterCount.Should().Be(2);
-        behavior3.EnterCount.Should().Be(2);
+        behavior1.EnterCount.ShouldBe(2);
+        behavior2.EnterCount.ShouldBe(2);
+        behavior3.EnterCount.ShouldBe(2);
     }
 
     [Fact]
@@ -83,12 +83,11 @@ public partial class PublisherFixture
         publisher.Publish(new TestCommandOne());
         await publisher.PublishAsync(new TestCommandOne());
 
-        callsSequence.Should().BeEquivalentTo(
-            [
-                "-100", "-50", "unsorted", "50", "100",
-                "-100", "-50", "unsorted", "50", "100"
-            ],
-            options => options.WithStrictOrdering());
+        callsSequence.ShouldBe(
+        [
+            "-100", "-50", "unsorted", "50", "100",
+            "-100", "-50", "unsorted", "50", "100"
+        ]);
     }
 
     [Fact]
@@ -110,8 +109,8 @@ public partial class PublisherFixture
         publisher.Publish(new TestCommandOne());
         await publisher.PublishAsync(new TestCommandOne());
 
-        receivedMessages.Should().HaveCount(2);
-        receivedMessages.Should().AllBeOfType<TestCommandTwo>();
+        receivedMessages.Count.ShouldBe(2);
+        receivedMessages.ShouldAllBe(message => message is TestCommandTwo);
     }
 
     private class ChangeMessageBehavior<TSourceType> : IBehavior

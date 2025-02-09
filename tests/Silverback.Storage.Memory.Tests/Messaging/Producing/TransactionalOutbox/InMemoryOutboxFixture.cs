@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
@@ -23,7 +23,7 @@ public class InMemoryOutboxFixture
         outbox.Add(outboxMessage2);
         outbox.Add(outboxMessage3);
 
-        outbox.Get(3).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        outbox.Get(3).ShouldBe([outboxMessage1, outboxMessage2, outboxMessage3]);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class InMemoryOutboxFixture
 
         outbox.Remove([outboxMessage1, outboxMessage2]);
 
-        outbox.Get(10).Should().BeEquivalentTo(new[] { outboxMessage3 });
+        outbox.Get(10).ShouldBe([outboxMessage3]);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class InMemoryOutboxFixture
         outbox.Add(outboxMessage2);
         outbox.Add(outboxMessage3);
 
-        outbox.Get(2).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2 }, options => options.WithStrictOrdering());
+        outbox.Get(2).ShouldBe([outboxMessage1, outboxMessage2]);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class InMemoryOutboxFixture
     {
         InMemoryOutbox outbox = new();
 
-        outbox.Get(3).Should().BeEmpty();
+        outbox.Get(3).ShouldBeEmpty();
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class InMemoryOutboxFixture
         IReadOnlyCollection<OutboxMessage> batch1 = outbox.Get(3);
         IReadOnlyCollection<OutboxMessage> batch2 = outbox.Get(3);
 
-        batch2.Should().BeEquivalentTo(batch1);
+        batch2.ShouldBe(batch1);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class InMemoryOutboxFixture
 
         int count = outbox.ItemsCount;
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class InMemoryOutboxFixture
 
         int count = outbox.ItemsCount;
 
-        count.Should().Be(0);
+        count.ShouldBe(0);
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class InMemoryOutboxFixture
 
         outbox.Add(new OutboxMessage(null, null, "2"));
 
-        outbox.GetMaxAge().Should().BeGreaterThan(TimeSpan.FromMilliseconds(90));
+        outbox.GetMaxAge().ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
     }
 
     [Fact]
@@ -125,6 +125,6 @@ public class InMemoryOutboxFixture
     {
         InMemoryOutbox outbox = new();
 
-        outbox.GetMaxAge().Should().Be(TimeSpan.Zero);
+        outbox.GetMaxAge().ShouldBe(TimeSpan.Zero);
     }
 }

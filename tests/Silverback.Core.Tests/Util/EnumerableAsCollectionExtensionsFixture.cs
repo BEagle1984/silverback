@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -27,8 +27,8 @@ public class EnumerableAsCollectionExtensionsFixture
 
         IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
-        collection.Should().NotBeSameAs(enumerable);
-        collection.Should().BeEquivalentTo(enumerable);
+        collection.ShouldNotBeSameAs(enumerable);
+        collection.ShouldBe(enumerable);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class EnumerableAsCollectionExtensionsFixture
 
         IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
-        collection.Should().BeSameAs(enumerable);
+        collection.ShouldBeSameAs(enumerable);
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public class EnumerableAsCollectionExtensionsFixture
 
         IReadOnlyList<int> list = enumerable.AsReadOnlyList();
 
-        list.Should().NotBeSameAs(enumerable);
-        list.Should().BeEquivalentTo(enumerable);
+        list.ShouldNotBeSameAs(enumerable);
+        list.ShouldBe(enumerable);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class EnumerableAsCollectionExtensionsFixture
 
         IReadOnlyList<int> list = enumerable.AsReadOnlyList();
 
-        list.Should().BeSameAs(enumerable);
+        list.ShouldBeSameAs(enumerable);
     }
 
     [Fact]
@@ -76,8 +76,8 @@ public class EnumerableAsCollectionExtensionsFixture
 
         List<int> list = enumerable.AsList();
 
-        list.Should().NotBeSameAs(enumerable);
-        list.Should().BeEquivalentTo(enumerable);
+        list.ShouldNotBeSameAs(enumerable);
+        list.ShouldBe(enumerable);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class EnumerableAsCollectionExtensionsFixture
 
         List<int> list = enumerable.AsList();
 
-        list.Should().BeSameAs(enumerable);
+        list.ShouldBeSameAs(enumerable);
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class EnumerableAsCollectionExtensionsFixture
 
         int[] array = enumerable.AsArray();
 
-        array.Should().NotBeSameAs(enumerable);
-        array.Should().BeEquivalentTo(enumerable);
+        array.ShouldNotBeSameAs(enumerable);
+        array.ShouldBe(enumerable);
     }
 
     [Fact]
@@ -108,6 +108,6 @@ public class EnumerableAsCollectionExtensionsFixture
 
         int[] array = enumerable.AsArray();
 
-        array.Should().BeSameAs(enumerable);
+        array.ShouldBeSameAs(enumerable);
     }
 }

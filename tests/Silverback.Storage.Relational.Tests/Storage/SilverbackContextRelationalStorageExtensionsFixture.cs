@@ -4,9 +4,9 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using NSubstitute;
+using Shouldly;
 using Silverback.Storage;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         IStorageTransaction wrappedTransaction = context.EnlistDbTransaction(transaction);
 
-        wrappedTransaction.Should().BeOfType<DbTransactionWrapper>().Which.UnderlyingTransaction.Should().Be(transaction);
+        wrappedTransaction.ShouldBeOfType<DbTransactionWrapper>().UnderlyingTransaction.ShouldBe(transaction);
         context.Received(1).EnlistTransaction(wrappedTransaction);
     }
 
@@ -35,7 +35,7 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         DbTransaction? activeTransaction = context.GetActiveDbTransaction<DbTransaction>();
 
-        activeTransaction.Should().Be(transaction);
+        activeTransaction.ShouldBe(transaction);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         DbTransaction? activeTransaction = context.GetActiveDbTransaction<DbTransaction>();
 
-        activeTransaction.Should().BeNull();
+        activeTransaction.ShouldBeNull();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         DbTransaction? activeTransaction = context.GetActiveDbTransaction<DbTransaction>();
 
-        activeTransaction.Should().BeNull();
+        activeTransaction.ShouldBeNull();
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         bool result = context.TryGetActiveDbTransaction(out DbTransaction? activeTransaction);
 
-        result.Should().BeTrue();
-        activeTransaction.Should().Be(transaction);
+        result.ShouldBeTrue();
+        activeTransaction.ShouldBe(transaction);
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         bool result = context.TryGetActiveDbTransaction(out TestTransaction? activeTransaction);
 
-        result.Should().BeFalse();
-        activeTransaction.Should().BeNull();
+        result.ShouldBeFalse();
+        activeTransaction.ShouldBeNull();
     }
 
     [Fact]
@@ -91,7 +91,8 @@ public class SilverbackContextRelationalStorageExtensionsFixture
 
         Action act = () => context.GetActiveDbTransaction<SqliteTransaction>();
 
-        act.Should().Throw<InvalidOperationException>().WithMessage(
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe(
             "The current transaction (TestTransaction) is not a SqliteTransaction. " +
             "Silverback must be configured to use the same storage as the one used by the application.");
     }

@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Background;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
@@ -39,7 +39,7 @@ public class DistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class DistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class DistributedBackgroundServiceFixture
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
             lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
 
-        service2.DistributedLock.Should().BeSameAs(service1.DistributedLock);
+        service2.DistributedLock.ShouldBeSameAs(service1.DistributedLock);
 
         async Task ExecuteTask(CancellationToken stoppingToken, Action execute)
         {
@@ -116,9 +116,9 @@ public class DistributedBackgroundServiceFixture
 
         await AsyncTestingUtil.WaitAsync(() => executed1 && executed2, TimeSpan.FromSeconds(5));
 
-        executed1.Should().BeTrue();
-        executed2.Should().BeTrue();
-        executedInParallel.Should().BeFalse();
+        executed1.ShouldBeTrue();
+        executed2.ShouldBeTrue();
+        executedInParallel.ShouldBeFalse();
     }
 
     private sealed class TestDistributedBackgroundService : DistributedBackgroundService

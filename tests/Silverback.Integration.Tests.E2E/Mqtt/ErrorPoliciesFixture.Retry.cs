@@ -5,8 +5,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -56,10 +56,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        tryCount.Should().Be(11);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        tryCount.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(3);
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
+        tryCount.ShouldBe(3);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]
@@ -136,8 +136,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(1);
+        tryCount.ShouldBe(11);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(1);
     }
 
     [Fact]
@@ -182,12 +182,12 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should().NotBeEquivalentTo(rawMessage.ReReadAll());
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().ShouldNotBe(rawMessage.ReReadAll());
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
 
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]
@@ -224,12 +224,12 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
+        tryCount.ShouldBe(11);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 }

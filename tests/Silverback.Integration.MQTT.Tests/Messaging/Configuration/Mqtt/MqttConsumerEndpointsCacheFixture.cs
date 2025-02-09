@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -34,9 +34,9 @@ public class MqttConsumerEndpointsCacheFixture
 
         MqttConsumerEndpoint endpoint = cache.GetEndpoint("topic4");
 
-        endpoint.Should().NotBeNull();
-        endpoint.Topic.Should().Be("topic4");
-        endpoint.Configuration.Should().BeSameAs(endpointConfiguration2);
+        endpoint.ShouldNotBeNull();
+        endpoint.Topic.ShouldBe("topic4");
+        endpoint.Configuration.ShouldBeSameAs(endpointConfiguration2);
     }
 
     [Theory]
@@ -65,9 +65,9 @@ public class MqttConsumerEndpointsCacheFixture
 
         MqttConsumerEndpoint endpoint = cache.GetEndpoint(topic);
 
-        endpoint.Should().NotBeNull();
-        endpoint.Topic.Should().Be(topic);
-        endpoint.Configuration.Should().BeSameAs(endpointConfiguration2);
+        endpoint.ShouldNotBeNull();
+        endpoint.Topic.ShouldBe(topic);
+        endpoint.Configuration.ShouldBeSameAs(endpointConfiguration2);
     }
 
     [Theory]
@@ -96,7 +96,7 @@ public class MqttConsumerEndpointsCacheFixture
         MqttConsumerEndpoint endpoint1 = cache.GetEndpoint(topic);
         MqttConsumerEndpoint endpoint2 = cache.GetEndpoint(topic);
 
-        endpoint2.Should().BeSameAs(endpoint1);
+        endpoint2.ShouldBeSameAs(endpoint1);
     }
 
     [Fact]
@@ -122,6 +122,7 @@ public class MqttConsumerEndpointsCacheFixture
 
         Action act = () => cache.GetEndpoint("topic5");
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("No configuration found for the specified topic 'topic5'.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No configuration found for the specified topic 'topic5'.");
     }
 }

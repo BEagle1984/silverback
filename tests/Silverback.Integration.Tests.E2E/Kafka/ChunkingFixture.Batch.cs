@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -91,30 +91,30 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
 
-        failedCommit.Should().BeNull();
-        enumerationAborted.Should().BeNull();
+        failedCommit.ShouldBeNull();
+        enumerationAborted.ShouldBeNull();
 
-        batches.Should().HaveCount(messagesCount / batchSize);
-        batches[0].Should().HaveCount(batchSize);
-        batches[1].Should().HaveCount(batchSize);
-        batches[2].Should().HaveCount(batchSize);
+        batches.Count.ShouldBe(messagesCount / batchSize);
+        batches[0].Count.ShouldBe(batchSize);
+        batches[1].Count.ShouldBe(batchSize);
+        batches[2].Count.ShouldBe(batchSize);
 
-        batches[0][0].ContentEventOne.Should().Be("Long message 1");
-        batches[0][1].ContentEventOne.Should().Be("Long message 2");
-        batches[0][2].ContentEventOne.Should().Be("Long message 3");
+        batches[0][0].ContentEventOne.ShouldBe("Long message 1");
+        batches[0][1].ContentEventOne.ShouldBe("Long message 2");
+        batches[0][2].ContentEventOne.ShouldBe("Long message 3");
 
-        batches[1][0].ContentEventOne.Should().Be("Long message 4");
-        batches[1][1].ContentEventOne.Should().Be("Long message 5");
-        batches[1][2].ContentEventOne.Should().Be("Long message 6");
+        batches[1][0].ContentEventOne.ShouldBe("Long message 4");
+        batches[1][1].ContentEventOne.ShouldBe("Long message 5");
+        batches[1][2].ContentEventOne.ShouldBe("Long message 6");
 
-        batches[2][0].ContentEventOne.Should().Be("Long message 7");
-        batches[2][1].ContentEventOne.Should().Be("Long message 8");
-        batches[2][2].ContentEventOne.Should().Be("Long message 9");
+        batches[2][0].ContentEventOne.ShouldBe("Long message 7");
+        batches[2][1].ContentEventOne.ShouldBe("Long message 8");
+        batches[2][2].ContentEventOne.ShouldBe("Long message 9");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(chunksPerMessage * messagesCount);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(chunksPerMessage * messagesCount);
     }
 
     [Fact]
@@ -191,33 +191,33 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        failedCommit.Should().BeNull();
-        enumerationAborted.Should().BeNull();
+        failedCommit.ShouldBeNull();
+        enumerationAborted.ShouldBeNull();
 
-        batches.Should().HaveCount(messagesCount / batchSize);
-        batches[0].Should().HaveCount(batchSize);
-        batches[1].Should().HaveCount(batchSize);
-        batches[2].Should().HaveCount(batchSize);
+        batches.Count.ShouldBe(messagesCount / batchSize);
+        batches[0].Count.ShouldBe(batchSize);
+        batches[1].Count.ShouldBe(batchSize);
+        batches[2].Count.ShouldBe(batchSize);
 
-        batches[0][0].Should().Be("Long message 1");
-        batches[0][1].Should().Be("Long message 2");
-        batches[0][2].Should().Be("Long message 3");
-        batches[0][3].Should().Be("Long message 4");
-        batches[0][4].Should().Be("Long message 5");
+        batches[0][0].ShouldBe("Long message 1");
+        batches[0][1].ShouldBe("Long message 2");
+        batches[0][2].ShouldBe("Long message 3");
+        batches[0][3].ShouldBe("Long message 4");
+        batches[0][4].ShouldBe("Long message 5");
 
-        batches[1][0].Should().Be("Long message 6");
-        batches[1][1].Should().Be("Long message 7");
-        batches[1][2].Should().Be("Long message 8");
-        batches[1][3].Should().Be("Long message 9");
-        batches[1][4].Should().Be("Long message 10");
+        batches[1][0].ShouldBe("Long message 6");
+        batches[1][1].ShouldBe("Long message 7");
+        batches[1][2].ShouldBe("Long message 8");
+        batches[1][3].ShouldBe("Long message 9");
+        batches[1][4].ShouldBe("Long message 10");
 
-        batches[2][0].Should().Be("Long message 11");
-        batches[2][1].Should().Be("Long message 12");
-        batches[2][2].Should().Be("Long message 13");
-        batches[2][3].Should().Be("Long message 14");
-        batches[2][4].Should().Be("Long message 15");
+        batches[2][0].ShouldBe("Long message 11");
+        batches[2][1].ShouldBe("Long message 12");
+        batches[2][2].ShouldBe("Long message 13");
+        batches[2][3].ShouldBe("Long message 14");
+        batches[2][4].ShouldBe("Long message 15");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(chunksPerMessage * messagesCount);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(chunksPerMessage * messagesCount);
     }
 
     [Fact]
@@ -293,30 +293,30 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
 
-        failedCommit.Should().BeNull();
-        enumerationAborted.Should().BeNull();
+        failedCommit.ShouldBeNull();
+        enumerationAborted.ShouldBeNull();
 
-        batches.Should().HaveCount(messagesCount / batchSize);
-        batches[0].Should().HaveCount(batchSize);
-        batches[1].Should().HaveCount(batchSize);
-        batches[2].Should().HaveCount(batchSize);
+        batches.Count.ShouldBe(messagesCount / batchSize);
+        batches[0].Count.ShouldBe(batchSize);
+        batches[1].Count.ShouldBe(batchSize);
+        batches[2].Count.ShouldBe(batchSize);
 
-        batches[0][0].ContentEventOne.Should().Be("Long message 1");
-        batches[0][1].ContentEventOne.Should().Be("Long message 2");
-        batches[0][2].ContentEventOne.Should().Be("Long message 3");
+        batches[0][0].ContentEventOne.ShouldBe("Long message 1");
+        batches[0][1].ContentEventOne.ShouldBe("Long message 2");
+        batches[0][2].ContentEventOne.ShouldBe("Long message 3");
 
-        batches[1][0].ContentEventOne.Should().Be("Long message 4");
-        batches[1][1].ContentEventOne.Should().Be("Long message 5");
-        batches[1][2].ContentEventOne.Should().Be("Long message 6");
+        batches[1][0].ContentEventOne.ShouldBe("Long message 4");
+        batches[1][1].ContentEventOne.ShouldBe("Long message 5");
+        batches[1][2].ContentEventOne.ShouldBe("Long message 6");
 
-        batches[2][0].ContentEventOne.Should().Be("Long message 7");
-        batches[2][1].ContentEventOne.Should().Be("Long message 8");
-        batches[2][2].ContentEventOne.Should().Be("Long message 9");
+        batches[2][0].ContentEventOne.ShouldBe("Long message 7");
+        batches[2][1].ContentEventOne.ShouldBe("Long message 8");
+        batches[2][2].ContentEventOne.ShouldBe("Long message 9");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(chunksPerMessage * messagesCount);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(chunksPerMessage * messagesCount);
     }
 
     [Fact]
@@ -393,33 +393,33 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        failedCommit.Should().BeNull();
-        enumerationAborted.Should().BeNull();
+        failedCommit.ShouldBeNull();
+        enumerationAborted.ShouldBeNull();
 
-        batches.Should().HaveCount(messagesCount / batchSize);
-        batches[0].Should().HaveCount(batchSize);
-        batches[1].Should().HaveCount(batchSize);
-        batches[2].Should().HaveCount(batchSize);
+        batches.Count.ShouldBe(messagesCount / batchSize);
+        batches[0].Count.ShouldBe(batchSize);
+        batches[1].Count.ShouldBe(batchSize);
+        batches[2].Count.ShouldBe(batchSize);
 
-        batches[0][0].Should().Be("Long message 1");
-        batches[0][1].Should().Be("Long message 2");
-        batches[0][2].Should().Be("Long message 3");
-        batches[0][3].Should().Be("Long message 4");
-        batches[0][4].Should().Be("Long message 5");
+        batches[0][0].ShouldBe("Long message 1");
+        batches[0][1].ShouldBe("Long message 2");
+        batches[0][2].ShouldBe("Long message 3");
+        batches[0][3].ShouldBe("Long message 4");
+        batches[0][4].ShouldBe("Long message 5");
 
-        batches[1][0].Should().Be("Long message 6");
-        batches[1][1].Should().Be("Long message 7");
-        batches[1][2].Should().Be("Long message 8");
-        batches[1][3].Should().Be("Long message 9");
-        batches[1][4].Should().Be("Long message 10");
+        batches[1][0].ShouldBe("Long message 6");
+        batches[1][1].ShouldBe("Long message 7");
+        batches[1][2].ShouldBe("Long message 8");
+        batches[1][3].ShouldBe("Long message 9");
+        batches[1][4].ShouldBe("Long message 10");
 
-        batches[2][0].Should().Be("Long message 11");
-        batches[2][1].Should().Be("Long message 12");
-        batches[2][2].Should().Be("Long message 13");
-        batches[2][3].Should().Be("Long message 14");
-        batches[2][4].Should().Be("Long message 15");
+        batches[2][0].ShouldBe("Long message 11");
+        batches[2][1].ShouldBe("Long message 12");
+        batches[2][2].ShouldBe("Long message 13");
+        batches[2][3].ShouldBe("Long message 14");
+        batches[2][4].ShouldBe("Long message 15");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(chunksPerMessage * messagesCount);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(chunksPerMessage * messagesCount);
     }
 
     // TODO: Chunking_ShouldAbortSequence_WhenDisconnectingWhileJsonConsumedInBatch() => throw new NotImplementedException();

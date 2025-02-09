@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -24,7 +24,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.Decrypt(new SymmetricDecryptionSettings()).Build();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.DisplayName.Should().Be("display-name (test)");
+        endpoint.DisplayName.ShouldBe("display-name (test)");
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeUsing(deserializer).Build();
 
-        endpoint.Deserializer.Should().BeSameAs(deserializer);
+        endpoint.Deserializer.ShouldBeSameAs(deserializer);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Decrypt(encryptionSettings).Build();
 
-        endpoint.Encryption.Should().BeSameAs(encryptionSettings);
+        endpoint.Encryption.ShouldBeSameAs(encryptionSettings);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.OnError(errorPolicy).Build();
 
-        endpoint.ErrorPolicy.Should().BeSameAs(errorPolicy);
+        endpoint.ErrorPolicy.ShouldBeSameAs(errorPolicy);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.OnError(errorPolicy => errorPolicy.Retry(5).ThenSkip()).Build();
 
-        endpoint.ErrorPolicy.Should().BeOfType<ErrorPolicyChain>();
+        endpoint.ErrorPolicy.ShouldBeOfType<ErrorPolicyChain>();
     }
 
     [Theory]
@@ -95,9 +95,9 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.EnableBatchProcessing(size, TimeSpan.FromMinutes(42)).Build();
 
-        endpoint.Batch.Should().NotBeNull();
-        endpoint.Batch!.Size.Should().Be(size);
-        endpoint.Batch!.MaxWaitTime.Should().Be(TimeSpan.FromMinutes(42));
+        endpoint.Batch.ShouldNotBeNull();
+        endpoint.Batch!.Size.ShouldBe(size);
+        endpoint.Batch!.MaxWaitTime.ShouldBe(TimeSpan.FromMinutes(42));
     }
 
     [Theory]
@@ -109,7 +109,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.EnableBatchProcessing(size).Build();
 
-        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.WithSequenceTimeout(TimeSpan.FromMinutes(42)).Build();
 
-        endpoint.Sequence.Timeout.Should().Be(TimeSpan.FromMinutes(42));
+        endpoint.Sequence.Timeout.ShouldBe(TimeSpan.FromMinutes(42));
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.ThrowIfUnhandled().Build();
 
-        endpoint.ThrowIfUnhandled.Should().Be(true);
+        endpoint.ThrowIfUnhandled.ShouldBe(true);
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.IgnoreUnhandledMessages().Build();
 
-        endpoint.ThrowIfUnhandled.Should().Be(false);
+        endpoint.ThrowIfUnhandled.ShouldBe(false);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        endpoint.MessageValidationMode.ShouldBe(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.DisableMessageValidation().Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.None);
+        endpoint.MessageValidationMode.ShouldBe(MessageValidationMode.None);
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.ValidateMessage(false).Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        endpoint.MessageValidationMode.ShouldBe(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -179,6 +179,6 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.ValidateMessage(true).Build();
 
-        endpoint.MessageValidationMode.Should().Be(MessageValidationMode.ThrowException);
+        endpoint.MessageValidationMode.ShouldBe(MessageValidationMode.ThrowException);
     }
 }

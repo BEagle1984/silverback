@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
@@ -19,8 +19,8 @@ public class EntityFrameworkKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.Build();
 
-        settings.Should().BeOfType<EntityFrameworkKafkaOffsetStoreSettings>();
-        settings.Should().BeEquivalentTo(new EntityFrameworkKafkaOffsetStoreSettings(typeof(TestDbContext), GetDbContext));
+        settings.ShouldBeOfType<EntityFrameworkKafkaOffsetStoreSettings>();
+        settings.ShouldBe(new EntityFrameworkKafkaOffsetStoreSettings(typeof(TestDbContext), GetDbContext));
     }
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();

@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
@@ -31,11 +31,11 @@ public class KafkaConsumerConfigurationFixture
             BootstrapServers = "config2"
         };
 
-        configuration1.ToConfluentConfig().BootstrapServers.Should().Be("config1");
-        configuration2.ToConfluentConfig().BootstrapServers.Should().Be("config2");
+        configuration1.ToConfluentConfig().BootstrapServers.ShouldBe("config1");
+        configuration2.ToConfluentConfig().BootstrapServers.ShouldBe("config2");
 
-        configuration1.ToConfluentConfig().GroupId.Should().Be("group");
-        configuration2.ToConfluentConfig().GroupId.Should().Be("group");
+        configuration1.ToConfluentConfig().GroupId.ShouldBe("group");
+        configuration2.ToConfluentConfig().GroupId.ShouldBe("group");
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class KafkaConsumerConfigurationFixture
         {
         };
 
-        configuration1.CommitOffsetEach.Should().Be(42);
-        configuration2.CommitOffsetEach.Should().Be(42);
+        configuration1.CommitOffsetEach.ShouldBe(42);
+        configuration2.CommitOffsetEach.ShouldBe(42);
     }
 
     [Fact]
@@ -65,8 +65,8 @@ public class KafkaConsumerConfigurationFixture
 
         configuration = configuration with { CommitOffsets = false };
 
-        configuration.EnableAutoCommit.Should().BeFalse();
-        configuration.CommitOffsetEach.Should().BeNull();
+        configuration.EnableAutoCommit.ShouldBe(false);
+        configuration.CommitOffsetEach.ShouldBeNull();
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class KafkaConsumerConfigurationFixture
 
         configuration = configuration with { SendOffsetsToTransaction = true };
 
-        configuration.CommitOffsets.Should().BeFalse();
+        configuration.CommitOffsets.ShouldBe(false);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class KafkaConsumerConfigurationFixture
 
         configuration = configuration with { ProcessPartitionsIndependently = false };
 
-        configuration.MaxDegreeOfParallelism.Should().Be(1);
+        configuration.MaxDegreeOfParallelism.ShouldBe(1);
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -125,8 +125,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("At least one endpoint must be configured.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("At least one endpoint must be configured.");
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -177,8 +177,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Cannot mix static partition assignments and subscriptions*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot mix static partition assignments and subscriptions.*");
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -236,8 +236,8 @@ public class KafkaConsumerConfigurationFixture
         };
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Cannot connect to the same topic in different endpoints*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot connect to the same topic in different endpoints.*");
     }
 
     [Theory]
@@ -262,7 +262,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId must be specified when the partitions are assigned dynamically. *");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("The GroupId must be specified when the partitions are assigned dynamically. .*");
     }
 
     [Theory]
@@ -288,7 +289,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId should be specified when committing the offsets to the broker. *");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("The GroupId should be specified when committing the offsets to the broker. .*");
     }
 
     [Theory]
@@ -315,7 +317,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId should be specified when using a client side offset store.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The GroupId should be specified when using a client side offset store.");
     }
 
     [Fact]
@@ -339,7 +342,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -354,7 +357,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Theory]
@@ -380,9 +383,9 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         else
-            act.Should().ThrowExactly<BrokerConfigurationException>();
+            act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -397,8 +400,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("SendOffsetsToTransaction and CommitOffsets cannot be enabled at the same time.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("SendOffsetsToTransaction and CommitOffsets cannot be enabled at the same time.");
     }
 
     [Theory]
@@ -422,15 +425,15 @@ public class KafkaConsumerConfigurationFixture
 
         if (isValid)
         {
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         }
         else
         {
-            act.Should().ThrowExactly<BrokerConfigurationException>()
-                .WithMessage(
-                    value < 1
-                        ? "MaxDegreeOfParallelism must be greater or equal to 1."
-                        : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
+            Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+            exception.Message.ShouldBe(
+            value < 1
+                ? "MaxDegreeOfParallelism must be greater or equal to 1."
+                : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
         }
     }
 
@@ -449,9 +452,14 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
-            act.Should().NotThrow();
+        {
+            act.ShouldNotThrow();
+        }
         else
-            act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The backpressure limit must be greater or equal to 1.");
+        {
+            Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+            exception.Message.ShouldBe("The backpressure limit must be greater or equal to 1.");
+        }
     }
 
     [Theory]
@@ -469,9 +477,14 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
-            act.Should().NotThrow();
+        {
+            act.ShouldNotThrow();
+        }
         else
-            act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The get metadata timeout must be greater than 0.");
+        {
+            Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+            exception.Message.ShouldBe("The get metadata timeout must be greater than 0.");
+        }
     }
 
     [Fact]
@@ -505,7 +518,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("All endpoints must use the same Batch settings*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("All endpoints must use the same Batch settings.*");
     }
 
     [Fact]
@@ -543,7 +557,8 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("All endpoints must use the same Batch settings*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("All endpoints must use the same Batch settings.*");
     }
 
     [Fact]
@@ -588,7 +603,7 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -603,9 +618,9 @@ public class KafkaConsumerConfigurationFixture
 
         ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
-        confluentConfig.GroupId.Should().Be("group-42");
-        confluentConfig.FetchMaxBytes.Should().Be(42);
+        confluentConfig.BootstrapServers.ShouldBe("PLAINTEXT://tests");
+        confluentConfig.GroupId.ShouldBe("group-42");
+        confluentConfig.FetchMaxBytes.ShouldBe(42);
     }
 
     [Fact]
@@ -618,7 +633,7 @@ public class KafkaConsumerConfigurationFixture
 
         ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.EnableAutoOffsetStore.Should().BeFalse();
+        confluentConfig.EnableAutoOffsetStore.ShouldBe(false);
     }
 
     [InlineData(null)]
@@ -633,7 +648,7 @@ public class KafkaConsumerConfigurationFixture
 
         ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
+        confluentConfig.GroupId.ShouldBe(KafkaConsumerConfiguration.UnsetGroupId);
     }
 
     [Fact]
@@ -646,7 +661,7 @@ public class KafkaConsumerConfigurationFixture
 
         ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.GroupId.Should().Be("group1");
+        confluentConfig.GroupId.ShouldBe("group1");
     }
 
     private static KafkaConsumerConfiguration GetValidConfiguration() =>

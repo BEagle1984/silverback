@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -23,8 +23,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader("key", "value")
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<StaticOutboundHeadersEnricher>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<StaticOutboundHeadersEnricher>();
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader<TestEventOne>("key", "value")
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -49,8 +49,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader("key", message => message?.Content)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader<TestEventOne>("key", message => message?.Content)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -75,8 +75,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader("key", envelope => envelope.Headers.Count)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .AddHeader<TestEventOne>("key", envelope => envelope.Headers.Count)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<GenericOutboundHeadersEnricher<TestEventOne>>();
     }
 }

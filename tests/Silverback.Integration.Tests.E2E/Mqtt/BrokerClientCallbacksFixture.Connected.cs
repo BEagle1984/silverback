@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
@@ -39,7 +39,7 @@ public partial class BrokerClientCallbacksFixture
 
         await AsyncTestingUtil.WaitAsync(() => callback.CallsCount > 0);
 
-        callback.CallsCount.Should().Be(1);
+        callback.CallsCount.ShouldBe(1);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public partial class BrokerClientCallbacksFixture
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.InboundEnvelopes.Count > 0);
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
     }
 
     private sealed class TestConnectedCallback : IMqttClientConnectedCallback

@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -55,7 +55,7 @@ public class TestingHelperFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount().Should().Be(0);
+        Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount().ShouldBe(0);
     }
 
     [Fact]
@@ -97,9 +97,9 @@ public class TestingHelperFixture : MqttFixture
         {
             await Helper.WaitUntilAllMessagesAreConsumedAsync("topic1", "topic2");
 
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic1").Should().Be(0);
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic2").Should().Be(0);
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic3").Should().Be(10);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic1").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic2").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic3").ShouldBe(10);
         }
         finally
         {
@@ -146,9 +146,9 @@ public class TestingHelperFixture : MqttFixture
         {
             await Helper.WaitUntilAllMessagesAreConsumedAsync("one", "two");
 
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic1").Should().Be(0);
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic2").Should().Be(0);
-            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic3").Should().Be(10);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic1").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic2").ShouldBe(0);
+            Helper.GetClientSession(DefaultClientId).GetPendingMessagesCount("topic3").ShouldBe(10);
         }
         finally
         {

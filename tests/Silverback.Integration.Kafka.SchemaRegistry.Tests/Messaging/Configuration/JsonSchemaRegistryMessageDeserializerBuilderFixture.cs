@@ -3,8 +3,8 @@
 
 using System;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
@@ -22,7 +22,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
-        serializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
+        serializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class JsonSchemaRegistryMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
 
-        serializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
+        serializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -52,9 +52,9 @@ public class JsonSchemaRegistryMessageDeserializerBuilderFixture
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
 
-        JsonSchemaRegistryMessageDeserializer<TestEventThree> jsonUsingSchemaRegistryMessageDeserializer = serializer.As<JsonSchemaRegistryMessageDeserializer<TestEventThree>>();
+        JsonSchemaRegistryMessageDeserializer<TestEventThree> jsonUsingSchemaRegistryMessageDeserializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventThree>>();
         jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.ShouldNotBeNull();
-        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
+        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
     }
 
     [Fact]
@@ -65,7 +65,8 @@ public class JsonSchemaRegistryMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -76,7 +77,8 @@ public class JsonSchemaRegistryMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
     }
 
     private JsonSchemaRegistryMessageDeserializerBuilder GetValidBuilder() =>

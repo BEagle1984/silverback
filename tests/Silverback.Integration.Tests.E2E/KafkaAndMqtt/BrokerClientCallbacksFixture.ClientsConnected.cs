@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
@@ -52,7 +52,7 @@ public partial class BrokerClientCallbacksFixture
         BrokerClientsConnectedCallback callback = (BrokerClientsConnectedCallback)Host.ServiceProvider
             .GetServices<IBrokerClientCallback>()
             .Single(callback => callback is BrokerClientsConnectedCallback);
-        callback.CallCount.Should().Be(1);
+        callback.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -83,8 +83,8 @@ public partial class BrokerClientCallbacksFixture
             .GetServices<IBrokerClientCallback>()
             .Where(service => service is BrokerClientsConnectedCallback)
             .ToList();
-        callbacks.Should().HaveCount(2);
-        callbacks.Cast<BrokerClientsConnectedCallback>().Should().OnlyContain(callback => callback.CallCount == 1);
+        callbacks.Count.ShouldBe(2);
+        callbacks.Cast<BrokerClientsConnectedCallback>().ShouldAllBe(callback => callback.CallCount == 1);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public partial class BrokerClientCallbacksFixture
         await kafkaTestingHelper.WaitUntilConnectedAsync();
         await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-        kafkaTestingHelper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        kafkaTestingHelper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
     }
 
     private class BrokerClientsConnectedCallback : IBrokerClientsConnectedCallback

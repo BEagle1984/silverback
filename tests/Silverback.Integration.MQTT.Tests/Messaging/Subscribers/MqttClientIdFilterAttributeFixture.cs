@@ -3,9 +3,9 @@
 
 using System;
 using System.IO;
-using FluentAssertions;
 using MQTTnet;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -57,7 +57,7 @@ public class MqttClientIdFilterAttributeFixture
 
         bool result = new MqttClientIdFilterAttribute("client1", "client2").MustProcess(inboundEnvelope);
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class MqttClientIdFilterAttributeFixture
     {
         bool result = new MqttClientIdFilterAttribute().MustProcess(new TestEventOne());
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -82,6 +82,6 @@ public class MqttClientIdFilterAttributeFixture
 
         bool result = new MqttClientIdFilterAttribute().MustProcess(envelope);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

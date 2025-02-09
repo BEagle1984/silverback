@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -33,7 +33,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -92,9 +92,9 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        syncMessages.Should().HaveCount(2);
-        asyncMessages.Should().HaveCount(2);
-        asyncValueTaskMessages.Should().HaveCount(2);
+        syncMessages.Count.ShouldBe(2);
+        asyncMessages.Count.ShouldBe(2);
+        asyncValueTaskMessages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -115,8 +115,8 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        messages1.Should().HaveCount(2);
-        messages2.Should().HaveCount(2);
+        messages1.Count.ShouldBe(2);
+        messages2.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -138,10 +138,10 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        publicMessages.Should().HaveCount(2);
-        publicDecoratedMessages.Should().HaveCount(2);
-        privateMessages.Should().BeEmpty();
-        privateDecoratedMessages.Should().HaveCount(2);
+        publicMessages.Count.ShouldBe(2);
+        publicDecoratedMessages.Count.ShouldBe(2);
+        privateMessages.ShouldBeEmpty();
+        privateDecoratedMessages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -165,10 +165,10 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        publicMessages.Should().BeEmpty();
-        publicDecoratedMessages.Should().HaveCount(2);
-        privateMessages.Should().BeEmpty();
-        privateDecoratedMessages.Should().HaveCount(2);
+        publicMessages.ShouldBeEmpty();
+        publicDecoratedMessages.Count.ShouldBe(2);
+        privateMessages.ShouldBeEmpty();
+        privateDecoratedMessages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -187,8 +187,8 @@ public partial class PublisherFixture
 
         publisher.Publish(new TestEventOne());
 
-        messages1.Should().HaveCount(1);
-        messages2.Should().HaveCount(1);
+        messages1.Count.ShouldBe(1);
+        messages2.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -207,8 +207,8 @@ public partial class PublisherFixture
 
         await publisher.PublishAsync(new TestEventOne());
 
-        messages1.Should().HaveCount(1);
-        messages2.Should().HaveCount(1);
+        messages1.Count.ShouldBe(1);
+        messages2.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -227,8 +227,8 @@ public partial class PublisherFixture
 
         publisher.Publish(new TestEventOne());
 
-        messages1.Should().HaveCount(1);
-        messages2.Should().HaveCount(1);
+        messages1.Count.ShouldBe(1);
+        messages2.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -247,8 +247,8 @@ public partial class PublisherFixture
 
         await publisher.PublishAsync(new TestEventOne());
 
-        messages1.Should().HaveCount(1);
-        messages2.Should().HaveCount(1);
+        messages1.Count.ShouldBe(1);
+        messages2.Count.ShouldBe(1);
     }
 
     private class SimpleSubscriber

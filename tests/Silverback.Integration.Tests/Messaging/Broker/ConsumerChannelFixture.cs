@@ -3,8 +3,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Sequences;
@@ -20,9 +20,9 @@ public class ConsumerChannelFixture
         ConsumerChannel<TestMessage> channel1 = new(10, "test", Substitute.For<ISilverbackLogger>());
         ConsumerChannel<TestMessage> channel2 = new(10, "test", Substitute.For<ISilverbackLogger>());
 
-        channel1.SequenceStore.Should().BeOfType<SequenceStore>();
-        channel2.SequenceStore.Should().BeOfType<SequenceStore>();
-        channel1.SequenceStore.Should().NotBeSameAs(channel2.SequenceStore);
+        channel1.SequenceStore.ShouldBeOfType<SequenceStore>();
+        channel2.SequenceStore.ShouldBeOfType<SequenceStore>();
+        channel1.SequenceStore.ShouldNotBeSameAs(channel2.SequenceStore);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class ConsumerChannelFixture
         await channel.WriteAsync(testMessage, CancellationToken.None);
 
         TestMessage readMessage = await channel.ReadAsync();
-        readMessage.Should().BeSameAs(testMessage);
+        readMessage.ShouldBeSameAs(testMessage);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ConsumerChannelFixture
 
         channel.Reset();
 
-        channel.SequenceStore.Should().NotBeSameAs(sequenceStore);
+        channel.SequenceStore.ShouldNotBeSameAs(sequenceStore);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class ConsumerChannelFixture
         TestMessage secondMessage = new();
         await channel.WriteAsync(secondMessage, CancellationToken.None);
         TestMessage readMessage = await channel.ReadAsync();
-        readMessage.Should().BeSameAs(secondMessage);
+        readMessage.ShouldBeSameAs(secondMessage);
     }
 
     private record TestMessage;

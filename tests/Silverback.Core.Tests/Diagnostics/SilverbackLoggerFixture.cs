@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Lock;
@@ -142,7 +142,7 @@ public class SilverbackLoggerFixture
     {
         LoggerSubstitute<SilverbackLoggerFixture> logger = new(LogLevel.Information);
         LogEvent logEvent = CoreLogEvents.BackgroundServiceStarting;
-        logger.IsEnabled(logEvent.Level).Should().BeTrue();
+        logger.IsEnabled(logEvent.Level).ShouldBeTrue();
 
         LogLevelDictionary logLevels = new()
         {
@@ -153,7 +153,7 @@ public class SilverbackLoggerFixture
 
         bool result = silverbackLogger.IsEnabled(logEvent);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     private class TestService : DistributedBackgroundService

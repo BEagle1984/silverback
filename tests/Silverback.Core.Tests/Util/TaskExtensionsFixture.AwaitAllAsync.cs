@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -27,21 +27,21 @@ public partial class TaskExtensionsFixture
         IEnumerable<ValueTask> tasks = [WaitSemaphore(), WaitSemaphore(), WaitSemaphore()];
         ValueTask awaitTask = tasks.AwaitAllAsync();
 
-        awaitTask.IsCompleted.Should().BeFalse();
+        awaitTask.IsCompleted.ShouldBeFalse();
 
         semaphore.Release();
         semaphore.Release();
 
         await Task.Delay(50);
 
-        awaitTask.IsCompleted.Should().BeFalse();
+        awaitTask.IsCompleted.ShouldBeFalse();
 
         semaphore.Release();
 
         await awaitTask;
 
-        awaitTask.IsCompleted.Should().BeTrue();
-        awaitTask.IsCompletedSuccessfully.Should().BeTrue();
+        awaitTask.IsCompleted.ShouldBeTrue();
+        awaitTask.IsCompletedSuccessfully.ShouldBeTrue();
     }
 
     [Fact]
@@ -60,8 +60,9 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
-        (await act.Should().ThrowExactlyAsync<AggregateException>()).And.InnerExceptions.Should().HaveCount(1);
-        tasks.Where(task => task.IsCompleted).Should().HaveCount(3);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(1);
+        tasks.Count(task => task.IsCompleted).ShouldBe(3);
     }
 
     [Fact]
@@ -80,8 +81,9 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
-        (await act.Should().ThrowExactlyAsync<AggregateException>()).And.InnerExceptions.Should().HaveCount(2);
-        tasks.Where(task => task.IsCompleted).Should().HaveCount(3);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(2);
+        tasks.Count(task => task.IsCompleted).ShouldBe(3);
     }
 
     [Fact]
@@ -99,22 +101,22 @@ public partial class TaskExtensionsFixture
         IEnumerable<ValueTask<int>> tasks = [WaitSemaphore(1), WaitSemaphore(2), WaitSemaphore(3)];
         ValueTask<IReadOnlyCollection<int>> awaitTask = tasks.AwaitAllAsync();
 
-        awaitTask.IsCompleted.Should().BeFalse();
+        awaitTask.IsCompleted.ShouldBeFalse();
 
         semaphore.Release();
         semaphore.Release();
 
         await Task.Delay(50);
 
-        awaitTask.IsCompleted.Should().BeFalse();
+        awaitTask.IsCompleted.ShouldBeFalse();
 
         semaphore.Release();
 
         IReadOnlyCollection<int> results = await awaitTask;
 
-        awaitTask.IsCompleted.Should().BeTrue();
-        awaitTask.IsCompletedSuccessfully.Should().BeTrue();
-        results.Should().BeEquivalentTo(new[] { 1, 2, 3 }, options => options.WithoutStrictOrdering());
+        awaitTask.IsCompleted.ShouldBeTrue();
+        awaitTask.IsCompletedSuccessfully.ShouldBeTrue();
+        results.ShouldBe([1, 2, 3], ignoreOrder: true);
     }
 
     [Fact]
@@ -137,8 +139,9 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
-        (await act.Should().ThrowExactlyAsync<AggregateException>()).And.InnerExceptions.Should().HaveCount(1);
-        tasks.Where(task => task.IsCompleted).Should().HaveCount(3);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(1);
+        tasks.Count(task => task.IsCompleted).ShouldBe(3);
     }
 
     [Fact]
@@ -161,7 +164,8 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
-        (await act.Should().ThrowExactlyAsync<AggregateException>()).And.InnerExceptions.Should().HaveCount(2);
-        tasks.Where(task => task.IsCompleted).Should().HaveCount(3);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(2);
+        tasks.Count(task => task.IsCompleted).ShouldBe(3);
     }
 }

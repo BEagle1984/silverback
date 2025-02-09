@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -18,7 +18,7 @@ public class MqttClientWebSocketConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -30,7 +30,8 @@ public class MqttClientWebSocketConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The URI is required to connect with the message broker.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The URI is required to connect with the message broker.");
     }
 
     [Fact]
@@ -40,7 +41,8 @@ public class MqttClientWebSocketConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The TLS configuration is required.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The TLS configuration is required.");
     }
 
     private static MqttClientWebSocketConfiguration GetValidConfiguration() => new()

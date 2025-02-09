@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
@@ -24,7 +24,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.Encrypt(new SymmetricEncryptionSettings()).Build();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.Build();
 
-        configuration.DisplayName.Should().Be("display-name (test)");
+        configuration.DisplayName.ShouldBe("display-name (test)");
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.SerializeUsing(serializer).Build();
 
-        configuration.Serializer.Should().BeSameAs(serializer);
+        configuration.Serializer.ShouldBeSameAs(serializer);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.Encrypt(encryptionSettings).Build();
 
-        configuration.Encryption.Should().BeSameAs(encryptionSettings);
+        configuration.Encryption.ShouldBeSameAs(encryptionSettings);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.UseStrategy(strategy).Build();
 
-        configuration.Strategy.Should().BeSameAs(strategy);
+        configuration.Strategy.ShouldBeSameAs(strategy);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.ProduceDirectly().Build();
 
-        configuration.Strategy.Should().BeOfType<DefaultProduceStrategy>();
+        configuration.Strategy.ShouldBeOfType<DefaultProduceStrategy>();
     }
 
     [Fact]
@@ -98,8 +98,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         InMemoryOutboxSettings settings = new();
         TestProducerEndpointConfiguration configuration = builder.StoreToOutbox(settings).Build();
 
-        configuration.Strategy.Should().BeOfType<OutboxProduceStrategy>();
-        configuration.Strategy.As<OutboxProduceStrategy>().Settings.Should().Be(settings);
+        OutboxProduceStrategy outboxStrategy = configuration.Strategy.ShouldBeOfType<OutboxProduceStrategy>();
+        outboxStrategy.Settings.ShouldBe(settings);
     }
 
     [Fact]
@@ -113,8 +113,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .StoreToOutbox(outbox => outbox.UseMemory().WithName("test-outbox"))
             .Build();
 
-        configuration.Strategy.Should().BeOfType<OutboxProduceStrategy>();
-        configuration.Strategy.As<OutboxProduceStrategy>().Settings.As<InMemoryOutboxSettings>().OutboxName.Should().Be("test-outbox");
+        OutboxProduceStrategy outboxStrategy = configuration.Strategy.ShouldBeOfType<OutboxProduceStrategy>();
+        InMemoryOutboxSettings outboxSettings = outboxStrategy.Settings.ShouldBeOfType<InMemoryOutboxSettings>();
+        outboxSettings.OutboxName.ShouldBe("test-outbox");
     }
 
     [Fact]
@@ -124,9 +125,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.EnableChunking(42, false).Build();
 
-        configuration.Chunk.Should().NotBeNull();
-        configuration.Chunk!.Size.Should().Be(42);
-        configuration.Chunk!.AlwaysAddHeaders.Should().BeFalse();
+        configuration.Chunk.ShouldNotBeNull();
+        configuration.Chunk!.Size.ShouldBe(42);
+        configuration.Chunk!.AlwaysAddHeaders.ShouldBeFalse();
     }
 
     [Fact]
@@ -136,7 +137,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.Build();
 
-        configuration.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        configuration.MessageValidationMode.ShouldBe(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -146,7 +147,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.DisableMessageValidation().Build();
 
-        configuration.MessageValidationMode.Should().Be(MessageValidationMode.None);
+        configuration.MessageValidationMode.ShouldBe(MessageValidationMode.None);
     }
 
     [Fact]
@@ -156,7 +157,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.ValidateMessage(false).Build();
 
-        configuration.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        configuration.MessageValidationMode.ShouldBe(MessageValidationMode.LogWarning);
     }
 
     [Fact]
@@ -166,6 +167,6 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.ValidateMessage(true).Build();
 
-        configuration.MessageValidationMode.Should().Be(MessageValidationMode.ThrowException);
+        configuration.MessageValidationMode.ShouldBe(MessageValidationMode.ThrowException);
     }
 }

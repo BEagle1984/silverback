@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Subscribers;
 using Xunit;
 
@@ -31,9 +31,9 @@ public class MethodReturnTypeFixture
 
         MethodReturnType returnType = MethodReturnType.CreateFromMethodInfo(methodInfo);
 
-        returnType.IsTask.Should().Be(isTask);
-        returnType.IsValueTask.Should().Be(isValueTask);
-        returnType.HasResult.Should().Be(hasReturnValue);
+        returnType.IsTask.ShouldBe(isTask);
+        returnType.IsValueTask.ShouldBe(isValueTask);
+        returnType.HasResult.ShouldBe(hasReturnValue);
     }
 
     private object ReturningObject() => new();

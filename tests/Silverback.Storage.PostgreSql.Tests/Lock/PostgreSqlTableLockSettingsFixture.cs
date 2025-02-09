@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -15,8 +15,8 @@ public class PostgreSqlTableLockSettingsFixture
     {
         PostgreSqlTableLockSettings settings = new("my-lock", "connection-string");
 
-        settings.LockName.Should().Be("my-lock");
-        settings.ConnectionString.Should().Be("connection-string");
+        settings.LockName.ShouldBe("my-lock");
+        settings.ConnectionString.ShouldBe("connection-string");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -39,7 +39,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock name is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock name is required.");
     }
 
     [Theory]
@@ -52,7 +53,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The connection string is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The connection string is required.");
     }
 
     [Fact]
@@ -65,7 +67,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -78,7 +81,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -91,7 +95,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 
     [Fact]
@@ -104,7 +109,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 
     [Fact]
@@ -117,7 +123,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The acquire interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The acquire interval must be greater than zero.");
     }
 
     [Fact]
@@ -130,7 +137,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The acquire interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The acquire interval must be greater than zero.");
     }
 
     [Fact]
@@ -143,7 +151,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The heartbeat interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The heartbeat interval must be greater than zero.");
     }
 
     [Fact]
@@ -156,7 +165,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The heartbeat interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The heartbeat interval must be greater than zero.");
     }
 
     [Fact]
@@ -169,7 +179,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than zero.");
     }
 
     [Fact]
@@ -182,7 +193,8 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than zero.");
     }
 
     [Fact]
@@ -196,6 +208,7 @@ public class PostgreSqlTableLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than the heartbeat interval.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than the heartbeat interval.");
     }
 }

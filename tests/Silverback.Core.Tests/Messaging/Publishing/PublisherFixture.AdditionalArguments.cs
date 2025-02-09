@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
@@ -30,7 +30,7 @@ public partial class PublisherFixture
 
         publisher.Publish(new TestEventOne());
 
-        counter.Value.Should().Be(2);
+        counter.Value.ShouldBe(2);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public partial class PublisherFixture
 
         await publisher.PublishAsync(new TestEventOne(), cancellationToken);
 
-        counter.Value.Should().Be(2);
+        counter.Value.ShouldBe(2);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public partial class PublisherFixture
 
         publisher.Publish(new TestEventOne());
 
-        counter.Value.Should().Be(2);
+        counter.Value.ShouldBe(2);
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public partial class PublisherFixture
 
         await publisher.PublishAsync(new TestEventOne(), cancellationTokenArgument);
 
-        counter.Value.Should().Be(2);
+        counter.Value.ShouldBe(2);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]

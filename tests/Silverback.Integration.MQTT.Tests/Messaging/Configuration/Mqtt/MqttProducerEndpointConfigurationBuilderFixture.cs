@@ -3,8 +3,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -30,7 +30,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic");
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttStaticProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic");
+        endpointConfiguration.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        endpointConfiguration.RawName.ShouldBe("some-topic");
         MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
-        configuration.Topic.Should().Be("some-topic");
+        configuration.Topic.ShouldBe("some-topic");
     }
 
     [Fact]
@@ -55,10 +55,10 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => "some-topic");
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-");
+        endpointConfiguration.EndpointResolver.ShouldBeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.RawName.ShouldStartWith("dynamic-");
         MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
-        configuration.Topic.Should().Be("some-topic");
+        configuration.Topic.ShouldBe("some-topic");
     }
 
     [Fact]
@@ -69,10 +69,10 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic/{0}", _ => ["123"]);
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
-        endpointConfiguration.RawName.Should().Be("some-topic/{0}");
+        endpointConfiguration.EndpointResolver.ShouldBeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.RawName.ShouldBe("some-topic/{0}");
         MqttProducerEndpoint configuration = (MqttProducerEndpoint)endpointConfiguration.EndpointResolver.GetEndpoint(_envelope);
-        configuration.Topic.Should().Be("some-topic/123");
+        configuration.Topic.ShouldBe("some-topic/123");
     }
 
     [Fact]
@@ -84,8 +84,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        endpointConfiguration.EndpointResolver.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
+        endpointConfiguration.EndpointResolver.ShouldBeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
+        endpointConfiguration.RawName.ShouldStartWith("dynamic-TestEndpointResolver-");
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").Retain();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Retain.Should().BeTrue();
+        configuration.Retain.ShouldBeTrue();
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").WithMessageExpiration(TimeSpan.FromMinutes(42));
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageExpiryInterval.Should().Be(42 * 60);
+        configuration.MessageExpiryInterval.ShouldBe(42U * 60U);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").IgnoreNoMatchingSubscribersError();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.IgnoreNoMatchingSubscribersError.Should().BeTrue();
+        configuration.IgnoreNoMatchingSubscribersError.ShouldBeTrue();
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").ThrowNoMatchingSubscribersError();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.IgnoreNoMatchingSubscribersError.Should().BeFalse();
+        configuration.IgnoreNoMatchingSubscribersError.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]

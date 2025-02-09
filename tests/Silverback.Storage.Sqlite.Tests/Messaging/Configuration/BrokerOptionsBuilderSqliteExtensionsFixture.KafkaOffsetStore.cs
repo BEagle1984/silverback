@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -30,7 +30,7 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         IKafkaOffsetStore store = factory.GetStore(new SqliteKafkaOffsetStoreSettings("conn"), serviceProvider);
 
-        store.Should().BeOfType<SqliteKafkaOffsetStore>();
+        store.ShouldBeOfType<SqliteKafkaOffsetStore>();
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
         IKafkaOffsetStore store1 = factory.GetStore(new KafkaOffsetStoreSettings1(), serviceProvider);
         IKafkaOffsetStore store2 = factory.GetStore(new KafkaOffsetStoreSettings2(), serviceProvider);
 
-        store1.Should().BeOfType<SqliteKafkaOffsetStore>();
-        store2.Should().BeOfType<SqliteKafkaOffsetStore>();
+        store1.ShouldBeOfType<SqliteKafkaOffsetStore>();
+        store2.ShouldBeOfType<SqliteKafkaOffsetStore>();
     }
 
     private record KafkaOffsetStoreSettings1 : KafkaOffsetStoreSettings;

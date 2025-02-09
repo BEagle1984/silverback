@@ -4,8 +4,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -56,11 +56,11 @@ public partial class ConsumerEndpointFixture
 
         MessageHeaderCollection headers = Helper.Spy.InboundEnvelopes.Single().Headers;
 
-        headers.Should().ContainEquivalentOf(new MessageHeader("x-content", "Hello E2E!"));
-        headers.Should().ContainEquivalentOf(new MessageHeader("x-static", "42"));
-        headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "Hello header!"));
-        headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", "False"));
-        headers.Select(header => header.Name).Should().NotContain("x-content-nope");
+        headers.ShouldContain(new MessageHeader("x-content", "Hello E2E!"));
+        headers.ShouldContain(new MessageHeader("x-static", "42"));
+        headers.ShouldContain(new MessageHeader("x-custom-header", "Hello header!"));
+        headers.ShouldContain(new MessageHeader("x-custom-header2", "False"));
+        headers.Select(header => header.Name).ShouldNotContain("x-content-nope");
     }
 
     [Fact]
@@ -89,13 +89,10 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes[0].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "100"));
-        Helper.Spy.InboundEnvelopes[1].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "200"));
-        Helper.Spy.InboundEnvelopes[2].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "300"));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "100"));
+        Helper.Spy.InboundEnvelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "200"));
+        Helper.Spy.InboundEnvelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "300"));
     }
 
     [Fact]
@@ -121,9 +118,9 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Single().Headers.Should().ContainSingle(header => header.Name == KafkaMessageHeaders.Timestamp);
+        Helper.Spy.InboundEnvelopes.Single().Headers.ShouldContain(header => header.Name == KafkaMessageHeaders.Timestamp);
         DateTime timestamp = Helper.Spy.InboundEnvelopes.Single().Headers.GetValueOrDefault<DateTime>(KafkaMessageHeaders.Timestamp);
-        timestamp.Should().BeBefore(DateTime.Now);
-        timestamp.Should().BeAfter(DateTime.Now.AddSeconds(-1));
+        timestamp.ShouldBeLessThan(DateTime.Now);
+        timestamp.ShouldBeGreaterThan(DateTime.Now.AddSeconds(-1));
     }
 }

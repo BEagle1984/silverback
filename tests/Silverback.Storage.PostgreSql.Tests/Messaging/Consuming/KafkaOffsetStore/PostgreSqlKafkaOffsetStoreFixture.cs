@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -54,13 +54,13 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
 
         IReadOnlyCollection<KafkaOffset> offsets = store.GetStoredOffsets("group1");
 
-        offsets.Should().HaveCount(2);
-        offsets.Should().BeEquivalentTo(
+        offsets.Count.ShouldBe(2);
+        offsets.ShouldBe(
             [
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
             ],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
         await store.StoreOffsetsAsync("group1", offsets);
 
         IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets("group1");
-        storedOffsets.Should().HaveCount(2);
-        storedOffsets.Should().BeEquivalentTo(offsets, options => options.WithStrictOrdering());
+        storedOffsets.Count.ShouldBe(2);
+        storedOffsets.ShouldBe(offsets);
     }
 }

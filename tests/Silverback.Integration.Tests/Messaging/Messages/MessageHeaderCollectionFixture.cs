@@ -3,8 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -23,7 +22,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection[1].Should().BeEquivalentTo(new MessageHeader("two", "2"));
+        collection[1].ShouldBe(new MessageHeader("two", "2"));
     }
 
     [Fact]
@@ -38,7 +37,7 @@ public class MessageHeaderCollectionFixture
 
         Action act = () => collection[4] = new MessageHeader("four", "4");
 
-        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -53,7 +52,7 @@ public class MessageHeaderCollectionFixture
 
         collection[1] = new MessageHeader("two!", "2!");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -72,7 +71,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection["two"].Should().BeEquivalentTo("2");
+        collection["two"].ShouldBe("2");
     }
 
     [Fact]
@@ -87,7 +86,7 @@ public class MessageHeaderCollectionFixture
 
         Func<string?> act = () => collection["four"];
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -102,7 +101,7 @@ public class MessageHeaderCollectionFixture
 
         collection["four"] = "4";
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -124,7 +123,7 @@ public class MessageHeaderCollectionFixture
 
         collection["two"] = "2!";
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -142,7 +141,7 @@ public class MessageHeaderCollectionFixture
         collection.Add("two", 2);
         collection.Add("three", 3);
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -160,7 +159,7 @@ public class MessageHeaderCollectionFixture
         collection.Add("two", "2");
         collection.Add("three", "3");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -179,7 +178,7 @@ public class MessageHeaderCollectionFixture
             new MessageHeader("three", "3")
         ];
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -193,9 +192,9 @@ public class MessageHeaderCollectionFixture
     {
         MessageHeaderCollection collection = [];
 
-        collection.Add("one", 23.June(2023).At(02, 42, 42));
+        collection.Add("one", new DateTime(2023, 6, 23, 2, 42, 42));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "2023-06-23T02:42:42.0000000")
@@ -209,7 +208,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddRange(new MessageHeaderCollection { { "one", "1" }, { "two", "2" }, { "three", "3" } });
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -229,8 +228,8 @@ public class MessageHeaderCollectionFixture
 
         int affected = collection.Replace("one", 12);
 
-        affected.Should().Be(1);
-        collection.Should().BeEquivalentTo(
+        affected.ShouldBe(1);
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "12"),
@@ -249,8 +248,8 @@ public class MessageHeaderCollectionFixture
 
         int affected = collection.Replace("one", "1(2)");
 
-        affected.Should().Be(1);
-        collection.Should().BeEquivalentTo(
+        affected.ShouldBe(1);
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1(2)"),
@@ -269,8 +268,8 @@ public class MessageHeaderCollectionFixture
 
         int affected = collection.Replace("three", "3");
 
-        affected.Should().Be(0);
-        collection.Should().BeEquivalentTo(
+        affected.ShouldBe(0);
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -283,12 +282,12 @@ public class MessageHeaderCollectionFixture
     {
         MessageHeaderCollection collection = new()
         {
-            { "one", 01.January(2023) }
+            { "one", new DateTime(2023, 1, 1) }
         };
 
-        collection.Replace("one", 23.June(2023).At(02, 42, 43));
+        collection.Replace("one", new DateTime(2023, 6, 23, 2, 42, 43));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "2023-06-23T02:42:43.0000000")
@@ -306,7 +305,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddOrReplace("one", 12);
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "12"),
@@ -325,7 +324,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddOrReplace("one", "1(2)");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1(2)"),
@@ -344,7 +343,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddOrReplace("three", 3);
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -364,7 +363,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddOrReplace("three", "3");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -378,12 +377,12 @@ public class MessageHeaderCollectionFixture
     {
         MessageHeaderCollection collection = new()
         {
-            { "one", 01.January(2023) }
+            { "one", new DateTime(2023, 1, 1) }
         };
 
-        collection.AddOrReplace("one", 23.June(2023).At(02, 42, 43));
+        collection.AddOrReplace("one", new DateTime(2023, 6, 23, 2, 42, 43));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "2023-06-23T02:42:43.0000000")
@@ -401,7 +400,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddIfNotExists("one", "1(2)");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -420,7 +419,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddIfNotExists("three", 3);
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -440,7 +439,7 @@ public class MessageHeaderCollectionFixture
 
         collection.AddIfNotExists("three", "3");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -454,9 +453,9 @@ public class MessageHeaderCollectionFixture
     {
         MessageHeaderCollection collection = [];
 
-        collection.AddIfNotExists("one", 23.June(2023).At(02, 42, 43));
+        collection.AddIfNotExists("one", new DateTime(2023, 6, 23, 2, 42, 43));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "2023-06-23T02:42:43.0000000")
@@ -475,7 +474,7 @@ public class MessageHeaderCollectionFixture
 
         collection.Remove("two");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -495,7 +494,7 @@ public class MessageHeaderCollectionFixture
 
         collection.Remove("four");
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -516,7 +515,7 @@ public class MessageHeaderCollectionFixture
 
         collection.Remove(new MessageHeader("two", "2"));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -536,7 +535,7 @@ public class MessageHeaderCollectionFixture
 
         collection.Remove(new MessageHeader("four", "4"));
 
-        collection.Should().BeEquivalentTo(
+        collection.ShouldBe(
             new[]
             {
                 new MessageHeader("one", "1"),
@@ -555,7 +554,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.Contains("one").Should().BeTrue();
+        collection.Contains("one").ShouldBeTrue();
     }
 
     [Fact]
@@ -568,7 +567,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.Contains("four").Should().BeFalse();
+        collection.Contains("four").ShouldBeFalse();
     }
 
     [Fact]
@@ -583,8 +582,8 @@ public class MessageHeaderCollectionFixture
 
         bool result = collection.TryGetValue("two", out string? value);
 
-        result.Should().BeTrue();
-        value.Should().BeEquivalentTo("2");
+        result.ShouldBeTrue();
+        value.ShouldBe("2");
     }
 
     [Fact]
@@ -599,8 +598,8 @@ public class MessageHeaderCollectionFixture
 
         bool result = collection.TryGetValue("two", out string? value);
 
-        result.Should().BeTrue();
-        value.Should().BeNull();
+        result.ShouldBeTrue();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -615,8 +614,8 @@ public class MessageHeaderCollectionFixture
 
         bool result = collection.TryGetValue("four", out string? value);
 
-        result.Should().BeFalse();
-        value.Should().BeNull();
+        result.ShouldBeFalse();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -629,7 +628,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValue("two").Should().BeEquivalentTo("2");
+        collection.GetValue("two").ShouldBe("2");
     }
 
     [Fact]
@@ -642,7 +641,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValue("four").Should().BeEquivalentTo(null);
+        collection.GetValue("four").ShouldBeNull();
     }
 
     [Fact]
@@ -657,7 +656,7 @@ public class MessageHeaderCollectionFixture
 
         int? result = collection.GetValue<int>("two");
 
-        result.Should().Be(2);
+        result.ShouldBe(2);
     }
 
     [Fact]
@@ -672,7 +671,7 @@ public class MessageHeaderCollectionFixture
 
         int? result = (int?)collection.GetValue("two", typeof(int));
 
-        result.Should().Be(2);
+        result.ShouldBe(2);
     }
 
     [Fact]
@@ -687,7 +686,7 @@ public class MessageHeaderCollectionFixture
 
         int? result = collection.GetValue<int>("four");
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -702,7 +701,7 @@ public class MessageHeaderCollectionFixture
 
         int? result = (int?)collection.GetValue("four", typeof(int));
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -715,7 +714,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault("two", typeof(int)).Should().Be(2);
+        collection.GetValueOrDefault("two", typeof(int)).ShouldBe(2);
     }
 
     [Fact]
@@ -728,7 +727,7 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault("four", typeof(int)).Should().Be(0);
+        collection.GetValueOrDefault("four", typeof(int)).ShouldBe(0);
     }
 
     [Fact]
@@ -743,7 +742,7 @@ public class MessageHeaderCollectionFixture
 
         int result = collection.GetValueOrDefault<int>("two");
 
-        result.Should().Be(2);
+        result.ShouldBe(2);
     }
 
     [Fact]
@@ -758,8 +757,8 @@ public class MessageHeaderCollectionFixture
 
         object? result = collection.GetValueOrDefault("two", typeof(int));
 
-        result.Should().BeOfType(typeof(int));
-        result.Should().Be(2);
+        result.ShouldBeOfType(typeof(int));
+        result.ShouldBe(2);
     }
 
     [Fact]
@@ -774,7 +773,7 @@ public class MessageHeaderCollectionFixture
 
         int result = collection.GetValueOrDefault<int>("four");
 
-        result.Should().Be(0);
+        result.ShouldBe(0);
     }
 
     [Fact]
@@ -789,7 +788,7 @@ public class MessageHeaderCollectionFixture
 
         object? result = collection.GetValueOrDefault("four", typeof(int));
 
-        result.Should().BeOfType(typeof(int));
-        result.Should().Be(0);
+        result.ShouldBeOfType(typeof(int));
+        result.ShouldBe(0);
     }
 }

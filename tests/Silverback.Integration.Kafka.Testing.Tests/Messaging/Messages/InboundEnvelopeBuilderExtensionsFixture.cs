@@ -2,8 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types.Domain;
@@ -22,7 +21,7 @@ public class InboundEnvelopeBuilderExtensionsFixture
         builder.WithOffset(offset);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.BrokerMessageIdentifier.Should().BeSameAs(offset);
+        envelope.BrokerMessageIdentifier.ShouldBeSameAs(offset);
     }
 
     [Fact]
@@ -33,8 +32,7 @@ public class InboundEnvelopeBuilderExtensionsFixture
         builder.WithOffset("topic", 0, 42);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.BrokerMessageIdentifier.Should().BeOfType<KafkaOffset>()
-            .Which.Should().BeEquivalentTo(new KafkaOffset("topic", 0, 42));
+        envelope.BrokerMessageIdentifier.ShouldBe(new KafkaOffset("topic", 0, 42));
     }
 
     [Fact]
@@ -46,18 +44,18 @@ public class InboundEnvelopeBuilderExtensionsFixture
         builder.WithKafkaKey(key);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.GetKafkaKey().Should().Be(key);
+        envelope.GetKafkaKey().ShouldBe(key);
     }
 
     [Fact]
     public void WithKafkaTimestamp_ShouldSetKafkaTimestamp()
     {
         InboundEnvelopeBuilder<TestEventOne> builder = new();
-        DateTime timestamp = 23.June(1984).At(02, 42, 42);
+        DateTime timestamp = new(1984, 6, 23, 2, 42, 42);
 
         builder.WithKafkaTimestamp(timestamp);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.GetKafkaTimestamp().Should().Be(timestamp);
+        envelope.GetKafkaTimestamp().ShouldBe(timestamp);
     }
 }

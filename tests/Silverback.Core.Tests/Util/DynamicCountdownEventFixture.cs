@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class DynamicCountdownEventFixture
         countdownEvent.AddCount();
         countdownEvent.AddCount(3);
 
-        countdownEvent.CurrentCount.Should().Be(4);
+        countdownEvent.CurrentCount.ShouldBe(4);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class DynamicCountdownEventFixture
         countdownEvent.AddCount(3);
         countdownEvent.Reset();
 
-        countdownEvent.CurrentCount.Should().Be(0);
+        countdownEvent.CurrentCount.ShouldBe(0);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class DynamicCountdownEventFixture
         countdownEvent.AddCount(3);
         countdownEvent.Reset(5);
 
-        countdownEvent.CurrentCount.Should().Be(5);
+        countdownEvent.CurrentCount.ShouldBe(5);
     }
 
     [Theory]
@@ -56,7 +56,7 @@ public class DynamicCountdownEventFixture
 
         Action act = () => countdownEvent.AddCount(count);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class DynamicCountdownEventFixture
         countdownEvent.Signal(2);
         countdownEvent.Signal();
 
-        countdownEvent.CurrentCount.Should().Be(2);
+        countdownEvent.CurrentCount.ShouldBe(2);
     }
 
     [Theory]
@@ -81,7 +81,7 @@ public class DynamicCountdownEventFixture
 
         Action act = () => countdownEvent.Signal(count);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -93,15 +93,15 @@ public class DynamicCountdownEventFixture
 
         Task waitTask = countdownEvent.WaitAsync();
         await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(50));
-        waitTask.IsCompleted.Should().BeFalse();
+        waitTask.IsCompleted.ShouldBeFalse();
 
         countdownEvent.Signal();
         await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(50));
-        waitTask.IsCompleted.Should().BeFalse();
+        waitTask.IsCompleted.ShouldBeFalse();
 
         countdownEvent.Signal();
         await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(200));
-        waitTask.IsCompleted.Should().BeTrue();
+        waitTask.IsCompleted.ShouldBeTrue();
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class DynamicCountdownEventFixture
         Task waitTask = countdownEvent.WaitAsync(new CancellationTokenSource(10).Token);
 
         await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted);
-        waitTask.IsCompleted.Should().BeTrue();
-        waitTask.Status.Should().Be(TaskStatus.Canceled);
+        waitTask.IsCompleted.ShouldBeTrue();
+        waitTask.Status.ShouldBe(TaskStatus.Canceled);
     }
 }

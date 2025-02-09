@@ -2,12 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
@@ -54,9 +53,10 @@ public class MessageValidationFixture : KafkaFixture
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 
-        await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
+        Exception exception = await act.ShouldThrowAsync<MessageValidationException>();
+        exception.Message.ShouldBe(expectedMessage);
 
-        Host.ServiceProvider.GetRequiredService<IInMemoryTopicCollection>().Should().BeEmpty(); // the topic is created when the first message is produced
+        Host.ServiceProvider.GetRequiredService<IInMemoryTopicCollection>().ShouldBeEmpty(); // the topic is created when the first message is produced
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public class MessageValidationFixture : KafkaFixture
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 
-        await act.Should().NotThrowAsync<ValidationException>();
-        DefaultTopic.MessagesCount.Should().Be(1);
+        await act.ShouldNotThrowAsync();
+        DefaultTopic.MessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -109,8 +109,8 @@ public class MessageValidationFixture : KafkaFixture
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 
-        await act.Should().NotThrowAsync<ValidationException>();
-        DefaultTopic.MessagesCount.Should().Be(1);
+        await act.ShouldNotThrowAsync();
+        DefaultTopic.MessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -145,14 +145,14 @@ public class MessageValidationFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
-        received.Should().BeFalse();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        received.ShouldBeFalse();
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
     [Fact]
@@ -187,14 +187,14 @@ public class MessageValidationFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
-        received.Should().BeTrue();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+        received.ShouldBeTrue();
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
-        consumer.Client.Status.Should().Be(ClientStatus.Initialized);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
     }
 
     [Fact]
@@ -229,13 +229,13 @@ public class MessageValidationFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
-        received.Should().BeTrue();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
+        received.ShouldBeTrue();
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
-        consumer.Client.Status.Should().Be(ClientStatus.Initialized);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+        consumer.Client.Status.ShouldBe(ClientStatus.Initialized);
     }
 }

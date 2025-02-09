@@ -5,9 +5,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -68,7 +68,7 @@ public class ErrorPolicyChainFixture
                     new TestOffset())),
             new InvalidOperationException("test"));
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Theory]
@@ -103,7 +103,7 @@ public class ErrorPolicyChainFixture
                     new TestOffset())),
             new InvalidOperationException("test"));
 
-        testPolicy.Applied.Should().Be(failedAttempts > 3);
+        testPolicy.Applied.ShouldBe(failedAttempts > 3);
     }
 
     [Theory]
@@ -141,7 +141,8 @@ public class ErrorPolicyChainFixture
 
         for (int i = 0; i < policies.Length; i++)
         {
-            policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
+            TestErrorPolicy testErrorPolicy = policies[i].ShouldBeOfType<TestErrorPolicy>();
+            testErrorPolicy.Applied.ShouldBe(i == expectedAppliedPolicy);
         }
     }
 
@@ -173,6 +174,7 @@ public class ErrorPolicyChainFixture
                     new TestOffset())),
             new InvalidOperationException("test"));
 
-        policies[1].As<TestErrorPolicy>().Applied.Should().BeTrue();
+        TestErrorPolicy testErrorPolicy = policies[1].ShouldBeOfType<TestErrorPolicy>();
+        testErrorPolicy.Applied.ShouldBeTrue();
     }
 }

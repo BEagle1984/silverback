@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
@@ -36,8 +36,8 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
         IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
         IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
-        reader.Should().BeOfType<SqliteOutboxReader>();
-        writer.Should().BeOfType<SqliteOutboxWriter>();
+        reader.ShouldBeOfType<SqliteOutboxReader>();
+        writer.ShouldBeOfType<SqliteOutboxWriter>();
     }
 
     [Fact]
@@ -62,10 +62,10 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
         IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1(), serviceProvider);
         IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2(), serviceProvider);
 
-        reader1.Should().BeOfType<SqliteOutboxReader>();
-        reader2.Should().BeOfType<SqliteOutboxReader>();
-        writer1.Should().BeOfType<SqliteOutboxWriter>();
-        writer2.Should().BeOfType<SqliteOutboxWriter>();
+        reader1.ShouldBeOfType<SqliteOutboxReader>();
+        reader2.ShouldBeOfType<SqliteOutboxReader>();
+        writer1.ShouldBeOfType<SqliteOutboxWriter>();
+        writer2.ShouldBeOfType<SqliteOutboxWriter>();
     }
 
     private record OutboxSettings1 : OutboxSettings

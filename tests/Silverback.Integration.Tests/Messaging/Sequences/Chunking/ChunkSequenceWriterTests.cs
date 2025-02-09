@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
@@ -38,7 +38,7 @@ public class ChunkSequenceWriterTests
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Theory]
@@ -64,7 +64,7 @@ public class ChunkSequenceWriterTests
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
-        result.Should().Be(alwaysAddHeaders);
+        result.ShouldBe(alwaysAddHeaders);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ChunkSequenceWriterTests
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -109,20 +109,20 @@ public class ChunkSequenceWriterTests
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
-        envelopes.Should().HaveCount(4);
-        envelopes.ForEach(envelope => envelope.EndpointConfiguration.Should().BeSameAs(sourceEnvelope.EndpointConfiguration));
-        envelopes.ForEach(envelope => envelope.Headers.Should().Contain(sourceEnvelope.Headers));
-        envelopes[0].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[..3]);
-        envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
-        envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-        envelopes[1].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[3..6]);
-        envelopes[1].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
-        envelopes[1].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-        envelopes[2].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[6..9]);
-        envelopes[2].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
-        envelopes[2].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-        envelopes[3].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[9..10]);
-        envelopes[3].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
-        envelopes[3].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes.Count.ShouldBe(4);
+        envelopes.ForEach(envelope => envelope.EndpointConfiguration.ShouldBeSameAs(sourceEnvelope.EndpointConfiguration));
+        sourceEnvelope.Headers.ForEach(sourceHeader => envelopes.ForEach(envelope => envelope.Headers.ShouldContain(sourceHeader)));
+        envelopes[0].RawMessage.ReadAll().ShouldBe(rawMessage[..3]);
+        envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
+        envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[1].RawMessage.ReadAll().ShouldBe(rawMessage[3..6]);
+        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
+        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[2].RawMessage.ReadAll().ShouldBe(rawMessage[6..9]);
+        envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
+        envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[3].RawMessage.ReadAll().ShouldBe(rawMessage[9..10]);
+        envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
+        envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
     }
 }

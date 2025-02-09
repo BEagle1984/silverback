@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -24,7 +24,7 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.MessageType.Should().Be(typeof(TestEventOne));
+        envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.MessageType.Should().Be(typeof(object));
+        envelope.MessageType.ShouldBe(typeof(object));
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.MessageType.Should().Be(typeof(TestEventOne));
+        envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.IsTombstone.Should().BeTrue();
+        envelope.IsTombstone.ShouldBeTrue();
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.IsTombstone.Should().BeTrue();
+        envelope.IsTombstone.ShouldBeTrue();
     }
 
     [Fact]
@@ -93,6 +93,6 @@ public class InboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.IsTombstone.Should().BeFalse();
+        envelope.IsTombstone.ShouldBeFalse();
     }
 }

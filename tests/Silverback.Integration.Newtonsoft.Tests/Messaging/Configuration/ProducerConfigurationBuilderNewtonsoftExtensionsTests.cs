@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -20,7 +20,7 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
 
         TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft().Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
+        configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
     }
 
     [Fact]
@@ -35,10 +35,10 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
                     settings.MaxDepth = 42;
                 })).Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
-        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = configuration.Serializer.As<NewtonsoftJsonMessageSerializer>();
+        configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
+        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
         newtonsoftJsonMessageSerializer.Settings.ShouldNotBeNull();
-        newtonsoftJsonMessageSerializer.Settings.MaxDepth.Should().Be(42);
+        newtonsoftJsonMessageSerializer.Settings.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
                     .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
-        configuration.Serializer.As<NewtonsoftJsonMessageSerializer>().Encoding.Should().Be(MessageEncoding.Unicode);
+        configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
+        configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().Encoding.ShouldBe(MessageEncoding.Unicode);
     }
 }

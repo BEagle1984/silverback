@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
@@ -33,7 +33,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestCommandTwo());
         await publisher.PublishAsync(new TestCommandTwo());
 
-        activityListener.Activities.Should().Contain(activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
+        activityListener.Activities.ShouldContain(activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
     }
 
     private sealed class TestActivityListener : IDisposable

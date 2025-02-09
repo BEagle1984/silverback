@@ -8,9 +8,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -71,9 +71,9 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
-        received.Should().Be(5);
-        Helper.ConsumerGroups.Should().HaveCount(1);
-        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+        received.ShouldBe(5);
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
 
         await consumer.Client.DisconnectAsync();
 
@@ -86,7 +86,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => received >= 8);
-        received.Should().Be(8);
+        received.ShouldBe(8);
     }
 
     [Fact]
@@ -127,9 +127,9 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
-        received.Should().Be(5);
-        Helper.ConsumerGroups.Should().HaveCount(1);
-        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+        received.ShouldBe(5);
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
 
         await consumer.Client.DisconnectAsync();
 
@@ -142,7 +142,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => received >= 8);
-        received.Should().Be(8);
+        received.ShouldBe(8);
     }
 
     [Fact]
@@ -207,9 +207,9 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
-        received.Should().Be(5);
-        Helper.ConsumerGroups.Should().HaveCount(1);
-        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+        received.ShouldBe(5);
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
 
         await consumer.Client.DisconnectAsync();
 
@@ -218,7 +218,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
         await consumer.Client.ConnectAsync();
 
         await AsyncTestingUtil.WaitAsync(() => received >= 10);
-        received.Should().Be(10);
+        received.ShouldBe(10);
 
         await consumer.Client.DisconnectAsync();
 
@@ -231,7 +231,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => received >= 13);
-        received.Should().Be(13);
+        received.ShouldBe(13);
     }
 
     [Fact]
@@ -274,9 +274,9 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
-        received.Should().Be(5);
-        Helper.ConsumerGroups.Should().HaveCount(1);
-        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+        received.ShouldBe(5);
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
 
         await consumer.Client.DisconnectAsync();
 
@@ -289,6 +289,6 @@ public class OffsetStoreSqliteFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => received >= 8);
-        received.Should().Be(8);
+        received.ShouldBe(8);
     }
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Xunit;
@@ -17,8 +17,8 @@ public class JsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.Build();
 
-        serializer.Should().BeOfType<JsonMessageSerializer>();
-        serializer.As<JsonMessageSerializer>().MustSetTypeHeader.Should().BeTrue();
+        JsonMessageSerializer jsonSerializer = serializer.ShouldBeOfType<JsonMessageSerializer>();
+        jsonSerializer.MustSetTypeHeader.ShouldBeTrue();
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class JsonMessageSerializerBuilderFixture
             .Build();
 
         serializer.Options.ShouldNotBeNull();
-        serializer.Options.MaxDepth.Should().Be(42);
+        serializer.Options.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -45,7 +45,8 @@ public class JsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.SetTypeHeader().Build();
 
-        serializer.As<JsonMessageSerializer>().MustSetTypeHeader.Should().BeTrue();
+        JsonMessageSerializer jsonSerializer = serializer.ShouldBeOfType<JsonMessageSerializer>();
+        jsonSerializer.MustSetTypeHeader.ShouldBeTrue();
     }
 
     [Fact]
@@ -55,6 +56,7 @@ public class JsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.DisableTypeHeader().Build();
 
-        serializer.As<JsonMessageSerializer>().MustSetTypeHeader.Should().BeFalse();
+        JsonMessageSerializer jsonSerializer = serializer.ShouldBeOfType<JsonMessageSerializer>();
+        jsonSerializer.MustSetTypeHeader.ShouldBeFalse();
     }
 }

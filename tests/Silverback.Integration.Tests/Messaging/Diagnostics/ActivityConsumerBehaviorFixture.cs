@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -51,10 +51,9 @@ public class ActivityConsumerBehaviorFixture
                     Substitute.For<IServiceProvider>()),
                 (_, _) =>
                 {
-                    Activity.Current.Should().NotBeNull();
-                    Activity.Current!.ParentId.Should()
-                        .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-                    Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
+                    Activity.Current.ShouldNotBeNull();
+                    Activity.Current.ParentId.ShouldBe("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                    Activity.Current.Id.ShouldStartWith("00-0af7651916cd43dd8448eb211c80319c");
 
                     entered = true;
 
@@ -62,7 +61,7 @@ public class ActivityConsumerBehaviorFixture
                 },
                 CancellationToken.None);
 
-        entered.Should().BeTrue();
+        entered.ShouldBeTrue();
     }
 
     [Fact]
@@ -92,8 +91,8 @@ public class ActivityConsumerBehaviorFixture
                     Substitute.For<IServiceProvider>()),
                 (_, _) =>
                 {
-                    Activity.Current.Should().NotBeNull();
-                    Activity.Current!.Id.Should().NotBeNullOrEmpty();
+                    Activity.Current.ShouldNotBeNull();
+                    Activity.Current.Id.ShouldNotBeNullOrEmpty();
 
                     entered = true;
 
@@ -101,6 +100,6 @@ public class ActivityConsumerBehaviorFixture
                 },
                 CancellationToken.None);
 
-        entered.Should().BeTrue();
+        entered.ShouldBeTrue();
     }
 }

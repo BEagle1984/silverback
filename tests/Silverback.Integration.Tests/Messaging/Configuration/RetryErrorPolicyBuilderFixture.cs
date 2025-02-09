@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -21,7 +21,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.ApplyTo(null!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.ExcludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.Exclude(null!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.ExcludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class RetryErrorPolicyBuilderFixture
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.ApplyRule.ShouldNotBeNull();
-        policy.ApplyRule.Invoke(null!, null!).Should().BeTrue();
+        policy.ApplyRule.Invoke(null!, null!).ShouldBeTrue();
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class RetryErrorPolicyBuilderFixture
         Action act1 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, bool>)null!);
         Action act2 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, Exception, bool>)null!);
 
-        act1.Should().Throw<ArgumentNullException>();
-        act2.Should().Throw<ArgumentNullException>();
+        act1.ShouldThrow<ArgumentNullException>();
+        act2.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class RetryErrorPolicyBuilderFixture
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.ApplyRule.ShouldNotBeNull();
-        policy.ApplyRule.Invoke(null!, null!).Should().BeTrue();
+        policy.ApplyRule.Invoke(null!, null!).ShouldBeTrue();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class RetryErrorPolicyBuilderFixture
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();
-        policy.MessageToPublishFactory.Invoke(null!, null!).Should().BeOfType<TestEventOne>();
+        policy.MessageToPublishFactory.Invoke(null!, null!).ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class RetryErrorPolicyBuilderFixture
         Action act1 = () => builder.Publish((Func<IRawInboundEnvelope, object?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
 
-        act1.Should().Throw<ArgumentNullException>();
-        act2.Should().Throw<ArgumentNullException>();
+        act1.ShouldThrow<ArgumentNullException>();
+        act2.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class RetryErrorPolicyBuilderFixture
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();
-        policy.MessageToPublishFactory.Invoke(null!, null!).Should().BeOfType<TestEventOne>();
+        policy.MessageToPublishFactory.Invoke(null!, null!).ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithInterval(TimeSpan.FromMinutes(42));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
+        policy.InitialDelay.ShouldBe(TimeSpan.FromMinutes(42));
     }
 
     [Theory]
@@ -169,7 +169,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithInterval(TimeSpan.FromMinutes(value));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -180,10 +180,10 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithIncrementalDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
-        policy.DelayIncrement.Should().Be(TimeSpan.FromDays(42));
-        policy.DelayFactor.Should().Be(1.0);
-        policy.MaxDelay.Should().BeNull();
+        policy.InitialDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.ShouldBe(TimeSpan.FromDays(42));
+        policy.DelayFactor.ShouldBe(1.0);
+        policy.MaxDelay.ShouldBeNull();
     }
 
     [Fact]
@@ -194,10 +194,10 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithIncrementalDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42), TimeSpan.FromHours(42));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
-        policy.DelayIncrement.Should().Be(TimeSpan.FromDays(42));
-        policy.DelayFactor.Should().Be(1.0);
-        policy.MaxDelay.Should().Be(TimeSpan.FromHours(42));
+        policy.InitialDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.ShouldBe(TimeSpan.FromDays(42));
+        policy.DelayFactor.ShouldBe(1.0);
+        policy.MaxDelay.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -209,7 +209,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithIncrementalDelay(TimeSpan.FromMinutes(value), TimeSpan.MaxValue);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -221,7 +221,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithIncrementalDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(value));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -233,7 +233,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithIncrementalDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(42), TimeSpan.FromMinutes(value));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -244,10 +244,10 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithExponentialDelay(TimeSpan.FromMinutes(42), 2.0);
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
-        policy.DelayIncrement.Should().Be(TimeSpan.Zero);
-        policy.DelayFactor.Should().Be(2.0);
-        policy.MaxDelay.Should().BeNull();
+        policy.InitialDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.ShouldBe(TimeSpan.Zero);
+        policy.DelayFactor.ShouldBe(2.0);
+        policy.MaxDelay.ShouldBeNull();
     }
 
     [Fact]
@@ -258,10 +258,10 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithExponentialDelay(TimeSpan.FromMinutes(42), 2.0, TimeSpan.FromHours(42));
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
-        policy.DelayIncrement.Should().Be(TimeSpan.Zero);
-        policy.DelayFactor.Should().Be(2.0);
-        policy.MaxDelay.Should().Be(TimeSpan.FromHours(42));
+        policy.InitialDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        policy.DelayIncrement.ShouldBe(TimeSpan.Zero);
+        policy.DelayFactor.ShouldBe(2.0);
+        policy.MaxDelay.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -273,7 +273,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithExponentialDelay(TimeSpan.FromMinutes(value), 2.0);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -285,7 +285,7 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithExponentialDelay(TimeSpan.FromMinutes(42), value);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -296,7 +296,7 @@ public class RetryErrorPolicyBuilderFixture
         builder.WithMaxRetries(42);
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
-        policy.MaxFailedAttempts.Should().Be(42);
+        policy.MaxFailedAttempts.ShouldBe(42);
     }
 
     [Theory]
@@ -308,6 +308,6 @@ public class RetryErrorPolicyBuilderFixture
 
         Action act = () => builder.WithMaxRetries(value);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 }

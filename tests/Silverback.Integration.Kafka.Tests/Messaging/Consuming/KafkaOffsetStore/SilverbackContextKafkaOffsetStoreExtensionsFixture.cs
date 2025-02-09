@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class SilverbackContextKafkaOffsetStoreExtensionsFixture
 
         context.SetKafkaOffsetStoreScope(scope);
 
-        context.GetKafkaOffsetStoreScope().Should().Be(scope);
+        context.GetKafkaOffsetStoreScope().ShouldBe(scope);
     }
 
     [Fact]
@@ -43,6 +43,6 @@ public class SilverbackContextKafkaOffsetStoreExtensionsFixture
         context.SetKafkaOffsetStoreScope(scope);
 
         Action act = () => context.SetKafkaOffsetStoreScope(scope);
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 }

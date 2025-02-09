@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class IncrementalDelayHelperFixture
             42.0,
             null);
 
-        delay.Should().Be(initialDelay);
+        delay.ShouldBe(initialDelay);
     }
 
     [Theory]
@@ -41,7 +41,7 @@ public class IncrementalDelayHelperFixture
             1.0,
             null);
 
-        delay.TotalSeconds.Should().Be(expectedDelay);
+        delay.TotalSeconds.ShouldBe(expectedDelay);
     }
 
     [Theory]
@@ -60,7 +60,7 @@ public class IncrementalDelayHelperFixture
             delayFactor,
             null);
 
-        delay.TotalSeconds.Should().Be(expectedDelay);
+        delay.TotalSeconds.ShouldBe(expectedDelay);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class IncrementalDelayHelperFixture
             1.0,
             maxDelay);
 
-        delay.Should().Be(maxDelay);
+        delay.ShouldBe(maxDelay);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class IncrementalDelayHelperFixture
             1.0,
             maxDelay);
 
-        delay.Should().Be(TimeSpan.FromSeconds(142));
+        delay.ShouldBe(TimeSpan.FromSeconds(142));
     }
 
     [Fact]
@@ -114,6 +114,6 @@ public class IncrementalDelayHelperFixture
             1.0,
             maxDelay);
 
-        delay.Should().Be(TimeSpan.FromSeconds(142));
+        delay.ShouldBe(TimeSpan.FromSeconds(142));
     }
 }

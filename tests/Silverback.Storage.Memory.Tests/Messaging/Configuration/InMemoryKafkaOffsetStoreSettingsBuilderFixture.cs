@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
@@ -17,8 +17,7 @@ public class InMemoryKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.Build();
 
-        settings.Should().BeOfType<InMemoryKafkaOffsetStoreSettings>();
-        settings.Should().BeEquivalentTo(new InMemoryKafkaOffsetStoreSettings());
+        settings.ShouldBe(new InMemoryKafkaOffsetStoreSettings());
     }
 
     [Fact]
@@ -28,6 +27,6 @@ public class InMemoryKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.WithName("test-offsetStore").Build();
 
-        settings.As<InMemoryKafkaOffsetStoreSettings>().OffsetStoreName.Should().Be("test-offsetStore");
+        settings.ShouldBeOfType<InMemoryKafkaOffsetStoreSettings>().OffsetStoreName.ShouldBe("test-offsetStore");
     }
 }

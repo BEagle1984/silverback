@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class CheckFixture
 
         object result = Check.NotNull(obj, "param");
 
-        result.Should().BeSameAs(obj);
+        result.ShouldBeSameAs(obj);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class CheckFixture
 
         Action act = () => Check.NotNull(obj, "param");
 
-        act.Should().ThrowExactly<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class CheckFixture
 
         IReadOnlyCollection<object> result = Check.NotEmpty(collection, "param");
 
-        result.Should().BeSameAs(collection);
+        result.ShouldBeSameAs(collection);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class CheckFixture
 
         Action act = () => Check.NotEmpty(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class CheckFixture
 
         Action act = () => Check.NotEmpty(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class CheckFixture
 
         string result = Check.NotNullOrEmpty(str, "param");
 
-        result.Should().BeSameAs(str);
+        result.ShouldBeSameAs(str);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class CheckFixture
 
         Action act = () => Check.NotNullOrEmpty(str, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class CheckFixture
 
         Action act = () => Check.NotNullOrEmpty(str, "param");
 
-        act.Should().ThrowExactly<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class CheckFixture
 
         string? result = Check.NullButNotEmpty(str, "param");
 
-        result.Should().BeSameAs(str);
+        result.ShouldBeSameAs(str);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class CheckFixture
 
         Action act = () => Check.NullButNotEmpty(str, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class CheckFixture
 
         string? result = Check.NullButNotEmpty(str, "param");
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class CheckFixture
 
         IReadOnlyCollection<object> result = Check.HasNoNulls(collection, "param");
 
-        result.Should().BeSameAs(collection);
+        result.ShouldBeSameAs(collection);
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class CheckFixture
 
         Action act = () => Check.HasNoNulls(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class CheckFixture
 
         Action act = () => Check.HasNoNulls(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class CheckFixture
 
         IReadOnlyCollection<string?> result = Check.HasNoEmpties(collection, "param");
 
-        result.Should().BeSameAs(collection);
+        result.ShouldBeSameAs(collection);
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class CheckFixture
 
         Action act = () => Check.HasNoEmpties(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -181,7 +181,7 @@ public class CheckFixture
 
         Action act = () => Check.HasNoEmpties(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class CheckFixture
 
         Action act = () => Check.HasNoEmpties(collection, "param");
 
-        act.Should().ThrowExactly<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Theory]
@@ -204,7 +204,7 @@ public class CheckFixture
     {
         int result = Check.Range(value, "param", min, max);
 
-        result.Should().Be(value);
+        result.ShouldBe(value);
     }
 
     [Theory]
@@ -216,6 +216,6 @@ public class CheckFixture
     {
         Action act = () => Check.Range(value, "param", min, max);
 
-        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 }

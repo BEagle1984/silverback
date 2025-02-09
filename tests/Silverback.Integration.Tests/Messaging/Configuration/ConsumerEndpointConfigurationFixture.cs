@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Types;
 using Xunit;
@@ -18,7 +18,7 @@ public class ConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow<BrokerConfigurationException>();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class ConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class ConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     private static TestConsumerEndpointConfiguration GetValidConfiguration() => new("test");

@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -21,7 +21,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
             .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel<object>())
             .Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
             .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel(typeof(TestEventOne)))
             .Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -70,10 +70,10 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
                     settings.MaxDepth = 42;
                 })).Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
-        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
         newtonsoftJsonMessageDeserializer.Settings.ShouldNotBeNull();
-        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.Should().Be(42);
+        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -86,9 +86,8 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
                     .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
-        configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>().Encoding.Should()
-            .Be(MessageEncoding.Unicode);
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>().Encoding.ShouldBe(MessageEncoding.Unicode);
     }
 
     [Fact]
@@ -105,9 +104,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
                         settings.MaxDepth = 42;
                     })).Build();
 
-        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
-        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
         newtonsoftJsonMessageDeserializer.Settings.ShouldNotBeNull();
-        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.Should().Be(42);
+        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.ShouldBe(42);
     }
 }

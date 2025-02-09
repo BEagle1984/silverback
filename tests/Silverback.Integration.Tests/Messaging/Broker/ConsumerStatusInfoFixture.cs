@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Xunit;
 
@@ -21,12 +21,12 @@ public class ConsumerStatusInfoFixture
             statusInfo.SetStopped();
         }
 
-        statusInfo.History.Should().HaveCount(10);
-        statusInfo.History.First().Status.Should().Be(ConsumerStatus.Started);
+        statusInfo.History.Count.ShouldBe(10);
+        statusInfo.History.First().Status.ShouldBe(ConsumerStatus.Started);
 
         statusInfo.SetConnected();
 
-        statusInfo.History.Should().HaveCount(10);
-        statusInfo.History.First().Status.Should().Be(ConsumerStatus.Stopped);
+        statusInfo.History.Count.ShouldBe(10);
+        statusInfo.History.First().Status.ShouldBe(ConsumerStatus.Stopped);
     }
 }

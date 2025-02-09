@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -29,6 +29,6 @@ public partial class BrokerOptionsBuilderEntityFrameworkExtensionsFixture
             new EntityFrameworkKafkaOffsetStoreSettings(typeof(TestDbContext), GetDbContext),
             serviceProvider);
 
-        store.Should().BeOfType<EntityFrameworkKafkaOffsetStore>();
+        store.ShouldBeOfType<EntityFrameworkKafkaOffsetStore>();
     }
 }

@@ -3,8 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -17,17 +16,17 @@ public class MessageHeaderFixture
     {
         MessageHeader messageHeader = new("key", "value");
 
-        messageHeader.Name.Should().Be("key");
-        messageHeader.Value.Should().Be("value");
+        messageHeader.Name.ShouldBe("key");
+        messageHeader.Value.ShouldBe("value");
     }
 
     [Fact]
     public void Ctor_ShouldConvertDateTimeToStringWithInvariantCulture()
     {
-        DateTime dateTime = 23.June(1984).At(2, 34, 56, 789);
+        DateTime dateTime = new(1984, 6, 23, 2, 34, 56, 789);
         MessageHeader messageHeader = new("key", dateTime);
 
-        messageHeader.Value.Should().Be("1984-06-23T02:34:56.7890000");
+        messageHeader.Value.ShouldBe("1984-06-23T02:34:56.7890000");
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public class MessageHeaderFixture
     {
         Action act = () => new MessageHeader(null!, "value");
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Theory]
@@ -53,7 +52,7 @@ public class MessageHeaderFixture
 
         bool result = headerX.Equals(headerY);
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -70,7 +69,7 @@ public class MessageHeaderFixture
 
         bool result = headerX.Equals((object?)headerY);
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -87,7 +86,7 @@ public class MessageHeaderFixture
 
         bool result = headerX == headerY;
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -104,6 +103,6 @@ public class MessageHeaderFixture
 
         bool result = headerX != headerY;
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 }

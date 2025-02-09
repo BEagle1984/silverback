@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -18,7 +18,7 @@ public partial class TypesCacheFixture
     {
         Type? type = TypesCache.GetType(typeName);
 
-        type.Should().BeNull();
+        type.ShouldBeNull();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public partial class TypesCacheFixture
 
         Type? type = TypesCache.GetType(typeName);
 
-        type.Should().Be(typeof(TestObject));
+        type.ShouldBe(typeof(TestObject));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public partial class TypesCacheFixture
         Type? type = TypesCache.GetType(typeName);
 
         type.ShouldNotBeNull();
-        type.AssemblyQualifiedName.Should().Be(typeof(TestObject).AssemblyQualifiedName);
+        type.AssemblyQualifiedName.ShouldBe(typeof(TestObject).AssemblyQualifiedName);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public partial class TypesCacheFixture
 
         Action act = () => TypesCache.GetType(typeName);
 
-        act.Should().Throw<TypeLoadException>();
+        act.ShouldThrow<TypeLoadException>();
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public partial class TypesCacheFixture
 
         Type? type = TypesCache.GetType(typeName, false);
 
-        type.Should().BeNull();
+        type.ShouldBeNull();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public partial class TypesCacheFixture
 
         Type? type = TypesCache.GetType(typeName);
 
-        type.Should().Be(typeof(TestObject));
+        type.ShouldBe(typeof(TestObject));
     }
 
     [Theory]
@@ -79,8 +79,8 @@ public partial class TypesCacheFixture
     {
         Type? type = TypesCache.GetType(assemblyQualifiedName);
 
-        type.Should().NotBeNull();
-        type.Should().Be(expected);
+        type.ShouldNotBeNull();
+        type.ShouldBe(expected);
     }
 
     private class TestObject;

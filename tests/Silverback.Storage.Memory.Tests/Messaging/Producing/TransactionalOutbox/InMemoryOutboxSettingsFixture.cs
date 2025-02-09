@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -16,7 +16,7 @@ public class InMemoryOutboxSettingsFixture
     {
         InMemoryOutboxSettings settings = new();
 
-        settings.OutboxName.Should().Be("default");
+        settings.OutboxName.ShouldBe("default");
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public class InMemoryOutboxSettingsFixture
     {
         InMemoryOutboxSettings settings = new("my-outbox");
 
-        settings.OutboxName.Should().Be("my-outbox");
+        settings.OutboxName.ShouldBe("my-outbox");
     }
 
     [Fact]
@@ -34,8 +34,7 @@ public class InMemoryOutboxSettingsFixture
 
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
-        lockSettings.Should().BeOfType<InMemoryLockSettings>();
-        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.my-outbox");
+        lockSettings.ShouldBeOfType<InMemoryLockSettings>().LockName.ShouldBe("outbox.my-outbox");
     }
 
     [Fact]
@@ -45,7 +44,7 @@ public class InMemoryOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -57,6 +56,6 @@ public class InMemoryOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 }

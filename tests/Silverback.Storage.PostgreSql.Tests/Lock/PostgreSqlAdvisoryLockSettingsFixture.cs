@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -15,8 +15,8 @@ public class PostgreSqlAdvisoryLockSettingsFixture
     {
         PostgreSqlAdvisoryLockSettings settings = new("my-lock", "connection-string");
 
-        settings.LockName.Should().Be("my-lock");
-        settings.ConnectionString.Should().Be("connection-string");
+        settings.LockName.ShouldBe("my-lock");
+        settings.ConnectionString.ShouldBe("connection-string");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class PostgreSqlAdvisoryLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -39,7 +39,8 @@ public class PostgreSqlAdvisoryLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock name is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock name is required.");
     }
 
     [Theory]
@@ -52,6 +53,7 @@ public class PostgreSqlAdvisoryLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The connection string is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The connection string is required.");
     }
 }

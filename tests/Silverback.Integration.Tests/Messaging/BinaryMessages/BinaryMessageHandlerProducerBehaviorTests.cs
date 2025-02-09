@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -40,8 +40,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.RawMessage.Should().BeSameAs(message.Content);
+        result.ShouldNotBeNull();
+        result!.RawMessage.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
@@ -65,8 +65,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.RawMessage.Should().BeSameAs(message.Content);
+        result.ShouldNotBeNull();
+        result!.RawMessage.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
@@ -94,8 +94,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.Should().BeSameAs(envelope);
+        result.ShouldNotBeNull();
+        result!.ShouldBeSameAs(envelope);
     }
 
     [Fact]
@@ -119,8 +119,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.Should().BeSameAs(envelope);
+        result.ShouldNotBeNull();
+        result!.ShouldBeSameAs(envelope);
     }
 
     private sealed class InheritedBinaryMessage : BinaryMessage;

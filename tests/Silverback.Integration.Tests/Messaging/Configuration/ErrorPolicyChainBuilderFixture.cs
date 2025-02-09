@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Xunit;
@@ -19,11 +19,10 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenStop();
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<StopConsumerErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeEquivalentTo(new StopConsumerErrorPolicy());
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        chain.Policies[1].ShouldBeEquivalentTo(new StopConsumerErrorPolicy());
     }
 
     [Fact]
@@ -34,12 +33,12 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenStop(stopPolicy => stopPolicy.Exclude<InvalidOperationException>());
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<StopConsumerErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<StopConsumerErrorPolicy>().ExcludedExceptions.Should()
-            .BeEquivalentTo(new[] { typeof(InvalidOperationException) });
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        chain.Policies[1].ShouldBeOfType<StopConsumerErrorPolicy>();
+        StopConsumerErrorPolicy stopConsumerErrorPolicy = chain.Policies[1].ShouldBeOfType<StopConsumerErrorPolicy>();
+        stopConsumerErrorPolicy.ExcludedExceptions.ShouldBe([typeof(InvalidOperationException)]);
     }
 
     [Fact]
@@ -50,11 +49,10 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenSkip();
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeEquivalentTo(new StopConsumerErrorPolicy());
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        chain.Policies[1].ShouldBeEquivalentTo(new SkipMessageErrorPolicy());
     }
 
     [Fact]
@@ -65,11 +63,11 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenSkip(policy => policy.ApplyTo<TimeoutException>());
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<SkipMessageErrorPolicy>().IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException) });
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        SkipMessageErrorPolicy skipMessageErrorPolicy = chain.Policies[1].ShouldBeOfType<SkipMessageErrorPolicy>();
+        skipMessageErrorPolicy.IncludedExceptions.ShouldBe([typeof(TimeoutException)]);
     }
 
     [Fact]
@@ -80,11 +78,10 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenRetry();
 
         IErrorPolicy policy = builder.Build();
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<RetryErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeEquivalentTo(new RetryErrorPolicy());
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        chain.Policies[1].ShouldBeEquivalentTo(new RetryErrorPolicy());
     }
 
     [Fact]
@@ -95,11 +92,11 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenRetry(policy => policy.WithInterval(TimeSpan.FromDays(42)));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<RetryErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<RetryErrorPolicy>().InitialDelay.Should().Be(TimeSpan.FromDays(42));
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        RetryErrorPolicy retryPolicy = chain.Policies[1].ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.InitialDelay.ShouldBe(TimeSpan.FromDays(42));
     }
 
     [Fact]
@@ -110,11 +107,11 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenRetry(42);
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<RetryErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<RetryErrorPolicy>().MaxFailedAttempts.Should().Be(42);
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        RetryErrorPolicy retryPolicy = chain.Policies[1].ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.MaxFailedAttempts.ShouldBe(42);
     }
 
     [Fact]
@@ -125,12 +122,12 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenRetry(42, policy => policy.WithInterval(TimeSpan.FromDays(42)));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<RetryErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<RetryErrorPolicy>().MaxFailedAttempts.Should().Be(42);
-        policy.As<ErrorPolicyChain>().Policies[1].As<RetryErrorPolicy>().InitialDelay.Should().Be(TimeSpan.FromDays(42));
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        RetryErrorPolicy retryPolicy = chain.Policies[1].ShouldBeOfType<RetryErrorPolicy>();
+        retryPolicy.MaxFailedAttempts.ShouldBe(42);
+        retryPolicy.InitialDelay.ShouldBe(TimeSpan.FromDays(42));
     }
 
     [Fact]
@@ -141,11 +138,11 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenMoveTo("topic1");
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        MoveMessageErrorPolicy movePolicy = chain.Policies[1].ShouldBeOfType<MoveMessageErrorPolicy>();
+        movePolicy.EndpointName.ShouldBe("topic1");
     }
 
     [Fact]
@@ -156,11 +153,11 @@ public class ErrorPolicyChainBuilderFixture
         builder.Skip().ThenMoveTo("topic1", policy => policy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
-        policy.Should().BeOfType<ErrorPolicyChain>();
-        policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
-        policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
-        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
+        ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
+        chain.Policies.Count.ShouldBe(2);
+        chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
+        MoveMessageErrorPolicy movePolicy = chain.Policies[1].ShouldBeOfType<MoveMessageErrorPolicy>();
+        movePolicy.EndpointName.ShouldBe("topic1");
+        movePolicy.MaxFailedAttempts.ShouldBe(42);
     }
 }

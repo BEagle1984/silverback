@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -16,7 +16,7 @@ public class DefaultProduceStrategyTests
         DefaultProduceStrategy strategy = new();
         DefaultProduceStrategy otherStrategy = new();
 
-        strategy.Equals(otherStrategy).Should().BeTrue();
+        strategy.Equals(otherStrategy).ShouldBeTrue();
     }
 
     [Fact]
@@ -25,6 +25,6 @@ public class DefaultProduceStrategyTests
         DefaultProduceStrategy strategy = new();
         OutboxProduceStrategy otherStrategy = new(new InMemoryOutboxSettings());
 
-        strategy.Equals(otherStrategy).Should().BeFalse();
+        strategy.Equals(otherStrategy).ShouldBeFalse();
     }
 }

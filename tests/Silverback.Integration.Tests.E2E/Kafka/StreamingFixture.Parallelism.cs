@@ -4,8 +4,8 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -57,12 +57,12 @@ public partial class StreamingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedStreams.Should().HaveCount(3);
-        receivedMessages.Should().HaveCount(15);
+        receivedStreams.Count.ShouldBe(3);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.Content)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -106,12 +106,12 @@ public partial class StreamingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedStreams.Should().HaveCount(1);
-        receivedMessages.Should().HaveCount(15);
+        receivedStreams.Count.ShouldBe(1);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.Content)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public partial class StreamingFixture
 
         try
         {
-            receivedMessages.Should().HaveCount(2);
+            receivedMessages.Count.ShouldBe(2);
         }
         finally
         {
@@ -170,6 +170,6 @@ public partial class StreamingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(12);
+        receivedMessages.Count.ShouldBe(12);
     }
 }

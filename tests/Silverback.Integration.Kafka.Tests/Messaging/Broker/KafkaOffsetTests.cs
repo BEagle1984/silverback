@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Xunit;
 
@@ -16,9 +16,9 @@ public class KafkaOffsetTests
     {
         KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 42));
 
-        offset.TopicPartition.Topic.Should().Be("test-topic");
-        offset.TopicPartition.Partition.Value.Should().Be(2);
-        offset.Offset.Value.Should().Be(42);
+        offset.TopicPartition.Topic.ShouldBe("test-topic");
+        offset.TopicPartition.Partition.Value.ShouldBe(2);
+        offset.Offset.Value.ShouldBe(42);
     }
 
     [Theory]
@@ -32,7 +32,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA < offsetB;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -46,7 +46,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA > offsetB;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -60,7 +60,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA <= offsetB;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -77,7 +77,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA >= offsetB;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -92,7 +92,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA == offsetB!;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -107,7 +107,7 @@ public class KafkaOffsetTests
 
         bool result = offsetA != offsetB!;
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -122,7 +122,7 @@ public class KafkaOffsetTests
 
         int result = offsetA.CompareTo(offsetB);
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public class KafkaOffsetTests
 
         bool result = offset.Equals(offset);
 
-        result.Should().BeTrue();
+        result.ShouldBe(true);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class KafkaOffsetTests
 
         bool result = offset.Equals((object)offset);
 
-        result.Should().BeTrue();
+        result.ShouldBe(true);
     }
 
     [Theory]
@@ -164,7 +164,7 @@ public class KafkaOffsetTests
 
         bool result = kafkaOffset1.Equals(kafkaOffset2);
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -186,7 +186,7 @@ public class KafkaOffsetTests
 
         bool result = kafkaOffset1.Equals((object)kafkaOffset2);
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Fact]
@@ -197,7 +197,7 @@ public class KafkaOffsetTests
 
         bool result = offset1.Equals(null);
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public class KafkaOffsetTests
 
         bool result = offset1.Equals((object?)null);
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public class KafkaOffsetTests
 
         bool result = offset1.Equals(offset2);
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 
     private sealed class TestOtherOffset : IBrokerMessageIdentifier

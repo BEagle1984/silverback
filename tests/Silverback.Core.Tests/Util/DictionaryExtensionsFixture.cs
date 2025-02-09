@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -25,8 +25,8 @@ public class DictionaryExtensionsFixture
             "b",
             _ => throw new InvalidOperationException("Shouldn't call this"));
 
-        value.Should().Be(2);
-        dictionary.Should().HaveCount(3);
+        value.ShouldBe(2);
+        dictionary.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -43,15 +43,15 @@ public class DictionaryExtensionsFixture
             "d",
             key =>
             {
-                key.Should().Be("d");
+                key.ShouldBe("d");
 
                 return 42;
             });
 
-        value.Should().Be(42);
-        dictionary.Should().HaveCount(4);
-        dictionary.Keys.Should().Contain("d");
-        dictionary["d"].Should().Be(42);
+        value.ShouldBe(42);
+        dictionary.Count.ShouldBe(4);
+        dictionary.Keys.ShouldContain("d");
+        dictionary["d"].ShouldBe(42);
     }
 
     [Fact]
@@ -66,8 +66,8 @@ public class DictionaryExtensionsFixture
 
         int value = dictionary.GetOrAddDefault("b");
 
-        value.Should().Be(2);
-        dictionary.Should().HaveCount(3);
+        value.ShouldBe(2);
+        dictionary.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public class DictionaryExtensionsFixture
 
         int value = dictionary.GetOrAddDefault("d");
 
-        value.Should().Be(0);
-        dictionary.Should().HaveCount(4);
-        dictionary.Keys.Should().Contain("d");
-        dictionary["d"].Should().Be(0);
+        value.ShouldBe(0);
+        dictionary.Count.ShouldBe(4);
+        dictionary.Keys.ShouldContain("d");
+        dictionary["d"].ShouldBe(0);
     }
 
     [Fact]
@@ -103,9 +103,9 @@ public class DictionaryExtensionsFixture
             _ => 42,
             (_, _) => throw new InvalidOperationException("Shouldn't call this"));
 
-        dictionary.Should().HaveCount(4);
-        dictionary.Keys.Should().Contain("d");
-        dictionary["d"].Should().Be(42);
+        dictionary.Count.ShouldBe(4);
+        dictionary.Keys.ShouldContain("d");
+        dictionary["d"].ShouldBe(42);
     }
 
     [Fact]
@@ -123,8 +123,8 @@ public class DictionaryExtensionsFixture
             _ => throw new InvalidOperationException("Shouldn't call this"),
             (_, _) => 42);
 
-        dictionary.Should().HaveCount(3);
-        dictionary["c"].Should().Be(42);
+        dictionary.Count.ShouldBe(3);
+        dictionary["c"].ShouldBe(42);
     }
 
     [Fact]
@@ -143,9 +143,9 @@ public class DictionaryExtensionsFixture
             static (_, _, _) => throw new InvalidOperationException("Shouldn't call this"),
             42);
 
-        dictionary.Should().HaveCount(4);
-        dictionary.Keys.Should().Contain("d");
-        dictionary["d"].Should().Be(42);
+        dictionary.Count.ShouldBe(4);
+        dictionary.Keys.ShouldContain("d");
+        dictionary["d"].ShouldBe(42);
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class DictionaryExtensionsFixture
             static (_, _, data) => data,
             42);
 
-        dictionary.Should().HaveCount(3);
-        dictionary["c"].Should().Be(42);
+        dictionary.Count.ShouldBe(3);
+        dictionary["c"].ShouldBe(42);
     }
 }

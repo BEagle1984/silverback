@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -18,8 +18,8 @@ public class EntityFrameworkOutboxSettingsFixture
     {
         EntityFrameworkOutboxSettings settings = new(typeof(TestDbContext), GetDbContext);
 
-        settings.DbContextType.Should().Be(typeof(TestDbContext));
-        settings.GetDbContext(Substitute.For<IServiceProvider>()).Should().BeOfType<TestDbContext>();
+        settings.DbContextType.ShouldBe(typeof(TestDbContext));
+        settings.GetDbContext(Substitute.For<IServiceProvider>()).ShouldBeOfType<TestDbContext>();
     }
 
     [Fact]
@@ -29,11 +29,10 @@ public class EntityFrameworkOutboxSettingsFixture
 
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
-        lockSettings.Should().BeOfType<EntityFrameworkLockSettings>();
-        lockSettings.As<EntityFrameworkLockSettings>().LockName.Should().Be("outbox.TestDbContext");
-        lockSettings.As<EntityFrameworkLockSettings>().DbContextType.Should().Be(typeof(TestDbContext));
-        lockSettings.As<EntityFrameworkLockSettings>().GetDbContext(Substitute.For<IServiceProvider>())
-            .Should().BeOfType<TestDbContext>();
+        EntityFrameworkLockSettings efLockSettings = lockSettings.ShouldBeOfType<EntityFrameworkLockSettings>();
+        efLockSettings.LockName.ShouldBe("outbox.TestDbContext");
+        efLockSettings.DbContextType.ShouldBe(typeof(TestDbContext));
+        efLockSettings.GetDbContext(Substitute.For<IServiceProvider>()).ShouldBeOfType<TestDbContext>();
     }
 
     [Fact]
@@ -43,7 +42,7 @@ public class EntityFrameworkOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -53,7 +52,8 @@ public class EntityFrameworkOutboxSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext type is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext type is required.");
     }
 
     [Fact]
@@ -63,7 +63,8 @@ public class EntityFrameworkOutboxSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext factory is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext factory is required.");
     }
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();

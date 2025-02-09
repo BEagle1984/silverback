@@ -3,8 +3,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Xunit;
 
 namespace Silverback.Tests.Core;
@@ -20,8 +20,8 @@ public class SilverbackContextFixture
 
         context.AddObject(ObjectTypeId, "new");
 
-        context.TryGetObject(ObjectTypeId, out object? value).Should().BeTrue();
-        value.Should().BeEquivalentTo("new");
+        context.TryGetObject(ObjectTypeId, out object? value).ShouldBeTrue();
+        value.ShouldBe("new");
     }
 
     [Fact]
@@ -32,8 +32,8 @@ public class SilverbackContextFixture
 
         Action act = () => context.AddObject(ObjectTypeId, new object());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("An object of type aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee has already been added.");
+        InvalidOperationException exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("An object of type aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee has already been added.");
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class SilverbackContextFixture
 
         Action act = () => context.AddObject(ObjectTypeId, obj);
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public class SilverbackContextFixture
 
         context.SetObject(ObjectTypeId, "new");
 
-        context.TryGetObject(ObjectTypeId, out object? value).Should().BeTrue();
-        value.Should().BeEquivalentTo("new");
+        context.TryGetObject(ObjectTypeId, out object? value).ShouldBeTrue();
+        value.ShouldBe("new");
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class SilverbackContextFixture
         context.SetObject(ObjectTypeId, "new");
         context.SetObject(ObjectTypeId, "overwritten");
 
-        context.TryGetObject(ObjectTypeId, out object? value).Should().BeTrue();
-        value.Should().BeEquivalentTo("overwritten");
+        context.TryGetObject(ObjectTypeId, out object? value).ShouldBeTrue();
+        value.ShouldBe("overwritten");
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class SilverbackContextFixture
 
         context.RemoveObject(ObjectTypeId);
 
-        context.TryGetObject(ObjectTypeId, out object? _).Should().BeFalse();
+        context.TryGetObject(ObjectTypeId, out object? _).ShouldBeFalse();
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class SilverbackContextFixture
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetObject(ObjectTypeId, "myobject");
 
-        context.GetObject(ObjectTypeId).Should().Be("myobject");
+        context.GetObject(ObjectTypeId).ShouldBe("myobject");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class SilverbackContextFixture
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetObject(ObjectTypeId, "myobject");
 
-        context.GetObject<string>(ObjectTypeId).Should().Be("myobject");
+        context.GetObject<string>(ObjectTypeId).ShouldBe("myobject");
     }
 
     [Fact]
@@ -107,7 +107,8 @@ public class SilverbackContextFixture
 
         Action act = () => context.GetObject(ObjectTypeId);
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("The object with type id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee was not found.");
+        InvalidOperationException exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The object with type id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee was not found.");
     }
 
     [Fact]
@@ -117,7 +118,8 @@ public class SilverbackContextFixture
 
         Action act = () => context.GetObject<string>(ObjectTypeId);
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("The object with type id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee was not found.");
+        InvalidOperationException exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The object with type id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee was not found.");
     }
 
     [Fact]
@@ -126,8 +128,8 @@ public class SilverbackContextFixture
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetObject(ObjectTypeId, "myobject");
 
-        context.TryGetObject(ObjectTypeId, out object? value).Should().BeTrue();
-        value.Should().Be("myobject");
+        context.TryGetObject(ObjectTypeId, out object? value).ShouldBeTrue();
+        value.ShouldBe("myobject");
     }
 
     [Fact]
@@ -136,8 +138,8 @@ public class SilverbackContextFixture
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetObject(ObjectTypeId, "myobject");
 
-        context.TryGetObject(ObjectTypeId, out string? value).Should().BeTrue();
-        value.Should().Be("myobject");
+        context.TryGetObject(ObjectTypeId, out string? value).ShouldBeTrue();
+        value.ShouldBe("myobject");
     }
 
     [Fact]
@@ -145,7 +147,7 @@ public class SilverbackContextFixture
     {
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
 
-        context.TryGetObject(ObjectTypeId, out object? _).Should().BeFalse();
+        context.TryGetObject(ObjectTypeId, out object? _).ShouldBeFalse();
     }
 
     [Fact]
@@ -157,7 +159,7 @@ public class SilverbackContextFixture
 
         object result = context.GetOrAddObject(ObjectTypeId, () => new object());
 
-        result.Should().Be(obj);
+        result.ShouldBe(obj);
     }
 
     [Fact]
@@ -169,9 +171,9 @@ public class SilverbackContextFixture
 
         object result = context.GetOrAddObject(ObjectTypeId, () => obj);
 
-        result.Should().Be(obj);
-        context.TryGetObject(ObjectTypeId, out object? storedObj).Should().BeTrue();
-        storedObj.Should().Be(obj);
+        result.ShouldBe(obj);
+        context.TryGetObject(ObjectTypeId, out object? storedObj).ShouldBeTrue();
+        storedObj.ShouldBe(obj);
     }
 
     [Fact]
@@ -183,7 +185,7 @@ public class SilverbackContextFixture
 
         object result = context.GetOrAddObject(ObjectTypeId, _ => new object(), "123");
 
-        result.Should().Be(obj);
+        result.ShouldBe(obj);
     }
 
     [Fact]
@@ -194,8 +196,8 @@ public class SilverbackContextFixture
 
         object result = context.GetOrAddObject(ObjectTypeId, arg => arg, obj);
 
-        result.Should().Be(obj);
-        context.TryGetObject(ObjectTypeId, out object? storedObj).Should().BeTrue();
-        storedObj.Should().Be(obj);
+        result.ShouldBe(obj);
+        context.TryGetObject(ObjectTypeId, out object? storedObj).ShouldBeTrue();
+        storedObj.ShouldBe(obj);
     }
 }

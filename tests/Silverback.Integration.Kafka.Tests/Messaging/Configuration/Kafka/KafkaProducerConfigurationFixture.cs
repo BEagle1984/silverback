@@ -3,7 +3,7 @@
 
 using System;
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
@@ -28,11 +28,11 @@ public class KafkaProducerConfigurationFixture
             BootstrapServers = "config2"
         };
 
-        configuration1.BootstrapServers.Should().Be("config1");
-        configuration2.BootstrapServers.Should().Be("config2");
+        configuration1.BootstrapServers.ShouldBe("config1");
+        configuration2.BootstrapServers.ShouldBe("config2");
 
-        configuration1.MessageCopyMaxBytes.Should().Be(42);
-        configuration2.MessageCopyMaxBytes.Should().Be(42);
+        configuration1.MessageCopyMaxBytes.ShouldBe(42);
+        configuration2.MessageCopyMaxBytes.ShouldBe(42);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class KafkaProducerConfigurationFixture
         {
         };
 
-        configuration1.FlushTimeout.Should().Be(TimeSpan.FromDays(42));
-        configuration2.FlushTimeout.Should().Be(TimeSpan.FromDays(42));
+        configuration1.FlushTimeout.ShouldBe(TimeSpan.FromDays(42));
+        configuration2.FlushTimeout.ShouldBe(TimeSpan.FromDays(42));
     }
 
     [Theory]
@@ -62,7 +62,7 @@ public class KafkaProducerConfigurationFixture
             EnableDeliveryReports = enableDeliveryReports
         };
 
-        configuration.AreDeliveryReportsEnabled.Should().Be(expected);
+        configuration.AreDeliveryReportsEnabled.ShouldBe(expected);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Theory]
@@ -152,7 +152,7 @@ public class KafkaProducerConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -166,8 +166,8 @@ public class KafkaProducerConfigurationFixture
 
         ProducerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
-        confluentConfig.LingerMs.Should().Be(42);
+        confluentConfig.BootstrapServers.ShouldBe("PLAINTEXT://tests");
+        confluentConfig.LingerMs.ShouldBe(42);
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class KafkaProducerConfigurationFixture
 
         ProducerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.DeliveryReportFields.Should().Be("key,status");
+        confluentConfig.DeliveryReportFields.ShouldBe("key,status");
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public class KafkaProducerConfigurationFixture
 
         ProducerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        confluentConfig.EnableBackgroundPoll.Should().BeTrue();
+        confluentConfig.EnableBackgroundPoll.ShouldBe(true);
     }
 
     private static KafkaProducerConfiguration GetValidConfiguration() => new()

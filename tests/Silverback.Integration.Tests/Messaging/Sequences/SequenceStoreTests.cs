@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -27,8 +27,8 @@ public class SequenceStoreTests
 
         ChunkSequence? result = await store.GetAsync<ChunkSequence>("bbb");
 
-        result.Should().NotBeNull();
-        result!.SequenceId.Should().Be("bbb");
+        result.ShouldNotBeNull();
+        result.SequenceId.ShouldBe("bbb");
     }
 
     [Theory]
@@ -45,12 +45,12 @@ public class SequenceStoreTests
 
         if (matchPrefix)
         {
-            result.Should().NotBeNull();
-            result!.SequenceId.Should().Be("aaa-123");
+            result.ShouldNotBeNull();
+            result.SequenceId.ShouldBe("aaa-123");
         }
         else
         {
-            result.Should().BeNull();
+            result.ShouldBeNull();
         }
     }
 
@@ -66,7 +66,7 @@ public class SequenceStoreTests
 
         ChunkSequence? result = await store.GetAsync<ChunkSequence>("123");
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class SequenceStoreTests
         ChunkSequence newSequence = new("abc", 10, context);
         ChunkSequence result = await store.AddAsync(newSequence);
 
-        result.Should().BeSameAs(newSequence);
-        (await store.GetAsync<ChunkSequence>("abc")).Should().BeSameAs(newSequence);
+        result.ShouldBeSameAs(newSequence);
+        (await store.GetAsync<ChunkSequence>("abc")).ShouldBeSameAs(newSequence);
     }
 
     [Fact]
@@ -94,9 +94,9 @@ public class SequenceStoreTests
         ChunkSequence newSequence = new("abc", 10, context);
         await store.AddAsync(newSequence);
 
-        originalSequence.IsAborted.Should().BeTrue();
+        originalSequence.IsAborted.ShouldBeTrue();
 
-        (await store.GetAsync<ChunkSequence>("abc")).Should().BeSameAs(newSequence);
+        (await store.GetAsync<ChunkSequence>("abc")).ShouldBeSameAs(newSequence);
     }
 
     [Fact]
@@ -107,11 +107,11 @@ public class SequenceStoreTests
 
         ChunkSequence sequence = await store.AddAsync(new ChunkSequence("abc", 10, context));
 
-        sequence.IsNew.Should().BeTrue();
+        sequence.IsNew.ShouldBeTrue();
 
         sequence = (await store.GetAsync<ChunkSequence>("abc"))!;
 
-        sequence.IsNew.Should().BeFalse();
+        sequence.IsNew.ShouldBeFalse();
     }
 
     [Fact]
@@ -126,9 +126,9 @@ public class SequenceStoreTests
 
         await store.RemoveAsync("bbb");
 
-        (await store.GetAsync<ChunkSequence>("bbb")).Should().BeNull();
-        (await store.GetAsync<ChunkSequence>("aaa")).Should().NotBeNull();
-        (await store.GetAsync<ChunkSequence>("ccc")).Should().NotBeNull();
+        (await store.GetAsync<ChunkSequence>("bbb")).ShouldBeNull();
+        (await store.GetAsync<ChunkSequence>("aaa")).ShouldNotBeNull();
+        (await store.GetAsync<ChunkSequence>("ccc")).ShouldNotBeNull();
     }
 
     [Fact]
@@ -143,9 +143,9 @@ public class SequenceStoreTests
 
         await store.RemoveAsync("123");
 
-        (await store.GetAsync<ChunkSequence>("aaa")).Should().NotBeNull();
-        (await store.GetAsync<ChunkSequence>("bbb")).Should().NotBeNull();
-        (await store.GetAsync<ChunkSequence>("ccc")).Should().NotBeNull();
+        (await store.GetAsync<ChunkSequence>("aaa")).ShouldNotBeNull();
+        (await store.GetAsync<ChunkSequence>("bbb")).ShouldNotBeNull();
+        (await store.GetAsync<ChunkSequence>("ccc")).ShouldNotBeNull();
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public class SequenceStoreTests
 
         IReadOnlyCollection<ISequence> result = store.GetPendingSequences();
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -170,8 +170,8 @@ public class SequenceStoreTests
 
         IReadOnlyCollection<ISequence> result = store.GetPendingSequences();
 
-        result.Should().HaveCount(2);
-        result.Select(sequence => sequence.SequenceId).Should().BeEquivalentTo("ccc", "ddd");
+        result.Count.ShouldBe(2);
+        result.Select(sequence => sequence.SequenceId).ShouldBe(["ccc", "ddd"]);
     }
 
     [Fact]
@@ -184,6 +184,6 @@ public class SequenceStoreTests
 
         IReadOnlyCollection<ISequence> result = store.GetPendingSequences();
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 }

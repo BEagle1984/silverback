@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Kafka.SchemaRegistry.TestTypes;
@@ -29,7 +29,8 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
 
         Action act = () => builder.SerializeAsAvro(serializer => serializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -41,7 +42,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .SerializeAsAvro(serializer => serializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -56,7 +57,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel<TestEventOne>())
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -71,7 +72,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -81,7 +82,8 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
 
         Action act = () => builder.SerializeAsJsonUsingSchemaRegistry(serializer => serializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .SerializeAsJsonUsingSchemaRegistry(serializer => serializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -108,7 +110,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel<TestEventOne>())
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -123,7 +125,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -135,6 +137,6 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .SerializeAsProtobuf(serializer => serializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
+        endpointConfiguration.Serializer.ShouldBeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
     }
 }

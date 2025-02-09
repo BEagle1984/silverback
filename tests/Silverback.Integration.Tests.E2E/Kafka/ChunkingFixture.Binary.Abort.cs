@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -72,8 +72,8 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
@@ -86,15 +86,15 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("text/plain");
 
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(message2.Content.ReReadAll());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
     }
 
     [Fact]
@@ -150,8 +150,8 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
@@ -164,15 +164,15 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("text/plain");
 
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(message2.Content.ReReadAll());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
     }
 
     [Fact]
@@ -222,8 +222,8 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 0, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
@@ -236,14 +236,14 @@ public partial class ChunkingFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("text/plain");
 
-        receivedFiles.Should().HaveCount(1);
-        receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        receivedFiles.Count.ShouldBe(1);
+        receivedFiles[0].ShouldBe(message2.Content.ReReadAll());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(4);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(4);
     }
 }

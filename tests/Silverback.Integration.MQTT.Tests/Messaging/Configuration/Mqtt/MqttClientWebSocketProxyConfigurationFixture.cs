@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -18,7 +18,7 @@ public class MqttClientWebSocketProxyConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public class MqttClientWebSocketProxyConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     private static MqttClientWebSocketProxyConfiguration GetValidConfiguration() => new()

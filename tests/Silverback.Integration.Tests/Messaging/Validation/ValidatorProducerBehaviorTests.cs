@@ -2,14 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -49,28 +48,30 @@ public class ValidatorProducerBehaviorTests
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not working")]
     public static TheoryData<TestValidationMessage> HandleAsync_None_WarningIsNotLogged_TestData =>
+    [
         new()
         {
-            new TestValidationMessage
-            {
-                Id = "1",
-                String10 = "123456789abc",
-                IntRange = 5,
-                NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                String10 = "123456", IntRange = 5, NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
-            }
-        };
+            Id = "1",
+            String10 = "123456789abc",
+            IntRange = 5,
+            NumbersOnly = "123"
+        },
+
+        new()
+        {
+            Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
+        },
+
+        new()
+        {
+            String10 = "123456", IntRange = 5, NumbersOnly = "123"
+        },
+
+        new()
+        {
+            Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
+        }
+    ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     public static TheoryData<TestValidationMessage, string> HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData =>
@@ -152,9 +153,9 @@ public class ValidatorProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.Message.Should().NotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
+        result.ShouldNotBeNull();
+        result!.Message.ShouldNotBeNull();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
     }
 
     [Theory]
@@ -185,10 +186,10 @@ public class ValidatorProducerBehaviorTests
             },
             CancellationToken.None).AsTask();
 
-        await act.Should().NotThrowAsync<ValidationException>();
-        result.Should().NotBeNull();
-        result!.Message.Should().NotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
+        await act.ShouldNotThrowAsync();
+        result.ShouldNotBeNull();
+        result!.Message.ShouldNotBeNull();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
     }
 
     [Theory]
@@ -218,8 +219,8 @@ public class ValidatorProducerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result!.Message.Should().NotBeNull();
+        result.ShouldNotBeNull();
+        result!.Message.ShouldNotBeNull();
         expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1081);
     }
@@ -251,7 +252,8 @@ public class ValidatorProducerBehaviorTests
             },
             CancellationToken.None).AsTask();
 
-        result.Should().BeNull();
-        await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
+        result.ShouldBeNull();
+        Exception exception = await act.ShouldThrowAsync<MessageValidationException>();
+        exception.Message.ShouldBe(expectedMessage);
     }
 }

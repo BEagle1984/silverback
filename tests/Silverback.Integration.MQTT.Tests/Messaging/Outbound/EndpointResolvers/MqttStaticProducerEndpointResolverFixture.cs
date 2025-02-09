@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -29,9 +29,9 @@ public class MqttStaticProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
+        endpoint.ShouldNotBeNull();
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic");
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class MqttStaticProducerEndpointResolverFixture
     {
         MqttStaticProducerEndpointResolver endpointResolver = new("topic");
 
-        endpointResolver.RawName.Should().Be("topic");
+        endpointResolver.RawName.ShouldBe("topic");
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class MqttStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = new MqttStaticProducerEndpointResolver("topic");
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -57,6 +57,6 @@ public class MqttStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = new MqttStaticProducerEndpointResolver(topic!);
 
-        act.Should().Throw<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 }

@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -60,14 +60,14 @@ public partial class StreamingFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
-        receivedMessages.Should().HaveCount(2);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        receivedMessages.Count.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
     [Fact]
@@ -113,11 +113,11 @@ public partial class StreamingFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
-        receivedMessages.Should().HaveCount(2);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        receivedMessages.Count.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 }

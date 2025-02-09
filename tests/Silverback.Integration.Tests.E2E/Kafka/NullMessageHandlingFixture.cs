@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -54,9 +54,9 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        tombstone.Should().BeOfType<Tombstone>();
-        tombstone!.MessageId.Should().Be("42");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        tombstone.ShouldBeOfType<Tombstone>();
+        tombstone!.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -92,9 +92,9 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        tombstone.Should().BeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageId.Should().Be("42");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
+        tombstone!.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -129,9 +129,9 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        tombstone.Should().BeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageId.Should().Be("42");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
+        tombstone!.MessageId.ShouldBe("42");
     }
 
     [Fact]
@@ -171,9 +171,9 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        consumed.Should().BeTrue();
-        consumedMessage.Should().BeNull();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        consumed.ShouldBeTrue();
+        consumedMessage.ShouldBeNull();
     }
 
     [Fact]
@@ -208,9 +208,9 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        consumedEnvelope.Should().NotBeNull();
-        consumedEnvelope!.GetKafkaKey().Should().Be("42");
-        consumedEnvelope!.Message.Should().BeNull();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        consumedEnvelope.ShouldNotBeNull();
+        consumedEnvelope!.GetKafkaKey().ShouldBe("42");
+        consumedEnvelope!.Message.ShouldBeNull();
     }
 }

@@ -10,8 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -61,10 +61,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        tryCount.Should().Be(11);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        tryCount.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
 
     [Fact]
@@ -125,10 +125,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(20);
-        tryCount.Should().Be(6);
-        consumedCount.Should().Be(18);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(18 + 6);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(20);
+        tryCount.ShouldBe(6);
+        consumedCount.ShouldBe(18);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(18 + 6);
     }
 
     [Fact]
@@ -190,10 +190,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(20);
-        tryCount.Should().Be(6);
-        consumedCount.Should().Be(18);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(18 + 6);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(20);
+        tryCount.ShouldBe(6);
+        consumedCount.ShouldBe(18);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(18 + 6);
     }
 
     [Fact]
@@ -231,8 +231,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(3);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        tryCount.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 
     [Fact]
@@ -269,8 +269,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        tryCount.ShouldBe(11);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
     }
 
     [Fact]
@@ -319,32 +319,32 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(16);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(16);
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>
             {
                 envelope.RawMessage.ShouldNotBeNull();
-                envelope.RawMessage.Length.Should().BeLessOrEqualTo(10);
+                envelope.RawMessage.Length.ShouldBeLessThanOrEqualTo(10);
             });
 
-        tryCount.Should().Be(8);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(8);
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message one");
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message one");
-        Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message two");
-        Helper.Spy.InboundEnvelopes[3].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message two");
-        Helper.Spy.InboundEnvelopes[4].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message three");
-        Helper.Spy.InboundEnvelopes[5].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message three");
-        Helper.Spy.InboundEnvelopes[6].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message four");
-        Helper.Spy.InboundEnvelopes[7].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message four");
+        tryCount.ShouldBe(8);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(8);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message one");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message one");
+        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message two");
+        Helper.Spy.InboundEnvelopes[3].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message two");
+        Helper.Spy.InboundEnvelopes[4].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message three");
+        Helper.Spy.InboundEnvelopes[5].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message three");
+        Helper.Spy.InboundEnvelopes[6].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message four");
+        Helper.Spy.InboundEnvelopes[7].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message four");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(16);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(16);
     }
 
     [Fact]
     public async Task RetryPolicy_ShouldRetryChunkedJsonMultipleTimes_WhenProcessingPartitionIndependently()
     {
-        int tryCount = 0;
+        Counter[] tryCounters = new Counter[4];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -358,7 +358,7 @@ public partial class ErrorPoliciesFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(
                             producer => producer
-                                .Produce<IIntegrationEvent>(
+                                .Produce<IIntegrationMessage>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(10)))
@@ -369,28 +369,29 @@ public partial class ErrorPoliciesFixture
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+                .AddDelegateSubscriber<TestIndexedMessage>(HandleMessage)
                 .AddIntegrationSpy());
 
-        void HandleMessage(IIntegrationEvent message)
+        void HandleMessage(TestIndexedMessage message)
         {
-            Interlocked.Increment(ref tryCount);
-            if (tryCount % 2 != 0)
+            int tryCount = tryCounters[message.Index].Increment();
+            if (tryCount <= 2)
                 throw new InvalidOperationException("Retry!");
         }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message one" });
-        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message two" });
-        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message three" });
-        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message four" });
+        for (int i = 0; i < 4; i++)
+        {
+            tryCounters[i] = new Counter();
+            await publisher.PublishAsync(new TestIndexedMessage(i, "Long message"));
+        }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(16);
-        tryCount.Should().Be(8);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(8);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(16);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(16);
+        tryCounters.ShouldAllBe(tryCount => tryCount.Value == 3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(12);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(16);
     }
 
     [SuppressMessage("ReSharper", "MustUseReturnValue", Justification = "Test code")]
@@ -453,21 +454,21 @@ public partial class ErrorPoliciesFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(2);
+        tryCount.ShouldBe(2);
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBe(10));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[2].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("application/pdf");
+        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<BinaryMessage>().ContentType.ShouldBe("text/plain");
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
-        receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles[0].ShouldBe(message1.Content.ReReadAll());
+        receivedFiles[1].ShouldBe(message2.Content.ReReadAll());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
     }
 
     [Fact]
@@ -514,12 +515,12 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should().NotBeEquivalentTo(rawMessage.ReReadAll());
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().ShouldNotBe(rawMessage.ReReadAll());
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 
     [Fact]
@@ -567,16 +568,16 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(8);
-        Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(8);
+        Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().ShouldNotBe(rawMessage.Read(10));
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>
             {
-                envelope.RawMessage.Should().NotBeNull();
-                envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                envelope.RawMessage.ShouldNotBeNull();
+                envelope.RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
             });
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
 
     [Fact]
@@ -624,10 +625,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
 
-        completedBatches.Should().Be(1);
+        completedBatches.ShouldBe(1);
     }
 
     [Fact]
@@ -676,10 +677,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
 
-        completedBatches.Should().Be(1);
+        completedBatches.ShouldBe(1);
     }
 
     [Fact]
@@ -732,10 +733,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
 
-        completedBatches.Should().Be(1);
+        completedBatches.ShouldBe(1);
     }
 
     [Fact]
@@ -785,10 +786,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
 
-        completedBatches.Should().Be(1);
+        completedBatches.ShouldBe(1);
     }
 
     [Fact]
@@ -825,12 +826,12 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
+        tryCount.ShouldBe(11);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Xunit;
 
@@ -43,15 +43,15 @@ public class ValueReadOnlyCollectionFixture
         ValueReadOnlyCollection<string> collection1 = new(values1);
         ValueReadOnlyCollection<string> collection2 = new(values2);
 
-        collection1.Equals(collection2).Should().Be(expected);
-        collection1.GetHashCode().Equals(collection2.GetHashCode()).Should().Be(expected);
+        collection1.Equals(collection2).ShouldBe(expected);
+        collection1.GetHashCode().Equals(collection2.GetHashCode()).ShouldBe(expected);
     }
 
     [Fact]
     public void Count_ShouldReturnCount()
     {
         ValueReadOnlyCollection<int> collection = new([1, 2, 3]);
-        collection.Count.Should().Be(3);
+        collection.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class ValueReadOnlyCollectionFixture
         ValueReadOnlyCollection<string> empty1 = ValueReadOnlyCollection.Empty<string>();
         ValueReadOnlyCollection<string> empty2 = ValueReadOnlyCollection.Empty<string>();
 
-        empty1.Should().BeEmpty();
-        empty1.Should().BeSameAs(empty2);
+        empty1.ShouldBeEmpty();
+        empty1.ShouldBeSameAs(empty2);
     }
 }

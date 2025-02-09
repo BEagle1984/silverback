@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Tests.Logging;
@@ -59,9 +59,9 @@ public class BrokerClientCallbacksInvokerFixture
 
         invoker.Invoke<ICallbackOne>(handler => handler.Handle());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
-        callbackOneHandlerTwo.CallCount.Should().Be(1);
-        callbackTwoHandlerOne.CallCount.Should().Be(0);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
+        callbackOneHandlerTwo.CallCount.ShouldBe(1);
+        callbackTwoHandlerOne.CallCount.ShouldBe(0);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         invoker.Invoke<ICallbackOne>(handler => handler.Handle());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         invoker.Invoke<ICallbackOne>(handler => handler.Handle(), substituteServiceProvider);
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         Action act = () => invoker.Invoke<ICallbackOne>(handler => handler.Handle());
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class BrokerClientCallbacksInvokerFixture
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
         invoker.Invoke<ICallbackOne>(handler => handler.Handle());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class BrokerClientCallbacksInvokerFixture
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
         invoker.Invoke<ICallbackOne>(handler => handler.Handle(), invokeDuringShutdown: false);
 
-        callbackOneHandlerOne.CallCount.Should().Be(0);
+        callbackOneHandlerOne.CallCount.ShouldBe(0);
     }
 
     [Fact]
@@ -209,9 +209,9 @@ public class BrokerClientCallbacksInvokerFixture
 
         await invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
-        callbackOneHandlerTwo.CallCount.Should().Be(1);
-        callbackTwoHandlerOne.CallCount.Should().Be(0);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
+        callbackOneHandlerTwo.CallCount.ShouldBe(1);
+        callbackTwoHandlerOne.CallCount.ShouldBe(0);
     }
 
     [Fact]
@@ -229,7 +229,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         await invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -253,7 +253,7 @@ public class BrokerClientCallbacksInvokerFixture
             handler => handler.HandleAsync(),
             substituteServiceProvider);
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -300,7 +300,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         Func<Task> act = () => invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync()).AsTask();
 
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 
     [Fact]
@@ -322,7 +322,7 @@ public class BrokerClientCallbacksInvokerFixture
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
         await invoker.InvokeAsync<ICallbackOneAsync>(handler => handler.HandleAsync());
 
-        callbackOneHandlerOne.CallCount.Should().Be(1);
+        callbackOneHandlerOne.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -346,7 +346,7 @@ public class BrokerClientCallbacksInvokerFixture
             handler => handler.HandleAsync(),
             invokeDuringShutdown: false);
 
-        callbackOneHandlerOne.CallCount.Should().Be(0);
+        callbackOneHandlerOne.CallCount.ShouldBe(0);
     }
 
     [Fact]
@@ -361,7 +361,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         Action act = () => invoker.Invoke<ICallbackOne>(callback => callback.Handle());
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -376,7 +376,7 @@ public class BrokerClientCallbacksInvokerFixture
 
         Func<Task> act = () => invoker.InvokeAsync<ICallbackOneAsync>(callback => callback.HandleAsync()).AsTask();
 
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 
     private sealed class CallbackOneHandlerOne : ICallbackOne

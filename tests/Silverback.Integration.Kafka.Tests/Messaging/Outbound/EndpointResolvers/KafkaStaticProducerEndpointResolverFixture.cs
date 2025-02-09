@@ -3,8 +3,8 @@
 
 using System;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
@@ -30,10 +30,10 @@ public class KafkaStaticProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(Partition.Any);
+        endpoint.ShouldNotBeNull();
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(Partition.Any);
     }
 
     [Fact]
@@ -43,10 +43,10 @@ public class KafkaStaticProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().NotBeNull();
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        endpoint.ShouldNotBeNull();
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         KafkaStaticProducerEndpointResolver endpointResolver = new("topic");
 
-        endpointResolver.RawName.Should().Be("topic");
+        endpointResolver.RawName.ShouldBe("topic");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         KafkaStaticProducerEndpointResolver endpointResolver = new("topic", 42);
 
-        endpointResolver.RawName.Should().Be("topic[42]");
+        endpointResolver.RawName.ShouldBe("topic[42]");
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = new KafkaStaticProducerEndpointResolver("topic");
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = new KafkaStaticProducerEndpointResolver("topic", 42);
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -88,7 +88,7 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = new KafkaStaticProducerEndpointResolver(topic!);
 
-        act.Should().Throw<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -96,6 +96,6 @@ public class KafkaStaticProducerEndpointResolverFixture
     {
         Action act = () => _ = _ = new KafkaStaticProducerEndpointResolver("topic", -42);
 
-        act.Should().ThrowExactly<ArgumentException>();
+        act.ShouldThrow<ArgumentException>();
     }
 }

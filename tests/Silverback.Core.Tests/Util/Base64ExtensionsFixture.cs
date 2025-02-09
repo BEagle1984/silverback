@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -16,7 +16,7 @@ public class Base64ExtensionsFixture
 
         string? result = array.ToBase64String();
 
-        result.Should().Be("AQIDBA==");
+        result.ShouldBe("AQIDBA==");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class Base64ExtensionsFixture
 
         string? result = array.ToBase64String();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class Base64ExtensionsFixture
 
         byte[]? result = base64.FromBase64String();
 
-        result.Should().BeEquivalentTo([1, 2, 3, 4]);
+        result.ShouldBe([1, 2, 3, 4]);
     }
 
     [Theory]
@@ -46,6 +46,6 @@ public class Base64ExtensionsFixture
     {
         byte[]? result = input.FromBase64String();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 }

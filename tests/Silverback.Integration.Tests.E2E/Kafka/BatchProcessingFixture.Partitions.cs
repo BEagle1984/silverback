@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -67,8 +67,8 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 10);
 
-        receivedBatches.Sum(messages => messages.Count).Should().Be(10);
-        receivedBatches.Count.Should().Be(3);
+        receivedBatches.Sum(messages => messages.Count).ShouldBe(10);
+        receivedBatches.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -131,8 +131,8 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 20);
 
-        receivedBatches.Sum(messages => messages.Count).Should().Be(20);
-        receivedBatches.Count.Should().Be(6);
+        receivedBatches.Sum(messages => messages.Count).ShouldBe(20);
+        receivedBatches.Count.ShouldBe(6);
     }
 
     [Fact]
@@ -181,8 +181,8 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 10);
 
-        receivedBatches.Count.Should().Be(1);
-        receivedBatches.Sum(batch => batch.Count).Should().Be(10);
+        receivedBatches.Count.ShouldBe(1);
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(10);
     }
 
     [Fact]
@@ -236,7 +236,7 @@ public partial class BatchProcessingFixture
 
         try
         {
-            receivedMessages.Should().HaveCount(2);
+            receivedMessages.Count.ShouldBe(2);
         }
         finally
         {
@@ -245,6 +245,6 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(16);
+        receivedMessages.Count.ShouldBe(16);
     }
 }

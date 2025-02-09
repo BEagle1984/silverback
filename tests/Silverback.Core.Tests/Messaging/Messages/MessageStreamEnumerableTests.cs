@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 using Xunit;
@@ -24,13 +24,13 @@ public class MessageStreamEnumerableTests
             () =>
             {
                 using IEnumerator<Message> enumerator = stream.GetEnumerator();
-                enumerator.MoveNext().Should().BeTrue();
-                enumerator.Current.Value.Should().Be(1);
-                enumerator.MoveNext().Should().BeTrue();
-                enumerator.Current.Value.Should().Be(2);
-                enumerator.MoveNext().Should().BeTrue();
-                enumerator.Current.Value.Should().Be(3);
-                enumerator.MoveNext().Should().BeFalse();
+                enumerator.MoveNext().ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(1);
+                enumerator.MoveNext().ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(2);
+                enumerator.MoveNext().ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(3);
+                enumerator.MoveNext().ShouldBeFalse();
                 success = true;
             });
 
@@ -42,7 +42,7 @@ public class MessageStreamEnumerableTests
 
         await enumerationTask;
 
-        success.Should().BeTrue();
+        success.ShouldBeTrue();
     }
 
     [Fact]
@@ -55,13 +55,13 @@ public class MessageStreamEnumerableTests
             async () =>
             {
                 await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
-                (await enumerator.MoveNextAsync()).Should().BeTrue();
-                enumerator.Current.Value.Should().Be(1);
-                (await enumerator.MoveNextAsync()).Should().BeTrue();
-                enumerator.Current.Value.Should().Be(2);
-                (await enumerator.MoveNextAsync()).Should().BeTrue();
-                enumerator.Current.Value.Should().Be(3);
-                (await enumerator.MoveNextAsync()).Should().BeFalse();
+                (await enumerator.MoveNextAsync()).ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(1);
+                (await enumerator.MoveNextAsync()).ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(2);
+                (await enumerator.MoveNextAsync()).ShouldBeTrue();
+                enumerator.Current.Value.ShouldBe(3);
+                (await enumerator.MoveNextAsync()).ShouldBeFalse();
                 success = true;
             });
 
@@ -73,7 +73,7 @@ public class MessageStreamEnumerableTests
 
         await enumerationTask;
 
-        success.Should().BeTrue();
+        success.ShouldBeTrue();
     }
 
     [Fact]
@@ -89,22 +89,22 @@ public class MessageStreamEnumerableTests
         enumerator.MoveNext();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         enumerator.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
+        pushTask3.IsCompleted.ShouldBeFalse();
 
         enumerator.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeTrue();
+        pushTask3.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]
@@ -120,22 +120,22 @@ public class MessageStreamEnumerableTests
         await enumerator.MoveNextAsync();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         await enumerator.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
+        pushTask3.IsCompleted.ShouldBeFalse();
 
         await enumerator.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeTrue();
+        pushTask3.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]
@@ -154,14 +154,14 @@ public class MessageStreamEnumerableTests
                 completed = true;
             }).FireAndForget();
 
-        completed.Should().BeFalse();
+        completed.ShouldBeFalse();
 
         await stream.CompleteAsync();
 
         // Give the other thread a chance to exit the MoveNext
         await AsyncTestingUtil.WaitAsync(() => completed);
 
-        completed.Should().BeTrue();
+        completed.ShouldBeTrue();
     }
 
     [Fact]
@@ -180,14 +180,14 @@ public class MessageStreamEnumerableTests
                 completed = true;
             }).FireAndForget();
 
-        completed.Should().BeFalse();
+        completed.ShouldBeFalse();
 
         await stream.CompleteAsync();
 
         // Give the other thread a chance to exit the MoveNext
         await AsyncTestingUtil.WaitAsync(() => completed);
 
-        completed.Should().BeTrue();
+        completed.ShouldBeTrue();
     }
 
     [Fact]
@@ -205,16 +205,16 @@ public class MessageStreamEnumerableTests
                 completed = true;
             });
 
-        completed.Should().BeFalse();
+        completed.ShouldBeFalse();
 
         stream.Abort();
 
         // Give the other thread a chance to exit the MoveNext
         await AsyncTestingUtil.WaitAsync(() => enumerationTask.IsCompleted);
 
-        completed.Should().BeFalse();
-        enumerationTask.Status.Should().Be(TaskStatus.Faulted);
-        enumerationTask.Exception!.InnerExceptions[0].Should().BeAssignableTo<OperationCanceledException>();
+        completed.ShouldBeFalse();
+        enumerationTask.Status.ShouldBe(TaskStatus.Faulted);
+        enumerationTask.Exception!.InnerExceptions[0].ShouldBeAssignableTo<OperationCanceledException>();
     }
 
     [Fact]
@@ -232,15 +232,15 @@ public class MessageStreamEnumerableTests
                 completed = true;
             });
 
-        completed.Should().BeFalse();
+        completed.ShouldBeFalse();
 
         stream.Abort();
 
         // Give the other thread a chance to exit the MoveNext
         await AsyncTestingUtil.WaitAsync(() => enumerationTask.IsCompleted);
 
-        completed.Should().BeFalse();
-        enumerationTask.Status.Should().Be(TaskStatus.Canceled);
+        completed.ShouldBeFalse();
+        enumerationTask.Status.ShouldBe(TaskStatus.Canceled);
     }
 
     [Fact]
@@ -256,15 +256,15 @@ public class MessageStreamEnumerableTests
                 pushed = true;
             });
 
-        pushed.Should().BeFalse();
+        pushed.ShouldBeFalse();
 
         stream.Abort();
 
         // Give the other thread a chance to exit the MoveNext
         await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
 
-        pushed.Should().BeFalse();
-        pushTask.Status.Should().Be(TaskStatus.Canceled);
+        pushed.ShouldBeFalse();
+        pushTask.Status.ShouldBe(TaskStatus.Canceled);
     }
 
     [Fact]
@@ -275,7 +275,7 @@ public class MessageStreamEnumerableTests
         await stream.CompleteAsync();
 
         Func<Task> act = async () => await stream.PushAsync(new Message(42));
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.ShouldThrowAsync<InvalidOperationException>();
     }
 
     [Fact]
@@ -285,7 +285,7 @@ public class MessageStreamEnumerableTests
         stream.Dispose();
 
         Func<Task> act = async () => await stream.PushAsync(new Message(42));
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.ShouldThrowAsync<InvalidOperationException>();
     }
 
     private record Message(int Value);

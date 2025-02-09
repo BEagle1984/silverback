@@ -8,11 +8,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading.Tasks;
-using FluentAssertions;
 using MQTTnet;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
@@ -32,8 +32,8 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaTcp("tests-server")
             .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 
-        MqttClientConfiguration config = builder.Build();
-        config.ProtocolVersion.Should().Be(MqttProtocolVersion.V500);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.ProtocolVersion.ShouldBe(MqttProtocolVersion.V500);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class MqttClientConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public class MqttClientConfigurationBuilderFixture
         builder.WithClientId("two");
         MqttClientConfiguration configuration2 = builder.Build();
 
-        configuration1.ClientId.Should().Be("one");
-        configuration2.ClientId.Should().Be("two");
+        configuration1.ClientId.ShouldBe("one");
+        configuration2.ClientId.ShouldBe("two");
     }
 
     [Theory]
@@ -72,11 +72,9 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaTcp("tests-server")
             .EnableTls(new MqttClientTlsConfiguration { UseTls = useTls });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(
-            new DnsEndPoint(
-                "tests-server",
-                useTls ? 8883 : 1883));
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", useTls ? 8883 : 1883));
     }
 
     [Fact]
@@ -89,14 +87,16 @@ public class MqttClientConfigurationBuilderFixture
             .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(2);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        MqttStaticProducerEndpointResolver resolver1 = endpoint1.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        resolver1.Topic.ShouldBe("topic1");
+        endpoint1.Serializer.ShouldBeOfType<JsonMessageSerializer>();
         MqttProducerEndpointConfiguration endpoint2 = configuration.ProducerEndpoints.Skip(1).First();
-        endpoint2.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic2");
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        MqttStaticProducerEndpointResolver resolver2 = endpoint2.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        resolver2.Topic.ShouldBe("topic2");
+        endpoint2.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -107,12 +107,13 @@ public class MqttClientConfigurationBuilderFixture
         builder.Produce(endpoint => endpoint.ProduceTo("topic1"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(1);
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(1);
         MqttProducerEndpointConfiguration endpoint = configuration.ProducerEndpoints.Single();
-        endpoint.MessageType.Should().Be<object>();
-        endpoint.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        endpoint.MessageType.ShouldBe(typeof(object));
+        MqttStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        resolver.Topic.ShouldBe("topic1");
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -125,11 +126,12 @@ public class MqttClientConfigurationBuilderFixture
             .Produce<TestEventTwo>("id1", endpoint => endpoint.ProduceTo("topic1"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(1);
-        MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(1);
+        MqttProducerEndpointConfiguration endpoint = configuration.ProducerEndpoints.First();
+        MqttStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        resolver.Topic.ShouldBe("topic1");
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -142,12 +144,13 @@ public class MqttClientConfigurationBuilderFixture
             .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1").WithAtLeastOnceQoS());
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(1);
-        MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
-        endpoint1.EndpointResolver.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint1.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(1);
+        MqttProducerEndpointConfiguration endpoint = configuration.ProducerEndpoints.First();
+        MqttStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<MqttStaticProducerEndpointResolver>();
+        resolver.Topic.ShouldBe("topic1");
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        endpoint.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
@@ -160,8 +163,8 @@ public class MqttClientConfigurationBuilderFixture
             .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic1"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -174,8 +177,8 @@ public class MqttClientConfigurationBuilderFixture
             .Produce<TestEventTwo>("id2", endpoint => endpoint.ProduceTo("topic1"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ProducerEndpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.ProducerEndpoints.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -188,16 +191,16 @@ public class MqttClientConfigurationBuilderFixture
             .Consume(endpoint => endpoint.ConsumeFrom("topic2"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ConsumerEndpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.ConsumerEndpoints.Count.ShouldBe(2);
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
-        endpoint1.Topics.Should().HaveCount(1);
-        endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        endpoint1.Topics.Count.ShouldBe(1);
+        endpoint1.Topics.First().ShouldBe("topic1");
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
         MqttConsumerEndpointConfiguration endpoint2 = configuration.ConsumerEndpoints.Skip(1).First();
-        endpoint2.Topics.Should().HaveCount(1);
-        endpoint2.Topics.First().Should().Be("topic2");
-        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        endpoint2.Topics.Count.ShouldBe(1);
+        endpoint2.Topics.First().ShouldBe("topic2");
+        endpoint2.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -210,16 +213,16 @@ public class MqttClientConfigurationBuilderFixture
             .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ConsumerEndpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.ConsumerEndpoints.Count.ShouldBe(2);
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
-        endpoint1.Topics.Should().HaveCount(1);
-        endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint1.Topics.Count.ShouldBe(1);
+        endpoint1.Topics.First().ShouldBe("topic1");
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
         MqttConsumerEndpointConfiguration endpoint2 = configuration.ConsumerEndpoints.Skip(1).First();
-        endpoint2.Topics.Should().HaveCount(1);
-        endpoint2.Topics.First().Should().Be("topic2");
-        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventTwo>>();
+        endpoint2.Topics.Count.ShouldBe(1);
+        endpoint2.Topics.First().ShouldBe("topic2");
+        endpoint2.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventTwo>>();
     }
 
     [Fact]
@@ -232,11 +235,11 @@ public class MqttClientConfigurationBuilderFixture
             .Consume<TestEventTwo>("id1", endpoint => endpoint.ConsumeFrom("topic2"));
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ConsumerEndpoints.Should().HaveCount(1);
-        configuration.ConsumerEndpoints.First().Topics.Should().HaveCount(1);
-        configuration.ConsumerEndpoints.First().Topics.Should().BeEquivalentTo("topic1");
-        configuration.ConsumerEndpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
+        configuration.ShouldNotBeNull();
+        configuration.ConsumerEndpoints.Count.ShouldBe(1);
+        configuration.ConsumerEndpoints.First().Topics.Count.ShouldBe(1);
+        configuration.ConsumerEndpoints.First().Topics.ShouldBe(["topic1"]);
+        configuration.ConsumerEndpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -249,13 +252,13 @@ public class MqttClientConfigurationBuilderFixture
             .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic1").WithAtLeastOnceQoS());
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.ConsumerEndpoints.Should().HaveCount(1);
+        configuration.ShouldNotBeNull();
+        configuration.ConsumerEndpoints.Count.ShouldBe(1);
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
-        endpoint1.Topics.Should().HaveCount(1);
-        endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
-        endpoint1.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
+        endpoint1.Topics.Count.ShouldBe(1);
+        endpoint1.Topics.First().ShouldBe("topic1");
+        endpoint1.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint1.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
@@ -269,8 +272,8 @@ public class MqttClientConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>()
-            .WithMessage("Cannot connect to the same topic in different endpoints in the same consumer.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("Cannot connect to the same topic in different endpoints in the same consumer.");
     }
 
     [Fact]
@@ -280,8 +283,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.UseProtocolVersion(MqttProtocolVersion.V311);
 
-        MqttClientConfiguration config = builder.Build();
-        config.ProtocolVersion.Should().Be(MqttProtocolVersion.V311);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.ProtocolVersion.ShouldBe(MqttProtocolVersion.V311);
     }
 
     [Fact]
@@ -291,8 +294,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithTimeout(TimeSpan.FromSeconds(42));
 
-        MqttClientConfiguration config = builder.Build();
-        config.Timeout.TotalSeconds.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.Timeout.TotalSeconds.ShouldBe(42);
     }
 
     [Fact]
@@ -302,8 +305,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.RequestCleanSession();
 
-        MqttClientConfiguration config = builder.Build();
-        config.CleanSession.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.CleanSession.ShouldBeTrue();
     }
 
     [Fact]
@@ -313,8 +316,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.RequestPersistentSession();
 
-        MqttClientConfiguration config = builder.Build();
-        config.CleanSession.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.CleanSession.ShouldBeFalse();
     }
 
     [Fact]
@@ -324,8 +327,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.DisableKeepAlive();
 
-        MqttClientConfiguration config = builder.Build();
-        config.KeepAlivePeriod.Should().Be(TimeSpan.Zero);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.KeepAlivePeriod.ShouldBe(TimeSpan.Zero);
     }
 
     [Fact]
@@ -335,8 +338,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.SendKeepAlive(TimeSpan.FromMinutes(42));
 
-        MqttClientConfiguration config = builder.Build();
-        config.KeepAlivePeriod.Should().Be(TimeSpan.FromMinutes(42));
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.KeepAlivePeriod.ShouldBe(TimeSpan.FromMinutes(42));
     }
 
     [Fact]
@@ -346,8 +349,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithClientId("client-42");
 
-        MqttClientConfiguration config = builder.Build();
-        config.ClientId.Should().Be("client-42");
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.ClientId.ShouldBe("client-42");
     }
 
     [Fact]
@@ -365,11 +368,11 @@ public class MqttClientConfigurationBuilderFixture
                 .WithDelay(TimeSpan.FromSeconds(42))
                 .ProduceTo("testaments"));
 
-        MqttClientConfiguration config = builder.Build();
-        config.WillMessage.ShouldNotBeNull();
-        config.WillMessage.Topic.Should().Be("testaments");
-        config.WillMessage.Payload.Should().NotBeNullOrEmpty();
-        config.WillMessage.Delay.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.WillMessage.ShouldNotBeNull();
+        configuration.WillMessage.Topic.ShouldBe("testaments");
+        configuration.WillMessage.Payload.ShouldNotBeEmpty();
+        configuration.WillMessage.Delay.ShouldBe(42U);
     }
 
     [Fact]
@@ -379,9 +382,9 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithEnhancedAuthentication("method", [0x01, 0x02, 0x03]);
 
-        MqttClientConfiguration config = builder.Build();
-        config.AuthenticationMethod.Should().Be("method");
-        config.AuthenticationData.Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.AuthenticationMethod.ShouldBe("method");
+        configuration.AuthenticationData.ShouldBe([0x01, 0x02, 0x03]);
     }
 
     [Fact]
@@ -391,8 +394,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.LimitTopicAlias(42);
 
-        MqttClientConfiguration config = builder.Build();
-        config.TopicAliasMaximum.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.TopicAliasMaximum.ShouldBe((ushort)42);
     }
 
     [Theory]
@@ -409,9 +412,9 @@ public class MqttClientConfigurationBuilderFixture
         Action act = () => builder.LimitTopicAlias(value);
 
         if (isValid)
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         else
-            act.Should().Throw<ArgumentOutOfRangeException>();
+            act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -421,8 +424,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.LimitPacketSize(42);
 
-        MqttClientConfiguration config = builder.Build();
-        config.MaximumPacketSize.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.MaximumPacketSize.ShouldBe(42U);
     }
 
     [Theory]
@@ -440,9 +443,9 @@ public class MqttClientConfigurationBuilderFixture
         Action act = () => builder.LimitPacketSize(value);
 
         if (isValid)
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         else
-            act.Should().Throw<ArgumentOutOfRangeException>();
+            act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -452,8 +455,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.LimitUnacknowledgedPublications(42);
 
-        MqttClientConfiguration config = builder.Build();
-        config.ReceiveMaximum.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.ReceiveMaximum.ShouldBe((ushort)42);
     }
 
     [Theory]
@@ -471,9 +474,9 @@ public class MqttClientConfigurationBuilderFixture
         Action act = () => builder.LimitUnacknowledgedPublications(value);
 
         if (isValid)
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         else
-            act.Should().Throw<ArgumentOutOfRangeException>();
+            act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -483,8 +486,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.RequestProblemInformation();
 
-        MqttClientConfiguration config = builder.Build();
-        config.RequestProblemInformation.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.RequestProblemInformation.ShouldBeTrue();
     }
 
     [Fact]
@@ -494,8 +497,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.DisableProblemInformation();
 
-        MqttClientConfiguration config = builder.Build();
-        config.RequestProblemInformation.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.RequestProblemInformation.ShouldBeFalse();
     }
 
     [Fact]
@@ -505,8 +508,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.RequestResponseInformation();
 
-        MqttClientConfiguration config = builder.Build();
-        config.RequestResponseInformation.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.RequestResponseInformation.ShouldBeTrue();
     }
 
     [Fact]
@@ -516,8 +519,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.DisableResponseInformation();
 
-        MqttClientConfiguration config = builder.Build();
-        config.RequestResponseInformation.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.RequestResponseInformation.ShouldBeFalse();
     }
 
     [Fact]
@@ -527,8 +530,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithSessionExpiration(TimeSpan.FromSeconds(42));
 
-        MqttClientConfiguration config = builder.Build();
-        config.SessionExpiryInterval.Should().Be(42);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.SessionExpiryInterval.ShouldBe(42U);
     }
 
     [Fact]
@@ -540,13 +543,12 @@ public class MqttClientConfigurationBuilderFixture
             .AddUserProperty("prop1", "value1")
             .AddUserProperty("prop2", "value2");
 
-        MqttClientConfiguration config = builder.Build();
-        config.UserProperties.Should().BeEquivalentTo(
-            new[]
-            {
-                new MqttUserProperty("prop1", "value1"),
-                new MqttUserProperty("prop2", "value2")
-            });
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.UserProperties.ShouldBe(
+        [
+            new MqttUserProperty("prop1", "value1"),
+            new MqttUserProperty("prop2", "value2")
+        ]);
     }
 
     [Fact]
@@ -556,10 +558,10 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithCredentials("user", "pass");
 
-        MqttClientConfiguration config = builder.Build();
-        config.Credentials.ShouldNotBeNull();
-        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
-        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo("pass"u8.ToArray());
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.Credentials.ShouldNotBeNull();
+        configuration.Credentials.GetUserName(configuration.GetMqttClientOptions()).ShouldBe("user");
+        configuration.Credentials.GetPassword(configuration.GetMqttClientOptions()).ShouldBe("pass"u8.ToArray());
     }
 
     [Fact]
@@ -570,10 +572,10 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithCredentials("user", passwordBytes);
 
-        MqttClientConfiguration config = builder.Build();
-        config.Credentials.ShouldNotBeNull();
-        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
-        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.Credentials.ShouldNotBeNull();
+        configuration.Credentials.GetUserName(configuration.GetMqttClientOptions()).ShouldBe("user");
+        configuration.Credentials.GetPassword(configuration.GetMqttClientOptions()).ShouldBe(passwordBytes);
     }
 
     [Fact]
@@ -584,10 +586,10 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.WithCredentials(new MqttClientCredentials("user", passwordBytes));
 
-        MqttClientConfiguration config = builder.Build();
-        config.Credentials.ShouldNotBeNull();
-        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
-        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.Credentials.ShouldNotBeNull();
+        configuration.Credentials.GetUserName(configuration.GetMqttClientOptions()).ShouldBe("user");
+        configuration.Credentials.GetPassword(configuration.GetMqttClientOptions()).ShouldBe(passwordBytes);
     }
 
     [Fact]
@@ -598,8 +600,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.UseEnhancedAuthenticationHandler(instance);
 
-        MqttClientConfiguration config = builder.Build();
-        config.EnhancedAuthenticationHandler.Should().BeSameAs(instance);
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.EnhancedAuthenticationHandler.ShouldBeSameAs(instance);
     }
 
     [Fact]
@@ -613,8 +615,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.UseEnhancedAuthenticationHandler<TestEnhancedAuthenticationHandler>();
 
-        MqttClientConfiguration config = builder.Build();
-        config.EnhancedAuthenticationHandler.Should().BeOfType<TestEnhancedAuthenticationHandler>();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.EnhancedAuthenticationHandler.ShouldBeOfType<TestEnhancedAuthenticationHandler>();
     }
 
     [Fact]
@@ -628,8 +630,8 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.UseEnhancedAuthenticationHandler(typeof(TestEnhancedAuthenticationHandler));
 
-        MqttClientConfiguration config = builder.Build();
-        config.EnhancedAuthenticationHandler.Should().BeOfType<TestEnhancedAuthenticationHandler>();
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.EnhancedAuthenticationHandler.ShouldBeOfType<TestEnhancedAuthenticationHandler>();
     }
 
     [Theory]
@@ -643,8 +645,9 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration configuration = builder.Build();
 
-        configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("test", 42));
-        configuration.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("test", 42));
+        tcpConfiguration.Tls.UseTls.ShouldBeFalse();
     }
 
     [Fact]
@@ -656,8 +659,9 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration configuration = builder.Build();
 
-        configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("test", 42));
-        configuration.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("test", 42));
+        tcpConfiguration.Tls.UseTls.ShouldBeTrue();
     }
 
     [Theory]
@@ -671,8 +675,9 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration configuration = builder.Build();
 
-        configuration.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be(uri);
-        configuration.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeFalse();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Uri.ShouldBe(uri);
+        webSocketConfiguration.Tls.UseTls.ShouldBeFalse();
     }
 
     [Fact]
@@ -682,9 +687,9 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.ConnectViaTcp("tests-server");
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1883));
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1883));
     }
 
     [Fact]
@@ -694,14 +699,14 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.ConnectViaTcp("tests-server", 1234, AddressFamily.InterNetworkV6, ProtocolType.IP);
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(
             new DnsEndPoint(
                 "tests-server",
                 1234,
                 AddressFamily.InterNetworkV6));
-        config.Channel.As<MqttClientTcpConfiguration>().ProtocolType.Should().Be(ProtocolType.IP);
+        tcpConfiguration.ProtocolType.ShouldBe(ProtocolType.IP);
     }
 
     [Fact]
@@ -711,9 +716,9 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.ConnectViaTcp("tests-server", 1234);
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]
@@ -727,9 +732,9 @@ public class MqttClientConfigurationBuilderFixture
                 RemoteEndpoint = new DnsEndPoint("tests-server", 1234),
             });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]
@@ -739,9 +744,9 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.ConnectViaWebSocket("uri");
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientWebSocketConfiguration>();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be("uri");
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Uri.ShouldBe("uri");
     }
 
     [Fact]
@@ -759,10 +764,10 @@ public class MqttClientConfigurationBuilderFixture
                 }
             });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.Should().BeOfType<MqttClientWebSocketConfiguration>();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be("uri");
-        config.Channel.As<MqttClientWebSocketConfiguration>().RequestHeaders.Should().BeEquivalentTo(
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Uri.ShouldBe("uri");
+        webSocketConfiguration.RequestHeaders.ShouldBe(
             new Dictionary<string, string>
             {
                 { "header", "value" }
@@ -784,14 +789,15 @@ public class MqttClientConfigurationBuilderFixture
                 true,
                 ["local1", "local2"]);
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy.Should().NotBeNull();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Address.Should().Be("address");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Username.Should().Be("user");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Password.Should().Be("pass");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Domain.Should().Be("domain");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassOnLocal.Should().BeTrue();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassList.Should().BeEquivalentTo("local1", "local2");
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Proxy.ShouldNotBeNull();
+        webSocketConfiguration.Proxy!.Address.ShouldBe("address");
+        webSocketConfiguration.Proxy!.Username.ShouldBe("user");
+        webSocketConfiguration.Proxy!.Password.ShouldBe("pass");
+        webSocketConfiguration.Proxy!.Domain.ShouldBe("domain");
+        webSocketConfiguration.Proxy!.BypassOnLocal.ShouldBeTrue();
+        webSocketConfiguration.Proxy!.BypassList.ShouldBe(["local1", "local2"]);
     }
 
     [Fact]
@@ -812,14 +818,15 @@ public class MqttClientConfigurationBuilderFixture
                     BypassList = ["local1", "local2"]
                 });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy.Should().NotBeNull();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Address.Should().Be("address");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Username.Should().Be("user");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Password.Should().Be("pass");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Domain.Should().Be("domain");
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassOnLocal.Should().BeTrue();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassList.Should().BeEquivalentTo("local1", "local2");
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Proxy.ShouldNotBeNull();
+        webSocketConfiguration.Proxy!.Address.ShouldBe("address");
+        webSocketConfiguration.Proxy!.Username.ShouldBe("user");
+        webSocketConfiguration.Proxy!.Password.ShouldBe("pass");
+        webSocketConfiguration.Proxy!.Domain.ShouldBe("domain");
+        webSocketConfiguration.Proxy!.BypassOnLocal.ShouldBeTrue();
+        webSocketConfiguration.Proxy!.BypassList.ShouldBe(["local1", "local2"]);
     }
 
     [Fact]
@@ -831,8 +838,9 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaTcp("tests-server")
             .EnableTls();
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.Tls.UseTls.ShouldBeTrue();
     }
 
     [Fact]
@@ -844,8 +852,9 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaTcp("tests-server")
             .DisableTls();
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.Tls.UseTls.ShouldBeFalse();
     }
 
     [Fact]
@@ -863,10 +872,11 @@ public class MqttClientConfigurationBuilderFixture
                     AllowUntrustedCertificates = true
                 });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeTrue();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.SslProtocol.Should().Be(SslProtocols.Tls12);
-        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.AllowUntrustedCertificates.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Tls.UseTls.ShouldBeTrue();
+        webSocketConfiguration.Tls.SslProtocol.ShouldBe(SslProtocols.Tls12);
+        webSocketConfiguration.Tls.AllowUntrustedCertificates.ShouldBeTrue();
     }
 
     [Fact]
@@ -878,8 +888,9 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaWebSocket("tests-server")
             .DisableTls();
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
+        webSocketConfiguration.Tls.UseTls.ShouldBeFalse();
     }
 
     [Fact]
@@ -897,10 +908,11 @@ public class MqttClientConfigurationBuilderFixture
                     AllowUntrustedCertificates = true
                 });
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.SslProtocol.Should().Be(SslProtocols.Tls12);
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.AllowUntrustedCertificates.Should().BeTrue();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.Tls.UseTls.ShouldBeTrue();
+        tcpConfiguration.Tls.SslProtocol.ShouldBe(SslProtocols.Tls12);
+        tcpConfiguration.Tls.AllowUntrustedCertificates.ShouldBeTrue();
     }
 
     [Fact]
@@ -912,8 +924,9 @@ public class MqttClientConfigurationBuilderFixture
             .ConnectViaTcp("tests-server")
             .DisableTls();
 
-        MqttClientConfiguration config = builder.Build();
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
+        MqttClientConfiguration configuration = builder.Build();
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.Tls.UseTls.ShouldBeFalse();
     }
 
     [Fact]
@@ -924,7 +937,7 @@ public class MqttClientConfigurationBuilderFixture
         builder.EnableParallelProcessing(42);
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.MaxDegreeOfParallelism.Should().Be(42);
+        configuration.MaxDegreeOfParallelism.ShouldBe(42);
     }
 
     [Fact]
@@ -935,7 +948,7 @@ public class MqttClientConfigurationBuilderFixture
         builder.DisableParallelProcessing();
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.MaxDegreeOfParallelism.Should().Be(1);
+        configuration.MaxDegreeOfParallelism.ShouldBe(1);
     }
 
     [Fact]
@@ -946,7 +959,7 @@ public class MqttClientConfigurationBuilderFixture
         builder.LimitBackpressure(42);
 
         MqttClientConfiguration configuration = builder.Build();
-        configuration.BackpressureLimit.Should().Be(42);
+        configuration.BackpressureLimit.ShouldBe(42);
     }
 
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>

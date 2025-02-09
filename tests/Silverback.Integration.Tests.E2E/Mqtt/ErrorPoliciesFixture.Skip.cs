@@ -3,8 +3,8 @@
 
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -51,8 +51,8 @@ public partial class ErrorPoliciesFixture
             });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
+        Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
 
         await producer.RawProduceAsync(
             rawMessage,
@@ -62,7 +62,7 @@ public partial class ErrorPoliciesFixture
             });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 }

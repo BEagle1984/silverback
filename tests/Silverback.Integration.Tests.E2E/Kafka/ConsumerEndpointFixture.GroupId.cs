@@ -4,8 +4,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -48,10 +48,10 @@ public partial class ConsumerEndpointFixture
         await AsyncTestingUtil.WaitAsync(() => received >= 5);
         await Task.Delay(100);
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
 
-        Helper.ConsumerGroups.Should().HaveCount(1);
-        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
     }
 }

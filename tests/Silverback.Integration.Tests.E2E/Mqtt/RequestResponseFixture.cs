@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -50,15 +50,15 @@ public class RequestResponseFixture : MqttFixture
             envelope => envelope.SetMqttResponseTopic("response/two").SetMqttCorrelationData([1, 2, 3, 4]));
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
-        messages.Should().HaveCount(2);
-        messages[0].ResponseTopic.Should().Be("response/one");
-        messages[0].CorrelationData.Should().BeEquivalentTo("data"u8.ToArray());
-        messages[0].UserProperties.Should().NotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
-        messages[0].UserProperties.Should().NotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
-        messages[1].ResponseTopic.Should().Be("response/two");
-        messages[1].CorrelationData.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
-        messages[1].UserProperties.Should().NotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
-        messages[1].UserProperties.Should().NotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
+        messages.Count.ShouldBe(2);
+        messages[0].ResponseTopic.ShouldBe("response/one");
+        messages[0].CorrelationData.ShouldBe("data"u8.ToArray());
+        messages[0].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
+        messages[0].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
+        messages[1].ResponseTopic.ShouldBe("response/two");
+        messages[1].CorrelationData.ShouldBe([1, 2, 3, 4]);
+        messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
+        messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
     }
 
     [Fact]
@@ -89,10 +89,10 @@ public class RequestResponseFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].GetMqttResponseTopic().Should().Be("response/one");
-        Helper.Spy.InboundEnvelopes[0].GetMqttCorrelationData().Should().BeEquivalentTo("data"u8.ToArray());
-        Helper.Spy.InboundEnvelopes[1].GetMqttResponseTopic().Should().Be("response/two");
-        Helper.Spy.InboundEnvelopes[1].GetMqttCorrelationData().Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].GetMqttResponseTopic().ShouldBe("response/one");
+        Helper.Spy.InboundEnvelopes[0].GetMqttCorrelationData().ShouldBe("data"u8.ToArray());
+        Helper.Spy.InboundEnvelopes[1].GetMqttResponseTopic().ShouldBe("response/two");
+        Helper.Spy.InboundEnvelopes[1].GetMqttCorrelationData().ShouldBe([1, 2, 3, 4]);
     }
 }

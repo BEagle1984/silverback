@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -31,8 +31,8 @@ public class KafkaOffsetStoreScopeFixture
         await scope.StoreOffsetsAsync();
 
         IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets(string.Empty);
-        storedOffsets.Should().HaveCount(1);
-        storedOffsets.First().Should().BeEquivalentTo(new KafkaOffset("topic1", 3, 42));
+        storedOffsets.Count.ShouldBe(1);
+        storedOffsets.First().ShouldBe(new KafkaOffset("topic1", 3, 42));
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public class KafkaOffsetStoreScopeFixture
 
         ISequence sequence = Substitute.For<ISequence>();
         sequence.GetCommitIdentifiers().Returns(
-            [
-                new KafkaOffset("topic1", 3, 42),
-                new KafkaOffset("topic2", 6, 13)
-            ]);
+        [
+            new KafkaOffset("topic1", 3, 42),
+            new KafkaOffset("topic2", 6, 13)
+        ]);
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequence: sequence);
 
         KafkaOffsetStoreScope scope = new(store, context);
@@ -53,13 +53,13 @@ public class KafkaOffsetStoreScopeFixture
         await scope.StoreOffsetsAsync();
 
         IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets(string.Empty);
-        storedOffsets.Should().HaveCount(2);
-        storedOffsets.Should().BeEquivalentTo(
+        storedOffsets.Count.ShouldBe(2);
+        storedOffsets.ShouldBe(
             [
                 new KafkaOffset("topic1", 3, 42),
                 new KafkaOffset("topic2", 6, 13)
             ],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     private class TestOffsetStore : IKafkaOffsetStore

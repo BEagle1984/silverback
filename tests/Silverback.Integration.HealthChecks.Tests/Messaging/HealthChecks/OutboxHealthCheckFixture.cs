@@ -4,12 +4,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -42,7 +42,7 @@ public class OutboxHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Healthy);
+        result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class OutboxHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Healthy);
+        result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class OutboxHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class OutboxHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
     }
 
     [Fact]
@@ -146,8 +146,8 @@ public class OutboxHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
-        result.Exception.Should().BeOfType<ArithmeticException>();
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
+        result.Exception.ShouldBeOfType<ArithmeticException>();
     }
 
     private static (IHealthCheck HealthCheck, HealthCheckContext Context) GetHealthCheck(IServiceProvider serviceProvider)

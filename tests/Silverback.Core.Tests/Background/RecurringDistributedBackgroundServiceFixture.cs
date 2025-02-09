@@ -4,9 +4,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Background;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
@@ -39,7 +39,7 @@ public class RecurringDistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class RecurringDistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class RecurringDistributedBackgroundServiceFixture
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
             lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
 
-        service2.DistributedLock.Should().BeSameAs(service1.DistributedLock);
+        service2.DistributedLock.ShouldBeSameAs(service1.DistributedLock);
 
         async Task ExecuteTask(CancellationToken stoppingToken, Action execute)
         {
@@ -111,8 +111,8 @@ public class RecurringDistributedBackgroundServiceFixture
         await AsyncTestingUtil.WaitAsync(() => executed1 || executed2);
         await Task.Delay(100);
 
-        (executed1 || executed2).Should().BeTrue();
-        (executed1 && executed2).Should().BeFalse();
+        (executed1 || executed2).ShouldBeTrue();
+        (executed1 && executed2).ShouldBeFalse();
 
         if (executed1)
             await service1.StopAsync(CancellationToken.None);
@@ -120,9 +120,9 @@ public class RecurringDistributedBackgroundServiceFixture
             await service2.StopAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed1 && executed2);
-        (executed1 && executed2).Should().BeTrue();
+        (executed1 && executed2).ShouldBeTrue();
 
-        executedInParallel.Should().BeFalse();
+        executedInParallel.ShouldBeFalse();
     }
 
     [Fact]
@@ -152,7 +152,9 @@ public class RecurringDistributedBackgroundServiceFixture
 
         await AsyncTestingUtil.WaitAsync(() => secondExecution != null);
 
-        (secondExecution - firstExecution).Should().BeGreaterThan(TimeSpan.FromMilliseconds(90));
+        firstExecution.ShouldNotBeNull();
+        secondExecution.ShouldNotBeNull();
+        (secondExecution.Value - firstExecution.Value).ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
     }
 
     [Fact]
@@ -176,14 +178,14 @@ public class RecurringDistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
-        executions.Should().BeGreaterThan(0);
+        executions.ShouldBeGreaterThan(0);
 
         await service.StopAsync(CancellationToken.None);
 
         int executionsBeforeStop = executions;
         await Task.Delay(100);
 
-        executions.Should().Be(executionsBeforeStop);
+        executions.ShouldBe(executionsBeforeStop);
     }
 
     [Fact]
@@ -208,18 +210,18 @@ public class RecurringDistributedBackgroundServiceFixture
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
-        executions.Should().BeGreaterThan(0);
+        executions.ShouldBeGreaterThan(0);
 
         service.Pause();
 
         int executionsBeforePause = executions;
         await Task.Delay(100);
-        executions.Should().Be(executionsBeforePause);
+        executions.ShouldBe(executionsBeforePause);
 
         service.Resume();
 
         await AsyncTestingUtil.WaitAsync(() => executions > executionsBeforePause);
-        executions.Should().BeGreaterThan(executionsBeforePause);
+        executions.ShouldBeGreaterThan(executionsBeforePause);
     }
 
     private sealed class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService

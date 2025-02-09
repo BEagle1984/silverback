@@ -4,8 +4,8 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Newtonsoft.Json;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -28,7 +28,7 @@ public class NewtonsoftJsonMessageSerializerFixture
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
         byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
-        serialized.ReadAll().Should().BeEquivalentTo(expected);
+        serialized.ReadAll().ShouldBe(expected);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+        headers.GetValue("x-message-type").ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        headers.GetValue("x-message-type").Should().BeNull();
+        headers.GetValue("x-message-type").ShouldBeNull();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class NewtonsoftJsonMessageSerializerFixture
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+        serialized.ReadAll().ShouldBe(messageBytes);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class NewtonsoftJsonMessageSerializerFixture
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeSameAs(stream);
+        serialized.ShouldBeSameAs(stream);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class NewtonsoftJsonMessageSerializerFixture
         Stream? serialized = await serializer
             .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeNull();
+        serialized.ShouldBeNull();
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -160,6 +160,6 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

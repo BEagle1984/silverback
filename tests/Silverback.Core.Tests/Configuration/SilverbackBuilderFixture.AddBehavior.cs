@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -25,9 +25,9 @@ public partial class SilverbackBuilderFixture
         builder.AddTransientBehavior(typeof(TestBehavior));
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Transient);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Transient);
     }
 
     [Fact]
@@ -38,9 +38,9 @@ public partial class SilverbackBuilderFixture
         builder.AddTransientBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Transient);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Transient);
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public partial class SilverbackBuilderFixture
         builder.AddTransientBehavior(_ => new TestBehavior());
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationFactory.Should().NotBeNull();
-        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).Should().BeAssignableTo<TestBehavior>();
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Transient);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationFactory.ShouldNotBeNull();
+        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).ShouldBeAssignableTo<TestBehavior>();
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Transient);
     }
 
     [Fact]
@@ -65,9 +65,9 @@ public partial class SilverbackBuilderFixture
         builder.AddScopedBehavior(typeof(TestBehavior));
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Scoped);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Scoped);
     }
 
     [Fact]
@@ -78,9 +78,9 @@ public partial class SilverbackBuilderFixture
         builder.AddScopedBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Scoped);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Scoped);
     }
 
     [Fact]
@@ -91,10 +91,10 @@ public partial class SilverbackBuilderFixture
         builder.AddScopedBehavior(_ => new TestBehavior());
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationFactory.Should().NotBeNull();
-        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).Should().BeAssignableTo<TestBehavior>();
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Scoped);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationFactory.ShouldNotBeNull();
+        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).ShouldBeAssignableTo<TestBehavior>();
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Scoped);
     }
 
     [Fact]
@@ -105,9 +105,9 @@ public partial class SilverbackBuilderFixture
         builder.AddSingletonBehavior(typeof(TestBehavior));
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Singleton);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
     [Fact]
@@ -118,9 +118,9 @@ public partial class SilverbackBuilderFixture
         builder.AddSingletonBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationType.Should().Be(typeof(TestBehavior));
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Singleton);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationType.ShouldBe(typeof(TestBehavior));
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
     [Fact]
@@ -131,10 +131,10 @@ public partial class SilverbackBuilderFixture
         builder.AddSingletonBehavior(_ => new TestBehavior());
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationFactory.Should().NotBeNull();
-        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).Should().BeAssignableTo<TestBehavior>();
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Singleton);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationFactory.ShouldNotBeNull();
+        descriptors[0].ImplementationFactory!.Invoke(Substitute.For<IServiceProvider>()).ShouldBeAssignableTo<TestBehavior>();
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
     [Fact]
@@ -146,10 +146,10 @@ public partial class SilverbackBuilderFixture
         builder.AddSingletonBehavior(instance);
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
-        descriptors.Should().HaveCount(1);
-        descriptors[0].ImplementationInstance.Should().NotBeNull();
-        descriptors[0].ImplementationInstance.Should().Be(instance);
-        descriptors[0].Lifetime.Should().Be(ServiceLifetime.Singleton);
+        descriptors.Count.ShouldBe(1);
+        descriptors[0].ImplementationInstance.ShouldNotBeNull();
+        descriptors[0].ImplementationInstance.ShouldBe(instance);
+        descriptors[0].Lifetime.ShouldBe(ServiceLifetime.Singleton);
     }
 
     private class TestBehavior : IBehavior

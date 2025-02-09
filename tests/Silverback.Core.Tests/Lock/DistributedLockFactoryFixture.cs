@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -24,8 +24,8 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1(), Substitute.For<IServiceProvider>());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings2(), Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<DistributedLock1>();
-        lock2.Should().BeOfType<DistributedLock2>();
+        lock1.ShouldBeOfType<DistributedLock1>();
+        lock2.ShouldBeOfType<DistributedLock2>();
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class DistributedLockFactoryFixture
         IDistributedLock nullLock1 = factory.GetDistributedLock(null, Substitute.For<IServiceProvider>());
         IDistributedLock nullLock2 = factory.GetDistributedLock(null, Substitute.For<IServiceProvider>());
 
-        nullLock1.Should().BeOfType<NullLock>();
-        nullLock2.Should().BeSameAs(nullLock1);
+        nullLock1.ShouldBeOfType<NullLock>();
+        nullLock2.ShouldBeSameAs(nullLock1);
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class DistributedLockFactoryFixture
 
         Action act = () => factory.GetDistributedLock(new LockSettings2(), Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("No factory registered for the specified settings type (LockSettings2).");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No factory registered for the specified settings type (LockSettings2).");
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1(), Substitute.For<IServiceProvider>());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings1(), Substitute.For<IServiceProvider>());
 
-        lock2.Should().BeSameAs(lock1);
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock1 = factory.GetDistributedLock(lockSettings1, Substitute.For<IServiceProvider>());
         IDistributedLock lock2 = factory.GetDistributedLock(lockSettings1, Substitute.For<IServiceProvider>());
 
-        lock2.Should().BeSameAs(lock1);
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -97,11 +97,11 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2("A"), Substitute.For<IServiceProvider>());
         IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -119,11 +119,11 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2("A"), Substitute.For<IServiceProvider>());
         IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -134,8 +134,8 @@ public class DistributedLockFactoryFixture
 
         Action act = () => factory.AddFactory<LockSettings1>((_, _) => new DistributedLock1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified settings type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified settings type is already registered.");
     }
 
     [Fact]
@@ -150,8 +150,8 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1(), Substitute.For<IServiceProvider>());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings2(), Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<OverrideLock>();
-        lock2.Should().BeOfType<OverrideLock>();
+        lock1.ShouldBeOfType<OverrideLock>();
+        lock2.ShouldBeOfType<OverrideLock>();
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class DistributedLockFactoryFixture
 
         bool result = factory.HasFactory<LockSettings1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -173,7 +173,7 @@ public class DistributedLockFactoryFixture
 
         bool result = factory.HasFactory<LockSettings2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

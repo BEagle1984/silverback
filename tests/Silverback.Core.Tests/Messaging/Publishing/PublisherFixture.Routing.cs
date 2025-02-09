@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
@@ -35,7 +35,7 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventOne());
         await publisher.PublishAsync(new TestEventTwo());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventOne());
         await publisher.PublishAsync(new TestEventTwo());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -81,11 +81,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -110,11 +110,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -137,11 +137,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -166,11 +166,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventOne());
         await publisher.PublishAsync(new TestEventTwo());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -214,11 +214,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -241,11 +241,11 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventTwo());
         await publisher.PublishAsync(new TestCommandOne());
 
-        messages.Should().HaveCount(4);
-        messages[0].Should().BeOfType<TestEventOne>();
-        messages[1].Should().BeOfType<TestEventTwo>();
-        messages[2].Should().BeOfType<TestEventOne>();
-        messages[3].Should().BeOfType<TestEventTwo>();
+        messages.Count.ShouldBe(4);
+        messages[0].ShouldBeOfType<TestEventOne>();
+        messages[1].ShouldBeOfType<TestEventTwo>();
+        messages[2].ShouldBeOfType<TestEventOne>();
+        messages[3].ShouldBeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -266,7 +266,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        messages.Should().HaveCount(2);
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -286,10 +286,12 @@ public partial class PublisherFixture
         Action actSync = () => publisher.Publish(new TestEventOne());
         Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne());
 
-        actSync.Should().Throw<InvalidOperationException>().WithMessage("No service for type *");
-        await actAsync.Should().ThrowAsync<InvalidOperationException>().WithMessage("No service for type *");
+        Exception syncException = actSync.ShouldThrow<InvalidOperationException>();
+        syncException.Message.ShouldMatch("No service for type .*");
+        Exception asyncException = await actAsync.ShouldThrowAsync<InvalidOperationException>();
+        asyncException.Message.ShouldMatch("No service for type .*");
 
-        messages.Should().BeEmpty();
+        messages.ShouldBeEmpty();
     }
 
     [Fact]
@@ -311,8 +313,8 @@ public partial class PublisherFixture
         Action actSync = () => publisher.Publish(new TestEventOne(), true);
         Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
 
-        actSync.Should().ThrowExactly<UnhandledMessageException>();
-        await actAsync.Should().ThrowExactlyAsync<UnhandledMessageException>();
+        actSync.ShouldThrow<UnhandledMessageException>();
+        await actAsync.ShouldThrowAsync<UnhandledMessageException>();
     }
 
     [Fact]
@@ -334,8 +336,8 @@ public partial class PublisherFixture
         Action actSync = () => publisher.Publish(new TestEventOne(), true);
         Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
 
-        actSync.Should().NotThrow();
-        await actAsync.Should().NotThrowAsync();
+        actSync.ShouldNotThrow();
+        await actAsync.ShouldNotThrowAsync();
     }
 
     [Fact]
@@ -359,10 +361,10 @@ public partial class PublisherFixture
         Func<Task> actAsync1 = () => publisher.PublishAsync(new TestEventOne());
         Func<Task> actAsync2 = () => publisher.PublishAsync(new TestEventOne());
 
-        actSync1.Should().NotThrow();
-        actSync2.Should().NotThrow();
-        await actAsync1.Should().NotThrowAsync();
-        await actAsync2.Should().NotThrowAsync();
+        actSync1.ShouldNotThrow();
+        actSync2.ShouldNotThrow();
+        await actAsync1.ShouldNotThrowAsync();
+        await actAsync2.ShouldNotThrowAsync();
     }
 
     private class BaseTypeSubscriber

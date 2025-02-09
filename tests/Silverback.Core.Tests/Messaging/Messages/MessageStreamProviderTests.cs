@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -39,12 +39,12 @@ public class MessageStreamProviderTests
 
         await Task.WhenAll(task1, task2);
 
-        eventsList.Should().HaveCount(2);
-        eventsList[0].Should().BeOfType<TestEventOne>();
-        eventsList[1].Should().BeOfType<TestEventTwo>();
+        eventsList.Count.ShouldBe(2);
+        eventsList[0].ShouldBeOfType<TestEventOne>();
+        eventsList[1].ShouldBeOfType<TestEventTwo>();
 
-        testEventOnesList.Should().HaveCount(1);
-        testEventOnesList[0].Should().BeOfType<TestEventOne>();
+        testEventOnesList.Count.ShouldBe(1);
+        testEventOnesList[0].ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class MessageStreamProviderTests
 
         await provider.PushAsync(new TestEventOne());
 
-        processed.Should().BeTrue();
+        processed.ShouldBeTrue();
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class MessageStreamProviderTests
         await provider.PushAsync(new TestEventOne());
         Func<Task> act = () => provider.PushAsync(new TestEventTwo());
 
-        await act.Should().ThrowAsync<UnhandledMessageException>();
+        await act.ShouldThrowAsync<UnhandledMessageException>();
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class MessageStreamProviderTests
         await provider.PushAsync(new TestEventOne());
         Func<Task> act = () => provider.PushAsync(new TestEventTwo(), false);
 
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 
     [Fact]
@@ -118,7 +118,8 @@ public class MessageStreamProviderTests
 
         await task;
 
-        envelopes.Should().HaveCount(3);
+        envelopes.ShouldNotBeNull();
+        envelopes.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -142,12 +143,12 @@ public class MessageStreamProviderTests
 
         await Task.WhenAll(task1, task2);
 
-        eventsList.Should().HaveCount(2);
-        eventsList[0].Should().BeOfType<TestEventOne>();
-        eventsList[1].Should().BeOfType<TestEventTwo>();
+        eventsList.Count.ShouldBe(2);
+        eventsList[0].ShouldBeOfType<TestEventOne>();
+        eventsList[1].ShouldBeOfType<TestEventTwo>();
 
-        testEventOnesList.Should().HaveCount(1);
-        testEventOnesList[0].Should().BeOfType<TestEventOne>();
+        testEventOnesList.Count.ShouldBe(1);
+        testEventOnesList[0].ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -161,7 +162,7 @@ public class MessageStreamProviderTests
         await provider.PushAsync(new TestEnvelope(new TestEventOne()));
         Func<Task> act = () => provider.PushAsync(new TestEnvelope(new TestEventTwo()));
 
-        await act.Should().ThrowAsync<UnhandledMessageException>();
+        await act.ShouldThrowAsync<UnhandledMessageException>();
     }
 
     [Fact]
@@ -178,22 +179,22 @@ public class MessageStreamProviderTests
         enumerator.MoveNext();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         enumerator.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
+        pushTask3.IsCompleted.ShouldBeFalse();
 
         enumerator.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeTrue();
+        pushTask3.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]
@@ -210,22 +211,22 @@ public class MessageStreamProviderTests
         await enumerator.MoveNextAsync();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         await enumerator.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
+        pushTask3.IsCompleted.ShouldBeFalse();
 
         await enumerator.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
-        pushTask3.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeTrue();
+        pushTask3.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]
@@ -245,30 +246,30 @@ public class MessageStreamProviderTests
         enumerator2.MoveNext();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         enumerator1.MoveNext();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         enumerator2.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
 
         enumerator1.MoveNext();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
 
         enumerator2.MoveNext();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
+        pushTask2.IsCompleted.ShouldBeTrue();
     }
 
     [Fact]
@@ -288,30 +289,30 @@ public class MessageStreamProviderTests
         await enumerator2.MoveNextAsync();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         await enumerator1.MoveNextAsync();
 
         await Task.Delay(100);
-        pushTask1.IsCompleted.Should().BeFalse();
+        pushTask1.IsCompleted.ShouldBeFalse();
 
         await enumerator2.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
-        pushTask1.IsCompleted.Should().BeTrue();
+        pushTask1.IsCompleted.ShouldBeTrue();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
 
         await enumerator1.MoveNextAsync();
 
         await Task.Delay(100);
-        pushTask2.IsCompleted.Should().BeFalse();
+        pushTask2.IsCompleted.ShouldBeFalse();
 
         await enumerator2.MoveNextAsync();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
-        pushTask2.IsCompleted.Should().BeTrue();
+        pushTask2.IsCompleted.ShouldBeTrue();
     }
 
     [Fact]
@@ -331,12 +332,12 @@ public class MessageStreamProviderTests
         await provider.PushAsync(2);
         await provider.PushAsync(3);
 
-        count.Should().BeNull();
+        count.ShouldBeNull();
 
         await provider.CompleteAsync();
         await enumerationTask;
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -356,12 +357,12 @@ public class MessageStreamProviderTests
         await provider.PushAsync(2);
         await provider.PushAsync(3);
 
-        count.Should().BeNull();
+        count.ShouldBeNull();
 
         await provider.CompleteAsync();
         await enumerationTask;
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -381,14 +382,14 @@ public class MessageStreamProviderTests
         await provider.PushAsync(2);
         await provider.PushAsync(3);
 
-        count.Should().BeNull();
+        count.ShouldBeNull();
 
         provider.Abort();
 
         await AsyncTestingUtil.WaitAsync(() => enumerationTask.IsCompleted);
 
-        count.Should().BeNull();
-        enumerationTask.Status.Should().Be(TaskStatus.Faulted);
+        count.ShouldBeNull();
+        enumerationTask.Status.ShouldBe(TaskStatus.Faulted);
     }
 
     [Fact]
@@ -408,14 +409,14 @@ public class MessageStreamProviderTests
         await provider.PushAsync(2);
         await provider.PushAsync(3);
 
-        count.Should().BeNull();
+        count.ShouldBeNull();
 
         provider.Abort();
 
         await AsyncTestingUtil.WaitAsync(() => enumerationTask.IsCompleted);
 
-        count.Should().BeNull();
-        enumerationTask.Status.Should().Be(TaskStatus.Canceled);
+        count.ShouldBeNull();
+        enumerationTask.Status.ShouldBe(TaskStatus.Canceled);
     }
 
     [Fact]
@@ -443,22 +444,22 @@ public class MessageStreamProviderTests
         await provider.PushAsync(new TestEventOne(), false);
         await provider.PushAsync(new TestEventOne(), false);
 
-        createStreamTask.Status.Should().NotBe(TaskStatus.RanToCompletion);
-        lazyStream.Stream.Should().BeNull();
+        createStreamTask.Status.ShouldNotBe(TaskStatus.RanToCompletion);
+        lazyStream.Stream.ShouldBeNull();
 
         await provider.PushAsync(new TestEventTwo());
 
-        createStreamTask.Status.Should().Be(TaskStatus.RanToCompletion);
-        lazyStream.Stream.Should().BeOfType<MessageStreamEnumerable<TestEventTwo>>();
+        createStreamTask.Status.ShouldBe(TaskStatus.RanToCompletion);
+        lazyStream.Stream.ShouldBeOfType<MessageStreamEnumerable<TestEventTwo>>();
 
         await provider.PushAsync(new TestEventTwo());
 
-        receivedTwos.Should().HaveCount(2);
+        receivedTwos.Count.ShouldBe(2);
 
         await provider.CompleteAsync();
 
         await AsyncTestingUtil.WaitAsync(() => completed);
-        completed.Should().BeTrue();
+        completed.ShouldBeTrue();
     }
 
     [Fact]
@@ -468,7 +469,7 @@ public class MessageStreamProviderTests
         ILazyMessageStreamEnumerable<IEvent> stream1 = provider.CreateLazyStream<IEvent>();
         ILazyMessageStreamEnumerable<IEvent> stream2 = provider.CreateLazyStream<IEvent>();
 
-        stream2.Should().NotBeSameAs(stream1);
+        stream2.ShouldNotBeSameAs(stream1);
     }
 
     [Fact]
@@ -479,7 +480,7 @@ public class MessageStreamProviderTests
         ILazyMessageStreamEnumerable<IEvent> stream1 = provider.CreateLazyStream<IEvent>();
         ILazyMessageStreamEnumerable<object> stream2 = provider.CreateLazyStream(typeof(IEvent));
 
-        stream2.Should().BeOfType(stream1.GetType());
+        stream2.ShouldBeOfType(stream1.GetType());
     }
 
     [Fact]
@@ -489,7 +490,7 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<IEvent> stream1 = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<IEvent> stream2 = provider.CreateStream<IEvent>();
 
-        stream2.Should().NotBeSameAs(stream1);
+        stream2.ShouldNotBeSameAs(stream1);
     }
 
     [Fact]
@@ -500,7 +501,7 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<IEvent> stream1 = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<object> stream2 = provider.CreateStream(typeof(IEvent));
 
-        stream2.Should().BeOfType(stream1.GetType());
+        stream2.ShouldBeOfType(stream1.GetType());
     }
 
     private class TestEvent : IEvent;

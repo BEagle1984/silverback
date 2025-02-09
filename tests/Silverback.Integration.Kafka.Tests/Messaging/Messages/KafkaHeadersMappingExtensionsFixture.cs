@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -21,11 +21,9 @@ public class KafkaHeadersMappingExtensionsFixture
 
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
-        confluentHeaders.Should().BeEquivalentTo(
-        [
-            new Header("one", "1"u8.ToArray()),
-            new Header("two", "2"u8.ToArray())
-        ]);
+        confluentHeaders.Count.ShouldBe(2);
+        confluentHeaders[0].ShouldBeEquivalentTo(new Header("one", "1"u8.ToArray()));
+        confluentHeaders[1].ShouldBeEquivalentTo(new Header("two", "2"u8.ToArray()));
     }
 
     [Fact]
@@ -40,11 +38,9 @@ public class KafkaHeadersMappingExtensionsFixture
 
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
-        confluentHeaders.Should().BeEquivalentTo(
-        [
-            new Header("one", "1"u8.ToArray()),
-            new Header("two", "2"u8.ToArray())
-        ]);
+        confluentHeaders.Count.ShouldBe(2);
+        confluentHeaders[0].ShouldBeEquivalentTo(new Header("one", "1"u8.ToArray()));
+        confluentHeaders[1].ShouldBeEquivalentTo(new Header("two", "2"u8.ToArray()));
     }
 
     [Fact]
@@ -60,11 +56,9 @@ public class KafkaHeadersMappingExtensionsFixture
 
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
-        confluentHeaders.Should().BeEquivalentTo(
-        [
-            new Header("one", "1"u8.ToArray()),
-            new Header("two", "2"u8.ToArray())
-        ]);
+        confluentHeaders.Count.ShouldBe(2);
+        confluentHeaders[0].ShouldBeEquivalentTo(new Header("one", "1"u8.ToArray()));
+        confluentHeaders[1].ShouldBeEquivalentTo(new Header("two", "2"u8.ToArray()));
     }
 
     [Fact]
@@ -80,10 +74,8 @@ public class KafkaHeadersMappingExtensionsFixture
 
         Headers confluentHeaders = headers.ToConfluentHeaders();
 
-        confluentHeaders.Should().BeEquivalentTo(
-        [
-            new Header("one", "1"u8.ToArray()),
-            new Header("two", "2"u8.ToArray())
-        ]);
+        confluentHeaders.Count.ShouldBe(2);
+        confluentHeaders[0].ShouldBeEquivalentTo(new Header("one", "1"u8.ToArray()));
+        confluentHeaders[1].ShouldBeEquivalentTo(new Header("two", "2"u8.ToArray()));
     }
 }

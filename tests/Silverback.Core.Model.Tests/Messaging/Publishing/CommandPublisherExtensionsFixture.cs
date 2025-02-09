@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Xunit;
@@ -46,7 +46,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteCommand(new TestCommandWithResult());
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true);
-        result.Should().BeEquivalentTo([1, 2, 3]);
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Theory]
@@ -61,7 +61,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteCommand(new TestCommandWithResult(), throwIfUnhandled);
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo([1, 2, 3]);
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = await publisher.ExecuteCommandAsync(new TestCommandWithResult(), cancellationToken);
 
         await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true, cancellationToken);
-        result.Should().BeEquivalentTo([1, 2, 3]);
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Theory]
@@ -114,7 +114,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = await publisher.ExecuteCommandAsync(new TestCommandWithResult(), throwIfUnhandled);
 
         await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo([1, 2, 3]);
+        result.ShouldBe([1, 2, 3]);
     }
 
     private class TestCommand : ICommand;

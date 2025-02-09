@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
@@ -21,7 +21,7 @@ public class JsonSchemaRegistryMessageSerializerBuilderFixture
     {
         IMessageSerializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
-        serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class JsonSchemaRegistryMessageSerializerBuilderFixture
     {
         IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
 
-        serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
@@ -53,7 +53,8 @@ public class JsonSchemaRegistryMessageSerializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -63,7 +64,8 @@ public class JsonSchemaRegistryMessageSerializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
     }
 
     [Fact]
@@ -74,9 +76,9 @@ public class JsonSchemaRegistryMessageSerializerBuilderFixture
             .Configure(config => config.AutoRegisterSchemas = false)
             .Build();
 
-        JsonSchemaRegistryMessageSerializer<TestEventOne> jsonUsingSchemaRegistryMessageSerializer = serializer.As<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        JsonSchemaRegistryMessageSerializer<TestEventOne> jsonUsingSchemaRegistryMessageSerializer = serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
         jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.ShouldNotBeNull();
-        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.AutoRegisterSchemas.Should().BeFalse();
+        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.AutoRegisterSchemas.ShouldBe(false);
     }
 
     private JsonSchemaRegistryMessageSerializerBuilder GetValidBuilder() =>

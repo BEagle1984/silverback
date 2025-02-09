@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -26,7 +26,7 @@ public class MqttEnvelopeExtensionsFixture
 
         string? responseTopic = envelope.GetMqttResponseTopic();
 
-        responseTopic.Should().Be("topic/1");
+        responseTopic.ShouldBe("topic/1");
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class MqttEnvelopeExtensionsFixture
 
         string? responseTopic = envelope.GetMqttResponseTopic();
 
-        responseTopic.Should().BeNull();
+        responseTopic.ShouldBeNull();
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class MqttEnvelopeExtensionsFixture
 
         envelope.SetMqttResponseTopic("topic/1");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.ResponseTopic, "topic/1"));
+        envelope.Headers.ShouldContain(new MessageHeader(MqttMessageHeaders.ResponseTopic, "topic/1"));
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class MqttEnvelopeExtensionsFixture
 
         byte[]? correlationData = envelope.GetMqttCorrelationData();
 
-        correlationData.Should().BeEquivalentTo(new byte[] { 1, 2, 3, 4 });
+        correlationData.ShouldBe([1, 2, 3, 4]);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class MqttEnvelopeExtensionsFixture
 
         string? correlationData = envelope.GetMqttCorrelationDataAsString();
 
-        correlationData.Should().Be("{correlation-data}");
+        correlationData.ShouldBe("{correlation-data}");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class MqttEnvelopeExtensionsFixture
 
         string? correlationData = envelope.GetMqttCorrelationDataAsString();
 
-        correlationData.Should().BeNull();
+        correlationData.ShouldBeNull();
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class MqttEnvelopeExtensionsFixture
 
         envelope.SetMqttCorrelationData([1, 2, 3, 4]);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.CorrelationData, "AQIDBA=="));
+        envelope.Headers.ShouldContain(new MessageHeader(MqttMessageHeaders.CorrelationData, "AQIDBA=="));
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class MqttEnvelopeExtensionsFixture
 
         envelope.SetMqttCorrelationData("{correlation-data}");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.CorrelationData, "e2NvcnJlbGF0aW9uLWRhdGF9"));
+        envelope.Headers.ShouldContain(new MessageHeader(MqttMessageHeaders.CorrelationData, "e2NvcnJlbGF0aW9uLWRhdGF9"));
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class MqttEnvelopeExtensionsFixture
 
         string? destinationTopic = envelope.GetMqttDestinationTopic();
 
-        destinationTopic.Should().Be("topic/1");
+        destinationTopic.ShouldBe("topic/1");
     }
 
     [Fact]
@@ -161,6 +161,6 @@ public class MqttEnvelopeExtensionsFixture
 
         envelope.SetMqttDestinationTopic("topic/1");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(MqttMessageHeaders.DestinationTopic, "topic/1"));
+        envelope.Headers.ShouldContain(new MessageHeader(MqttMessageHeaders.DestinationTopic, "topic/1"));
     }
 }

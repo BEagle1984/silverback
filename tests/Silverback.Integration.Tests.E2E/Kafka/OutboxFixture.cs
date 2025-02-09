@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -77,10 +77,10 @@ public class OutboxFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic1").Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic2").Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic1").ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic2").ShouldBe(2);
     }
 
     [Fact]
@@ -131,11 +131,11 @@ public class OutboxFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic1").Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic2").Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic3").Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic1").ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic2").ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic3").ShouldBe(1);
     }
 
     [Fact]
@@ -186,10 +186,10 @@ public class OutboxFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic1").Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic2").Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic1").ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count(envelope => envelope.Endpoint.RawName == "topic2").ShouldBe(3);
     }
 
     [Fact]
@@ -264,12 +264,12 @@ public class OutboxFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(6);
         List<object?> inboundMessages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).ToList();
 
-        inboundMessages.OfType<TestEventOne>().Should().HaveCount(3);
-        inboundMessages.OfType<TestEventTwo>().Should().HaveCount(3);
+        inboundMessages.OfType<TestEventOne>().Count().ShouldBe(3);
+        inboundMessages.OfType<TestEventTwo>().Count().ShouldBe(3);
     }
 
     [Fact]
@@ -305,7 +305,7 @@ public class OutboxFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("key"u8.ToArray());
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Key.ShouldBe("key"u8.ToArray());
     }
 }

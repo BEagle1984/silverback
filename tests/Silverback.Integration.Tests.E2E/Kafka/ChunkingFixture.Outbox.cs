@@ -5,8 +5,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -64,10 +64,10 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(5 * chunksPerMessage);
-        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(chunkSize));
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(chunkSize));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
 
         for (int i = 0; i < Helper.Spy.RawOutboundEnvelopes.Count; i++)
         {
@@ -75,21 +75,20 @@ public partial class ChunkingFixture
             IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
             IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
-            envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should()
-                .Be(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
 
             if (envelope == lastEnvelope)
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().Be(true.ToString());
+                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBe(true.ToString());
             }
             else
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().BeNull();
+                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBeNull();
             }
         }
 
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
+            .ShouldBe(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
     }
 }

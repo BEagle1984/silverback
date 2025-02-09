@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -22,7 +22,7 @@ public class OutboxHealthCheckServiceFixture
 
         bool result = await service.CheckIsHealthyAsync(TimeSpan.FromSeconds(30));
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class OutboxHealthCheckServiceFixture
 
         bool result = await service.CheckIsHealthyAsync(TimeSpan.FromSeconds(30), 100);
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 
     [Theory]
@@ -51,6 +51,6 @@ public class OutboxHealthCheckServiceFixture
 
         bool result = await service.CheckIsHealthyAsync(TimeSpan.FromMinutes(2));
 
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 }

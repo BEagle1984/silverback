@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -41,18 +41,18 @@ public partial class OutboundMessageEnrichmentFixture
             new TestEventTwo(),
             envelope => envelope.AddHeader("three", "3").AddHeader("four", "4").SetKafkaKey($"{++i}"));
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeOfType<TestEventTwo>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeOfType<TestEventTwo>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "three" && header.Value == "3");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "four" && header.Value == "4");
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(2);
-        messages[0].Key.Should().BeEquivalentTo("1"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("2"u8.ToArray());
+        messages.Count.ShouldBe(2);
+        messages[0].Key.ShouldBe("1"u8.ToArray());
+        messages[1].Key.ShouldBe("2"u8.ToArray());
     }
 
     [Fact]
@@ -78,26 +78,26 @@ public partial class OutboundMessageEnrichmentFixture
             new IIntegrationEvent[] { new TestEventOne(), new TestEventTwo() }.AsEnumerable(),
             envelope => envelope.AddHeader("three", "3").AddHeader("four", "4").SetKafkaKey($"{++i + 10}"));
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        Helper.Spy.OutboundEnvelopes[2].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
-        Helper.Spy.OutboundEnvelopes[3].Message.Should().BeOfType<TestEventTwo>();
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "three" && header.Value == "3");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "four" && header.Value == "4");
+        Helper.Spy.OutboundEnvelopes[3].Message.ShouldBeOfType<TestEventTwo>();
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldContain(header => header.Name == "three" && header.Value == "3");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldContain(header => header.Name == "four" && header.Value == "4");
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(4);
-        messages[0].Key.Should().BeEquivalentTo("1"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("2"u8.ToArray());
-        messages[2].Key.Should().BeEquivalentTo("13"u8.ToArray());
-        messages[3].Key.Should().BeEquivalentTo("14"u8.ToArray());
+        messages.Count.ShouldBe(4);
+        messages[0].Key.ShouldBe("1"u8.ToArray());
+        messages[1].Key.ShouldBe("2"u8.ToArray());
+        messages[2].Key.ShouldBe("13"u8.ToArray());
+        messages[3].Key.ShouldBe("14"u8.ToArray());
     }
 
     [Fact]
@@ -124,25 +124,25 @@ public partial class OutboundMessageEnrichmentFixture
             (envelope, counter) => envelope.AddHeader("three", "3").AddHeader("four", "4").SetKafkaKey($"{counter.Increment()}"),
             new Counter(100));
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        Helper.Spy.OutboundEnvelopes[2].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
-        Helper.Spy.OutboundEnvelopes[3].Message.Should().BeOfType<TestEventTwo>();
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "three" && header.Value == "3");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "four" && header.Value == "4");
+        Helper.Spy.OutboundEnvelopes[3].Message.ShouldBeOfType<TestEventTwo>();
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldContain(header => header.Name == "three" && header.Value == "3");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldContain(header => header.Name == "four" && header.Value == "4");
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(4);
-        messages[0].Key.Should().BeEquivalentTo("1"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("2"u8.ToArray());
-        messages[2].Key.Should().BeEquivalentTo("101"u8.ToArray());
-        messages[3].Key.Should().BeEquivalentTo("102"u8.ToArray());
+        messages.Count.ShouldBe(4);
+        messages[0].Key.ShouldBe("1"u8.ToArray());
+        messages[1].Key.ShouldBe("2"u8.ToArray());
+        messages[2].Key.ShouldBe("101"u8.ToArray());
+        messages[3].Key.ShouldBe("102"u8.ToArray());
     }
 }

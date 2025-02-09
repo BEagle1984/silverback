@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -54,8 +54,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        tryCount.ShouldBe(11);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
     }
 
     [Fact]
@@ -101,8 +101,8 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
+        tryCount.ShouldBe(11);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
+        tryCount.ShouldBe(11);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
     }
 }

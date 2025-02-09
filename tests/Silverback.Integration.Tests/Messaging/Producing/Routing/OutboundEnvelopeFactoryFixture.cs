@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Routing;
@@ -24,12 +24,12 @@ public class OutboundEnvelopeFactoryFixture
 
         IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpointConfiguration, producer);
 
-        envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
-        envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.EndpointConfiguration.Should().Be(endpointConfiguration);
-        envelope.Producer.Should().Be(producer);
+        envelope.ShouldBeOfType<OutboundEnvelope<TestEventOne>>();
+        envelope.Message.ShouldBe(message);
+        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
+        envelope.Producer.ShouldBe(producer);
     }
 
     [Fact]
@@ -41,12 +41,12 @@ public class OutboundEnvelopeFactoryFixture
 
         IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(null, headers, endpointConfiguration, producer);
 
-        envelope.Should().BeOfType<OutboundEnvelope>();
-        envelope.Message.Should().BeNull();
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.EndpointConfiguration.Should().Be(endpointConfiguration);
-        envelope.Producer.Should().Be(producer);
+        envelope.ShouldBeOfType<OutboundEnvelope>();
+        envelope.Message.ShouldBeNull();
+        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
+        envelope.Producer.ShouldBe(producer);
     }
 
     [Fact]
@@ -59,12 +59,12 @@ public class OutboundEnvelopeFactoryFixture
 
         IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpointConfiguration, producer);
 
-        envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
-        envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.EndpointConfiguration.Should().Be(endpointConfiguration);
-        envelope.Producer.Should().Be(producer);
+        envelope.ShouldBeOfType<OutboundEnvelope<TestEventOne>>();
+        envelope.Message.ShouldBe(message);
+        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
+        envelope.Producer.ShouldBe(producer);
     }
 
     [Fact]
@@ -78,11 +78,11 @@ public class OutboundEnvelopeFactoryFixture
 
         IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, originalEnvelope);
 
-        envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
-        envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.EndpointConfiguration.Should().Be(endpointConfiguration);
-        envelope.Producer.Should().Be(producer);
+        envelope.ShouldBeOfType<OutboundEnvelope<TestEventOne>>();
+        envelope.Message.ShouldBe(message);
+        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
+        envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
+        envelope.Producer.ShouldBe(producer);
     }
 }

@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
@@ -22,8 +22,8 @@ public class ServiceCollectionExtensionsFixture
 
         SilverbackBuilder builder = serviceCollection.AddSilverback();
 
-        builder.Should().BeOfType<SilverbackBuilder>();
-        builder.Services.Should().BeSameAs(serviceCollection);
+        builder.ShouldBeOfType<SilverbackBuilder>();
+        builder.Services.ShouldBeSameAs(serviceCollection);
     }
 
     [Fact]
@@ -35,8 +35,8 @@ public class ServiceCollectionExtensionsFixture
 
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-        serviceProvider.GetService<BusOptions>().Should().BeOfType<BusOptions>();
-        serviceProvider.GetService<IPublisher>().Should().BeOfType<Publisher>();
+        serviceProvider.GetService<BusOptions>().ShouldBeOfType<BusOptions>();
+        serviceProvider.GetService<IPublisher>().ShouldBeOfType<Publisher>();
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class ServiceCollectionExtensionsFixture
         serviceCollection.AddSilverback();
         serviceCollection.AddSilverback();
 
-        serviceCollection.GetAll<BusOptions>().Should().HaveCount(1);
+        serviceCollection.GetAll<BusOptions>().Count.ShouldBe(1);
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public class ServiceCollectionExtensionsFixture
 
         SilverbackBuilder builder = serviceCollection.ConfigureSilverback();
 
-        builder.Should().BeOfType<SilverbackBuilder>();
-        builder.Services.Should().BeSameAs(serviceCollection);
+        builder.ShouldBeOfType<SilverbackBuilder>();
+        builder.Services.ShouldBeSameAs(serviceCollection);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class ServiceCollectionExtensionsFixture
         IDistributedLockFactory factory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         DistributedLockFactory defaultFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
-        factory.Should().NotBeNull();
-        factory.Should().BeSameAs(defaultFactory);
+        factory.ShouldNotBeNull();
+        factory.ShouldBeSameAs(defaultFactory);
     }
 }

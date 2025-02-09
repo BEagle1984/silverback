@@ -3,8 +3,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -63,14 +63,14 @@ public class BinaryMessageFixture : MqttFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
+            .Select(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>().ContentType)
+            .ShouldBe(["application/pdf", "text/plain"]);
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
             new[]
             {
                 message1.Content.ReReadAll(),

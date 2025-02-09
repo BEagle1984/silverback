@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Encryption;
 using Silverback.Util;
 using Xunit;
@@ -33,9 +33,9 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -50,9 +50,9 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -71,9 +71,9 @@ public class SymmetricEncryptStreamTests
             });
 
         byte[]? result = await cryptoStream.ReadAllAsync();
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(128 * 2 / 8);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(128 * 2 / 8);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -92,9 +92,9 @@ public class SymmetricEncryptStreamTests
             });
 
         byte[]? result = cryptoStream.ReadAll();
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(128 * 2 / 8);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(128 * 2 / 8);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -110,9 +110,9 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -128,9 +128,9 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes);
-        result.Should().NotBeEquivalentTo(ClearTextMessage);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes);
+        result.ShouldNotBe(ClearTextMessage);
     }
 
     [Fact]
@@ -148,10 +148,10 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes);
 
-        result.Take(iv.Length).Should().NotBeEquivalentTo(iv);
+        result.Take(iv.Length).ShouldNotBe(iv);
     }
 
     [Fact]
@@ -169,10 +169,10 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes);
 
-        result.Take(iv.Length).Should().NotBeEquivalentTo(iv);
+        result.Take(iv.Length).ShouldNotBe(iv);
     }
 
     [Fact]
@@ -186,8 +186,8 @@ public class SymmetricEncryptStreamTests
             });
 
         byte[]? result = await cryptoStream.ReadAllAsync();
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
     }
 
     [Fact]
@@ -201,8 +201,8 @@ public class SymmetricEncryptStreamTests
             });
 
         byte[]? result = cryptoStream.ReadAll();
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(AesDefaultBlockSizeInBytes + AesDefaultInitializationVectorSizeInBytes);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result1 = await cryptoStream1.ReadAllAsync();
         byte[]? result2 = await cryptoStream2.ReadAllAsync();
-        result2.Should().BeEquivalentTo(result1);
+        result2.ShouldBe(result1);
     }
 
     [Fact]
@@ -248,7 +248,7 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result1 = cryptoStream1.ReadAll();
         byte[]? result2 = cryptoStream2.ReadAll();
-        result2.Should().BeEquivalentTo(result1);
+        result2.ShouldBe(result1);
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result1 = await cryptoStream1.ReadAllAsync();
         byte[]? result2 = await cryptoStream2.ReadAllAsync();
-        result2.Should().NotBeEquivalentTo(result1);
+        result2.ShouldNotBe(result1);
     }
 
     [Fact]
@@ -290,7 +290,7 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result1 = cryptoStream1.ReadAll();
         byte[]? result2 = cryptoStream2.ReadAll();
-        result2.Should().NotBeEquivalentTo(result1);
+        result2.ShouldNotBe(result1);
     }
 
     [Fact]
@@ -315,7 +315,7 @@ public class SymmetricEncryptStreamTests
         IEnumerable<byte> iv1 = result1!.Take(AesDefaultInitializationVectorSizeInBytes);
         IEnumerable<byte> iv2 = result2!.Take(AesDefaultInitializationVectorSizeInBytes);
 
-        iv2.Should().NotBeEquivalentTo(iv1);
+        iv2.ShouldNotBe(iv1);
     }
 
     [Fact]
@@ -340,7 +340,7 @@ public class SymmetricEncryptStreamTests
         IEnumerable<byte> iv1 = result1!.Take(AesDefaultInitializationVectorSizeInBytes);
         IEnumerable<byte> iv2 = result2!.Take(AesDefaultInitializationVectorSizeInBytes);
 
-        iv2.Should().NotBeEquivalentTo(iv1);
+        iv2.ShouldNotBe(iv1);
     }
 
     [Fact]
@@ -355,7 +355,8 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().HaveCount(32);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(32);
     }
 
     [Fact]
@@ -370,7 +371,8 @@ public class SymmetricEncryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().HaveCount(32);
+        result.ShouldNotBeNull();
+        result.Length.ShouldBe(32);
     }
 
     private static byte[] GenerateKey(int size, int seed = 1) =>

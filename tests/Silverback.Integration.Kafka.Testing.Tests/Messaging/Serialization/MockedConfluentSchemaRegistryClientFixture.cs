@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
@@ -25,8 +25,8 @@ public class MockedConfluentSchemaRegistryClientFixture
         int id = await _client.RegisterSchemaAsync("subject", schema);
 
         Schema registeredSchema = await _client.GetSchemaBySubjectAndIdAsync("subject", id);
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema);
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class MockedConfluentSchemaRegistryClientFixture
         int id = await _client.RegisterSchemaAsync("subject", new Schema(schema, SchemaType.Avro));
 
         Schema registeredSchema = await _client.GetSchemaBySubjectAndIdAsync("subject", id);
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema);
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class MockedConfluentSchemaRegistryClientFixture
         int id = await _client.RegisterSchemaAsync("subject", new Schema(schema, SchemaType.Json));
 
         Schema registeredSchema = await _client.GetSchemaBySubjectAndIdAsync("subject", id);
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema);
     }
 
     [Fact]
@@ -74,8 +74,8 @@ public class MockedConfluentSchemaRegistryClientFixture
         int id = await _client.RegisterSchemaAsync("subject", new Schema(schema, SchemaType.Protobuf));
 
         Schema registeredSchema = await _client.GetSchemaBySubjectAndIdAsync("subject", id);
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int id2 = await _client.RegisterSchemaAsync("subject", new Schema(schema, SchemaType.Json));
 
-        id2.Should().Be(id1);
+        id2.ShouldBe(id1);
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int id2 = await _client.RegisterSchemaAsync("subject", new Schema(schema2, SchemaType.Json));
 
-        id2.Should().NotBe(id1);
+        id2.ShouldNotBe(id1);
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int returnedId = await _client.GetSchemaIdAsync("subject", schema);
 
-        returnedId.Should().Be(id);
+        returnedId.ShouldBe(id);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int returnedId = await _client.GetSchemaIdAsync("subject", new Schema(schema, SchemaType.Avro));
 
-        returnedId.Should().Be(id);
+        returnedId.ShouldBe(id);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int returnedId = await _client.GetSchemaIdAsync("subject", new Schema(schema, SchemaType.Json));
 
-        returnedId.Should().Be(id);
+        returnedId.ShouldBe(id);
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         int returnedId = await _client.GetSchemaIdAsync("subject", new Schema(descriptor, SchemaType.Protobuf));
 
-        returnedId.Should().Be(id);
+        returnedId.ShouldBe(id);
     }
 
     [Fact]
@@ -182,10 +182,10 @@ public class MockedConfluentSchemaRegistryClientFixture
         Schema registeredSchema1 = await _client.GetSchemaBySubjectAndIdAsync("subject", id1);
         Schema registeredSchema2 = await _client.GetSchemaBySubjectAndIdAsync("subject", id2);
 
-        registeredSchema1.Should().NotBeNull();
-        registeredSchema1.SchemaString.Should().Be(schema1);
-        registeredSchema2.Should().NotBeNull();
-        registeredSchema2.SchemaString.Should().Be(schema2);
+        registeredSchema1.ShouldNotBeNull();
+        registeredSchema1.SchemaString.ShouldBe(schema1);
+        registeredSchema2.ShouldNotBeNull();
+        registeredSchema2.SchemaString.ShouldBe(schema2);
     }
 
     [Fact]
@@ -203,10 +203,10 @@ public class MockedConfluentSchemaRegistryClientFixture
         Schema registeredSchema1 = await _client.GetSchemaBySubjectAndIdAsync("subject", id1);
         Schema registeredSchema2 = await _client.GetSchemaBySubjectAndIdAsync("subject2", id2);
 
-        registeredSchema1.Should().NotBeNull();
-        registeredSchema1.SchemaString.Should().Be(schema1);
-        registeredSchema2.Should().NotBeNull();
-        registeredSchema2.SchemaString.Should().Be(schema2);
+        registeredSchema1.ShouldNotBeNull();
+        registeredSchema1.SchemaString.ShouldBe(schema1);
+        registeredSchema2.ShouldNotBeNull();
+        registeredSchema2.SchemaString.ShouldBe(schema2);
     }
 
     [Fact]
@@ -239,10 +239,10 @@ public class MockedConfluentSchemaRegistryClientFixture
         Schema registeredSchema1 = await _client.GetSchemaBySubjectAndIdAsync("subject", id1);
         Schema registeredSchema2 = await _client.GetSchemaBySubjectAndIdAsync("subject2", id2);
 
-        registeredSchema1.Should().NotBeNull();
-        registeredSchema1.SchemaString.Should().Be(schema1);
-        registeredSchema2.Should().NotBeNull();
-        registeredSchema2.SchemaString.Should().Be(schema2);
+        registeredSchema1.ShouldNotBeNull();
+        registeredSchema1.SchemaString.ShouldBe(schema1);
+        registeredSchema2.ShouldNotBeNull();
+        registeredSchema2.SchemaString.ShouldBe(schema2);
     }
 
     [Fact]
@@ -259,8 +259,8 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         Schema registeredSchema = await _client.GetLatestSchemaAsync("subject");
 
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema2);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema2);
     }
 
     [Fact]
@@ -277,8 +277,8 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         Schema registeredSchema = await _client.GetLatestSchemaAsync("subject2");
 
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema2);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema2);
     }
 
     [Fact]
@@ -310,7 +310,7 @@ public class MockedConfluentSchemaRegistryClientFixture
 
         Schema registeredSchema = await _client.GetLatestSchemaAsync("subject2");
 
-        registeredSchema.Should().NotBeNull();
-        registeredSchema.SchemaString.Should().Be(schema2);
+        registeredSchema.ShouldNotBeNull();
+        registeredSchema.SchemaString.ShouldBe(schema2);
     }
 }

@@ -3,7 +3,8 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using System.Linq;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -23,10 +24,10 @@ public class EnumerableTypeParameterExtensionsFixture
 
         IEnumerable<object> results = objects.OfType(typeof(ObjectA));
 
-        results.Should().BeAssignableTo<IEnumerable<ObjectA>>();
-        results.GetType().GenericTypeArguments[0].Should().Be(typeof(ObjectA));
-        results.Should().HaveCount(2);
-        results.Should().AllBeOfType<ObjectA>();
+        results.ShouldBeAssignableTo<IEnumerable<ObjectA>>();
+        results.GetType().GenericTypeArguments[0].ShouldBe(typeof(ObjectA));
+        results.Count().ShouldBe(2);
+        results.ShouldAllBe(result => result is ObjectA);
     }
 
     [Fact]
@@ -36,10 +37,10 @@ public class EnumerableTypeParameterExtensionsFixture
 
         IEnumerable<object> results = objects.OfType(typeof(IObjectA));
 
-        results.Should().BeAssignableTo<IEnumerable<IObjectA>>();
-        results.GetType().GenericTypeArguments[0].Should().Be(typeof(IObjectA));
-        results.Should().HaveCount(2);
-        results.Should().AllBeOfType<ObjectA>();
+        results.ShouldBeAssignableTo<IEnumerable<IObjectA>>();
+        results.GetType().GenericTypeArguments[0].ShouldBe(typeof(IObjectA));
+        results.Count().ShouldBe(2);
+        results.ShouldAllBe(result => result is ObjectA);
     }
 
     [Fact]
@@ -49,8 +50,8 @@ public class EnumerableTypeParameterExtensionsFixture
 
         IEnumerable<object> results = objects.Cast(typeof(IObjectA));
 
-        results.Should().BeAssignableTo<IEnumerable<IObjectA>>();
-        results.GetType().GenericTypeArguments[0].Should().Be(typeof(IObjectA));
+        results.ShouldBeAssignableTo<IEnumerable<IObjectA>>();
+        results.GetType().GenericTypeArguments[0].ShouldBe(typeof(IObjectA));
     }
 
     [Fact]
@@ -60,9 +61,9 @@ public class EnumerableTypeParameterExtensionsFixture
 
         IEnumerable<object> results = objects.ToList(typeof(ObjectA));
 
-        results.Should().BeOfType<List<ObjectA>>();
-        results.Should().BeEquivalentTo(objects);
-        results.Should().AllBeOfType<ObjectA>();
+        results.ShouldBeOfType<List<ObjectA>>();
+        results.ShouldBe(objects);
+        results.ShouldAllBe(result => result is ObjectA);
     }
 
     [Fact]
@@ -72,9 +73,9 @@ public class EnumerableTypeParameterExtensionsFixture
 
         IEnumerable<object> results = objects.ToList(typeof(IObjectA));
 
-        results.Should().BeOfType<List<IObjectA>>();
-        results.Should().BeEquivalentTo(objects);
-        results.Should().AllBeOfType<ObjectA>();
+        results.ShouldBeOfType<List<IObjectA>>();
+        results.ShouldBe(objects);
+        results.ShouldAllBe(result => result is ObjectA);
     }
 
     private class ObjectA : IObjectA;

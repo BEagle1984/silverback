@@ -3,9 +3,8 @@
 
 using System;
 using Confluent.Kafka;
-using FluentAssertions;
-using FluentAssertions.Extensions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -28,7 +27,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         string? key = envelope.GetKafkaKey();
 
-        key.Should().Be("test");
+        key.ShouldBe("test");
     }
 
     [Fact]
@@ -43,7 +42,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         string? key = envelope.GetKafkaKey();
 
-        key.Should().Be("test");
+        key.ShouldBe("test");
     }
 
     [Fact]
@@ -58,7 +57,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         string? key = envelope.GetKafkaKey();
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -73,7 +72,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         envelope.SetKafkaKey("test");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "test"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "test"));
     }
 
     [Fact]
@@ -81,14 +80,14 @@ public class KafkaEnvelopeExtensionsFixture
     {
         InboundEnvelope envelope = new(
             null,
-            [new MessageHeader(KafkaMessageHeaders.Timestamp, 23.June(1984).At(02, 42, 42))],
+            [new MessageHeader(KafkaMessageHeaders.Timestamp, new DateTime(1984, 06, 23, 02, 42, 42))],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
         DateTime? timestamp = envelope.GetKafkaTimestamp();
 
-        timestamp.Should().Be(23.June(1984).At(02, 42, 42));
+        timestamp.ShouldBe(new DateTime(1984, 06, 23, 02, 42, 42));
     }
 
     [Fact]
@@ -103,7 +102,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         DateTime? timestamp = envelope.GetKafkaTimestamp();
 
-        timestamp.Should().BeNull();
+        timestamp.ShouldBeNull();
     }
 
     [Fact]
@@ -119,7 +118,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         KafkaOffset kafkaOffset = envelope.GetKafkaOffset();
 
-        kafkaOffset.Should().Be(offset);
+        kafkaOffset.ShouldBe(offset);
     }
 
     [Fact]
@@ -134,7 +133,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         string? destinationTopic = envelope.GetKafkaDestinationTopic();
 
-        destinationTopic.Should().Be("topic/1");
+        destinationTopic.ShouldBe("topic/1");
     }
 
     [Fact]
@@ -149,7 +148,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         int? destinationPartition = envelope.GetKafkaDestinationPartition();
 
-        destinationPartition.Should().Be(42);
+        destinationPartition.ShouldBe(42);
     }
 
     [Fact]
@@ -164,7 +163,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         envelope.SetKafkaDestinationTopic("topic/1");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
     }
 
     [Fact]
@@ -179,7 +178,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         envelope.SetKafkaDestinationTopic("topic/1", 42);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42));
     }
 }

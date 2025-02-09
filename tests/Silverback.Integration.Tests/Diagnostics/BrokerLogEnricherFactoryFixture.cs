@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -26,8 +26,8 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<BrokerLogEnricher1>();
-        enricher2.Should().BeOfType<BrokerLogEnricher2>();
+        enricher1.ShouldBeOfType<BrokerLogEnricher1>();
+        enricher2.ShouldBeOfType<BrokerLogEnricher2>();
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class BrokerLogEnricherFactoryFixture
 
         IBrokerLogEnricher enricher = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher.Should().Be(NullBrokerLogEnricher.Instance);
+        enricher.ShouldBe(NullBrokerLogEnricher.Instance);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
 
-        enricher2.Should().BeSameAs(enricher1);
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher1 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
 
-        enricher2.Should().BeSameAs(enricher1);
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -82,9 +82,9 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1A.Should().BeSameAs(enricher1B);
-        enricher2A.Should().BeSameAs(enricher2B);
-        enricher1A.Should().NotBeSameAs(enricher2A);
+        enricher1A.ShouldBeSameAs(enricher1B);
+        enricher2A.ShouldBeSameAs(enricher2B);
+        enricher1A.ShouldNotBeSameAs(enricher2A);
     }
 
     [Fact]
@@ -100,9 +100,9 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1A.Should().BeSameAs(enricher1B);
-        enricher2A.Should().BeSameAs(enricher2B);
-        enricher1A.Should().NotBeSameAs(enricher2A);
+        enricher1A.ShouldBeSameAs(enricher1B);
+        enricher2A.ShouldBeSameAs(enricher2B);
+        enricher1A.ShouldNotBeSameAs(enricher2A);
     }
 
     [Fact]
@@ -113,8 +113,8 @@ public class BrokerLogEnricherFactoryFixture
 
         Action act = () => factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified discriminator type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified discriminator type is already registered.");
     }
 
     [Fact]
@@ -129,8 +129,8 @@ public class BrokerLogEnricherFactoryFixture
         IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<OverrideLogEnricher>();
-        enricher2.Should().BeOfType<OverrideLogEnricher>();
+        enricher1.ShouldBeOfType<OverrideLogEnricher>();
+        enricher2.ShouldBeOfType<OverrideLogEnricher>();
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class BrokerLogEnricherFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class BrokerLogEnricherFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

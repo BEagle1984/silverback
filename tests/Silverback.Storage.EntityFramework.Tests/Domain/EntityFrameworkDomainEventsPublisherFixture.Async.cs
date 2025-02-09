@@ -2,11 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using NSubstitute;
+using Shouldly;
 using Silverback.Domain;
 using Silverback.Storage;
 using Xunit;
@@ -30,9 +31,9 @@ public sealed partial class EntityFrameworkDomainEventsPublisherFixture
         await domainEventsPublisher.SaveChangesAndPublishDomainEventsAsync();
 
         await _publisher.Received(2).PublishAsync(Arg.Any<ValueChangedDomainEvent>());
-        _dbContext.ChangeTracker.Entries().Should().AllSatisfy(entry => entry.State.Should().Be(EntityState.Unchanged));
-        _assertDbContext.TestDomainEntities.Should().HaveCount(2);
-        _assertDbContext.TestDomainEntities.Should().AllSatisfy(entity => entity.Value.Should().Be(42));
+        _dbContext.ChangeTracker.Entries().ShouldAllBe(entry => entry.State == EntityState.Unchanged);
+        _assertDbContext.TestDomainEntities.Count().ShouldBe(2);
+        _assertDbContext.TestDomainEntities.ShouldAllBe(entity => entity.Value == 42);
     }
 
     [Fact]
@@ -51,9 +52,9 @@ public sealed partial class EntityFrameworkDomainEventsPublisherFixture
 
         await _publisher.Received(2).PublishAsync(Arg.Any<ValueChangedDomainEvent>());
         _publisher.Context.Received(1).AddObject(Arg.Any<Guid>(), Arg.Is<IStorageTransaction>(transaction => transaction != null));
-        _dbContext.ChangeTracker.Entries().Should().AllSatisfy(entry => entry.State.Should().Be(EntityState.Unchanged));
-        _assertDbContext.TestDomainEntities.Should().HaveCount(2);
-        _assertDbContext.TestDomainEntities.Should().AllSatisfy(entity => entity.Value.Should().Be(42));
+        _dbContext.ChangeTracker.Entries().ShouldAllBe(entry => entry.State == EntityState.Unchanged);
+        _assertDbContext.TestDomainEntities.Count().ShouldBe(2);
+        _assertDbContext.TestDomainEntities.ShouldAllBe(entity => entity.Value == 42);
     }
 
     [Fact]
@@ -75,8 +76,8 @@ public sealed partial class EntityFrameworkDomainEventsPublisherFixture
         await transaction.RollbackAsync();
 
         await _publisher.Received(2).PublishAsync(Arg.Any<ValueChangedDomainEvent>());
-        _dbContext.ChangeTracker.Entries().Should().AllSatisfy(entry => entry.State.Should().Be(EntityState.Unchanged));
-        _assertDbContext.TestDomainEntities.Should().HaveCount(2);
-        _assertDbContext.TestDomainEntities.Should().AllSatisfy(entity => entity.Value.Should().Be(0));
+        _dbContext.ChangeTracker.Entries().ShouldAllBe(entry => entry.State == EntityState.Unchanged);
+        _assertDbContext.TestDomainEntities.Count().ShouldBe(2);
+        _assertDbContext.TestDomainEntities.ShouldAllBe(entity => entity.Value == 0);
     }
 }

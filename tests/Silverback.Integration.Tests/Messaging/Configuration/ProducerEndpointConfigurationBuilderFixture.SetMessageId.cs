@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -23,8 +23,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .SetMessageId(message => message?.Content)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .SetMessageId<TestEventOne>(message => message?.Content)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -49,8 +49,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .SetMessageId(envelope => envelope.Headers.Count)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .SetMessageId<TestEventOne>(envelope => envelope.Headers.Count)
             .Build();
 
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<MessageIdOutboundHeadersEnricher<TestEventOne>>();
     }
 }

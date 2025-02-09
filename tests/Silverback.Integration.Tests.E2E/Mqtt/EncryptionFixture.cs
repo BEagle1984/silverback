@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
@@ -61,15 +61,15 @@ public class EncryptionFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull());
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull());
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull());
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull());
     }
 
     [Fact]
@@ -116,17 +116,17 @@ public class EncryptionFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier1);
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier1);
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier2);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier1);
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier1);
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier2);
     }
 
     [Fact]
@@ -167,17 +167,17 @@ public class EncryptionFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
     }
 
     [Fact]
@@ -226,12 +226,12 @@ public class EncryptionFixture : MqttFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
             new[]
             {
                 message1.Content.ReReadAll(),

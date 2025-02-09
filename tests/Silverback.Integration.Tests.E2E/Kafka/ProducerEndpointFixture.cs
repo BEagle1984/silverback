@@ -1,13 +1,12 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -47,8 +46,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Value.Should().BeEquivalentTo(rawMessage);
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Value.ShouldBe(rawMessage);
     }
 
     [Fact]
@@ -85,8 +84,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
             await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
-        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
-        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Count.ShouldBe(2);
+        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -94,8 +93,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+            true);
+        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
@@ -103,7 +102,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            true);
     }
 
     [Fact]
@@ -138,8 +137,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
             await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
-        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
-        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Count.ShouldBe(2);
+        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -147,8 +146,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+            true);
+        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
@@ -156,7 +155,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            true);
     }
 
     [Fact]
@@ -185,7 +184,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+        Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -193,8 +192,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+            true);
+        Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -202,8 +201,8 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetTopic("topic3").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
+            true);
+        Helper.GetTopic("topic3").GetAllMessages().GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -211,7 +210,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            true);
     }
 
     [Fact]
@@ -244,14 +243,13 @@ public partial class ProducerEndpointFixture : KafkaFixture
             });
 
         Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
-        message.GetContentAsString().Should().BeEquivalentTo("{\"Content\":\"Hello E2E!\"}");
+        message.GetContentAsString().ShouldBe("{\"Content\":\"Hello E2E!\"}");
 
-        List<(string Key, string)> headers = message.Headers.Select(header => (header.Key, header.GetValueAsString())).ToList();
-        headers.Should().ContainEquivalentOf(("x-content", "Hello E2E!"));
-        headers.Should().ContainEquivalentOf(("x-static", "42"));
-        headers.Should().ContainEquivalentOf(("x-custom-header", "Hello header!"));
-        headers.Should().ContainEquivalentOf(("x-custom-header2", "False"));
-        headers.Select(header => header.Key).Should().NotContain("x-content-nope");
+        message.Headers.ShouldContain(header => header.Key == "x-content" && header.GetValueAsString() == "Hello E2E!");
+        message.Headers.ShouldContain(header => header.Key == "x-static" && header.GetValueAsString() == "42");
+        message.Headers.ShouldContain(header => header.Key == "x-custom-header" && header.GetValueAsString() == "Hello header!");
+        message.Headers.ShouldContain(header => header.Key == "x-custom-header2" && header.GetValueAsString() == "False");
+        message.Headers.ShouldNotContain(header => header.Key == "x-content-nope");
     }
 
     [Fact]
@@ -270,12 +268,12 @@ public partial class ProducerEndpointFixture : KafkaFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
-        Helper.GetTopic(DefaultTopicName, "PLAINTEXT://e2e").MessagesCount.Should().Be(0); // Needed to force topic creation
-        DefaultTopic.MessagesCount.Should().Be(0);
+        Helper.GetTopic(DefaultTopicName, "PLAINTEXT://e2e").MessagesCount.ShouldBe(0); // Needed to force topic creation
+        DefaultTopic.MessagesCount.ShouldBe(0);
 
         IProducer producer = Host.ScopedServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
-        DefaultTopic.MessagesCount.Should().Be(1);
+        DefaultTopic.MessagesCount.ShouldBe(1);
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Xunit;
@@ -21,7 +21,8 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The algorithm name is required.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The algorithm name is required.");
     }
 
     [Fact]
@@ -35,7 +36,8 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("A Key or a KeyProvider is required.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("A Key or a KeyProvider is required.");
     }
 
     [Fact]
@@ -49,6 +51,7 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("Cannot set both the Key and the KeyProvider.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Cannot set both the Key and the KeyProvider.");
     }
 }

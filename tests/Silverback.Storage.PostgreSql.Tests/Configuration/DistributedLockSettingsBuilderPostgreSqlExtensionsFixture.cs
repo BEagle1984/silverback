@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Xunit;
@@ -17,7 +17,7 @@ public class DistributedLockSettingsBuilderPostgreSqlExtensionsFixture
 
         PostgreSqlAdvisoryLockSettingsBuilder result = builder.UsePostgreSqlAdvisoryLock("lock", "conn");
 
-        result.Should().BeOfType<PostgreSqlAdvisoryLockSettingsBuilder>();
+        result.ShouldBeOfType<PostgreSqlAdvisoryLockSettingsBuilder>();
     }
 
     [Fact]
@@ -27,6 +27,6 @@ public class DistributedLockSettingsBuilderPostgreSqlExtensionsFixture
 
         PostgreSqlTableLockSettingsBuilder result = builder.UsePostgreSqlTable("lock", "conn");
 
-        result.Should().BeOfType<PostgreSqlTableLockSettingsBuilder>();
+        result.ShouldBeOfType<PostgreSqlTableLockSettingsBuilder>();
     }
 }

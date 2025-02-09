@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -48,9 +48,9 @@ public class StoredOffsetLoaderFixture
 
         TopicPartitionOffset result = loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, currentOffset));
 
-        result.Offset.Value.Should().Be(storedOffset + 1);
-        result.Topic.Should().Be("test-topic");
-        result.Partition.Value.Should().Be(42);
+        result.Offset.Value.ShouldBe(storedOffset + 1);
+        result.Topic.ShouldBe("test-topic");
+        result.Partition.Value.ShouldBe(42);
     }
 
     [Fact]
@@ -69,9 +69,9 @@ public class StoredOffsetLoaderFixture
 
         TopicPartitionOffset result = loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, 10));
 
-        result.Offset.Value.Should().Be(10);
-        result.Topic.Should().Be("test-topic");
-        result.Partition.Value.Should().Be(42);
+        result.Offset.Value.ShouldBe(10);
+        result.Topic.ShouldBe("test-topic");
+        result.Partition.Value.ShouldBe(42);
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class StoredOffsetLoaderFixture
 
         TopicPartitionOffset result = loader.ApplyStoredOffset(new TopicPartitionOffset("test-topic", 42, 5));
 
-        result.Offset.Value.Should().Be(5);
-        result.Topic.Should().Be("test-topic");
-        result.Partition.Value.Should().Be(42);
+        result.Offset.Value.ShouldBe(5);
+        result.Topic.ShouldBe("test-topic");
+        result.Partition.Value.ShouldBe(42);
     }
 }

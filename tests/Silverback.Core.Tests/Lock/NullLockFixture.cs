@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -17,8 +17,8 @@ public class NullLockFixture
         NullLock nullLock1 = NullLock.Instance;
         NullLock nullLock2 = NullLock.Instance;
 
-        nullLock1.Should().NotBeNull();
-        nullLock1.Should().BeSameAs(nullLock2);
+        nullLock1.ShouldNotBeNull();
+        nullLock1.ShouldBeSameAs(nullLock2);
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class NullLockFixture
     {
         DistributedLockHandle handle = await NullLock.Instance.AcquireAsync();
 
-        handle.Should().NotBeNull();
+        handle.ShouldNotBeNull();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class NullLockFixture
 
         Action act = handle.Dispose;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -46,6 +46,6 @@ public class NullLockFixture
 
         Func<Task> act = () => handle.DisposeAsync().AsTask();
 
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 }

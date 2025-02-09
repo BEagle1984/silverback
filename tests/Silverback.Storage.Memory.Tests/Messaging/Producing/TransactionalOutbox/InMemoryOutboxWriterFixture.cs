@@ -4,8 +4,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -37,7 +37,7 @@ public class InMemoryOutboxWriterFixture
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
-        outbox.Get(10).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        outbox.Get(10).ShouldBe([outboxMessage1, outboxMessage2, outboxMessage3]);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class InMemoryOutboxWriterFixture
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
-        outbox.Get(10).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        outbox.Get(10).ShouldBe([outboxMessage1, outboxMessage2, outboxMessage3]);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class InMemoryOutboxWriterFixture
 
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
-        outbox.Get(10).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        outbox.Get(10).ShouldBe([outboxMessage1, outboxMessage2, outboxMessage3]);
     }
 
     [Fact]
@@ -104,15 +104,13 @@ public class InMemoryOutboxWriterFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox1 = outboxFactory.GetOutbox(outboxSettings1);
         InMemoryOutbox outbox2 = outboxFactory.GetOutbox(outboxSettings2);
-        outbox1.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                new byte[] { 0x01 }
-            });
-        outbox2.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                new byte[] { 0x02 }
-            });
+        outbox1.Get(10).Select(message => message.Content).ShouldBe(
+        [
+            [0x01]
+        ]);
+        outbox2.Get(10).Select(message => message.Content).ShouldBe(
+        [
+            [0x02]
+        ]);
     }
 }

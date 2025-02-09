@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
@@ -20,7 +20,7 @@ public class ConfluentAdminClientFactoryExtensionsFixture
     {
         IAdminClient client = _factory.GetClient(builder => builder.WithBootstrapServers("PLAINTEXT://test:9092"));
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class ConfluentAdminClientFactoryExtensionsFixture
                 BootstrapServers = "PLAINTEXT://test:9092"
             });
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class ConfluentAdminClientFactoryExtensionsFixture
                 BootstrapServers = "PLAINTEXT://test:9092"
             });
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class ConfluentAdminClientFactoryExtensionsFixture
                 EnableDeliveryReports = false
             });
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class ConfluentAdminClientFactoryExtensionsFixture
                 BootstrapServers = "PLAINTEXT://test:9092"
             });
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -82,6 +82,6 @@ public class ConfluentAdminClientFactoryExtensionsFixture
                 ConsumeResultFields = "something"
             });
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -16,7 +16,7 @@ public class OutboxWorkerSettingsFixture
     {
         OutboxWorkerSettings settings = new(new TestOutboxSettings());
 
-        settings.DistributedLock.Should().BeOfType<TestLockSettings>();
+        settings.DistributedLock.ShouldBeOfType<TestLockSettings>();
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class OutboxWorkerSettingsFixture
             OutboxWorkerSettings dummy = new(new TestOutboxSettingsNoLock());
         };
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class OutboxWorkerSettingsFixture
     {
         OutboxWorkerSettings settings = new(new TestOutboxSettingsNoLock(), new TestLockSettings());
 
-        settings.DistributedLock.Should().BeOfType<TestLockSettings>();
+        settings.DistributedLock.ShouldBeOfType<TestLockSettings>();
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class OutboxWorkerSettingsFixture
     {
         OutboxWorkerSettings settings = new(new TestOutboxSettingsNoLock(), null);
 
-        settings.DistributedLock.Should().BeNull();
+        settings.DistributedLock.ShouldBeNull();
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class OutboxWorkerSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class OutboxWorkerSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class OutboxWorkerSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     private record TestOutboxSettings : OutboxSettings

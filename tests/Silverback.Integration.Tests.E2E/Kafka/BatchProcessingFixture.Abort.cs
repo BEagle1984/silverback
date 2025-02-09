@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -65,8 +65,8 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().Be(5);
-        offsetCommittedCallback.CallsCount.Should().Be(5);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        receivedBatches.ShouldBe(5);
+        offsetCommittedCallback.CallsCount.ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 }

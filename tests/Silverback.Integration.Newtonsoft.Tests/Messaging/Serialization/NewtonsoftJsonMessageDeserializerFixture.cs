@@ -6,8 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Newtonsoft.Json;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -30,14 +30,14 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         Stream serialized = (await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault()))!;
 
-        Encoding.UTF8.GetString(serialized.ReadAll()!).Should().NotContain("TestEventOne");
+        Encoding.UTF8.GetString(serialized.ReadAll()!).ShouldNotContain("TestEventOne");
 
         (object? deserialized, _) = await deserializer.DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
 
         TestEventOne? message2 = deserialized as TestEventOne;
 
-        message2.Should().NotBeNull();
-        message2.Should().BeEquivalentTo(message);
+        message2.ShouldNotBeNull();
+        message2.ShouldBeEquivalentTo(message);
     }
 
     [Fact]
@@ -50,9 +50,9 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, _) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
     }
 
     [Theory]
@@ -67,10 +67,10 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        type.Should().Be(typeof(TestEventOne));
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -86,9 +86,9 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, _) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
     }
 
     [Theory]
@@ -106,10 +106,10 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        type.Should().Be(typeof(TestEventOne));
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Theory]
@@ -127,10 +127,10 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        type.Should().Be(typeof(TestEventOne));
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -146,10 +146,10 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        type.Should().Be(typeof(TestEventOne));
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -165,10 +165,10 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().NotBeNull();
-        deserializedObject.Should().BeOfType<TestEventOne>();
-        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        type.Should().Be(typeof(TestEventOne));
+        deserializedObject.ShouldNotBeNull();
+        deserializedObject.ShouldBeOfType<TestEventOne>();
+        deserializedObject.ShouldBeOfType<TestEventOne>().Content.ShouldBe("the message");
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -181,7 +181,8 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
-        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("Message type header *");
+        Exception exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldMatch("Message type header .*");
     }
 
     [Theory]
@@ -199,7 +200,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
-        await act.Should().ThrowAsync<TypeLoadException>();
+        await act.ShouldThrowAsync<TypeLoadException>();
     }
 
     [Fact]
@@ -212,7 +213,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             [],
             TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeNull();
+        deserializedObject.ShouldBeNull();
     }
 
     [Fact]
@@ -225,7 +226,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             [],
             TestConsumerEndpoint.GetDefault());
 
-        type.Should().Be(typeof(TestEventOne));
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -238,7 +239,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             [],
             TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeNull();
+        deserializedObject.ShouldBeNull();
     }
 
     [Fact]
@@ -251,7 +252,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             [],
             TestConsumerEndpoint.GetDefault());
 
-        type.Should().Be(typeof(TestEventOne));
+        type.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -262,7 +263,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -284,7 +285,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -295,7 +296,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -318,7 +319,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -339,6 +340,6 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

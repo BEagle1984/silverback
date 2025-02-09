@@ -4,12 +4,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Publishing;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -52,7 +51,7 @@ public partial class BrokerClientCallbacksFixture
         BrokerClientsConfiguredCallback callback = (BrokerClientsConfiguredCallback)Host.ServiceProvider
             .GetServices<IBrokerClientCallback>()
             .Single(callback => callback is BrokerClientsConfiguredCallback);
-        callback.CallCount.Should().Be(1);
+        callback.CallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -83,8 +82,8 @@ public partial class BrokerClientCallbacksFixture
             .GetServices<IBrokerClientCallback>()
             .Where(service => service is BrokerClientsConfiguredCallback)
             .ToList();
-        callbacks.Should().HaveCount(2);
-        callbacks.Cast<BrokerClientsConfiguredCallback>().Should().OnlyContain(callback => callback.CallCount == 1);
+        callbacks.Count.ShouldBe(2);
+        callbacks.Cast<BrokerClientsConfiguredCallback>().ShouldAllBe(callback => callback.CallCount == 1);
     }
 
     private class BrokerClientsConfiguredCallback : IBrokerClientsConfiguredCallback
@@ -99,20 +98,4 @@ public partial class BrokerClientCallbacksFixture
     }
 
     private sealed class OtherBrokerClientsConfiguredCallback : BrokerClientsConfiguredCallback;
-
-    private sealed class ProducingBrokerClientsConfiguredCallback : IBrokerClientsConfiguredCallback
-    {
-        private readonly IPublisher _publisher;
-
-        public ProducingBrokerClientsConfiguredCallback(IPublisher publisher)
-        {
-            _publisher = publisher;
-        }
-
-        public async Task OnBrokerClientsConfiguredAsync()
-        {
-            TestEventOne message = new();
-            await _publisher.PublishAsync(message);
-        }
-    }
 }

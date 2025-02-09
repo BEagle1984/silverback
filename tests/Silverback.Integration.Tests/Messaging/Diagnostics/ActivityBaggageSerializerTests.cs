@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Diagnostics;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class ActivityBaggageSerializerTests
 
         string result = ActivityBaggageSerializer.Serialize(itemsToAdd);
 
-        result.Should().Be("key1=value1,key2=value2,key3=value3");
+        result.ShouldBe("key1=value1,key2=value2,key3=value3");
     }
 
     [Fact]
@@ -32,10 +32,10 @@ public class ActivityBaggageSerializerTests
 
         IReadOnlyCollection<KeyValuePair<string, string>> result = ActivityBaggageSerializer.Deserialize(value);
 
-        result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key1", "value1"));
-        result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key2", "value2"));
-        result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("keyonly", string.Empty));
-        result.Should().ContainEquivalentOf(new KeyValuePair<string, string>(string.Empty, "valueonly"));
+        result.ShouldContain(new KeyValuePair<string, string>("key1", "value1"));
+        result.ShouldContain(new KeyValuePair<string, string>("key2", "value2"));
+        result.ShouldContain(new KeyValuePair<string, string>("keyonly", string.Empty));
+        result.ShouldContain(new KeyValuePair<string, string>(string.Empty, "valueonly"));
     }
 
     [Theory]
@@ -47,6 +47,6 @@ public class ActivityBaggageSerializerTests
     {
         IReadOnlyCollection<KeyValuePair<string, string>> result = ActivityBaggageSerializer.Deserialize(deserializeValue!);
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 }

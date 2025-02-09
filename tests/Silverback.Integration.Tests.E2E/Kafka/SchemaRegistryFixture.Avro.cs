@@ -4,8 +4,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -67,10 +67,10 @@ public partial class SchemaRegistryFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((AvroMessage)envelope.Message!).number)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -132,10 +132,10 @@ public partial class SchemaRegistryFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((AvroMessage)envelope.Message!).number)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -173,9 +173,9 @@ public partial class SchemaRegistryFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((AvroMessage)envelope.Message!).number)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
     }
 }

@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Tests.Types;
@@ -67,7 +67,7 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.Zero);
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.Zero);
 
-        result.Should().HaveCount(2);
-        result.Should().BeEquivalentTo(new[] { _stoppedConsumer, _startedConsumer });
+        result.Count.ShouldBe(2);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer]);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.Zero);
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.FromSeconds(10));
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.FromMilliseconds(1000));
 
-        result.Should().BeEmpty();
+        result.ShouldBeEmpty();
 
         await Task.Delay(150);
 
@@ -136,7 +136,7 @@ public class ConsumersHealthCheckServiceFixture
             ConsumerStatus.Connected,
             TimeSpan.FromMilliseconds(100));
 
-        result.Should().HaveCount(2);
-        result.Should().BeEquivalentTo(new[] { _stoppedConsumer, _startedConsumer });
+        result.Count.ShouldBe(2);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer]);
     }
 }

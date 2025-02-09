@@ -61,7 +61,7 @@ public sealed class PostgreSqlDatabase : IDisposable
             }
             catch (NpgsqlException)
             {
-                if (++tryCount > 20)
+                if (++tryCount > 30)
                     throw;
 
                 await Task.Delay(100);

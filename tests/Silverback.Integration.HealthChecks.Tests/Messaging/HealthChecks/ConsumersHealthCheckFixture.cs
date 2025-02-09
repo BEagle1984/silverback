@@ -4,11 +4,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Xunit;
@@ -39,7 +39,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Healthy);
+        result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
     [Theory]
@@ -64,7 +64,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
     }
 
     [Fact]
@@ -88,8 +88,8 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
-        result.Description.Should().Be(
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
+        result.Description.ShouldBe(
             $"One or more consumers are not connected:{Environment.NewLine}" +
             "- whatever-the-display-name");
     }
@@ -114,7 +114,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Degraded);
+        result.Status.ShouldBe(HealthStatus.Degraded);
     }
 
     [Theory]
@@ -143,7 +143,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(expectedHealthCheckStatus);
+        result.Status.ShouldBe(expectedHealthCheckStatus);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Healthy);
+        result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
     [Fact]
@@ -201,7 +201,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Unhealthy);
+        result.Status.ShouldBe(HealthStatus.Unhealthy);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class ConsumersHealthCheckFixture
 
         HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
 
-        result.Status.Should().Be(HealthStatus.Healthy);
+        result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
     private static (IHealthCheck HealthCheck, HealthCheckContext Context) GetHealthCheck(IServiceProvider serviceProvider)

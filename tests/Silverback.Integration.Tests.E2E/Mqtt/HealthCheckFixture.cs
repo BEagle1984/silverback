@@ -4,8 +4,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -50,7 +50,7 @@ public class HealthCheckFixture : MqttFixture
                 .AddConsumersCheck());
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     // TODO: Test unhealthy case

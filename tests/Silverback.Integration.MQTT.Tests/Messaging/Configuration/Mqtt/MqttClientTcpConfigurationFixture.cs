@@ -3,7 +3,7 @@
 
 using System;
 using System.Net;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -19,7 +19,7 @@ public class MqttClientTcpConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -29,7 +29,8 @@ public class MqttClientTcpConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The remote endpoint is required to connect with the message broker.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The remote endpoint is required to connect with the message broker.");
     }
 
     [Fact]
@@ -39,7 +40,8 @@ public class MqttClientTcpConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The TLS configuration is required.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The TLS configuration is required.");
     }
 
     private static MqttClientTcpConfiguration GetValidConfiguration() => new()

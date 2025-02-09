@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -44,7 +44,7 @@ public partial class ConsumerEndpointFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Handled message" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        received.Should().Be(1);
+        received.ShouldBe(1);
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -54,8 +54,8 @@ public partial class ConsumerEndpointFixture
                 Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
 
         IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
     [Fact]
@@ -86,16 +86,16 @@ public partial class ConsumerEndpointFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Handled message" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        received.Should().Be(1);
+        received.ShouldBe(1);
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        received.Should().Be(1);
+        received.ShouldBe(1);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -148,19 +148,19 @@ public partial class ConsumerEndpointFixture
         await producer.ProduceAsync(new TestEventOne());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        received.Should().Be(3);
+        received.ShouldBe(3);
 
         await producer.ProduceAsync(new TestEventTwo());
         await producer.ProduceAsync(new TestEventThree());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        received.Should().Be(4);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        received.ShouldBe(4);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
 
-        DefaultConsumerGroup.CommittedOffsets.Count.Should().Be(1);
-        DefaultConsumerGroup.CommittedOffsets.Single().Offset.Value.Should().Be(3);
+        DefaultConsumerGroup.CommittedOffsets.Count.ShouldBe(1);
+        DefaultConsumerGroup.CommittedOffsets.Single().Offset.Value.ShouldBe(3);
     }
 }

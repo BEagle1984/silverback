@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Tests.Logging;
@@ -28,7 +28,7 @@ public partial class SilverbackBuilderFixture
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        serviceProvider.GetRequiredService<ISilverbackLogger<object>>().Should().NotBeNull();
-        serviceProvider.GetRequiredService<LogLevelDictionary>().Should().HaveCount(2);
+        serviceProvider.GetRequiredService<ISilverbackLogger<object>>().ShouldNotBeNull();
+        serviceProvider.GetRequiredService<LogLevelDictionary>().Count.ShouldBe(2);
     }
 }

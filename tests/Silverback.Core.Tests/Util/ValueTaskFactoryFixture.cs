@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -17,7 +17,7 @@ public class ValueTaskFactoryFixture
     {
         ValueTask result = ValueTaskFactory.CompletedTask;
 
-        result.Should().BeEquivalentTo(default(ValueTask));
+        result.ShouldBe(default);
     }
 
     [Fact]
@@ -25,9 +25,9 @@ public class ValueTaskFactoryFixture
     {
         ValueTask<int> result = ValueTaskFactory.FromResult(42);
 
-        result.IsCompleted.Should().BeTrue();
-        result.IsCompletedSuccessfully.Should().BeTrue();
-        (await result).Should().Be(42);
+        result.IsCompleted.ShouldBeTrue();
+        result.IsCompletedSuccessfully.ShouldBeTrue();
+        (await result).ShouldBe(42);
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class ValueTaskFactoryFixture
 
         ValueTask result = ValueTaskFactory.FromCanceled(cancellationTokenSource.Token);
 
-        result.IsCompleted.Should().BeTrue();
-        result.IsCanceled.Should().BeTrue();
+        result.IsCompleted.ShouldBeTrue();
+        result.IsCanceled.ShouldBeTrue();
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class ValueTaskFactoryFixture
 
         ValueTask<int> result = ValueTaskFactory.FromCanceled<int>(cancellationTokenSource.Token);
 
-        result.IsCompleted.Should().BeTrue();
-        result.IsCanceled.Should().BeTrue();
+        result.IsCompleted.ShouldBeTrue();
+        result.IsCanceled.ShouldBeTrue();
     }
 
     [Fact]
@@ -59,8 +59,8 @@ public class ValueTaskFactoryFixture
     {
         ValueTask result = ValueTaskFactory.FromException(new ArgumentNullException());
 
-        result.IsCompleted.Should().BeTrue();
-        result.IsFaulted.Should().BeTrue();
+        result.IsCompleted.ShouldBeTrue();
+        result.IsFaulted.ShouldBeTrue();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class ValueTaskFactoryFixture
     {
         ValueTask<int> result = ValueTaskFactory.FromException<int>(new ArgumentNullException());
 
-        result.IsCompleted.Should().BeTrue();
-        result.IsFaulted.Should().BeTrue();
+        result.IsCompleted.ShouldBeTrue();
+        result.IsFaulted.ShouldBeTrue();
     }
 }

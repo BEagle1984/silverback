@@ -24,7 +24,7 @@ internal sealed class KafkaMovePolicyMessageEnricher : IMovePolicyMessageEnriche
         }
 
         outboundEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.FailureReason, $"{exception.GetType().FullName} in {exception.Source}");
-        outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourcePartition, consumerEndpoint.TopicPartition.Partition.Value);
+        outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourcePartition, offset.TopicPartition.Partition.Value);
         outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourceOffset, offset.Offset);
 
         if (inboundEnvelope.Headers.TryGetValue(KafkaMessageHeaders.Timestamp, out string? timestamp))

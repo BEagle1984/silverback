@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using FluentAssertions;
 using MQTTnet.Packets;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class MqttHeadersMappingExtensionsFixture
 
         List<MqttUserProperty> userProperties = headers.ToUserProperties();
 
-        userProperties.Should().BeEquivalentTo(
+        userProperties.ShouldBe(
         [
             new MqttUserProperty("one", "1"),
             new MqttUserProperty("two", "2")
@@ -41,7 +41,7 @@ public class MqttHeadersMappingExtensionsFixture
 
         List<MqttUserProperty> userProperties = headers.ToUserProperties();
 
-        userProperties.Should().BeEquivalentTo(
+        userProperties.ShouldBe(
         [
             new MqttUserProperty("one", "1"),
             new MqttUserProperty(DefaultMessageHeaders.MessageId, "1234"),
@@ -62,7 +62,7 @@ public class MqttHeadersMappingExtensionsFixture
 
         List<MqttUserProperty> userProperties = headers.ToUserProperties();
 
-        userProperties.Should().BeEquivalentTo(
+        userProperties.ShouldBe(
         [
             new MqttUserProperty("one", "1"),
             new MqttUserProperty("two", "2")
@@ -81,7 +81,7 @@ public class MqttHeadersMappingExtensionsFixture
 
         List<MqttUserProperty> userProperties = headers.ToUserProperties();
 
-        userProperties.Should().BeEquivalentTo(
+        userProperties.ShouldBe(
         [
             new MqttUserProperty("one", "1"),
             new MqttUserProperty("two", "2")
@@ -101,7 +101,7 @@ public class MqttHeadersMappingExtensionsFixture
 
         List<MqttUserProperty> userProperties = headers.ToUserProperties();
 
-        userProperties.Should().BeEquivalentTo(
+        userProperties.ShouldBe(
         [
             new MqttUserProperty("one", "1"),
             new MqttUserProperty("two", "2")

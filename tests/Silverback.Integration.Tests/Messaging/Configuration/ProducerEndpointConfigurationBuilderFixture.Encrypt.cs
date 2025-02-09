@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Encryption;
 using Silverback.Tests.Types;
 using Xunit;
@@ -22,9 +22,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.EncryptUsingAes(key, iv).Build();
 
-        configuration.Encryption.Should().BeOfType<SymmetricEncryptionSettings>();
-        configuration.Encryption.As<SymmetricEncryptionSettings>().Key.Should().BeSameAs(key);
-        configuration.Encryption.As<SymmetricEncryptionSettings>().InitializationVector.Should().BeSameAs(iv);
+        SymmetricEncryptionSettings encryptionSettings = configuration.Encryption.ShouldBeOfType<SymmetricEncryptionSettings>();
+        encryptionSettings.Key.ShouldBeSameAs(key);
+        encryptionSettings.InitializationVector.ShouldBeSameAs(iv);
     }
 
     [Fact]
@@ -38,10 +38,9 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.EncryptUsingAes(key, keyIdentifier, iv).Build();
 
-        configuration.Encryption.Should().BeOfType<SymmetricEncryptionSettings>();
-        configuration.Encryption.As<SymmetricEncryptionSettings>().Key.Should().BeSameAs(key);
-        configuration.Encryption.As<SymmetricEncryptionSettings>().InitializationVector.Should().BeSameAs(iv);
-        configuration.Encryption.As<SymmetricEncryptionSettings>().KeyIdentifier.Should()
-            .BeSameAs(keyIdentifier);
+        SymmetricEncryptionSettings encryptionSettings = configuration.Encryption.ShouldBeOfType<SymmetricEncryptionSettings>();
+        encryptionSettings.Key.ShouldBeSameAs(key);
+        encryptionSettings.InitializationVector.ShouldBeSameAs(iv);
+        encryptionSettings.KeyIdentifier.ShouldBe(keyIdentifier);
     }
 }

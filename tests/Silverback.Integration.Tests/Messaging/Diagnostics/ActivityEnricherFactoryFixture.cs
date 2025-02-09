@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
@@ -25,8 +25,8 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<ActivityEnricher1>();
-        enricher2.Should().BeOfType<ActivityEnricher2>();
+        enricher1.ShouldBeOfType<ActivityEnricher1>();
+        enricher2.ShouldBeOfType<ActivityEnricher2>();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class ActivityEnricherFactoryFixture
 
         IBrokerActivityEnricher enricher = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher.Should().Be(NullBrokerActivityEnricher.Instance);
+        enricher.ShouldBe(NullBrokerActivityEnricher.Instance);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
 
-        enricher2.Should().BeSameAs(enricher1);
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher1 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
 
-        enricher2.Should().BeSameAs(enricher1);
+        enricher2.ShouldBeSameAs(enricher1);
     }
 
     [Fact]
@@ -81,9 +81,9 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1A.Should().BeSameAs(enricher1B);
-        enricher2A.Should().BeSameAs(enricher2B);
-        enricher1A.Should().NotBeSameAs(enricher2A);
+        enricher1A.ShouldBeSameAs(enricher1B);
+        enricher2A.ShouldBeSameAs(enricher2B);
+        enricher1A.ShouldNotBeSameAs(enricher2A);
     }
 
     [Fact]
@@ -99,9 +99,9 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1A.Should().BeSameAs(enricher1B);
-        enricher2A.Should().BeSameAs(enricher2B);
-        enricher1A.Should().NotBeSameAs(enricher2A);
+        enricher1A.ShouldBeSameAs(enricher1B);
+        enricher2A.ShouldBeSameAs(enricher2B);
+        enricher1A.ShouldNotBeSameAs(enricher2A);
     }
 
     [Fact]
@@ -112,8 +112,8 @@ public class ActivityEnricherFactoryFixture
 
         Action act = () => factory.AddFactory<EndpointConfiguration1>(_ => new ActivityEnricher1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified discriminator type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified discriminator type is already registered.");
     }
 
     [Fact]
@@ -128,8 +128,8 @@ public class ActivityEnricherFactoryFixture
         IBrokerActivityEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerActivityEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        enricher1.Should().BeOfType<OverrideActivityEnricher>();
-        enricher2.Should().BeOfType<OverrideActivityEnricher>();
+        enricher1.ShouldBeOfType<OverrideActivityEnricher>();
+        enricher2.ShouldBeOfType<OverrideActivityEnricher>();
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class ActivityEnricherFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class ActivityEnricherFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using MQTTnet.Protocol;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Types.Domain;
@@ -21,7 +21,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("some-topic");
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.RawName.Should().Be("some-topic");
+        configuration.RawName.ShouldBe("some-topic");
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("some-topic", "some-other-topic");
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.Topics.Should().BeEquivalentTo("some-topic", "some-other-topic");
+        configuration.Topics.ShouldBe(["some-topic", "some-other-topic"]);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
             .WithAtMostOnceQoS();
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtMostOnce);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
             .WithAtLeastOnceQoS();
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
@@ -95,6 +95,6 @@ public class MqttConsumerEndpointConfigurationBuilderFixture
             .WithExactlyOnceQoS();
 
         MqttConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 }

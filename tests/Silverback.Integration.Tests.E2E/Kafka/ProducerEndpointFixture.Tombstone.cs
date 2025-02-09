@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -31,9 +31,9 @@ public partial class ProducerEndpointFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
 
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Value.Should().BeNull();
-        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("42"u8.ToArray());
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Value.ShouldBeNull();
+        DefaultTopic.GetAllMessages()[0].Key.ShouldBe("42"u8.ToArray());
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public partial class ProducerEndpointFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync<TestEventOne>(null, envelope => envelope.SetKafkaKey("42"));
 
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Value.Should().BeNull();
-        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("42"u8.ToArray());
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Value.ShouldBeNull();
+        DefaultTopic.GetAllMessages()[0].Key.ShouldBe("42"u8.ToArray());
     }
 }

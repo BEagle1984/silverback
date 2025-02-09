@@ -3,9 +3,9 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Formatter;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -51,11 +51,11 @@ public class BasicFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
     }
 
     [Fact]
@@ -86,10 +86,10 @@ public class BasicFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
     }
 }

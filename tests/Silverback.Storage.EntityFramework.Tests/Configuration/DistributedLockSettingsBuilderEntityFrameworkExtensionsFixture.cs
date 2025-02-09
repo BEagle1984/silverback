@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Xunit;
@@ -18,7 +18,7 @@ public class DistributedLockSettingsBuilderEntityFrameworkExtensionsFixture
 
         EntityFrameworkLockSettingsBuilder implementationBuilder = builder.UseDbContext<TestDbContext>("lock");
 
-        implementationBuilder.Should().BeOfType<EntityFrameworkLockSettingsBuilder>();
+        implementationBuilder.ShouldBeOfType<EntityFrameworkLockSettingsBuilder>();
     }
 
     private class TestDbContext : DbContext;

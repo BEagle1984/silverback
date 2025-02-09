@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -27,8 +27,8 @@ public class DynamicProducerEndpointResolverFixture
                 new TestProducerEndpointConfiguration(),
                 Substitute.For<IProducer>()));
 
-        endpoint.Should().BeOfType<TestProducerEndpoint>();
-        endpoint.RawName.Should().Be("topic");
+        endpoint.ShouldBeOfType<TestProducerEndpoint>();
+        endpoint.RawName.ShouldBe("topic");
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class DynamicProducerEndpointResolverFixture
                 new TestProducerEndpointConfiguration(),
                 Substitute.For<IProducer>()));
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The envelope must be of type Silverback.Messaging.Messages.IOutboundEnvelope`1[[Silverback.Tests.Types.Domain.TestEventOne*");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldMatch(@"The envelope must be of type Silverback.Messaging.Messages.IOutboundEnvelope`1\[\[Silverback.Tests.Types.Domain.TestEventOne.*");
     }
 }

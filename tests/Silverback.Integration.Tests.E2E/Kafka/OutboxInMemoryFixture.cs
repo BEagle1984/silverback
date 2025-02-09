@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -69,11 +69,11 @@ public class OutboxInMemoryFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -123,9 +123,9 @@ public class OutboxInMemoryFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultTopic.MessagesCount.Should().Be(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultTopic.MessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -160,15 +160,15 @@ public class OutboxInMemoryFixture : KafkaFixture
                 .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.WrapAndPublishBatchAsync(new[] { new TestEventOne(), new TestEventOne() });
+        await publisher.WrapAndPublishBatchAsync([new TestEventOne(), new TestEventOne()]);
         await publisher.WrapAndPublishBatchAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Count().ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Count().ShouldBe(1);
     }
 
     [Fact]
@@ -216,10 +216,10 @@ public class OutboxInMemoryFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventThree>>().Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Count().ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Count().ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventThree>>().Count().ShouldBe(1);
     }
 }

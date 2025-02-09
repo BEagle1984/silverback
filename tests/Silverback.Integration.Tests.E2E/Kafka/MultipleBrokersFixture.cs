@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -59,18 +59,18 @@ public class MultipleBrokersFixture : KafkaFixture
         await publisher.PublishAsync(new Broker1Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 
         await publisher.PublishAsync(new Broker2Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<KafkaConsumer>().Configuration.BootstrapServers.Should().Be("PLAINTEXT://e2e-1");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<KafkaConsumer>().Configuration.BootstrapServers.Should().Be("PLAINTEXT://e2e-2");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-2");
     }
 
     [Fact]
@@ -113,12 +113,12 @@ public class MultipleBrokersFixture : KafkaFixture
         await publisher.PublishAsync(new Broker2Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<KafkaConsumer>().Configuration.BootstrapServers.Should().Be("PLAINTEXT://e2e-1");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<KafkaConsumer>().Configuration.BootstrapServers.Should().Be("PLAINTEXT://e2e-2");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-2");
     }
 
     private sealed class Broker1Message : IIntegrationMessage;

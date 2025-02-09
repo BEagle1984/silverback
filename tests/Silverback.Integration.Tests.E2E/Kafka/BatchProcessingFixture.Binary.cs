@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -70,12 +70,12 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -89,12 +89,12 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -150,12 +150,12 @@ public partial class BatchProcessingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -169,11 +169,11 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 }

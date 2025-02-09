@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
 
@@ -17,8 +17,8 @@ public class EntityFrameworkKafkaOffsetStoreSettingsFixture
     {
         EntityFrameworkKafkaOffsetStoreSettings settings = new(typeof(TestDbContext), GetDbContext);
 
-        settings.DbContextType.Should().Be(typeof(TestDbContext));
-        settings.GetDbContext(Substitute.For<IServiceProvider>()).Should().BeOfType<TestDbContext>();
+        settings.DbContextType.ShouldBe(typeof(TestDbContext));
+        settings.GetDbContext(Substitute.For<IServiceProvider>()).ShouldBeOfType<TestDbContext>();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class EntityFrameworkKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -38,7 +38,8 @@ public class EntityFrameworkKafkaOffsetStoreSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext type is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext type is required.");
     }
 
     [Fact]
@@ -48,7 +49,8 @@ public class EntityFrameworkKafkaOffsetStoreSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext factory is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext factory is required.");
     }
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();

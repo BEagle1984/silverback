@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -21,8 +21,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.Build();
 
-        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
+        configuration.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        configuration.Serializer.ShouldNotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -32,8 +32,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.Build();
 
-        configuration.Serializer.Should().BeOfType<BinaryMessageSerializer>();
-        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Binary);
+        configuration.Serializer.ShouldBeOfType<BinaryMessageSerializer>();
+        configuration.Serializer.ShouldNotBeSameAs(DefaultSerializers.Binary);
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.SerializeAsJson().Build();
 
-        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        configuration.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
+        configuration.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        configuration.Serializer.ShouldNotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -59,8 +59,8 @@ public partial class ProducerEndpointConfigurationBuilderFixture
                     options.MaxDepth = 42;
                 })).Build();
 
-        configuration.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        configuration.Serializer.As<JsonMessageSerializer>().Options!.MaxDepth.Should().Be(42);
+        JsonMessageSerializer jsonSerializer = configuration.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        jsonSerializer.Options!.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -70,6 +70,6 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         TestProducerEndpointConfiguration configuration = builder.ProduceBinaryMessages().Build();
 
-        configuration.Serializer.Should().BeOfType<BinaryMessageSerializer>();
+        configuration.Serializer.ShouldBeOfType<BinaryMessageSerializer>();
     }
 }

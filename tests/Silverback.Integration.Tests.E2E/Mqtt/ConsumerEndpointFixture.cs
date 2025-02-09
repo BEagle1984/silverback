@@ -3,8 +3,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -65,9 +65,9 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        areOverlapping.Should().BeFalse();
-        receivedMessages.Should().Be(10);
-        exitedSubscribers.Should().Be(10);
+        areOverlapping.ShouldBeFalse();
+        receivedMessages.ShouldBe(10);
+        exitedSubscribers.ShouldBe(10);
     }
 
     [Fact]
@@ -102,17 +102,17 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
         IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
         IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
 
-        eventOneEnvelopes.Should().HaveCount(5);
-        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
-        eventTwoEnvelopes.Should().HaveCount(5);
-        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
+        eventOneEnvelopes.Length.ShouldBe(5);
+        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventTwoEnvelopes.Length.ShouldBe(5);
+        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
     }
 
     [Fact]
@@ -144,17 +144,17 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
         IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
         IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
 
-        eventOneEnvelopes.Should().HaveCount(5);
-        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
-        eventTwoEnvelopes.Should().HaveCount(5);
-        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo("1", "2", "3", "4", "5");
+        eventOneEnvelopes.Length.ShouldBe(5);
+        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
+        eventTwoEnvelopes.Length.ShouldBe(5);
+        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
     }
 
     [Fact]
@@ -188,16 +188,16 @@ public partial class ConsumerEndpointFixture : MqttFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         MqttConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().ToArray();
-        consumers.Should().HaveCount(2);
+        consumers.Length.ShouldBe(2);
 
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        inboundEnvelopes.Should().HaveCount(10);
+        inboundEnvelopes.Length.ShouldBe(10);
 
         IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
 
-        consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
-        consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
+        consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
+        consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
     }
 
     [Fact]
@@ -239,27 +239,27 @@ public partial class ConsumerEndpointFixture : MqttFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         MqttConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().ToArray();
-        consumers.Should().HaveCount(4);
+        consumers.Length.ShouldBe(4);
 
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        inboundEnvelopes.Should().HaveCount(15);
+        inboundEnvelopes.Length.ShouldBe(15);
 
         IInboundEnvelope<TestEventOne>[] client1Envelopes = inboundEnvelopes.Where(
             envelope => envelope
-                .Consumer.As<MqttConsumer>().Configuration.ClientId == "client1").ToArray();
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1").ToArray();
         IInboundEnvelope<TestEventOne>[] client2Envelopes = inboundEnvelopes.Where(
             envelope => envelope
-                .Consumer.As<MqttConsumer>().Configuration.ClientId == "client2").ToArray();
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2").ToArray();
         IInboundEnvelope<TestEventOne>[] client3Envelopes = inboundEnvelopes.Where(
             envelope => envelope
-                .Consumer.As<MqttConsumer>().Configuration.ClientId == "client3").ToArray();
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3").ToArray();
         IInboundEnvelope<TestEventOne>[] client4Envelopes = inboundEnvelopes.Where(
             envelope => envelope
-                .Consumer.As<MqttConsumer>().Configuration.ClientId == "client4").ToArray();
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4").ToArray();
 
-        client1Envelopes.Union(client2Envelopes).Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
-        client3Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
-        client4Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
+        client1Envelopes.Union(client2Envelopes).Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
+        client3Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
+        client4Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
     }
 
     [Fact]
@@ -287,7 +287,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
         await consumer.StopAsync();
 
@@ -300,7 +300,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -329,7 +329,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
         await consumer.Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
@@ -342,7 +342,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
         await Helper.WaitUntilConnectedAsync();
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -375,7 +375,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 }

@@ -3,8 +3,8 @@
 
 using System.Net;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -58,14 +58,20 @@ public class MultipleBrokersFixture : MqttFixture
         await publisher.PublishAsync(new Broker2Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
-            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-1");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
-            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-2");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0]
+            .Consumer.ShouldBeOfType<MqttConsumer>()
+            .Configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>()
+            .RemoteEndpoint.ShouldBeOfType<DnsEndPoint>()
+            .Host.ShouldBe("e2e-mqtt-broker-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1]
+            .Consumer.ShouldBeOfType<MqttConsumer>()
+            .Configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>()
+            .RemoteEndpoint.ShouldBeOfType<DnsEndPoint>()
+            .Host.ShouldBe("e2e-mqtt-broker-2");
     }
 
     [Fact]
@@ -102,14 +108,20 @@ public class MultipleBrokersFixture : MqttFixture
         await publisher.PublishAsync(new Broker2Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
-            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-1");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
-            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-2");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0]
+            .Consumer.ShouldBeOfType<MqttConsumer>()
+            .Configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>()
+            .RemoteEndpoint.ShouldBeOfType<DnsEndPoint>()
+            .Host.ShouldBe("e2e-mqtt-broker-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1]
+            .Consumer.ShouldBeOfType<MqttConsumer>()
+            .Configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>()
+            .RemoteEndpoint.ShouldBeOfType<DnsEndPoint>()
+            .Host.ShouldBe("e2e-mqtt-broker-2");
     }
 
     private sealed class Broker1Message : IIntegrationMessage;

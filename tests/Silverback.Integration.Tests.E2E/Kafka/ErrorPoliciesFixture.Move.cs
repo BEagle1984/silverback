@@ -2,17 +2,17 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Tests.Integration.E2E.Util;
 using Silverback.Util;
 using Xunit;
 
@@ -51,15 +51,15 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.ShouldBe("other-topic");
 
         IInMemoryTopic otherTopic = Helper.GetTopic("other-topic");
-        otherTopic.MessagesCount.Should().Be(1);
-        otherTopic.GetAllMessages()[0].Value.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        otherTopic.MessagesCount.ShouldBe(1);
+        otherTopic.GetAllMessages()[0].Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 
     [Fact]
@@ -103,10 +103,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
-        tryCount.Should().Be(11);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(11);
+        tryCount.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
 
     [Fact]
@@ -146,17 +146,17 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        tryCount.Should().Be(2);
+        tryCount.ShouldBe(2);
 
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.ShouldBe("other-topic");
 
         IInMemoryTopic otherTopic = Helper.GetTopic("other-topic");
-        otherTopic.MessagesCount.Should().Be(1);
-        otherTopic.GetAllMessages()[0].Value.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        otherTopic.MessagesCount.ShouldBe(1);
+        otherTopic.GetAllMessages()[0].Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 
     [Fact]
@@ -193,34 +193,22 @@ public partial class ErrorPoliciesFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         IInMemoryTopic otherTopic = Helper.GetTopic("other-topic");
-        otherTopic.MessagesCount.Should().Be(1);
+        otherTopic.MessagesCount.ShouldBe(1);
         Message<byte[]?, byte[]?> movedMessage = otherTopic.GetAllMessages()[0];
-        movedMessage.Value.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                DefaultMessageHeaders.FailedAttempts,
-                Encoding.UTF8.GetBytes("1")));
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                DefaultMessageHeaders.FailureReason,
-                Encoding.UTF8.GetBytes("System.InvalidOperationException in Silverback.Integration.Tests.E2E")));
-        movedMessage.Headers.Should().ContainSingle(header => header.Key == KafkaMessageHeaders.SourceTimestamp);
-        movedMessage.Headers.Should().ContainSingle(header => header.Key == KafkaMessageHeaders.Timestamp);
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                KafkaMessageHeaders.SourceTopic,
-                Encoding.UTF8.GetBytes(DefaultTopicName)));
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                KafkaMessageHeaders.SourcePartition,
-                Encoding.UTF8.GetBytes("0")));
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                KafkaMessageHeaders.SourceOffset,
-                Encoding.UTF8.GetBytes("1")));
-        movedMessage.Headers.Should().ContainEquivalentOf(
-            new Header(
-                KafkaMessageHeaders.SourceConsumerGroupId,
-                Encoding.UTF8.GetBytes(DefaultGroupId)));
+        movedMessage.Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        movedMessage.Headers.ShouldContain(header => header.Key == DefaultMessageHeaders.FailedAttempts && header.GetValueAsString() == "1");
+        movedMessage.Headers.ShouldContain(
+            header => header.Key == DefaultMessageHeaders.FailureReason &&
+                      header.GetValueAsString() == "System.InvalidOperationException in Silverback.Integration.Tests.E2E");
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceTimestamp);
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.Timestamp);
+        movedMessage.Headers.ShouldContain(
+            header => header.Key == KafkaMessageHeaders.SourceTopic &&
+                      header.GetValueAsString() == DefaultTopicName);
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourcePartition && header.GetValueAsString() == "0");
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceOffset && header.GetValueAsString() == "0");
+        movedMessage.Headers.ShouldContain(
+            header => header.Key == KafkaMessageHeaders.SourceConsumerGroupId &&
+                      header.GetValueAsString() == DefaultGroupId);
     }
 }

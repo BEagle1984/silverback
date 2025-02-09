@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Kafka.SchemaRegistry.TestTypes;
@@ -29,7 +29,8 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
 
         Action act = () => builder.DeserializeAvro(deserializer => deserializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -41,7 +42,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .DeserializeAvro(deserializer => deserializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -56,7 +57,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel<TestEventOne>())
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -71,7 +72,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -81,7 +82,8 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
 
         Action act = () => builder.DeserializeJsonUsingSchemaRegistry(deserializer => deserializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .DeserializeJsonUsingSchemaRegistry(deserializer => deserializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -108,7 +110,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel<TestEventOne>())
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -123,7 +125,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
                     .UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -135,6 +137,6 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsFixture
             .DeserializeProtobuf(deserializer => deserializer.ConnectToSchemaRegistry("test-url"))
             .Build();
 
-        endpointConfiguration.Deserializer.Should().BeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
+        endpointConfiguration.Deserializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
     }
 }

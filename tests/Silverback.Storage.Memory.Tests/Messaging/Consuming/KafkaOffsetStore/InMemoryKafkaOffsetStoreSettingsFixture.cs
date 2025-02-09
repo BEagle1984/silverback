@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
 
@@ -15,7 +15,7 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
     {
         InMemoryKafkaOffsetStoreSettings settings = new();
 
-        settings.OffsetStoreName.Should().Be("default");
+        settings.OffsetStoreName.ShouldBe("default");
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
     {
         InMemoryKafkaOffsetStoreSettings settings = new("my-offsets");
 
-        settings.OffsetStoreName.Should().Be("my-offsets");
+        settings.OffsetStoreName.ShouldBe("my-offsets");
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -45,6 +45,6 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 }

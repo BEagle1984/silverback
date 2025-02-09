@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -21,13 +21,13 @@ public class ConsumerPipelineContextFixture
 
         ConsumerPipelineContext clonedContext = context.Clone();
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(context.Envelope);
-        clonedContext.Consumer.Should().BeSameAs(context.Consumer);
-        clonedContext.SequenceStore.Should().BeSameAs(context.SequenceStore);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(context.Envelope);
+        clonedContext.Consumer.ShouldBeSameAs(context.Consumer);
+        clonedContext.SequenceStore.ShouldBeSameAs(context.SequenceStore);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
     }
 
     [Fact]
@@ -38,13 +38,13 @@ public class ConsumerPipelineContextFixture
 
         ConsumerPipelineContext clonedContext = context.Clone(newEnvelope);
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(newEnvelope);
-        clonedContext.Consumer.Should().BeSameAs(context.Consumer);
-        clonedContext.SequenceStore.Should().BeSameAs(context.SequenceStore);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(newEnvelope);
+        clonedContext.Consumer.ShouldBeSameAs(context.Consumer);
+        clonedContext.SequenceStore.ShouldBeSameAs(context.SequenceStore);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
     }
 
     private static ConsumerPipelineContext CreateContext() => new(

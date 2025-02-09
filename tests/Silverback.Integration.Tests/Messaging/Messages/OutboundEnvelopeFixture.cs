@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.IO;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -20,8 +20,8 @@ public class OutboundEnvelopeFixture
         byte[] message = [1, 2, 3];
         OutboundEnvelope outboundEnvelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
-        outboundEnvelope.Message.Should().BeSameAs(message);
-        outboundEnvelope.RawMessage.As<MemoryStream>().ToArray().Should().BeEquivalentTo(message);
+        outboundEnvelope.Message.ShouldBeSameAs(message);
+        ((MemoryStream)outboundEnvelope.RawMessage!).ToArray().ShouldBe(message);
     }
 
     [Fact]
@@ -30,8 +30,8 @@ public class OutboundEnvelopeFixture
         MemoryStream stream = new([1, 2, 3]);
         OutboundEnvelope outboundEnvelope = new(stream, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
 
-        outboundEnvelope.Message.Should().BeSameAs(stream);
-        outboundEnvelope.RawMessage.Should().BeSameAs(stream);
+        outboundEnvelope.Message.ShouldBeSameAs(stream);
+        outboundEnvelope.RawMessage.ShouldBeSameAs(stream);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class OutboundEnvelopeFixture
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
-        envelope.MessageType.Should().Be(typeof(TestEventOne));
+        envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class OutboundEnvelopeFixture
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
-        envelope.MessageType.Should().Be(typeof(object));
+        envelope.MessageType.ShouldBe(typeof(object));
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class OutboundEnvelopeFixture
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
-        envelope.MessageType.Should().Be(typeof(TestEventOne));
+        envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class OutboundEnvelopeFixture
     {
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "old" },
-            null,
+            [new MessageHeader("x-header-1", "one"), new MessageHeader("x-header-2", "two")],
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>())
         {
@@ -84,9 +84,15 @@ public class OutboundEnvelopeFixture
 
         IOutboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
 
-        newEnvelope.Should().NotBeSameAs(envelope);
-        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(e => e.RawMessage));
-        newEnvelope.RawMessage.Should().NotBeSameAs(envelope.RawMessage);
+        newEnvelope.ShouldNotBeSameAs(envelope);
+        newEnvelope.RawMessage.ShouldNotBeSameAs(envelope.RawMessage);
+        newEnvelope.Message.ShouldBeSameAs(envelope.Message);
+        newEnvelope.MessageType.ShouldBe(envelope.MessageType);
+        newEnvelope.Context.ShouldBeSameAs(envelope.Context);
+        newEnvelope.Headers.ShouldBe(envelope.Headers);
+        newEnvelope.Producer.ShouldBeSameAs(envelope.Producer);
+        newEnvelope.EndpointConfiguration.ShouldBeSameAs(envelope.EndpointConfiguration);
+        newEnvelope.BrokerMessageIdentifier.ShouldBeSameAs(envelope.BrokerMessageIdentifier);
     }
 
     [Fact]
@@ -94,7 +100,7 @@ public class OutboundEnvelopeFixture
     {
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "old" },
-            null,
+            [new MessageHeader("x-header-1", "one"), new MessageHeader("x-header-2", "two")],
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>())
         {
@@ -103,16 +109,15 @@ public class OutboundEnvelopeFixture
 
         IOutboundEnvelope<TestEventTwo> newEnvelope = envelope.CloneReplacingMessage(new TestEventTwo());
 
-        newEnvelope.Should().NotBeSameAs(envelope);
-        newEnvelope.Should().BeEquivalentTo(
-            envelope,
-            options => options
-                .Excluding(e => e.Message)
-                .Excluding(e => e.MessageType)
-                .Excluding(e => e.RawMessage));
-        newEnvelope.Message.Should().BeOfType<TestEventTwo>();
-        newEnvelope.MessageType.Should().Be(typeof(TestEventTwo));
-        newEnvelope.RawMessage.Should().BeNull();
+        newEnvelope.ShouldNotBeSameAs(envelope);
+        newEnvelope.Message.ShouldBeOfType<TestEventTwo>();
+        newEnvelope.MessageType.ShouldBe(typeof(TestEventTwo));
+        newEnvelope.RawMessage.ShouldBeNull();
+        newEnvelope.Context.ShouldBeSameAs(envelope.Context);
+        newEnvelope.Headers.ShouldBe(envelope.Headers);
+        newEnvelope.Producer.ShouldBeSameAs(envelope.Producer);
+        newEnvelope.EndpointConfiguration.ShouldBeSameAs(envelope.EndpointConfiguration);
+        newEnvelope.BrokerMessageIdentifier.ShouldBeSameAs(envelope.BrokerMessageIdentifier);
     }
 
     [Fact]
@@ -127,7 +132,7 @@ public class OutboundEnvelopeFixture
             RawMessage = null
         };
 
-        envelope.IsTombstone.Should().BeTrue();
+        envelope.IsTombstone.ShouldBeTrue();
     }
 
     [Fact]
@@ -142,7 +147,7 @@ public class OutboundEnvelopeFixture
             RawMessage = new MemoryStream()
         };
 
-        envelope.IsTombstone.Should().BeTrue();
+        envelope.IsTombstone.ShouldBeTrue();
     }
 
     [Fact]
@@ -157,7 +162,7 @@ public class OutboundEnvelopeFixture
             RawMessage = new MemoryStream()
         };
 
-        envelope.IsTombstone.Should().BeFalse();
+        envelope.IsTombstone.ShouldBeFalse();
     }
 
     [Fact]
@@ -171,8 +176,8 @@ public class OutboundEnvelopeFixture
 
         envelope.AddHeader("one", "1").AddHeader("two", "2");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldContain(new MessageHeader("two", "2"));
     }
 
     [Fact]
@@ -186,8 +191,8 @@ public class OutboundEnvelopeFixture
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("two", "2");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldContain(new MessageHeader("two", "2"));
     }
 
     [Fact]
@@ -201,8 +206,8 @@ public class OutboundEnvelopeFixture
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("one", "2");
 
-        envelope.Headers.Should().NotContainEquivalentOf(new MessageHeader("one", "1"));
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "2"));
+        envelope.Headers.ShouldNotContain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "2"));
     }
 
     [Fact]
@@ -216,8 +221,8 @@ public class OutboundEnvelopeFixture
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("two", "2");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldContain(new MessageHeader("two", "2"));
     }
 
     [Fact]
@@ -231,8 +236,8 @@ public class OutboundEnvelopeFixture
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("one", "2");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
-        envelope.Headers.Should().NotContainEquivalentOf(new MessageHeader("one", "2"));
+        envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
+        envelope.Headers.ShouldNotContain(new MessageHeader("one", "2"));
     }
 
     [Fact]
@@ -246,7 +251,7 @@ public class OutboundEnvelopeFixture
 
         envelope.SetMessageId("one").SetMessageId("two");
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "two"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "two"));
     }
 
     [Fact]
@@ -258,7 +263,7 @@ public class OutboundEnvelopeFixture
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
-        envelope.GetMessageId().Should().Be("test-id");
+        envelope.GetMessageId().ShouldBe("test-id");
     }
 
     [Fact]
@@ -270,6 +275,6 @@ public class OutboundEnvelopeFixture
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
-        envelope.GetMessageId().Should().BeNull();
+        envelope.GetMessageId().ShouldBeNull();
     }
 }

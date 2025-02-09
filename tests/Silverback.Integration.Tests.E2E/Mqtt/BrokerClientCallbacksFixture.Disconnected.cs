@@ -3,8 +3,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -44,7 +44,7 @@ public partial class BrokerClientCallbacksFixture
 
         await AsyncTestingUtil.WaitAsync(() => callback.CallsCount > 0);
 
-        callback.CallsCount.Should().Be(1);
+        callback.CallsCount.ShouldBe(1);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public partial class BrokerClientCallbacksFixture
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.OutboundEnvelopes.Count > 0);
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
     }
 
     private sealed class TestDisconnectingCallback : IMqttClientDisconnectingCallback

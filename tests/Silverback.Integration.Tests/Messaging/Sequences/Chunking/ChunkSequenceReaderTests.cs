@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -42,7 +42,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         bool result = await new ChunkSequenceReader().CanHandleAsync(context);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         bool result = await new ChunkSequenceReader().CanHandleAsync(context);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -88,9 +88,9 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
-        sequence.Should().NotBeNull();
-        sequence.TotalLength.Should().Be(4);
-        sequence.IsNew.Should().BeTrue();
+        sequence.ShouldNotBeNull();
+        sequence.TotalLength.ShouldBe(4);
+        sequence.IsNew.ShouldBeTrue();
     }
 
     [Fact]
@@ -127,10 +127,10 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ISequence sequence1 = await reader.GetSequenceAsync(context1);
 
-        sequence1.Should().NotBeNull();
-        sequence1.Should().BeOfType<ChunkSequence>();
-        sequence1.TotalLength.Should().Be(4);
-        sequence1.IsNew.Should().BeTrue();
+        sequence1.ShouldNotBeNull();
+        sequence1.ShouldBeOfType<ChunkSequence>();
+        sequence1.TotalLength.ShouldBe(4);
+        sequence1.IsNew.ShouldBeTrue();
 
         ConsumerPipelineContext context2 = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope2,
@@ -138,9 +138,9 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ISequence sequence2 = await reader.GetSequenceAsync(context2);
 
-        sequence2.Should().NotBeNull();
-        sequence2.Should().BeSameAs(sequence1);
-        sequence2.IsNew.Should().BeFalse();
+        sequence2.ShouldNotBeNull();
+        sequence2.ShouldBeSameAs(sequence1);
+        sequence2.IsNew.ShouldBeFalse();
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
-        sequence.Should().BeOfType<IncompleteSequence>();
+        sequence.ShouldBeOfType<IncompleteSequence>();
     }
 
     public void Dispose() => _sequenceStore.DisposeAsync().SafeWait();

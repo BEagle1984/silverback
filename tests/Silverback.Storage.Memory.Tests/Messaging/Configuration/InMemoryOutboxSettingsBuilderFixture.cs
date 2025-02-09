@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -17,8 +17,7 @@ public class InMemoryOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.Build();
 
-        settings.Should().BeOfType<InMemoryOutboxSettings>();
-        settings.Should().BeEquivalentTo(new InMemoryOutboxSettings());
+        settings.ShouldBe(new InMemoryOutboxSettings());
     }
 
     [Fact]
@@ -28,6 +27,6 @@ public class InMemoryOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.WithName("test-outbox").Build();
 
-        settings.As<InMemoryOutboxSettings>().OutboxName.Should().Be("test-outbox");
+        settings.ShouldBeOfType<InMemoryOutboxSettings>().OutboxName.ShouldBe("test-outbox");
     }
 }

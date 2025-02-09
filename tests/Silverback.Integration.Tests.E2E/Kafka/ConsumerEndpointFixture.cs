@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -73,9 +73,9 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        areOverlapping.Should().BeFalse();
-        receivedMessages.Sum().Should().Be(10);
-        exitedSubscribers.Sum().Should().Be(10);
+        areOverlapping.ShouldBeFalse();
+        receivedMessages.Sum().ShouldBe(10);
+        exitedSubscribers.Sum().ShouldBe(10);
     }
 
     [Fact]
@@ -110,17 +110,17 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
         IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
         IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
 
-        eventOneEnvelopes.Should().HaveCount(5);
-        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
-        eventTwoEnvelopes.Should().HaveCount(5);
-        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
+        eventOneEnvelopes.Length.ShouldBe(5);
+        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventTwoEnvelopes.Length.ShouldBe(5);
+        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
     }
 
     [Fact]
@@ -152,21 +152,21 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
         IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
         IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
 
-        eventOneEnvelopes.Should().HaveCount(5);
-        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
+        eventOneEnvelopes.Length.ShouldBe(5);
+        eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5"],
-            options => options.WithoutStrictOrdering());
-        eventTwoEnvelopes.Should().HaveCount(5);
-        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(
+            ignoreOrder: true);
+        eventTwoEnvelopes.Length.ShouldBe(5);
+        eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(
             ["1", "2", "3", "4", "5"],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -208,19 +208,19 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
-        consumers.Should().HaveCount(2);
-        consumers[0].Client.Assignment.Should().HaveCount(2);
-        consumers[1].Client.Assignment.Should().HaveCount(2);
+        consumers.Length.ShouldBe(2);
+        consumers[0].Client.Assignment.Count.ShouldBe(2);
+        consumers[1].Client.Assignment.Count.ShouldBe(2);
 
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        inboundEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
+        inboundEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
         IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
 
-        consumer1Envelopes.Should().HaveCount(4);
-        consumer2Envelopes.Should().HaveCount(4);
+        consumer1Envelopes.Length.ShouldBe(4);
+        consumer2Envelopes.Length.ShouldBe(4);
     }
 
     [Fact]
@@ -256,21 +256,21 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
-        consumers.Should().HaveCount(2);
-        consumers[0].Client.Assignment.Should().HaveCount(4);
-        consumers[1].Client.Assignment.Should().HaveCount(4);
+        consumers.Length.ShouldBe(2);
+        consumers[0].Client.Assignment.Count.ShouldBe(4);
+        consumers[1].Client.Assignment.Count.ShouldBe(4);
 
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        inboundEnvelopes.Should().HaveCount(16);
+        inboundEnvelopes.Length.ShouldBe(16);
         IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
 
-        consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
+        consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            options => options.WithoutStrictOrdering());
-        consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
+            ignoreOrder: true);
+        consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -312,14 +312,14 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
-        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.Should().Be(3);
-        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.ShouldBe(3);
+        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.ShouldBe(2);
 
         await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.Offsets.Count == 2);
 
-        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.Should().Be(3);
-        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.Should().Be(2);
+        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.ShouldBe(3);
+        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.ShouldBe(2);
     }
 
     [Fact]
@@ -362,15 +362,15 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
-        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.Should().Be(4);
-        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
+        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.ShouldBe(4);
+        DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.ShouldBe(2);
 
         await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.CallsCount >= 2);
 
-        offsetCommittedCallback.CallsCount.Should().Be(2);
-        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.Should().Be(4);
-        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.Should().Be(2);
+        offsetCommittedCallback.CallsCount.ShouldBe(2);
+        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.ShouldBe(4);
+        offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.ShouldBe(2);
     }
 
     [Fact]
@@ -403,15 +403,15 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         await producer.ProduceAsync(new TestEventOne());
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages == 3);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
-        offsetCommittedCallback.CallsCount.Should().Be(0);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+        offsetCommittedCallback.CallsCount.ShouldBe(0);
 
         await Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single().Client.DisconnectAsync();
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
-        offsetCommittedCallback.CallsCount.Should().Be(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
+        offsetCommittedCallback.CallsCount.ShouldBe(1);
     }
 
     [Fact]
@@ -441,7 +441,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
         await consumer.StopAsync();
 
@@ -454,7 +454,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -484,7 +484,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
         await consumer.Client.DisconnectAsync();
 
@@ -498,7 +498,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         await Helper.WaitUntilConnectedAsync();
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -549,7 +549,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         try
         {
-            receivedMessages.Should().HaveCount(2);
+            receivedMessages.Count.ShouldBe(2);
         }
         finally
         {
@@ -558,6 +558,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(12);
+        receivedMessages.Count.ShouldBe(12);
     }
 }

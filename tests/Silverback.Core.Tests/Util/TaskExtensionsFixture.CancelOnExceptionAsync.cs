@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
@@ -27,8 +27,8 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => Task.WhenAll(task1, task2);
 
-        await act.Should().ThrowAsync<TestException>();
-        success.Should().BeFalse();
+        await act.ShouldThrowAsync<TestException>();
+        success.ShouldBeFalse();
 
         async Task SuccessTask(CancellationToken cancellationToken)
         {
@@ -55,8 +55,8 @@ public partial class TaskExtensionsFixture
 
         Func<Task> act = () => Task.WhenAll(task1, task2);
 
-        await act.Should().ThrowAsync<TestException>();
-        success.Should().BeFalse();
+        await act.ShouldThrowAsync<TestException>();
+        success.ShouldBeFalse();
 
         async Task<int> SuccessTask(CancellationToken cancellationToken)
         {

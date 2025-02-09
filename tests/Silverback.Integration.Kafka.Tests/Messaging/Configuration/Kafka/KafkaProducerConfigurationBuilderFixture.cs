@@ -4,8 +4,8 @@
 using System;
 using System.Linq;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
@@ -23,7 +23,7 @@ public class KafkaProducerConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -37,8 +37,8 @@ public class KafkaProducerConfigurationBuilderFixture
         builder.WithBootstrapServers("two");
         KafkaProducerConfiguration configuration2 = builder.Build();
 
-        configuration1.BootstrapServers.Should().Be("one");
-        configuration2.BootstrapServers.Should().Be("two");
+        configuration1.BootstrapServers.ShouldBe("one");
+        configuration2.BootstrapServers.ShouldBe("two");
     }
 
     [Fact]
@@ -51,16 +51,16 @@ public class KafkaProducerConfigurationBuilderFixture
             .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(2);
         KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.EndpointResolver.As<KafkaStaticProducerEndpointResolver>().TopicPartition
-            .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        KafkaStaticProducerEndpointResolver resolver1 = endpoint1.EndpointResolver.ShouldBeOfType<KafkaStaticProducerEndpointResolver>();
+        resolver1.TopicPartition.ShouldBe(new TopicPartition("topic1", Partition.Any));
+        endpoint1.Serializer.ShouldBeOfType<JsonMessageSerializer>();
         KafkaProducerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
-        endpoint2.EndpointResolver.As<KafkaStaticProducerEndpointResolver>().TopicPartition
-            .Should().BeEquivalentTo(new TopicPartition("topic2", Partition.Any));
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        KafkaStaticProducerEndpointResolver resolver2 = endpoint2.EndpointResolver.ShouldBeOfType<KafkaStaticProducerEndpointResolver>();
+        resolver2.TopicPartition.ShouldBe(new TopicPartition("topic2", Partition.Any));
+        endpoint2.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -71,13 +71,13 @@ public class KafkaProducerConfigurationBuilderFixture
         builder.Produce(endpoint => endpoint.ProduceTo("topic1"));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(1);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(1);
         KafkaProducerEndpointConfiguration endpoint = configuration.Endpoints.Single();
-        endpoint.MessageType.Should().Be<object>();
-        endpoint.EndpointResolver.As<KafkaStaticProducerEndpointResolver>().TopicPartition
-            .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        endpoint.MessageType.ShouldBe(typeof(object));
+        KafkaStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<KafkaStaticProducerEndpointResolver>();
+        resolver.TopicPartition.ShouldBe(new TopicPartition("topic1", Partition.Any));
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -90,12 +90,12 @@ public class KafkaProducerConfigurationBuilderFixture
             .Produce<TestEventTwo>("id1", endpoint => endpoint.ProduceTo("topic1"));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(1);
-        KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.EndpointResolver.As<KafkaStaticProducerEndpointResolver>().TopicPartition
-            .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(1);
+        KafkaProducerEndpointConfiguration endpoint = configuration.Endpoints.First();
+        KafkaStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<KafkaStaticProducerEndpointResolver>();
+        resolver.TopicPartition.ShouldBe(new TopicPartition("topic1", Partition.Any));
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -108,13 +108,13 @@ public class KafkaProducerConfigurationBuilderFixture
             .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1").EnableChunking(1000));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(1);
-        KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
-        endpoint1.EndpointResolver.As<KafkaStaticProducerEndpointResolver>().TopicPartition
-            .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint1.Chunk!.Size.Should().Be(42);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(1);
+        KafkaProducerEndpointConfiguration endpoint = configuration.Endpoints.First();
+        KafkaStaticProducerEndpointResolver resolver = endpoint.EndpointResolver.ShouldBeOfType<KafkaStaticProducerEndpointResolver>();
+        resolver.TopicPartition.ShouldBe(new TopicPartition("topic1", Partition.Any));
+        endpoint.Serializer.ShouldBeOfType<JsonMessageSerializer>();
+        endpoint.Chunk!.Size.ShouldBe(42);
     }
 
     [Fact]
@@ -127,8 +127,8 @@ public class KafkaProducerConfigurationBuilderFixture
             .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic1"));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -141,8 +141,8 @@ public class KafkaProducerConfigurationBuilderFixture
             .Produce<TestEventTwo>("id2", endpoint => endpoint.ProduceTo("topic1"));
 
         KafkaProducerConfiguration configuration = builder.Build();
-        configuration.Should().NotBeNull();
-        configuration.Endpoints.Should().HaveCount(2);
+        configuration.ShouldNotBeNull();
+        configuration.Endpoints.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -153,8 +153,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.ThrowIfNotAcknowledged.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.ThrowIfNotAcknowledged.ShouldBe(true);
     }
 
     [Fact]
@@ -165,8 +165,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.ThrowIfNotAcknowledged.ShouldBe(false);
     }
 
     [Fact]
@@ -177,8 +177,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.DisposeOnException.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.DisposeOnException.ShouldBe(true);
     }
 
     [Fact]
@@ -189,8 +189,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.DisposeOnException.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.DisposeOnException.ShouldBe(false);
     }
 
     [Fact]
@@ -201,8 +201,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.FlushTimeout.Should().Be(TimeSpan.FromHours(42));
+        configuration.ShouldNotBeNull();
+        configuration.FlushTimeout.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Fact]
@@ -213,8 +213,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.TransactionsInitTimeout.Should().Be(TimeSpan.FromHours(42));
+        configuration.ShouldNotBeNull();
+        configuration.TransactionsInitTimeout.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Fact]
@@ -225,8 +225,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.TransactionCommitTimeout.Should().Be(TimeSpan.FromHours(42));
+        configuration.ShouldNotBeNull();
+        configuration.TransactionCommitTimeout.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Fact]
@@ -237,8 +237,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.TransactionAbortTimeout.Should().Be(TimeSpan.FromHours(42));
+        configuration.ShouldNotBeNull();
+        configuration.TransactionAbortTimeout.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Fact]
@@ -249,8 +249,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableDeliveryReports.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnableDeliveryReports.ShouldBe(true);
     }
 
     [Fact]
@@ -262,8 +262,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableDeliveryReports.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.EnableDeliveryReports.ShouldBe(false);
     }
 
     [Fact]
@@ -274,8 +274,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableIdempotence.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnableIdempotence.ShouldBe(true);
     }
 
     [Fact]
@@ -286,8 +286,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableIdempotence.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.EnableIdempotence.ShouldBe(false);
     }
 
     [Fact]
@@ -298,8 +298,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableGaplessGuarantee.Should().BeTrue();
+        configuration.ShouldNotBeNull();
+        configuration.EnableGaplessGuarantee.ShouldBe(true);
     }
 
     [Fact]
@@ -310,8 +310,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.EnableGaplessGuarantee.Should().BeFalse();
+        configuration.ShouldNotBeNull();
+        configuration.EnableGaplessGuarantee.ShouldBe(false);
     }
 
     [Fact]
@@ -322,8 +322,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.TransactionalId.Should().Be("transactional-id");
+        configuration.ShouldNotBeNull();
+        configuration.TransactionalId.ShouldBe("transactional-id");
     }
 
     [Fact]
@@ -335,8 +335,8 @@ public class KafkaProducerConfigurationBuilderFixture
 
         KafkaProducerConfiguration configuration = builder.Build();
 
-        configuration.Should().NotBeNull();
-        configuration.TransactionalId.Should().BeNull();
+        configuration.ShouldNotBeNull();
+        configuration.TransactionalId.ShouldBeNull();
     }
 
     private static KafkaProducerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>

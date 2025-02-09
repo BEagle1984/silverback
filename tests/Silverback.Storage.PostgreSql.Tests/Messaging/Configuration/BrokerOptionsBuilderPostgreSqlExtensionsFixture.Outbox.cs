@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -31,7 +31,7 @@ public partial class BrokerOptionsBuilderPostgreSqlExtensionsFixture
         IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
         IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
-        reader.Should().BeOfType<PostgreSqlOutboxReader>();
-        writer.Should().BeOfType<PostgreSqlOutboxWriter>();
+        reader.ShouldBeOfType<PostgreSqlOutboxReader>();
+        writer.ShouldBeOfType<PostgreSqlOutboxWriter>();
     }
 }

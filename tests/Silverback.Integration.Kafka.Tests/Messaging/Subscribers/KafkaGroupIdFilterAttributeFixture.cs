@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
@@ -66,7 +66,7 @@ public class KafkaGroupIdFilterAttributeFixture
 
         bool result = new KafkaGroupIdFilterAttribute("group1", "group2").MustProcess(envelope);
 
-        result.Should().Be(expectedResult);
+        result.ShouldBe(expectedResult);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class KafkaGroupIdFilterAttributeFixture
     {
         bool result = new KafkaGroupIdFilterAttribute().MustProcess(new NoKeyMembersMessage());
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 
     [Fact]
@@ -92,6 +92,6 @@ public class KafkaGroupIdFilterAttributeFixture
 
         bool result = new KafkaGroupIdFilterAttribute().MustProcess(envelope);
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 }

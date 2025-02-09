@@ -4,9 +4,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -44,12 +44,11 @@ public class InMemoryOutboxReaderFixture
 
         await outboxReader.AcknowledgeAsync([outboxMessage1, outboxMessage3]);
 
-        outbox.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                [0x02],
-                new byte[] { 0x04 }
-            });
+        outbox.Get(10).Select(message => message.Content).ShouldBe(
+        [
+            [0x02],
+            [0x04]
+        ]);
     }
 
     [Fact]
@@ -75,11 +74,11 @@ public class InMemoryOutboxReaderFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
+        (await messages.ToListAsync()).Select(message => message.Content).ShouldBe(
         [
             [0x01],
-                [0x02],
-                new byte[] { 0x03 }
+            [0x02],
+            [0x03]
         ]);
     }
 
@@ -98,7 +97,7 @@ public class InMemoryOutboxReaderFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Should().BeEmpty();
+        (await messages.ToListAsync()).ShouldBeEmpty();
     }
 
     [Fact]
@@ -125,7 +124,7 @@ public class InMemoryOutboxReaderFixture
         IDisposableAsyncEnumerable<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
         IDisposableAsyncEnumerable<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
 
-        (await batch2.ToListAsync()).Should().BeEquivalentTo(await batch1.ToListAsync());
+        (await batch2.ToListAsync()).ShouldBe(await batch1.ToListAsync());
     }
 
     [Fact]
@@ -149,13 +148,12 @@ public class InMemoryOutboxReaderFixture
 
         IDisposableAsyncEnumerable<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
-        (await messages.ToListAsync()).Select(message => message.Content).Should().BeEquivalentTo(
-            [
-                [0x01],
-                [0x02],
-                new byte[] { 0x03 }
-            ],
-            options => options.WithStrictOrdering());
+        (await messages.ToListAsync()).Select(message => message.Content).ShouldBe(
+        [
+            [0x01],
+            [0x02],
+            [0x03]
+        ]);
     }
 
     [Fact]
@@ -179,7 +177,7 @@ public class InMemoryOutboxReaderFixture
 
         int count = await outboxReader.GetLengthAsync();
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -196,7 +194,7 @@ public class InMemoryOutboxReaderFixture
 
         int count = await outboxReader.GetLengthAsync();
 
-        count.Should().Be(0);
+        count.ShouldBe(0);
     }
 
     [Fact]
@@ -221,7 +219,7 @@ public class InMemoryOutboxReaderFixture
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
         // TODO: Revert assert to >=100 and figure out why it fails in the pipeline
-        maxAge.Should().BeGreaterThan(TimeSpan.FromMilliseconds(90));
+        maxAge.ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
     }
 
     [Fact]
@@ -238,6 +236,6 @@ public class InMemoryOutboxReaderFixture
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
-        maxAge.Should().Be(TimeSpan.Zero);
+        maxAge.ShouldBe(TimeSpan.Zero);
     }
 }

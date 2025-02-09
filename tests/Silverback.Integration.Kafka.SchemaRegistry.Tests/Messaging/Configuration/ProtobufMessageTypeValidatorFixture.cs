@@ -3,9 +3,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.Kafka.SchemaRegistry.TestTypes;
 using Silverback.Tests.Types.Domain;
@@ -20,7 +20,7 @@ public class ProtobufMessageTypeValidatorFixture
     {
         Action act = () => ProtobufMessageTypeValidator.Validate(typeof(ProtobufMessage));
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -28,7 +28,8 @@ public class ProtobufMessageTypeValidatorFixture
     {
         Action act = () => ProtobufMessageTypeValidator.Validate(typeof(TestEventOne));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("TestEventOne does not implement IMessage<TestEventOne>.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("TestEventOne does not implement IMessage<TestEventOne>.");
     }
 
     [Fact]
@@ -36,7 +37,8 @@ public class ProtobufMessageTypeValidatorFixture
     {
         Action act = () => ProtobufMessageTypeValidator.Validate(typeof(ProtobufMessageWrongType));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("ProtobufMessageWrongType does not implement IMessage<ProtobufMessageWrongType>.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("ProtobufMessageWrongType does not implement IMessage<ProtobufMessageWrongType>.");
     }
 
     [Fact]
@@ -44,7 +46,8 @@ public class ProtobufMessageTypeValidatorFixture
     {
         Action act = () => ProtobufMessageTypeValidator.Validate(typeof(ProtobufMessageNoCtor));
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("ProtobufMessageNoCtor does not have a public parameterless constructor.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("ProtobufMessageNoCtor does not have a public parameterless constructor.");
     }
 
     [SuppressMessage("Design", "CA1067:Override Object.Equals(object) when implementing IEquatable<T>", Justification = "Test class")]

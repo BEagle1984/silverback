@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -21,12 +21,12 @@ public class ProducerPipelineContextFixture
 
         ProducerPipelineContext clonedContext = context.Clone();
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(context.Envelope);
-        clonedContext.Producer.Should().BeSameAs(context.Producer);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(context.Envelope);
+        clonedContext.Producer.ShouldBeSameAs(context.Producer);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
     }
 
     [Fact]
@@ -36,15 +36,15 @@ public class ProducerPipelineContextFixture
 
         ProducerPipelineContext<int> clonedContext = (ProducerPipelineContext<int>)context.Clone();
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(context.Envelope);
-        clonedContext.Producer.Should().BeSameAs(context.Producer);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
-        clonedContext.OnSuccess.Should().Be(context.OnSuccess);
-        clonedContext.OnError.Should().Be(context.OnError);
-        clonedContext.CallbackState.Should().Be(context.CallbackState);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(context.Envelope);
+        clonedContext.Producer.ShouldBeSameAs(context.Producer);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
+        clonedContext.OnSuccess.ShouldBe(context.OnSuccess);
+        clonedContext.OnError.ShouldBe(context.OnError);
+        clonedContext.CallbackState.ShouldBe(context.CallbackState);
     }
 
     [Fact]
@@ -55,12 +55,12 @@ public class ProducerPipelineContextFixture
 
         ProducerPipelineContext clonedContext = context.Clone(newEnvelope);
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(newEnvelope);
-        clonedContext.Producer.Should().BeSameAs(context.Producer);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(newEnvelope);
+        clonedContext.Producer.ShouldBeSameAs(context.Producer);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
     }
 
     [Fact]
@@ -71,15 +71,15 @@ public class ProducerPipelineContextFixture
 
         ProducerPipelineContext<int> clonedContext = (ProducerPipelineContext<int>)context.Clone(newEnvelope);
 
-        clonedContext.Should().NotBeSameAs(context);
-        clonedContext.Envelope.Should().BeSameAs(newEnvelope);
-        clonedContext.Producer.Should().BeSameAs(context.Producer);
-        clonedContext.Pipeline.Should().BeSameAs(context.Pipeline);
-        clonedContext.ServiceProvider.Should().BeSameAs(context.ServiceProvider);
-        clonedContext.CurrentStepIndex.Should().Be(context.CurrentStepIndex);
-        clonedContext.OnSuccess.Should().Be(context.OnSuccess);
-        clonedContext.OnError.Should().Be(context.OnError);
-        clonedContext.CallbackState.Should().Be(context.CallbackState);
+        clonedContext.ShouldNotBeSameAs(context);
+        clonedContext.Envelope.ShouldBeSameAs(newEnvelope);
+        clonedContext.Producer.ShouldBeSameAs(context.Producer);
+        clonedContext.Pipeline.ShouldBeSameAs(context.Pipeline);
+        clonedContext.ServiceProvider.ShouldBeSameAs(context.ServiceProvider);
+        clonedContext.CurrentStepIndex.ShouldBe(context.CurrentStepIndex);
+        clonedContext.OnSuccess.ShouldBe(context.OnSuccess);
+        clonedContext.OnError.ShouldBe(context.OnError);
+        clonedContext.CallbackState.ShouldBe(context.CallbackState);
     }
 
     private static ProducerPipelineContext CreateContext() => new(

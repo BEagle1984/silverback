@@ -4,10 +4,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -52,9 +52,9 @@ public partial class DomainEventsFixture
             await dbContext.SaveChangesAsync();
         }
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("new value: 42");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("new value: 42");
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
@@ -64,9 +64,9 @@ public partial class DomainEventsFixture
             await dbContext.SaveChangesAsync();
         }
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.OutboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("new value: 42000");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>();
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("new value: 42000");
     }
 
     [Fact]
@@ -108,8 +108,8 @@ public partial class DomainEventsFixture
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(1);
-            dbContext.Outbox.Should().HaveCount(1);
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
+            dbContext.Outbox.Count().ShouldBe(1);
         }
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
@@ -123,8 +123,8 @@ public partial class DomainEventsFixture
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(1);
-            dbContext.Outbox.Should().HaveCount(2);
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
+            dbContext.Outbox.Count().ShouldBe(2);
         }
     }
 
@@ -164,12 +164,12 @@ public partial class DomainEventsFixture
             await transaction.RollbackAsync();
         }
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(0);
+            dbContext.TestDomainEntities.Count().ShouldBe(0);
         }
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
@@ -184,12 +184,12 @@ public partial class DomainEventsFixture
             await transaction.CommitAsync();
         }
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(1);
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
         }
     }
 
@@ -232,15 +232,15 @@ public partial class DomainEventsFixture
 
             await transaction.RollbackAsync();
 
-            dbContext.TestDomainEntities.Should().HaveCount(0);
-            dbContext.Outbox.Should().HaveCount(0);
+            dbContext.TestDomainEntities.Count().ShouldBe(0);
+            dbContext.Outbox.Count().ShouldBe(0);
         }
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(0);
-            dbContext.Outbox.Should().HaveCount(0);
+            dbContext.TestDomainEntities.Count().ShouldBe(0);
+            dbContext.Outbox.Count().ShouldBe(0);
         }
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
@@ -258,8 +258,8 @@ public partial class DomainEventsFixture
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-            dbContext.TestDomainEntities.Should().HaveCount(1);
-            dbContext.Outbox.Should().HaveCount(1);
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
+            dbContext.Outbox.Count().ShouldBe(1);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Kafka;
 using Xunit;
@@ -15,6 +15,6 @@ public class KafkaConsumerEndpointFixture
     {
         KafkaConsumerEndpoint endpoint = new("topic", 42, new KafkaConsumerEndpointConfiguration());
 
-        endpoint.RawName.Should().Be("topic");
+        endpoint.RawName.ShouldBe("topic");
     }
 }

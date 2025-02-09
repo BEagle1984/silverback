@@ -3,8 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -24,7 +23,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         bool result = headers.Contains("header2");
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         bool result = headers.Contains("header4");
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -54,8 +53,8 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         bool result = headers.TryGetValue("header2", out string? value);
 
-        result.Should().BeTrue();
-        value.Should().Be("value2");
+        result.ShouldBeTrue();
+        value.ShouldBe("value2");
     }
 
     [Fact]
@@ -70,8 +69,8 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         bool result = headers.TryGetValue("header4", out string? value);
 
-        result.Should().BeFalse();
-        value.Should().BeNull();
+        result.ShouldBeFalse();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -86,7 +85,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         string? value = headers.GetValue("header2");
 
-        value.Should().Be("value2");
+        value.ShouldBe("value2");
     }
 
     [Fact]
@@ -101,7 +100,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         string? value = headers.GetValue("header4");
 
-        value.Should().BeNull();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -116,7 +115,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         Action act = () => headers.GetValue("header4", throwIfNotFound: true);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -129,7 +128,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         int? value = headers.GetValue<int>("header1");
 
-        value.Should().Be(42);
+        value.ShouldBe(42);
     }
 
     [Fact]
@@ -142,7 +141,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         DateTime? value = headers.GetValue<DateTime>("header1");
 
-        value.Should().Be(23.June(2023).At(2, 42, 42, 123));
+        value.ShouldBe(new DateTime(2023, 6, 23, 2, 42, 42, 123));
     }
 
     [Fact]
@@ -157,7 +156,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         double? value = headers.GetValue<double>("header4");
 
-        value.Should().BeNull();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -172,7 +171,7 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         double? value = headers.GetValueOrDefault<double>("header2");
 
-        value.Should().Be(2.2);
+        value.ShouldBe(2.2);
     }
 
     [Fact]
@@ -187,6 +186,6 @@ public class MessageHeaderEnumerableExtensionsFixture
 
         double? value = headers.GetValueOrDefault<double>("header4");
 
-        value.Should().Be(0);
+        value.ShouldBe(0);
     }
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -26,7 +26,7 @@ public class CustomHeadersMappingsFixture
 
         mappings.Apply(headers);
 
-        headers.Should().BeEquivalentTo(
+        headers.ShouldBe(
             new[]
             {
                 new MessageHeader("mapped1", "1"),
@@ -49,7 +49,7 @@ public class CustomHeadersMappingsFixture
 
         mappings.Apply(headers);
 
-        headers.Should().BeEquivalentTo(
+        headers.ShouldBe(
             new[]
             {
                 new MessageHeader("x-chunk-index", "1"),
@@ -74,7 +74,7 @@ public class CustomHeadersMappingsFixture
 
         mappings.Revert(headers);
 
-        headers.Should().BeEquivalentTo(
+        headers.ShouldBe(
             new[]
             {
                 new MessageHeader("x-chunk-index", "1"),
@@ -97,7 +97,7 @@ public class CustomHeadersMappingsFixture
 
         mappings.Revert(headers);
 
-        headers.Should().BeEquivalentTo(
+        headers.ShouldBe(
             new[]
             {
                 new MessageHeader("mapped1", "1"),

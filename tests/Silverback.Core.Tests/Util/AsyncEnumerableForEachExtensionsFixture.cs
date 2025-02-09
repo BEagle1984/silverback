@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -20,7 +20,7 @@ public class AsyncEnumerableForEachExtensionsFixture
 
         await enumerable.ForEachAsync(item => total += item);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class AsyncEnumerableForEachExtensionsFixture
 
         await enumerable.ForEachAsync(Do);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 
     [Fact]
@@ -54,6 +54,6 @@ public class AsyncEnumerableForEachExtensionsFixture
 
         await enumerable.ForEachAsync(Do);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 }

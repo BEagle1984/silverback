@@ -2,13 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -52,7 +53,20 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await outboxWriter.AddAsync(outboxMessage2);
         await outboxWriter.AddAsync(outboxMessage3);
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo([outboxMessage1, outboxMessage2, outboxMessage3]);
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        dbOutboxMessages.Count.ShouldBe(3);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
@@ -75,7 +89,20 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync([outboxMessage1, outboxMessage2, outboxMessage3]);
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo([outboxMessage1, outboxMessage2, outboxMessage3]);
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        dbOutboxMessages.Count.ShouldBe(3);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
@@ -98,7 +125,20 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         OutboxMessage outboxMessage3 = new([0x03], null, "test");
         await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 }.ToAsyncEnumerable());
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().BeEquivalentTo([outboxMessage1, outboxMessage2, outboxMessage3]);
+        List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
+        dbOutboxMessages.Count.ShouldBe(3);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(
+            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                               dbOutboxMessage.Headers == null &&
+                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
@@ -134,12 +174,12 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.RollbackAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -152,7 +192,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.CommitAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(7);
     }
 
     [Fact]
@@ -192,12 +232,12 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.RollbackAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -214,7 +254,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.CommitAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(7);
     }
 
     [Fact]
@@ -256,12 +296,12 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.RollbackAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(3);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(3);
 
         // Add after rollback
         await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(4);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
 
         // Begin new transaction, add and commit
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
@@ -279,6 +319,6 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
             await transaction.CommitAsync();
         }
 
-        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Should().HaveCount(7);
+        (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(7);
     }
 }

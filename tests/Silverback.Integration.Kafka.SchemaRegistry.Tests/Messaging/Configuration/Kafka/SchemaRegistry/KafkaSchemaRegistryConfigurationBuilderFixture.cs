@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Xunit;
 
@@ -17,7 +17,7 @@ public class KafkaSchemaRegistryConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -31,8 +31,8 @@ public class KafkaSchemaRegistryConfigurationBuilderFixture
         builder.WithRequestTimeoutMs(12);
         KafkaSchemaRegistryConfiguration configuration2 = builder.Build();
 
-        configuration1.RequestTimeoutMs.Should().Be(42);
-        configuration2.RequestTimeoutMs.Should().Be(12);
+        configuration1.RequestTimeoutMs.ShouldBe(42);
+        configuration2.RequestTimeoutMs.ShouldBe(12);
     }
 
     private static KafkaSchemaRegistryConfigurationBuilder GetBuilderWithValidConfiguration() =>

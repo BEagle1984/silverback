@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Enrichers;
@@ -27,8 +27,8 @@ public class StaticOutboundHeadersEnricherFixture
 
         enricher.Enrich(envelope);
 
-        envelope.Headers.Should().HaveCount(1);
-        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
+        envelope.Headers.Count.ShouldBe(1);
+        envelope.Headers.ShouldBe(new[] { new MessageHeader("x-test", "value") });
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class StaticOutboundHeadersEnricherFixture
 
         enricher.Enrich(envelope);
 
-        envelope.Headers.Should().HaveCount(1);
-        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
+        envelope.Headers.Count.ShouldBe(1);
+        envelope.Headers.ShouldBe(new[] { new MessageHeader("x-test", "value") });
     }
 }

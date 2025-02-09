@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -21,7 +21,7 @@ public class MoveMessageErrorPolicyBuilderFixture
         builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         Action act = () => builder.ApplyTo(null!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class MoveMessageErrorPolicyBuilderFixture
         builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.IncludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class MoveMessageErrorPolicyBuilderFixture
         builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.ExcludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         Action act = () => builder.Exclude(null!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class MoveMessageErrorPolicyBuilderFixture
         builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.ExcludedExceptions.Should().BeEquivalentTo(new[] { typeof(TimeoutException), typeof(OutOfMemoryException) });
+        policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.ApplyRule.ShouldNotBeNull();
-        policy.ApplyRule.Invoke(null!, null!).Should().BeTrue();
+        policy.ApplyRule.Invoke(null!, null!).ShouldBeTrue();
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class MoveMessageErrorPolicyBuilderFixture
         Action act1 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, bool>)null!);
         Action act2 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, Exception, bool>)null!);
 
-        act1.Should().Throw<ArgumentNullException>();
-        act2.Should().Throw<ArgumentNullException>();
+        act1.ShouldThrow<ArgumentNullException>();
+        act2.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.ApplyRule.ShouldNotBeNull();
-        policy.ApplyRule.Invoke(null!, null!).Should().BeTrue();
+        policy.ApplyRule.Invoke(null!, null!).ShouldBeTrue();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();
-        policy.MessageToPublishFactory.Invoke(null!, null!).Should().BeOfType<TestEventOne>();
+        policy.MessageToPublishFactory.Invoke(null!, null!).ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class MoveMessageErrorPolicyBuilderFixture
         Action act1 = () => builder.Publish((Func<IRawInboundEnvelope, object?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
 
-        act1.Should().Throw<ArgumentNullException>();
-        act2.Should().Throw<ArgumentNullException>();
+        act1.ShouldThrow<ArgumentNullException>();
+        act2.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.MessageToPublishFactory.ShouldNotBeNull();
-        policy.MessageToPublishFactory.Invoke(null!, null!).Should().BeOfType<TestEventOne>();
+        policy.MessageToPublishFactory.Invoke(null!, null!).ShouldBeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class MoveMessageErrorPolicyBuilderFixture
         builder.WithMaxRetries(42);
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.MaxFailedAttempts.Should().Be(42);
+        policy.MaxFailedAttempts.ShouldBe(42);
     }
 
     [Theory]
@@ -169,7 +169,7 @@ public class MoveMessageErrorPolicyBuilderFixture
 
         Action act = () => builder.WithMaxRetries(value);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -194,8 +194,8 @@ public class MoveMessageErrorPolicyBuilderFixture
         Action act1 = () => builder.Transform((Action<IOutboundEnvelope?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
 
-        act1.Should().Throw<ArgumentNullException>();
-        act2.Should().Throw<ArgumentNullException>();
+        act1.ShouldThrow<ArgumentNullException>();
+        act2.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -218,6 +218,6 @@ public class MoveMessageErrorPolicyBuilderFixture
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.EndpointName.Should().Be("topic1");
+        policy.EndpointName.ShouldBe("topic1");
     }
 }

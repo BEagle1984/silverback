@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -29,7 +29,7 @@ public class EnumerableSelectExtensionsFixture
                 return item * 2;
             });
 
-        result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
+        result.ShouldBe([2, 4, 6], ignoreOrder: true);
     }
 
     [Fact]
@@ -48,8 +48,10 @@ public class EnumerableSelectExtensionsFixture
             },
             2);
 
-        act.Should().Throw<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(1);
+        AggregateException aggregateException = act.ShouldThrow<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(2);
+        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException);
+        countdownEvent.CurrentCount.ShouldBe(1);
     }
 
     [Fact]
@@ -69,7 +71,7 @@ public class EnumerableSelectExtensionsFixture
                 return item * 2;
             });
 
-        result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
+        result.ShouldBe([2, 4, 6], ignoreOrder: true);
     }
 
     [Fact]
@@ -90,8 +92,10 @@ public class EnumerableSelectExtensionsFixture
             },
             2).AsTask();
 
-        await act.Should().ThrowAsync<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(1);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(3);
+        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException || exception is OperationCanceledException);
+        countdownEvent.CurrentCount.ShouldBe(1);
     }
 
     [Theory]
@@ -103,7 +107,7 @@ public class EnumerableSelectExtensionsFixture
 
         IEnumerable<int> result = enumerable.Select(item => item * 2, parallel);
 
-        result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
+        result.ShouldBe([2, 4, 6], ignoreOrder: true);
     }
 
     [Fact]
@@ -113,7 +117,7 @@ public class EnumerableSelectExtensionsFixture
 
         IEnumerable<int> result = await enumerable.SelectAsync(item => ValueTask.FromResult(item * 2));
 
-        result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
+        result.ShouldBe([2, 4, 6]);
     }
 
     [Theory]
@@ -125,7 +129,7 @@ public class EnumerableSelectExtensionsFixture
 
         IEnumerable<int> result = await enumerable.SelectAsync(i => ValueTask.FromResult(i * 2), parallel);
 
-        result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
+        result.ShouldBe([2, 4, 6], ignoreOrder: true);
     }
 
     [Fact]
@@ -136,7 +140,7 @@ public class EnumerableSelectExtensionsFixture
         IEnumerable<int> result =
             await enumerable.SelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
 
-        result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3 });
+        result.ShouldBe([1, 1, 2, 2, 3, 3]);
     }
 
     [Fact]
@@ -146,7 +150,7 @@ public class EnumerableSelectExtensionsFixture
 
         IEnumerable<int> result = await enumerable.ParallelSelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
 
-        result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3 });
+        result.ShouldBe([1, 1, 2, 2, 3, 3], ignoreOrder: true);
     }
 
     [Fact]
@@ -166,7 +170,7 @@ public class EnumerableSelectExtensionsFixture
                 return [item * 2, item * 3];
             });
 
-        result.Should().BeEquivalentTo(new[] { 2, 3, 4, 6, 6, 9 });
+        result.ShouldBe([2, 3, 4, 6, 6, 9], ignoreOrder: true);
     }
 
     [Fact]
@@ -187,7 +191,9 @@ public class EnumerableSelectExtensionsFixture
             },
             2).AsTask();
 
-        await act.Should().ThrowAsync<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(1);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.Count.ShouldBe(3);
+        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException || exception is OperationCanceledException);
+        countdownEvent.CurrentCount.ShouldBe(1);
     }
 }

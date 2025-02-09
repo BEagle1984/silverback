@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Xunit;
@@ -22,7 +22,7 @@ public class QueryPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteQuery(new TestQuery());
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestQuery>(), true);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class QueryPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteQuery(new TestQuery(), throwIfUnhandled);
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestQuery>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class QueryPublisherExtensionsFixture
         IEnumerable<int> result = await publisher.ExecuteQueryAsync(new TestQuery());
 
         await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestQuery>(), true);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.ShouldBe([1, 2, 3]);
     }
 
     [Theory]
@@ -62,7 +62,7 @@ public class QueryPublisherExtensionsFixture
         IEnumerable<int> result = await publisher.ExecuteQueryAsync(new TestQuery(), throwIfUnhandled);
 
         await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestQuery>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.ShouldBe([1, 2, 3]);
     }
 
     private class TestQuery : IQuery<IEnumerable<int>>;

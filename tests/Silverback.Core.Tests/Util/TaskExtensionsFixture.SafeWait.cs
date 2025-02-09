@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -18,7 +18,7 @@ public partial class TaskExtensionsFixture
 
         AsyncMethod().SafeWait();
 
-        done.Should().BeTrue();
+        done.ShouldBeTrue();
 
         async Task AsyncMethod()
         {
@@ -32,7 +32,7 @@ public partial class TaskExtensionsFixture
     {
         int result = AsyncMethod().SafeWait();
 
-        result.Should().Be(3);
+        result.ShouldBe(3);
 
         static async Task<int> AsyncMethod()
         {
@@ -46,7 +46,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => AsyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static async Task AsyncMethod()
         {
@@ -60,7 +60,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => AsyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static async Task<int> AsyncMethod()
         {
@@ -76,7 +76,7 @@ public partial class TaskExtensionsFixture
 
         AsyncMethod().SafeWait();
 
-        done.Should().BeTrue();
+        done.ShouldBeTrue();
 
         async ValueTask AsyncMethod()
         {
@@ -92,7 +92,7 @@ public partial class TaskExtensionsFixture
 
         SyncMethod().SafeWait();
 
-        done.Should().BeTrue();
+        done.ShouldBeTrue();
 
         ValueTask SyncMethod()
         {
@@ -106,7 +106,7 @@ public partial class TaskExtensionsFixture
     {
         int result = AsyncMethod().SafeWait();
 
-        result.Should().Be(3);
+        result.ShouldBe(3);
 
         static async ValueTask<int> AsyncMethod()
         {
@@ -120,7 +120,7 @@ public partial class TaskExtensionsFixture
     {
         int result = SyncMethod().SafeWait();
 
-        result.Should().Be(3);
+        result.ShouldBe(3);
 
         static ValueTask<int> SyncMethod() => new(3);
     }
@@ -130,7 +130,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => AsyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static async ValueTask AsyncMethod()
         {
@@ -144,7 +144,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => AsyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static ValueTask AsyncMethod() => throw new NotSupportedException("test");
     }
@@ -154,7 +154,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => AsyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static async ValueTask<int> AsyncMethod()
         {
@@ -168,7 +168,7 @@ public partial class TaskExtensionsFixture
     {
         Action act = () => SyncMethod().SafeWait();
 
-        act.Should().Throw<NotSupportedException>();
+        act.ShouldThrow<NotSupportedException>();
 
         static ValueTask<int> SyncMethod() => throw new NotSupportedException("test");
     }

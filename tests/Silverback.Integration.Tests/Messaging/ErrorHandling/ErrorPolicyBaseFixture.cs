@@ -6,9 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -118,7 +118,7 @@ public class ErrorPolicyBaseFixture
                     new TestOffset())),
             exception);
 
-        canHandle.Should().Be(mustApply);
+        canHandle.ShouldBe(mustApply);
     }
 
     [Theory]
@@ -142,7 +142,7 @@ public class ErrorPolicyBaseFixture
                     new TestOffset())),
             exception);
 
-        canHandle.Should().Be(mustApply);
+        canHandle.ShouldBe(mustApply);
     }
 
     [Theory]
@@ -167,7 +167,7 @@ public class ErrorPolicyBaseFixture
                     new TestOffset())),
             exception);
 
-        canHandle.Should().Be(mustApply);
+        canHandle.ShouldBe(mustApply);
     }
 
     [Theory]
@@ -185,7 +185,7 @@ public class ErrorPolicyBaseFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope),
             exception);
 
-        canHandle.Should().Be(mustApply);
+        canHandle.ShouldBe(mustApply);
     }
 
     [Theory]
@@ -214,7 +214,7 @@ public class ErrorPolicyBaseFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope),
             new InvalidOperationException());
 
-        canHandle.Should().Be(expectedResult);
+        canHandle.ShouldBe(expectedResult);
     }
 
     [Fact]

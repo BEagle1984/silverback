@@ -13,7 +13,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ductus.FluentDocker" />
-    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" />
@@ -26,6 +25,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
     <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>

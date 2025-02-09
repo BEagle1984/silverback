@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
@@ -36,8 +36,8 @@ public sealed class MessageObservableFixture : IDisposable
         await _streamProvider.PushAsync(2);
         await _streamProvider.PushAsync(3);
 
-        count.Should().Be(3);
-        task.IsCompleted.Should().BeFalse();
+        count.ShouldBe(3);
+        task.IsCompleted.ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class MessageObservableFixture : IDisposable
 
         await subscribeTask;
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -66,17 +66,17 @@ public sealed class MessageObservableFixture : IDisposable
         Task<int> pushTask = _streamProvider.PushAsync(1);
 
         await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
-        pushTask.IsCompleted.Should().BeFalse();
+        pushTask.IsCompleted.ShouldBeFalse();
 
         Task.Run(() => _observable.Subscribe(_ => count++)).FireAndForget();
 
         await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
-        pushTask.IsCompleted.Should().BeTrue();
+        pushTask.IsCompleted.ShouldBeTrue();
 
         await _streamProvider.PushAsync(2);
         await _streamProvider.PushAsync(3);
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -89,13 +89,13 @@ public sealed class MessageObservableFixture : IDisposable
 
         await Task.WhenAny(firstSubscribe, secondSubscribe);
 
-        firstSubscribe.IsFaulted.Should().NotBe(secondSubscribe.IsFaulted); // any of the two must have failed, but not both
+        firstSubscribe.IsFaulted.ShouldNotBe(secondSubscribe.IsFaulted); // any of the two must have failed, but not both
 
         await _streamProvider.PushAsync(1);
         await _streamProvider.PushAsync(2);
         await _streamProvider.PushAsync(3);
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class MessageObservableFixture : IDisposable
                     await _streamProvider.PushAsync(3);
                 }));
 
-        count.Should().Be(3);
+        count.ShouldBe(3);
     }
 
     public void Dispose() => _streamProvider.Dispose();

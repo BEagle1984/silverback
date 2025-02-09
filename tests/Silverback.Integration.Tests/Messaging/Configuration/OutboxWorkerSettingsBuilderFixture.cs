@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
@@ -22,7 +22,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
             .Build();
 
-        settings.Should().NotBeNull();
+        settings.ShouldNotBeNull();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
             .Build();
 
-        settings.Should().NotBeNull();
+        settings.ShouldNotBeNull();
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithInterval(TimeSpan.FromSeconds(42))
             .Build();
 
-        settings.Interval.Should().Be(TimeSpan.FromSeconds(42));
+        settings.Interval.ShouldBe(TimeSpan.FromSeconds(42));
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
             .WithInterval(TimeSpan.FromSeconds(-42));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithIncrementalRetryDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42))
             .Build();
 
-        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
-        settings.RetryDelayIncrement.Should().Be(TimeSpan.FromDays(42));
-        settings.RetryDelayFactor.Should().Be(1.0);
-        settings.MaxRetryDelay.Should().BeNull();
+        settings.InitialRetryDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.ShouldBe(TimeSpan.FromDays(42));
+        settings.RetryDelayFactor.ShouldBe(1.0);
+        settings.MaxRetryDelay.ShouldBeNull();
     }
 
     [Fact]
@@ -98,10 +98,10 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithIncrementalRetryDelay(TimeSpan.FromMinutes(42), TimeSpan.FromDays(42), TimeSpan.FromHours(42))
             .Build();
 
-        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
-        settings.RetryDelayIncrement.Should().Be(TimeSpan.FromDays(42));
-        settings.RetryDelayFactor.Should().Be(1.0);
-        settings.MaxRetryDelay.Should().Be(TimeSpan.FromHours(42));
+        settings.InitialRetryDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.ShouldBe(TimeSpan.FromDays(42));
+        settings.RetryDelayFactor.ShouldBe(1.0);
+        settings.MaxRetryDelay.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -113,7 +113,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.FromMinutes(value), TimeSpan.MaxValue);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -125,7 +125,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(value));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -137,7 +137,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.WithIncrementalRetryDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(42), TimeSpan.FromMinutes(value));
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -150,10 +150,10 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithExponentialRetryDelay(TimeSpan.FromMinutes(42), 2.0)
             .Build();
 
-        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
-        settings.RetryDelayIncrement.Should().Be(TimeSpan.Zero);
-        settings.RetryDelayFactor.Should().Be(2.0);
-        settings.MaxRetryDelay.Should().BeNull();
+        settings.InitialRetryDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.ShouldBe(TimeSpan.Zero);
+        settings.RetryDelayFactor.ShouldBe(2.0);
+        settings.MaxRetryDelay.ShouldBeNull();
     }
 
     [Fact]
@@ -166,10 +166,10 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithExponentialRetryDelay(TimeSpan.FromMinutes(42), 2.0, TimeSpan.FromHours(42))
             .Build();
 
-        settings.InitialRetryDelay.Should().Be(TimeSpan.FromMinutes(42));
-        settings.RetryDelayIncrement.Should().Be(TimeSpan.Zero);
-        settings.RetryDelayFactor.Should().Be(2.0);
-        settings.MaxRetryDelay.Should().Be(TimeSpan.FromHours(42));
+        settings.InitialRetryDelay.ShouldBe(TimeSpan.FromMinutes(42));
+        settings.RetryDelayIncrement.ShouldBe(TimeSpan.Zero);
+        settings.RetryDelayFactor.ShouldBe(2.0);
+        settings.MaxRetryDelay.ShouldBe(TimeSpan.FromHours(42));
     }
 
     [Theory]
@@ -181,7 +181,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.WithExponentialRetryDelay(TimeSpan.FromMinutes(value), 2.0);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Theory]
@@ -193,7 +193,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
         Action act = () => builder.WithExponentialRetryDelay(TimeSpan.FromMinutes(42), value);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .EnforceMessageOrder()
             .Build();
 
-        settings.EnforceMessageOrder.Should().BeTrue();
+        settings.EnforceMessageOrder.ShouldBeTrue();
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .DisableMessageOrderEnforcement()
             .Build();
 
-        settings.EnforceMessageOrder.Should().BeFalse();
+        settings.EnforceMessageOrder.ShouldBeFalse();
     }
 
     [Fact]
@@ -232,7 +232,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithBatchSize(42)
             .Build();
 
-        settings.BatchSize.Should().Be(42);
+        settings.BatchSize.ShouldBe(42);
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .ProcessOutbox(_ => new TestOutboxSettingsBuilder())
             .WithBatchSize(0);
 
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -257,7 +257,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithDistributedLock(_ => new TestLockSettingsBuilder())
             .Build();
 
-        settings.DistributedLock.Should().BeOfType<TestLockSettings>();
+        settings.DistributedLock.ShouldBeOfType<TestLockSettings>();
     }
 
     [Fact]
@@ -270,7 +270,7 @@ public class OutboxWorkerSettingsBuilderFixture
             .WithoutDistributedLock()
             .Build();
 
-        settings.DistributedLock.Should().BeNull();
+        settings.DistributedLock.ShouldBeNull();
     }
 
     private record TestOutboxSettings : OutboxSettings

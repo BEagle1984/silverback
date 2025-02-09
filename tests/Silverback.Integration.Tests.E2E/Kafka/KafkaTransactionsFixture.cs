@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -57,14 +57,14 @@ public class KafkaTransactionsFixture : KafkaFixture
 
             // Not committed yet, so we expect no message to be consumed
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+            Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+            Helper.Spy.InboundEnvelopes.Count.ShouldBe(0);
 
             transaction.Commit();
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -101,8 +101,8 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -180,14 +180,14 @@ public class KafkaTransactionsFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= 2 * partitionsPerTopic * (batchSize - 1));
-        committedOutputMessages.Should().Be(0);
+        committedOutputMessages.ShouldBe(0);
 
         // Publish 1 extra message to complete the first 2 batches (1 per topic)
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = (partitionsPerTopic - 1).ToString(CultureInfo.InvariantCulture) });
 
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= batchSize * 2);
         await Task.Delay(100);
-        committedOutputMessages.Should().Be(batchSize * 2);
+        committedOutputMessages.ShouldBe(batchSize * 2);
 
         // Complete all batches
         for (int partition = 0; partition < partitionsPerTopic - 1; partition++)
@@ -198,7 +198,7 @@ public class KafkaTransactionsFixture : KafkaFixture
         int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        committedOutputMessages.Should().Be(expectedOutputMessages);
+        committedOutputMessages.ShouldBe(expectedOutputMessages);
     }
 
     [Fact]
@@ -266,13 +266,13 @@ public class KafkaTransactionsFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= 2 * partitionsPerTopic * (batchSize - 1));
-        committedOutputMessages.Should().Be(0);
+        committedOutputMessages.ShouldBe(0);
 
         // Publish 1 extra message to complete the first 2 batches (1 per topic)
         await publisher.PublishAsync(new TestEventOne());
 
         await Task.Delay(500);
-        committedOutputMessages.Should().BeLessOrEqualTo(batchSize * 2);
+        committedOutputMessages.ShouldBeLessThanOrEqualTo(batchSize * 2);
 
         // Complete all batches
         for (int partition = 0; partition < partitionsPerTopic - 1; partition++)
@@ -283,7 +283,7 @@ public class KafkaTransactionsFixture : KafkaFixture
         int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync(false);
-        committedOutputMessages.Should().Be(expectedOutputMessages);
+        committedOutputMessages.ShouldBe(expectedOutputMessages);
     }
 
     [Fact]
@@ -348,7 +348,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= batchSize - 1);
         await Task.Delay(100);
-        committedOutputMessages.Should().Be(0);
+        committedOutputMessages.ShouldBe(0);
 
         // Publish 1 extra message to complete the batch
         await publisher.PublishAsync(new TestEventOne());
@@ -356,7 +356,7 @@ public class KafkaTransactionsFixture : KafkaFixture
         int expectedOutputMessages = batchSize;
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        committedOutputMessages.Should().Be(expectedOutputMessages);
+        committedOutputMessages.ShouldBe(expectedOutputMessages);
     }
 
     [Fact]
@@ -412,8 +412,8 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= 3);
         await Helper.WaitUntilAllMessagesAreConsumedAsync(true);
-        committedOutputMessages.Should().Be(3);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").Should().Be(3);
+        committedOutputMessages.ShouldBe(3);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").ShouldBe(3);
     }
 
     [Fact]
@@ -492,22 +492,22 @@ public class KafkaTransactionsFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= 2 * partitionsPerTopic * (batchSize - 1));
-        committedOutputMessages.Should().Be(0);
+        committedOutputMessages.ShouldBe(0);
 
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(0);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(0);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").ShouldBe(0);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").ShouldBe(0);
 
         // Publish 1 extra message to complete the first 2 batches (1 per topic)
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = (partitionsPerTopic - 1).ToString(CultureInfo.InvariantCulture) });
 
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= batchSize * 2);
         await Task.Delay(100);
-        committedOutputMessages.Should().Be(batchSize * 2);
+        committedOutputMessages.ShouldBe(batchSize * 2);
         await AsyncTestingUtil.WaitAsync(
             () => Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1") >= batchSize
                   && Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2") >= batchSize);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(batchSize);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(batchSize);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").ShouldBe(batchSize);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").ShouldBe(batchSize);
 
         // Complete all batches
         for (int partition = 0; partition < partitionsPerTopic - 1; partition++)
@@ -518,8 +518,8 @@ public class KafkaTransactionsFixture : KafkaFixture
         int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        committedOutputMessages.Should().Be(expectedOutputMessages);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(batchSize * partitionsPerTopic);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(batchSize * partitionsPerTopic);
+        committedOutputMessages.ShouldBe(expectedOutputMessages);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").ShouldBe(batchSize * partitionsPerTopic);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").ShouldBe(batchSize * partitionsPerTopic);
     }
 }

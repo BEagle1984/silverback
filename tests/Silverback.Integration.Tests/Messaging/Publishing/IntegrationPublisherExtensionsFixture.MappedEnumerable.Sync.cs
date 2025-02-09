@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
@@ -39,13 +39,13 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].Message.Should().BeNull();
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
     }
 
     [Fact]
@@ -66,13 +66,13 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].Message.Should().BeNull();
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
     }
 
     [Fact]
@@ -98,22 +98,22 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[0].GetKafkaKey().Should().Be("1");
-        capturedEnvelopes[0].Headers["x-source"].Should().Be("1");
-        capturedEnvelopes[0].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].GetKafkaKey().Should().Be("2");
-        capturedEnvelopes[1].Headers["x-source"].Should().Be("2");
-        capturedEnvelopes[1].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[2].Message.Should().Be(null);
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].GetKafkaKey().Should().Be("3");
-        capturedEnvelopes[2].Headers["x-source"].Should().Be("-1");
-        capturedEnvelopes[2].Headers["x-topic"].Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
+        capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
 
     [Fact]
@@ -139,22 +139,22 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[0].GetKafkaKey().Should().Be("1");
-        capturedEnvelopes[0].Headers["x-source"].Should().Be("1");
-        capturedEnvelopes[0].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].GetKafkaKey().Should().Be("2");
-        capturedEnvelopes[1].Headers["x-source"].Should().Be("2");
-        capturedEnvelopes[1].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[2].Message.Should().Be(null);
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].GetKafkaKey().Should().Be("3");
-        capturedEnvelopes[2].Headers["x-source"].Should().Be("-1");
-        capturedEnvelopes[2].Headers["x-topic"].Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
+        capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
 
     [Fact]
@@ -184,22 +184,22 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1-1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[0].GetKafkaKey().Should().Be("1");
-        capturedEnvelopes[0].Headers["x-source"].Should().Be("1");
-        capturedEnvelopes[0].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2-2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].GetKafkaKey().Should().Be("2");
-        capturedEnvelopes[1].Headers["x-source"].Should().Be("2");
-        capturedEnvelopes[1].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[2].Message.Should().Be(null);
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].GetKafkaKey().Should().Be("3");
-        capturedEnvelopes[2].Headers["x-source"].Should().Be("-1");
-        capturedEnvelopes[2].Headers["x-topic"].Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
+        capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
 
     [Fact]
@@ -229,22 +229,22 @@ public partial class IntegrationPublisherExtensionsFixture
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
-        capturedEnvelopes.Should().HaveCount(3);
-        capturedEnvelopes[0].Message.Should().BeEquivalentTo(new TestEventOne { Content = "1-1" });
-        capturedEnvelopes[0].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[0].GetKafkaKey().Should().Be("1");
-        capturedEnvelopes[0].Headers["x-source"].Should().Be("1");
-        capturedEnvelopes[0].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[1].Message.Should().BeEquivalentTo(new TestEventOne { Content = "2-2" });
-        capturedEnvelopes[1].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[1].GetKafkaKey().Should().Be("2");
-        capturedEnvelopes[1].Headers["x-source"].Should().Be("2");
-        capturedEnvelopes[1].Headers["x-topic"].Should().Be("one");
-        capturedEnvelopes[2].Message.Should().Be(null);
-        capturedEnvelopes[2].EndpointConfiguration.RawName.Should().Be("one");
-        capturedEnvelopes[2].GetKafkaKey().Should().Be("3");
-        capturedEnvelopes[2].Headers["x-source"].Should().Be("-1");
-        capturedEnvelopes[2].Headers["x-topic"].Should().Be("one");
+        capturedEnvelopes.Length.ShouldBe(3);
+        capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-1" });
+        capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-2" });
+        capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
+        capturedEnvelopes[2].Message.ShouldBeNull();
+        capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
+        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
+        capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
 
     [Theory]
@@ -309,8 +309,9 @@ public partial class IntegrationPublisherExtensionsFixture
             sources,
             static source => source == null ? null : new TestEventOne { Content = $"{source}" });
 
-        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        strategy.ReceivedCalls().Should().BeEmpty();
+        Exception exception = act.ShouldThrow<RoutingException>();
+        exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
+        strategy.ReceivedCalls().ShouldBeEmpty();
     }
 
     [Fact]
@@ -327,7 +328,8 @@ public partial class IntegrationPublisherExtensionsFixture
             },
             1);
 
-        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        strategy.ReceivedCalls().Should().BeEmpty();
+        Exception exception = act.ShouldThrow<RoutingException>();
+        exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
+        strategy.ReceivedCalls().ShouldBeEmpty();
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -22,7 +22,7 @@ public class EnumerableForEachExtensionsFixture
 
         enumerable.ForEach(i => total += i);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 
     [Fact]
@@ -34,11 +34,11 @@ public class EnumerableForEachExtensionsFixture
         enumerable.ForEach(
             (item, index) =>
             {
-                index.Should().Be(item);
+                index.ShouldBe(item);
                 total += item;
             });
 
-        total.Should().Be(10);
+        total.ShouldBe(10);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class EnumerableForEachExtensionsFixture
 
         await enumerable.ForEachAsync(Do);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class EnumerableForEachExtensionsFixture
 
         await enumerable.ForEachAsync(Do);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class EnumerableForEachExtensionsFixture
                 Interlocked.Add(ref total, item);
             });
 
-        total.Should().Be(6);
+        total.ShouldBe(6);
     }
 
     [Fact]
@@ -108,8 +108,9 @@ public class EnumerableForEachExtensionsFixture
             },
             2);
 
-        act.Should().Throw<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(1);
+        AggregateException aggregateException = act.ShouldThrow<AggregateException>();
+        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException);
+        countdownEvent.CurrentCount.ShouldBe(1);
     }
 
     [Fact]
@@ -130,7 +131,7 @@ public class EnumerableForEachExtensionsFixture
                 Interlocked.Add(ref total, item);
             });
 
-        total.Should().Be(6);
+        total.ShouldBe(6);
     }
 
     [Fact]
@@ -149,8 +150,9 @@ public class EnumerableForEachExtensionsFixture
             },
             2).AsTask();
 
-        await act.Should().ThrowAsync<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(1);
+        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
+        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException || exception is OperationCanceledException);
+        countdownEvent.CurrentCount.ShouldBe(1);
     }
 
     [Fact]
@@ -167,6 +169,6 @@ public class EnumerableForEachExtensionsFixture
             },
             2);
 
-        total.Should().Be(15);
+        total.ShouldBe(15);
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -18,8 +18,7 @@ public class SqliteOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.Build();
 
-        settings.Should().BeOfType<SqliteOutboxSettings>();
-        settings.Should().BeEquivalentTo(new SqliteOutboxSettings("connection-string"));
+        settings.ShouldBe(new SqliteOutboxSettings("connection-string"));
     }
 
     [Fact]
@@ -29,7 +28,7 @@ public class SqliteOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.UseTable("test-outbox").Build();
 
-        settings.As<SqliteOutboxSettings>().TableName.Should().Be("test-outbox");
+        settings.ShouldBeOfType<SqliteOutboxSettings>().TableName.ShouldBe("test-outbox");
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class SqliteOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.WithDbCommandTimeout(TimeSpan.FromSeconds(20)).Build();
 
-        settings.As<SqliteOutboxSettings>().DbCommandTimeout.Should().Be(TimeSpan.FromSeconds(20));
+        settings.ShouldBeOfType<SqliteOutboxSettings>().DbCommandTimeout.ShouldBe(TimeSpan.FromSeconds(20));
     }
 
     [Fact]
@@ -49,6 +48,6 @@ public class SqliteOutboxSettingsBuilderFixture
 
         OutboxSettings settings = builder.WithCreateTableTimeout(TimeSpan.FromSeconds(40)).Build();
 
-        settings.As<SqliteOutboxSettings>().CreateTableTimeout.Should().Be(TimeSpan.FromSeconds(40));
+        settings.ShouldBeOfType<SqliteOutboxSettings>().CreateTableTimeout.ShouldBe(TimeSpan.FromSeconds(40));
     }
 }

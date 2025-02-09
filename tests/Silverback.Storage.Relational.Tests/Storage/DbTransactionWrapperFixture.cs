@@ -6,8 +6,8 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Storage;
 using Xunit;
 
@@ -24,7 +24,7 @@ public class DbTransactionWrapperFixture
 
         DbTransactionWrapper transactionWrapper = new(transaction, _context);
 
-        transactionWrapper.Should().NotBeNull();
+        transactionWrapper.ShouldNotBeNull();
         _context.Received(1).EnlistTransaction(Arg.Any<DbTransactionWrapper>());
     }
 
@@ -35,7 +35,7 @@ public class DbTransactionWrapperFixture
 
         DbTransactionWrapper transactionWrapper = new(transaction, _context);
 
-        transactionWrapper.UnderlyingTransaction.Should().Be(transaction);
+        transactionWrapper.UnderlyingTransaction.ShouldBe(transaction);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class DbTransactionWrapperFixture
 
         DbTransactionWrapper transactionWrapper = new(transaction, _context);
 
-        transactionWrapper.Equals(transactionWrapper).Should().BeTrue();
+        transactionWrapper.Equals(transactionWrapper).ShouldBeTrue();
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class DbTransactionWrapperFixture
         object transactionWrapper1 = new DbTransactionWrapper(transaction, _context);
         object transactionWrapper2 = new DbTransactionWrapper(transaction, _context);
 
-        transactionWrapper1.Equals(transactionWrapper2).Should().BeTrue();
+        transactionWrapper1.Equals(transactionWrapper2).ShouldBeTrue();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class DbTransactionWrapperFixture
         object transactionWrapper1 = new DbTransactionWrapper(transaction1, _context);
         object transactionWrapper2 = new DbTransactionWrapper(transaction2, _context);
 
-        transactionWrapper1.Equals(transactionWrapper2).Should().BeFalse();
+        transactionWrapper1.Equals(transactionWrapper2).ShouldBeFalse();
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class DbTransactionWrapperFixture
 
         DbTransactionWrapper transactionWrapper = new(transaction, _context);
 
-        transactionWrapper.GetHashCode().Should().Be(transaction.GetHashCode());
+        transactionWrapper.GetHashCode().ShouldBe(transaction.GetHashCode());
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class DbTransactionWrapperFixture
 
         transactionWrapper.Commit();
 
-        transaction.IsCommitted.Should().BeTrue();
-        transaction.IsRolledBack.Should().BeFalse();
+        transaction.IsCommitted.ShouldBeTrue();
+        transaction.IsRolledBack.ShouldBeFalse();
     }
 
     [Fact]
@@ -101,8 +101,8 @@ public class DbTransactionWrapperFixture
 
         await transactionWrapper.CommitAsync();
 
-        transaction.IsCommitted.Should().BeTrue();
-        transaction.IsRolledBack.Should().BeFalse();
+        transaction.IsCommitted.ShouldBeTrue();
+        transaction.IsRolledBack.ShouldBeFalse();
     }
 
     [Fact]
@@ -113,8 +113,8 @@ public class DbTransactionWrapperFixture
 
         transactionWrapper.Rollback();
 
-        transaction.IsCommitted.Should().BeFalse();
-        transaction.IsRolledBack.Should().BeTrue();
+        transaction.IsCommitted.ShouldBeFalse();
+        transaction.IsRolledBack.ShouldBeTrue();
     }
 
     [Fact]
@@ -125,8 +125,8 @@ public class DbTransactionWrapperFixture
 
         await transactionWrapper.RollbackAsync();
 
-        transaction.IsCommitted.Should().BeFalse();
-        transaction.IsRolledBack.Should().BeTrue();
+        transaction.IsCommitted.ShouldBeFalse();
+        transaction.IsRolledBack.ShouldBeTrue();
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class DbTransactionWrapperFixture
         transactionWrapper.Dispose();
 
         _context.Received(1).RemoveTransaction();
-        transaction.IsDisposed.Should().BeTrue();
+        transaction.IsDisposed.ShouldBeTrue();
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class DbTransactionWrapperFixture
         await transactionWrapper.DisposeAsync();
 
         _context.Received(1).RemoveTransaction();
-        transaction.IsDisposed.Should().BeTrue();
+        transaction.IsDisposed.ShouldBeTrue();
     }
 
     private class TestTransaction : DbTransaction

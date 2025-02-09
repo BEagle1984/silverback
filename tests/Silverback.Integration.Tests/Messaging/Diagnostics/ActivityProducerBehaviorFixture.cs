@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -42,7 +42,7 @@ public class ActivityProducerBehaviorFixture
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().Contain(
+        envelope.Headers.ShouldContain(
             header =>
                 header.Name == DefaultMessageHeaders.TraceId &&
                 header.Value != null &&
@@ -64,6 +64,6 @@ public class ActivityProducerBehaviorFixture
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().Contain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));
+        envelope.Headers.ShouldContain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));
     }
 }

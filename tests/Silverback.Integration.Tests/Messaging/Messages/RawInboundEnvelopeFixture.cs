@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.IO;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -23,7 +23,7 @@ public class RawInboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.Should().NotBeNull();
+        envelope.ShouldNotBeNull();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class RawInboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.GetMessageId().Should().Be("test-id");
+        envelope.GetMessageId().ShouldBe("test-id");
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class RawInboundEnvelopeFixture
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
-        envelope.GetMessageId().Should().BeNull();
+        envelope.GetMessageId().ShouldBeNull();
     }
 
     [Fact]
@@ -64,8 +64,10 @@ public class RawInboundEnvelopeFixture
 
         IRawInboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
 
-        newEnvelope.Should().NotBeSameAs(envelope);
-        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(e => e.RawMessage));
-        newEnvelope.RawMessage.Should().NotBeSameAs(envelope.RawMessage);
+        newEnvelope.ShouldNotBeSameAs(envelope);
+        newEnvelope.RawMessage.ShouldNotBeSameAs(envelope.RawMessage);
+        newEnvelope.Headers.ShouldBe(envelope.Headers);
+        newEnvelope.Consumer.ShouldBeSameAs(envelope.Consumer);
+        newEnvelope.BrokerMessageIdentifier.ShouldBeSameAs(envelope.BrokerMessageIdentifier);
     }
 }

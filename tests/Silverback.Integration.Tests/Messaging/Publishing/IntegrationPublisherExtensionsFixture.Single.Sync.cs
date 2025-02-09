@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
@@ -183,8 +183,9 @@ public partial class IntegrationPublisherExtensionsFixture
 
         Action act = () => _publisher.WrapAndPublish(message);
 
-        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        strategy.ReceivedCalls().Should().BeEmpty();
+        Exception exception = act.ShouldThrow<RoutingException>();
+        exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
+        strategy.ReceivedCalls().ShouldBeEmpty();
     }
 
     [Fact]
@@ -200,7 +201,8 @@ public partial class IntegrationPublisherExtensionsFixture
             },
             1);
 
-        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        strategy.ReceivedCalls().Should().BeEmpty();
+        Exception exception = act.ShouldThrow<RoutingException>();
+        exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
+        strategy.ReceivedCalls().ShouldBeEmpty();
     }
 }

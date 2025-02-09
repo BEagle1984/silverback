@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -21,7 +21,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Topics = new ValueReadOnlyCollection<string>(["topic"])
         };
 
-        configuration.RawName.Should().Be("topic");
+        configuration.RawName.ShouldBe("topic");
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Topics = new ValueReadOnlyCollection<string>(["topic1", "topic2", "topic3"])
         };
 
-        configuration.RawName.Should().Be("topic1,topic2,topic3");
+        configuration.RawName.ShouldBe("topic1,topic2,topic3");
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow<BrokerConfigurationException>();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("At least 1 topic must be specified.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("At least 1 topic must be specified.");
     }
 
     [Fact]
@@ -95,8 +95,8 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("At least 1 topic must be specified.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("At least 1 topic must be specified.");
     }
 
     [Theory]
@@ -111,8 +111,8 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("A topic name cannot be null or empty.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("A topic name cannot be null or empty.");
     }
 
     [Fact]
@@ -125,8 +125,8 @@ public class MqttConsumerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Batch processing is currently not supported for MQTT.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("Batch processing is currently not supported for MQTT.");
     }
 
     private static MqttConsumerEndpointConfiguration GetValidConfiguration() =>

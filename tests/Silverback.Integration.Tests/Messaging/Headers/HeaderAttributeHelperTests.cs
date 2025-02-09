@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types.Domain;
@@ -26,16 +26,16 @@ public class HeaderAttributeHelperTests
 
         IEnumerable<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message);
 
-        result.Should().BeEquivalentTo(
-            new[]
-            {
+        result.ShouldBe(
+            [
                 new MessageHeader("x-string", "string1"),
                 new MessageHeader("x-string-default", "string2"),
                 new MessageHeader("x-readonly-string", "readonly"),
                 new MessageHeader("x-int", "1"),
                 new MessageHeader("x-int-default", "2"),
                 new MessageHeader("x-readonly-int", "42")
-            });
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -45,8 +45,8 @@ public class HeaderAttributeHelperTests
 
         List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
 
-        result.Should().ContainEquivalentOf(new MessageHeader("x-string-default", null));
-        result.Should().ContainEquivalentOf(new MessageHeader("x-int-default", "0"));
+        result.ShouldContain(new MessageHeader("x-string-default", null));
+        result.ShouldContain(new MessageHeader("x-int-default", "0"));
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public class HeaderAttributeHelperTests
 
         List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
 
-        result.Select(header => header.Name).Should().NotContain("x-string");
-        result.Select(header => header.Name).Should().NotContain("x-int");
+        result.Select(header => header.Name).ShouldNotContain("x-string");
+        result.Select(header => header.Name).ShouldNotContain("x-int");
     }
 
     [Fact]
@@ -77,11 +77,11 @@ public class HeaderAttributeHelperTests
 
         HeaderAttributeHelper.SetFromHeaders(message, headers);
 
-        message.StringHeader.Should().Be("string1");
-        message.StringHeaderWithDefault.Should().Be("string2");
-        message.ReadOnlyStringHeader.Should().Be("readonly");
-        message.IntHeader.Should().Be(1);
-        message.IntHeaderWithDefault.Should().Be(2);
-        message.ReadOnlyIntHeader.Should().Be(42);
+        message.StringHeader.ShouldBe("string1");
+        message.StringHeaderWithDefault.ShouldBe("string2");
+        message.ReadOnlyStringHeader.ShouldBe("readonly");
+        message.IntHeader.ShouldBe(1);
+        message.IntHeaderWithDefault.ShouldBe(2);
+        message.ReadOnlyIntHeader.ShouldBe(42);
     }
 }

@@ -6,8 +6,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -57,10 +57,10 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(5 * chunksPerMessage);
-        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(chunkSize));
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(chunkSize));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
 
         for (int i = 0; i < Helper.Spy.RawOutboundEnvelopes.Count; i++)
         {
@@ -69,31 +69,30 @@ public partial class ChunkingFixture
             IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
             IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
-            envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should()
-                .Be(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
 
             if (envelope == firstEnvelope)
             {
-                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).Should().BeNull();
+                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).ShouldBeNull();
             }
             else
             {
-                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).Should().Be(((KafkaOffset)firstEnvelope.BrokerMessageIdentifier!).Offset.ToString());
+                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).ShouldBe(((KafkaOffset)firstEnvelope.BrokerMessageIdentifier!).Offset.ToString());
             }
 
             if (envelope == lastEnvelope)
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().Be(true.ToString());
+                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBe(true.ToString());
             }
             else
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().BeNull();
+                envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBeNull();
             }
         }
 
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
+            .ShouldBe(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
     }
 
     [Fact]
@@ -135,12 +134,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 1");
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 2");
-        Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 3");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 2");
+        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 3");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -182,12 +181,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 1");
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 2");
-        Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 3");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 2");
+        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 3");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -229,12 +228,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 1");
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 2");
-        Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message 3");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 2");
+        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 3");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -297,12 +296,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<TestEventOne>().ContentEventOne)
-            .Should().BeEquivalentTo("Message 1", "Message 2");
+            .Select(envelope => envelope.Message.ShouldBeOfType<TestEventOne>().ContentEventOne)
+            .ShouldBe(["Message 1", "Message 2"]);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
     }
 
     [Fact]
@@ -352,17 +351,17 @@ public partial class ChunkingFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessagesCount == 3);
-        receivedMessagesCount.Should().Be(3);
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(messagesCount);
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
+        receivedMessagesCount.ShouldBe(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(messagesCount);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(messagesCount * chunksPerMessage);
 
         cancellationTokenSource.Cancel();
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(messagesCount);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(messagesCount);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventWithKafkaKey)envelope.Message!).Content)
-            .Should().BeEquivalentTo(Enumerable.Range(1, messagesCount).Select(i => $"Long message {i}"));
+            .ShouldBe(Enumerable.Range(1, messagesCount).Select(i => $"Long message {i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -397,11 +396,11 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Message 1");
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Message 2");
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Message 2");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 }

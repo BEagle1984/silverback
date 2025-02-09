@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing;
@@ -30,8 +30,8 @@ public partial class MessageWrapperFixture
     {
         IMessageWrapper instance = MessageWrapper.Instance;
 
-        instance.Should().NotBeNull();
-        instance.Should().BeSameAs(MessageWrapper.Instance);
+        instance.ShouldNotBeNull();
+        instance.ShouldBeSameAs(MessageWrapper.Instance);
     }
 
     private static (IProducer Producer, IProduceStrategyImplementation Strategy) CreateProducer(string topic, bool enableSubscribing = false)

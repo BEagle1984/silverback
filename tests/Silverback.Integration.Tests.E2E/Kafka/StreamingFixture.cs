@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -51,7 +51,7 @@ public partial class StreamingFixture : KafkaFixture
         {
             foreach (TestEventOne message in stream)
             {
-                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                 receivedMessages.Add(message);
             }
         }
@@ -65,11 +65,11 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public partial class StreamingFixture : KafkaFixture
         {
             foreach (IInboundEnvelope<TestEventOne> envelope in stream)
             {
-                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                 receivedMessages.Add(envelope.Message!);
             }
         }
@@ -112,11 +112,11 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public partial class StreamingFixture : KafkaFixture
         {
             await foreach (TestEventOne message in stream)
             {
-                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                 receivedMessages.Add(message);
             }
         }
@@ -159,11 +159,11 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public partial class StreamingFixture : KafkaFixture
         {
             foreach (TestEventOne message in stream)
             {
-                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                 receivedMessages.Add(message);
             }
         }
@@ -206,11 +206,11 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -239,7 +239,7 @@ public partial class StreamingFixture : KafkaFixture
         {
             await foreach (TestEventOne message in stream)
             {
-                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                 receivedMessages.Add(message);
             }
         }
@@ -253,11 +253,11 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 
     [Fact]
@@ -287,7 +287,7 @@ public partial class StreamingFixture : KafkaFixture
             stream.Subscribe(
                 message =>
                 {
-                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(receivedMessages.Count);
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(receivedMessages.Count);
                     receivedMessages.Add(message);
                 });
 
@@ -300,10 +300,10 @@ public partial class StreamingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedMessages.Should().HaveCount(15);
+        receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
 }

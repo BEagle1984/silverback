@@ -3,8 +3,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -79,8 +79,8 @@ public class MqttToKafkaFixture : KafkaFixture
         await AsyncTestingUtil.WaitAsync(() => eventTwoCount >= 15);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        eventOneCount.Should().Be(15);
-        eventTwoCount.Should().Be(15);
-        DefaultConsumerGroup.GetCommittedOffsetsCount("some-topic").Should().Be(15);
+        eventOneCount.ShouldBe(15);
+        eventTwoCount.ShouldBe(15);
+        DefaultConsumerGroup.GetCommittedOffsetsCount("some-topic").ShouldBe(15);
     }
 }

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
@@ -43,8 +43,8 @@ public class OutboundRouterBehaviorFixture
 
         await _behavior.HandleAsync(new TestEventOne(), _ => Next(ref nextBehaviorCalls), CancellationToken.None);
 
-        nextBehaviorCalls.Should().Be(1);
-        _messageWrapper.ReceivedCalls().Should().BeEmpty();
+        nextBehaviorCalls.ShouldBe(1);
+        _messageWrapper.ReceivedCalls().ShouldBeEmpty();
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(message1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(message2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceAsync(message2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }
@@ -72,7 +72,7 @@ public class OutboundRouterBehaviorFixture
 
         await _behavior.HandleAsync(message, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(1);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(1);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message, Arg.Any<IPublisher>(), ArgIsProducers(producer1, producer2));
     }
 
@@ -87,7 +87,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }
@@ -103,7 +103,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }
@@ -119,7 +119,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }
@@ -135,7 +135,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(message1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(message2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceAsync(message2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }
@@ -151,7 +151,7 @@ public class OutboundRouterBehaviorFixture
         await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
         await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
 
-        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<IPublisher>(), ArgIsProducers(producer2));
     }

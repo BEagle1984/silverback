@@ -3,8 +3,8 @@
 
 using System;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
@@ -22,7 +22,7 @@ public class AvroMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class AvroMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -52,9 +52,9 @@ public class AvroMessageDeserializerBuilderFixture
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
 
-        AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.As<AvroMessageDeserializer<TestEventThree>>();
+        AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventThree>>();
         avroMessageDeserializer.AvroDeserializerConfig.ShouldNotBeNull();
-        avroMessageDeserializer.AvroDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
+        avroMessageDeserializer.AvroDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
     }
 
     [Fact]
@@ -64,7 +64,8 @@ public class AvroMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -74,7 +75,8 @@ public class AvroMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
     }
 
     private AvroMessageDeserializerBuilder GetValidBuilder() =>

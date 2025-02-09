@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Xunit;
 
@@ -18,8 +18,8 @@ public class ValueReadOnlyCollectionExtensionsTests
 
         IValueReadOnlyCollection<int> valueCollection = enumerable.AsValueReadOnlyCollection();
 
-        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-        valueCollection.ToList().Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        valueCollection.ShouldBeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToList().ShouldBe([1, 2, 3]);
     }
 
     [Fact]
@@ -29,8 +29,8 @@ public class ValueReadOnlyCollectionExtensionsTests
 
         IValueReadOnlyCollection<int> valueCollection = list.AsValueReadOnlyCollection();
 
-        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-        valueCollection.ToList().Should().BeEquivalentTo(list);
+        valueCollection.ShouldBeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToList().ShouldBe(list);
     }
 
     [Fact]
@@ -40,8 +40,8 @@ public class ValueReadOnlyCollectionExtensionsTests
 
         IValueReadOnlyCollection<int> valueCollection = array.AsValueReadOnlyCollection();
 
-        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-        valueCollection.ToArray().Should().BeEquivalentTo(array);
+        valueCollection.ShouldBeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToArray().ShouldBe(array);
     }
 
     [Fact]
@@ -51,6 +51,6 @@ public class ValueReadOnlyCollectionExtensionsTests
 
         IValueReadOnlyCollection<int> valueCollection = collection.AsValueReadOnlyCollection();
 
-        valueCollection.Should().BeSameAs(collection);
+        valueCollection.ShouldBeSameAs(collection);
     }
 }

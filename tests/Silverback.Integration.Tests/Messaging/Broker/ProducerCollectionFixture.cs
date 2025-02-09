@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -29,8 +29,8 @@ public class ProducerCollectionFixture
         producerCollection.Add(producer1);
         producerCollection.Add(producer2);
 
-        producerCollection.Should().HaveCount(2);
-        producerCollection.Should().BeEquivalentTo(new[] { producer1, producer2 });
+        producerCollection.Count.ShouldBe(2);
+        producerCollection.ShouldBe(new[] { producer1, producer2 });
     }
 
     [Fact]
@@ -63,7 +63,8 @@ public class ProducerCollectionFixture
 
         Action act = () => producerCollection.Add(producer2Bis);
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("A producer endpoint with the name 'two' has already been added.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("A producer endpoint with the name 'two' has already been added.");
     }
 
     [Fact]
@@ -81,7 +82,7 @@ public class ProducerCollectionFixture
 
         IProducer producer = producerCollection.GetProducerForEndpoint("topic1");
 
-        producer.Should().Be(producer1);
+        producer.ShouldBe(producer1);
     }
 
     [Fact]
@@ -107,7 +108,7 @@ public class ProducerCollectionFixture
 
         IProducer producer = producerCollection.GetProducerForEndpoint("two");
 
-        producer.Should().Be(producer2);
+        producer.ShouldBe(producer2);
     }
 
     [Fact]
@@ -125,7 +126,8 @@ public class ProducerCollectionFixture
 
         Action act = () => producerCollection.GetProducerForEndpoint("not-configured-topic");
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("No producer has been configured for endpoint 'not-configured-topic'.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No producer has been configured for endpoint 'not-configured-topic'.");
     }
 
     [Fact]
@@ -152,8 +154,8 @@ public class ProducerCollectionFixture
         IProducer eventOneProducer = producerCollection.GetProducersForMessage(typeof(TestEventOne)).Single();
         IProducer eventTwoProducer = producerCollection.GetProducersForMessage(typeof(TestEventTwo)).Single();
 
-        eventOneProducer.Should().Be(producer1);
-        eventTwoProducer.Should().Be(producer2);
+        eventOneProducer.ShouldBe(producer1);
+        eventTwoProducer.ShouldBe(producer2);
     }
 
     [Fact]
@@ -180,8 +182,8 @@ public class ProducerCollectionFixture
         IReadOnlyCollection<IProducer> eventOneProducers = producerCollection.GetProducersForMessage(typeof(TestEventOne));
         IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(typeof(TestEventTwo));
 
-        eventOneProducers.Should().HaveCount(2);
-        eventTwoProducers.Should().BeEmpty();
+        eventOneProducers.Count.ShouldBe(2);
+        eventTwoProducers.ShouldBeEmpty();
     }
 
     [Fact]
@@ -208,8 +210,8 @@ public class ProducerCollectionFixture
         IProducer tombstoneProducer1 = producerCollection.GetProducersForMessage(typeof(Tombstone<TestEventOne>)).Single();
         IProducer tombstoneProducer2 = producerCollection.GetProducersForMessage(typeof(Tombstone<TestEventTwo>)).Single();
 
-        tombstoneProducer1.Should().Be(producer1);
-        tombstoneProducer2.Should().Be(producer2);
+        tombstoneProducer1.ShouldBe(producer1);
+        tombstoneProducer2.ShouldBe(producer2);
     }
 
     [Fact]
@@ -227,6 +229,6 @@ public class ProducerCollectionFixture
 
         IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(typeof(TestEventTwo));
 
-        eventTwoProducers.Should().BeEmpty();
+        eventTwoProducers.ShouldBeEmpty();
     }
 }

@@ -5,8 +5,8 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -47,7 +47,7 @@ public class HealthCheckFixture : KafkaFixture
                 .AddConsumersCheck());
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -79,11 +79,11 @@ public class HealthCheckFixture : KafkaFixture
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         await Task.Delay(500); // Incremented this to 500 because flaky
 
         response = await Host.HttpClient.GetAsync("/health");
-        response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
     }
 }

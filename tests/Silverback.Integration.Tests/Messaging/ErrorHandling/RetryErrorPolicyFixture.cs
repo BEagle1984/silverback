@@ -5,10 +5,10 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -67,7 +67,7 @@ public class RetryErrorPolicyFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        canHandle.Should().Be(expectedResult);
+        canHandle.ShouldBe(expectedResult);
     }
 
     [Theory]
@@ -96,7 +96,7 @@ public class RetryErrorPolicyFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        canHandle.Should().Be(true);
+        canHandle.ShouldBe(true);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class RetryErrorPolicyFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]

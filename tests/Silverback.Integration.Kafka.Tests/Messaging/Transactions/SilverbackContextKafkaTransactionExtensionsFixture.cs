@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -27,7 +27,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         IKafkaTransaction transaction = context.InitKafkaTransaction();
 
         transaction.ShouldNotBeNull();
-        context.GetKafkaTransaction().Should().BeSameAs(transaction);
+        context.GetKafkaTransaction().ShouldBeSameAs(transaction);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         IKafkaTransaction transaction = context.InitKafkaTransaction("suffix");
 
         transaction.ShouldNotBeNull();
-        transaction.TransactionalIdSuffix.Should().Be("suffix");
+        transaction.TransactionalIdSuffix.ShouldBe("suffix");
     }
 
     [Theory]
@@ -73,7 +73,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         IKafkaTransaction transaction = context.InitKafkaTransaction(baseSuffix);
 
         transaction.ShouldNotBeNull();
-        transaction.TransactionalIdSuffix.Should().Be($"{baseSuffix}|topic1[42]");
+        transaction.TransactionalIdSuffix.ShouldBe($"{baseSuffix}|topic1[42]");
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         IKafkaTransaction transaction = context.InitKafkaTransaction();
 
         transaction.ShouldNotBeNull();
-        transaction.TransactionalIdSuffix.Should().BeNull();
+        transaction.TransactionalIdSuffix.ShouldBeNull();
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         KafkaTransaction transaction = new(context);
         context.AddKafkaTransaction(transaction);
 
-        context.GetKafkaTransaction().Should().Be(transaction);
+        context.GetKafkaTransaction().ShouldBe(transaction);
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
 
         Action act = () => context.AddKafkaTransaction(new KafkaTransaction(context));
 
-        act.Should().Throw<InvalidOperationException>();
+        act.ShouldThrow<InvalidOperationException>();
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
 
         Action act = () => context.AddKafkaTransaction(transaction);
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -150,6 +150,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         context.RemoveKafkaTransaction();
 
         Action act = () => context.GetKafkaTransaction();
-        act.Should().Throw<InvalidOperationException>().WithMessage("*not found.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldMatch(@".*not found\.");
     }
 }

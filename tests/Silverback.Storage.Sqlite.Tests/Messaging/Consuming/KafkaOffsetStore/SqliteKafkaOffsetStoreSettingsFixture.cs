@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
 
@@ -15,8 +15,8 @@ public class SqliteKafkaOffsetStoreSettingsFixture
     {
         SqliteKafkaOffsetStoreSettings settings = new("connection-string");
 
-        settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("SilverbackKafkaOffsets");
+        settings.ConnectionString.ShouldBe("connection-string");
+        settings.TableName.ShouldBe("SilverbackKafkaOffsets");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -42,7 +42,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Theory]
@@ -55,7 +55,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = kafkaOffsetStoreSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -68,7 +68,8 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -81,7 +82,8 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -94,7 +96,8 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 
     [Fact]
@@ -107,6 +110,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 }

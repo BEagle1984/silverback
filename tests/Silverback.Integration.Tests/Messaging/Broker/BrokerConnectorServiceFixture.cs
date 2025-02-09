@@ -6,10 +6,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -73,7 +73,7 @@ public class BrokerConnectorServiceFixture
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
 
-        tries.Should().Be(3);
+        tries.ShouldBe(3);
 
         foreach (IBrokerClient client in clients)
         {
@@ -110,7 +110,7 @@ public class BrokerConnectorServiceFixture
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
 
-        tries.Should().Be(1);
+        tries.ShouldBe(1);
 
         foreach (IBrokerClient client in clients)
         {

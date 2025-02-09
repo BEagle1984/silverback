@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -66,13 +66,13 @@ public partial class ChunkingFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryMessage>());
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(10));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>());
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(new[] { message1.Content.ReReadAll(), message2.Content.ReReadAll() });
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(new[] { message1.Content.ReReadAll(), message2.Content.ReReadAll() });
     }
 
     [Fact]
@@ -118,12 +118,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFiles.Should().HaveCount(3);
-        receivedFiles[0].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 1"));
-        receivedFiles[1].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 2"));
-        receivedFiles[2].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 3"));
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
+        receivedFiles[1].ShouldBe(Encoding.UTF8.GetBytes("Long message 2"));
+        receivedFiles[2].ShouldBe(Encoding.UTF8.GetBytes("Long message 3"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -169,12 +169,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFiles.Should().HaveCount(3);
-        receivedFiles[0].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 1"));
-        receivedFiles[1].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 2"));
-        receivedFiles[2].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 3"));
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
+        receivedFiles[1].ShouldBe(Encoding.UTF8.GetBytes("Long message 2"));
+        receivedFiles[2].ShouldBe(Encoding.UTF8.GetBytes("Long message 3"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -220,12 +220,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFiles.Should().HaveCount(3);
-        receivedFiles[0].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 1"));
-        receivedFiles[1].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 2"));
-        receivedFiles[2].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 3"));
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
+        receivedFiles[1].ShouldBe(Encoding.UTF8.GetBytes("Long message 2"));
+        receivedFiles[2].ShouldBe(Encoding.UTF8.GetBytes("Long message 3"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -271,12 +271,12 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFiles.Should().HaveCount(3);
-        receivedFiles[0].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 1"));
-        receivedFiles[1].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 2"));
-        receivedFiles[2].Should().BeEquivalentTo(Encoding.UTF8.GetBytes("Long message 3"));
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles[0].ShouldBe(Encoding.UTF8.GetBytes("Long message 1"));
+        receivedFiles[1].ShouldBe(Encoding.UTF8.GetBytes("Long message 2"));
+        receivedFiles[2].ShouldBe(Encoding.UTF8.GetBytes("Long message 3"));
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
     }
 
     [Fact]
@@ -341,11 +341,11 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(new[] { rawMessage1, rawMessage2 });
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(new[] { rawMessage1, rawMessage2 });
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
     }
 
     [Fact]
@@ -404,8 +404,8 @@ public partial class ChunkingFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
 
-        receivedFilesCount.Should().Be(3);
-        receivedFiles.Should().BeEmpty();
+        receivedFilesCount.ShouldBe(3);
+        receivedFiles.ShouldBeEmpty();
 
         await producer.RawProduceAsync(
             rawMessage3.Skip(20).ToArray(),
@@ -419,9 +419,9 @@ public partial class ChunkingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedFilesCount.Should().Be(3);
-        receivedFiles.Should().HaveCount(3);
-        receivedFiles.Should().BeEquivalentTo(new[] { rawMessage1, rawMessage2, rawMessage3 });
+        receivedFilesCount.ShouldBe(3);
+        receivedFiles.Count.ShouldBe(3);
+        receivedFiles.ShouldBe([rawMessage1, rawMessage2, rawMessage3], ignoreOrder: true);
     }
 
     [Fact]
@@ -462,13 +462,13 @@ public partial class ChunkingFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
-        receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles[0].ShouldBe(message1.Content.ReReadAll());
+        receivedFiles[1].ShouldBe(message2.Content.ReReadAll());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 }

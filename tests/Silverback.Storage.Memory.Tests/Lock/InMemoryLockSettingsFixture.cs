@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -15,7 +15,7 @@ public class InMemoryLockSettingsFixture
     {
         InMemoryLockSettings settings = new("my-lock");
 
-        settings.LockName.Should().Be("my-lock");
+        settings.LockName.ShouldBe("my-lock");
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class InMemoryLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -38,6 +38,6 @@ public class InMemoryLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 }

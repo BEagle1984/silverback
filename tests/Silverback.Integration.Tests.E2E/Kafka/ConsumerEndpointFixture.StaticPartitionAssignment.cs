@@ -4,8 +4,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -62,8 +62,8 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -107,8 +107,8 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
     }
 }

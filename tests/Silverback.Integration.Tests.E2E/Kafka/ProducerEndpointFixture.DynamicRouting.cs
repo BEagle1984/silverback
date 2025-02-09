@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
@@ -55,16 +55,16 @@ public partial class ProducerEndpointFixture
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
         IInMemoryTopic topic3 = Helper.GetTopic("topic3");
 
-        topic1.MessagesCount.Should().Be(1);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(1);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        topic1.MessagesCount.Should().Be(2);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(2);
+        topic1.MessagesCount.ShouldBe(2);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(2);
     }
 
     [Fact]
@@ -111,20 +111,20 @@ public partial class ProducerEndpointFixture
         IInMemoryPartition partition1 = topic1.Partitions[2];
         IInMemoryPartition partition2 = topic2.Partitions[3];
 
-        topic1.MessagesCount.Should().Be(1);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(1);
-        partition1.TotalMessagesCount.Should().Be(1);
-        partition2.TotalMessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(1);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(1);
+        partition1.TotalMessagesCount.ShouldBe(1);
+        partition2.TotalMessagesCount.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        topic1.MessagesCount.Should().Be(2);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(2);
-        partition1.TotalMessagesCount.Should().Be(2);
-        partition2.TotalMessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(2);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(2);
+        partition1.TotalMessagesCount.ShouldBe(2);
+        partition2.TotalMessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -164,16 +164,16 @@ public partial class ProducerEndpointFixture
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
         IInMemoryTopic topic3 = Helper.GetTopic("topic3");
 
-        topic1.MessagesCount.Should().Be(1);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(1);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        topic1.MessagesCount.Should().Be(2);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(2);
+        topic1.MessagesCount.ShouldBe(2);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(2);
     }
 
     [Fact]
@@ -206,20 +206,20 @@ public partial class ProducerEndpointFixture
         IInMemoryPartition partition1 = topic1.Partitions[2];
         IInMemoryPartition partition2 = topic2.Partitions[3];
 
-        topic1.MessagesCount.Should().Be(1);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(1);
-        partition1.TotalMessagesCount.Should().Be(1);
-        partition2.TotalMessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(1);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(1);
+        partition1.TotalMessagesCount.ShouldBe(1);
+        partition2.TotalMessagesCount.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        topic1.MessagesCount.Should().Be(2);
-        topic2.MessagesCount.Should().Be(1);
-        topic3.MessagesCount.Should().Be(2);
-        partition1.TotalMessagesCount.Should().Be(2);
-        partition2.TotalMessagesCount.Should().Be(1);
+        topic1.MessagesCount.ShouldBe(2);
+        topic2.MessagesCount.ShouldBe(1);
+        topic3.MessagesCount.ShouldBe(2);
+        partition1.TotalMessagesCount.ShouldBe(2);
+        partition2.TotalMessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -256,21 +256,20 @@ public partial class ProducerEndpointFixture
         IInMemoryPartition partition1 = Helper.GetTopic("topic1").Partitions[2];
         IInMemoryPartition partition2 = Helper.GetTopic("topic2").Partitions[3];
 
-        partition1.TotalMessagesCount.Should().Be(1);
-        partition2.TotalMessagesCount.Should().Be(1);
+        partition1.TotalMessagesCount.ShouldBe(1);
+        partition2.TotalMessagesCount.ShouldBe(1);
 
         await publisher.WrapAndPublishBatchAsync(
-            new[]
-            {
+            [
                 new TestEventOne(),
                 new TestEventOne()
-            },
+            ],
             envelope => envelope
                 .AddHeader("x-where-to-go-topic", "topic1")
                 .AddHeader("x-where-to-go-partition", 2));
 
-        partition1.TotalMessagesCount.Should().Be(3);
-        partition2.TotalMessagesCount.Should().Be(1);
+        partition1.TotalMessagesCount.ShouldBe(3);
+        partition2.TotalMessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -302,8 +301,8 @@ public partial class ProducerEndpointFixture
             },
             envelope => envelope.SetKafkaDestinationTopic(envelope.MessageType == typeof(TestEventOne) ? "topic1" : "topic2"));
 
-        Helper.GetTopic("topic1").MessagesCount.Should().Be(3);
-        Helper.GetTopic("topic2").MessagesCount.Should().Be(2);
+        Helper.GetTopic("topic1").MessagesCount.ShouldBe(3);
+        Helper.GetTopic("topic2").MessagesCount.ShouldBe(2);
     }
 
     [Fact]
@@ -325,9 +324,9 @@ public partial class ProducerEndpointFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
 
-        DefaultTopic.MessagesCount.Should().Be(1);
-        DefaultTopic.GetAllMessages()[0].Value.Should().BeNull();
-        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("42"u8.ToArray());
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Value.ShouldBeNull();
+        DefaultTopic.GetAllMessages()[0].Key.ShouldBe("42"u8.ToArray());
     }
 
     [Fact]
@@ -357,8 +356,8 @@ public partial class ProducerEndpointFixture
                 new TestEventOne()
             });
 
-        Helper.GetTopic("topic1").MessagesCount.Should().Be(2);
-        Helper.GetTopic("topic2").MessagesCount.Should().Be(1);
+        Helper.GetTopic("topic1").MessagesCount.ShouldBe(2);
+        Helper.GetTopic("topic2").MessagesCount.ShouldBe(1);
     }
 
     [Fact]
@@ -390,8 +389,8 @@ public partial class ProducerEndpointFixture
                 null
             });
 
-        Helper.GetTopic("events").MessagesCount.Should().Be(2);
-        Helper.GetTopic("tombstones").MessagesCount.Should().Be(3);
+        Helper.GetTopic("events").MessagesCount.ShouldBe(2);
+        Helper.GetTopic("tombstones").MessagesCount.ShouldBe(3);
     }
 
     private sealed class MessageBasedEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>

@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Kafka;
@@ -35,7 +35,7 @@ public class KafkaConsumerEndpointsCacheFixture
 
         KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
 
-        result.Configuration.Should().Be(configuration.Endpoints.First());
+        result.Configuration.ShouldBe(configuration.Endpoints.First());
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class KafkaConsumerEndpointsCacheFixture
 
         KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic2", 42));
 
-        result.TopicPartition.Should().Be(new TopicPartition("topic2", Partition.Any));
+        result.TopicPartition.ShouldBe(new TopicPartition("topic2", Partition.Any));
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class KafkaConsumerEndpointsCacheFixture
 
         KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
 
-        result.TopicPartition.Should().Be(new TopicPartition("topic1", 42));
+        result.TopicPartition.ShouldBe(new TopicPartition("topic1", 42));
     }
 
     [Fact]
@@ -111,6 +111,7 @@ public class KafkaConsumerEndpointsCacheFixture
 
         Action act = () => cache.GetEndpoint(new TopicPartition("topic3", 42));
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("No configuration found for the specified topic partition 'topic3[42]'.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No configuration found for the specified topic partition 'topic3[42]'.");
     }
 }

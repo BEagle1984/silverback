@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
@@ -28,7 +28,7 @@ public class SilverbackBuilderEntityFrameworkExtensionsFixture
             new EntityFrameworkLockSettings("lock", typeof(TestDbContext), GetDbContext),
             serviceProvider);
 
-        distributedLock.Should().BeOfType<EntityFrameworkLock>();
+        distributedLock.ShouldBeOfType<EntityFrameworkLock>();
     }
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();

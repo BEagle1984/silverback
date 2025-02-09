@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -49,9 +49,10 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().BeAssignableTo<IInboundEnvelope<BinaryMessage>>();
-        BinaryMessage binaryMessage = result.As<IInboundEnvelope<BinaryMessage>>().Message!;
-        binaryMessage.Content.ReadAll().Should().BeEquivalentTo(rawContent);
+        result.ShouldNotBeNull();
+        IInboundEnvelope<BinaryMessage> binaryMessageEnvelope = result.ShouldBeAssignableTo<IInboundEnvelope<BinaryMessage>>();
+        binaryMessageEnvelope.Message.ShouldNotBeNull();
+        binaryMessageEnvelope.Message.Content.ReadAll().ShouldBe(rawContent);
     }
 
     [Fact]
@@ -80,7 +81,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().BeSameAs(envelope);
+        result.ShouldBeSameAs(envelope);
     }
 
     [Fact]
@@ -118,6 +119,6 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             },
             CancellationToken.None);
 
-        result.Should().BeSameAs(envelope);
+        result.ShouldBeSameAs(envelope);
     }
 }

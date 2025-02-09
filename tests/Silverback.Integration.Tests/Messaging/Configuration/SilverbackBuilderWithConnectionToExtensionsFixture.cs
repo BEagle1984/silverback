@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -25,9 +25,9 @@ public class SilverbackBuilderWithConnectionToExtensionsFixture
 
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-        serviceProvider.GetService<BrokerClientCollection>().Should().NotBeNull();
-        serviceProvider.GetService<IProducerCollection>().Should().NotBeNull();
-        serviceProvider.GetService<IConsumerCollection>().Should().NotBeNull();
+        serviceProvider.GetService<BrokerClientCollection>().ShouldNotBeNull();
+        serviceProvider.GetService<IProducerCollection>().ShouldNotBeNull();
+        serviceProvider.GetService<IConsumerCollection>().ShouldNotBeNull();
     }
 
     [Fact]
@@ -47,10 +47,10 @@ public class SilverbackBuilderWithConnectionToExtensionsFixture
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         OutboxWriterFactory defaultWriterFactory = serviceProvider.GetRequiredService<OutboxWriterFactory>();
 
-        readerFactory.Should().NotBeNull();
-        writerFactory.Should().NotBeNull();
+        readerFactory.ShouldNotBeNull();
+        writerFactory.ShouldNotBeNull();
 
-        readerFactory.Should().BeSameAs(defaultReaderFactory);
-        writerFactory.Should().BeSameAs(defaultWriterFactory);
+        readerFactory.ShouldBeSameAs(defaultReaderFactory);
+        writerFactory.ShouldBeSameAs(defaultWriterFactory);
     }
 }

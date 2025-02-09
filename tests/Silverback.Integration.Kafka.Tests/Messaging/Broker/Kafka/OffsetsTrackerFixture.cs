@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Broker.Kafka;
@@ -20,8 +20,8 @@ public class OffsetsTrackerFixture
         tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 2));
         tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 3));
 
-        tracker.GetRollbackOffSets().Should().BeEquivalentTo([new KafkaOffset("topic", 1, 2)]);
-        tracker.GetCommitOffsets().Should().BeEquivalentTo([new KafkaOffset("topic", 1, 3)]);
+        tracker.GetRollbackOffSets().ShouldBe([new KafkaOffset("topic", 1, 2)]);
+        tracker.GetCommitOffsets().ShouldBe([new KafkaOffset("topic", 1, 3)]);
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public class OffsetsTrackerFixture
 
         tracker.UntrackPartition(new TopicPartition("topic", 1));
 
-        tracker.GetRollbackOffSets().Should().BeEquivalentTo([new KafkaOffset("topic", 2, 4)]);
-        tracker.GetCommitOffsets().Should().BeEquivalentTo([new KafkaOffset("topic", 2, 5)]);
+        tracker.GetRollbackOffSets().ShouldBe([new KafkaOffset("topic", 2, 4)]);
+        tracker.GetCommitOffsets().ShouldBe([new KafkaOffset("topic", 2, 5)]);
     }
 
     [Fact]
@@ -52,16 +52,18 @@ public class OffsetsTrackerFixture
 
         tracker.Commit(new KafkaOffset("topic", 1, 2));
 
-        tracker.GetRollbackOffSets().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 3),
-            new KafkaOffset("topic", 2, 4)
-        ]);
-        tracker.GetCommitOffsets().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 3),
-            new KafkaOffset("topic", 2, 5)
-        ]);
+        tracker.GetRollbackOffSets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 3),
+                new KafkaOffset("topic", 2, 4)
+            ],
+            ignoreOrder: true);
+        tracker.GetCommitOffsets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 3),
+                new KafkaOffset("topic", 2, 5)
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -76,11 +78,12 @@ public class OffsetsTrackerFixture
         tracker.TrackOffset(new KafkaOffset("topic", 2, 5));
         tracker.TrackOffset(new KafkaOffset("topic", 2, 6));
 
-        tracker.GetCommitOffsets().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 3),
-            new KafkaOffset("topic", 2, 6)
-        ]);
+        tracker.GetCommitOffsets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 3),
+                new KafkaOffset("topic", 2, 6)
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -95,11 +98,12 @@ public class OffsetsTrackerFixture
         tracker.TrackOffset(new KafkaOffset("topic", 2, 5));
         tracker.TrackOffset(new KafkaOffset("topic", 2, 6));
 
-        tracker.GetRollbackOffSets().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 1),
-            new KafkaOffset("topic", 2, 4)
-        ]);
+        tracker.GetRollbackOffSets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 1),
+                new KafkaOffset("topic", 2, 4)
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -114,11 +118,12 @@ public class OffsetsTrackerFixture
         tracker.TrackIdentifier(new KafkaOffset("topic", 2, 5));
         tracker.TrackIdentifier(new KafkaOffset("topic", 2, 6));
 
-        tracker.GetCommitIdentifiers().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 3),
-            new KafkaOffset("topic", 2, 6)
-        ]);
+        tracker.GetCommitIdentifiers().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 3),
+                new KafkaOffset("topic", 2, 6)
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -133,10 +138,11 @@ public class OffsetsTrackerFixture
         tracker.TrackIdentifier(new KafkaOffset("topic", 2, 5));
         tracker.TrackIdentifier(new KafkaOffset("topic", 2, 6));
 
-        tracker.GetRollbackIdentifiers().Should().BeEquivalentTo(
-        [
-            new KafkaOffset("topic", 1, 1),
-            new KafkaOffset("topic", 2, 4)
-        ]);
+        tracker.GetRollbackIdentifiers().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 1),
+                new KafkaOffset("topic", 2, 4)
+            ],
+            ignoreOrder: true);
     }
 }

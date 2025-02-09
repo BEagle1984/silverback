@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
@@ -17,7 +17,7 @@ public class OutboxSettingsBuilderEntityFrameworkExtensionsFixture
 
         IOutboxSettingsImplementationBuilder implementationBuilder = builder.UseEntityFramework<TestDbContext>();
 
-        implementationBuilder.Should().BeOfType<EntityFrameworkOutboxSettingsBuilder>();
+        implementationBuilder.ShouldBeOfType<EntityFrameworkOutboxSettingsBuilder>();
     }
 
     private class TestDbContext : DbContext;

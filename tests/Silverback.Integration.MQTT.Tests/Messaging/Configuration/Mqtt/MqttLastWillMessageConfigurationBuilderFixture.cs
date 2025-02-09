@@ -5,10 +5,10 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
 using MQTTnet.Protocol;
 using Newtonsoft.Json;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -31,7 +31,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
         configurationBuilder.ProduceTo("testaments");
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Topic.Should().Be("testaments");
+        willMessage.Topic.ShouldBe("testaments");
     }
 
     [Fact]
@@ -45,14 +45,14 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .SendMessage(message);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Payload.Should().NotBeNullOrEmpty();
+        willMessage.Payload.ShouldNotBeEmpty();
 
         (object? deserializedMessage, Type _) = await new JsonMessageDeserializer<TestEventOne>().DeserializeAsync(
             new MemoryStream(willMessage.Payload!),
             [],
             TestConsumerEndpoint.GetDefault());
 
-        deserializedMessage.Should().BeEquivalentTo(message);
+        deserializedMessage.ShouldBeEquivalentTo(message);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithDelay(TimeSpan.FromSeconds(42));
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Delay.Should().Be(42);
+        willMessage.Delay.ShouldBe(42U);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithExpiration(TimeSpan.FromSeconds(42));
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Expiration.Should().Be(42);
+        willMessage.Expiration.ShouldBe(42U);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
+        willMessage.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithAtMostOnceQoS();
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
+        willMessage.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtMostOnce);
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithAtLeastOnceQoS();
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
+        willMessage.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithExactlyOnceQoS();
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
+        willMessage.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .Retain();
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Retain.Should().BeTrue();
+        willMessage.Retain.ShouldBeTrue();
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             message,
             Arg.Any<MessageHeaderCollection>(),
             Arg.Any<ProducerEndpoint>());
-        willMessage.Payload.Should().BeEquivalentTo(payload);
+        willMessage.Payload.ShouldBe(payload);
     }
 
     [Fact]
@@ -197,8 +197,8 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .SendMessage(message);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Payload.Should().NotBeNullOrEmpty();
-        willMessage.Payload.Should().BeEquivalentTo(messageBytes);
+        willMessage.Payload.ShouldNotBeEmpty();
+        willMessage.Payload.ShouldBe(messageBytes);
     }
 
     [Fact]
@@ -228,8 +228,8 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .SendMessage(message);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.Payload.Should().NotBeNullOrEmpty();
-        willMessage.Payload.Should().BeEquivalentTo(messageBytes);
+        willMessage.Payload.ShouldNotBeEmpty();
+        willMessage.Payload.ShouldBe(messageBytes);
     }
 
     [Fact]
@@ -242,7 +242,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithContentType("application/json");
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.ContentType.Should().Be("application/json");
+        willMessage.ContentType.ShouldBe("application/json");
     }
 
     [Fact]
@@ -256,7 +256,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithCorrelationData(correlationData);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.CorrelationData.Should().BeSameAs(correlationData);
+        willMessage.CorrelationData.ShouldBeSameAs(correlationData);
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .WithPayloadFormatIndicator(MqttPayloadFormatIndicator.CharacterData);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.PayloadFormatIndicator.Should().Be(MqttPayloadFormatIndicator.CharacterData);
+        willMessage.PayloadFormatIndicator.ShouldBe(MqttPayloadFormatIndicator.CharacterData);
     }
 
     [Fact]
@@ -283,8 +283,8 @@ public class MqttLastWillMessageConfigurationBuilderFixture
             .AddHeader("two", "2");
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
-        willMessage.UserProperties.Should().HaveCount(2);
-        willMessage.UserProperties.Should().ContainEquivalentOf(new MqttUserProperty("one", "1"));
-        willMessage.UserProperties.Should().ContainEquivalentOf(new MqttUserProperty("two", "2"));
+        willMessage.UserProperties.Count.ShouldBe(2);
+        willMessage.UserProperties.ShouldContain(new MqttUserProperty("one", "1"));
+        willMessage.UserProperties.ShouldContain(new MqttUserProperty("two", "2"));
     }
 }

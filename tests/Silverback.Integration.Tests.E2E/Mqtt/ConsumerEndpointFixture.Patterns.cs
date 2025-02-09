@@ -3,8 +3,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -64,8 +64,8 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message.As<TestEventOne>().ContentEventOne)
-            .Should().BeEquivalentTo("Ticino", "USA News", "Canada News");
+        Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message.ShouldBeOfType<TestEventOne>().ContentEventOne)
+            .ShouldBe(["Ticino", "USA News", "Canada News"]);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public partial class ConsumerEndpointFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message.As<TestEventOne>().ContentEventOne)
-            .Should().BeEquivalentTo("Mesocco", "Ticino", "USA News", "California News", "Canada News");
+        Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message.ShouldBeOfType<TestEventOne>().ContentEventOne)
+            .ShouldBe(["Mesocco", "Ticino", "USA News", "California News", "Canada News"]);
     }
 }

@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Broker.Kafka.Mocks.Rebalance;
 using Xunit;
@@ -39,13 +39,13 @@ public class SimpleRebalanceStrategyTests
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
 
-        result.RevokedPartitions.Should().BeEmpty();
+        result.RevokedPartitions.ShouldBeEmpty();
 
-        result.AssignedPartitions.Should().HaveCount(2);
-        result.AssignedPartitions[consumer1].Should().BeEquivalentTo(partitionAssignments[0].Partitions);
-        result.AssignedPartitions[consumer2].Should().BeEquivalentTo(partitionAssignments[1].Partitions);
+        result.AssignedPartitions.Count.ShouldBe(2);
+        result.AssignedPartitions[consumer1].ShouldBe(partitionAssignments[0].Partitions);
+        result.AssignedPartitions[consumer2].ShouldBe(partitionAssignments[1].Partitions);
 
-        partitionAssignments[0].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[0].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 0),
@@ -54,7 +54,7 @@ public class SimpleRebalanceStrategyTests
                 new TopicPartition("topic2", 0),
                 new TopicPartition("topic2", 2)
             });
-        partitionAssignments[1].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 1),
@@ -91,14 +91,14 @@ public class SimpleRebalanceStrategyTests
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
 
-        result.RevokedPartitions.Should().BeEmpty();
+        result.RevokedPartitions.ShouldBeEmpty();
 
-        result.AssignedPartitions.Should().HaveCount(3);
-        result.AssignedPartitions[consumer1].Should().BeEquivalentTo(partitionAssignments[0].Partitions);
-        result.AssignedPartitions[consumer2].Should().BeEquivalentTo(partitionAssignments[1].Partitions);
-        result.AssignedPartitions[consumer3].Should().BeEquivalentTo(partitionAssignments[2].Partitions);
+        result.AssignedPartitions.Count.ShouldBe(3);
+        result.AssignedPartitions[consumer1].ShouldBe(partitionAssignments[0].Partitions);
+        result.AssignedPartitions[consumer2].ShouldBe(partitionAssignments[1].Partitions);
+        result.AssignedPartitions[consumer3].ShouldBe(partitionAssignments[2].Partitions);
 
-        partitionAssignments[0].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[0].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 0),
@@ -106,14 +106,14 @@ public class SimpleRebalanceStrategyTests
                 new TopicPartition("topic2", 0),
                 new TopicPartition("topic2", 2)
             });
-        partitionAssignments[1].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 1),
                 new TopicPartition("topic1", 4),
                 new TopicPartition("topic2", 1)
             });
-        partitionAssignments[2].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[2].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 2)
@@ -157,39 +157,37 @@ public class SimpleRebalanceStrategyTests
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
 
-        result.RevokedPartitions.Should().HaveCount(2);
-        result.RevokedPartitions[consumer1].Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartition("topic1", 0),
+        result.RevokedPartitions.Count.ShouldBe(2);
+        result.RevokedPartitions[consumer1].ShouldBe(
+        [
+            new TopicPartition("topic1", 0),
                 new TopicPartition("topic1", 2),
                 new TopicPartition("topic1", 4)
-            });
-        result.RevokedPartitions[consumer2].Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartition("topic1", 1),
+        ]);
+        result.RevokedPartitions[consumer2].ShouldBe(
+        [
+            new TopicPartition("topic1", 1),
                 new TopicPartition("topic1", 3)
-            });
+        ]);
 
-        result.AssignedPartitions.Should().HaveCount(3);
-        result.AssignedPartitions[consumer1].Should().BeEquivalentTo(partitionAssignments[0].Partitions);
-        result.AssignedPartitions[consumer2].Should().BeEquivalentTo(partitionAssignments[1].Partitions);
-        result.AssignedPartitions[consumer3].Should().BeEquivalentTo(partitionAssignments[2].Partitions);
+        result.AssignedPartitions.Count.ShouldBe(3);
+        result.AssignedPartitions[consumer1].ShouldBe(partitionAssignments[0].Partitions);
+        result.AssignedPartitions[consumer2].ShouldBe(partitionAssignments[1].Partitions);
+        result.AssignedPartitions[consumer3].ShouldBe(partitionAssignments[2].Partitions);
 
-        partitionAssignments[0].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[0].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 0),
                 new TopicPartition("topic1", 3)
             });
-        partitionAssignments[1].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 1),
                 new TopicPartition("topic1", 4)
             });
-        partitionAssignments[2].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[2].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 2)
@@ -230,32 +228,30 @@ public class SimpleRebalanceStrategyTests
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
 
-        result.RevokedPartitions.Should().HaveCount(2);
-        result.RevokedPartitions[consumer1].Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartition("topic1", 0),
+        result.RevokedPartitions.Count.ShouldBe(2);
+        result.RevokedPartitions[consumer1].ShouldBe(
+        [
+            new TopicPartition("topic1", 0),
                 new TopicPartition("topic1", 3)
-            });
-        result.RevokedPartitions[consumer2].Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartition("topic1", 1),
+        ]);
+        result.RevokedPartitions[consumer2].ShouldBe(
+        [
+            new TopicPartition("topic1", 1),
                 new TopicPartition("topic1", 4)
-            });
+        ]);
 
-        result.AssignedPartitions.Should().HaveCount(2);
-        result.AssignedPartitions[consumer1].Should().BeEquivalentTo(partitionAssignments[0].Partitions);
-        result.AssignedPartitions[consumer2].Should().BeEquivalentTo(partitionAssignments[1].Partitions);
+        result.AssignedPartitions.Count.ShouldBe(2);
+        result.AssignedPartitions[consumer1].ShouldBe(partitionAssignments[0].Partitions);
+        result.AssignedPartitions[consumer2].ShouldBe(partitionAssignments[1].Partitions);
 
-        partitionAssignments[0].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[0].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 0),
                 new TopicPartition("topic1", 2),
                 new TopicPartition("topic1", 4)
             });
-        partitionAssignments[1].Partitions.Should().BeEquivalentTo(
+        partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
                 new TopicPartition("topic1", 1),

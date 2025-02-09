@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -33,7 +33,7 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventOne { Message = "yes" });
         await publisher.PublishAsync(new TestEventOne { Message = "no" });
 
-        filteredSubscriber.ReceivedMessages.Should().HaveCount(2);
+        filteredSubscriber.ReceivedMessages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEnvelope(new TestEventOne { Message = "yes" }));
         await publisher.PublishAsync(new TestEnvelope(new TestEventOne { Message = "no" }));
 
-        filteredSubscriber.ReceivedEnvelopes.Should().HaveCount(2);
-        filteredSubscriber.ReceivedMessages.Should().HaveCount(2);
+        filteredSubscriber.ReceivedEnvelopes.Count.ShouldBe(2);
+        filteredSubscriber.ReceivedMessages.Count.ShouldBe(2);
     }
 
     private sealed class EventOneFilterAttribute : MessageFilterAttribute

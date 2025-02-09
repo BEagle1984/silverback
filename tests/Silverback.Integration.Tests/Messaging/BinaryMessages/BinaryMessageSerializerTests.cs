@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -28,8 +28,8 @@ public class BinaryMessageSerializerTests
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
         string? typeHeaderValue = headers["x-message-type"];
-        typeHeaderValue.Should().NotBeNullOrEmpty();
-        typeHeaderValue.Should().StartWith("Silverback.Messaging.Messages.BinaryMessage, Silverback.Integration,");
+        typeHeaderValue.ShouldNotBeNullOrEmpty();
+        typeHeaderValue.ShouldStartWith("Silverback.Messaging.Messages.BinaryMessage, Silverback.Integration,");
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class BinaryMessageSerializerTests
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeSameAs(messageStream);
+        serialized.ShouldBeSameAs(messageStream);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class BinaryMessageSerializerTests
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+        serialized.ReadAll().ShouldBe(messageBytes);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class BinaryMessageSerializerTests
 
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        result.Should().BeSameAs(message.Content);
+        result.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class BinaryMessageSerializerTests
 
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        result.Should().BeSameAs(message.Content);
+        result.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class BinaryMessageSerializerTests
 
         Func<Task> act = async () => await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        await act.Should().ThrowAsync<ArgumentException>();
+        await act.ShouldThrowAsync<ArgumentException>();
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class BinaryMessageSerializerTests
             [],
             TestProducerEndpoint.GetDefault());
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class BinaryMessageSerializerTests
         Stream? serialized = await new BinaryMessageSerializer()
             .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeNull();
+        serialized.ShouldBeNull();
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class BinaryMessageSerializerTests
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class BinaryMessageSerializerTests
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     private sealed class InheritedBinaryMessage : BinaryMessage;

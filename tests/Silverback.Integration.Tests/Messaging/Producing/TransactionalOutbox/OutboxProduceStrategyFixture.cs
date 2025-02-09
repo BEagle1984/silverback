@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -18,7 +18,7 @@ public class OutboxProduceStrategyFixture
         OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
         OutboxProduceStrategy strategy2 = new(new TestSettings("outbox"));
 
-        strategy1.Equals(strategy2).Should().BeTrue();
+        strategy1.Equals(strategy2).ShouldBeTrue();
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class OutboxProduceStrategyFixture
         OutboxProduceStrategy strategy1 = new(new TestSettings("outbox"));
         DefaultProduceStrategy strategy2 = new();
 
-        strategy1.Equals(strategy2).Should().BeFalse();
+        strategy1.Equals(strategy2).ShouldBeFalse();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class OutboxProduceStrategyFixture
         OutboxProduceStrategy strategy1 = new(new TestSettings("outbox1"));
         OutboxProduceStrategy strategy2 = new(new TestSettings("outbox2"));
 
-        strategy1.Equals(strategy2).Should().BeFalse();
+        strategy1.Equals(strategy2).ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing")]

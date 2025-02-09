@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -74,12 +74,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -88,12 +88,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -144,12 +144,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -158,12 +158,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -214,12 +214,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -228,12 +228,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -284,12 +284,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -298,12 +298,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -354,12 +354,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -368,12 +368,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -420,12 +420,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -434,12 +434,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     // This is to reproduce an issue that caused a deadlock, since the SubscribedMethodInvoker wasn't
@@ -496,12 +496,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 16; i <= 20; i++)
         {
@@ -510,12 +510,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     [Fact]
@@ -562,8 +562,8 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches1 >= 2);
 
-        receivedBatches1.Should().Be(2);
-        receivedBatches2.Should().Be(0);
+        receivedBatches1.ShouldBe(2);
+        receivedBatches2.ShouldBe(0);
     }
 
     [Fact]
@@ -623,11 +623,11 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 8);
 
-        receivedBatches.Sum(batch => batch.Count).Should().Be(8);
-        receivedBatches.Should().HaveCount(3);
-        completedBatches.Should().Be(2);
-        exitedSubscribers.Should().Be(2);
-        areOverlapping.Should().BeFalse();
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(8);
+        receivedBatches.Count.ShouldBe(3);
+        completedBatches.ShouldBe(2);
+        exitedSubscribers.ShouldBe(2);
+        areOverlapping.ShouldBeFalse();
     }
 
     [Fact]
@@ -676,12 +676,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        completedBatches.Should().Be(2);
-        receivedBatches[0].Count.Should().Be(1);
-        receivedBatches[1].Count.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        completedBatches.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(1);
+        receivedBatches[1].Count.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -731,12 +731,12 @@ public partial class BatchProcessingFixture : KafkaFixture
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        completedBatches.Should().Be(2);
-        receivedBatches[0].Count.Should().Be(1);
-        receivedBatches[1].Count.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        completedBatches.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(1);
+        receivedBatches[1].Count.ShouldBe(1);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -786,12 +786,12 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(1);
-        receivedBatches[0].Should().HaveCount(1);
+        receivedBatches.Count.ShouldBe(1);
+        receivedBatches[0].Count.ShouldBe(1);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.Client.Status.ShouldBe(ClientStatus.Disconnected);
     }
 
     [Fact]
@@ -845,9 +845,9 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(2);
-        receivedBatches[1].Should().HaveCount(2);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(2);
+        receivedBatches[1].Count.ShouldBe(2);
+        completedBatches.ShouldBe(2);
     }
 }

@@ -5,9 +5,9 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -49,15 +49,15 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.ShouldBe("other-topic");
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
-        messages.Should().HaveCount(1);
-        messages[0].Payload.ToArray().Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages.Count.ShouldBe(1);
+        messages[0].Payload.ToArray().ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 
     [Fact]
@@ -99,10 +99,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
-        tryCount.Should().Be(11);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(11);
+        tryCount.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(11);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
 
     [Fact]
@@ -140,16 +140,16 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        tryCount.Should().Be(2);
+        tryCount.ShouldBe(2);
 
-        Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
-        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.Should().Be("other-topic");
+        Helper.Spy.OutboundEnvelopes[1].Message.ShouldBeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+        Helper.Spy.OutboundEnvelopes[1].GetEndpoint().RawName.ShouldBe("other-topic");
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
-        messages.Should().HaveCount(1);
-        messages[0].Payload.ToArray().Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages.Count.ShouldBe(1);
+        messages[0].Payload.ToArray().ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 }

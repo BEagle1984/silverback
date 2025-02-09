@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Enrichers;
@@ -29,8 +29,8 @@ public class GenericOutboundHeadersEnricherFixture
 
         enricher.Enrich(envelope);
 
-        envelope.Headers.Should().HaveCount(1);
-        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "content") });
+        envelope.Headers.Count.ShouldBe(1);
+        envelope.Headers.ShouldBe(new[] { new MessageHeader("x-test", "content") });
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public class GenericOutboundHeadersEnricherFixture
         enricher.Enrich(envelopeEventOne);
         enricher.Enrich(envelopeEventTwo);
 
-        envelopeEventOne.Headers.Should().HaveCount(1);
-        envelopeEventTwo.Headers.Should().BeEmpty();
+        envelopeEventOne.Headers.Count.ShouldBe(1);
+        envelopeEventTwo.Headers.ShouldBeEmpty();
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class GenericOutboundHeadersEnricherFixture
         enricher.Enrich(envelopeEventTwo);
         enricher.Enrich(envelopeBinaryMessage);
 
-        envelopeEventOne.Headers.Should().HaveCount(1);
-        envelopeEventTwo.Headers.Should().HaveCount(1);
-        envelopeBinaryMessage.Headers.Should().BeEmpty();
+        envelopeEventOne.Headers.Count.ShouldBe(1);
+        envelopeEventTwo.Headers.Count.ShouldBe(1);
+        envelopeBinaryMessage.Headers.ShouldBeEmpty();
     }
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
@@ -14,7 +14,7 @@ public class ParsedTopicFixture
     {
         ParsedTopic parsedTopic = new("test");
 
-        parsedTopic.Topic.Should().Be("test");
+        parsedTopic.Topic.ShouldBe("test");
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class ParsedTopicFixture
     {
         ParsedTopic parsedTopic = new("$share/group/test");
 
-        parsedTopic.Topic.Should().Be("test");
+        parsedTopic.Topic.ShouldBe("test");
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class ParsedTopicFixture
     {
         ParsedTopic parsedTopic = new("test");
 
-        parsedTopic.Regex.Should().BeNull();
+        parsedTopic.Regex.ShouldBeNull();
     }
 
     [Theory]
@@ -42,7 +42,7 @@ public class ParsedTopicFixture
         ParsedTopic parsedTopic = new(topic);
 
         parsedTopic.Regex.ShouldNotBeNull();
-        parsedTopic.Regex.ToString().Should().Be(regex);
+        parsedTopic.Regex.ToString().ShouldBe(regex);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ParsedTopicFixture
     {
         ParsedTopic parsedTopic = new("test");
 
-        parsedTopic.SharedSubscriptionGroup.Should().BeNull();
+        parsedTopic.SharedSubscriptionGroup.ShouldBeNull();
     }
 
     [Fact]
@@ -58,6 +58,6 @@ public class ParsedTopicFixture
     {
         ParsedTopic parsedTopic = new("$share/group/test");
 
-        parsedTopic.SharedSubscriptionGroup.Should().Be("group");
+        parsedTopic.SharedSubscriptionGroup.ShouldBe("group");
     }
 }

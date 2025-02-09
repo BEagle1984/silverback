@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -17,7 +17,7 @@ public class EnumerableFirstExtensionsFixture
 
         object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int));
 
-        result.Should().Be(1);
+        result.ShouldBe(1);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class EnumerableFirstExtensionsFixture
 
         object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int intItem && intItem == 2));
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -37,6 +37,6 @@ public class EnumerableFirstExtensionsFixture
 
         int result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item % 2 == 0));
 
-        result.Should().Be(0);
+        result.ShouldBe(0);
     }
 }

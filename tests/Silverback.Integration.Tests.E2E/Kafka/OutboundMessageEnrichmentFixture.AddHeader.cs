@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -38,9 +38,9 @@ public partial class OutboundMessageEnrichmentFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
     }
 
     [Fact]
@@ -69,10 +69,10 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventTwo());
         await publisher.PublishEventAsync(new TestEventThree());
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().NotContain(header => header.Name == "x-something");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldNotContain(header => header.Name == "x-something");
     }
 
     [Fact]
@@ -101,11 +101,11 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().NotContain(header => header.Name == "x-something");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldNotContain(header => header.Name == "x-something");
     }
 
     [Fact]
@@ -134,11 +134,11 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().NotContain(header => header.Name == "x-something");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldNotContain(header => header.Name == "x-something");
     }
 
     [Fact]
@@ -166,10 +166,10 @@ public partial class OutboundMessageEnrichmentFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "two" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "three" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "three");
     }
 
     [Fact]
@@ -219,9 +219,9 @@ public partial class OutboundMessageEnrichmentFixture
             {
             });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-something" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-something" && header.Value == "three");
     }
 }

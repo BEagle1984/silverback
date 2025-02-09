@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.SchemaRegistry;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
 using Xunit;
@@ -20,7 +20,7 @@ public class SchemaRegistryClientFactoryFixture
 
         ISchemaRegistryClient client = _clientFactory.GetClient(configuration);
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class SchemaRegistryClientFactoryFixture
         ISchemaRegistryClient client1 = _clientFactory.GetClient(configuration);
         ISchemaRegistryClient client2 = _clientFactory.GetClient(configuration);
 
-        client1.Should().BeSameAs(client2);
+        client1.ShouldBeSameAs(client2);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class SchemaRegistryClientFactoryFixture
         ISchemaRegistryClient client1 = _clientFactory.GetClient(configuration1);
         ISchemaRegistryClient client2 = _clientFactory.GetClient(configuration2);
 
-        client1.Should().BeSameAs(client2);
+        client1.ShouldBeSameAs(client2);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class SchemaRegistryClientFactoryFixture
         ISchemaRegistryClient client1 = _clientFactory.GetClient(configuration1);
         ISchemaRegistryClient client2 = _clientFactory.GetClient(configuration2);
 
-        client1.Should().NotBeSameAs(client2);
+        client1.ShouldNotBeSameAs(client2);
     }
 
     private static KafkaSchemaRegistryConfiguration GetValidConfiguration() =>

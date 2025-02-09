@@ -6,9 +6,9 @@ using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -73,11 +73,11 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -126,11 +126,11 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -179,11 +179,11 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
     }
 
     [Fact]
@@ -238,8 +238,8 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(0);
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
@@ -258,10 +258,10 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(6);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"commit {i}"));
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), ignoreOrder: true);
     }
 }

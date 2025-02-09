@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -40,11 +40,11 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().NotContain(header => header.Name == "x-message-id");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldNotContain(header => header.Name == "x-message-id");
     }
 
     [Fact]
@@ -72,11 +72,11 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().NotContain(header => header.Name == "x-message-id");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(4);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "three");
+        Helper.Spy.OutboundEnvelopes[3].Headers.ShouldNotContain(header => header.Name == "x-message-id");
     }
 
     [Fact]
@@ -104,9 +104,9 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().NotContain(header => header.Name == "x-message-id");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+        Helper.Spy.OutboundEnvelopes[0].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "one");
+        Helper.Spy.OutboundEnvelopes[1].Headers.ShouldContain(header => header.Name == "x-message-id" && header.Value == "two");
+        Helper.Spy.OutboundEnvelopes[2].Headers.ShouldNotContain(header => header.Name == "x-message-id");
     }
 }

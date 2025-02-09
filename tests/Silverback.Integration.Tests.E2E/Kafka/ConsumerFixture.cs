@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -67,16 +67,16 @@ public class ConsumerFixture : KafkaFixture
         }
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Sum() == 6);
-        receivedMessages.Sum().Should().Be(6);
-        receivedMessages[pausedPartition.Partition].Should().Be(0); // First + message ready in queue
+        receivedMessages.Sum().ShouldBe(6);
+        receivedMessages[pausedPartition.Partition].ShouldBe(0); // First + message ready in queue
 
         consumer.Resume([pausedPartition]);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        receivedMessages.Sum().Should().Be(9);
-        receivedMessages[0].Should().Be(3);
-        receivedMessages[1].Should().Be(3);
-        receivedMessages[2].Should().Be(3);
+        receivedMessages.Sum().ShouldBe(9);
+        receivedMessages[0].ShouldBe(3);
+        receivedMessages[1].ShouldBe(3);
+        receivedMessages[2].ShouldBe(3);
     }
 
     [Fact]
@@ -116,18 +116,18 @@ public class ConsumerFixture : KafkaFixture
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        receivedMessages.Sum().Should().Be(9);
-        receivedMessages[0].Should().Be(3);
-        receivedMessages[1].Should().Be(3);
-        receivedMessages[2].Should().Be(3);
+        receivedMessages.Sum().ShouldBe(9);
+        receivedMessages[0].ShouldBe(3);
+        receivedMessages[1].ShouldBe(3);
+        receivedMessages[2].ShouldBe(3);
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
         consumer.Seek(new TopicPartitionOffset(DefaultTopicName, 1, 0));
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Sum() >= 12);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        receivedMessages.Sum().Should().Be(12);
-        receivedMessages[1].Should().Be(6);
+        receivedMessages.Sum().ShouldBe(12);
+        receivedMessages[1].ShouldBe(6);
     }
 
     [Fact]
@@ -176,17 +176,17 @@ public class ConsumerFixture : KafkaFixture
             await producer.ProduceAsync(new TestEventOne(), cancellationToken: CancellationToken.None);
 
             await AsyncTestingUtil.WaitAsync(() => received);
-            received.Should().BeTrue();
+            received.ShouldBeTrue();
 
             consumer.StopAsync().FireAndForget();
 
             await AsyncTestingUtil.WaitAsync(() => cancelled);
-            cancelled.Should().BeTrue();
-            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+            cancelled.ShouldBeTrue();
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
 
             semaphore.Release();
             await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
-            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+            consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
         }
         finally
         {

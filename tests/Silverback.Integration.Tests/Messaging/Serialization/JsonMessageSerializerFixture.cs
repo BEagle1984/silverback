@@ -4,7 +4,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -27,7 +27,7 @@ public class JsonMessageSerializerFixture
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
         byte[] expected = "{\"Content\":\"the message\"}"u8.ToArray();
-        serialized.ReadAll().Should().BeEquivalentTo(expected);
+        serialized.ReadAll().ShouldBe(expected);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class JsonMessageSerializerFixture
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+        headers.GetValue("x-message-type").ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class JsonMessageSerializerFixture
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        headers.GetValue("x-message-type").Should().BeNull();
+        headers.GetValue("x-message-type").ShouldBeNull();
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class JsonMessageSerializerFixture
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeSameAs(messageStream);
+        serialized.ShouldBeSameAs(messageStream);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class JsonMessageSerializerFixture
             [],
             TestProducerEndpoint.GetDefault());
 
-        serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+        serialized.ReadAll().ShouldBe(messageBytes);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class JsonMessageSerializerFixture
         Stream? serialized = await serializer
             .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
-        serialized.Should().BeNull();
+        serialized.ShouldBeNull();
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class JsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public class JsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class JsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -159,6 +159,6 @@ public class JsonMessageSerializerFixture
 
         bool result = Equals(serializer1, serializer2);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

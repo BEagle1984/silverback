@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Consuming.Transaction;
 using Xunit;
@@ -21,7 +21,7 @@ public class SilverbackContextConsumerPipelineContextExtensionsFixture
         context.SetConsumerPipelineContext(pipelineContext);
 
         context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? storedPipelineContext);
-        storedPipelineContext.Should().BeSameAs(pipelineContext);
+        storedPipelineContext.ShouldBeSameAs(pipelineContext);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class SilverbackContextConsumerPipelineContextExtensionsFixture
 
         ConsumerPipelineContext result = context.GetConsumerPipelineContext();
 
-        result.Should().BeSameAs(pipelineContext);
+        result.ShouldBeSameAs(pipelineContext);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class SilverbackContextConsumerPipelineContextExtensionsFixture
 
         Action act = () => context.GetConsumerPipelineContext();
 
-        act.Should().Throw<InvalidOperationException>();
+        act.ShouldThrow<InvalidOperationException>();
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public class SilverbackContextConsumerPipelineContextExtensionsFixture
 
         bool result = context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? storedPipelineContext);
 
-        result.Should().BeTrue();
-        storedPipelineContext.Should().BeSameAs(pipelineContext);
+        result.ShouldBeTrue();
+        storedPipelineContext.ShouldBeSameAs(pipelineContext);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class SilverbackContextConsumerPipelineContextExtensionsFixture
 
         bool result = context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? storedPipelineContext);
 
-        result.Should().BeFalse();
-        storedPipelineContext.Should().BeNull();
+        result.ShouldBeFalse();
+        storedPipelineContext.ShouldBeNull();
     }
 }

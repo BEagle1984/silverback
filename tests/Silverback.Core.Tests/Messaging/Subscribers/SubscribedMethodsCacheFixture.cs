@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -31,7 +31,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class SubscribedMethodsCacheFixture
 
         bool result = cache.HasMessageStreamSubscriber(new Envelope<TestEventOne>(), serviceProvider);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     private record Envelope<T>(T? Message = default) : IEnvelope<T>

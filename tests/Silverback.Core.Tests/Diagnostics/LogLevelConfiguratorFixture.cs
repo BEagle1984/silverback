@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Shouldly;
 using Silverback.Diagnostics;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class LogLevelConfiguratorFixture
 
         configurator.LogLevelDictionary[eventId]
             .Invoke(null, LogLevel.None, new Lazy<string>())
-            .Should().Be(LogLevel.Warning);
+            .ShouldBe(LogLevel.Warning);
     }
 
     [Fact]
@@ -36,10 +36,10 @@ public class LogLevelConfiguratorFixture
 
         configurator.LogLevelDictionary[eventId]
             .Invoke(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
-            .Should().Be(LogLevel.Critical);
+            .ShouldBe(LogLevel.Critical);
         configurator.LogLevelDictionary[eventId]
             .Invoke(new ArithmeticException(), LogLevel.None, new Lazy<string>())
-            .Should().Be(LogLevel.Error);
+            .ShouldBe(LogLevel.Error);
     }
 
     [Fact]
@@ -54,9 +54,9 @@ public class LogLevelConfiguratorFixture
 
         configurator.LogLevelDictionary[eventId]
             .Invoke(new InvalidOperationException(), LogLevel.None, new Lazy<string>())
-            .Should().Be(LogLevel.Critical);
+            .ShouldBe(LogLevel.Critical);
         configurator.LogLevelDictionary[eventId]
             .Invoke(new ArithmeticException(), LogLevel.None, new Lazy<string>())
-            .Should().Be(LogLevel.Error);
+            .ShouldBe(LogLevel.Error);
     }
 }

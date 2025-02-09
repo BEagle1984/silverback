@@ -2,8 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -26,36 +27,19 @@ public class EnumerableSortExtensionsFixture
 
         IEnumerable<Item> sorted = items.SortBySortIndex();
 
-        sorted.Should().BeEquivalentTo(
-            new[]
-            {
-                new SortedItem(-100),
-                new SortedItem(-50),
-                new Item("unsorted3"),
-                new Item("unsorted2"),
-                new SortedItem(50),
-                new SortedItem(100)
-            });
+        sorted.ShouldBe(
+        [
+            new SortedItem(-100),
+            new SortedItem(-50),
+            new Item("unsorted3"),
+            new Item("unsorted2"),
+            new SortedItem(50),
+            new SortedItem(100)
+        ]);
     }
 
-    private class Item
-    {
-        public Item(string id)
-        {
-            Id = id;
-        }
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Needed for testing")]
+    private record Item(string Id);
 
-        public string Id { get; }
-    }
-
-    private sealed class SortedItem : Item, ISorted
-    {
-        public SortedItem(int sortIndex)
-            : base(sortIndex.ToString(CultureInfo.InvariantCulture))
-        {
-            SortIndex = sortIndex;
-        }
-
-        public int SortIndex { get; }
-    }
+    private sealed record SortedItem(int SortIndex) : Item(SortIndex.ToString(CultureInfo.InvariantCulture)), ISorted;
 }

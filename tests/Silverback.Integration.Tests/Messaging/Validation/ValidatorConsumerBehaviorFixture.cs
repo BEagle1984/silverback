@@ -2,14 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -52,28 +51,30 @@ public class ValidatorConsumerBehaviorFixture
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not working")]
     public static TheoryData<TestValidationMessage> HandleAsync_ShouldNotLog_WhenModeNone_TestData =>
+    [
         new()
         {
-            new TestValidationMessage
-            {
-                Id = "1",
-                String10 = "123456789abc",
-                IntRange = 5,
-                NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                String10 = "123456", IntRange = 5, NumbersOnly = "123"
-            },
-            new TestValidationMessage
-            {
-                Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
-            }
-        };
+            Id = "1",
+            String10 = "123456789abc",
+            IntRange = 5,
+            NumbersOnly = "123"
+        },
+
+        new()
+        {
+            Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
+        },
+
+        new()
+        {
+            String10 = "123456", IntRange = 5, NumbersOnly = "123"
+        },
+
+        new()
+        {
+            Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
+        }
+    ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     public static TheoryData<TestValidationMessage, string> HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData =>
@@ -157,8 +158,8 @@ public class ValidatorConsumerBehaviorFixture
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
+        result.ShouldNotBeNull();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
     }
 
     [Theory]
@@ -190,9 +191,9 @@ public class ValidatorConsumerBehaviorFixture
                 return default;
             },
             CancellationToken.None).AsTask();
-        await act.Should().NotThrowAsync<ValidationException>();
-        result.Should().NotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
+        await act.ShouldNotThrowAsync();
+        result.ShouldNotBeNull();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
     }
 
     [Theory]
@@ -222,7 +223,7 @@ public class ValidatorConsumerBehaviorFixture
             },
             CancellationToken.None);
 
-        result.Should().NotBeNull();
+        result.ShouldNotBeNull();
         expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1082);
     }
@@ -255,7 +256,8 @@ public class ValidatorConsumerBehaviorFixture
             },
             CancellationToken.None).AsTask();
 
-        await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
-        result.Should().BeNull();
+        Exception exception = await act.ShouldThrowAsync<MessageValidationException>();
+        exception.Message.ShouldBe(expectedMessage);
+        result.ShouldBeNull();
     }
 }

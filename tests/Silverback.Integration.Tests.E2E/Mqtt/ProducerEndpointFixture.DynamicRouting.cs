@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -48,16 +48,16 @@ public partial class ProducerEndpointFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(1);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(1);
+        Helper.GetMessages("topic1").Count.ShouldBe(1);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(2);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(2);
+        Helper.GetMessages("topic1").Count.ShouldBe(2);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(2);
     }
 
     [Fact]
@@ -92,16 +92,16 @@ public partial class ProducerEndpointFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(1);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(1);
+        Helper.GetMessages("topic1").Count.ShouldBe(1);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(2);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(2);
+        Helper.GetMessages("topic1").Count.ShouldBe(2);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(2);
     }
 
     [Fact]
@@ -127,16 +127,16 @@ public partial class ProducerEndpointFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(1);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(1);
+        Helper.GetMessages("topic1").Count.ShouldBe(1);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(1);
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
-        Helper.GetMessages("topic1").Should().HaveCount(2);
-        Helper.GetMessages("topic2").Should().HaveCount(1);
-        Helper.GetMessages("topic3").Should().HaveCount(2);
+        Helper.GetMessages("topic1").Count.ShouldBe(2);
+        Helper.GetMessages("topic2").Count.ShouldBe(1);
+        Helper.GetMessages("topic3").Count.ShouldBe(2);
     }
 
     [Fact]
@@ -166,8 +166,8 @@ public partial class ProducerEndpointFixture
             },
             envelope => envelope.SetMqttDestinationTopic(envelope.MessageType == typeof(TestEventOne) ? "topic1" : "topic2"));
 
-        Helper.GetMessages("topic1").Should().HaveCount(3);
-        Helper.GetMessages("topic2").Should().HaveCount(2);
+        Helper.GetMessages("topic1").Count.ShouldBe(3);
+        Helper.GetMessages("topic2").Count.ShouldBe(2);
     }
 
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>

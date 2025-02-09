@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Tests.Types.Domain;
@@ -22,8 +22,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic("response-topic");
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -34,8 +34,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic<TestEventOne>("response-topic");
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic(message => message?.Content);
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -58,8 +58,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic<TestEventOne>(message => message?.Content);
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -70,8 +70,8 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic(envelope => envelope.GetMessageId());
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").SetResponseTopic<TestEventOne>(envelope => envelope.GetMessageId());
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.MessageEnrichers.Should().HaveCount(1);
-        configuration.MessageEnrichers.Single().Should().BeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Count.ShouldBe(1);
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
     }
 }

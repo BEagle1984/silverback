@@ -5,8 +5,8 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -74,7 +74,7 @@ public partial class BrokerClientCallbacksFixture
         await AsyncTestingUtil.WaitAsync(() => callbackKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 8);
 
         // There are 3 partitions and 1 message will be published, so a total of 4 EOF callbacks per consumer are expected
-        callbackKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(8);
+        callbackKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.ShouldBe(8);
     }
 
     private sealed class KafkaPartitionEofCallback : IKafkaPartitionEofCallback

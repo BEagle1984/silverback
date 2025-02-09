@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -49,17 +49,15 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventOne).AssemblyQualifiedName);
-        Helper.Spy.OutboundEnvelopes[1].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventTwo).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes[1].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventTwo).AssemblyQualifiedName);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
-        Helper.Spy.InboundEnvelopes[1].GetRawMessageAsString().Should().Be("{\"ContentEventTwo\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<TestEventTwo>();
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventTwo>().ContentEventTwo.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
+        Helper.Spy.InboundEnvelopes[1].GetRawMessageAsString().ShouldBe("{\"ContentEventTwo\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventTwo>().ContentEventTwo.ShouldBe("Hello E2E!");
     }
 
     [Fact]
@@ -85,13 +83,12 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventOne).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
     }
 
     [Fact]
@@ -117,13 +114,12 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.MessageType).ShouldBeNull();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
     }
 
     [Fact]
@@ -150,17 +146,15 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventOne).AssemblyQualifiedName);
-        Helper.Spy.OutboundEnvelopes[1].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventTwo).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes[1].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventTwo).AssemblyQualifiedName);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
-        Helper.Spy.InboundEnvelopes[1].GetRawMessageAsString().Should().Be("{\"ContentEventTwo\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<TestEventTwo>();
-        Helper.Spy.InboundEnvelopes[1].Message.As<TestEventTwo>().ContentEventTwo.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
+        Helper.Spy.InboundEnvelopes[1].GetRawMessageAsString().ShouldBe("{\"ContentEventTwo\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventTwo>().ContentEventTwo.ShouldBe("Hello E2E!");
     }
 
     [Fact]
@@ -186,13 +180,12 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].Should().BeEquivalentTo(typeof(TestEventOne).AssemblyQualifiedName);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageType].ShouldBe(typeof(TestEventOne).AssemblyQualifiedName);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
     }
 
     [Fact]
@@ -218,12 +211,11 @@ public class JsonSerializationFixture : MqttFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.MessageType).ShouldBeNull();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().Should().Be("{\"ContentEventOne\":\"Hello E2E!\"}");
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Hello E2E!");
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].GetRawMessageAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E!\"}");
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Hello E2E!");
     }
 }

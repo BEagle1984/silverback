@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -21,12 +21,12 @@ public class InMemoryOutboxFactoryFixture
         InMemoryOutbox outboxB2 = factory.GetOutbox(new InMemoryOutboxSettings("B"));
         InMemoryOutbox outboxC = factory.GetOutbox(new MyOutboxSettings());
 
-        outboxA1.Should().BeSameAs(outboxA2);
-        outboxB1.Should().BeSameAs(outboxB2);
-        outboxA1.Should().NotBeSameAs(outboxB1);
-        outboxA2.Should().NotBeSameAs(outboxB2);
-        outboxC.Should().NotBeSameAs(outboxA1);
-        outboxC.Should().NotBeSameAs(outboxB1);
+        outboxA1.ShouldBeSameAs(outboxA2);
+        outboxB1.ShouldBeSameAs(outboxB2);
+        outboxA1.ShouldNotBeSameAs(outboxB1);
+        outboxA2.ShouldNotBeSameAs(outboxB2);
+        outboxC.ShouldNotBeSameAs(outboxA1);
+        outboxC.ShouldNotBeSameAs(outboxB1);
     }
 
     private record MyOutboxSettings : OutboxSettings

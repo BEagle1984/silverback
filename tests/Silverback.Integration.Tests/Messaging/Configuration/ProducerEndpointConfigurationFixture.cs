@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -25,7 +25,7 @@ public class ProducerEndpointConfigurationFixture
             EndpointResolver = endpointResolver
         };
 
-        configuration.RawName.Should().Be("raw-name");
+        configuration.RawName.ShouldBe("raw-name");
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow<BrokerConfigurationException>();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Theory]
@@ -81,7 +81,8 @@ public class ProducerEndpointConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("A unique friendly name for the endpoint is required when using the outbox produce strategy.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("A unique friendly name for the endpoint is required when using the outbox produce strategy.");
     }
 
     private static TestProducerEndpointConfiguration GetValidConfiguration() => new("test");

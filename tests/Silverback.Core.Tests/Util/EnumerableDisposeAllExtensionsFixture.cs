@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -23,9 +23,9 @@ public class EnumerableDisposeAllExtensionsFixture
 
         await objects.DisposeAllAsync();
 
-        objects[0].As<IMustDispose>().IsDisposed.Should().BeTrue();
-        objects[2].As<IMustDispose>().IsDisposed.Should().BeTrue();
-        objects[3].As<IMustDispose>().IsDisposed.Should().BeTrue();
+        objects[0].ShouldBeAssignableTo<IMustDispose>().IsDisposed.ShouldBeTrue();
+        objects[2].ShouldBeAssignableTo<IMustDispose>().IsDisposed.ShouldBeTrue();
+        objects[3].ShouldBeAssignableTo<IMustDispose>().IsDisposed.ShouldBeTrue();
     }
 
     [Fact]
@@ -35,10 +35,10 @@ public class EnumerableDisposeAllExtensionsFixture
 
         await objects.DisposeAllAsync();
 
-        objects[0].AsyncDisposed.Should().BeTrue();
-        objects[0].SyncDisposed.Should().BeFalse();
-        objects[1].AsyncDisposed.Should().BeTrue();
-        objects[1].SyncDisposed.Should().BeFalse();
+        objects[0].AsyncDisposed.ShouldBeTrue();
+        objects[0].SyncDisposed.ShouldBeFalse();
+        objects[1].AsyncDisposed.ShouldBeTrue();
+        objects[1].SyncDisposed.ShouldBeFalse();
     }
 
     private class Disposable : IDisposable, IMustDispose

@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -44,7 +44,7 @@ public class SerializerProducerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        result.RawMessage.ReadAll().Should().BeEquivalentTo("{\"Content\":\"test\"}"u8.ToArray());
+        result.RawMessage.ReadAll().ShouldBe("{\"Content\":\"test\"}"u8.ToArray());
     }
 
     [Fact]
@@ -72,9 +72,9 @@ public class SerializerProducerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        result.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
-        result.Message.Should().BeNull();
-        result.RawMessage.Should().BeNull();
-        result.IsTombstone.Should().BeTrue();
+        result.ShouldBeOfType<OutboundEnvelope<TestEventOne>>();
+        result.Message.ShouldBeNull();
+        result.RawMessage.ShouldBeNull();
+        result.IsTombstone.ShouldBeTrue();
     }
 }

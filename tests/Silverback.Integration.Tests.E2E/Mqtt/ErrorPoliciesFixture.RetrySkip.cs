@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -50,7 +50,7 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        tryCount.Should().Be(11);
-        DefaultClientSession.GetPendingMessagesCount().Should().Be(0);
+        tryCount.ShouldBe(11);
+        DefaultClientSession.GetPendingMessagesCount().ShouldBe(0);
     }
 }

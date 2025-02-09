@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Storage;
@@ -46,8 +46,8 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
 
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
-        handle.Should().NotBeNull();
-        handle.LockLostToken.IsCancellationRequested.Should().BeFalse();
+        handle.ShouldNotBeNull();
+        handle.LockLostToken.IsCancellationRequested.ShouldBeFalse();
     }
 
     [Fact]
@@ -86,21 +86,21 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         DistributedLockHandle handleA = await await Task.WhenAny(taskA1, taskA2);
         DistributedLockHandle handleB = await await Task.WhenAny(taskB1, taskB2);
 
-        handleA.Should().NotBeNull();
-        handleB.Should().NotBeNull();
+        handleA.ShouldNotBeNull();
+        handleB.ShouldNotBeNull();
 
         await Task.Delay(100);
 
-        (taskA1.IsCompleted ^ taskA2.IsCompleted).Should().BeTrue();
-        (taskB1.IsCompleted ^ taskB2.IsCompleted).Should().BeTrue();
+        (taskA1.IsCompleted ^ taskA2.IsCompleted).ShouldBeTrue();
+        (taskB1.IsCompleted ^ taskB2.IsCompleted).ShouldBeTrue();
 
         await handleA.DisposeAsync();
         handleB.Dispose();
 
         await Task.WhenAll(taskA1, taskA2, taskB1, taskB2);
 
-        (taskA1.IsCompleted & taskA2.IsCompleted).Should().BeTrue();
-        (taskB1.IsCompleted & taskB2.IsCompleted).Should().BeTrue();
+        (taskA1.IsCompleted & taskA2.IsCompleted).ShouldBeTrue();
+        (taskB1.IsCompleted & taskB2.IsCompleted).ShouldBeTrue();
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);
 
         handle = await distributedLock2.AcquireAsync();
-        handle.Should().NotBeNull();
+        handle.ShouldNotBeNull();
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         handle.Dispose();
         Action act = handle.Dispose;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);
 
         handle = await distributedLock2.AcquireAsync();
-        handle.Should().NotBeNull();
+        handle.ShouldNotBeNull();
     }
 
     [Fact]
@@ -198,7 +198,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         await handle.DisposeAsync();
         Func<Task> act = () => handle.DisposeAsync().AsTask();
 
-        await act.Should().NotThrowAsync();
+        await act.ShouldNotThrowAsync();
     }
 
     [Fact]
@@ -225,6 +225,6 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         await Task.Delay(1000);
 
         DateTime lastHeartbeat = dataAccess.ExecuteScalar<DateTime>($"SELECT LastHeartbeat FROM \"{_lockSettings.TableName}\" WHERE LockName = 'test-lock'", null, TimeSpan.FromSeconds(1));
-        lastHeartbeat.Should().BeAfter(initialHeartbeat);
+        lastHeartbeat.ShouldBeGreaterThan(initialHeartbeat);
     }
 }

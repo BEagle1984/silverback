@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Tests.Types;
 using Xunit;
@@ -23,8 +23,8 @@ public class ConsumerCollectionFixture
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);
 
-        consumerCollection.Should().HaveCount(2);
-        consumerCollection.Should().BeEquivalentTo(new[] { consumer1, consumer2 });
+        consumerCollection.Count.ShouldBe(2);
+        consumerCollection.ShouldBe(new[] { consumer1, consumer2 });
     }
 
     [Fact]
@@ -46,36 +46,37 @@ public class ConsumerCollectionFixture
 
         IConsumer consumer2 = Substitute.For<IConsumer>();
         consumer2.EndpointsConfiguration.Returns(
-            [
-                new TestConsumerEndpointConfiguration("topic1")
-                {
-                    FriendlyName = "three"
-                },
-                new TestConsumerEndpointConfiguration("topic2")
-                {
-                    FriendlyName = "four"
-                }
-            ]);
+        [
+            new TestConsumerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "three"
+            },
+            new TestConsumerEndpointConfiguration("topic2")
+            {
+                FriendlyName = "four"
+            }
+        ]);
 
         IConsumer consumer3 = Substitute.For<IConsumer>();
         consumer3.EndpointsConfiguration.Returns(
-            [
-                new TestConsumerEndpointConfiguration("topic1")
-                {
-                    FriendlyName = "five"
-                },
-                new TestConsumerEndpointConfiguration("topic2")
-                {
-                    FriendlyName = "four"
-                }
-            ]);
+        [
+            new TestConsumerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "five"
+            },
+            new TestConsumerEndpointConfiguration("topic2")
+            {
+                FriendlyName = "four"
+            }
+        ]);
 
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);
 
         Action act = () => consumerCollection.Add(consumer3);
 
-        act.Should().Throw<InvalidOperationException>().WithMessage("A consumer endpoint with the name 'four' has already been added.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("A consumer endpoint with the name 'four' has already been added.");
     }
 
     [Fact]
@@ -90,11 +91,11 @@ public class ConsumerCollectionFixture
 
         using IEnumerator<IConsumer> enumerator = consumerCollection.GetEnumerator();
         enumerator.MoveNext();
-        enumerator.Current.Should().Be(consumer1);
+        enumerator.Current.ShouldBe(consumer1);
         enumerator.MoveNext();
-        enumerator.Current.Should().Be(consumer2);
+        enumerator.Current.ShouldBe(consumer2);
         enumerator.MoveNext();
-        enumerator.Current.Should().BeNull();
+        enumerator.Current.ShouldBeNull();
     }
 
     [Fact]
@@ -107,6 +108,6 @@ public class ConsumerCollectionFixture
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);
 
-        consumerCollection.Count.Should().Be(2);
+        consumerCollection.Count.ShouldBe(2);
     }
 }

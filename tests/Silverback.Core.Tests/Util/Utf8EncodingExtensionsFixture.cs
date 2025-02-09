@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -16,7 +16,7 @@ public class Utf8EncodingExtensionsFixture
 
         string? result = bytes.ToUtf8String();
 
-        result.Should().Be("ABC");
+        result.ShouldBe("ABC");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class Utf8EncodingExtensionsFixture
 
         string? result = bytes.ToUtf8String();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class Utf8EncodingExtensionsFixture
     {
         byte[]? result = "ABC".ToUtf8Bytes();
 
-        result.Should().Equal("ABC"u8.ToArray());
+        result.ShouldBe("ABC"u8.ToArray());
     }
 
     [Fact]
@@ -44,6 +44,6 @@ public class Utf8EncodingExtensionsFixture
 
         byte[]? result = str.ToUtf8Bytes();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 }

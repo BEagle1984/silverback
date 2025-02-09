@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Filter;
@@ -30,8 +30,8 @@ public class GenericOutboundMessageFilterFixture
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(testEventOne => testEventOne?.Content == "yes");
 
-        filter.ShouldProduce(envelope1).Should().BeTrue();
-        filter.ShouldProduce(envelope2).Should().BeFalse();
+        filter.ShouldProduce(envelope1).ShouldBeTrue();
+        filter.ShouldProduce(envelope2).ShouldBeFalse();
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class GenericOutboundMessageFilterFixture
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(envelope => envelope.Message?.Content == "yes");
 
-        filter.ShouldProduce(envelope1).Should().BeTrue();
-        filter.ShouldProduce(envelope2).Should().BeFalse();
+        filter.ShouldProduce(envelope1).ShouldBeTrue();
+        filter.ShouldProduce(envelope2).ShouldBeFalse();
     }
 
     [Fact]
@@ -65,6 +65,6 @@ public class GenericOutboundMessageFilterFixture
 
         GenericOutboundMessageFilter<TestEventTwo> filter = new(envelope => envelope.Message?.Content == "yes");
 
-        filter.ShouldProduce(testEnvelope).Should().BeFalse();
+        filter.ShouldProduce(testEnvelope).ShouldBeFalse();
     }
 }

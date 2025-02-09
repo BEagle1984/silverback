@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -25,8 +25,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
-        endpoint.Deserializer.Should().NotBeSameAs(DefaultDeserializers.Json);
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Json);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.Deserializer.Should().BeOfType<BinaryMessageDeserializer<BinaryMessage>>();
-        endpoint.Deserializer.Should().NotBeSameAs(DefaultDeserializers.Json);
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<BinaryMessage>>();
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Json);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
-        endpoint.Deserializer.Should().BeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson().Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
-        endpoint.Deserializer.Should().NotBeSameAs(DefaultDeserializers.Json);
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Json);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson().Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             .DeserializeJson(deserializer => deserializer.UseModel<TestEventOne>())
             .Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             .DeserializeJson(deserializer => deserializer.UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
+        endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -118,8 +118,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
                     }))
             .Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
-        endpoint.Deserializer.As<JsonMessageDeserializer<object>>().Options!.MaxDepth.Should().Be(42);
+        JsonMessageDeserializer<object> jsonDeserializer = endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
+        jsonDeserializer.Options!.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -138,8 +138,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
                         }))
             .Build();
 
-        endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
-        endpoint.Deserializer.As<JsonMessageDeserializer<TestEventOne>>().Options!.MaxDepth.Should().Be(42);
+        JsonMessageDeserializer<TestEventOne> jsonDeserializer = endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        jsonDeserializer.Options!.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -149,8 +149,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
-        endpoint.Deserializer.Should().BeOfType<BinaryMessageDeserializer<BinaryMessage>>();
-        endpoint.Deserializer.Should().NotBeSameAs(DefaultDeserializers.Binary);
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<BinaryMessage>>();
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Binary);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
-        endpoint.Deserializer.Should().BeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
     }
 
     [Fact]
@@ -170,7 +170,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.ConsumeBinaryMessages();
 
-        act.Should().ThrowExactly<ArgumentException>().WithMessage("The type *.TestEventOne does not implement IBinaryMessage. *");
+        Exception exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldMatch(@"The type .*\.TestEventOne does not implement IBinaryMessage\. .*");
     }
 
     [Fact]
@@ -182,8 +183,8 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             builder.ConsumeBinaryMessages();
         };
 
-        act.Should().ThrowExactly<ArgumentException>()
-            .WithMessage("The type *+BinaryMessageWithoutDefaultConstructor does not have a default constructor. *");
+        Exception exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldMatch(@"The type .*\+BinaryMessageWithoutDefaultConstructor does not have a default constructor\. .*");
     }
 
     [Fact]
@@ -195,7 +196,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             .ConsumeBinaryMessages(deserializer => deserializer.UseModel<CustomBinaryMessage>())
             .Build();
 
-        endpoint.Deserializer.Should().BeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
     }
 
     private sealed class CustomBinaryMessage : IBinaryMessage

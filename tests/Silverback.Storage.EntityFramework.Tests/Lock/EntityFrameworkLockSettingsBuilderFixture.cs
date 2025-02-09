@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class EntityFrameworkLockSettingsBuilderFixture
 
         DistributedLockSettings settings = builder.Build();
 
-        settings.Should().BeOfType<EntityFrameworkLockSettings>();
-        settings.Should().BeEquivalentTo(new EntityFrameworkLockSettings("my-lock", typeof(DbContext), GetDbContext));
+        settings.ShouldBeOfType<EntityFrameworkLockSettings>();
+        settings.ShouldBe(new EntityFrameworkLockSettings("my-lock", typeof(DbContext), GetDbContext));
     }
 }

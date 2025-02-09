@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
@@ -18,8 +18,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.Build();
 
-        settings.Should().BeOfType<PostgreSqlKafkaOffsetStoreSettings>();
-        settings.Should().BeEquivalentTo(new PostgreSqlKafkaOffsetStoreSettings("connection-string"));
+        settings.ShouldBe(new PostgreSqlKafkaOffsetStoreSettings("connection-string"));
     }
 
     [Fact]
@@ -29,7 +28,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.UseTable("test-offsetStore").Build();
 
-        settings.As<PostgreSqlKafkaOffsetStoreSettings>().TableName.Should().Be("test-offsetStore");
+        settings.ShouldBeOfType<PostgreSqlKafkaOffsetStoreSettings>().TableName.ShouldBe("test-offsetStore");
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.WithDbCommandTimeout(TimeSpan.FromSeconds(20)).Build();
 
-        settings.As<PostgreSqlKafkaOffsetStoreSettings>().DbCommandTimeout.Should().Be(TimeSpan.FromSeconds(20));
+        settings.ShouldBeOfType<PostgreSqlKafkaOffsetStoreSettings>().DbCommandTimeout.ShouldBe(TimeSpan.FromSeconds(20));
     }
 
     [Fact]
@@ -49,6 +48,6 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilderFixture
 
         KafkaOffsetStoreSettings settings = builder.WithCreateTableTimeout(TimeSpan.FromSeconds(40)).Build();
 
-        settings.As<PostgreSqlKafkaOffsetStoreSettings>().CreateTableTimeout.Should().Be(TimeSpan.FromSeconds(40));
+        settings.ShouldBeOfType<PostgreSqlKafkaOffsetStoreSettings>().CreateTableTimeout.ShouldBe(TimeSpan.FromSeconds(40));
     }
 }

@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -65,9 +65,9 @@ public class StreamPublisherTests
 
         await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 4 && receivedTestEventOnes >= 2);
 
-        receivedStreams.Should().Be(4);
-        receivedEvents.Should().Be(4);
-        receivedTestEventOnes.Should().Be(2);
+        receivedStreams.ShouldBe(4);
+        receivedEvents.ShouldBe(4);
+        receivedTestEventOnes.ShouldBe(2);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public class StreamPublisherTests
         await AsyncTestingUtil.WaitAsync(
             () => receivedEnumeratedStreams >= 1,
             TimeSpan.FromMilliseconds(500));
-        receivedEnumeratedStreams.Should().Be(0);
+        receivedEnumeratedStreams.ShouldBe(0);
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class StreamPublisherTests
 
         await Task.Delay(200);
 
-        receivedStreams.Should().Be(0);
+        receivedStreams.ShouldBe(0);
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class StreamPublisherTests
         MessageStreamProvider<IEvent> streamProvider2 = new();
 
         await Task.Delay(100);
-        receivedStreams.Should().Be(0);
+        receivedStreams.ShouldBe(0);
 
         streamPublisher.Publish(streamProvider1);
         await streamPublisher.PublishAsync(streamProvider2);
@@ -199,17 +199,17 @@ public class StreamPublisherTests
         await streamProvider1.PushAsync(new TestEventTwo());
         await Task.Delay(100);
 
-        receivedStreams.Should().Be(1);
+        receivedStreams.ShouldBe(1);
 
         await streamProvider1.PushAsync(new TestEventOne());
         await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2);
 
-        receivedStreams.Should().Be(2);
+        receivedStreams.ShouldBe(2);
 
         await streamProvider2.PushAsync(new TestEventOne());
         await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4);
 
-        receivedStreams.Should().Be(4);
+        receivedStreams.ShouldBe(4);
     }
 
     [Fact]
@@ -257,7 +257,7 @@ public class StreamPublisherTests
 
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-        await act.Should().ThrowAsync<TargetInvocationException>();
+        await act.ShouldThrowAsync<TargetInvocationException>();
     }
 
     [Fact]
@@ -299,7 +299,7 @@ public class StreamPublisherTests
 
         Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-        await act.Should().ThrowAsync<TargetInvocationException>();
+        await act.ShouldThrowAsync<TargetInvocationException>();
     }
 
     [Fact]
@@ -341,12 +341,12 @@ public class StreamPublisherTests
 
         Task whenAnyTask = await Task.WhenAny(tasks);
 
-        whenAnyTask.Status.Should().Be(TaskStatus.Faulted);
+        whenAnyTask.Status.ShouldBe(TaskStatus.Faulted);
 
         streamProvider.Abort();
 
         await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
-        tasks.All(task => task.IsCompleted).Should().BeTrue();
+        tasks.All(task => task.IsCompleted).ShouldBeTrue();
     }
 
     [Fact]
@@ -387,9 +387,9 @@ public class StreamPublisherTests
 
         await AsyncTestingUtil.WaitAsync(() => receivedEnvelopes >= 2 && receivedTestEnvelopes >= 2);
 
-        receivedStreams.Should().Be(2);
-        receivedEnvelopes.Should().Be(2);
-        receivedTestEnvelopes.Should().Be(2);
+        receivedStreams.ShouldBe(2);
+        receivedEnvelopes.ShouldBe(2);
+        receivedTestEnvelopes.ShouldBe(2);
     }
 
     [Fact]
@@ -431,8 +431,8 @@ public class StreamPublisherTests
 
         await AsyncTestingUtil.WaitAsync(() => receivedTestEventOnes >= 2 && receivedTestEnvelopes >= 4);
 
-        receivedStreams.Should().Be(2);
-        receivedTestEventOnes.Should().Be(2);
-        receivedTestEnvelopes.Should().Be(4);
+        receivedStreams.ShouldBe(2);
+        receivedTestEventOnes.ShouldBe(2);
+        receivedTestEnvelopes.ShouldBe(4);
     }
 }

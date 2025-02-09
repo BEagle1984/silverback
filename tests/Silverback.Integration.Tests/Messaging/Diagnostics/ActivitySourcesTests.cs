@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
@@ -24,8 +24,8 @@ public class ActivitySourcesTests
 
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        activity.TraceStateString.Should().BeNull();
-        activity.Baggage.Should().BeEmpty();
+        activity.TraceStateString.ShouldBeNull();
+        activity.Baggage.ShouldBeEmpty();
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class ActivitySourcesTests
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        activity.TraceStateString.Should().BeNull();
-        activity.Baggage.Should().BeEmpty();
+        activity.TraceStateString.ShouldBeNull();
+        activity.Baggage.ShouldBeEmpty();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class ActivitySourcesTests
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        activity.Baggage.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key1", "value1"));
+        activity.Baggage.ShouldContain(new KeyValuePair<string, string?>("key1", "value1"));
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class ActivitySourcesTests
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        activity.TraceStateString.Should().Be("key1=value1");
+        activity.TraceStateString.ShouldBe("key1=value1");
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ActivitySourcesTests
         IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        listener.Activities.Should().Contain(activity);
+        listener.Activities.ShouldContain(activity);
     }
 
     private static IRawInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>

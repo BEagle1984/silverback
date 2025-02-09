@@ -4,7 +4,7 @@
 // TODO: REIMPLEMENT
 //
 // using System.Threading.Tasks;
-// using FluentAssertions;
+// using Shouldly;
 // using Microsoft.Extensions.DependencyInjection;
 // using Silverback.Configuration;
 // using Silverback.Messaging.Configuration;
@@ -63,16 +63,16 @@
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 //
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
 //
-//         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-//         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<TestEventWithUniqueKey>();
-//         Helper.Spy.InboundEnvelopes[1].Message.As<TestEventWithUniqueKey>().UniqueKey.Should().Be("1");
-//         Helper.Spy.InboundEnvelopes[2].Message.Should().BeOfType<TestEventWithUniqueKey>();
-//         Helper.Spy.InboundEnvelopes[2].Message.As<TestEventWithUniqueKey>().UniqueKey.Should().Be("2");
-//         Helper.Spy.InboundEnvelopes[3].Message.Should().BeOfType<TestEventOne>();
+//         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+//         Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventWithUniqueKey>();
+//         Helper.Spy.InboundEnvelopes[1].Message.As<TestEventWithUniqueKey>().UniqueKey.ShouldBe("1");
+//         Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventWithUniqueKey>();
+//         Helper.Spy.InboundEnvelopes[2].Message.As<TestEventWithUniqueKey>().UniqueKey.ShouldBe("2");
+//         Helper.Spy.InboundEnvelopes[3].Message.ShouldBeOfType<TestEventOne>();
 //
-//         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+//         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
 //     }
 //
 //     [Fact]
@@ -115,17 +115,17 @@
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 //
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
 //
-//         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-//         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<TestEventWithUniqueKey>();
-//         Helper.Spy.InboundEnvelopes[1].Message.As<TestEventWithUniqueKey>().UniqueKey.Should().Be("1");
-//         Helper.Spy.InboundEnvelopes[2].Message.Should().BeOfType<TestEventWithUniqueKey>();
-//         Helper.Spy.InboundEnvelopes[2].Message.As<TestEventWithUniqueKey>().UniqueKey.Should().Be("2");
-//         Helper.Spy.InboundEnvelopes[3].Message.Should().BeOfType<TestEventOne>();
+//         Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>();
+//         Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventWithUniqueKey>();
+//         Helper.Spy.InboundEnvelopes[1].Message.As<TestEventWithUniqueKey>().UniqueKey.ShouldBe("1");
+//         Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventWithUniqueKey>();
+//         Helper.Spy.InboundEnvelopes[2].Message.As<TestEventWithUniqueKey>().UniqueKey.ShouldBe("2");
+//         Helper.Spy.InboundEnvelopes[3].Message.ShouldBeOfType<TestEventOne>();
 //
-//         dbContext.InboundMessages.Should().HaveCount(4);
-//         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+//         dbContext.InboundMessages.Count.ShouldBe(4);
+//         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
 //     }
 //
 //     [Fact]
@@ -159,7 +159,7 @@
 //         await publisher.PublishAsync(new TestEventOne { Content = "Message 3" });
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
 //
 //         await Helper.Broker.DisconnectAsync();
 //         await Helper.Broker.ConnectAsync();
@@ -167,7 +167,7 @@
 //         await publisher.PublishAsync(new TestEventOne { Content = "Message 4" });
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
 //     }
 //
 //     [Fact]
@@ -203,7 +203,7 @@
 //         await publisher.PublishAsync(new TestEventOne { Content = "Message 3" });
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
 //
 //         await Helper.Broker.DisconnectAsync();
 //         await Helper.Broker.ConnectAsync();
@@ -211,6 +211,6 @@
 //         await publisher.PublishAsync(new TestEventOne { Content = "Message 4" });
 //
 //         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-//         Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+//         Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
 //     }
 // }

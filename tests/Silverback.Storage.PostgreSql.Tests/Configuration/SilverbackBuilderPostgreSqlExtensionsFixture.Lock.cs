@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
@@ -27,7 +27,7 @@ public class SilverbackBuilderPostgreSqlExtensionsFixture
             new PostgreSqlAdvisoryLockSettings("lock", "conn"),
             serviceProvider);
 
-        distributedLock.Should().BeOfType<PostgreSqlAdvisoryLock>();
+        distributedLock.ShouldBeOfType<PostgreSqlAdvisoryLock>();
     }
 
     [Fact]
@@ -44,6 +44,6 @@ public class SilverbackBuilderPostgreSqlExtensionsFixture
             new PostgreSqlTableLockSettings("lock", "conn"),
             serviceProvider);
 
-        distributedLock.Should().BeOfType<PostgreSqlTableLock>();
+        distributedLock.ShouldBeOfType<PostgreSqlTableLock>();
     }
 }

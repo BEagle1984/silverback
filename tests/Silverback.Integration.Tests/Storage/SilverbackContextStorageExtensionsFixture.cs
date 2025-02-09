@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Storage;
 using Xunit;
 
@@ -20,7 +20,7 @@ public class SilverbackContextStorageExtensionsFixture
         context.EnlistTransaction(transaction);
 
         context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction);
-        storedTransaction.Should().BeSameAs(transaction);
+        storedTransaction.ShouldBeSameAs(transaction);
     }
 
     [Fact]
@@ -32,8 +32,8 @@ public class SilverbackContextStorageExtensionsFixture
 
         bool result = context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction);
 
-        result.Should().BeTrue();
-        storedTransaction.Should().BeSameAs(transaction);
+        result.ShouldBeTrue();
+        storedTransaction.ShouldBeSameAs(transaction);
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public class SilverbackContextStorageExtensionsFixture
 
         bool result = context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction);
 
-        result.Should().BeFalse();
-        storedTransaction.Should().BeNull();
+        result.ShouldBeFalse();
+        storedTransaction.ShouldBeNull();
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class SilverbackContextStorageExtensionsFixture
 
         context.RemoveTransaction();
 
-        context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction).Should().BeFalse();
-        storedTransaction.Should().BeNull();
+        context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction).ShouldBeFalse();
+        storedTransaction.ShouldBeNull();
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
 
@@ -15,8 +15,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
     {
         PostgreSqlKafkaOffsetStoreSettings settings = new("connection-string");
 
-        settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("SilverbackKafkaOffsets");
+        settings.ConnectionString.ShouldBe("connection-string");
+        settings.TableName.ShouldBe("SilverbackKafkaOffsets");
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -42,7 +42,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The kafkaOffsetStore table name is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The kafkaOffsetStore table name is required.");
     }
 
     [Theory]
@@ -55,7 +56,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The connection string is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The connection string is required.");
     }
 
     [Fact]
@@ -68,7 +70,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -81,7 +84,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -94,7 +98,8 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 
     [Fact]
@@ -107,6 +112,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 }

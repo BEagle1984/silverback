@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Xunit;
@@ -17,8 +17,8 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.Build();
 
-        serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
-        serializer.As<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.Should().BeTrue();
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.ShouldBeTrue();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.WithEncoding(MessageEncoding.UTF32).Build();
 
-        serializer.As<NewtonsoftJsonMessageSerializer>().Encoding.Should().Be(MessageEncoding.UTF32);
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().Encoding.ShouldBe(MessageEncoding.UTF32);
     }
 
     [Fact]
@@ -44,9 +44,9 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
                 })
             .Build();
 
-        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.As<NewtonsoftJsonMessageSerializer>();
+        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
         newtonsoftJsonMessageSerializer.Settings.ShouldNotBeNull();
-        newtonsoftJsonMessageSerializer.Settings.MaxDepth.Should().Be(42);
+        newtonsoftJsonMessageSerializer.Settings.MaxDepth.ShouldBe(42);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.SetTypeHeader().Build();
 
-        serializer.As<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.Should().BeTrue();
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.ShouldBeTrue();
     }
 
     [Fact]
@@ -66,6 +66,6 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
 
         IMessageSerializer serializer = builder.DisableTypeHeader().Build();
 
-        serializer.As<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.Should().BeFalse();
+        serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>().MustSetTypeHeader.ShouldBeFalse();
     }
 }

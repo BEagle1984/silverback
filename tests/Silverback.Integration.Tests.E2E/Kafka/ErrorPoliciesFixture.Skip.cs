@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -54,8 +54,8 @@ public partial class ErrorPoliciesFixture
             });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         await producer.RawProduceAsync(
             rawMessage,
@@ -65,8 +65,8 @@ public partial class ErrorPoliciesFixture
             });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -106,8 +106,8 @@ public partial class ErrorPoliciesFixture
             HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
+        Helper.Spy.InboundEnvelopes.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -120,8 +120,8 @@ public partial class ErrorPoliciesFixture
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(6);
     }
 
     [Fact]
@@ -176,8 +176,8 @@ public partial class ErrorPoliciesFixture
             });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().BeEmpty();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
+        receivedBatches.ShouldBeEmpty();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         for (int i = 0; i < 6; i++)
         {
@@ -191,10 +191,10 @@ public partial class ErrorPoliciesFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 6);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(5);
-        receivedBatches[1].Should().HaveCount(1);
-        completedBatches.Should().Be(1);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(5);
+        receivedBatches[1].Count.ShouldBe(1);
+        completedBatches.ShouldBe(1);
 
         await producer.RawProduceAsync(
             invalidRawMessage,
@@ -214,10 +214,10 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(5);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(2);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(12);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(5);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(12);
     }
 }

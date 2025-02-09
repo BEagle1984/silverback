@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Xunit;
@@ -23,7 +23,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -34,11 +34,10 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("topic");
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new TopicPartitionOffset[]
-            {
-                new("topic", Partition.Any, Offset.Unset)
-            });
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
+        ]);
     }
 
     [Fact]
@@ -49,12 +48,11 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("topic1", "topic2");
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new TopicPartitionOffset[]
-            {
-                new("topic1", Partition.Any, Offset.Unset),
-                new("topic2", Partition.Any, Offset.Unset)
-            });
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
+        ]);
     }
 
     [Fact]
@@ -65,11 +63,10 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("topic", 1);
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new TopicPartitionOffset[]
-            {
-                new("topic", 1, Offset.Unset)
-            });
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic", 1, Offset.Unset)
+        ]);
     }
 
     [Fact]
@@ -80,13 +77,12 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("topic", 1, 2, 3);
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new TopicPartitionOffset[]
-            {
-                new("topic", 1, Offset.Unset),
-                new("topic", 2, Offset.Unset),
-                new("topic", 3, Offset.Unset)
-            });
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic", 1, Offset.Unset),
+                new TopicPartitionOffset("topic", 2, Offset.Unset),
+                new TopicPartitionOffset("topic", 3, Offset.Unset)
+        ]);
     }
 
     [Fact]
@@ -101,14 +97,13 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
             new TopicPartition("topic2", 3));
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", 0, Offset.Unset),
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", 0, Offset.Unset),
                 new TopicPartitionOffset("topic1", 1, Offset.Unset),
                 new TopicPartitionOffset("topic2", 2, Offset.Unset),
                 new TopicPartitionOffset("topic2", 3, Offset.Unset)
-            });
+        ]);
     }
 
     [Fact]
@@ -123,14 +118,13 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
             new TopicPartitionOffset("topic2", 3, Offset.Unset));
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", 0, Offset.Beginning),
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", 0, Offset.Beginning),
                 new TopicPartitionOffset("topic1", 1, Offset.End),
                 new TopicPartitionOffset("topic2", 2, 42),
                 new TopicPartitionOffset("topic2", 3, Offset.Unset)
-            });
+        ]);
     }
 
     [Fact]
@@ -141,13 +135,12 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom("topic1", partitions => partitions);
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
-            });
-        configuration.PartitionOffsetsProvider.Should().NotBeNull();
-        configuration.PartitionOffsetsProvider.Should().BeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+        ]);
+        configuration.PartitionOffsetsProvider.ShouldNotBeNull();
+        configuration.PartitionOffsetsProvider.ShouldBeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
     }
 
     [Fact]
@@ -158,14 +151,13 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
         builder.ConsumeFrom(["topic1", "topic2"], partitions => partitions);
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
                 new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
-            });
-        configuration.PartitionOffsetsProvider.Should().NotBeNull();
-        configuration.PartitionOffsetsProvider.Should().BeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
+        ]);
+        configuration.PartitionOffsetsProvider.ShouldNotBeNull();
+        configuration.PartitionOffsetsProvider.ShouldBeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
     }
 
     [Fact]
@@ -181,13 +173,12 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
                         new TopicPartitionOffset(partition, Offset.Beginning)));
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
-            });
-        configuration.PartitionOffsetsProvider.Should().NotBeNull();
-        configuration.PartitionOffsetsProvider.Should().BeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+        ]);
+        configuration.PartitionOffsetsProvider.ShouldNotBeNull();
+        configuration.PartitionOffsetsProvider.ShouldBeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
     }
 
     [Fact]
@@ -203,13 +194,12 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
                         new TopicPartitionOffset(partition, Offset.Beginning)));
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
-        configuration.TopicPartitions.Should().BeEquivalentTo(
-            new[]
-            {
-                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+        configuration.TopicPartitions.ShouldBe(
+        [
+            new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
                 new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset)
-            });
-        configuration.PartitionOffsetsProvider.Should().NotBeNull();
-        configuration.PartitionOffsetsProvider.Should().BeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
+        ]);
+        configuration.PartitionOffsetsProvider.ShouldNotBeNull();
+        configuration.PartitionOffsetsProvider.ShouldBeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
     }
 }

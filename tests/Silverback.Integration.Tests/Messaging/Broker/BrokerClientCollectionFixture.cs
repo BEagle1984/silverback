@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Xunit;
 
@@ -21,8 +21,8 @@ public class BrokerClientCollectionFixture
         brokerClientCollection.Add(client1);
         brokerClientCollection.Add(client2);
 
-        brokerClientCollection.Should().HaveCount(2);
-        brokerClientCollection.Should().BeEquivalentTo(new[] { client1, client2 });
+        brokerClientCollection.Count.ShouldBe(2);
+        brokerClientCollection.ShouldBe([client1, client2]);
     }
 
     [Fact]

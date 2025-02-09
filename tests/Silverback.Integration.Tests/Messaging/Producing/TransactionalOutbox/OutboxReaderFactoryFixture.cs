@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
@@ -26,8 +26,8 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader1 = factory.GetReader(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxReader reader2 = factory.GetReader(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        reader1.Should().BeOfType<OutboxReader1>();
-        reader2.Should().BeOfType<OutboxReader2>();
+        reader1.ShouldBeOfType<OutboxReader1>();
+        reader2.ShouldBeOfType<OutboxReader2>();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class OutboxReaderFactoryFixture
 
         Action act = () => factory.GetReader(null!, Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class OutboxReaderFactoryFixture
 
         Action act = () => factory.GetReader(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("No factory registered for the specified settings type (OutboxSettings2).");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No factory registered for the specified settings type (OutboxSettings2).");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader1 = factory.GetReader(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxReader reader2 = factory.GetReader(new OutboxSettings1(), Substitute.For<IServiceProvider>());
 
-        reader2.Should().BeSameAs(reader1);
+        reader2.ShouldBeSameAs(reader1);
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader1 = factory.GetReader(outboxSettings1, Substitute.For<IServiceProvider>());
         IOutboxReader reader2 = factory.GetReader(outboxSettings1, Substitute.For<IServiceProvider>());
 
-        reader1.Should().BeOfType<OverrideOutboxReader>();
-        reader2.Should().BeSameAs(reader1);
+        reader1.ShouldBeOfType<OverrideOutboxReader>();
+        reader2.ShouldBeSameAs(reader1);
     }
 
     [Fact]
@@ -96,11 +96,11 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader2A1 = factory.GetReader(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
         IOutboxReader reader2A2 = factory.GetReader(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
 
-        reader1A1.Should().BeSameAs(reader1A2);
-        reader1B1.Should().BeSameAs(reader1B2);
-        reader1A1.Should().NotBeSameAs(reader1B1);
-        reader2A1.Should().BeSameAs(reader2A2);
-        reader2A1.Should().NotBeSameAs(reader1A1);
+        reader1A1.ShouldBeSameAs(reader1A2);
+        reader1B1.ShouldBeSameAs(reader1B2);
+        reader1A1.ShouldNotBeSameAs(reader1B1);
+        reader2A1.ShouldBeSameAs(reader2A2);
+        reader2A1.ShouldNotBeSameAs(reader1A1);
     }
 
     [Fact]
@@ -118,11 +118,11 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader2A1 = factory.GetReader(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
         IOutboxReader reader2A2 = factory.GetReader(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
 
-        reader1A1.Should().BeSameAs(reader1A2);
-        reader1B1.Should().BeSameAs(reader1B2);
-        reader1A1.Should().NotBeSameAs(reader1B1);
-        reader2A1.Should().BeSameAs(reader2A2);
-        reader2A1.Should().NotBeSameAs(reader1A1);
+        reader1A1.ShouldBeSameAs(reader1A2);
+        reader1B1.ShouldBeSameAs(reader1B2);
+        reader1A1.ShouldNotBeSameAs(reader1B1);
+        reader2A1.ShouldBeSameAs(reader2A2);
+        reader2A1.ShouldNotBeSameAs(reader1A1);
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class OutboxReaderFactoryFixture
 
         Action act = () => factory.AddFactory<OutboxSettings1>((_, _) => new OutboxReader1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified settings type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified settings type is already registered.");
     }
 
     [Fact]
@@ -149,8 +149,8 @@ public class OutboxReaderFactoryFixture
         IOutboxReader reader1 = factory.GetReader(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxReader reader2 = factory.GetReader(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        reader1.Should().BeOfType<OverrideOutboxReader>();
-        reader2.Should().BeOfType<OverrideOutboxReader>();
+        reader1.ShouldBeOfType<OverrideOutboxReader>();
+        reader2.ShouldBeOfType<OverrideOutboxReader>();
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class OutboxReaderFactoryFixture
 
         bool result = factory.HasFactory<OutboxSettings1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class OutboxReaderFactoryFixture
 
         bool result = factory.HasFactory<OutboxSettings2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -29,8 +29,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic");
     }
 
     [Fact]
@@ -40,8 +40,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic");
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic-123");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic-123");
     }
 
     [Fact]
@@ -66,8 +66,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic-123");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic-123");
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("topic");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("topic");
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class MqttDynamicProducerEndpointResolverFixture
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class MqttDynamicProducerEndpointResolverFixture
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => "topic");
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class MqttDynamicProducerEndpointResolverFixture
             "topic-{0}",
             (IOutboundEnvelope<TestEventOne> _) => ["123"]);
 
-        endpointResolver.RawName.Should().StartWith("topic-{0}");
+        endpointResolver.RawName.ShouldStartWith("topic-{0}");
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class MqttDynamicProducerEndpointResolverFixture
             "topic-{0}",
             (TestEventOne? _) => ["123"]);
 
-        endpointResolver.RawName.Should().StartWith("topic-{0}");
+        endpointResolver.RawName.ShouldStartWith("topic-{0}");
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class MqttDynamicProducerEndpointResolverFixture
             typeof(TestEndpointResolver),
             envelope => new TestEndpointResolver().GetTopic(envelope));
 
-        endpointResolver.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-TestEndpointResolver-");
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         string result = endpointResolver.GetSerializedEndpoint(_envelope);
 
-        result.Should().Be("topic");
+        result.ShouldBe("topic");
     }
 
     [Fact]
@@ -154,8 +154,8 @@ public class MqttDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
 
-        endpoint.Should().BeOfType<MqttProducerEndpoint>();
-        endpoint.As<MqttProducerEndpoint>().Topic.Should().Be("serialized");
+        MqttProducerEndpoint mqttEndpoint = endpoint.ShouldBeOfType<MqttProducerEndpoint>();
+        mqttEndpoint.Topic.ShouldBe("serialized");
     }
 
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>

@@ -4,8 +4,8 @@
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -49,9 +49,9 @@ public class MockFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)
-            .Should().NotBeBefore(DateTime.Now.AddSeconds(-2));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)!.Value
+            .ShouldBeGreaterThan(DateTime.Now.AddSeconds(-2));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class MockFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp).Should().Be(date);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp).ShouldBe(date);
     }
 }

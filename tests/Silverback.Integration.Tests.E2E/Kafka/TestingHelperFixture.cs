@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -58,15 +58,16 @@ public class TestingHelperFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.Should().BeEquivalentTo(
-        [
-            new TopicPartitionOffset("topic1", 0, 3),
-            new TopicPartitionOffset("topic1", 1, 2),
-            new TopicPartitionOffset("topic2", 0, 3),
-            new TopicPartitionOffset("topic2", 1, 2),
-            new TopicPartitionOffset("topic3", 0, 3),
-            new TopicPartitionOffset("topic3", 1, 2)
-        ]);
+        Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
+            [
+                new TopicPartitionOffset("topic1", 0, 3),
+                new TopicPartitionOffset("topic1", 1, 2),
+                new TopicPartitionOffset("topic2", 0, 3),
+                new TopicPartitionOffset("topic2", 1, 2),
+                new TopicPartitionOffset("topic3", 0, 3),
+                new TopicPartitionOffset("topic3", 1, 2)
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -109,13 +110,14 @@ public class TestingHelperFixture : KafkaFixture
         {
             await Helper.WaitUntilAllMessagesAreConsumedAsync("topic1", "topic2");
 
-            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.Should().BeEquivalentTo(
-            [
-                new TopicPartitionOffset("topic1", 0, 5),
-                new TopicPartitionOffset("topic1", 1, 5),
-                new TopicPartitionOffset("topic2", 0, 5),
-                new TopicPartitionOffset("topic2", 1, 5)
-            ]);
+            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
+                [
+                    new TopicPartitionOffset("topic1", 0, 5),
+                    new TopicPartitionOffset("topic1", 1, 5),
+                    new TopicPartitionOffset("topic2", 0, 5),
+                    new TopicPartitionOffset("topic2", 1, 5)
+                ],
+                ignoreOrder: true);
         }
         finally
         {
@@ -163,13 +165,14 @@ public class TestingHelperFixture : KafkaFixture
         {
             await Helper.WaitUntilAllMessagesAreConsumedAsync("one", "two");
 
-            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.Should().BeEquivalentTo(
-            [
-                new TopicPartitionOffset("topic1", 0, 5),
-                new TopicPartitionOffset("topic1", 1, 5),
-                new TopicPartitionOffset("topic2", 0, 5),
-                new TopicPartitionOffset("topic2", 1, 5)
-            ]);
+            Helper.GetConsumerGroup(DefaultGroupId).CommittedOffsets.ShouldBe(
+                [
+                    new TopicPartitionOffset("topic1", 0, 5),
+                    new TopicPartitionOffset("topic1", 1, 5),
+                    new TopicPartitionOffset("topic2", 0, 5),
+                    new TopicPartitionOffset("topic2", 1, 5)
+                ],
+                ignoreOrder: true);
         }
         finally
         {

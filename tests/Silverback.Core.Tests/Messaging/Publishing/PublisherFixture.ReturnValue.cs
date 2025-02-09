@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -46,7 +46,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(12);
+        republishedMessages.Count.ShouldBe(12);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(12);
+        republishedMessages.Count.ShouldBe(12);
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(24);
+        republishedMessages.Count.ShouldBe(24);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(24);
+        republishedMessages.Count.ShouldBe(24);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(24);
+        republishedMessages.Count.ShouldBe(24);
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(24);
+        republishedMessages.Count.ShouldBe(24);
     }
 
     [Fact]
@@ -213,7 +213,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(0);
+        republishedMessages.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -242,7 +242,7 @@ public partial class PublisherFixture
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(10);
+        republishedMessages.Count.ShouldBe(10);
     }
 
     [Fact]
@@ -259,8 +259,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEquivalentTo("result-1-sync", "result-1-async");
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(["result-1-sync", "result-1-async"]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -277,13 +277,12 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
-        syncResults.Should().BeEquivalentTo(
-            new[]
-            {
-                ["result-2-sync-1", "result-2-sync-2"],
-                new[] { "result-2-async-1", "result-2-async-2" }
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(
+        [
+            ["result-2-sync-1", "result-2-sync-2"],
+            ["result-2-async-1", "result-2-async-2"]
+        ]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -300,13 +299,12 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryThree());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryThree());
 
-        syncResults.Should().BeEquivalentTo(
-            new[]
-            {
-                ["result-2-sync-1", "result-2-sync-2"],
-                new[] { "result-2-async-1", "result-2-async-2" }
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(
+        [
+            ["result-2-sync-1", "result-2-sync-2"],
+            ["result-2-async-1", "result-2-async-2"]
+        ]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -323,8 +321,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEmpty();
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -341,13 +339,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
-        syncResults.Should().BeEquivalentTo(
-            new IEnumerable<string>[]
-            {
-                [],
-                []
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe([[], []]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -370,8 +363,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEquivalentTo("result-sync", "result-task", "result-value-task");
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(["result-sync", "result-task", "result-value-task"]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -394,14 +387,13 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
-        syncResults.Should().BeEquivalentTo(
-            new[]
-            {
-                ["result1-sync", "result2-sync"],
-                ["result1-task", "result2-task"],
-                new[] { "result1-value-task", "result2-value-task" }
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(
+        [
+            ["result1-sync", "result2-sync"],
+            ["result1-task", "result2-task"],
+            ["result1-value-task", "result2-value-task"]
+        ]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -424,8 +416,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEmpty();
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -448,14 +440,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
-        syncResults.Should().BeEquivalentTo(
-            new IEnumerable<string>[]
-            {
-                [],
-                [],
-                []
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe([[], [], []]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -482,8 +468,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEmpty();
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -513,8 +499,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryOne());
 
-        syncResults.Should().BeEmpty();
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBeEmpty();
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -537,8 +523,8 @@ public partial class PublisherFixture
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEquivalentTo("result-1-sync", "result-1-async", "result-delegate");
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(["result-1-sync", "result-1-async", "result-delegate"]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [Fact]
@@ -561,14 +547,13 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryTwo());
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
-        syncResults.Should().BeEquivalentTo(
-            new[]
-            {
-                ["result-2-sync-1", "result-2-sync-2"],
-                ["result-2-async-1", "result-2-async-2"],
-                new[] { "result-delegate-1", "result-delegate-2" }
-            });
-        asyncResults.Should().BeEquivalentTo(syncResults);
+        syncResults.ShouldBe(
+        [
+            ["result-2-sync-1", "result-2-sync-2"],
+            ["result-2-async-1", "result-2-async-2"],
+            ["result-delegate-1", "result-delegate-2"]
+        ]);
+        asyncResults.ShouldBe(syncResults);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]

@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -48,28 +48,28 @@ public class ConsumerStatusInfoFixture : KafkaFixture
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Started);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         DefaultConsumerGroup.ScheduleRebalance();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Started);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Started);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
 
         await consumer.Client.DisconnectAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         IProducer producer = Helper.GetProducer(
             producer => producer.WithBootstrapServers("PLAINTEXT://e2e")
@@ -106,11 +106,11 @@ public class ConsumerStatusInfoFixture : KafkaFixture
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
 
         await consumer.Client.DisconnectAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
         KafkaConsumer consumer = (KafkaConsumer)Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         // Simulate a local poll timeout
         KafkaConsumerLocalTimeoutMonitor timeoutMonitor = (KafkaConsumerLocalTimeoutMonitor)Host.ServiceProvider
@@ -148,7 +148,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
                 "[thrd:main]: Application maximum poll interval (10000ms) exceeded by 89ms (adjust max.poll.interval.ms for long-running message processing): leaving group"),
             consumer);
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Started);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
         KafkaConsumer consumer = (KafkaConsumer)Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         // Simulate a local poll timeout
         KafkaConsumerLocalTimeoutMonitor timeoutMonitor = (KafkaConsumerLocalTimeoutMonitor)Host.ServiceProvider
@@ -188,9 +188,9 @@ public class ConsumerStatusInfoFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.History.Count >= 5);
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
         string.Join("->", consumer.StatusInfo.History.TakeLast(3).Select(change => change.Status))
-            .Should().BeEquivalentTo("Stopped->Started->Connected");
+            .ShouldBe("Stopped->Started->Connected");
     }
 
     [Fact]
@@ -216,29 +216,29 @@ public class ConsumerStatusInfoFixture : KafkaFixture
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
-        consumer.StatusInfo.History.Should().HaveCount(1);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Started);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(1);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Started);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.History.Count >= 2);
 
-        consumer.StatusInfo.History.Should().HaveCount(2);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(2);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Connected);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        consumer.StatusInfo.History.Should().HaveCount(3);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(3);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Consuming);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
 
         await consumer.Client.DisconnectAsync();
 
-        consumer.StatusInfo.History.Should().HaveCount(4);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(4);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
     }
 
     [Fact]
@@ -267,8 +267,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();
-        consumer.StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset.Value.Should().Be(1);
-        consumer.StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
+        consumer.StatusInfo.LatestConsumedMessageIdentifier.ShouldBeOfType<KafkaOffset>().Offset.Value.ShouldBe(1);
+        consumer.StatusInfo.LatestConsumedMessageTimestamp.ShouldNotBeNull();
     }
 }

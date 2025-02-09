@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
@@ -14,6 +14,6 @@ public class MqttProducerEndpointFixture
     {
         MqttProducerEndpoint endpoint = new("topic", new MqttProducerEndpointConfiguration());
 
-        endpoint.RawName.Should().Be("topic");
+        endpoint.RawName.ShouldBe("topic");
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.SchemaRegistry;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
@@ -25,7 +25,7 @@ public class SchemaNormalizerFixture
 
         string normalizedSchema = SchemaNormalizer.Normalize(formattedSchema, SchemaType.Avro);
 
-        normalizedSchema.Should().Be(
+        normalizedSchema.ShouldBe(
             "{\"type\":\"record\",\"name\":\"AvroMessage\",\"namespace\":\"Silverback.Tests.Integration.E2E.TestTypes.Messages\"," +
             "\"fields\":[{\"name\":\"number\",\"type\":\"string\"}]}");
     }
@@ -45,7 +45,7 @@ public class SchemaNormalizerFixture
 
         string normalizedSchema = SchemaNormalizer.NormalizeAvro(formattedSchema);
 
-        normalizedSchema.Should().Be(
+        normalizedSchema.ShouldBe(
             "{\"type\":\"record\",\"name\":\"AvroMessage\",\"namespace\":\"Silverback.Tests.Integration.E2E.TestTypes.Messages\"," +
             "\"fields\":[{\"name\":\"number\",\"type\":\"string\"}]}");
     }
@@ -73,7 +73,7 @@ public class SchemaNormalizerFixture
 
         string normalizedSchema = SchemaNormalizer.Normalize(formattedSchema, SchemaType.Json);
 
-        normalizedSchema.Should().Be(
+        normalizedSchema.ShouldBe(
             "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"additionalProperties\":false," +
             "\"properties\":{\"ContentEventOne\":{\"type\":[\"null\",\"string\"]}},\"title\":\"TestEventOne\",\"type\":\"object\"}");
     }
@@ -101,7 +101,7 @@ public class SchemaNormalizerFixture
 
         string normalizedSchema = SchemaNormalizer.NormalizeJson(formattedSchema);
 
-        normalizedSchema.Should().Be(
+        normalizedSchema.ShouldBe(
             "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"additionalProperties\":false," +
             "\"properties\":{\"ContentEventOne\":{\"type\":[\"null\",\"string\"]}},\"title\":\"TestEventOne\",\"type\":\"object\"}");
     }
@@ -113,6 +113,6 @@ public class SchemaNormalizerFixture
 
         string normalizedSchema = SchemaNormalizer.Normalize(formattedSchema, SchemaType.Protobuf);
 
-        normalizedSchema.Should().Be(formattedSchema);
+        normalizedSchema.ShouldBe(formattedSchema);
     }
 }

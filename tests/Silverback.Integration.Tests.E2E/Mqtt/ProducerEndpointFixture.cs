@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
 using MQTTnet.Packets;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -53,8 +53,8 @@ public partial class ProducerEndpointFixture : MqttFixture
         await publisher.PublishEventAsync(message);
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
-        messages.Should().HaveCount(1);
-        messages[0].Payload.ToArray().Should().BeEquivalentTo(rawMessage);
+        messages.Count.ShouldBe(1);
+        messages[0].Payload.ToArray().ShouldBe(rawMessage);
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public partial class ProducerEndpointFixture : MqttFixture
             await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
-        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
-        Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Count.ShouldBe(2);
+        Helper.GetMessages("topic1").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -102,8 +102,8 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
+            ignoreOrder: true);
+        Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
@@ -111,7 +111,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -147,8 +147,8 @@ public partial class ProducerEndpointFixture : MqttFixture
             await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
-        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
-        Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
+        Host.ServiceProvider.GetRequiredService<IProducerCollection>().Count.ShouldBe(2);
+        Helper.GetMessages("topic1").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -156,8 +156,8 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
+            ignoreOrder: true);
+        Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
@@ -165,7 +165,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public partial class ProducerEndpointFixture : MqttFixture
             await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
+        Helper.GetMessages("topic1").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -204,8 +204,8 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
+            ignoreOrder: true);
+        Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -213,8 +213,8 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
-        Helper.GetMessages("topic3").GetContentAsString().Should().BeEquivalentTo(
+            ignoreOrder: true);
+        Helper.GetMessages("topic3").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
@@ -222,7 +222,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            options => options.WithoutStrictOrdering());
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -257,14 +257,14 @@ public partial class ProducerEndpointFixture : MqttFixture
             });
 
         MqttApplicationMessage message = GetDefaultTopicMessages().Single();
-        message.GetContentAsString().Should().BeEquivalentTo("{\"Content\":\"Hello E2E!\"}");
+        message.GetContentAsString().ShouldBe("{\"Content\":\"Hello E2E!\"}");
 
         List<MqttUserProperty> userProperties = message.UserProperties;
-        userProperties.Should().ContainEquivalentOf(new MqttUserProperty("x-content", "Hello E2E!"));
-        userProperties.Should().ContainEquivalentOf(new MqttUserProperty("x-static", "42"));
-        userProperties.Should().ContainEquivalentOf(new MqttUserProperty("x-custom-header", "Hello header!"));
-        userProperties.Should().ContainEquivalentOf(new MqttUserProperty("x-custom-header2", "False"));
-        userProperties.Select(userProperty => userProperty.Name).Should().NotContain("x-content-nope");
+        userProperties.ShouldContain(property => property.Name == "x-content" && property.Value == "Hello E2E!");
+        userProperties.ShouldContain(property => property.Name == "x-static" && property.Value == "42");
+        userProperties.ShouldContain(property => property.Name == "x-custom-header" && property.Value == "Hello header!");
+        userProperties.ShouldContain(property => property.Name == "x-custom-header2" && property.Value == "False");
+        userProperties.ShouldNotContain(property => property.Name == "x-content-nope");
     }
 
     [Fact]
@@ -283,11 +283,11 @@ public partial class ProducerEndpointFixture : MqttFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
-        GetDefaultTopicMessages().Should().HaveCount(0);
+        GetDefaultTopicMessages().Count.ShouldBe(0);
 
         IProducer producer = Host.ScopedServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
-        GetDefaultTopicMessages().Should().HaveCount(1);
+        GetDefaultTopicMessages().Count.ShouldBe(1);
     }
 }

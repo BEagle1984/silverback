@@ -3,8 +3,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -43,17 +43,17 @@ public class ConsumerStatusInfoFixture : MqttFixture
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
 
         await consumer.Client.DisconnectAsync();
 
-        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
     }
 
     [Fact]
@@ -78,25 +78,25 @@ public class ConsumerStatusInfoFixture : MqttFixture
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.History.Count >= 2);
 
-        consumer.StatusInfo.History.Should().HaveCount(2);
-        consumer.StatusInfo.History.First().Status.Should().Be(ConsumerStatus.Started);
-        consumer.StatusInfo.History.First().Timestamp.Should().NotBeNull();
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(2);
+        consumer.StatusInfo.History.First().Status.ShouldBe(ConsumerStatus.Started);
+        consumer.StatusInfo.History.First().Timestamp.ShouldNotBeNull();
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Connected);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        consumer.StatusInfo.History.Should().HaveCount(3);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(3);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Consuming);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
 
         await consumer.Client.DisconnectAsync();
 
-        consumer.StatusInfo.History.Should().HaveCount(4);
-        consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Stopped);
-        consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+        consumer.StatusInfo.History.Count.ShouldBe(4);
+        consumer.StatusInfo.History.Last().Status.ShouldBe(ConsumerStatus.Stopped);
+        consumer.StatusInfo.History.Last().Timestamp.ShouldNotBeNull();
     }
 
     [Fact]
@@ -123,8 +123,8 @@ public class ConsumerStatusInfoFixture : MqttFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
-        consumer.StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<MqttMessageIdentifier>();
-        consumer.StatusInfo.LatestConsumedMessageIdentifier.As<MqttMessageIdentifier>().ClientId.Should().Be(DefaultClientId);
-        consumer.StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
+        consumer.StatusInfo.LatestConsumedMessageIdentifier.ShouldBeOfType<MqttMessageIdentifier>();
+        consumer.StatusInfo.LatestConsumedMessageIdentifier.ShouldBeOfType<MqttMessageIdentifier>().ClientId.ShouldBe(DefaultClientId);
+        consumer.StatusInfo.LatestConsumedMessageTimestamp.ShouldNotBeNull();
     }
 }

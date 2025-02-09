@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -43,7 +43,7 @@ public partial class BrokerClientCallbacksFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
@@ -53,7 +53,7 @@ public partial class BrokerClientCallbacksFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 4" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(7);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(7);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public partial class BrokerClientCallbacksFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 3" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
@@ -93,7 +93,7 @@ public partial class BrokerClientCallbacksFixture
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "Message 4" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(4);
     }
 
     private class ResetOffsetPartitionsAssignedCallback : IKafkaPartitionsAssignedCallback

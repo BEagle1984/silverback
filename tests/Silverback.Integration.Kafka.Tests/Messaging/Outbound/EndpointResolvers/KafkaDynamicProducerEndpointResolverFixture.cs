@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
@@ -29,9 +29,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -41,9 +41,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -53,9 +53,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(Partition.Any);
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(Partition.Any);
     }
 
     [Fact]
@@ -65,9 +65,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(Partition.Any);
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(Partition.Any);
     }
 
     [Fact]
@@ -77,9 +77,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -89,9 +89,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -101,9 +101,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -113,9 +113,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -128,9 +128,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic-123");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic-123");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -143,9 +143,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic-123");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic-123");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -157,9 +157,9 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(_envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Topic.Should().Be("topic");
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Partition.Should().Be(new Partition(42));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.ShouldBe(new Partition(42));
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic", (IOutboundEnvelope<TestEventOne> _) => 42);
 
-        endpointResolver.RawName.Should().StartWith("topic");
+        endpointResolver.RawName.ShouldStartWith("topic");
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic", (TestEventOne? _) => 42);
 
-        endpointResolver.RawName.Should().StartWith("topic");
+        endpointResolver.RawName.ShouldStartWith("topic");
     }
 
     [Fact]
@@ -183,7 +183,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => "topic");
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic", _ => 42);
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => "topic", _ => 42);
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -215,7 +215,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => new TopicPartition("topic", 42));
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -223,7 +223,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((TestEventOne? _) => new TopicPartition("topic", 42));
 
-        endpointResolver.RawName.Should().StartWith("dynamic-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-");
     }
 
     [Fact]
@@ -233,7 +233,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
             "topic-{0}",
             (IOutboundEnvelope<TestEventOne> _) => ["123"]);
 
-        endpointResolver.RawName.Should().StartWith("topic-{0}");
+        endpointResolver.RawName.ShouldStartWith("topic-{0}");
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
             "topic-{0}",
             (TestEventOne? _) => ["123"]);
 
-        endpointResolver.RawName.Should().StartWith("topic-{0}");
+        endpointResolver.RawName.ShouldStartWith("topic-{0}");
     }
 
     [Fact]
@@ -253,7 +253,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
             typeof(TestEndpointResolver),
             envelope => new TestEndpointResolver().GetTopicPartition(envelope));
 
-        endpointResolver.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
+        endpointResolver.RawName.ShouldStartWith("dynamic-TestEndpointResolver-");
     }
 
     [Theory]
@@ -267,7 +267,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         string result = endpointResolver.GetSerializedEndpoint(_envelope);
 
-        result.Should().Be($"{topic}|{partition}");
+        result.ShouldBe($"{topic}|{partition}");
     }
 
     [Theory]
@@ -284,8 +284,8 @@ public class KafkaDynamicProducerEndpointResolverFixture
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
 
-        endpoint.Should().BeOfType<KafkaProducerEndpoint>();
-        endpoint.As<KafkaProducerEndpoint>().TopicPartition.Should().BeEquivalentTo(new TopicPartition(topic, partition));
+        KafkaProducerEndpoint kafkaEndpoint = endpoint.ShouldBeOfType<KafkaProducerEndpoint>();
+        kafkaEndpoint.TopicPartition.ShouldBe(new TopicPartition(topic, partition));
     }
 
     private sealed class TestEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>

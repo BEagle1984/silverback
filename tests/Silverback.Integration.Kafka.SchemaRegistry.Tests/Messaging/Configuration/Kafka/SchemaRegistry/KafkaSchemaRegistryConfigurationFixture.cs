@@ -3,7 +3,7 @@
 
 using System;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Xunit;
@@ -26,11 +26,11 @@ public class KafkaSchemaRegistryConfigurationFixture
             Url = "server2"
         };
 
-        configuration1.Url.Should().Be("server1");
-        configuration2.Url.Should().Be("server2");
+        configuration1.Url.ShouldBe("server1");
+        configuration2.Url.ShouldBe("server2");
 
-        configuration1.RequestTimeoutMs.Should().Be(42);
-        configuration2.RequestTimeoutMs.Should().Be(42);
+        configuration1.RequestTimeoutMs.ShouldBe(42);
+        configuration2.RequestTimeoutMs.ShouldBe(42);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class KafkaSchemaRegistryConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -54,8 +54,8 @@ public class KafkaSchemaRegistryConfigurationFixture
 
         SchemaRegistryConfig schemaRegistryConfig = configuration.ToConfluentConfig();
 
-        schemaRegistryConfig.Url.Should().Be("tests");
-        schemaRegistryConfig.MaxCachedSchemas.Should().Be(42);
+        schemaRegistryConfig.Url.ShouldBe("tests");
+        schemaRegistryConfig.MaxCachedSchemas.ShouldBe(42);
     }
 
     [Theory]
@@ -70,7 +70,8 @@ public class KafkaSchemaRegistryConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
     }
 
     private static KafkaSchemaRegistryConfiguration GetValidConfiguration() =>

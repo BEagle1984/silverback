@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using MQTTnet.Protocol;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -21,7 +21,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").WithAtMostOnceQoS();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtMostOnce);
     }
 
     [Fact]
@@ -43,6 +43,6 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic").WithAtLeastOnceQoS();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
+        configuration.QualityOfServiceLevel.ShouldBe(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 }

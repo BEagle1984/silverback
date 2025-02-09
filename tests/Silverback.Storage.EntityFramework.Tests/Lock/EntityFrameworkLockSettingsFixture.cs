@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using Silverback.Lock;
 using Xunit;
 
@@ -16,9 +16,9 @@ public class EntityFrameworkLockSettingsFixture
     {
         EntityFrameworkLockSettings settings = new("my-lock", typeof(TestDbContext), GetDbContext);
 
-        settings.LockName.Should().Be("my-lock");
-        settings.DbContextType.Should().Be(typeof(TestDbContext));
-        settings.GetDbContext(null!).Should().BeOfType<TestDbContext>();
+        settings.LockName.ShouldBe("my-lock");
+        settings.DbContextType.ShouldBe(typeof(TestDbContext));
+        settings.GetDbContext(null!).ShouldBeOfType<TestDbContext>();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -41,7 +41,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock name is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock name is required.");
     }
 
     [Fact]
@@ -51,7 +52,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext type is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext type is required.");
     }
 
     [Fact]
@@ -61,7 +63,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext factory is required.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The DbContext factory is required.");
     }
 
     [Fact]
@@ -74,7 +77,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The acquire interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The acquire interval must be greater than zero.");
     }
 
     [Fact]
@@ -87,7 +91,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The acquire interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The acquire interval must be greater than zero.");
     }
 
     [Fact]
@@ -100,7 +105,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The heartbeat interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The heartbeat interval must be greater than zero.");
     }
 
     [Fact]
@@ -113,7 +119,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The heartbeat interval must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The heartbeat interval must be greater than zero.");
     }
 
     [Fact]
@@ -126,7 +133,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than zero.");
     }
 
     [Fact]
@@ -139,7 +147,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than zero.");
     }
 
     [Fact]
@@ -153,7 +162,8 @@ public class EntityFrameworkLockSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than the heartbeat interval.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The lock timeout must be greater than the heartbeat interval.");
     }
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();

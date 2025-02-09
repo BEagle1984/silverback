@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -58,11 +58,11 @@ public class GroupIdFilterFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
 
         DecoratedSubscriber subscriber = Host.ServiceProvider.GetRequiredService<DecoratedSubscriber>();
-        subscriber.ReceivedConsumer1.Should().Be(3);
-        subscriber.ReceivedConsumer2.Should().Be(3);
+        subscriber.ReceivedConsumer1.ShouldBe(3);
+        subscriber.ReceivedConsumer2.ShouldBe(3);
     }
 
     [Fact]
@@ -102,10 +102,10 @@ public class GroupIdFilterFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
 
         Subscriber subscriber = Host.ServiceProvider.GetRequiredService<Subscriber>();
-        subscriber.Received.Should().Be(3);
+        subscriber.Received.ShouldBe(3);
     }
 
     [Fact]
@@ -161,10 +161,10 @@ public class GroupIdFilterFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
 
-        received1.Should().Be(3);
-        received2.Should().Be(3);
+        received1.ShouldBe(3);
+        received2.ShouldBe(3);
     }
 
     [Fact]
@@ -199,11 +199,11 @@ public class GroupIdFilterFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
 
         StreamSubscriber subscriber = Host.ServiceProvider.GetRequiredService<StreamSubscriber>();
-        subscriber.ReceivedConsumer1.Should().Be(3);
-        subscriber.ReceivedConsumer2.Should().Be(3);
+        subscriber.ReceivedConsumer1.ShouldBe(3);
+        subscriber.ReceivedConsumer2.ShouldBe(3);
     }
 
     private sealed class Subscriber

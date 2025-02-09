@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
@@ -26,8 +26,8 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock1 = factory.GetWriter(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxWriter lock2 = factory.GetWriter(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<OutboxWriter1>();
-        lock2.Should().BeOfType<OutboxWriter2>();
+        lock1.ShouldBeOfType<OutboxWriter1>();
+        lock2.ShouldBeOfType<OutboxWriter2>();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class OutboxWriterFactoryFixture
 
         Action act = () => factory.GetWriter(null!, Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class OutboxWriterFactoryFixture
 
         Action act = () => factory.GetWriter(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("No factory registered for the specified settings type (OutboxSettings2).");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No factory registered for the specified settings type (OutboxSettings2).");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock1 = factory.GetWriter(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxWriter lock2 = factory.GetWriter(new OutboxSettings1(), Substitute.For<IServiceProvider>());
 
-        lock2.Should().BeSameAs(lock1);
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock1 = factory.GetWriter(outboxSettings1, Substitute.For<IServiceProvider>());
         IOutboxWriter lock2 = factory.GetWriter(outboxSettings1, Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<OverrideOutboxWriter>();
-        lock2.Should().BeSameAs(lock1);
+        lock1.ShouldBeOfType<OverrideOutboxWriter>();
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -96,11 +96,11 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock2A1 = factory.GetWriter(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
         IOutboxWriter lock2A2 = factory.GetWriter(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -118,11 +118,11 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock2A1 = factory.GetWriter(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
         IOutboxWriter lock2A2 = factory.GetWriter(new OutboxSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class OutboxWriterFactoryFixture
 
         Action act = () => factory.AddFactory<OutboxSettings1>((_, _) => new OutboxWriter1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified settings type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified settings type is already registered.");
     }
 
     [Fact]
@@ -149,8 +149,8 @@ public class OutboxWriterFactoryFixture
         IOutboxWriter lock1 = factory.GetWriter(new OutboxSettings1(), Substitute.For<IServiceProvider>());
         IOutboxWriter lock2 = factory.GetWriter(new OutboxSettings2(), Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<OverrideOutboxWriter>();
-        lock2.Should().BeOfType<OverrideOutboxWriter>();
+        lock1.ShouldBeOfType<OverrideOutboxWriter>();
+        lock2.ShouldBeOfType<OverrideOutboxWriter>();
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class OutboxWriterFactoryFixture
 
         bool result = factory.HasFactory<OutboxSettings1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class OutboxWriterFactoryFixture
 
         bool result = factory.HasFactory<OutboxSettings2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

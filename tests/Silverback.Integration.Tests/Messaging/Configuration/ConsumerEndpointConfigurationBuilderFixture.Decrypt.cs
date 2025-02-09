@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Encryption;
 using Silverback.Tests.Types;
 using Xunit;
@@ -22,9 +22,9 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration configuration = builder.DecryptUsingAes(key, iv).Build();
 
-        configuration.Encryption.Should().BeOfType<SymmetricDecryptionSettings>();
-        configuration.Encryption.As<SymmetricDecryptionSettings>().Key.Should().BeSameAs(key);
-        configuration.Encryption.As<SymmetricDecryptionSettings>().InitializationVector.Should().BeSameAs(iv);
+        SymmetricDecryptionSettings encryptionSettings = configuration.Encryption.ShouldBeOfType<SymmetricDecryptionSettings>();
+        encryptionSettings.Key.ShouldBeSameAs(key);
+        encryptionSettings.InitializationVector.ShouldBeSameAs(iv);
     }
 
     [Fact]
@@ -39,10 +39,10 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
 
         TestConsumerEndpointConfiguration configuration = builder.DecryptUsingAes(DecryptionKeyCallback, iv).Build();
 
-        configuration.Encryption.Should().BeOfType<SymmetricDecryptionSettings>();
-        configuration.Encryption.As<SymmetricDecryptionSettings>().Key.Should().BeNull();
-        configuration.Encryption.As<SymmetricDecryptionSettings>().InitializationVector.Should().BeSameAs(iv);
-        configuration.Encryption.As<SymmetricDecryptionSettings>().KeyProvider.Should().NotBeNull();
-        configuration.Encryption.As<SymmetricDecryptionSettings>().KeyProvider!("abc").Should().BeSameAs(key);
+        SymmetricDecryptionSettings encryptionSettings = configuration.Encryption.ShouldBeOfType<SymmetricDecryptionSettings>();
+        encryptionSettings.Key.ShouldBeNull();
+        encryptionSettings.InitializationVector.ShouldBeSameAs(iv);
+        encryptionSettings.KeyProvider.ShouldNotBeNull();
+        encryptionSettings.KeyProvider!("abc").ShouldBeSameAs(key);
     }
 }

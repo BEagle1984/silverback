@@ -4,8 +4,8 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
@@ -44,7 +44,7 @@ public class ChunkStreamTests
         await copyTask;
         chunkStream.Close();
 
-        Encoding.UTF8.GetString(output.ToArray()).Should().Be("Silverback");
+        Encoding.UTF8.GetString(output.ToArray()).ShouldBe("Silverback");
     }
 
     [Fact]
@@ -75,6 +75,6 @@ public class ChunkStreamTests
         await copyTask;
         chunkStream.Close();
 
-        Encoding.UTF8.GetString(output.ToArray()).Should().Be("Silverback");
+        Encoding.UTF8.GetString(output.ToArray()).ShouldBe("Silverback");
     }
 }

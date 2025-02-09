@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
@@ -16,6 +16,6 @@ public class KafkaOffsetStoreSettingsBuilderPostgreSqlExtensionsFixture
 
         IKafkaOffsetStoreSettingsImplementationBuilder implementationBuilder = builder.UsePostgreSql("connection-string");
 
-        implementationBuilder.Should().BeOfType<PostgreSqlKafkaOffsetStoreSettingsBuilder>();
+        implementationBuilder.ShouldBeOfType<PostgreSqlKafkaOffsetStoreSettingsBuilder>();
     }
 }

@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Xunit;
@@ -25,8 +25,8 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore store1 = factory.GetStore(new OffsetStoreSettings1(), Substitute.For<IServiceProvider>());
         IKafkaOffsetStore store2 = factory.GetStore(new OffsetStoreSettings2(), Substitute.For<IServiceProvider>());
 
-        store1.Should().BeOfType<OffsetStore1>();
-        store2.Should().BeOfType<OffsetStore2>();
+        store1.ShouldBeOfType<OffsetStore1>();
+        store2.ShouldBeOfType<OffsetStore2>();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class KafkaOffsetStoreFactoryFixture
 
         Action act = () => factory.GetStore(null!, Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<ArgumentNullException>();
+        act.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class KafkaOffsetStoreFactoryFixture
 
         Action act = () => factory.GetStore(new OffsetStoreSettings2(), Substitute.For<IServiceProvider>());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("No factory registered for the specified settings type (OffsetStoreSettings2).");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("No factory registered for the specified settings type (OffsetStoreSettings2).");
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore lock1 = factory.GetStore(new OffsetStoreSettings1(), Substitute.For<IServiceProvider>());
         IKafkaOffsetStore lock2 = factory.GetStore(new OffsetStoreSettings1(), Substitute.For<IServiceProvider>());
 
-        lock2.Should().BeSameAs(lock1);
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore lock1 = factory.GetStore(offsetStoreSettings1, Substitute.For<IServiceProvider>());
         IKafkaOffsetStore lock2 = factory.GetStore(offsetStoreSettings1, Substitute.For<IServiceProvider>());
 
-        lock2.Should().BeSameAs(lock1);
+        lock2.ShouldBeSameAs(lock1);
     }
 
     [Fact]
@@ -94,11 +94,11 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore lock2A1 = factory.GetStore(new OffsetStoreSettings2("A"), Substitute.For<IServiceProvider>());
         IKafkaOffsetStore lock2A2 = factory.GetStore(new OffsetStoreSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -116,11 +116,11 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore lock2A1 = factory.GetStore(new OffsetStoreSettings2("A"), Substitute.For<IServiceProvider>());
         IKafkaOffsetStore lock2A2 = factory.GetStore(new OffsetStoreSettings2("A"), Substitute.For<IServiceProvider>());
 
-        lock1A1.Should().BeSameAs(lock1A2);
-        lock1B1.Should().BeSameAs(lock1B2);
-        lock1A1.Should().NotBeSameAs(lock1B1);
-        lock2A1.Should().BeSameAs(lock2A2);
-        lock2A1.Should().NotBeSameAs(lock1A1);
+        lock1A1.ShouldBeSameAs(lock1A2);
+        lock1B1.ShouldBeSameAs(lock1B2);
+        lock1A1.ShouldNotBeSameAs(lock1B1);
+        lock2A1.ShouldBeSameAs(lock2A2);
+        lock2A1.ShouldNotBeSameAs(lock1A1);
     }
 
     [Fact]
@@ -131,8 +131,8 @@ public class KafkaOffsetStoreFactoryFixture
 
         Action act = () => factory.AddFactory<OffsetStoreSettings1>((_, _) => new OffsetStore1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified settings type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified settings type is already registered.");
     }
 
     [Fact]
@@ -147,8 +147,8 @@ public class KafkaOffsetStoreFactoryFixture
         IKafkaOffsetStore lock1 = factory.GetStore(new OffsetStoreSettings1(), Substitute.For<IServiceProvider>());
         IKafkaOffsetStore lock2 = factory.GetStore(new OffsetStoreSettings2(), Substitute.For<IServiceProvider>());
 
-        lock1.Should().BeOfType<OverrideStore>();
-        lock2.Should().BeOfType<OverrideStore>();
+        lock1.ShouldBeOfType<OverrideStore>();
+        lock2.ShouldBeOfType<OverrideStore>();
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class KafkaOffsetStoreFactoryFixture
 
         bool result = factory.HasFactory<OffsetStoreSettings1>();
 
-        result.Should().BeTrue();
+        result.ShouldBe(true);
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public class KafkaOffsetStoreFactoryFixture
 
         bool result = factory.HasFactory<OffsetStoreSettings2>();
 
-        result.Should().BeFalse();
+        result.ShouldBe(false);
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

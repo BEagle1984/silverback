@@ -1,12 +1,11 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Encryption;
 using Silverback.Util;
 using Xunit;
@@ -35,8 +34,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -57,8 +56,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -84,8 +83,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -111,8 +110,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -133,8 +132,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -155,8 +154,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -177,8 +176,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = await cryptoStream.ReadAllAsync();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -199,8 +198,8 @@ public class SymmetricDecryptStreamTests
 
         byte[]? result = cryptoStream.ReadAll();
 
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(_clearTextMessage);
+        result.ShouldNotBeNull();
+        result.ShouldBe(_clearTextMessage);
     }
 
     [Fact]
@@ -214,7 +213,7 @@ public class SymmetricDecryptStreamTests
             });
 
         byte[]? result = await cryptoStream.ReadAllAsync();
-        result.Should().BeEquivalentTo(Array.Empty<byte>());
+        result.ShouldBe([]);
     }
 
     [Fact]
@@ -228,7 +227,7 @@ public class SymmetricDecryptStreamTests
             });
 
         byte[]? result = cryptoStream.ReadAll();
-        result.Should().BeEquivalentTo(Array.Empty<byte>());
+        result.ShouldBe([]);
     }
 
     private static byte[] GenerateKey(int size, int seed = 1) =>

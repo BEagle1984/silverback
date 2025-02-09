@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics;
 using Confluent.Kafka;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -33,13 +33,13 @@ public class KafkaActivityEnricherFixture
 
         enricher.EnrichInboundActivity(activity, context);
 
-        activity.Tags.Should().Contain(
+        activity.Tags.ShouldContain(
             keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
                             keyValuePair.Value == "MessageKey");
-        activity.Tags.Should().Contain(
+        activity.Tags.ShouldContain(
             keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
                             keyValuePair.Value == "topic[3]");
-        activity.Tags.Should().Contain(
+        activity.Tags.ShouldContain(
             keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
                             keyValuePair.Value == "topic[3]@42");
     }
@@ -65,7 +65,6 @@ public class KafkaActivityEnricherFixture
         Activity activity = new("Test Activity");
         enricher.EnrichOutboundActivity(activity, context);
 
-        activity.Tags.Should()
-            .Contain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey && keyValuePair.Value == "MyKey");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey && keyValuePair.Value == "MyKey");
     }
 }

@@ -5,9 +5,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -51,7 +51,7 @@ public class SkipMessageErrorPolicyFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        canHandle.Should().BeTrue();
+        canHandle.ShouldBeTrue();
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class SkipMessageErrorPolicyFixture
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]

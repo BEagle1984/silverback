@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -30,12 +30,12 @@ public partial class TaskExtensionsFixture
 
         Execute().FireAndForget();
 
-        executed.Should().BeFalse();
+        executed.ShouldBeFalse();
 
         semaphore1.Release();
         semaphore2.Wait(TimeSpan.FromSeconds(1));
 
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -54,12 +54,12 @@ public partial class TaskExtensionsFixture
 
         Execute().FireAndForget();
 
-        executed.Should().BeFalse();
+        executed.ShouldBeFalse();
 
         semaphore1.Release();
         semaphore2.Wait(TimeSpan.FromSeconds(1));
 
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -79,12 +79,12 @@ public partial class TaskExtensionsFixture
 
         Execute().FireAndForget();
 
-        executed.Should().BeFalse();
+        executed.ShouldBeFalse();
 
         semaphore1.Release();
         semaphore2.Wait(TimeSpan.FromSeconds(1));
 
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 
     [Fact]
@@ -104,11 +104,11 @@ public partial class TaskExtensionsFixture
 
         Execute().FireAndForget();
 
-        executed.Should().BeFalse();
+        executed.ShouldBeFalse();
 
         semaphore1.Release();
         semaphore2.Wait(TimeSpan.FromSeconds(1));
 
-        executed.Should().BeTrue();
+        executed.ShouldBeTrue();
     }
 }

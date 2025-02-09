@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -71,7 +71,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().BeNull();
+        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).ShouldBeNull();
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
+        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().NotBeNullOrEmpty();
+        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.Should().NotContain(header => header.Name == DefaultMessageHeaders.MessageId);
+        envelope.Headers.ShouldNotContain(header => header.Name == DefaultMessageHeaders.MessageId);
     }
 
     public void Dispose() => _kafkaProducer.Dispose();

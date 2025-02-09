@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -42,10 +42,10 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
-        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
+        messages.Count.ShouldBe(3);
+        messages[0].Key.ShouldBe("one"u8.ToArray());
+        messages[1].Key.ShouldBe("two"u8.ToArray());
+        messages[2].Key.ShouldBe("three"u8.ToArray());
     }
 
     [Fact]
@@ -73,10 +73,10 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
-        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
+        messages.Count.ShouldBe(3);
+        messages[0].Key.ShouldBe("one"u8.ToArray());
+        messages[1].Key.ShouldBe("two"u8.ToArray());
+        messages[2].Key.ShouldBe("three"u8.ToArray());
     }
 
     [Fact]
@@ -105,10 +105,10 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
-        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
-        messages[2].Key.Should().BeNull();
+        messages.Count.ShouldBe(3);
+        messages[0].Key.ShouldBe("one"u8.ToArray());
+        messages[1].Key.ShouldBe("two"u8.ToArray());
+        messages[2].Key.ShouldBeNull();
     }
 
     [Fact]
@@ -136,9 +136,9 @@ public partial class OutboundMessageEnrichmentFixture
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeNull();
-        messages[1].Key.Should().BeNull();
-        messages[2].Key.Should().BeNull();
+        messages.Count.ShouldBe(3);
+        messages[0].Key.ShouldBeNull();
+        messages[1].Key.ShouldBeNull();
+        messages[2].Key.ShouldBeNull();
     }
 }

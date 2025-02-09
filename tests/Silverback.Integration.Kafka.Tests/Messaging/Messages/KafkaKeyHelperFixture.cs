@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Xunit;
@@ -18,7 +18,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().Be("1");
+        key.ShouldBe("1");
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().BeNull();
+        key.ShouldBeNull();
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().Be("One=1,Two=2");
+        key.ShouldBe("One=1,Two=2");
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class KafkaKeyHelperFixture
 
         string? key = KafkaKeyHelper.GetMessageKey(message);
 
-        key.Should().Be("Two=2");
+        key.ShouldBe("Two=2");
     }
 
     [Fact]
@@ -181,9 +181,9 @@ public class KafkaKeyHelperFixture
         string? key3 = KafkaKeyHelper.GetMessageKey(message3);
         string? key4 = KafkaKeyHelper.GetMessageKey(message4);
 
-        key1.Should().Be("One=1,Two=2");
-        key2.Should().Be("One=1,Two=2");
-        key3.Should().Be("One=1");
-        key4.Should().Be("Two=2");
+        key1.ShouldBe("One=1,Two=2");
+        key2.ShouldBe("One=1,Two=2");
+        key3.ShouldBe("One=1");
+        key4.ShouldBe("Two=2");
     }
 }

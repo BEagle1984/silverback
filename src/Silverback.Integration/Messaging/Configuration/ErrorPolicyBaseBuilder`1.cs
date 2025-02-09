@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -168,14 +169,15 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The error policy.
     /// </returns>
+    [SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "I prefer the collections to remain simple arrays")]
     public ErrorPolicyBase Build()
     {
         ErrorPolicyBase policy = BuildCore();
 
         return policy with
         {
-            IncludedExceptions = _includedExceptions,
-            ExcludedExceptions = _excludedExceptions,
+            IncludedExceptions = _includedExceptions.ToArray(),
+            ExcludedExceptions = _excludedExceptions.ToArray(),
             ApplyRule = _applyRule,
             MessageToPublishFactory = _messageToPublishFactory
         };

@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
@@ -34,8 +34,8 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
         IOutboxReader reader = readerFactory.GetReader(new InMemoryOutboxSettings(), serviceProvider);
         IOutboxWriter writer = writerFactory.GetWriter(new InMemoryOutboxSettings(), serviceProvider);
 
-        reader.Should().BeOfType<InMemoryOutboxReader>();
-        writer.Should().BeOfType<InMemoryOutboxWriter>();
+        reader.ShouldBeOfType<InMemoryOutboxReader>();
+        writer.ShouldBeOfType<InMemoryOutboxWriter>();
     }
 
     [Fact]
@@ -60,10 +60,10 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
         IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1(), serviceProvider);
         IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2(), serviceProvider);
 
-        reader1.Should().BeOfType<InMemoryOutboxReader>();
-        reader2.Should().BeOfType<InMemoryOutboxReader>();
-        writer1.Should().BeOfType<InMemoryOutboxWriter>();
-        writer2.Should().BeOfType<InMemoryOutboxWriter>();
+        reader1.ShouldBeOfType<InMemoryOutboxReader>();
+        reader2.ShouldBeOfType<InMemoryOutboxReader>();
+        writer1.ShouldBeOfType<InMemoryOutboxWriter>();
+        writer2.ShouldBeOfType<InMemoryOutboxWriter>();
     }
 
     private record OutboxSettings1 : OutboxSettings

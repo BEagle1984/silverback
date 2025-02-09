@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using FluentAssertions;
 using MQTTnet;
 using MQTTnet.Formatter;
+using Shouldly;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -25,7 +25,7 @@ public class MqttClientConfigurationFixture
     {
         MqttClientConfiguration configuration = new();
 
-        configuration.ProtocolVersion.Should().Be(MqttProtocolVersion.V500);
+        configuration.ProtocolVersion.ShouldBe(MqttProtocolVersion.V500);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("ProducerEndpoints cannot be null.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("ProducerEndpoints cannot be null.");
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("ConsumerEndpoints cannot be null.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("ConsumerEndpoints cannot be null.");
     }
 
     [Fact]
@@ -73,8 +73,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("At least one endpoint must be configured.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("At least one endpoint must be configured.");
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.ShouldThrow<BrokerConfigurationException>();
     }
 
     [Fact]
@@ -134,8 +134,8 @@ public class MqttClientConfigurationFixture
         };
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Cannot connect to the same topic in different endpoints*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot connect to the same topic in different endpoints.*");
     }
 
     [Theory]
@@ -150,8 +150,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("A ClientId is required to connect with the message broker.*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("A ClientId is required to connect with the message broker.*");
     }
 
     [Fact]
@@ -164,8 +164,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The channel configuration is required*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("The channel configuration is required.*");
     }
 
     [Fact]
@@ -178,8 +178,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The remote endpoint is required*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("The remote endpoint is required.*");
     }
 
     [Fact]
@@ -195,8 +195,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The name of a user property cannot be empty.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The name of a user property cannot be empty.");
     }
 
     [Fact]
@@ -213,8 +213,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The topic is required*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("The topic is required.*");
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -256,8 +256,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Wrong serializer configuration. Since headers*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Wrong serializer configuration. Since headers.*");
     }
 
     [Fact]
@@ -278,7 +278,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Fact]
@@ -304,8 +304,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Cannot set MaxFailedAttempts on the error policies*");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldMatch("Cannot set MaxFailedAttempts on the error policies.*");
     }
 
     [Fact]
@@ -327,7 +327,7 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -342,8 +342,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The maximum degree of parallelism must be greater or equal to 1.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The maximum degree of parallelism must be greater or equal to 1.");
     }
 
     [Theory]
@@ -358,8 +358,8 @@ public class MqttClientConfigurationFixture
 
         Action act = configuration.Validate;
 
-        act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The backpressure limit must be greater or equal to 1.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The backpressure limit must be greater or equal to 1.");
     }
 
     [Fact]
@@ -378,10 +378,11 @@ public class MqttClientConfigurationFixture
 
         MqttClientOptions options = configuration.GetMqttClientOptions();
 
-        options.ClientId.Should().Be("client42");
-        options.ProtocolVersion.Should().Be(MqttProtocolVersion.V310);
-        options.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("test-server");
-        options.WillTopic.Should().Be("topic1");
+        options.ClientId.ShouldBe("client42");
+        options.ProtocolVersion.ShouldBe(MqttProtocolVersion.V310);
+        MqttClientWebSocketOptions webSocketOptions = options.ChannelOptions.ShouldBeOfType<MqttClientWebSocketOptions>();
+        webSocketOptions.Uri.ShouldBe("test-server");
+        options.WillTopic.ShouldBe("topic1");
     }
 
     [Fact]
@@ -400,7 +401,11 @@ public class MqttClientConfigurationFixture
 
         MqttClientOptions options = configuration.GetMqttClientOptions();
 
-        options.UserProperties.Should().BeEquivalentTo(mqttUserProperties);
+        options.UserProperties.ShouldBe(
+        [
+            new MQTTnet.Packets.MqttUserProperty("key1", "value1"),
+            new MQTTnet.Packets.MqttUserProperty("key2", "value2")
+        ]);
     }
 
     private static MqttClientConfiguration GetValidConfiguration() =>

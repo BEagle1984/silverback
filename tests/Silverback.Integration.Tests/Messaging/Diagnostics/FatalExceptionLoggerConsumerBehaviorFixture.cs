@@ -4,10 +4,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -93,7 +93,7 @@ public class FatalExceptionLoggerConsumerBehaviorFixture
             (_, _) => throw new InvalidCastException(),
             CancellationToken.None).AsTask();
 
-        await act.Should().ThrowExactlyAsync<ConsumerPipelineFatalException>()
-            .WithInnerExceptionExactly<ConsumerPipelineFatalException, InvalidCastException>();
+        Exception exception = await act.ShouldThrowAsync<ConsumerPipelineFatalException>();
+        exception.InnerException.ShouldBeOfType<InvalidCastException>();
     }
 }

@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -69,14 +69,14 @@ public class BinaryMessageFixture : KafkaFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
+            .Select(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>().ContentType)
+            .ShouldBe(["application/pdf", "text/plain"]);
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
             new[]
             {
                 message1.Content.ReReadAll(),
@@ -116,9 +116,9 @@ public class BinaryMessageFixture : KafkaFixture
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(message1.Content.ReReadAll());
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.ReReadAll().Should().BeEquivalentTo(message2.Content.ReReadAll());
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().ShouldBe(message1.Content.ReReadAll());
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ReReadAll().ShouldBe(message2.Content.ReReadAll());
     }
 
     [Fact]
@@ -165,15 +165,15 @@ public class BinaryMessageFixture : KafkaFixture
         await publisher.PublishAsync(jsonMessage);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(binaryMessage.Content.ReReadAll());
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().ShouldBe(binaryMessage.Content.ReReadAll());
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        receivedBinaryMessages.Should().HaveCount(1);
-        receivedJsonMessages.Should().HaveCount(1);
+        receivedBinaryMessages.Count.ShouldBe(1);
+        receivedJsonMessages.Count.ShouldBe(1);
 
-        receivedBinaryMessages[0].Content.ReReadAll().Should().BeEquivalentTo(binaryMessage.Content.ReReadAll());
-        receivedJsonMessages[0].Should().BeEquivalentTo(jsonMessage);
+        receivedBinaryMessages[0].Content.ReReadAll().ShouldBe(binaryMessage.Content.ReReadAll());
+        receivedJsonMessages[0].ShouldBeEquivalentTo(jsonMessage);
     }
 
     [Fact]
@@ -216,21 +216,21 @@ public class BinaryMessageFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
 
-        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
+        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).ShouldBeNull());
         Helper.Spy.OutboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
+            .Select(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>().ContentType)
+            .ShouldBe(["application/pdf", "text/plain"]);
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
-            new[]
-            {
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
+            [
                 message1.Content.ReReadAll(),
                 message2.Content.ReReadAll()
-            });
+            ],
+            ignoreOrder: true);
     }
 
     [Fact]
@@ -277,25 +277,25 @@ public class BinaryMessageFixture : KafkaFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<CustomBinaryMessage>());
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
-            .Should().BeEquivalentTo("one", "two");
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<CustomBinaryMessage>().CustomHeader)
-            .Should().BeEquivalentTo("one", "two");
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeOfType<CustomBinaryMessage>());
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(
+            envelope =>
+                envelope.Headers.Contains(new MessageHeader("x-custom-header", "one")) &&
+                envelope.Message!.CustomHeader == "one" &&
+                envelope.Message.ContentType == "application/pdf");
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(
+            envelope =>
+                envelope.Headers.Contains(new MessageHeader("x-custom-header", "two")) &&
+                envelope.Message!.CustomHeader == "two" &&
+                envelope.Message.ContentType == "text/plain");
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
-            new[]
-            {
+        receivedFiles.ShouldBe(
+            [
                 message1.Content.ReReadAll(),
                 message2.Content.ReReadAll()
-            });
+            ],
+            ignoreOrder: true);
     }
 }

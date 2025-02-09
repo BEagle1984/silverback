@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
@@ -69,17 +69,17 @@ public class EncryptionFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull());
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull());
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull());
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull());
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -130,19 +130,19 @@ public class EncryptionFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier1);
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier2);
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier1);
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier2);
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier1);
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().Be(keyIdentifier2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier1);
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBe(keyIdentifier2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -187,19 +187,19 @@ public class EncryptionFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
-        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).ShouldBeNull();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -243,29 +243,27 @@ public class EncryptionFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(12);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(12);
 
         for (int i = 0; i < 6; i++)
         {
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.Should().NotBeNull();
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().Should()
-                .NotBeEquivalentTo(rawMessageStream1.ReReadAll().Skip(i * 10).Take(10));
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ShouldNotBeNull();
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().ShouldNotBe(rawMessageStream1.ReReadAll().Skip(i * 10).Take(10));
         }
 
         for (int i = 0; i < 6; i++)
         {
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
-                .NotBeEquivalentTo(rawMessageStream2.ReReadAll().Skip(i * 10).Take(10));
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ShouldNotBeNull();
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().ShouldNotBe(rawMessageStream2.ReReadAll().Skip(i * 10).Take(10));
         }
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-        Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeEquivalentTo(message2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(12);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(12);
     }
 
     [Fact]
@@ -318,12 +316,12 @@ public class EncryptionFixture : KafkaFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-        Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.OutboundEnvelopes[0].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
+        Helper.Spy.OutboundEnvelopes[1].RawMessage.ShouldBeOfType<SymmetricEncryptStream>();
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
             new[]
             {
                 message1.Content.ReReadAll(),
@@ -382,26 +380,24 @@ public class EncryptionFixture : KafkaFixture
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(12);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(12);
 
         for (int i = 0; i < 6; i++)
         {
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.Should().NotBeNull();
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().Should()
-                .NotBeEquivalentTo(message1.Content.ReReadAll().Skip(i * 10).Take(10));
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ShouldNotBeNull();
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
+            Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().ShouldNotBe(message1.Content.ReReadAll().Skip(i * 10).Take(10));
         }
 
         for (int i = 0; i < 6; i++)
         {
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
-                .NotBeEquivalentTo(message2.Content.ReReadAll().Skip(i * 10).Take(10));
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ShouldNotBeNull();
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
+            Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().ShouldNotBe(message2.Content.ReReadAll().Skip(i * 10).Take(10));
         }
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
+        receivedFiles.Count.ShouldBe(2);
+        receivedFiles.ShouldBe(
             new[]
             {
                 message1.Content.ReReadAll(),

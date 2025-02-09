@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -61,13 +61,13 @@ public partial class StreamingFixture
         await producer.ProduceAsync(new TestEventOne());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        receivedMessages.Should().HaveCount(2);
+        receivedMessages.Count.ShouldBe(2);
 
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => aborted);
 
-        aborted.Should().BeTrue();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        aborted.ShouldBeTrue();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 
     [Fact]
@@ -101,12 +101,12 @@ public partial class StreamingFixture
         await producer.ProduceAsync(new TestEventOne());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        receivedMessages.Should().HaveCount(2);
+        receivedMessages.Count.ShouldBe(2);
 
         await Helper.GetConsumerForEndpoint(DefaultTopicName).Client.DisconnectAsync();
         await AsyncTestingUtil.WaitAsync(() => completed);
 
-        completed.Should().BeTrue();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
+        completed.ShouldBeTrue();
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
     }
 }

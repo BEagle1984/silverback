@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
@@ -17,8 +17,8 @@ public class SqliteOutboxSettingsFixture
     {
         SqliteOutboxSettings settings = new("connection-string");
 
-        settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("SilverbackOutbox");
+        settings.ConnectionString.ShouldBe("connection-string");
+        settings.TableName.ShouldBe("SilverbackOutbox");
     }
 
     [Fact]
@@ -31,8 +31,7 @@ public class SqliteOutboxSettingsFixture
 
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
-        lockSettings.Should().BeOfType<InMemoryLockSettings>();
-        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be($"outbox.{"connection-string".GetSha256Hash()}.my-outbox");
+        lockSettings.ShouldBeOfType<InMemoryLockSettings>().LockName.ShouldBe($"outbox.{"connection-string".GetSha256Hash()}.my-outbox");
     }
 
     [Fact]
@@ -42,7 +41,7 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -58,7 +57,7 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Theory]
@@ -71,7 +70,7 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.ShouldThrow<SilverbackConfigurationException>();
     }
 
     [Fact]
@@ -84,7 +83,8 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -97,7 +97,8 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The command timeout must be greater than zero.");
     }
 
     [Fact]
@@ -110,7 +111,8 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 
     [Fact]
@@ -123,6 +125,7 @@ public class SqliteOutboxSettingsFixture
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The create table timeout must be greater than zero.");
     }
 }

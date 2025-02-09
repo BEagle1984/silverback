@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -28,10 +28,7 @@ public class BinaryMessageDeserializerTests
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
         (object? deserialized, _) = await deserializer.DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
 
-        BinaryMessage? message2 = deserialized as BinaryMessage;
-
-        message2.Should().NotBeNull();
-        message2.Should().BeEquivalentTo(message);
+        deserialized.ShouldBeEquivalentTo(message);
     }
 
     [Fact]
@@ -46,10 +43,7 @@ public class BinaryMessageDeserializerTests
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
         (object? deserialized, _) = await deserializer.DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
 
-        BinaryMessage? message2 = deserialized as BinaryMessage;
-
-        message2.Should().NotBeNull();
-        message2.Should().BeEquivalentTo(message);
+        deserialized.ShouldBeEquivalentTo(message);
     }
 
     [Fact]
@@ -58,16 +52,15 @@ public class BinaryMessageDeserializerTests
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = [];
 
-        (object? deserializedObject, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
+        (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<BinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new BinaryMessage
             {
                 Content = rawContent
             });
-        type.Should().Be(typeof(BinaryMessage));
+        type.ShouldBe(typeof(BinaryMessage));
     }
 
     [Fact]
@@ -79,16 +72,15 @@ public class BinaryMessageDeserializerTests
             { "x-message-type", typeof(InheritedBinaryMessage).AssemblyQualifiedName! }
         };
 
-        (object? deserializedObject, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
+        (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<InheritedBinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new InheritedBinaryMessage
             {
                 Content = rawContent
             });
-        type.Should().Be(typeof(InheritedBinaryMessage));
+        type.ShouldBe(typeof(InheritedBinaryMessage));
     }
 
     [Fact]
@@ -97,45 +89,43 @@ public class BinaryMessageDeserializerTests
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = [];
 
-        (object? deserializedObject, Type type) = await new BinaryMessageDeserializer<InheritedBinaryMessage>()
+        (object? deserialized, Type type) = await new BinaryMessageDeserializer<InheritedBinaryMessage>()
             .DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<InheritedBinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new InheritedBinaryMessage
             {
                 Content = rawContent
             });
-        type.Should().Be(typeof(InheritedBinaryMessage));
+        type.ShouldBe(typeof(InheritedBinaryMessage));
     }
 
     [Fact]
     public async Task DeserializeAsync_NullMessage_BinaryWithNullContentReturned()
     {
-        (object? deserializedObject, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
+        (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(null, [], TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<BinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new BinaryMessage
             {
                 Content = null
             });
-        type.Should().Be(typeof(BinaryMessage));
+        type.ShouldBe(typeof(BinaryMessage));
     }
 
     [Fact]
     public async Task DeserializeAsync_EmptyMessage_BinaryWithEmptyContentReturned()
     {
-        (object? deserializedObject, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
+        (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(
                 new MemoryStream(),
                 [],
                 TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<BinaryMessage>();
-        deserializedObject.As<BinaryMessage>().Content.ReadAll()!.Length.Should().Be(0);
-        type.Should().Be(typeof(BinaryMessage));
+        BinaryMessage deserializedBinaryMessage = deserialized.ShouldBeOfType<BinaryMessage>();
+        deserializedBinaryMessage.Content.ReadAll()!.Length.ShouldBe(0);
+        type.ShouldBe(typeof(BinaryMessage));
     }
 
     [Fact]
@@ -146,15 +136,14 @@ public class BinaryMessageDeserializerTests
 
         BinaryMessageDeserializer<InheritedBinaryMessage> deserializer = new();
 
-        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
+        (object? deserialized, Type type) = await deserializer.DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<InheritedBinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new InheritedBinaryMessage
             {
                 Content = rawContent
             });
-        type.Should().Be(typeof(InheritedBinaryMessage));
+        type.ShouldBe(typeof(InheritedBinaryMessage));
     }
 
     [Fact]
@@ -164,15 +153,14 @@ public class BinaryMessageDeserializerTests
 
         BinaryMessageDeserializer<InheritedBinaryMessage> deserializer = new();
 
-        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(null, headers, TestConsumerEndpoint.GetDefault());
+        (object? deserialized, Type type) = await deserializer.DeserializeAsync(null, headers, TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<InheritedBinaryMessage>();
-        deserializedObject.Should().BeEquivalentTo(
+        deserialized.ShouldBeEquivalentTo(
             new InheritedBinaryMessage
             {
                 Content = null
             });
-        type.Should().Be(typeof(InheritedBinaryMessage));
+        type.ShouldBe(typeof(InheritedBinaryMessage));
     }
 
     [Fact]
@@ -182,14 +170,14 @@ public class BinaryMessageDeserializerTests
 
         BinaryMessageDeserializer<InheritedBinaryMessage> deserializer = new();
 
-        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(
+        (object? deserialized, Type type) = await deserializer.DeserializeAsync(
             new MemoryStream(),
             headers,
             TestConsumerEndpoint.GetDefault());
 
-        deserializedObject.Should().BeOfType<InheritedBinaryMessage>();
-        deserializedObject.As<BinaryMessage>().Content.ReadAll()!.Length.Should().Be(0);
-        type.Should().Be(typeof(InheritedBinaryMessage));
+        BinaryMessage deserializedBinaryMessage = deserialized.ShouldBeOfType<InheritedBinaryMessage>();
+        deserializedBinaryMessage.Content.ReadAll()!.Length.ShouldBe(0);
+        type.ShouldBe(typeof(InheritedBinaryMessage));
     }
 
     [Fact]
@@ -207,7 +195,7 @@ public class BinaryMessageDeserializerTests
 
         Func<Task> act = async () => await serializer.DeserializeAsync(rawContent, headers, TestConsumerEndpoint.GetDefault());
 
-        await act.Should().ThrowAsync<TypeLoadException>();
+        await act.ShouldThrowAsync<TypeLoadException>();
     }
 
     [Fact]
@@ -218,7 +206,7 @@ public class BinaryMessageDeserializerTests
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -230,7 +218,7 @@ public class BinaryMessageDeserializerTests
 
         bool result = Equals(deserializer1, deserializer2);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     private sealed class InheritedBinaryMessage : BinaryMessage;

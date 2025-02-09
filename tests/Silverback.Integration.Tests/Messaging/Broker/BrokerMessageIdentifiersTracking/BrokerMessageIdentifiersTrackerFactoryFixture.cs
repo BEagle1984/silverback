@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Configuration;
@@ -25,8 +25,8 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
         IBrokerMessageIdentifiersTracker tracker1 = factory.GetTracker(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerMessageIdentifiersTracker tracker2 = factory.GetTracker(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        tracker1.Should().BeOfType<Tracker1>();
-        tracker2.Should().BeOfType<Tracker2>();
+        tracker1.ShouldBeOfType<Tracker1>();
+        tracker2.ShouldBeOfType<Tracker2>();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
 
         IBrokerMessageIdentifiersTracker tracker = factory.GetTracker(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        tracker.Should().BeOfType<SimpleMessageIdentifiersTracker>();
+        tracker.ShouldBeOfType<SimpleMessageIdentifiersTracker>();
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
         IBrokerMessageIdentifiersTracker tracker1 = factory.GetTracker(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerMessageIdentifiersTracker tracker2 = factory.GetTracker(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
 
-        tracker2.Should().NotBeSameAs(tracker1);
+        tracker2.ShouldNotBeSameAs(tracker1);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
         IBrokerMessageIdentifiersTracker tracker1 = factory.GetTracker(endpointConfiguration1, Substitute.For<IServiceProvider>());
         IBrokerMessageIdentifiersTracker tracker2 = factory.GetTracker(endpointConfiguration1, Substitute.For<IServiceProvider>());
 
-        tracker2.Should().NotBeSameAs(tracker1);
+        tracker2.ShouldNotBeSameAs(tracker1);
     }
 
     [Fact]
@@ -77,8 +77,8 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
 
         Action act = () => factory.AddFactory<EndpointConfiguration1>(_ => new Tracker1());
 
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("The factory for the specified discriminator type is already registered.");
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified discriminator type is already registered.");
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
         IBrokerMessageIdentifiersTracker tracker1 = factory.GetTracker(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
         IBrokerMessageIdentifiersTracker tracker2 = factory.GetTracker(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
-        tracker1.Should().BeOfType<OverrideTracker>();
-        tracker2.Should().BeOfType<OverrideTracker>();
+        tracker1.ShouldBeOfType<OverrideTracker>();
+        tracker2.ShouldBeOfType<OverrideTracker>();
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration1>();
 
-        result.Should().BeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class BrokerMessageIdentifiersTrackerFactoryFixture
 
         bool result = factory.HasFactory<EndpointConfiguration2>();
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]

@@ -3,8 +3,8 @@
 
 using System;
 using Confluent.SchemaRegistry;
-using FluentAssertions;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
@@ -23,7 +23,7 @@ public class ProtobufMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel<ProtobufMessage>().Build();
 
-        serializer.Should().BeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
+        serializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class ProtobufMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(ProtobufMessage)).Build();
 
-        serializer.Should().BeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
+        serializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
     }
 
     [Fact]
@@ -53,9 +53,9 @@ public class ProtobufMessageDeserializerBuilderFixture
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
 
-        ProtobufMessageDeserializer<ProtobufMessage> protobufMessageDeserializer = serializer.As<ProtobufMessageDeserializer<ProtobufMessage>>();
+        ProtobufMessageDeserializer<ProtobufMessage> protobufMessageDeserializer = serializer.ShouldBeOfType<ProtobufMessageDeserializer<ProtobufMessage>>();
         protobufMessageDeserializer.ProtobufDeserializerConfig.ShouldNotBeNull();
-        protobufMessageDeserializer.ProtobufDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
+        protobufMessageDeserializer.ProtobufDeserializerConfig.SubjectNameStrategy.ShouldBe(SubjectNameStrategy.TopicRecord);
     }
 
     [Fact]
@@ -65,7 +65,8 @@ public class ProtobufMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
@@ -75,7 +76,8 @@ public class ProtobufMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("TestEventOne does not implement IMessage<TestEventOne>.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("TestEventOne does not implement IMessage<TestEventOne>.");
     }
 
     [Fact]
@@ -85,7 +87,8 @@ public class ProtobufMessageDeserializerBuilderFixture
 
         Action act = () => builder.Build();
 
-        act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
+        Exception exception = act.ShouldThrow<SilverbackConfigurationException>();
+        exception.Message.ShouldBe("At least 1 Url is required to connect with the schema registry.");
     }
 
     private ProtobufMessageDeserializerBuilder GetValidBuilder() =>

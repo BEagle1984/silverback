@@ -3,7 +3,7 @@
 
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Util;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class StreamExtensionsFixture
 
         byte[]? result = await stream.ReadAllAsync();
 
-        result.Should().BeEquivalentTo(buffer);
+        result.ShouldBe(buffer);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class StreamExtensionsFixture
 
         byte[]? result = await stream.ReadAllAsync();
 
-        result.Should().BeEquivalentTo(buffer);
+        result.ShouldBe(buffer);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class StreamExtensionsFixture
         Stream? input = null;
         byte[]? result = await input.ReadAllAsync();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class StreamExtensionsFixture
 
         byte[]? result = stream.ReadAll();
 
-        result.Should().BeEquivalentTo(buffer);
+        result.ShouldBe(buffer);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class StreamExtensionsFixture
 
         byte[]? result = stream.ReadAll();
 
-        result.Should().BeEquivalentTo(buffer);
+        result.ShouldBe(buffer);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class StreamExtensionsFixture
         Stream? input = null;
         byte[]? result = input.ReadAll();
 
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -79,10 +79,10 @@ public class StreamExtensionsFixture
         MemoryStream stream = new([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
 
         byte[]? result = await stream.ReadAsync(2);
-        result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02 });
+        result.ShouldBe([0x01, 0x02]);
 
         result = await stream.ReadAsync(3);
-        result.Should().BeEquivalentTo(new byte[] { 0x03, 0x04, 0x05 });
+        result.ShouldBe([0x03, 0x04, 0x05]);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class StreamExtensionsFixture
         MemoryStream stream = new([0x01, 0x02, 0x03]);
 
         byte[]? result = await stream.ReadAsync(5);
-        result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });
+        result.ShouldBe([0x01, 0x02, 0x03]);
     }
 
     [Fact]
@@ -100,10 +100,10 @@ public class StreamExtensionsFixture
         MemoryStream stream = new([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
 
         byte[]? result = stream.Read(2);
-        result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02 });
+        result.ShouldBe([0x01, 0x02]);
 
         result = stream.Read(3);
-        result.Should().BeEquivalentTo(new byte[] { 0x03, 0x04, 0x05 });
+        result.ShouldBe([0x03, 0x04, 0x05]);
     }
 
     [Fact]
@@ -112,6 +112,6 @@ public class StreamExtensionsFixture
         MemoryStream stream = new([0x01, 0x02, 0x03]);
 
         byte[]? result = stream.Read(5);
-        result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });
+        result.ShouldBe([0x01, 0x02, 0x03]);
     }
 }

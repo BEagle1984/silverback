@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using FluentAssertions;
 using MQTTnet;
 using MQTTnet.Diagnostics.Logger;
 using NSubstitute;
+using Shouldly;
 using Silverback.Messaging.Broker.Mqtt;
 using Xunit;
 
@@ -19,6 +19,6 @@ public class MqttNetClientFactoryFixture
 
         IMqttClient client = factory.CreateClient();
 
-        client.Should().NotBeNull();
+        client.ShouldNotBeNull();
     }
 }

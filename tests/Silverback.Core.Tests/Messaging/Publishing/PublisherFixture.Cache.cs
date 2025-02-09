@@ -6,9 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -48,7 +48,7 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new TestCommandOne());
         }
 
-        resolved.Should().Be(2);
+        resolved.ShouldBe(2);
 
         // PublishAsync
         resolved = 0;
@@ -58,7 +58,7 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new TestCommandOne());
         }
 
-        resolved.Should().Be(1);
+        resolved.ShouldBe(1);
 
         // Publish
         resolved = 0;
@@ -68,7 +68,7 @@ public partial class PublisherFixture
             scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new TestCommandOne());
         }
 
-        resolved.Should().Be(1);
+        resolved.ShouldBe(1);
 
         // Publish stream
         resolved = 0;
@@ -78,7 +78,7 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new MessageStreamProvider<TestCommandOne>());
         }
 
-        resolved.Should().Be(0);
+        resolved.ShouldBe(0);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public partial class PublisherFixture
             .Single()
             .StartAsync(CancellationToken.None);
 
-        resolved.Should().Be(2);
+        resolved.ShouldBe(2);
 
         // PublishAsync
         resolved = 0;
@@ -119,7 +119,7 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new TestCommandOne());
         }
 
-        resolved.Should().Be(1);
+        resolved.ShouldBe(1);
 
         // Publish
         resolved = 0;
@@ -129,7 +129,7 @@ public partial class PublisherFixture
             scope.ServiceProvider.GetRequiredService<IPublisher>().Publish(new TestCommandOne());
         }
 
-        resolved.Should().Be(1);
+        resolved.ShouldBe(1);
 
         // Publish stream
         resolved = 0;
@@ -139,6 +139,6 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new MessageStreamProvider<TestCommandOne>());
         }
 
-        resolved.Should().Be(0);
+        resolved.ShouldBe(0);
     }
 }

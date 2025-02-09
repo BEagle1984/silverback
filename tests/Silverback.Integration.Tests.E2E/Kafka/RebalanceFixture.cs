@@ -8,8 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -67,14 +67,14 @@ public class RebalanceFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
 
-        consumers[0].Client.Assignment.Should().HaveCount(5);
-        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Should().HaveCount(5);
-        consumers[1].Client.Assignment.Should().HaveCount(0);
-        partitionCallbacksHandler.RevokedPartitions.Should().NotContainKey(consumers[1]);
-        partitionCallbacksHandler.CurrentPartitions.Should().NotContainKey(consumers[1]);
+        consumers[0].Client.Assignment.Count.ShouldBe(5);
+        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Count.ShouldBe(5);
+        consumers[1].Client.Assignment.Count.ShouldBe(0);
+        partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
+        partitionCallbacksHandler.CurrentPartitions.ShouldNotContainKey(consumers[1]);
 
         await consumers[1].Client.ConnectAsync();
 
@@ -85,15 +85,15 @@ public class RebalanceFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
-        consumers[0].Client.Assignment.Should().HaveCount(3);
-        partitionCallbacksHandler.RevokedPartitions[consumers[0]].Should().HaveCount(5);
-        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Should().HaveCount(3);
-        consumers[1].Client.Assignment.Should().HaveCount(2);
-        partitionCallbacksHandler.RevokedPartitions.Should().NotContainKey(consumers[1]);
-        partitionCallbacksHandler.CurrentPartitions[consumers[1]].Should().HaveCount(2);
+        consumers[0].Client.Assignment.Count.ShouldBe(3);
+        partitionCallbacksHandler.RevokedPartitions[consumers[0]].Count.ShouldBe(5);
+        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Count.ShouldBe(3);
+        consumers[1].Client.Assignment.Count.ShouldBe(2);
+        partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
+        partitionCallbacksHandler.CurrentPartitions[consumers[1]].Count.ShouldBe(2);
     }
 
     [Fact]
@@ -137,14 +137,14 @@ public class RebalanceFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
 
-        consumers[0].Client.Assignment.Should().HaveCount(5);
-        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Should().HaveCount(5);
-        consumers[1].Client.Assignment.Should().HaveCount(0);
-        partitionCallbacksHandler.RevokedPartitions.Should().NotContainKey(consumers[1]);
-        partitionCallbacksHandler.CurrentPartitions.Should().NotContainKey(consumers[1]);
+        consumers[0].Client.Assignment.Count.ShouldBe(5);
+        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Count.ShouldBe(5);
+        consumers[1].Client.Assignment.Count.ShouldBe(0);
+        partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
+        partitionCallbacksHandler.CurrentPartitions.ShouldNotContainKey(consumers[1]);
 
         await consumers[1].Client.ConnectAsync();
 
@@ -155,15 +155,15 @@ public class RebalanceFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
-        consumers[0].Client.Assignment.Should().HaveCount(3);
-        partitionCallbacksHandler.RevokedPartitions[consumers[0]].Should().HaveCount(2);
-        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Should().HaveCount(3);
-        consumers[1].Client.Assignment.Should().HaveCount(2);
-        partitionCallbacksHandler.RevokedPartitions.Should().NotContainKey(consumers[1]);
-        partitionCallbacksHandler.CurrentPartitions[consumers[1]].Should().HaveCount(2);
+        consumers[0].Client.Assignment.Count.ShouldBe(3);
+        partitionCallbacksHandler.RevokedPartitions[consumers[0]].Count.ShouldBe(2);
+        partitionCallbacksHandler.CurrentPartitions[consumers[0]].Count.ShouldBe(3);
+        consumers[1].Client.Assignment.Count.ShouldBe(2);
+        partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
+        partitionCallbacksHandler.CurrentPartitions[consumers[1]].Count.ShouldBe(2);
     }
 
     [Fact]
@@ -204,12 +204,12 @@ public class RebalanceFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages == 5);
 
-        receivedMessages.Should().Be(5);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        receivedMessages.ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
 
         await DefaultConsumerGroup.RebalanceAsync();
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(5);
     }
 
     [Fact]
@@ -262,26 +262,26 @@ public class RebalanceFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
-        receivedBatches.Should().HaveCount(2);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
-        receivedBatches.Sum(batch => batch.Count).Should().Be(15);
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(15);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         await DefaultConsumerGroup.RebalanceAsync();
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 20, TimeSpan.FromSeconds(10));
 
-        receivedBatches.Should().HaveCount(3);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        receivedBatches[2].Should().HaveCount(5);
-        completedBatches.Should().Be(1);
-        receivedBatches.Sum(batch => batch.Count).Should().Be(20);
+        receivedBatches.Count.ShouldBe(3);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        receivedBatches[2].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(20);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
 
         for (int i = 1; i <= 5; i++)
         {
@@ -290,13 +290,13 @@ public class RebalanceFixture : KafkaFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        receivedBatches.Should().HaveCount(3);
-        receivedBatches[0].Should().HaveCount(10);
-        receivedBatches[1].Should().HaveCount(5);
-        receivedBatches[2].Should().HaveCount(10);
-        completedBatches.Should().Be(2);
+        receivedBatches.Count.ShouldBe(3);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        receivedBatches[2].Count.ShouldBe(10);
+        completedBatches.ShouldBe(2);
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(20);
     }
 
     private sealed class PartitionCallbacksHandler : IKafkaPartitionsAssignedCallback, IKafkaPartitionsRevokedCallback

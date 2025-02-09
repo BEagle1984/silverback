@@ -4,8 +4,8 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
@@ -34,8 +34,8 @@ public partial class PublisherFixture
 
         Action act = () => publisher.Publish(new TestEventOne());
 
-        act.Should().Throw<TargetInvocationException>();
-        messages.Should().HaveCount(1);
+        act.ShouldThrow<TargetInvocationException>();
+        messages.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public partial class PublisherFixture
 
         Func<Task> act = () => publisher.PublishAsync(new TestEventOne());
 
-        await act.Should().ThrowAsync<TargetInvocationException>();
-        messages.Should().HaveCount(1);
+        await act.ShouldThrowAsync<TargetInvocationException>();
+        messages.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -81,9 +81,9 @@ public partial class PublisherFixture
         Action act1 = () => publisher.Publish(new TestEventOne());
         Action act2 = () => publisher.Publish(new TestEventOne());
 
-        act1.Should().Throw<TargetInvocationException>();
-        act2.Should().Throw<TargetInvocationException>();
-        messages.Should().HaveCount(2);
+        act1.ShouldThrow<TargetInvocationException>();
+        act2.ShouldThrow<TargetInvocationException>();
+        messages.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -106,8 +106,8 @@ public partial class PublisherFixture
         Func<Task> act1 = () => publisher.PublishAsync(new TestEventOne());
         Func<Task> act2 = () => publisher.PublishAsync(new TestEventOne());
 
-        await act1.Should().ThrowAsync<TargetInvocationException>();
-        await act2.Should().ThrowAsync<TargetInvocationException>();
-        messages.Should().HaveCount(2);
+        await act1.ShouldThrowAsync<TargetInvocationException>();
+        await act2.ShouldThrowAsync<TargetInvocationException>();
+        messages.Count.ShouldBe(2);
     }
 }

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using FluentAssertions;
+using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -18,7 +18,7 @@ public class MqttUserPropertyFixture
 
         Action act = configuration.Validate;
 
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 
     [Theory]
@@ -30,6 +30,7 @@ public class MqttUserPropertyFixture
 
         Action act = configuration.Validate;
 
-        act.Should().Throw<BrokerConfigurationException>().WithMessage("The name of a user property cannot be empty.");
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("The name of a user property cannot be empty.");
     }
 }
