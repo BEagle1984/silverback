@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
@@ -33,13 +34,15 @@ namespace Silverback.Messaging.Serialization
         public abstract ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public abstract ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public abstract byte[] SerializeKey(

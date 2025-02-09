@@ -44,6 +44,7 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
             CancellationToken cancellationToken = default)
             => _eventsPublisher.ExecuteSaveTransactionAsync(
                 () =>
-                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
+                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken),
+                cancellationToken);
     }
 }

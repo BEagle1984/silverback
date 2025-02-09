@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -36,7 +37,10 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed with the Context")]
-        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public async Task HandleAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -53,7 +57,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                 _logger.LogProcessing(context.Envelope);
 
-                await next(context).ConfigureAwait(false);
+                await next(context, cancellationToken).ConfigureAwait(false);
 
                 if (context.Sequence == null)
                 {
@@ -75,7 +79,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 // handled and it's safer to stop the consumer)
                 if (context.Sequence != null)
                 {
-                    await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)
+                    await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception, cancellationToken)
                         .ConfigureAwait(false);
 
                     if (context.Sequence.Length > 0)
@@ -90,7 +94,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     throw;
                 }
 
-                if (!await HandleExceptionAsync(context, exception).ConfigureAwait(false))
+                if (!await HandleExceptionAsync(context, exception, cancellationToken).ConfigureAwait(false))
                     throw;
             }
         }
@@ -260,13 +264,14 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private async Task<bool> HandleExceptionAsync(
             ConsumerPipelineContext context,
-            Exception exception)
+            Exception exception,
+            CancellationToken cancellationToken)
         {
             _logger.LogProcessingError(context.Envelope, exception);
 
             try
             {
-                bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception)
+                bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception, cancellationToken)
                     .ConfigureAwait(false);
 
                 if (!handled)

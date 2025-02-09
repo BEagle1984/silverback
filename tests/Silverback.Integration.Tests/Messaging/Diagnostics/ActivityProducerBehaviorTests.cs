@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 header =>
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             envelope.Headers.Should().Contain(
                 header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));

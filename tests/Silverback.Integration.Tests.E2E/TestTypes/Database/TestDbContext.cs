@@ -49,7 +49,8 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Database
             CancellationToken cancellationToken = default)
             => _eventsPublisher.ExecuteSaveTransactionAsync(
                 () =>
-                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken));
+                    base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken),
+                cancellationToken);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

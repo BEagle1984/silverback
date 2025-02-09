@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +27,20 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .UseModel()
-                    .AddDelegateSubscriber((TestEvent _) => _receivedMessages++));
+                    .AddDelegateSubscriber((TestEvent _, CancellationToken ct) =>
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            throw new OperationCanceledException();
+                        }
+
+                        return _receivedMessages++;
+                    })
+                    .AddDelegateSubscriber(async (TestLongEvent _, CancellationToken ct) =>
+                    {
+                        await Task.Delay(5000, ct);
+                        return 0;
+                    }));
 
             _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
         }
@@ -36,6 +51,25 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
             await _publisher.PublishAsync(new TestEvent());
 
             _receivedMessages.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task PublishAsync_CanceledToken_ExceptionThrown()
+        {
+            Func<Task> act = () => _publisher.PublishAsync(new TestEvent(), new CancellationToken(true));
+
+            await act.Should().ThrowAsync<TargetInvocationException>().WithInnerException(typeof(OperationCanceledException));
+            _receivedMessages.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task PublishAsync_CanceledTokenAfter3Secs_ExceptionThrown()
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfter(3000);
+            Func<Task> act = () => _publisher.PublishAsync(new TestLongEvent(), cancellationTokenSource.Token);
+
+            await act.Should().ThrowAsync<TaskCanceledException>();
         }
 
         [Fact]

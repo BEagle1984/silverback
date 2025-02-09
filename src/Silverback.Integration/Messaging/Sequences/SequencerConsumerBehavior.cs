@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -33,13 +34,16 @@ namespace Silverback.Messaging.Sequences
         public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
 
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.HandleAsync" />
-        public override async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public override async Task HandleAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             var rawSequence = Check.NotNull(context, nameof(context)).Sequence as ISequenceImplementation;
 
             try
             {
-                await base.HandleAsync(context, next).ConfigureAwait(false);
+                await base.HandleAsync(context, next, cancellationToken).ConfigureAwait(false);
 
                 // Abort all pending sequences if the current message doesn't belong to a sequence
                 if (context.Sequence == null)
@@ -59,11 +63,12 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
         protected override Task PublishSequenceAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken)
         {
             Check.NotNull(next, nameof(next));
 
-            return next(context);
+            return next(context, cancellationToken);
         }
     }
 }
