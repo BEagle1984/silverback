@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Testing;
 
 /// <summary>
-///     Subscribes to all the <see cref="IOutboundEnvelope" /> transiting through the internal bus and forwards
+///     Subscribes to all the <see cref="IOutboundEnvelope" /> being published via the mediator and forwards
 ///     them to the <see cref="IIntegrationSpy" /> to be collected.
 /// </summary>
 /// <remarks>

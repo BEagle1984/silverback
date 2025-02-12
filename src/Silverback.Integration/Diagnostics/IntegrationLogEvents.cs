@@ -101,7 +101,7 @@ public static class IntegrationLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when all messages belonging to the
-    ///     sequence have been consumed and published to the internal bus.
+    ///     sequence have been consumed and published via the mediator.
     /// </summary>
     public static LogEvent SequenceCompleted { get; } = new(
         LogLevel.Debug,

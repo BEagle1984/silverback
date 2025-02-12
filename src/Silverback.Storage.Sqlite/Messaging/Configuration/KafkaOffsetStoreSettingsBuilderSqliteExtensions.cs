@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the <seealso cref="UseSqlite" /> method to the <see cref="KafkaOffsetStoreSettingsBuilder" />.
 /// </summary>
-public static class KafkaOffsetStoreSettingsBuilderMemoryExtensions
+public static class KafkaOffsetStoreSettingsBuilderSqliteExtensions
 {
     /// <summary>
     ///     Configures the SQLite offset store.

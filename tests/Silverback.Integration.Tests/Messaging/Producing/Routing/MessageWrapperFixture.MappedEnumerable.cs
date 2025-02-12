@@ -273,7 +273,7 @@ public partial class MessageWrapperFixture
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForMappedEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
     {
         IEnumerable<int?> sources = [1, 2, null];
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", enableSubscribing);
@@ -299,7 +299,7 @@ public partial class MessageWrapperFixture
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
     {
         IEnumerable<int?> sources = [1, 2, null];
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", enableSubscribing);

@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Publishing;
 public static class QueryPublisherExtensions
 {
     /// <summary>
-    ///     Executes the specified query publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified query forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -38,7 +38,7 @@ public static class QueryPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).Publish<TResult>(queryMessage, throwIfUnhandled).Single();
 
     /// <summary>
-    ///     Executes the specified query publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified query forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -66,7 +66,7 @@ public static class QueryPublisherExtensions
         .Single();
 
     /// <summary>
-    ///     Executes the specified query publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified query forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>

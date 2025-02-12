@@ -213,7 +213,7 @@ public partial class MessageWrapperFixture
     }
 
     [Fact]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForMappedCollectionAccordingToEnableSubscribing()
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing()
     {
         List<int?> sources = [1, 2, null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
@@ -251,7 +251,7 @@ public partial class MessageWrapperFixture
     }
 
     [Fact]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForConfiguredMappedCollectionAccordingToEnableSubscribing()
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing()
     {
         List<int?> sources = [1, 2, null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
@@ -292,7 +292,7 @@ public partial class MessageWrapperFixture
     }
 
     [Fact]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()
     {
         List<int?> sources = [1, 2, null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");

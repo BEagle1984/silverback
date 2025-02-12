@@ -23,7 +23,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .AddSubscribers(typeof(ISubscriber));
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -37,7 +37,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .AddSubscribers(typeof(ISubscriber), false);
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -57,7 +57,7 @@ public partial class SilverbackBuilderFixture
                     IsExclusive = false
                 });
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -71,7 +71,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .AddSubscribers<ISubscriber>();
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -85,7 +85,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .AddSubscribers<ISubscriber>(false);
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -104,7 +104,7 @@ public partial class SilverbackBuilderFixture
                     IsExclusive = false
                 });
 
-        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&

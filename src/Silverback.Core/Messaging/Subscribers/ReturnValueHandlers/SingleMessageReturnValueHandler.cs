@@ -15,7 +15,7 @@ public class SingleMessageReturnValueHandler : IReturnValueHandler
 {
     private readonly IPublisher _publisher;
 
-    private readonly BusOptions _busOptions;
+    private readonly MediatorOptions _mediatorOptions;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SingleMessageReturnValueHandler" /> class.
@@ -23,19 +23,19 @@ public class SingleMessageReturnValueHandler : IReturnValueHandler
     /// <param name="publisher">
     ///     The <see cref="IPublisher" /> to be used to publish the messages.
     /// </param>
-    /// <param name="busOptions">
-    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+    /// <param name="mediatorOptions">
+    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
     /// </param>
-    public SingleMessageReturnValueHandler(IPublisher publisher, BusOptions busOptions)
+    public SingleMessageReturnValueHandler(IPublisher publisher, MediatorOptions mediatorOptions)
     {
         _publisher = publisher;
-        _busOptions = busOptions;
+        _mediatorOptions = mediatorOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
     public bool CanHandle(object returnValue) =>
         returnValue != null &&
-        _busOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
+        _mediatorOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(object returnValue) =>

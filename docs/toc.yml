@@ -1,11 +1,11 @@
-- name: Concepts
-  href: concepts/
-- name: Samples
-  href: samples/
-- name: API Documentation
+- name: Guides
+  href: guides/
+- name: Examples
+  href: examples/
+- name: API Reference
   href: api/
-- name: Releases
-  href: releases.md
+- name: Changelog
+  href: changelog/
 - name: About
   href: about.md
 - name: Contributing

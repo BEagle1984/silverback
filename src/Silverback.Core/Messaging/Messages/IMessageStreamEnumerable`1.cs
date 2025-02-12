@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Represent a stream of messages being published through the internal bus. It is an enumerable that is
+///     Represent a stream of messages being published via the mediator. It is an enumerable that is
 ///     asynchronously pushed with messages.
 /// </summary>
 /// <typeparam name="TMessage">
