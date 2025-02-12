@@ -12,7 +12,9 @@ title: "Home"
                         Silverback
                     </h1>
                     <p class="lead">
-                        A simple but feature-rich message bus for .NET core
+                        <span style="font-size: .9em;">Simplicity at its core.</span><br />
+                        <span style="font-size: .9em;">Flexibility at its peak.</span><br />
+                        Effortless messaging for .NET
                     </p>
                     <p>
                         <a href="https://github.com/BEagle1984/silverback/" class="btn"><i class="fab fa-github"></i> View on GitHub</a>
@@ -22,105 +24,82 @@ title: "Home"
             </div>
         </div>
     </div>
-    <div class="container body-container body-content keys">
-        <div class="row">
-            <div class="col-md-4 key">
-                <i class="icon fas fa-paper-plane"></i>
-                <h2>Simple yet powerful message bus</h2>
-                <p>
-                    The in-memory message bus (the mediator) is very simple to use but it is very flexible and can be used in a multitude of use cases.
-                </p>
-                <p>
-                    Silverback also ships with native support for Rx.net (System.Reactive).
-                </p>
-            </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-plug"></i>
-                <h2>Message broker abstraction</h2>
-                <p>
-                    The bus can be connected with a message broker to integrate different services or applications. The integration happens configuratively at startup.
-                </p>
-                <p>
-                    Silverback corrently provides a package to connect with the very popular <a href="https://kafka.apache.org/">Apache Kafka</a> message broker, <a href="https://www.rabbitmq.com/">RabbitMQ</a> or any <a href="https://mqtt.org/">MQTT</a> broker.
-                </p>
-                <p>
-                    Integrating other message brokers wouldn't be a big deal and some will be added in the future...or feel free to create your own <code>IBroker</code> implementation.
-                </p>
-            </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-atom"></i>
-                <h2>Transactional messaging</h2>
-                <p>
-                    One of the main challenges related to asynchronous messaging is maintaining consistency, for example updating the database and sending the messages as part of an atomic transaction. Silverback solves this problem with the built-in implementation of the outbox table pattern, where the outbound messages are temporary inserted in a database table inside the regular transaction.
-                </p>
-                <p>
-                    Silverback integrates seemlessly with EntityFramework Core (but could be extended to plug-in other ORMs).
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4 key">
-                <i class="icon fas fa-exclamation-triangle"></i>
-                <h2>Error handling policies</h2>
-                <p>
-                    Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
-                    With Silverback you can configure some error handling policies for each inbound endpoint. The built-in policies are:
-                    <ul>
-                        <li><b>Skip</b>: simply ignore the message</li>
-                        <li><b>Retry</b>: retry the same message (delays can be specified)</li>
-                        <li><b>Move</b>: move the message to another topic/queue (or re-enqueue it at the end of the same one)</li>
-                    </ul>
-                </p>
-                <p>
-                    These 3 policies can be combined to build effective error handling strategies.
-                </p>
-            </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-puzzle-piece"></i>
-                <h2>Advanced use cases</h2>
-                <p>
-                    Silverback supports many advanced use cases out-of-the-box:
-                    <ul>
-                        <li><b>Chunking</b>: a larger message can be automatically split into smaller parts and transparently rebuilt on the other end</li>
-                        <li><b>Batch processing</b>: optimize your application handling multiple messages together, avoiding micro-transactions</li>
-                        <li>...and more!</li>
-                    </ul>
-                </p>
-            </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-pencil-ruler"></i>
-                <h2>Domain Driven Design</h2>
-                <p>
-                    Built-in support for enhanced domain entities that create domain events to be automatically published whenever the entity is persisted to the database.
-                </p>
-                <p>
-                    When properly configured, these events can be automatically be forwarded to the message broker of choice.
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4 key">
-                <i class="icon fas fa-thumbs-up"></i>
-                <h2>Exactly-once processing</h2>
-                <p>
-                    Silverback can automatically keep track of the messages that have been consumed in order to guarantee that each message is processed exactly once.
-                </p>
-                <p>
-                    This information can be stored in the database to be again transactional with the changes made to the local data, ensuring that the changes are applied once and only once to the data.
-                </p>
-            </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-shoe-prints"></i>
-                <h2>Distributed tracing</h2>
-                <p>
-                    Silverback integrates with <code>System.Diagnostics</code> to ensure the entire flow can easily be traced, also when involving a message broker.
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 more">
-                <a href="xref:introduction" class="btn btn-default btn-lg"><i class="fas fa-search-plus"></i> Discover more</a>
-            </div>
-        </div>
-    </div>
 </div>
+<div class="container body-container body-content">
+
+> [!Tip]
+> The old v4 documentation is still browsable here: [silverback-messaging.net/v4](/v4)
+
+> [!Important]
+> v5.0.0-beta.1 has just been released. Please note that the documentation is still being updated and some sections might be incomplete, outdated, or completely missing.
+
+Silverback is a **powerful, elegant, and feature-rich message bus for .NET**, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for **Apache Kafka** and **MQTT**, it offers robust features for **reliability, consistency, and scalability**.
+
+Whether you're building a **small microservice, a large-scale enterprise solution, or anything in between**, Silverback provides the tools to make messaging effortless and reliable.
+
+## Why Choose Silverback?
+
+Silverback is designed for **serious workloads**, offering enterprise-grade capabilities with a rich feature set optimized for **performance, resilience, and scalability**.
+
+### Key Features
+
+🔀 **Powerful Mediator**\
+Enables seamless in-memory communication between components, featuring **Rx.NET** support for reactive programming.
+
+🔗 **Seamless Message Broker Integration**\
+Silverback makes it easy to integrate with Kafka and MQTT, providing a streamlined and developer-friendly API to build event-driven architectures with minimal setup and configuration.
+
+🚀 **Kafka-Optimized Messaging**\
+Unlike generic messaging libraries, Silverback is built specifically for Kafka, leveraging its unique capabilities for high-throughput, exactly-once semantics, and partitioned processing. While Silverback also supports MQTT, Kafka is a first-class citizen, and the framework is highly optimized to take full advantage of its power.
+
+📤 **Transactional Outbox**\
+Ensures message consistency by linking database transactions with messaging, preventing message loss and guaranteeing atomicity.
+
+⚠️ **Advanced Error Handling**\
+Define flexible strategies to **retry, skip, or move messages** based on custom policies, ensuring robustness in failure scenarios.
+
+📦 **Batch Processing & Chunking**\
+Enhances efficiency by processing messages in bulk or splitting large messages into smaller chunks, which are automatically reassembled on the receiving end.
+
+⚡ **Domain-Driven Design (DDD) Support**\
+Automates domain event publishing when entities are persisted, ensuring seamless integration with message brokers for event-driven workflows.
+
+✅ **Exactly-Once Processing**\
+Ensures each message is consumed and processed exactly once, preventing duplicate processing and maintaining data integrity.
+
+🔍 **Distributed Tracing**\
+Leverages **System.Diagnostics** for full visibility into message flow and distributed transaction tracking.
+
+🧪 **Testability**\
+Provides in-memory mocks for **Kafka** and **MQTT**, along with powerful helpers for efficient unit testing.
+
+✨ **And much more!**\
+Silverback is highly extensible, making it the go-to messaging framework for .NET developers who want to harness Kafka’s full potential while maintaining flexibility for other brokers.
+
+## Getting Started
+
+### Learn the Basics
+
+Silverback is designed to be intuitive, but a solid foundation makes it even easier to use. Explore:
+
+* 📖 **[Guides](xref:setup)** - Learn the core principles and architecture.
+* 🛠️ **[Samples](xref:samples)** - Hands-on examples to see Silverback in action.
+* 📚 **[API Reference](xref:Silverback)** - Dive into the detailed API documentation.
+
+### Install via NuGet
+
+Getting started is as easy as installing the necessary packages for your use case. Silverback is modular and consists of multiple packages, such as **Silverback.Core**, **Silverback.Integration.Kafka**, and **Silverback.Integration.Mqtt**.\
+More details about the different packages can be found in the <xref:setup> guide.
+
+## Join the Silverback Community
+
+Silverback is **open-source** and thrives thanks to **contributors like you**! Whether it's bug reports, feature suggestions, or pull requests, we welcome your support.
+
+* 🐞 **[Issues](htts://github.com/BEagle1984/silverback/issues)** - Report bugs or suggest improvements.
+* 💬 **[Discussions](https://github.com/BEagle1984/silverback/discussions)** - Join the conversation and share your insights.
+* 💡 **[Contribute](contributing.md)** - Discover how you can help improve Silverback.
+
+A huge **thank you** to all contributors who help make Silverback even better!
+
+</div>
+<div style="height: 100px"></div>

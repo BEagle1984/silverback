@@ -32,7 +32,7 @@ public class DomainEventsPublisher
     ///     The function returning the modified entities to be scanned for domain events.
     /// </param>
     /// <param name="publisher">
-    ///     The <see cref="IPublisher" /> to be used to publish the events to the internal bus.
+    ///     The <see cref="IPublisher" /> to be used to publish the events via the mediator..
     /// </param>
     public DomainEventsPublisher(Func<IEnumerable<object>> entitiesProvider, IPublisher publisher)
         : this(
@@ -56,7 +56,7 @@ public class DomainEventsPublisher
     ///     The custom delegate to be used to clear the events from the entities after they have been published.
     /// </param>
     /// <param name="publisher">
-    ///     The <see cref="IPublisher" /> to be used to publish the events to the internal bus.
+    ///     The <see cref="IPublisher" /> to be used to publish the events via the mediator..
     /// </param>
     public DomainEventsPublisher(
         Func<IEnumerable<object>> entitiesProvider,

@@ -6,7 +6,7 @@
     <Version>$(BaseVersion)</Version>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description) This package adds the ability to create an Observable from the internal bus messages stream.</Description>
+    <Description>$(Description) This package adds the ability to create an Observable from the mediator messages stream.</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>

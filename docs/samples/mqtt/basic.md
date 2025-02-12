@@ -4,9 +4,9 @@ uid: sample-mqtt-basic
 
 # MQTT - Basic
 
-This sample implements the simple possible producer and consumer.
+This sample implements the simplest possible producer and consumer.
 
-See also: <xref:message-broker>
+See also: <xref:broker>, <xref:producing>, <xref:consuming>
 
 ## Common
 

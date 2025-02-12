@@ -20,7 +20,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Consuming;
 
 /// <summary>
-///     Publishes the consumed messages to the internal bus.
+///     Publishes the consumed messages via the mediator.
 /// </summary>
 public sealed class PublisherConsumerBehavior : IConsumerBehavior
 {

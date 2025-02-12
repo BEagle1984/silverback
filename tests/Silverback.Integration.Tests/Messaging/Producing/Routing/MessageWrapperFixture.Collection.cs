@@ -194,7 +194,7 @@ public partial class MessageWrapperFixture
     }
 
     [Fact]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing()
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing()
     {
         TestEventOne?[] messages = [new(), new(), null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
@@ -227,7 +227,7 @@ public partial class MessageWrapperFixture
     }
 
     [Fact]
-    public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing_WhenPassingArgument()
+    public async Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument()
     {
         TestEventOne?[] messages = [new(), new(), null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");

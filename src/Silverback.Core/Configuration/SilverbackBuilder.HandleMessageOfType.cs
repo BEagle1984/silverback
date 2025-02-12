@@ -33,8 +33,8 @@ public partial class SilverbackBuilder
     /// </returns>
     public SilverbackBuilder HandleMessagesOfType(Type messageType)
     {
-        if (!BusOptions.MessageTypes.Contains(messageType))
-            BusOptions.MessageTypes.Add(messageType);
+        if (!MediatorOptions.MessageTypes.Contains(messageType))
+            MediatorOptions.MessageTypes.Add(messageType);
 
         return this;
     }

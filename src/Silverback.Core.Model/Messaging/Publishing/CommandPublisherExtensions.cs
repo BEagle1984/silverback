@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Publishing;
 public static class CommandPublisherExtensions
 {
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -32,7 +32,7 @@ public static class CommandPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).Publish(commandMessage, throwIfUnhandled);
 
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -55,7 +55,7 @@ public static class CommandPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).Publish<TResult>(commandMessage, throwIfUnhandled).Single();
 
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -78,7 +78,7 @@ public static class CommandPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).PublishAsync(commandMessage, true, cancellationToken);
 
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -105,7 +105,7 @@ public static class CommandPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).PublishAsync(commandMessage, throwIfUnhandled, cancellationToken);
 
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>
@@ -133,7 +133,7 @@ public static class CommandPublisherExtensions
         .Single();
 
     /// <summary>
-    ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
+    ///     Executes the specified command forwarding it to its subscribers via the mediator and the
     ///     method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
     ///     the message through a message broker).
     /// </summary>

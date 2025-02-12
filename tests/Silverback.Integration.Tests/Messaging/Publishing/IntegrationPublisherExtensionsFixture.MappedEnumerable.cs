@@ -262,7 +262,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndPublishBatchAsync_ShouldPublishToInternalBusForMappedEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
+    public async Task WrapAndPublishBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
     {
         IEnumerable<int?> sources = [1, 2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
@@ -288,7 +288,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndPublishBatchAsync_ShouldPublishToInternalBusForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
+    public async Task WrapAndPublishBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
     {
         IEnumerable<int?> sources = [1, 2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);

@@ -6,7 +6,7 @@ uid: sample-kafka-binaryfile
 
 This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through Kafka.
 
-See also: <xref:binary-files>, <xref:chunking>
+See also: <xref:serialization>, <xref:deserialization>, <xref:chunking>
 
 ## Producer
 
@@ -17,7 +17,7 @@ The producer exposes two REST API that receive the path of a local file to be st
 # [BrokerClientsConfigurator](#tab/producer-endpoints)
 [!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Kafka/BinaryFileStreaming.Producer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/producer-custom-message)
-[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Kafka/BinaryFileStreaming.Producer/Messages/CustomBinaryFileMessage.cs)]
+[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Kafka/BinaryFileStreaming.Producer/Messages/CustomBinaryMessage.cs)]
 # [API Controller](#tab/producer-controller)
 [!code-csharp[Producer.ProducerController](../../../samples/Kafka/BinaryFileStreaming.Producer/Controllers/ProducerController.cs)]
 ***
@@ -33,7 +33,7 @@ The consumer simply streams the file to a temporary folder in the local file sys
 # [BrokerClientsConfigurator](#tab/consumer-endpoints)
 [!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Kafka/BinaryFileStreaming.Consumer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/consumer-custom-message)
-[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Kafka/BinaryFileStreaming.Consumer/Messages/CustomBinaryFileMessage.cs)]
+[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Kafka/BinaryFileStreaming.Consumer/Messages/CustomBinaryMessage.cs)]
 # [Subscriber](#tab/consumer-subscriber)
 [!code-csharp[Consumer.BinaryFileSubscriber](../../../samples/Kafka/BinaryFileStreaming.Consumer/Subscribers/BinaryFileSubscriber.cs)]
 ***

@@ -17,7 +17,7 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
 {
     private readonly IPublisher _publisher;
 
-    private readonly BusOptions _busOptions;
+    private readonly MediatorOptions _mediatorOptions;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ObservableMessagesReturnValueHandler" /> class.
@@ -25,13 +25,13 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
     /// <param name="publisher">
     ///     The <see cref="IPublisher" /> to be used to publish the messages.
     /// </param>
-    /// <param name="busOptions">
-    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+    /// <param name="mediatorOptions">
+    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
     /// </param>
-    public ObservableMessagesReturnValueHandler(IPublisher publisher, BusOptions busOptions)
+    public ObservableMessagesReturnValueHandler(IPublisher publisher, MediatorOptions mediatorOptions)
     {
         _publisher = publisher;
-        _busOptions = busOptions;
+        _mediatorOptions = mediatorOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
@@ -40,7 +40,7 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
         returnValue.GetType().GetInterfaces().Any(
             i => i.IsGenericType &&
                  i.GetGenericTypeDefinition() == typeof(IObservable<>) &&
-                 _busOptions.MessageTypes.Any(
+                 _mediatorOptions.MessageTypes.Any(
                      messageType =>
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 

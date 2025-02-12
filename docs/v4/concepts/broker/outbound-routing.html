@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Outbound Messages Routing | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Outbound Messages Routing | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="outbound-routing">
+<h1 id="outbound-messages-routing">Outbound Messages Routing</h1>
+
+<p>By default Silverback routes the messages according to their type and the static configuration defined at startup. In some cases you may need more flexibility, being able to apply your own routing rules.</p>
+<p>In such cases it is possible to either take advantage of the simple endpoint name resolvers or even implement a fully customized router.</p>
+<figure>
+	<a href="../../images/diagrams/outbound-routing.png"><img src="../../images/diagrams/outbound-routing.png"></a>
+    <figcaption>The messages are dynamically routed to the appropriate endpoint.</figcaption>
+</figure>
+<h2 id="endpoint-name-resolver">Endpoint name resolver</h2>
+<p>Using an endpoint name resolver is fairly simple and just requires a slightly different configuration in the <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>.</p>
+<p>Here below a few examples of custom routing. Please refer to the <a class="xref" href="../../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>/<a class="xref" href="../../api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> or <a class="xref" href="../../api/Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a>/<a class="xref" href="../../api/Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a> API documentation for further information about all the possibilities.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_resolvers-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-fluent" data-tab="resolvers-fluent" tabindex="0" aria-selected="true">Fluent</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_resolvers-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-legacy" data-tab="resolvers-legacy" tabindex="-1">Legacy</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_resolvers-resolver" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-resolver" data-tab="resolvers-resolver" tabindex="-1">ProducerEndpointNameResolver</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S_resolvers-fluent" role="tabpanel" data-tab="resolvers-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                
+                // Using a resolver function
+                .AddOutbound&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo&lt;OrderCreatedEvent&gt;(envelope =&gt; 
+                    {
+                        if (envelope.Message.IsPriority)
+                            return &quot;priority-orders&quot;;
+                        else
+                            return &quot;normal-orders&quot;;
+                    }))
+                
+                // Using format string and arguments function
+                .AddOutbound&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo&lt;OrderCreatedEvent&gt;(
+                        &quot;orders-{0}&quot;,
+                        envelope =&gt; 
+                        {
+                            if (envelope.Message.IsPriority)
+                                return new[] { &quot;priority&quot; };
+                            else
+                                return new[] { &quot;normal&quot; };
+                        }))
+                
+                // Using a resolver class
+                .AddOutbound&lt;OrderCreatedEvent&gt;(endpoint =&gt; endpoint
+                    .UseEndpointNameResolver&lt;MyEndpointNameResolver&gt;())
+                
+                // Kafka only: using a partition resolver function
+                .AddOutbound&lt;InventoryUpdateMessage&gt;(endpoint =&gt; endpoint
+                    .ProduceTo&lt;InventoryUpdateMessage&gt;(
+                        _ =&gt; &quot;topic1&quot;,
+                        envelope =&gt;
+                        {
+                            switch (envelope.Message.Supplier)
+                            {
+                                case &quot;foo&quot;:
+                                    return 0;
+                                case &quot;bar&quot;:
+                                    return 1;
+                                case &quot;baz&quot;:
+                                    return 2;
+                            }
+                        }))));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S_resolvers-legacy" role="tabpanel" data-tab="resolvers-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            
+            // Using a resolver function
+            .AddOutbound&lt;OrderCreatedEvent&gt;(
+                new KafkaProducerEndpoint(envelope =&gt; 
+                    {
+                        var message = (OrderCreatedEvent) envelope.Message;
+                        
+                        if (message.IsPriority)
+                            return &quot;priority-orders&quot;;
+                        else
+                            return &quot;normal-orders&quot;;
+                    })
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    }
+                })
+            
+            // Using format string and arguments function
+            .AddOutbound&lt;OrderCreatedEvent&gt;(
+                new KafkaProducerEndpoint(
+                    &quot;orders-{0}&quot;,
+                    envelope =&gt; 
+                    {
+                        var message = (OrderCreatedEvent) envelope.Message;
+                        
+                        if (message.IsPriority)
+                            return new[] { &quot;priority&quot; };
+                        else
+                            return new[] { &quot;normal&quot; };
+                    })
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    }
+                })
+            
+            // Using a resolver class
+            .AddOutbound&lt;OrderCreatedEvent&gt;(
+                new KafkaProducerEndpoint(typeof(MyEndpointNameResolver))
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    }
+                })
+            
+            // Kafka only: using a partition resolver function
+            .AddOutbound&lt;InventoryUpdateMessage&gt;(
+                new KafkaProducerEndpoint(
+                    _ =&gt; &quot;topic1&quot;,
+                    envelope =&gt;
+                    {
+                        var message = (InventoryUpdateMessage) envelope.Message;
+                        
+                        switch (message.Supplier)
+                        {
+                            case &quot;foo&quot;:
+                                return 0;
+                            case &quot;bar&quot;:
+                                return 1;
+                            case &quot;baz&quot;:
+                                return 2;
+                        }
+                    })
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    }
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S_resolvers-resolver" role="tabpanel" data-tab="resolvers-resolver" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointNameResolver : ProducerEndpointNameResolver&lt;TestEventOne&gt;
+{
+    private readonly IMyService _service;
+    
+    public MyEndpointNameResolver(IMyService service)
+    {
+        _service = service;
+    }
+
+    protected override string GetName(IOutboundEnvelope&lt;TestEventOne&gt; envelope)
+    {
+        if (_service.IsPriorityOrder(envelope.Message.OrderNumber))
+            return &quot;priority-orders&quot;;
+        else
+            return &quot;normal-orders&quot;;
+    }
+}
+</code></pre>
+</section>
+</div>
+<h2 id="custom-router">Custom router</h2>
+<p>In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_genericrouter-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_genericrouter-startup" data-tab="genericrouter-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_genericrouter-configurator" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_genericrouter-configurator" data-tab="genericrouter-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-1_genericrouter-startup" role="tabpanel" data-tab="genericrouter-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-1_genericrouter-configurator" role="tabpanel" data-tab="genericrouter-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;IPrioritizedCommand&gt;(
+                (message, _, endpointsDictionary) =&gt; 
+                    new []
+                    {
+                        endpointsDictionary[message.Priority.ToString()],
+                        endpointsDictionary[&quot;all&quot;]
+                    },
+                new Dictionary&lt;string, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;
+                {
+                    { &quot;low&quot;, endpoint =&gt; endpoint.ProduceTo(&quot;low-priority&quot;) },
+                    { &quot;normal&quot;, endpoint =&gt; endpoint.ProduceTo(&quot;normal-priority&quot;) },
+                    { &quot;high&quot;, endpoint =&gt; endpoint.ProduceTo(&quot;high-priority&quot;) },
+                    { &quot;all&quot;, endpoint =&gt; endpoint.ProduceTo(&quot;all&quot;) }
+                });
+}
+</code></pre>
+</section>
+</div>
+
+<p>Alternatively, an actual router class can also be created to encapsulate the routing logic.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_router-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router-startup" data-tab="router-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_router-configurator" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router-configurator" data-tab="router-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_router" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router" data-tab="router" tabindex="-1">Router</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-2_router-startup" role="tabpanel" data-tab="router-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;()
+            .AddSingletonOutboundRouter&lt;PrioritizedRouter&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-2_router-configurator" role="tabpanel" data-tab="router-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder.AddOutbound&lt;IPrioritizedCommand, PrioritizedRouter&gt;();
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-2_router" role="tabpanel" data-tab="router" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class PrioritizedRouter : OutboundRouter&lt;IPrioritizedCommand&gt;
+{
+    private static readonly IProducerEndpoint HighPriorityEndpoint =
+        new KafkaProducerEndpoint(&quot;high-priority&quot;)
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint NormalPriorityEndpoint =
+        new KafkaProducerEndpoint(&quot;normal-priority&quot;)
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint LowPriorityEndpoint =
+        new KafkaProducerEndpoint(&quot;low-priority&quot;)
+        {
+            ...
+        };
+    private static readonly IProducerEndpoint AllMessagesEndpoint =
+        new KafkaProducerEndpoint(&quot;all&quot;)
+        {
+            ...
+        };
+
+    public override IEnumerable&lt;IProducerEndpoint&gt; Endpoints
+    {
+        get
+        {
+            yield return AllMessagesEndpoint;
+            yield return LowPriorityEndpoint;
+            yield return NormalPriorityEndpoint;
+            yield return HighPriorityEndpoint;
+        }
+    }
+
+    public override IEnumerable&lt;IProducerEndpoint&gt; GetDestinationEndpoints(
+        IPrioritizedCommand message,
+        MessageHeaderCollection headers)
+    {
+        yield return AllMessagesEndpoint;
+        
+        switch (message.Priority)
+        {
+            case MessagePriority.Low:
+                yield return LowPriorityEndpoint;
+                break;
+            case MessagePriority.High:
+                yield return HighPriorityEndpoint;
+                break;
+            default:
+                yield return NormalPriorityEndpoint;
+                break;
+        }
+    }
+}
+</code></pre>
+</section>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/broker/outbound-routing.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

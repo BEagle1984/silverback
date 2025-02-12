@@ -204,7 +204,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatch_ShouldPublishToInternalBusForMappedCollectionAccordingToEnableSubscribing()
+    public async Task WrapAndPublishBatch_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing()
     {
         List<int?> sources = [1, 2, null];
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
@@ -238,7 +238,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatch_ShouldPublishToInternalBusForConfiguredMappedCollectionAccordingToEnableSubscribing()
+    public async Task WrapAndPublishBatch_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing()
     {
         List<int?> sources = [1, 2, null];
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
@@ -275,7 +275,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatch_ShouldPublishToInternalBusForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()
+    public async Task WrapAndPublishBatch_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()
     {
         List<int?> sources = [1, 2, null];
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");

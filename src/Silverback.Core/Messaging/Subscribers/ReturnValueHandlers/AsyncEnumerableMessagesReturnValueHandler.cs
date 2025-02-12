@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// </summary>
 public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
 {
-    private readonly BusOptions _busOptions;
+    private readonly MediatorOptions _mediatorOptions;
 
     private readonly IPublisher _publisher;
 
@@ -25,13 +25,13 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
     /// <param name="publisher">
     ///     The <see cref="IPublisher" /> to be used to publish the messages.
     /// </param>
-    /// <param name="busOptions">
-    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
+    /// <param name="mediatorOptions">
+    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
     /// </param>
-    public AsyncEnumerableMessagesReturnValueHandler(IPublisher publisher, BusOptions busOptions)
+    public AsyncEnumerableMessagesReturnValueHandler(IPublisher publisher, MediatorOptions mediatorOptions)
     {
         _publisher = publisher;
-        _busOptions = busOptions;
+        _mediatorOptions = mediatorOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
@@ -40,7 +40,7 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
         returnValue.GetType().GetInterfaces().Any(
             i => i.IsGenericType &&
                  i.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>) &&
-                 _busOptions.MessageTypes.Any(
+                 _mediatorOptions.MessageTypes.Any(
                      messageType =>
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 

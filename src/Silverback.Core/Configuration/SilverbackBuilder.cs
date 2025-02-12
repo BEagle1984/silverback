@@ -31,9 +31,9 @@ public partial class SilverbackBuilder
     public IServiceCollection Services { get; }
 
     /// <summary>
-    ///     Gets the <see cref="BusOptions" />.
+    ///     Gets the <see cref="MediatorOptions" />.
     /// </summary>
-    public BusOptions BusOptions =>
-        Services.GetSingletonServiceInstance<BusOptions>() ??
-        throw new InvalidOperationException("BusOptions not found, AddSilverback has not been called.");
+    public MediatorOptions MediatorOptions =>
+        Services.GetSingletonServiceInstance<MediatorOptions>() ??
+        throw new InvalidOperationException("MediatorOptions not found, AddSilverback has not been called.");
 }

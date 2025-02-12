@@ -1,0 +1,91 @@
+- name: Setting Up Silverback
+  href: setup.md
+- name: Using the Mediator
+  href: mediator.md
+- name: Message Broker
+  items:
+    - name: Connecting
+      href: broker/connecting.md
+    - name: Callbacks
+      href: broker/callbacks.md
+    - name: Producing
+      items:
+        - name: Basics
+          href: broker/producing/basics.md
+        - name: Serialization
+          href: broker/producing/serialization.md
+        - name: Headers
+          href: broker/producing/headers.md
+        - name: Chunking
+          href: broker/producing/chunking.md
+        - name: Encryption
+          href: broker/producing/encryption.md
+        - name: Tombstone
+          href: broker/producing/tombstone.md
+        - name: Validation
+          href: broker/producing/validation.md
+        - name: Outbox
+          href: broker/producing/outbox.md
+        - name: Behaviors
+          href: broker/producing/behaviors.md
+        - name: Tracing
+          href: broker/producing/tracing.md
+        - name: Kafka
+          items:
+            - name: Key and Partitioning
+              href: broker/producing/kafka/partitioning.md
+            - name: Transactions
+              href: broker/producing/kafka/transactions.md
+            - name: Schema Registry
+              href: broker/producing/kafka/schema-registry.md
+    - name: Consuming
+      items:
+        - name: Basics
+          href: broker/consuming/basics.md
+        - name: Deserialization
+          href: broker/consuming/deserialization.md
+        - name: Headers
+          href: broker/consuming/headers.md
+        - name: Decryption
+          href: broker/consuming/decryption.md
+        - name: Tombstone
+          href: broker/consuming/tombstone.md
+        - name: Validation
+          href: broker/consuming/validation.md
+        - name: Behaviors
+          href: broker/consuming/behaviors.md
+        - name: Tracing
+          href: broker/consuming/tracing.md
+        - name: Health Check
+          href: broker/consuming/health-check.md
+        - name: Kafka
+          items:
+            - name: Subscription and Assignment
+              href: broker/consuming/kafka/subscription.md
+            - name: Offset Storage
+              href: broker/consuming/kafka/offset.md
+            - name: Schema Registry
+              href: broker/consuming/kafka/schema-registry.md
+    - name: Default Headers
+      href: broker/default-headers.md
+    - name: Testing
+      href: broker/testing.md
+- name: Logging
+  href: logging.md
+- name: DDD Domain Events
+  href: domain-events.md
+- name: Storage
+  href: storage.md
+- name: Practical Implementations
+  items:
+    - name: Seamless Message Conversion
+      href: practical/conversion.md
+    - name: Consuming Same Message from Multiple Topics
+      href: practical/same-message.md
+    - name: Multiple Consumers for the Same Topic
+      href: practical/multiple-consumers.md
+    - name: MQTT 5 Request-Response
+      href: practical/mqtt-request-response.md
+    - name: Background Services with Distributed Lock
+      href: practical/background-services.md
+

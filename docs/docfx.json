@@ -24,14 +24,20 @@
       },
       {
         "files": [
-          "concepts/**.md",
-          "concepts/**/toc.yml"
+          "guides/**.md",
+          "guides/**/toc.yml"
         ]
       },
       {
         "files": [
           "samples/**.md",
           "samples/**/toc.yml"
+        ]
+      },
+      {
+        "files": [
+          "changelog/**.md",
+          "changelog/**/toc.yml"
         ]
       },
       {
@@ -44,7 +50,8 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "v4/**"
         ]
       }
     ],
@@ -62,7 +69,7 @@
     "globalMetadata": {
       "_appTitle": "Silverback",
       "_appLogoPath": "images/logo.png",
-      "_appFooter": "© 2020 Sergio Aquilini",
+      "_appFooter": "© 2025 Sergio Aquilini",
       "_enableSearch": "true",
       "_gitContribute": {
         "repo": "https://github.com/beagle1984/silverback",

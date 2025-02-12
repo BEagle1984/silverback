@@ -18,7 +18,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .HandleMessagesOfType(typeof(UnhandledMessage));
 
-        builder.BusOptions.MessageTypes.ShouldBe(
+        builder.MediatorOptions.MessageTypes.ShouldBe(
         [
             typeof(IMessage),
                 typeof(UnhandledMessage)
@@ -32,7 +32,7 @@ public partial class SilverbackBuilderFixture
             .AddSilverback()
             .HandleMessagesOfType<UnhandledMessage>();
 
-        builder.BusOptions.MessageTypes.ShouldBe(
+        builder.MediatorOptions.MessageTypes.ShouldBe(
         [
             typeof(IMessage),
                 typeof(UnhandledMessage)

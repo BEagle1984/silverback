@@ -21,7 +21,7 @@ public class BatchSequence : Sequence
     /// </param>
     /// <param name="context">
     ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the sequence gets published
-    ///     to the internal bus.
+    ///     via the mediator.
     /// </param>
     public BatchSequence(string sequenceId, ConsumerPipelineContext context)
         : base(

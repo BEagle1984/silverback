@@ -4,7 +4,7 @@
     <RootNamespace>$(RootNamespace)</RootNamespace>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description) This core package provides the in-memory message bus (mediator).</Description>
+    <Description>$(Description) This core package provides the mediator (in-memory message bus).</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
