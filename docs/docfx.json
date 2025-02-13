@@ -50,7 +50,8 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "v4/**"
         ]
       }
     ],

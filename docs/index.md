@@ -12,7 +12,9 @@ title: "Home"
                         Silverback
                     </h1>
                     <p class="lead">
-                        Powerful messaging made simple
+                        <span style="font-size: .8em;">Simplicity at its core.</span><br />
+                        <span style="font-size: .9em;">Flexibility at its peak.</span><br />
+                        Effortless messaging for .NET
                     </p>
                     <p>
                         <a href="https://github.com/BEagle1984/silverback/" class="btn"><i class="fab fa-github"></i> View on GitHub</a>
@@ -24,6 +26,9 @@ title: "Home"
     </div>
 </div>
 <div class="container body-container body-content">
+
+> [!Important]
+> The old v4 documentation is still browsable here: [silverback-messaging.net/v4](/v4)
 
 ## What is Silverback?
 

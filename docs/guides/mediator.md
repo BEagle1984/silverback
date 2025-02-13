@@ -139,6 +139,28 @@ services
     .AddScopedSubscriber<SubscribingService>(autoSubscribeAllPublicMethods: false);
 ```
 
+## Cancellation
+
+If a subscriber method accepts a `CancellationToken`, Silverback will forward the optional cancellation token to the subscribers.
+
+```csharp
+await _publisher.ExecuteCommandAsync(myCommand, cancellationToken);
+```
+
+The cancellation token can be used to interrupt long-running operations or can be passed to other API such as HTTP requests or database operations supporting cancellation.
+
+```csharp
+public async Task OnCommandReceived(MyCommand command, CancellationToken cancellationToken)
+{
+    while (...) // Long-running operation
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        // Processing
+    }
+}
+```
+
 ## Behaviors
 
 Behaviors allow you to implement a custom pipeline (similar to ASP.NET middleware), adding cross-cutting concerns like logging and validation.
