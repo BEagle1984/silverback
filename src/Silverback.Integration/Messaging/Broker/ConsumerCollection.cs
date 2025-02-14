@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,17 +13,17 @@ namespace Silverback.Messaging.Broker;
 
 internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
 {
-    private readonly List<IConsumer> _consumers = [];
+    private readonly ConcurrentDictionary<string, IConsumer> _consumers = [];
 
     public int Count => _consumers.Count;
 
-    public IConsumer this[int index] => _consumers[index];
+    public IConsumer this[string name] => _consumers[name];
 
     public void Add(IConsumer consumer)
     {
         foreach (string? friendlyName in consumer.EndpointsConfiguration.Select(configuration => configuration.FriendlyName))
         {
-            if (!string.IsNullOrEmpty(friendlyName) && _consumers.Exists(
+            if (!string.IsNullOrEmpty(friendlyName) && _consumers.Values.Any(
                 existingConsumer => existingConsumer.EndpointsConfiguration
                     .Any(configuration => configuration.FriendlyName == friendlyName)))
             {
@@ -30,14 +31,15 @@ internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
             }
         }
 
-        _consumers.Add(consumer);
+        if (!_consumers.TryAdd(consumer.Name, consumer))
+            throw new InvalidOperationException($"A consumer with name '{consumer.Name}' has already been added.");
     }
 
-    public ValueTask StopAllAsync() => _consumers.ForEachAsync(consumer => consumer.StopAsync());
+    public ValueTask StopAllAsync() => _consumers.Values.ForEachAsync(consumer => consumer.StopAsync());
 
-    public IEnumerator<IConsumer> GetEnumerator() => _consumers.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<IConsumer> GetEnumerator() => _consumers.Values.GetEnumerator();
 
     public ValueTask DisposeAsync() => this.DisposeAllAsync();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -74,8 +74,8 @@ public class ProduceBenchmark
         clientsConnectorService.StartAsync(CancellationToken.None).SafeWait();
 
         IProducerCollection producerCollection = serviceProvider.GetRequiredService<IProducerCollection>();
-        _producer = producerCollection[0];
-        _producerWithoutValidation = producerCollection[^1];
+        _producer = producerCollection.First();
+        _producerWithoutValidation = producerCollection.Last();
 
         Activity activity = new("Benchmark");
         activity.Start();

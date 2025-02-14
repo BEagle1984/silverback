@@ -14,7 +14,7 @@ namespace Silverback.Testing;
 public abstract partial class TestingHelper
 {
     /// <inheritdoc cref="ITestingHelper.GetConsumer" />
-    public IConsumer GetConsumer(string name) => _consumers?.First(consumer => consumer.Name == name) ??
+    public IConsumer GetConsumer(string name) => _consumers?[name] ??
                                                  throw new InvalidOperationException($"No consumer found with name '{name}'.");
 
     /// <inheritdoc cref="ITestingHelper.GetConsumerForEndpoint" />

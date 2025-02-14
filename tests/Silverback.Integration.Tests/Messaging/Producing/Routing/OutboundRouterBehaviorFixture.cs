@@ -165,7 +165,7 @@ public class OutboundRouterBehaviorFixture
     }
 
     private static IProducer[] ArgIsProducers(params IProducer[] expectedProducers) =>
-        Arg.Is<IProducer[]>(producers => producers.SequenceEqual(expectedProducers));
+        Arg.Is<IProducer[]>(producers => new HashSet<IProducer>(producers).SetEquals(expectedProducers));
 
     private IProducer AddProducer<TMessage>(string topic, bool enableSubscribing = false)
     {

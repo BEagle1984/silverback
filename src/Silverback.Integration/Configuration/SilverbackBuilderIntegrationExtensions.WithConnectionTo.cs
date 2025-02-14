@@ -74,6 +74,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     private static void AddClientsManagement(SilverbackBuilder builder) =>
         builder.Services
             .AddSingleton<BrokerClientCollection>()
+            .AddSingleton<IBrokerClientCollection>(serviceProvider => serviceProvider.GetRequiredService<BrokerClientCollection>())
             .AddSingleton<ProducerCollection>()
             .AddSingleton<IProducerCollection>(serviceProvider => serviceProvider.GetRequiredService<ProducerCollection>())
             .AddSingleton<ConsumerCollection>()

@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
-    private readonly List<ProducerItem> _producers = [];
+    private readonly ConcurrentBag<ProducerItem> _producers = [];
 
     private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
 
@@ -23,8 +23,6 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
     private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointFriendlyName = new();
 
     public int Count => _producers.Count;
-
-    public IProducer this[int index] => _producers[index].Producer;
 
     public void Add(IProducer producer, bool routing = true)
     {
@@ -63,7 +61,7 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     public ValueTask DisposeAsync() => _producers.DisposeAllAsync();
 
-    private static IProducer[] GetProducersForMessage(List<ProducerItem> producers, Type messageType) =>
+    private static IProducer[] GetProducersForMessage(ConcurrentBag<ProducerItem> producers, Type messageType) =>
         producers
             .Where(
                 item =>

@@ -17,7 +17,7 @@ public partial interface ITestingHelper
     ///     The consumer name.
     /// </param>
     /// <returns>
-    ///     The <see cref="IProducer" />.
+    ///     The <see cref="IConsumer" /> with the specified name.
     /// </returns>
     IConsumer GetConsumer(string name);
 

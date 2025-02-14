@@ -31,9 +31,15 @@ public class BrokerConnectorServiceFixture
                 .WithConnectionToMessageBroker(options => options.ConnectAtStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
@@ -58,17 +64,21 @@ public class BrokerConnectorServiceFixture
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
         int tries = 0;
-        IBrokerClient brokenClient = Substitute.For<IBrokerClient>();
-        brokenClient.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
             _ =>
             {
                 if (++tries < 3)
                     throw new InvalidOperationException("retry!");
             });
-
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(brokenClient);
-        clients.Add(Substitute.For<IBrokerClient>());
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
@@ -95,17 +105,21 @@ public class BrokerConnectorServiceFixture
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
         int tries = 0;
-        IBrokerClient brokenClient = Substitute.For<IBrokerClient>();
-        brokenClient.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
             _ =>
             {
                 if (++tries < 3)
                     throw new InvalidOperationException("retry!");
             });
-
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(brokenClient);
-        clients.Add(Substitute.For<IBrokerClient>());
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
@@ -133,9 +147,15 @@ public class BrokerConnectorServiceFixture
                 .WithConnectionToMessageBroker(options => options.ConnectAfterStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
@@ -168,9 +188,15 @@ public class BrokerConnectorServiceFixture
                 .WithConnectionToMessageBroker(options => options.ManuallyConnect()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
@@ -208,9 +234,16 @@ public class BrokerConnectorServiceFixture
                         })));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
-        clients.Add(Substitute.For<IBrokerClient>());
+
+        IBrokerClient client1 = Substitute.For<IBrokerClient>();
+        client1.Name.Returns("client1");
+        clients.Add(client1);
+        IBrokerClient client2 = Substitute.For<IBrokerClient>();
+        client2.Name.Returns("client2");
+        clients.Add(client2);
+        IBrokerClient client3 = Substitute.For<IBrokerClient>();
+        client3.Name.Returns("client3");
+        clients.Add(client3);
 
         BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);

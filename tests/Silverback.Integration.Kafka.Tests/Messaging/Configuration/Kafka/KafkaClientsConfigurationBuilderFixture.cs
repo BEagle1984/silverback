@@ -40,12 +40,12 @@ public class KafkaClientsConfigurationBuilderFixture
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Count.ShouldBe(1);
-        KafkaConsumer kafkaConsumer = consumers[0].ShouldBeOfType<KafkaConsumer>();
+        KafkaConsumer kafkaConsumer = consumers.First().ShouldBeOfType<KafkaConsumer>();
         kafkaConsumer.Configuration.BootstrapServers.ShouldBe("PLAINTEXT://unittest");
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Count.ShouldBe(1);
-        KafkaProducer kafkaProducer = producers[0].ShouldBeOfType<KafkaProducer>();
+        KafkaProducer kafkaProducer = producers.First().ShouldBeOfType<KafkaProducer>();
         kafkaProducer.Configuration.BootstrapServers.ShouldBe("PLAINTEXT://unittest");
     }
 
@@ -60,17 +60,19 @@ public class KafkaClientsConfigurationBuilderFixture
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(producer => producer.Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+                        .AddProducer(producer => producer.Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1")))
+                        .AddProducer(producer => producer.Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Count.ShouldBe(2);
-        KafkaProducerEndpointConfiguration endpointConfiguration1 = producers[0].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        KafkaProducerEndpointConfiguration endpointConfiguration1 = producers.GetProducerForEndpoint("one").EndpointConfiguration
+            .ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration1.MessageType.ShouldBe(typeof(TestEventOne));
         endpointConfiguration1.EndpointResolver.RawName.ShouldBe("topic1");
-        KafkaProducerEndpointConfiguration endpointConfiguration2 = producers[1].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        KafkaProducerEndpointConfiguration endpointConfiguration2 = producers.GetProducerForEndpoint("two").EndpointConfiguration
+            .ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration2.MessageType.ShouldBe(typeof(TestEventTwo));
         endpointConfiguration2.EndpointResolver.RawName.ShouldBe("topic2");
     }
@@ -96,18 +98,20 @@ public class KafkaClientsConfigurationBuilderFixture
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Count.ShouldBe(2);
-        producers[0].ShouldBeOfType<KafkaProducer>();
-        producers[0].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
-        KafkaProducerEndpointConfiguration endpointConfiguration1 = producers[0].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        IProducer producer1 = producers.GetProducerForEndpoint("topic1");
+        producer1.ShouldBeOfType<KafkaProducer>();
+        producer1.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
+        KafkaProducerEndpointConfiguration endpointConfiguration1 = producer1.EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration1.EndpointResolver.RawName.ShouldBe("topic1");
-        producers[1].ShouldBeOfType<KafkaTransactionalProducer>();
-        producers[1].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
-        KafkaProducerEndpointConfiguration endpointConfiguration2 = producers[1].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        IProducer producer2 = producers.GetProducerForEndpoint("topic2");
+        producer2.ShouldBeOfType<KafkaTransactionalProducer>();
+        producer2.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
+        KafkaProducerEndpointConfiguration endpointConfiguration2 = producer2.EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration2.EndpointResolver.RawName.ShouldBe("topic2");
     }
 
     [Fact]
-    public async Task AddProducer_ShouldMergeProducerConfiguration_WhenIdIsTheSame()
+    public async Task AddProducer_ShouldMergeProducerConfiguration_WhenNameIsTheSame()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -131,19 +135,21 @@ public class KafkaClientsConfigurationBuilderFixture
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        KafkaProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<KafkaProducer>().ToArray();
-        producers.Length.ShouldBe(2);
-        producers[0].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
-        KafkaProducerEndpointConfiguration endpointConfiguration1 = producers[0].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        producers.Count.ShouldBe(2);
+        KafkaProducer producer1 = producers.GetProducerForEndpoint("topic1").ShouldBeOfType<KafkaProducer>();
+        producer1.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
+        KafkaProducerEndpointConfiguration endpointConfiguration1 = producer1.EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration1.EndpointResolver.RawName.ShouldBe("topic1");
-        producers[0].Configuration.BatchSize.ShouldBe(42);
-        producers[0].Configuration.LingerMs.ShouldBe(42);
-        producers[1].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
-        KafkaProducerEndpointConfiguration endpointConfiguration2 = producers[1].EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
+        producer1.Configuration.BatchSize.ShouldBe(42);
+        producer1.Configuration.LingerMs.ShouldBe(42);
+        KafkaProducer producer2 = producers.GetProducerForEndpoint("topic2").ShouldBeOfType<KafkaProducer>();
+        producer2.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
+        KafkaProducerEndpointConfiguration endpointConfiguration2 = producer2.EndpointConfiguration.ShouldBeOfType<KafkaProducerEndpointConfiguration>();
         endpointConfiguration2.EndpointResolver.RawName.ShouldBe("topic2");
-        producers[1].Configuration.BatchSize.ShouldBe(42);
-        producers[1].Configuration.LingerMs.ShouldBe(42);
-        producers[1].Client.ShouldBeSameAs(producers[0].Client);
+        producer2.Configuration.BatchSize.ShouldBe(42);
+        producer2.Configuration.LingerMs.ShouldBe(42);
+        producer2.Client.ShouldBeSameAs(producer1.Client);
     }
 
     [Fact]
@@ -158,22 +164,26 @@ public class KafkaClientsConfigurationBuilderFixture
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://unittest")
                         .AddConsumer(
+                            "consumer1",
                             consumer => consumer
                                 .WithGroupId("consumer1")
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
                         .AddConsumer(
+                            "consumer2",
                             consumer => consumer
                                 .WithGroupId("consumer2")
                                 .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        KafkaConsumer[] consumers = serviceProvider.GetRequiredService<ConsumerCollection>().Cast<KafkaConsumer>().ToArray();
-        consumers.Length.ShouldBe(2);
-        consumers[0].Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
-        consumers[0].Configuration.Endpoints.First().RawName.ShouldBe("topic1");
-        consumers[1].Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventTwo>>();
-        consumers[1].Configuration.Endpoints.First().RawName.ShouldBe("topic2");
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        consumers.Count.ShouldBe(2);
+        KafkaConsumer consumer1 = consumers["consumer1"].ShouldBeOfType<KafkaConsumer>();
+        consumer1.Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        consumer1.Configuration.Endpoints.First().RawName.ShouldBe("topic1");
+        KafkaConsumer consumer2 = consumers["consumer2"].ShouldBeOfType<KafkaConsumer>();
+        consumer2.Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventTwo>>();
+        consumer2.Configuration.Endpoints.First().RawName.ShouldBe("topic2");
     }
 
     [Fact]

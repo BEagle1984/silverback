@@ -18,20 +18,40 @@ public class ConsumerCollectionFixture
     {
         ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
+        consumer1.Name.Returns("consumer1");
         IConsumer consumer2 = Substitute.For<IConsumer>();
+        consumer2.Name.Returns("consumer2");
 
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);
 
         consumerCollection.Count.ShouldBe(2);
-        consumerCollection.ShouldBe(new[] { consumer1, consumer2 });
+        consumerCollection.ShouldBe([consumer1, consumer2]);
     }
 
     [Fact]
-    public void Add_ShouldThrow_WhenFriendlyNameNotUnique()
+    public void Add_ShouldThrow_WhenNameNotUnique()
     {
         ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
+        consumer1.Name.Returns("consumer1");
+        IConsumer consumer2 = Substitute.For<IConsumer>();
+        consumer2.Name.Returns("consumer1");
+
+        consumerCollection.Add(consumer1);
+
+        Action act = () => consumerCollection.Add(consumer2);
+
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("A consumer with name 'consumer1' has already been added.");
+    }
+
+    [Fact]
+    public void Add_ShouldThrow_WhenEndpointFriendlyNameNotUnique()
+    {
+        ConsumerCollection consumerCollection = [];
+        IConsumer consumer1 = Substitute.For<IConsumer>();
+        consumer1.Name.Returns("consumer1");
         consumer1.EndpointsConfiguration.Returns(
         [
             new TestConsumerEndpointConfiguration("topic1")
@@ -45,6 +65,7 @@ public class ConsumerCollectionFixture
         ]);
 
         IConsumer consumer2 = Substitute.For<IConsumer>();
+        consumer2.Name.Returns("consumer2");
         consumer2.EndpointsConfiguration.Returns(
         [
             new TestConsumerEndpointConfiguration("topic1")
@@ -84,18 +105,19 @@ public class ConsumerCollectionFixture
     {
         ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
+        consumer1.Name.Returns("consumer1");
         IConsumer consumer2 = Substitute.For<IConsumer>();
+        consumer2.Name.Returns("consumer2");
 
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);
 
         using IEnumerator<IConsumer> enumerator = consumerCollection.GetEnumerator();
         enumerator.MoveNext();
-        enumerator.Current.ShouldBe(consumer1);
-        enumerator.MoveNext();
         enumerator.Current.ShouldBe(consumer2);
         enumerator.MoveNext();
-        enumerator.Current.ShouldBeNull();
+        enumerator.Current.ShouldBe(consumer1);
+        enumerator.MoveNext().ShouldBeFalse();
     }
 
     [Fact]
@@ -103,7 +125,9 @@ public class ConsumerCollectionFixture
     {
         ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
+        consumer1.Name.Returns("consumer1");
         IConsumer consumer2 = Substitute.For<IConsumer>();
+        consumer2.Name.Returns("consumer2");
 
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);

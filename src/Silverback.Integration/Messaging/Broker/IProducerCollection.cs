@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     Returns an <see cref="IProducer" /> that can be used to produce messages against the message broker.
 /// </summary>
-public interface IProducerCollection : IReadOnlyList<IProducer>
+public interface IProducerCollection : IReadOnlyCollection<IProducer>
 {
     /// <summary>
     ///     Gets a producer for the specified endpoint.
