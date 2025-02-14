@@ -11,22 +11,28 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal sealed class BrokerClientCollection : IReadOnlyCollection<IBrokerClient>, IDisposable
+internal sealed class BrokerClientCollection : IBrokerClientCollection, IDisposable
 {
-    private readonly ConcurrentBag<IBrokerClient> _clients = [];
+    private readonly ConcurrentDictionary<string, IBrokerClient> _clients = [];
 
     public int Count => _clients.Count;
 
-    public void Add(IBrokerClient client) => _clients.Add(client);
+    public IBrokerClient this[string name] => _clients[name];
 
-    public ValueTask ConnectAllAsync() => _clients.ParallelForEachAsync(client => client.ConnectAsync());
+    public void Add(IBrokerClient client)
+    {
+        if (!_clients.TryAdd(client.Name, client))
+            throw new InvalidOperationException($"A client with name '{client.Name}' has already been added.");
+    }
 
-    public ValueTask DisconnectAllAsync() => _clients.ParallelForEachAsync(client => client.DisconnectAsync());
+    public ValueTask ConnectAllAsync() => _clients.Values.ParallelForEachAsync(client => client.ConnectAsync());
 
-    public void Dispose() => _clients.ForEach(client => client.Dispose());
+    public ValueTask DisconnectAllAsync() => _clients.Values.ParallelForEachAsync(client => client.DisconnectAsync());
+
+    public void Dispose() => _clients.Values.ForEach(client => client.Dispose());
 
     [MustDisposeResource]
-    public IEnumerator<IBrokerClient> GetEnumerator() => _clients.GetEnumerator();
+    public IEnumerator<IBrokerClient> GetEnumerator() => _clients.Values.GetEnumerator();
 
     [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

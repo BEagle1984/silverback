@@ -31,6 +31,7 @@ public class ConsumersHealthCheckServiceFixture
         stoppedStatusInfo.Status.Returns(ConsumerStatus.Stopped);
         stoppedStatusInfo.History.Returns([new ConsumerStatusChange(ConsumerStatus.Stopped, DateTime.UtcNow)]);
         _stoppedConsumer = Substitute.For<IConsumer>();
+        _stoppedConsumer.Name.Returns("stopped");
         _stoppedConsumer.StatusInfo.Returns(stoppedStatusInfo);
         _stoppedConsumer.EndpointsConfiguration.Returns([new TestConsumerEndpointConfiguration("topic1")]);
 
@@ -38,6 +39,7 @@ public class ConsumersHealthCheckServiceFixture
         startedStatusInfo.Status.Returns(ConsumerStatus.Started);
         startedStatusInfo.History.Returns([new ConsumerStatusChange(ConsumerStatus.Started, DateTime.UtcNow)]);
         _startedConsumer = Substitute.For<IConsumer>();
+        _startedConsumer.Name.Returns("started");
         _startedConsumer.StatusInfo.Returns(startedStatusInfo);
         _startedConsumer.EndpointsConfiguration.Returns([new TestConsumerEndpointConfiguration("topic2")]);
 
@@ -45,6 +47,7 @@ public class ConsumersHealthCheckServiceFixture
         connectedStatusInfo.Status.Returns(ConsumerStatus.Connected);
         connectedStatusInfo.History.Returns([new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow)]);
         _connectedConsumer = Substitute.For<IConsumer>();
+        _connectedConsumer.Name.Returns("connected");
         _connectedConsumer.StatusInfo.Returns(connectedStatusInfo);
         _connectedConsumer.EndpointsConfiguration.Returns([new TestConsumerEndpointConfiguration("topic3")]);
 
@@ -52,6 +55,7 @@ public class ConsumersHealthCheckServiceFixture
         consumingStatusInfo.Status.Returns(ConsumerStatus.Consuming);
         consumingStatusInfo.History.Returns([new ConsumerStatusChange(ConsumerStatus.Consuming, DateTime.UtcNow)]);
         _consumingConsumer = Substitute.For<IConsumer>();
+        _consumingConsumer.Name.Returns("consuming");
         _consumingConsumer.StatusInfo.Returns(consumingStatusInfo);
         _consumingConsumer.EndpointsConfiguration.Returns([new TestConsumerEndpointConfiguration("topic4")]);
     }
@@ -82,7 +86,7 @@ public class ConsumersHealthCheckServiceFixture
             TimeSpan.Zero);
 
         result.Count.ShouldBe(2);
-        result.ShouldBe([_stoppedConsumer, _startedConsumer]);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer], ignoreOrder: true);
     }
 
     [Fact]
@@ -137,6 +141,6 @@ public class ConsumersHealthCheckServiceFixture
             TimeSpan.FromMilliseconds(100));
 
         result.Count.ShouldBe(2);
-        result.ShouldBe([_stoppedConsumer, _startedConsumer]);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer], ignoreOrder: true);
     }
 }

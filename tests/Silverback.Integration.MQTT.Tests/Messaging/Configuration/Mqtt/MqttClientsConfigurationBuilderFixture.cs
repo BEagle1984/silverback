@@ -714,32 +714,38 @@ public class MqttClientsConfigurationBuilderFixture
                     clients => clients
                         .ConnectViaTcp("test", 42)
                         .AddClient(
+                            "client1",
                             client => client
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
                         .AddClient(
+                            "client2",
                             client => client
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        MqttProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<MqttProducer>().ToArray();
-        producers.Length.ShouldBe(2);
-        producers[0].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
-        producers[0].EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic2");
-        producers[1].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
-        producers[1].EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic4");
-        MqttConsumer[] consumers = serviceProvider.GetRequiredService<ConsumerCollection>().Cast<MqttConsumer>().ToArray();
-        consumers.Length.ShouldBe(2);
-        consumers[0].Configuration.ConsumerEndpoints.Count.ShouldBe(1);
-        consumers[0].Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic1");
-        consumers[1].Configuration.ConsumerEndpoints.Count.ShouldBe(1);
-        consumers[1].Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic3");
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        producers.Count.ShouldBe(2);
+        MqttProducer producer1 = producers.GetProducerForEndpoint("topic2").ShouldBeOfType<MqttProducer>();
+        producer1.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
+        producer1.EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic2");
+        MqttProducer producer2 = producers.GetProducerForEndpoint("topic4").ShouldBeOfType<MqttProducer>();
+        producer2.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
+        producer2.EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic4");
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        consumers.Count.ShouldBe(2);
+        MqttConsumer consumer1 = consumers["client1"].ShouldBeOfType<MqttConsumer>();
+        consumer1.Configuration.ConsumerEndpoints.Count.ShouldBe(1);
+        consumer1.Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic1");
+        MqttConsumer consumer2 = consumers["client2"].ShouldBeOfType<MqttConsumer>();
+        consumer2.Configuration.ConsumerEndpoints.Count.ShouldBe(1);
+        consumer2.Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic3");
     }
 
     [Fact]
-    public async Task AddProducer_ShouldMergeProducerConfiguration_WhenIdIsTheSame()
+    public async Task AddProducer_ShouldMergeProducerConfiguration_WhenNameIsTheSame()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -764,25 +770,28 @@ public class MqttClientsConfigurationBuilderFixture
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        MqttProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<MqttProducer>().ToArray();
-        producers.Length.ShouldBe(2);
-        producers[0].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
-        producers[0].EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic2");
-        producers[0].Configuration.ClientId.ShouldBe("client42");
-        producers[0].Configuration.MaximumPacketSize.ShouldBe((ushort)42);
-        producers[1].EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
-        producers[1].EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic4");
-        producers[1].Configuration.ClientId.ShouldBe("client42");
-        producers[1].Configuration.MaximumPacketSize.ShouldBe((ushort)42);
-        producers[1].Client.ShouldBeSameAs(producers[0].Client);
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        producers.Count.ShouldBe(2);
+        MqttProducer producer1 = producers.GetProducerForEndpoint("topic2").ShouldBeOfType<MqttProducer>();
+        producer1.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventOne));
+        producer1.EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic2");
+        producer1.Configuration.ClientId.ShouldBe("client42");
+        producer1.Configuration.MaximumPacketSize.ShouldBe((ushort)42);
+        MqttProducer producer2 = producers.GetProducerForEndpoint("topic4").ShouldBeOfType<MqttProducer>();
+        producer2.EndpointConfiguration.MessageType.ShouldBe(typeof(TestEventTwo));
+        producer2.EndpointConfiguration.EndpointResolver.RawName.ShouldBe("topic4");
+        producer2.Configuration.ClientId.ShouldBe("client42");
+        producer2.Configuration.MaximumPacketSize.ShouldBe((ushort)42);
+        producer2.Client.ShouldBeSameAs(producer1.Client);
 
-        MqttConsumer[] consumers = serviceProvider.GetRequiredService<ConsumerCollection>().Cast<MqttConsumer>().ToArray();
-        consumers.Length.ShouldBe(1);
-        consumers[0].Configuration.ConsumerEndpoints.Count.ShouldBe(2);
-        consumers[0].Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic1");
-        consumers[0].Configuration.ConsumerEndpoints.Last().RawName.ShouldBe("topic3");
-        consumers[0].Configuration.ClientId.ShouldBe("client42");
-        consumers[0].Configuration.MaximumPacketSize.ShouldBe((ushort)42);
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        consumers.Count.ShouldBe(1);
+        MqttConsumer consumer = consumers["client1"].ShouldBeOfType<MqttConsumer>();
+        consumer.Configuration.ConsumerEndpoints.Count.ShouldBe(2);
+        consumer.Configuration.ConsumerEndpoints.First().RawName.ShouldBe("topic1");
+        consumer.Configuration.ConsumerEndpoints.Last().RawName.ShouldBe("topic3");
+        consumer.Configuration.ClientId.ShouldBe("client42");
+        consumer.Configuration.MaximumPacketSize.ShouldBe((ushort)42);
     }
 
     private static MqttClientsConfigurationBuilder GetBuilder()

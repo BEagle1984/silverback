@@ -30,11 +30,11 @@ public class ProducerCollectionFixture
         producerCollection.Add(producer2);
 
         producerCollection.Count.ShouldBe(2);
-        producerCollection.ShouldBe(new[] { producer1, producer2 });
+        producerCollection.ShouldBe([producer1, producer2]);
     }
 
     [Fact]
-    public void Add_ShouldThrow_WhenFriendlyNameNotUnique()
+    public void Add_ShouldThrow_WhenEndpointFriendlyNameNotUnique()
     {
         ProducerCollection producerCollection = [];
         IProducer producer1 = Substitute.For<IProducer>();
