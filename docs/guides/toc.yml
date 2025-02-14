@@ -2,3 +2,7 @@
   href: setup.md
 - name: Using the Mediator
   href: mediator.md
+- name: Message Broker
+  items:
+    - name: Connecting
+      href: broker/connecting.md
