@@ -1,5 +1,6 @@
 ---
 uid: examples
+title: Examples
 ---
 
 ### **Examples**

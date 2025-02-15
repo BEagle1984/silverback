@@ -170,6 +170,9 @@ services
         }));
 ```
 
+> [!Tip]
+> [Callbacks](xref:broker-callbacks) can be used to execute custom code when the connection is established.
+
 You can also completely disable automatic connection and handle it manually when needed.
 
 ```csharp
@@ -289,7 +292,9 @@ public class ConsumerManagementService
 > [!Tip]
 > Assigning unique names to clients helps manage them programmatically.
 
-## Samples
+## Additional Resources
 
-* [All](xref:samples)
+* <xref:producing>
+* <xref:broker-consuming>
+* <xref:examples>
 

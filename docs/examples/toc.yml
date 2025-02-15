@@ -1,5 +1,5 @@
-- name: Examples
-  href: examples.md
+- name: Introduction
+  href: intro.md
 - name: Kafka
   items:
     - name: Basic

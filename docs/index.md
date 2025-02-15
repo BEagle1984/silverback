@@ -12,7 +12,7 @@ title: "Home"
                         Silverback
                     </h1>
                     <p class="lead">
-                        <span style="font-size: .8em;">Simplicity at its core.</span><br />
+                        <span style="font-size: .9em;">Simplicity at its core.</span><br />
                         <span style="font-size: .9em;">Flexibility at its peak.</span><br />
                         Effortless messaging for .NET
                     </p>
@@ -27,10 +27,11 @@ title: "Home"
 </div>
 <div class="container body-container body-content">
 
-> [!Important]
+> [!Tip]
 > The old v4 documentation is still browsable here: [silverback-messaging.net/v4](/v4)
 
-## What is Silverback?
+> [!Important]
+> v5.0.0-beta.1 has just been released. Please note that the documentation is still being updated and some sections might be incomplete, outdated, or completely missing.
 
 Silverback is a **powerful, elegant, and feature-rich message bus for .NET**, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for **Apache Kafka** and **MQTT**, it offers robust features for **reliability, consistency, and scalability**.
 
@@ -45,8 +46,11 @@ Silverback is designed for **serious workloads**, offering enterprise-grade capa
 🔀 **Powerful Mediator**\
 Enables seamless in-memory communication between components, featuring **Rx.NET** support for reactive programming.
 
-🚀 **Message Broker Abstraction**\
-Easily integrate with **Kafka** or **MQTT** to build event-driven architectures, distributed workflows, and scalable inter-service communication with minimal setup.
+🔗 **Seamless Message Broker Integration**\
+Silverback makes it easy to integrate with Kafka and MQTT, providing a streamlined and developer-friendly API to build event-driven architectures with minimal setup and configuration.
+
+🚀 **Kafka-Optimized Messaging**\
+Unlike generic messaging libraries, Silverback is built specifically for Kafka, leveraging its unique capabilities for high-throughput, exactly-once semantics, and partitioned processing. While Silverback also supports MQTT, Kafka is a first-class citizen, and the framework is highly optimized to take full advantage of its power.
 
 📤 **Transactional Outbox**\
 Ensures message consistency by linking database transactions with messaging, preventing message loss and guaranteeing atomicity.
@@ -70,7 +74,7 @@ Leverages **System.Diagnostics** for full visibility into message flow and distr
 Provides in-memory mocks for **Kafka** and **MQTT**, along with powerful helpers for efficient unit testing.
 
 ✨ **And much more!**\
-Silverback is highly extensible, making it the go-to messaging framework for .NET developers.
+Silverback is highly extensible, making it the go-to messaging framework for .NET developers who want to harness Kafka’s full potential while maintaining flexibility for other brokers.
 
 ## Getting Started
 
@@ -78,9 +82,9 @@ Silverback is highly extensible, making it the go-to messaging framework for .NE
 
 Silverback is designed to be intuitive, but a solid foundation makes it even easier to use. Explore:
 
-- 📖 **[Guides](guides/setup.html)** – Learn the core principles and architecture.
-- 🛠 **[Examples](examples/examples.html)** – Hands-on examples to see Silverback in action.
-- 📚 **[API Reference](api/Silverback.html)** – Dive into the detailed API documentation.
+* 📖 **[Guides](guides/setup.html)** - Learn the core principles and architecture.
+* 🛠️ **[Examples](examples/examples.html)** - Hands-on examples to see Silverback in action.
+* 📚 **[API Reference](api/Silverback.html)** - Dive into the detailed API documentation.
 
 ### Install via NuGet
 
@@ -91,12 +95,11 @@ More details about the different packages can be found in the **[Setting Up Silv
 
 Silverback is **open-source** and thrives thanks to **contributors like you**! Whether it's bug reports, feature suggestions, or pull requests, we welcome your support.
 
-- 💡 **[Contribute](contributing.md)** – Discover how you can help improve Silverback.
-- 💬 **[Discussions](https://github.com/BEagle1984/silverback/discussions)** – Join the conversation and share your insights.
+* 🐞 **[Issues](htts://github.com/BEagle1984/silverback/issues)** - Report bugs or suggest improvements.
+* 💬 **[Discussions](https://github.com/BEagle1984/silverback/discussions)** - Join the conversation and share your insights.
+* 💡 **[Contribute](contributing.md)** - Discover how you can help improve Silverback.
 
 A huge **thank you** to all contributors who help make Silverback even better!
-
-
 
 </div>
 <div style="height: 100px"></div>
