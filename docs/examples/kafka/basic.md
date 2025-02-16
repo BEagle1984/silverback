@@ -1,5 +1,5 @@
 ---
-uid: sample-kafka-basic
+uid: example-kafka-basic
 ---
 
 # Kafka - Basic

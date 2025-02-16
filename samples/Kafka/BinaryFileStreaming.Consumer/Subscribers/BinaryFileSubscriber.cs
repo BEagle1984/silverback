@@ -17,7 +17,7 @@ public class BinaryFileSubscriber
         _logger = logger;
     }
 
-    public async Task OnBinaryFileMessageReceivedAsync(CustomBinaryMessage binaryMessage)
+    public async Task OnBinaryMessageReceivedAsync(CustomBinaryMessage binaryMessage)
     {
         EnsureTargetFolderExists();
 

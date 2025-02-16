@@ -1,5 +1,5 @@
 ---
-uid: sample-mqtt-basic
+uid: example-mqtt-basic
 ---
 
 # MQTT - Basic

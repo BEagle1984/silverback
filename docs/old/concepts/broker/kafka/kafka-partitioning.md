@@ -281,4 +281,4 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 
 ## Samples
 
-* <xref:sample-kafka-binaryfile>
+* <xref:example-kafka-binaryfile>

@@ -2,7 +2,7 @@
 
 namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
 
-public class CustomBinaryFileMessage : BinaryMessage
+public class CustomBinaryMessage : BinaryMessage
 {
     [Header("x-filename")]
     public string? Filename { get; set; }

@@ -32,7 +32,7 @@ public class ProducerController : ControllerBase
         if (!string.IsNullOrEmpty(contentType))
             binaryMessage.ContentType = contentType;
 
-        // Publish the BinaryFileMessage that will be routed to the outbound
+        // Publish the BinaryMessage that will be routed to the outbound
         // endpoint. The FileStream will be read and produced chunk by chunk,
         // without the entire file being loaded into memory.
         await _publisher.PublishAsync(binaryMessage);
@@ -48,22 +48,22 @@ public class ProducerController : ControllerBase
         // Open specified file stream
         await using FileStream fileStream = System.IO.File.OpenRead(filePath);
 
-        // Create a CustomBinaryFileMessage that wraps the file stream. The
-        // CustomBinaryFileMessage extends the BinaryFileMessage adding an extra
+        // Create a CustomBinaryMessage that wraps the file stream. The
+        // CustomBinaryMessage extends the BinaryMessage adding an extra
         // Filename property that is also exported as header.
-        CustomBinaryFileMessage binaryFileMessage = new()
+        CustomBinaryMessage binaryMessage = new()
         {
             Content = fileStream,
             Filename = Path.GetFileName(filePath)
         };
 
         if (!string.IsNullOrEmpty(contentType))
-            binaryFileMessage.ContentType = contentType;
+            binaryMessage.ContentType = contentType;
 
-        // Publish the BinaryFileMessage that will be routed to the outbound
+        // Publish the BinaryMessage that will be routed to the outbound
         // endpoint. The FileStream will be read and produced chunk by chunk,
         // without the entire file being loaded into memory.
-        await _publisher.PublishAsync(binaryFileMessage);
+        await _publisher.PublishAsync(binaryMessage);
 
         return NoContent();
     }

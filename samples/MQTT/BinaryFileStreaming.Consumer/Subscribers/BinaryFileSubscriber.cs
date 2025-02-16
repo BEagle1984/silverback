@@ -17,11 +17,11 @@ public class BinaryFileSubscriber
         _logger = logger;
     }
 
-    public async Task OnBinaryFileMessageReceivedAsync(CustomBinaryFileMessage binaryFileMessage)
+    public async Task OnBinaryMessageReceivedAsync(CustomBinaryMessage binaryMessage)
     {
         EnsureTargetFolderExists();
 
-        string filename = Guid.NewGuid().ToString("N") + binaryFileMessage.Filename;
+        string filename = Guid.NewGuid().ToString("N") + binaryMessage.Filename;
 
         _logger.LogInformation("Saving binary file as {Filename}...", filename);
 
@@ -29,12 +29,12 @@ public class BinaryFileSubscriber
         using FileStream fileStream =
             File.OpenWrite(Path.Combine(OutputPath, filename));
 
-        if (binaryFileMessage.Content != null)
+        if (binaryMessage.Content != null)
         {
             // Asynchronously copy the message content to the FileStream.
             // The message chunks are streamed directly and the entire file is
             // never loaded into memory.
-            await binaryFileMessage.Content.CopyToAsync(fileStream);
+            await binaryMessage.Content.CopyToAsync(fileStream);
         }
 
         _logger.LogInformation(

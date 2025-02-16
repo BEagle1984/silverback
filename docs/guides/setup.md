@@ -1,3 +1,7 @@
+---
+uid: setup
+---
+
 # Setting Up Silverback
 
 Silverback is designed as a modular framework, allowing you to include only the components you need. This guide walks you through selecting the right packages and configuring the basics to get started.

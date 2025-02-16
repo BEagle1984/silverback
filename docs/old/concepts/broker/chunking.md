@@ -83,4 +83,4 @@ Some headers are used to describe the chunks sequence. See <xref:headers> for de
 
 ## Samples
 
-* <xref:sample-kafka-binaryfile>
+* <xref:example-kafka-binaryfile>

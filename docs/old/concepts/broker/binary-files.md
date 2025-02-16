@@ -295,4 +295,4 @@ public class FileSubscriberService
 
 ## Samples
 
-* <xref:sample-kafka-binaryfile>
+* <xref:example-kafka-binaryfile>

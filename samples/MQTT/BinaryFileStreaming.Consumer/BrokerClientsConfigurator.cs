@@ -28,7 +28,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             // Since the CustomBinaryMessage extends the built-in
                             // BinaryMessage, the serializer will be automatically
                             // switched to the BinaryMessageSerializer.
-                            .Consume<CustomBinaryFileMessage>(
+                            .Consume<CustomBinaryMessage>(
                                 endpoint => endpoint
                                     .ConsumeFrom("samples/binary-files")
                                     .WithAtLeastOnceQoS()

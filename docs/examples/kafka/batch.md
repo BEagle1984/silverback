@@ -1,5 +1,5 @@
 ---
-uid: sample-kafka-batch
+uid: example-kafka-batch
 ---
 
 # Kafka - Batch Processing

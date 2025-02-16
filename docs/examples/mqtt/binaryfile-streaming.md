@@ -1,5 +1,5 @@
 ---
-uid: sample-mqtt-binaryfile
+uid: example-mqtt-binaryfile
 ---
 
 # MQTT - Files Streaming
@@ -17,7 +17,7 @@ The producer exposes two REST API that receive the path of a local file to be st
 # [BrokerClientsConfigurator](#tab/producer-endpoints)
 [!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Producer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/producer-custom-message)
-[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Producer/Messages/CustomBinaryFileMessage.cs)]
+[!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Producer/Messages/CustomBinaryMessage.cs)]
 # [API Controller](#tab/producer-controller)
 [!code-csharp[Producer.ProducerController](../../../samples/Mqtt/BinaryFileStreaming.Producer/Controllers/ProducerController.cs)]
 ***
@@ -33,7 +33,7 @@ The consumer simply streams the file to a temporary folder in the local file sys
 # [BrokerClientsConfigurator](#tab/consumer-endpoints)
 [!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Consumer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/consumer-custom-message)
-[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Messages/CustomBinaryFileMessage.cs)]
+[!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Messages/CustomBinaryMessage.cs)]
 # [Subscriber](#tab/consumer-subscriber)
 [!code-csharp[Consumer.BinaryFileSubscriber](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Subscribers/BinaryFileSubscriber.cs)]
 ***

@@ -82,14 +82,14 @@ Silverback is highly extensible, making it the go-to messaging framework for .NE
 
 Silverback is designed to be intuitive, but a solid foundation makes it even easier to use. Explore:
 
-* 📖 **[Guides](guides/setup.html)** - Learn the core principles and architecture.
-* 🛠️ **[Examples](examples/examples.html)** - Hands-on examples to see Silverback in action.
-* 📚 **[API Reference](api/Silverback.html)** - Dive into the detailed API documentation.
+* 📖 **[Guides](xref:setup)** - Learn the core principles and architecture.
+* 🛠️ **[Examples](xref:examples)** - Hands-on examples to see Silverback in action.
+* 📚 **[API Reference](~/api/Silverback.html)** - Dive into the detailed API documentation.
 
 ### Install via NuGet
 
 Getting started is as easy as installing the necessary packages for your use case. Silverback is modular and consists of multiple packages, such as **Silverback.Core**, **Silverback.Integration.Kafka**, and **Silverback.Integration.Mqtt**.\
-More details about the different packages can be found in the **[Setting Up Silverback](guides/setup.html)** guide.
+More details about the different packages can be found in the <xref:setup> guide.
 
 ## Join the Silverback Community
 

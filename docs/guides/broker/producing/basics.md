@@ -266,4 +266,4 @@ For Kafka producers, you can also specify the partition to produce to or influen
 
 ## Additional Resources
 
-For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](api/Silverback.html).
+For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](~/api/Silverback.html).
