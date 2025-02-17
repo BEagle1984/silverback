@@ -1,5 +1,5 @@
 ---
-uid: example-kafka-avro
+uid: sample-kafka-avro
 ---
 
 # Kafka - Avro

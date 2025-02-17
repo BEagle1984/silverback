@@ -75,7 +75,7 @@ Some chunks sequences may be incomplete because either the producer failed to pu
 
 As mentioned already, the chunks have to be written to the same partition and have to be contiguous. This is by design.
 
-Another limitation is that the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.
+Another limitation is that the <xref:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy> is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.
 
 ## Headers
 
@@ -83,4 +83,4 @@ Some headers are used to describe the chunks sequence. See <xref:headers> for de
 
 ## Samples
 
-* <xref:example-kafka-binaryfile>
+* <xref:sample-kafka-binaryfile>

@@ -18,6 +18,8 @@
           href: broker/producing/headers.md
         - name: Chunking
           href: broker/producing/chunking.md
+        - name: Encryption
+          href: broker/producing/encryption.md
         - name: Tombstone
           href: broker/producing/tombstone.md
         - name: Validation
@@ -36,10 +38,6 @@
               href: broker/producing/kafka/transactions.md
             - name: Schema Registry
               href: broker/producing/kafka/schema-registry.md
-        - name: MQTT
-          items:
-            - name: Request-Response
-              href: broker/producing/mqtt/request-response.md
     - name: Consuming
       items:
         - name: Basics
@@ -48,6 +46,8 @@
           href: broker/consuming/deserialization.md
         - name: Headers
           href: broker/consuming/headers.md
+        - name: Decryption
+          href: broker/consuming/decryption.md
         - name: Tombstone
           href: broker/consuming/tombstone.md
         - name: Validation
@@ -66,6 +66,8 @@
               href: broker/consuming/kafka/offset.md
             - name: Schema Registry
               href: broker/consuming/kafka/schema-registry.md
+    - name: Default Headers
+      href: broker/default-headers.md
     - name: Testing
       href: broker/testing.md
 - name: Logging

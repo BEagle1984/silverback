@@ -1,12 +1,12 @@
 ---
-uid: example-mqtt-binaryfile
+uid: sample-mqtt-binaryfile
 ---
 
 # MQTT - Files Streaming
 
 This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through Mqtt.
 
-See also: <xref:binary-files>, <xref:chunking>
+See also: <xref:serialization>, <xref:deserialization>, <xref:chunking>~~~~
 
 ## Producer
 

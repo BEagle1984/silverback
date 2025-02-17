@@ -1,5 +1,5 @@
 ---
-uid: broker-connecting
+uid: broker
 ---
 
 # Connecting to a Message Broker
@@ -295,6 +295,6 @@ public class ConsumerManagementService
 ## Additional Resources
 
 * <xref:producing>
-* <xref:broker-consuming>
-* <xref:examples>
+* <xref:consuming>
+* <xref:samples>
 

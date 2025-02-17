@@ -187,11 +187,11 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 If an exceptions is thrown by the methods consuming the incoming messages (subscribers) the consumer will stop, unless some error policies are defined.
 
 The built-in policies are:
-* <xref:Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy> (default)
-* <xref:Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy>
-* <xref:Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy>
-* <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy>
-* <xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyChain>
+* <xref:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy> (default)
+* <xref:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy>
+* <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy>
+* <xref:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy>
+* <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain>
 
 # [Fluent](#tab/error-handling-fluent)
 ```csharp
@@ -249,11 +249,11 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 > Some message broker implementations might transparently cope with the missing message id header and derive it from other identifiers (e.g. the kafka message key) but it's not automatically guaranteed that they will always be unique. You should carefully check that before relying on this feature.
 
 > [!Important]
-> The <xref:Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy> will prevent the message broker to be polled for the duration of the configured delay, which could lead to a timeout. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
+> The <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy> will prevent the message broker to be polled for the duration of the configured delay, which could lead to a timeout. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
 
 ### Apply rules
 
-Use [ApplyTo](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo_System_Type_) and [Exclude](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_System_Type_) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Boolean__) to specify a custom apply rule.
+Use [ApplyTo](xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo_System_Type_) and [Exclude](xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_System_Type_) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Boolean__) to specify a custom apply rule.
 
 ```csharp
 .OnError(policy => policy

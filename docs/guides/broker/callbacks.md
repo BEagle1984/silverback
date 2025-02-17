@@ -137,4 +137,4 @@ public class ConnectionCallbackHandler : IMqttClientConnectedCallback
 
 ## Additional Resources
 
-For more details, refer to the [API Reference](~/api/Silverback.html) for each callback interface.
+For more details, refer to the [API Reference](xref:Silverback) for each callback interface.

@@ -1,12 +1,12 @@
 ---
-uid: example-kafka-batch
+uid: sample-kafka-batch
 ---
 
 # Kafka - Batch Processing
 
 In this sample the consumed messages are processed in batch.
 
-See also: [Inbound Endpoint - Batch processing](xref:inbound#batch-processing)
+See also: <xref:consuming>
 
 ## Common
 

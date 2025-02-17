@@ -106,6 +106,9 @@ The `Produce<TMessage>` method is used to configure the specified message type t
 
 By default, Silverback routes the messages based on the message type. However, you can also implement custom routing logic.
 
+> [!Note]  
+> Messages published and routed to a producer cannot be subscribed to locally (within the same process) unless the endpoint is explicitly configured with the `EnableSubscribing` method. However, you can still subscribe to the <xref:Silverback.Messaging.Messages.IOutboundEnvelope`1> without `EnableSubscribing`.
+
 ### Routing Function
 
 A routing function can be used to determine the endpoint based on the message content or metadata (via <xref:Silverback.Messaging.Messages.IOutboundEnvelope`1>). The function is called for each message and should return the destination topic name.
@@ -262,8 +265,8 @@ await _publisher.WrapAndPublishAsync(
 
 ### Kafka Partitioning
 
-For Kafka producers, you can also specify the partition to produce to or influence it using a partitioning key. More information can be found in the <xref:producing-kafka-partitioning> guide.
+For Kafka producers, you can also specify the partition to produce to or influence it using a partitioning key. More information can be found in the <xref:kafka-partitioning> guide.
 
 ## Additional Resources
 
-For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](~/api/Silverback.html).
+For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](xref:Silverback).

@@ -1,12 +1,12 @@
 ---
-uid: example-mqtt-basic-v3
+uid: sample-mqtt-basic-v3
 ---
 
 # MQTT - Basic (v3)
 
 This sample implements the simple possible producer and consumer, but using MQTT protocol version 3.
 
-See also: <xref:message-broker>
+See also: <xref:broker>, <xref:producing>, <xref:consuming>
 
 ## Common
 

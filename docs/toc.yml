@@ -1,7 +1,7 @@
 - name: Guides
   href: guides/
-- name: Examples
-  href: examples/
+- name: Samples
+  href: samples/
 - name: API Reference
   href: api/
 - name: Changelog

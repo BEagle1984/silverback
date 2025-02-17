@@ -13,7 +13,7 @@ An interface has to be implemented by the callback handler that is then register
 The only generic callback, invoked for any of the actual broker implementation is:
 * <xref:Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback>
 
-Some broker specific callbacks may be added by the specific broker implementation (see <xref:kafka-events> and <xref:mqtt-events>).
+Some broker specific callbacks may be added by the specific broker implementation (see <xref:broker-callbacks> and <xref:mqtt-events>).
 
 ### Example
 

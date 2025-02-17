@@ -83,8 +83,8 @@ Silverback is highly extensible, making it the go-to messaging framework for .NE
 Silverback is designed to be intuitive, but a solid foundation makes it even easier to use. Explore:
 
 * 📖 **[Guides](xref:setup)** - Learn the core principles and architecture.
-* 🛠️ **[Examples](xref:examples)** - Hands-on examples to see Silverback in action.
-* 📚 **[API Reference](~/api/Silverback.html)** - Dive into the detailed API documentation.
+* 🛠️ **[Samples](xref:samples)** - Hands-on examples to see Silverback in action.
+* 📚 **[API Reference](xref:Silverback)** - Dive into the detailed API documentation.
 
 ### Install via NuGet
 
