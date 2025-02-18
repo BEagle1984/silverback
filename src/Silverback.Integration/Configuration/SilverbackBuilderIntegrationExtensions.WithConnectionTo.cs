@@ -86,7 +86,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
 
     private static void AddOutboundRouting(SilverbackBuilder builder) =>
         builder
-            .AddScopedBehavior<OutboundRouterBehavior>()
+            .AddTransientBehavior<OutboundRouterBehavior>()
             .AddExtensibleFactory<IOutboxReaderFactory, OutboxReaderFactory>()
             .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
             .Services

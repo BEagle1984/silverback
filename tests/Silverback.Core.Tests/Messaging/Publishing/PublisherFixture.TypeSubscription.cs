@@ -56,6 +56,26 @@ public partial class PublisherFixture
     }
 
     [Fact]
+    public async Task PublishAndPublishAsync_ShouldInvokeTransientSubscriberFromRootScope()
+    {
+        TestingCollection<TestEventOne> messages = [];
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
+                .AddTransientSubscriber(_ => new SimpleSubscriber(messages)));
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        messages.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSingletonSubscriber()
     {
         TestingCollection<TestEventOne> messages = [];
@@ -64,6 +84,26 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
+                .AddSingletonSubscriber(new SimpleSubscriber(messages)));
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        messages.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldInvokeSingletonSubscriberFromRootScope()
+    {
+        TestingCollection<TestEventOne> messages = [];
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
                 .AddSingletonSubscriber(new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -403,5 +443,12 @@ public partial class PublisherFixture
 
             await messages.AddAsync(message);
         }
+    }
+
+    private class OtherMessageSubscriber
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test method")]
+        public void Subscriber(TestEventTwo message) => throw new InvalidOperationException("This shouldn't be invoked.");
     }
 }

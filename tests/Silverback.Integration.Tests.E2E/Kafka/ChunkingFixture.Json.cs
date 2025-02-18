@@ -48,7 +48,7 @@ public partial class ChunkingFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -343,7 +343,7 @@ public partial class ChunkingFixture
             await Task.WhenAny(Task.Delay(TimeSpan.FromSeconds(5)), cancellationTokenSource.Token.AsTask());
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= messagesCount; i++)
         {
@@ -389,7 +389,7 @@ public partial class ChunkingFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Message 1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Message 2" });

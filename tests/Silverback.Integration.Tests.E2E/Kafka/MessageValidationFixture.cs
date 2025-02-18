@@ -49,7 +49,7 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .ValidateMessageAndThrow()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 
@@ -78,7 +78,7 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .DisableMessageValidation()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 
@@ -105,7 +105,7 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .ValidateMessageAndWarn()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         Func<Task> act = () => publisher.PublishEventAsync(message);
 

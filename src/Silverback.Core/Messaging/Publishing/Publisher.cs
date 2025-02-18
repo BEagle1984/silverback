@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Publishing;
 
 /// <inheritdoc cref="IPublisher" />
-public class Publisher : IPublisher
+internal class Publisher : IPublisher
 {
     private readonly ISilverbackLogger _logger;
 
@@ -24,7 +24,9 @@ public class Publisher : IPublisher
 
     private readonly SubscribedMethodsCache _subscribedMethodsCache;
 
-    private SilverbackContext? _context;
+    private readonly bool _isInServiceScope;
+
+    private ISilverbackContext? _context;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="Publisher" /> class.
@@ -35,23 +37,32 @@ public class Publisher : IPublisher
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> instance to be used to resolve the subscribers.
     /// </param>
+    /// <param name="rootServiceProvider">
+    ///     The root <see cref="IServiceProvider" /> instance to be used to compare with the <paramref name="serviceProvider" /> and determine
+    ///     if the publisher is used in a service scope.
+    /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
     public Publisher(
         IBehaviorsProvider behaviorsProvider,
         IServiceProvider serviceProvider,
+        RootServiceProvider rootServiceProvider,
         ISilverbackLogger<Publisher> logger)
     {
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
 
+        _isInServiceScope = serviceProvider != rootServiceProvider.ServiceProvider;
+
         _subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
     }
 
     /// <inheritdoc cref="IPublisher.Context" />
-    public ISilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
+    public ISilverbackContext Context => _context ??= _isInServiceScope
+        ? _serviceProvider.GetRequiredService<ISilverbackContext>() // use the scoped context only if the publisher is used in a service scope
+        : new SilverbackContext(_serviceProvider); // otherwise create a transient one, but some stuff might not work as expected
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     public void Publish(object message, bool throwIfUnhandled = false) =>
@@ -80,7 +91,7 @@ public class Publisher : IPublisher
         CancellationToken cancellationToken = default) =>
         CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false)).ToList();
 
-    private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
+    private ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,
         object message,
         bool throwIfUnhandled,
@@ -91,7 +102,7 @@ public class Publisher : IPublisher
         if (!behaviors.TryPop(out IBehavior? nextBehavior))
             return finalAction(message, throwIfUnhandled, executionFlow, cancellationToken);
 
-        return nextBehavior.HandleAsync(message, NextAsync, cancellationToken);
+        return nextBehavior.HandleAsync(this, message, NextAsync, cancellationToken);
 
         ValueTask<IReadOnlyCollection<object?>> NextAsync(object nextMessage) =>
             ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, throwIfUnhandled, finalAction, executionFlow, cancellationToken);

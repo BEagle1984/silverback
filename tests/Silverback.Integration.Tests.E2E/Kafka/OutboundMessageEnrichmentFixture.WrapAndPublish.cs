@@ -32,7 +32,7 @@ public partial class OutboundMessageEnrichmentFixture
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         int i = 0;
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
@@ -69,7 +69,7 @@ public partial class OutboundMessageEnrichmentFixture
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         int i = 0;
         await publisher.WrapAndPublishBatchAsync(
             [new TestEventOne(), new TestEventOne()],
@@ -114,7 +114,7 @@ public partial class OutboundMessageEnrichmentFixture
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[] { new(), new() }.ToAsyncEnumerable(),
             static (envelope, counter) => envelope.AddHeader("one", "1").AddHeader("two", "2").SetKafkaKey($"{counter.Increment()}"),

@@ -42,7 +42,7 @@ public class BatchProducingFixture : KafkaFixture
                                     .EnableSubscribing()))) // Enable subscribing to ensure we don't fall into a mortal loop
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new TestEventOne[] { new(), new() });
         await publisher.PublishAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() }.AsEnumerable());
 
@@ -77,7 +77,7 @@ public class BatchProducingFixture : KafkaFixture
             yield return new TestEventThree();
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(GetMessagesAsync());
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
@@ -105,7 +105,7 @@ public class BatchProducingFixture : KafkaFixture
                                     .EnableSubscribing()))) // Enable subscribing to ensure we don't fall into a mortal loop
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync([new TestEventOne(), new TestEventOne()]);
         await publisher.WrapAndPublishBatchAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() }.AsEnumerable());
 
@@ -140,7 +140,7 @@ public class BatchProducingFixture : KafkaFixture
             yield return new TestEventThree();
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(GetMessagesAsync());
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);

@@ -47,7 +47,7 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
@@ -86,7 +86,7 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -154,7 +154,7 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
@@ -193,7 +193,7 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

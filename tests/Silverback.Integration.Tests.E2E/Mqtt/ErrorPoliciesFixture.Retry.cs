@@ -177,7 +177,7 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

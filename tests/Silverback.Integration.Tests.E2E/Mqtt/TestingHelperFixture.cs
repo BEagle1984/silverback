@@ -44,7 +44,7 @@ public class TestingHelperFixture : MqttFixture
                 .AddDelegateSubscriber<IIntegrationEvent>(_ => Task.Delay(Random.Shared.Next(5, 50)))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -84,7 +84,7 @@ public class TestingHelperFixture : MqttFixture
                 .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 10; i++)
         {
@@ -133,7 +133,7 @@ public class TestingHelperFixture : MqttFixture
                 .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 10; i++)
         {

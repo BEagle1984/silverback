@@ -43,7 +43,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
         DefaultTopic.MessagesCount.ShouldBe(1);
@@ -75,7 +75,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -128,7 +128,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -177,7 +177,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                             producer => producer
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -232,7 +232,7 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                         .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
                                         .AddHeader("x-static", 42)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(
             new TestEventWithHeaders
@@ -265,13 +265,13 @@ public partial class ProducerEndpointFixture : KafkaFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
         Helper.GetTopic(DefaultTopicName, "PLAINTEXT://e2e").MessagesCount.ShouldBe(0); // Needed to force topic creation
         DefaultTopic.MessagesCount.ShouldBe(0);
 
-        IProducer producer = Host.ScopedServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
+        IProducer producer = Host.ServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
         DefaultTopic.MessagesCount.ShouldBe(1);

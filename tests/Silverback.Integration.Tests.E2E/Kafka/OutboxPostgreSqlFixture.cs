@@ -66,7 +66,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
@@ -124,7 +124,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
@@ -174,7 +174,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
@@ -227,7 +227,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
@@ -286,7 +286,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
@@ -304,7 +304,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)

@@ -47,7 +47,7 @@ public partial class BrokerClientCallbacksFixture
                 .AddIntegrationSpyAndSubscriber());
 
         KafkaPartitionEofCallback callbackKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
-            .ScopedServiceProvider
+            .ServiceProvider
             .GetServices<IBrokerClientCallback>()
             .First(service => service is KafkaPartitionEofCallback);
 

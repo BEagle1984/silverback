@@ -65,7 +65,7 @@ public class MqttToKafkaFixture : KafkaFixture
 
         void HandleEventTwo(TestEventTwo message) => Interlocked.Increment(ref eventTwoCount);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         IMqttTestingHelper mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
 
         await mqttTestingHelper.WaitUntilConnectedAsync();

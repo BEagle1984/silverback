@@ -49,7 +49,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                                 .WithClientId(DefaultClientId)
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
@@ -84,7 +84,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -138,7 +138,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -189,7 +189,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                                 .WithClientId(DefaultClientId)
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -246,7 +246,7 @@ public partial class ProducerEndpointFixture : MqttFixture
                                         .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
                                         .AddHeader("x-static", 42)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(
             new TestEventWithHeaders
@@ -280,12 +280,12 @@ public partial class ProducerEndpointFixture : MqttFixture
                         .ConnectViaTcp("e2e-mqtt-broker")
                         .AddClient(client => client.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
         GetDefaultTopicMessages().Count.ShouldBe(0);
 
-        IProducer producer = Host.ScopedServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
+        IProducer producer = Host.ServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());
 
         GetDefaultTopicMessages().Count.ShouldBe(1);

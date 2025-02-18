@@ -35,7 +35,7 @@ public partial class IntegrationPublisherExtensionsFixture
             });
         IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
         producer.EndpointConfiguration.Strategy.Build(
-            Arg.Any<IServiceProvider>(),
+            Arg.Any<ISilverbackContext>(),
             Arg.Any<ProducerEndpointConfiguration>()).Returns(produceStrategyImplementation);
         _producers.Add(producer);
         return (producer, produceStrategyImplementation);

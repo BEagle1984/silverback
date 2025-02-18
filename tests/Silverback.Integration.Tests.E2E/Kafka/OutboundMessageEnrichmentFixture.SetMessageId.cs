@@ -36,7 +36,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetMessageId(message => message?.ContentEventOne)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -67,7 +67,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetMessageId(envelope => envelope.Message?.ContentEventOne)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -99,7 +99,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .SetMessageId<TestEventOne>(message => message?.ContentEventOne)
                                     .SetMessageId<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
@@ -130,7 +130,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetMessageId((TestEventOne? _) => null)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });

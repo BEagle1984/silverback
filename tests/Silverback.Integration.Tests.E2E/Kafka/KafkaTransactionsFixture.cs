@@ -47,7 +47,7 @@ public class KafkaTransactionsFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         using (IKafkaTransaction transaction = publisher.InitKafkaTransaction())
         {
@@ -88,7 +88,7 @@ public class KafkaTransactionsFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         using (IKafkaTransaction dummy = publisher.InitKafkaTransaction())
         {
@@ -167,7 +167,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batches (1 message missing) to each partition
         for (int i = 0; i < batchSize - 1; i++)
@@ -254,7 +254,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batches (1 message missing) to each partition
         for (int i = 0; i < batchSize - 1; i++)
@@ -338,7 +338,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batch (1 message missing)
         for (int i = 0; i < batchSize - 1; i++)
@@ -405,7 +405,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
         await publisher.PublishEventAsync(new TestEventOne());
         await publisher.PublishEventAsync(new TestEventOne());
@@ -479,7 +479,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batches (1 message missing) to each partition
         for (int i = 0; i < batchSize - 1; i++)

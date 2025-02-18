@@ -154,7 +154,11 @@ public partial class SilverbackBuilderFixture
 
     private class TestBehavior : IBehavior
     {
-        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken) =>
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+            IPublisher publisher,
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken) =>
             next.Invoke(message);
     }
 }

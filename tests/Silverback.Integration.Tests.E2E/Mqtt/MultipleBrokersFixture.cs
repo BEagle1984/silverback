@@ -50,7 +50,7 @@ public class MultipleBrokersFixture : MqttFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new Broker1Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts
@@ -100,7 +100,7 @@ public class MultipleBrokersFixture : MqttFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new Broker1Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts

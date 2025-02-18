@@ -311,7 +311,7 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message three" });
@@ -379,7 +379,7 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         for (int i = 0; i < 4; i++)
         {
             tryCounters[i] = new Counter();
@@ -448,7 +448,7 @@ public partial class ErrorPoliciesFixture
             receivedFiles.Add(binaryMessage.Content.ReadAll());
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
@@ -510,7 +510,7 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -563,7 +563,7 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

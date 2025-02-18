@@ -161,16 +161,13 @@ public partial class MessageWrapperFixture
             sources,
             _publisher,
             [producer1, producer2],
-            static (source, counter) =>
-            {
-                counter.Increment();
-                return source == null ? null : new TestEventOne { Content = $"{source}-{counter.Value}" };
-            },
-            static (envelope, source, counter) => envelope
-                .SetKafkaKey($"{counter.Value}")
+            static (source, args) =>
+                source == null ? null : new TestEventOne { Content = $"{source}-{args.CounterSource.Increment()}" },
+            static (envelope, source, args) => envelope
+                .SetKafkaKey($"{args.CounterEnvelope.Increment()}")
                 .AddHeader("x-source", source ?? -1)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
-            new Counter(),
+            (CounterSource: new Counter(), CounterEnvelope: new Counter()),
             cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
@@ -195,12 +192,12 @@ public partial class MessageWrapperFixture
         await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Length.ShouldBe(3);
-        capturedEnvelopes2[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-4" });
+        capturedEnvelopes2[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-1" });
         capturedEnvelopes2[0].EndpointConfiguration.RawName.ShouldBe("two");
         capturedEnvelopes2[0].GetKafkaKey().ShouldBe("4");
         capturedEnvelopes2[0].Headers["x-source"].ShouldBe("1");
         capturedEnvelopes2[0].Headers["x-topic"].ShouldBe("two");
-        capturedEnvelopes2[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-5" });
+        capturedEnvelopes2[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-2" });
         capturedEnvelopes2[1].EndpointConfiguration.RawName.ShouldBe("two");
         capturedEnvelopes2[1].GetKafkaKey().ShouldBe("5");
         capturedEnvelopes2[1].Headers["x-source"].ShouldBe("2");

@@ -82,7 +82,7 @@ public partial class ChunkingFixture
             }
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= messagesCount; i++)
         {
@@ -182,7 +182,7 @@ public partial class ChunkingFixture
             }
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= messagesCount; i++)
         {
@@ -284,7 +284,7 @@ public partial class ChunkingFixture
             }
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= messagesCount; i++)
         {
@@ -384,7 +384,7 @@ public partial class ChunkingFixture
             }
         }
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= messagesCount; i++)
         {

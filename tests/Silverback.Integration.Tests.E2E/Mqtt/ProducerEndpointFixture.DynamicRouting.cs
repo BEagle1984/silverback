@@ -42,7 +42,7 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -86,7 +86,7 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -121,7 +121,7 @@ public partial class ProducerEndpointFixture
                                 .WithClientId(DefaultClientId)
                                 .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -152,7 +152,7 @@ public partial class ProducerEndpointFixture
                         .ConnectViaTcp("e2e-mqtt-broker")
                         .AddClient(client => client.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceToDynamicTopic()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
             envelope => envelope.SetMqttDestinationTopic("topic1"));

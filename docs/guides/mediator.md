@@ -23,7 +23,7 @@ It is not mandatory, but it is recommended to use the [Silverback.Core.Model](ht
 
 Dedicated interfaces for events, commands, and queries are available in [Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model) to help define the meaning of each message, making the code more structured and readable.
 
-The *integration* variations are designed for messages exchanged via a message broker like Apache Kafka or MQTT.
+The _integration_ variations are designed for messages exchanged via a message broker like Apache Kafka or MQTT.
 
 These are the available interfaces:
 
@@ -34,7 +34,7 @@ These are the available interfaces:
 
 ## Publishing Messages
 
-To publish a message, you need an instance of <xref:Silverback.Messaging.Publishing.IPublisher>, which can be injected via dependency injection.
+To publish a message, you need an instance of <xref:Silverback.Messaging.Publishing.IPublisher>, which is registered with the DI container as a transient service.
 
 ```csharp
 using Silverback.Messaging.Publishing;
@@ -77,7 +77,7 @@ public async Task<QueryResult> PublishSomething()
 > [!Note]
 > The call to `Single()` is required because Silverback allows multiple subscribers for the same message, collecting multiple return values. This is unnecessary when using the specialized publishers described in the next chapter. The `ICommand` and `IQuery` interfaces specify the `TResult` type for better clarity.
 
-### Specialized Publisher Extensions
+### Silverback.Core.Model Extensions
 
 Each message type (<xref:Silverback.Messaging.Messages.IEvent>, <xref:Silverback.Messaging.Messages.ICommand>/<xref:Silverback.Messaging.Messages.ICommand`1>, and <xref:Silverback.Messaging.Messages.IQuery`1>) includes specialized extensions for <xref:Silverback.Messaging.Publishing.IPublisher> to improve semantics and clarity.
 
@@ -99,7 +99,7 @@ public async Task ExecuteCommand()
 
 Now, we need to write a subscriber method to process the published messages.
 
-Silverback’s internal bus routes messages based on their type. When a message is published, Silverback evaluates the signatures of subscribed methods and invokes those accepting the specific message type, a base type, or an implemented interface.
+Silverback’s mediator routes messages based on their type. When a message is published, Silverback evaluates the signatures of the subscribed methods and invokes those accepting the specific message type, a base type, or an implemented interface.
 
 ### Subscriber Class
 
@@ -129,7 +129,7 @@ public class Startup
 }
 ```
 
-By default, all public methods in a registered subscriber class are subscribed. To subscribe non-public methods or customize subscription options, use <xref:Silverback.Messaging.Subscribers.SubscribeAttribute>.
+By default, all public methods in a registered subscriber class (excluding the ones declared in the based classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <xref:Silverback.Messaging.Subscribers.SubscribeAttribute> to decorate the methods.
 
 You can also disable automatic subscription of public methods:
 
@@ -137,6 +137,132 @@ You can also disable automatic subscription of public methods:
 services
     .AddSilverback()
     .AddScopedSubscriber<SubscribingService>(autoSubscribeAllPublicMethods: false);
+```
+
+### Delegate based subscription
+
+In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the [AddDelegateSubscriber](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions) method.
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddDelegateSubscriber((SampleMessage message) =>
+            {
+                // TODO: Process messages
+            });
+    }
+}
+```
+
+### Supported methods and parameters
+
+The subscribed method (or delegate) can either be synchronous or asynchronous (returning a `Task` or a `ValueTask`).
+
+The first parameter must be the message and the parameter type can be the specific message, a base class or an implemented interface.
+
+The method can have other parameters that will be resolved using the service provider, or the cancellation token (see [Cancellation](#cancellation)).
+
+```csharp
+public class SubscribingService
+{
+    public async Task OnMessageReceived(BasketCheckoutMessage message, CheckoutService service)
+    {
+        service.Checkout(message.BaksetId, message.UserId);
+    }
+}
+```
+
+or
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddDelegateSubscriber(
+                (BasketCheckoutMessage message, CheckoutService service) =>
+                {
+                    service.Checkout(message.BaksetId, message.UserId);
+                });
+    }
+}
+```
+
+### Return values
+
+A subscriber can also have a return value that can be collected by the publisher.
+
+```csharp
+public class SubscribingService
+{
+    public async Task<SampleResult> OnMessageReceived(SampleMessage message)
+    {
+        ...
+
+        return new SampleResult(...);
+    }
+}
+```
+
+Ideally, you should use the specialized interfaces <xref:Silverback.Messaging.Messages.ICommand`1> and <xref:Silverback.Messaging.Messages.IQuery`1> to define the return type and make it easier to handle the result.
+
+### Return New Messages (Republishing)
+
+The subscriber method can also return a message or a collection of messages (either [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1), [IReadOnlyCollection<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1) or [IObservable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1), if using [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx)) that will be automatically republished to the internal bus.
+
+```csharp
+public class SubscribingService
+{
+    public async Task<OtherSampleMessage> OnMessageReceived(SampleMessage message)
+    {
+        ...
+
+        return new OtherSampleMessage
+        {
+            ...
+        };
+    }
+}
+```
+
+or
+
+```csharp
+public class SubscribingService
+{
+    public IEnumerable<IMessage> OnMessageReceived(IEnumerable<SampleMessage> messages) =>
+        messages.SelectMany(message =>
+        {
+            yield return new OtherSampleMessage1
+            {
+                ...
+            };
+            yield return new OtherSampleMessage2
+            {
+                ...
+            };
+        });
+}
+```
+
+Silverback recognizes only the messages implementing <xref:Silverback.Messaging.Messages.IMessage> as messages to be republished (<xref:Silverback.Messaging.Messages.IEvent>, <xref:Silverback.Messaging.Messages.ICommand>/<xref:Silverback.Messaging.Messages.ICommand`1>, and <xref:Silverback.Messaging.Messages.IQuery`1> all implement that interface), but you can register your own types, base types or interfaces.
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .HandleMessagesOfType<ICustomMessage>();
+    }
+}
 ```
 
 ## Cancellation
@@ -163,7 +289,7 @@ public async Task OnCommandReceived(MyCommand command, CancellationToken cancell
 
 ## Behaviors
 
-Behaviors allow you to implement a custom pipeline (similar to ASP.NET middleware), adding cross-cutting concerns like logging and validation.
+Behaviors allow you to implement a custom pipeline (similar to the ASP.NET middleware), adding cross-cutting concerns like logging and validation.
 
 ```csharp
 public class TracingBehavior : IBehavior
@@ -203,7 +329,7 @@ services
     .AddScopedBehavior<TracingBehavior>();
 ```
 
-If execution order is important, implement <xref:Silverback.ISorted> and specify `SortIndex`.
+If execution order is important, implement <xref:Silverback.ISorted> and specify the `SortIndex`.
 
 ```csharp
 public class SortedBehavior : IBehavior, ISorted

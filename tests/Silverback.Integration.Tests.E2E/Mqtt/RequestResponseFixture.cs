@@ -41,7 +41,7 @@ public class RequestResponseFixture : MqttFixture
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
             envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
@@ -79,7 +79,7 @@ public class RequestResponseFixture : MqttFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
             envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));

@@ -34,7 +34,7 @@ public partial class ProducerEndpointFixture
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName, 1))
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
@@ -77,7 +77,7 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
         await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
         await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
@@ -108,7 +108,7 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "1" });
         await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "2" });
@@ -136,7 +136,7 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
         await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });

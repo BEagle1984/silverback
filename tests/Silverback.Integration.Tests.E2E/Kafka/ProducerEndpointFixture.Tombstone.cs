@@ -28,7 +28,7 @@ public partial class ProducerEndpointFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
 
         DefaultTopic.MessagesCount.ShouldBe(1);
@@ -49,7 +49,7 @@ public partial class ProducerEndpointFixture
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync<TestEventOne>(null, envelope => envelope.SetKafkaKey("42"));
 
         DefaultTopic.MessagesCount.ShouldBe(1);

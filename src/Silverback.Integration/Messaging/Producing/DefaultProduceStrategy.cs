@@ -28,7 +28,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
     public static bool operator !=(DefaultProduceStrategy? left, DefaultProduceStrategy? right) => !Equals(left, right);
 
     /// <inheritdoc cref="IProduceStrategy.Build" />
-    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration) =>
+    public IProduceStrategyImplementation Build(ISilverbackContext context, ProducerEndpointConfiguration endpointConfiguration) =>
         Implementation;
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

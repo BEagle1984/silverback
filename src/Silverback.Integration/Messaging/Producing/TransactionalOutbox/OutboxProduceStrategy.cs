@@ -50,12 +50,14 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     public static bool operator !=(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => !Equals(left, right);
 
     /// <inheritdoc cref="IProduceStrategy.Build" />
-    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration)
+    public IProduceStrategyImplementation Build(ISilverbackContext context, ProducerEndpointConfiguration endpointConfiguration)
     {
-        _outboxWriter ??= serviceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, serviceProvider);
-        _logger ??= serviceProvider.GetRequiredService<IProducerLogger<OutboxProduceStrategy>>();
+        Check.NotNull(context, nameof(context));
 
-        return new OutboxProduceStrategyImplementation(_outboxWriter, endpointConfiguration, serviceProvider, _logger);
+        _outboxWriter ??= context.ServiceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, context.ServiceProvider);
+        _logger ??= context.ServiceProvider.GetRequiredService<IProducerLogger<OutboxProduceStrategy>>();
+
+        return new OutboxProduceStrategyImplementation(_outboxWriter, endpointConfiguration, context, _logger);
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
@@ -76,8 +78,6 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         private readonly ProducerEndpointConfiguration _configuration;
 
-        private readonly IServiceProvider _serviceProvider;
-
         private readonly IProducerLogger<OutboxProduceStrategy> _logger;
 
         private readonly ISilverbackContext _context;
@@ -87,15 +87,13 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         public OutboxProduceStrategyImplementation(
             IOutboxWriter outboxWriter,
             ProducerEndpointConfiguration configuration,
-            IServiceProvider serviceProvider,
+            ISilverbackContext context,
             IProducerLogger<OutboxProduceStrategy> logger)
         {
             _outboxWriter = outboxWriter;
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
+            _context = context;
             _logger = logger;
-
-            _context = serviceProvider.GetRequiredService<ISilverbackContext>();
         }
 
         public async Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
@@ -107,7 +105,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                     finalCancellationToken),
                 _configuration,
                 new DelegatedProducerState(_outboxWriter, _context),
-                _serviceProvider);
+                _context.ServiceProvider);
 
             await _producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
             _logger.LogStoringIntoOutbox(envelope);
@@ -121,7 +119,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                 static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, finalCancellationToken),
                 _configuration,
                 stream,
-                _serviceProvider);
+                _context.ServiceProvider);
 
             Task.Run(
                 async () =>
@@ -148,7 +146,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                 static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, finalCancellationToken),
                 _configuration,
                 stream,
-                _serviceProvider);
+                _context.ServiceProvider);
 
             Task.Run(
                 async () =>

@@ -27,12 +27,13 @@ public class OutboundRouterBehaviorFixture
 
     private readonly OutboundRouterBehavior _behavior;
 
+    private readonly IPublisher _publisher = Substitute.For<IPublisher>();
+
     public OutboundRouterBehaviorFixture()
     {
         _messageWrapper = Substitute.For<IMessageWrapper>();
-        IPublisher publisher = Substitute.For<IPublisher>();
-        publisher.Context.Returns(new SilverbackContext(Substitute.For<IServiceProvider>()));
-        _behavior = new OutboundRouterBehavior(publisher, _messageWrapper, _producers);
+        _publisher.Context.Returns(new SilverbackContext(Substitute.For<IServiceProvider>()));
+        _behavior = new OutboundRouterBehavior(_messageWrapper, _producers);
     }
 
     [Fact]
@@ -41,7 +42,7 @@ public class OutboundRouterBehaviorFixture
         AddProducer<TestEventTwo>("topic2");
         int nextBehaviorCalls = 0;
 
-        await _behavior.HandleAsync(new TestEventOne(), _ => Next(ref nextBehaviorCalls), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, new TestEventOne(), _ => Next(ref nextBehaviorCalls), CancellationToken.None);
 
         nextBehaviorCalls.ShouldBe(1);
         _messageWrapper.ReceivedCalls().ShouldBeEmpty();
@@ -55,8 +56,8 @@ public class OutboundRouterBehaviorFixture
         TestEventOne message1 = new();
         TestEventTwo message2 = new();
 
-        await _behavior.HandleAsync(message1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(message2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, message1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, message2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
@@ -70,7 +71,7 @@ public class OutboundRouterBehaviorFixture
         IProducer producer2 = AddProducer<TestEventOne>("topic2");
         TestEventOne message = new();
 
-        await _behavior.HandleAsync(message, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, message, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(1);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message, Arg.Any<IPublisher>(), ArgIsProducers(producer1, producer2));
@@ -84,8 +85,8 @@ public class OutboundRouterBehaviorFixture
         List<TestEventOne> messages1 = [new(), new()];
         TestEventTwo[] messages2 = [new(), new()];
 
-        await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
@@ -100,8 +101,8 @@ public class OutboundRouterBehaviorFixture
         IEnumerable<TestEventOne> messages1 = new TestEventOne[] { new(), new() }.ToPureEnumerable();
         IEnumerable<TestEventTwo> messages2 = new TestEventTwo[] { new(), new() }.ToPureEnumerable();
 
-        await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
@@ -116,8 +117,8 @@ public class OutboundRouterBehaviorFixture
         IAsyncEnumerable<TestEventOne> messages1 = new TestEventOne[] { new(), new() }.ToAsyncEnumerable();
         IAsyncEnumerable<TestEventTwo> messages2 = new TestEventTwo[] { new(), new() }.ToAsyncEnumerable();
 
-        await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
@@ -132,8 +133,8 @@ public class OutboundRouterBehaviorFixture
         Tombstone<TestEventOne> message1 = new("1");
         Tombstone<TestEventTwo> message2 = new("2");
 
-        await _behavior.HandleAsync(message1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(message2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, message1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, message2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));
@@ -148,8 +149,8 @@ public class OutboundRouterBehaviorFixture
         List<Tombstone<TestEventOne>> messages1 = [new("1"), new("2")];
         Tombstone<TestEventTwo>[] messages2 = [new("1"), new("2")];
 
-        await _behavior.HandleAsync(messages1, _ => Next(), CancellationToken.None);
-        await _behavior.HandleAsync(messages2, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages1, _ => Next(), CancellationToken.None);
+        await _behavior.HandleAsync(_publisher, messages2, _ => Next(), CancellationToken.None);
 
         _messageWrapper.ReceivedCalls().Count().ShouldBe(2);
         await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<IPublisher>(), ArgIsProducers(producer1));

@@ -15,11 +15,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions;
 /// </summary>
 internal sealed class TypeSubscription : ISubscription
 {
-    private readonly Func<IServiceProvider, object>? _subscriberInstanceFunc;
-
-    private readonly object? _subscriberInstance;
-
-    private IReadOnlyList<SubscribedMethod>? _subscribedMethods;
+    private readonly object? _implementationInstance;
 
     public TypeSubscription(Type subscriberType, TypeSubscriptionOptions options)
     {
@@ -27,41 +23,20 @@ internal sealed class TypeSubscription : ISubscription
         Options = Check.NotNull(options, nameof(options));
     }
 
-    public TypeSubscription(Type subscriberType, object subscriberInstance, TypeSubscriptionOptions options)
+    public TypeSubscription(Type subscriberType, object implementationInstance, TypeSubscriptionOptions options)
+        : this(subscriberType, options)
     {
-        SubscriberType = Check.NotNull(subscriberType, nameof(subscriberType));
-        _subscriberInstance = Check.NotNull(subscriberInstance, nameof(subscriberInstance));
-        Options = Check.NotNull(options, nameof(options));
-
-        _subscriberInstanceFunc = _ => _subscriberInstance;
+        _implementationInstance = Check.NotNull(implementationInstance, nameof(implementationInstance));
     }
 
     public Type SubscriberType { get; }
 
     public TypeSubscriptionOptions Options { get; }
 
-    public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)
-    {
-        if (_subscriberInstance != null)
-            return GetSubscribedMethods(_subscriberInstance, serviceProvider);
-
-        return _subscribedMethods ??= serviceProvider
-            .GetServices(SubscriberType)
-            .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
-            .ToList();
-    }
-
-    private List<SubscribedMethod> GetSubscribedMethods(object? subscriber, IServiceProvider serviceProvider)
-    {
-        if (subscriber == null)
-            return [];
-
-        Type targetType = subscriber.GetType();
-
-        return GetMethods(targetType)
-            .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo).EnsureInitialized(serviceProvider))
-            .ToList();
-    }
+    public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        GetMethods(SubscriberType)
+            .Select(methodInfo => GetSubscribedMethod(SubscriberType, methodInfo).EnsureInitialized(serviceProvider))
+            .ToArray();
 
     private SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
     {
@@ -76,11 +51,10 @@ internal sealed class TypeSubscription : ISubscription
             AutoSubscribeAllPublicMethods = Options.AutoSubscribeAllPublicMethods
         };
 
-        if (_subscriberInstanceFunc != null)
-            return new SubscribedMethod(_subscriberInstanceFunc, methodInfo, methodOptions);
-
         return new SubscribedMethod(
-            serviceProvider => serviceProvider.GetRequiredService(targetType),
+            _implementationInstance == null
+                ? serviceProvider => serviceProvider.GetRequiredService(targetType)
+                : _ => _implementationInstance,
             methodInfo,
             methodOptions);
     }

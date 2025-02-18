@@ -46,7 +46,7 @@ public partial class MessageWrapperFixture
             });
         IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
         producer.EndpointConfiguration.Strategy.Build(
-            Arg.Any<IServiceProvider>(),
+            Arg.Any<ISilverbackContext>(),
             Arg.Any<ProducerEndpointConfiguration>()).Returns(produceStrategyImplementation);
         return (producer, produceStrategyImplementation);
     }

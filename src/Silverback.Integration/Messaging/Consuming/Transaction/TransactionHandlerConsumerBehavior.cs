@@ -45,7 +45,6 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         try
         {
             IServiceScope scope = context.ServiceProvider.CreateScope();
-
             context.ReplaceServiceScope(scope);
             context.TransactionManager = new ConsumerTransactionManager(
                 context,
@@ -71,9 +70,8 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
         catch (Exception exception)
         {
-            // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and
-            // rethrow (-> if the exception bubbled up till this point, it's because it failed to be
-            // handled and it's safer to stop the consumer)
+            // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and rethrow
+            // (-> if the exception bubbled up till this point, it's because it failed to be handled, and it's safer to stop the consumer)
             if (context.Sequence != null)
             {
                 await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)

@@ -63,7 +63,7 @@ public class EncryptionFixture : KafkaFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -124,7 +124,7 @@ public class EncryptionFixture : KafkaFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -181,7 +181,7 @@ public class EncryptionFixture : KafkaFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -237,7 +237,7 @@ public class EncryptionFixture : KafkaFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -311,7 +311,7 @@ public class EncryptionFixture : KafkaFixture
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -375,7 +375,7 @@ public class EncryptionFixture : KafkaFixture
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

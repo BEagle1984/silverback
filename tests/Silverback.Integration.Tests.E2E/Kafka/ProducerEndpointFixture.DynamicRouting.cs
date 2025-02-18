@@ -45,7 +45,7 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -99,7 +99,7 @@ public partial class ProducerEndpointFixture
                                                 _ => Partition.Any
                                             })))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -154,7 +154,7 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException(),
                                             })))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -194,7 +194,7 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<MessageBasedEndpointResolver>()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
@@ -240,7 +240,7 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<HeaderBasedEndpointResolver>()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
@@ -287,7 +287,7 @@ public partial class ProducerEndpointFixture
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint.ProduceToDynamicTopic()))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
             envelope => envelope.SetKafkaDestinationTopic("topic1"));
@@ -321,7 +321,7 @@ public partial class ProducerEndpointFixture
                                 endpoint => endpoint
                                     .ProduceTo((IIntegrationEvent? _) => DefaultTopicName)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
 
         DefaultTopic.MessagesCount.ShouldBe(1);
@@ -347,7 +347,7 @@ public partial class ProducerEndpointFixture
                                         (IIntegrationEvent? message) =>
                                             message is TestEventOne ? "topic1" : "topic2")))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(
             new IIntegrationEvent[]
             {
@@ -378,7 +378,7 @@ public partial class ProducerEndpointFixture
                                         (IIntegrationEvent? message) =>
                                             message == null ? "tombstones" : "events")))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(
             new IIntegrationEvent?[]
             {

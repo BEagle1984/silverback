@@ -58,7 +58,7 @@ public partial class SchemaRegistryFixture
             DefaultTopicName + "-value",
             new Schema(AvroMessage._SCHEMA.ToString(), SchemaType.Avro));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -123,7 +123,7 @@ public partial class SchemaRegistryFixture
             new Schema(formattedSchema, SchemaType.Avro),
             true);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -164,7 +164,7 @@ public partial class SchemaRegistryFixture
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {

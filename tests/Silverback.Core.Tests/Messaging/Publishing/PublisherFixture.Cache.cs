@@ -22,7 +22,7 @@ public partial class PublisherFixture
 {
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Test")]
-    public async Task PublishAndPublishAsync_ShouldResolveOnlyNeededTypes_WhenResolvedOnceAlready()
+    public async Task PublishAndPublishAsync_ShouldResolveOnlyNeededTypes()
     {
         int resolved = 0;
 
@@ -48,7 +48,7 @@ public partial class PublisherFixture
             await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new TestCommandOne());
         }
 
-        resolved.ShouldBe(2);
+        resolved.ShouldBe(1);
 
         // PublishAsync
         resolved = 0;
@@ -109,7 +109,7 @@ public partial class PublisherFixture
             .Single()
             .StartAsync(CancellationToken.None);
 
-        resolved.ShouldBe(2);
+        resolved.ShouldBe(0);
 
         // PublishAsync
         resolved = 0;

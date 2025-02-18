@@ -35,7 +35,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .AddHeader("two", 2))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
@@ -64,7 +64,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .AddHeader<TestEventTwo>("x-something", "two"))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
         await publisher.PublishEventAsync(new TestEventTwo());
         await publisher.PublishEventAsync(new TestEventThree());
@@ -95,7 +95,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .AddHeader<TestEventOne>("x-something", message => message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -128,7 +128,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .AddHeader<TestEventOne>("x-something", envelope => envelope.Message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });

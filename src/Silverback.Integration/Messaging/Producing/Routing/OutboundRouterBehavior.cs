@@ -26,8 +26,6 @@ public class OutboundRouterBehavior : IBehavior, ISorted
 
     private static MethodInfo? _singleMessageWrapAndProduceMethod;
 
-    private readonly IPublisher _publisher;
-
     private readonly IMessageWrapper _messageWrapper;
 
     private readonly IProducerCollection _producers;
@@ -35,18 +33,14 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboundRouterBehavior" /> class.
     /// </summary>
-    /// <param name="publisher">
-    ///     The <see cref="IPublisher" />.
-    /// </param>
     /// <param name="messageWrapper">
     ///     The <see cref="IMessageWrapper" />.
     /// </param>
     /// <param name="producers">
     ///     The <see cref="IProducerCollection" />.
     /// </param>
-    public OutboundRouterBehavior(IPublisher publisher, IMessageWrapper messageWrapper, IProducerCollection producers)
+    public OutboundRouterBehavior(IMessageWrapper messageWrapper, IProducerCollection producers)
     {
-        _publisher = Check.NotNull(publisher, nameof(publisher));
         _messageWrapper = Check.NotNull(messageWrapper, nameof(messageWrapper));
         _producers = Check.NotNull(producers, nameof(producers));
     }
@@ -56,6 +50,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
 
     /// <inheritdoc cref="IBehavior.HandleAsync" />
     public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+        IPublisher publisher,
         object message,
         MessageHandler next,
         CancellationToken cancellationToken)
@@ -63,7 +58,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         Check.NotNull(message, nameof(message));
         Check.NotNull(next, nameof(next));
 
-        return await WrapAndRepublishRoutedMessageAsync(message, cancellationToken).ConfigureAwait(false)
+        return await WrapAndRepublishRoutedMessageAsync(publisher, message, cancellationToken).ConfigureAwait(false)
             ? []
             : await next(message).ConfigureAwait(false);
     }
@@ -99,7 +94,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                               method.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type))
             .MakeGenericMethod(messageType);
 
-    private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(object message, CancellationToken cancellationToken)
+    private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(IPublisher publisher, object message, CancellationToken cancellationToken)
     {
         Type messageType = message.GetType();
         Type? enumerableType = GetEnumerableType(messageType);
@@ -120,7 +115,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                                   method.GetParameters().Length == 5)).MakeGenericMethod(args.ActualMessageType),
             (EnumerableType: enumerableType, ActualMessageType: actualMessageType));
 
-        await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, _publisher, producers, null, cancellationToken])!).ConfigureAwait(false);
+        await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, publisher, producers, null, cancellationToken])!).ConfigureAwait(false);
 
         return true;
     }

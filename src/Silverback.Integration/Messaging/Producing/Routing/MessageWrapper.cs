@@ -757,5 +757,5 @@ internal class MessageWrapper : IMessageWrapper
     private static IProduceStrategyImplementation GetProduceStrategy(
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext context) =>
-        endpointConfiguration.Strategy.Build(context.ServiceProvider, endpointConfiguration);
+        endpointConfiguration.Strategy.Build(context, endpointConfiguration);
 }

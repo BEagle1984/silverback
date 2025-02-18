@@ -34,7 +34,7 @@ public partial class OutboundMessageEnrichmentFixture
                                         .SetMessageId<TestEventOne>(message => message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -66,7 +66,7 @@ public partial class OutboundMessageEnrichmentFixture
                                         .SetMessageId<TestEventOne>(envelope => envelope.Message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -99,7 +99,7 @@ public partial class OutboundMessageEnrichmentFixture
                                         .SetMessageId((TestEventTwo? _) => "two"))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });

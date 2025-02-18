@@ -68,7 +68,7 @@ public class BrokerClientsFixture : KafkaFixture
         clientConsumer2.Status.ShouldBe(ClientStatus.Disconnected);
         clientProducer.Status.ShouldBe(ClientStatus.Initialized);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {

@@ -76,7 +76,7 @@ public partial class SchemaRegistryFixture
             DefaultTopicName + "-value",
             new Schema(testEventOneSchema, SchemaType.Json));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -150,7 +150,7 @@ public partial class SchemaRegistryFixture
             new Schema(testEventOneSchema, SchemaType.Json),
             true);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -191,7 +191,7 @@ public partial class SchemaRegistryFixture
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {

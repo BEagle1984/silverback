@@ -249,52 +249,6 @@ public partial class PublisherFixture
     }
 
     [Fact]
-    public async Task PublishAndPublishAsync_ShouldInvokeSubscribers_WhenRegisteredViaInterface()
-    {
-        TestingCollection<TestEventOne> messages = [];
-
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSingleton<IService>(new ServiceSubscriber(messages))
-                .AddSingleton(new ServiceSubscriber(messages))
-                .AddSilverback()
-                .AddSubscribers<IService>());
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new TestEventOne());
-        await publisher.PublishAsync(new TestEventOne());
-
-        messages.Count.ShouldBe(2);
-    }
-
-    [Fact]
-    public async Task PublishAndPublishAsync_ShouldThrow_WhenSubscriberRegisteredViaInterfaceIsNotRegisteredAsSelf()
-    {
-        TestingCollection<TestEventOne> messages = [];
-
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSingleton<IService>(new ServiceSubscriber(messages))
-                .AddSilverback()
-                .AddSubscribers<IService>());
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        Action actSync = () => publisher.Publish(new TestEventOne());
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne());
-
-        Exception syncException = actSync.ShouldThrow<InvalidOperationException>();
-        syncException.Message.ShouldMatch("No service for type .*");
-        Exception asyncException = await actAsync.ShouldThrowAsync<InvalidOperationException>();
-        asyncException.Message.ShouldMatch("No service for type .*");
-
-        messages.ShouldBeEmpty();
-    }
-
-    [Fact]
     public async Task PublishAndPublishAsync_ShouldThrow_WhenThrowIfUnhandledIsEnabledAndMessageIsNotSubscribed()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(

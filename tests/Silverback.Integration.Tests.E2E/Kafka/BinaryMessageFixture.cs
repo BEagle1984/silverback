@@ -64,7 +64,7 @@ public class BinaryMessageFixture : KafkaFixture
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -73,15 +73,10 @@ public class BinaryMessageFixture : KafkaFixture
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>().ContentType)
-            .ShouldBe(["application/pdf", "text/plain"]);
+            .ShouldBe(["application/pdf", "text/plain"], ignoreOrder: true);
 
         receivedFiles.Count.ShouldBe(2);
-        receivedFiles.ShouldBe(
-            new[]
-            {
-                message1.Content.ReReadAll(),
-                message2.Content.ReReadAll()
-            });
+        receivedFiles.ShouldBe([message1.Content.ReReadAll(), message2.Content.ReReadAll()], ignoreOrder: true);
     }
 
     [Fact]
@@ -112,7 +107,7 @@ public class BinaryMessageFixture : KafkaFixture
                                 .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
 
@@ -160,7 +155,7 @@ public class BinaryMessageFixture : KafkaFixture
         void HandleBinaryMessage(BinaryMessage message) => receivedBinaryMessages.Add(message);
         void HandleEventOne(TestEventOne message) => receivedJsonMessages.Add(message);
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(binaryMessage);
         await publisher.PublishAsync(jsonMessage);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -272,7 +267,7 @@ public class BinaryMessageFixture : KafkaFixture
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

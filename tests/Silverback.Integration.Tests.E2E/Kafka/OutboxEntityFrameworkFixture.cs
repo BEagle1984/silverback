@@ -69,7 +69,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
@@ -120,7 +120,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
@@ -174,7 +174,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
@@ -232,7 +232,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction.GetDbTransaction());
 
             for (int i = 0; i < 3; i++)
@@ -250,7 +250,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction.GetDbTransaction());
 
             for (int i = 0; i < 3; i++)
@@ -311,7 +311,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction.GetDbTransaction());
 
             for (int i = 0; i < 3; i++)
@@ -329,7 +329,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
         {
-            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction.GetDbTransaction());
 
             for (int i = 0; i < 3; i++)

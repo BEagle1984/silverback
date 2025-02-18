@@ -58,7 +58,7 @@ public partial class SchemaRegistryFixture
             DefaultTopicName + "-value",
             new Schema(ProtobufMessage.Schema, SchemaType.Protobuf));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -99,7 +99,7 @@ public partial class SchemaRegistryFixture
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
@@ -160,7 +160,7 @@ public partial class SchemaRegistryFixture
             DefaultTopicName + "-value",
             new Schema(ProtobufMessage.Schema, SchemaType.Protobuf));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {

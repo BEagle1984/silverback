@@ -55,7 +55,7 @@ public class EncryptionFixture : MqttFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -110,7 +110,7 @@ public class EncryptionFixture : MqttFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -161,7 +161,7 @@ public class EncryptionFixture : MqttFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
         await publisher.PublishEventAsync(message2);
 
@@ -221,7 +221,7 @@ public class EncryptionFixture : MqttFixture
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

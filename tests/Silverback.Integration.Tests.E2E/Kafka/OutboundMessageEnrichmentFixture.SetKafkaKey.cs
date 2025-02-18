@@ -36,7 +36,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetKafkaKey(message => message?.ContentEventOne)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -67,7 +67,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -99,7 +99,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .SetKafkaKey<TestEventOne>(message => message?.ContentEventOne)
                                     .SetKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
@@ -130,7 +130,7 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .SetKafkaKey((TestEventOne? _) => null)))));
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });

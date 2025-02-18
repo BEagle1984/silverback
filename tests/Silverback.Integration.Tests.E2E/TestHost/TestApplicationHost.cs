@@ -27,15 +27,10 @@ public sealed class TestApplicationHost : IDisposable
 
     private string? _testMethodName;
 
-    private IServiceProvider? _scopedServiceProvider;
-
     private HttpClient? _httpClient;
 
     public IServiceProvider ServiceProvider =>
         _applicationFactory?.Services ?? throw new InvalidOperationException();
-
-    public IServiceProvider ScopedServiceProvider =>
-        _scopedServiceProvider ??= ServiceProvider.CreateScope().ServiceProvider;
 
     public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException();
 
@@ -91,7 +86,7 @@ public sealed class TestApplicationHost : IDisposable
 
         _configurationActions.Clear();
 
-        ILogger<TestApplicationHost>? logger = ScopedServiceProvider.GetService<ILogger<TestApplicationHost>>();
+        ILogger<TestApplicationHost>? logger = ServiceProvider.GetService<ILogger<TestApplicationHost>>();
 
         if (waitUntilBrokerClientsConnected)
         {
@@ -104,7 +99,7 @@ public sealed class TestApplicationHost : IDisposable
 
     public void Dispose()
     {
-        ILogger<TestApplicationHost>? logger = _scopedServiceProvider?.GetService<ILogger<TestApplicationHost>>();
+        ILogger<TestApplicationHost>? logger = ServiceProvider.GetService<ILogger<TestApplicationHost>>();
         logger?.LogInformation("Disposing test host ({TestMethod})", _testMethodName);
 
         _httpClient?.Dispose();

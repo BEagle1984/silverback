@@ -69,7 +69,7 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
         await publisher.PublishEventAsync(new TestEventTwo());
         await publisher.PublishEventAsync(new TestEventOne());
@@ -124,7 +124,7 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
@@ -177,7 +177,7 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
@@ -254,7 +254,7 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
@@ -299,7 +299,7 @@ public class OutboxFixture : KafkaFixture
                                         .StoreToOutbox(outbox => outbox.UseMemory()))))
                 .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("key"));
 

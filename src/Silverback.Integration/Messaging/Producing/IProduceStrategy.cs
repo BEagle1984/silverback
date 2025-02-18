@@ -14,8 +14,8 @@ public interface IProduceStrategy : IEquatable<IProduceStrategy>
     /// <summary>
     ///     Returns the actual strategy implementation, built using the provided <see cref="IServiceProvider" />.
     /// </summary>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to build the strategy.
+    /// <param name="context">
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="endpointConfiguration">
     ///     The producer endpoint configuration.
@@ -23,5 +23,5 @@ public interface IProduceStrategy : IEquatable<IProduceStrategy>
     /// <returns>
     ///     An instance of <see cref="IProduceStrategyImplementation" /> that can be used to produce the messages.
     /// </returns>
-    IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration);
+    IProduceStrategyImplementation Build(ISilverbackContext context, ProducerEndpointConfiguration endpointConfiguration);
 }

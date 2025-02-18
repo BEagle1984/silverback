@@ -58,7 +58,7 @@ public class BinaryMessageFixture : MqttFixture
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
         await publisher.PublishAsync(message2);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

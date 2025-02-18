@@ -16,6 +16,9 @@ public interface IBehavior
     /// <summary>
     ///     Process, handles or transforms the messages being published via the mediator.
     /// </summary>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" /> that is publishing the message.
+    /// </param>
     /// <param name="message">
     ///     The message being published.
     /// </param>
@@ -29,5 +32,5 @@ public interface IBehavior
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     result values (if any).
     /// </returns>
-    ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken);
+    ValueTask<IReadOnlyCollection<object?>> HandleAsync(IPublisher publisher, object message, MessageHandler next, CancellationToken cancellationToken);
 }
