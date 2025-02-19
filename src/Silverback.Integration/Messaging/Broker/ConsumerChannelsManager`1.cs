@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
@@ -124,6 +125,15 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             _logger.LogConsumerLowLevelTrace(
                 _consumer,
                 "Exiting processing loop of channel {channel} (operation canceled).",
+                () => [channel.Id]);
+        }
+        catch (ChannelClosedException)
+        {
+            // Ignore the ChannelClosedException as it might be thrown because of a race condition during retry and in any case
+            // it means that operation is being canceled
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Exiting processing loop of channel {channel} (channel closed).",
                 () => [channel.Id]);
         }
         catch (Exception ex)
