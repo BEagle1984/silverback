@@ -23,7 +23,7 @@ steps:
       projectName: 'silverback'
       projectVersion: '5.0.0'
       extraProperties: |
-        sonar.exclusions=**/obj/**,**/*.dll
+        sonar.exclusions=**/obj/**,**/*.dll,docs/**
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.*.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     displayName: 'Prepare code analysis on SonarCloud'
