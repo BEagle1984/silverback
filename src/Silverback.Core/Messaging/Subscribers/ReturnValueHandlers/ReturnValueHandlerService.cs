@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 
@@ -26,7 +27,7 @@ internal sealed class ReturnValueHandlerService
     [SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Method executes sync or async")]
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes sync or async")]
-    public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, ExecutionFlow executionFlow)
+    public async ValueTask<bool> HandleReturnValuesAsync(IPublisher publisher, object? returnValue, ExecutionFlow executionFlow)
     {
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
             return false;
@@ -39,10 +40,10 @@ internal sealed class ReturnValueHandlerService
         switch (executionFlow)
         {
             case ExecutionFlow.Async:
-                await returnValueHandler.HandleAsync(returnValue).ConfigureAwait(false);
+                await returnValueHandler.HandleAsync(publisher, returnValue).ConfigureAwait(false);
                 break;
             case ExecutionFlow.Sync:
-                returnValueHandler.Handle(returnValue);
+                returnValueHandler.Handle(publisher, returnValue);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(executionFlow), executionFlow, "Invalid execution flow.");

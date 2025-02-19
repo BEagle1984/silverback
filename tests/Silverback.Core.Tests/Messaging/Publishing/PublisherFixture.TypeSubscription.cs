@@ -121,7 +121,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> asyncMessages = [];
         TestingCollection<TestEventOne> asyncValueTaskMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -143,7 +143,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -167,7 +167,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> privateMessages = [];
         TestingCollection<TestEventOne> privateDecoratedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -192,7 +192,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> privateMessages = [];
         TestingCollection<TestEventOne> privateDecoratedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -217,7 +217,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -237,7 +237,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -257,7 +257,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -277,7 +277,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

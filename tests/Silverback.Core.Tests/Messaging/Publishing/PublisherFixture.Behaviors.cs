@@ -43,6 +43,29 @@ public partial class PublisherFixture
         TestBehavior behavior1 = new();
         TestBehavior behavior2 = new();
         TestBehavior behavior3 = new();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddSingletonBehavior(behavior1)
+                .AddSingletonBehavior(_ => behavior2)
+                .AddTransientBehavior(_ => behavior3));
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestCommandOne());
+        await publisher.PublishAsync(new TestCommandOne());
+
+        behavior1.EnterCount.ShouldBe(2);
+        behavior2.EnterCount.ShouldBe(2);
+        behavior3.EnterCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldExecuteScopedBehaviors()
+    {
+        TestBehavior behavior1 = new();
+        TestBehavior behavior2 = new();
+        TestBehavior behavior3 = new();
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -50,6 +73,30 @@ public partial class PublisherFixture
                 .AddSingletonBehavior(behavior1)
                 .AddScopedBehavior(_ => behavior2)
                 .AddTransientBehavior(_ => behavior3));
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestCommandOne());
+        await publisher.PublishAsync(new TestCommandOne());
+
+        behavior1.EnterCount.ShouldBe(2);
+        behavior2.EnterCount.ShouldBe(2);
+        behavior3.EnterCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldCallScopedBehaviorFromRootProvider_WhenNotValidatingScoped()
+    {
+        TestBehavior behavior1 = new();
+        TestBehavior behavior2 = new();
+        TestBehavior behavior3 = new();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddSingletonBehavior(behavior1)
+                .AddScopedBehavior(_ => behavior2)
+                .AddTransientBehavior(_ => behavior3),
+            validateScopes: false);
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestCommandOne());
@@ -95,7 +142,7 @@ public partial class PublisherFixture
     {
         List<object> receivedMessages = [];
         ChangeMessageBehavior<TestCommandOne> behavior = new(_ => new TestCommandTwo());
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

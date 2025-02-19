@@ -20,7 +20,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -43,7 +43,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -66,7 +66,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -91,7 +91,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

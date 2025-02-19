@@ -180,7 +180,7 @@ internal class Publisher : IPublisher
             .ToList();
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow, cancellationToken);
+            SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
     }
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
@@ -202,6 +202,6 @@ internal class Publisher : IPublisher
             .ToList();
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow, cancellationToken);
+            SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
     }
 }

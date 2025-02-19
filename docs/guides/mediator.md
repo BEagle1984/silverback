@@ -61,6 +61,10 @@ public class MyPublishingService
 
 The publisher provides both synchronous and asynchronous versions of each method.
 
+> [!Important]
+> The publisher is a transient service, meaning it can be resolved from the root provider and injected into singleton services, but it will throw an exception if the published message has to be handled by a scoped subscriber.
+> Producing to a message broker does *not* require a scope and is therefore safe to be done from a singleton service.
+
 ### Return Values
 
 Subscribers can return a result after processing a message.

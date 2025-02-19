@@ -54,11 +54,11 @@ public partial class PublisherFixture
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
+                .AddSingletonSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, IMessage>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, IMessage>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, IMessage>(Handle3)
@@ -81,11 +81,11 @@ public partial class PublisherFixture
     {
         TestingCollection<TestCommandOne> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<PublishEnumerableSubscriber>()
+                .AddTransientSubscriber<PublishEnumerableSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
@@ -109,11 +109,11 @@ public partial class PublisherFixture
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<PublishEnumerableOfInterfaceSubscriber>()
+                .AddSingletonSubscriber<PublishEnumerableOfInterfaceSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, IEnumerable<ICommand>>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle3)
@@ -137,11 +137,11 @@ public partial class PublisherFixture
     {
         TestingCollection<TestCommandOne> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<PublishAsyncEnumerableSubscriber>()
+                .AddSingletonSubscriber<PublishAsyncEnumerableSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
@@ -165,11 +165,11 @@ public partial class PublisherFixture
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
+                .AddTransientSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
@@ -221,12 +221,12 @@ public partial class PublisherFixture
     {
         TestingCollection<UnhandledMessage> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
                 .HandleMessagesOfType<UnhandledMessage>()
-                .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
+                .AddTransientSubscriber<PublishUnhandledMessageSubscriber>()
                 .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
                 .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
                 .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
@@ -248,7 +248,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnValueReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -266,7 +266,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEnumerableReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -288,7 +288,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnAsyncEnumerableReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -310,7 +310,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSubscriberReturnsNull()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -328,7 +328,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnCollectionOfEmptyEnumerable_WhenSubscriberReturnsEmptyEnumerable()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -346,7 +346,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnValueReturnedByDelegateSubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -370,7 +370,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnMultipleValuesReturnedByDelegateSubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -399,7 +399,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenDelegateSubscriberReturnsNull()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -423,7 +423,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnCollectionOfEmptyEnumerable_WhenDelegateSubscriberReturnsEmptyEnumerable()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -447,7 +447,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSyncOrAsyncOrDelegateSubscriberReturnsValueOfWrongType()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services =>
             {
                 services
@@ -475,7 +475,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableOfWrongType()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -506,7 +506,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldDiscardWrongTypeResults_WhenSyncOrAsyncOrDelegateSubscriberReturnsValueOfMixedTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -530,7 +530,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsyncShouldDiscardWrongTypeResults_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableOfMixedTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

@@ -20,11 +20,11 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldApplyMessageFilters()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddScopedSubscriber<TestFilteredSubscriber>());
+                .AddSingletonSubscriber<TestFilteredSubscriber>());
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
         TestFilteredSubscriber filteredSubscriber = serviceProvider.GetRequiredService<TestFilteredSubscriber>();
 

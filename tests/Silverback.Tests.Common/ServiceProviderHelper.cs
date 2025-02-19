@@ -17,14 +17,15 @@ public static class ServiceProviderHelper
 
     public static IServiceProvider GetServiceProvider(
         Action<IServiceCollection> servicesConfigurationAction,
-        IHostApplicationLifetime? hostApplicationLifetime = null)
+        IHostApplicationLifetime? hostApplicationLifetime = null,
+        bool validateScopes = true)
     {
         ServiceCollection services = [];
         services.AddSingleton(hostApplicationLifetime ?? Substitute.For<IHostApplicationLifetime>());
 
         servicesConfigurationAction(services);
 
-        ServiceProviderOptions options = new() { ValidateScopes = true };
+        ServiceProviderOptions options = new() { ValidateScopes = validateScopes };
         return services.BuildServiceProvider(options);
     }
 }

@@ -20,7 +20,7 @@ public partial class PublisherFixture
     public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -41,7 +41,7 @@ public partial class PublisherFixture
     public async Task PublishAndPublishAsync_ShouldUnwrapEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -63,7 +63,7 @@ public partial class PublisherFixture
     public async Task PublishAndPublishAsync_ShouldCastEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

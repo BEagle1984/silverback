@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Util;
@@ -20,6 +21,7 @@ namespace Silverback.Messaging.Subscribers;
 internal static class SubscribedMethodInvoker
 {
     public static async ValueTask<MethodInvocationResult> InvokeAsync(
+        IPublisher publisher,
         SubscribedMethod subscribedMethod,
         object message,
         IServiceProvider serviceProvider,
@@ -60,7 +62,7 @@ internal static class SubscribedMethodInvoker
         bool returnValueWasHandled =
             await serviceProvider
                 .GetRequiredService<ReturnValueHandlerService>()
-                .HandleReturnValuesAsync(returnValue, executionFlow)
+                .HandleReturnValuesAsync(publisher, returnValue, executionFlow)
                 .ConfigureAwait(false);
 
         if (returnValueWasHandled)

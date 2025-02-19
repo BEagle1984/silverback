@@ -21,7 +21,7 @@ public partial class PublisherFixture
     {
         using TestActivityListener activityListener = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

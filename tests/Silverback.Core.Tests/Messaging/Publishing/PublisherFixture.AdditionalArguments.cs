@@ -20,7 +20,7 @@ public partial class PublisherFixture
     public void Publish_ShouldResolveAdditionalArguments()
     {
         Counter counter = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()
@@ -38,7 +38,7 @@ public partial class PublisherFixture
     {
         Counter counter = new();
         CancellationToken cancellationToken = new(false);
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()
@@ -56,7 +56,7 @@ public partial class PublisherFixture
     {
         Counter counter = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()
@@ -79,7 +79,7 @@ public partial class PublisherFixture
     {
         Counter counter = new();
         CancellationToken cancellationTokenArgument = new(false);
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()

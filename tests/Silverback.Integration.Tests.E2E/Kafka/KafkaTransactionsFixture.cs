@@ -522,4 +522,52 @@ public class KafkaTransactionsFixture : KafkaFixture
         Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").ShouldBe(batchSize * partitionsPerTopic);
         Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").ShouldBe(batchSize * partitionsPerTopic);
     }
+
+    [Fact]
+    public async Task KafkaTransactions_ShouldProduceIndirectMessagesInTransaction()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaClients(
+                        clients => clients
+                            .WithBootstrapServers("PLAINTEXT://e2e")
+                            .AddProducer(
+                                producer => producer
+                                    .EnableTransactions("transactional-id")
+                                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                            .AddConsumer(
+                                consumer => consumer
+                                    .WithGroupId(DefaultGroupId)
+                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                    .AddDelegateSubscriber<TestEventOne, IIntegrationEvent>(HandleEventOne)
+                    .AddIntegrationSpyAndSubscriber();
+            });
+
+        // Republished messages must share the original IPublisher in order to be part of the same transaction
+        static IIntegrationEvent HandleEventOne(TestEventOne message) => new TestEventTwo();
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        using (IKafkaTransaction transaction = publisher.InitKafkaTransaction())
+        {
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+
+            // Not committed yet, so we expect no message to be consumed
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+            Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
+            Helper.Spy.InboundEnvelopes.Count.ShouldBe(0);
+
+            transaction.Commit();
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
+    }
 }

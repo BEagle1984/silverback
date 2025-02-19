@@ -22,7 +22,7 @@ public partial class PublisherFixture
 {
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Test")]
-    public async Task PublishAndPublishAsync_ShouldResolveOnlyNeededTypes()
+    public async Task PublishAndPublishAsync_ShouldResolveMatchingTypesOnly()
     {
         int resolved = 0;
 
@@ -83,7 +83,7 @@ public partial class PublisherFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Test")]
-    public async Task PublishAsync_ShouldResolveOnlyNeededTypes_WhenSubscribedMethodsLoaderServiceWasExecuted()
+    public async Task PublishAsync_ShouldResolveMatchingTypesOnly_WhenSubscribedMethodsLoaderServiceWasExecuted()
     {
         int resolved = 0;
 

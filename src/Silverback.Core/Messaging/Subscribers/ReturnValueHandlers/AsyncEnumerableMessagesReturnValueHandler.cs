@@ -17,20 +17,14 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
 {
     private readonly MediatorOptions _mediatorOptions;
 
-    private readonly IPublisher _publisher;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="AsyncEnumerableMessagesReturnValueHandler" /> class.
     /// </summary>
-    /// <param name="publisher">
-    ///     The <see cref="IPublisher" /> to be used to publish the messages.
-    /// </param>
     /// <param name="mediatorOptions">
     ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
     /// </param>
-    public AsyncEnumerableMessagesReturnValueHandler(IPublisher publisher, MediatorOptions mediatorOptions)
+    public AsyncEnumerableMessagesReturnValueHandler(MediatorOptions mediatorOptions)
     {
-        _publisher = publisher;
         _mediatorOptions = mediatorOptions;
     }
 
@@ -45,18 +39,20 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
-    public void Handle(object returnValue)
+    public void Handle(IPublisher publisher, object returnValue)
     {
+        Check.NotNull(publisher, nameof(publisher));
         Check.NotNull(returnValue, nameof(returnValue));
 
-        ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => _publisher.PublishAsync(message)).SafeWait();
+        ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => publisher.PublishAsync(message)).SafeWait();
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public ValueTask HandleAsync(object returnValue)
+    public ValueTask HandleAsync(IPublisher publisher, object returnValue)
     {
+        Check.NotNull(publisher, nameof(publisher));
         Check.NotNull(returnValue, nameof(returnValue));
 
-        return ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => _publisher.PublishAsync(message));
+        return ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => publisher.PublishAsync(message));
     }
 }

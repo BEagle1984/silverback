@@ -79,7 +79,7 @@ public static class ServiceCollectionExtensions
 
     // Note: resolvers and handlers will be evaluated in reverse order
     private static IServiceCollection AddReturnValueHandlers(this IServiceCollection services) => services
-        .AddScoped<ReturnValueHandlerService>()
-        .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
-        .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
+        .AddSingleton<ReturnValueHandlerService>()
+        .AddSingleton<IReturnValueHandler, SingleMessageReturnValueHandler>()
+        .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
 }
