@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
             services
                 .AddSingleton(new MediatorOptions())
                 .AddTransient<IPublisher, Publisher>()
-                .AddScoped<IStreamPublisher, StreamPublisher>()
+                .AddTransient<IStreamPublisher, StreamPublisher>()
                 .AddTransient<IBehaviorsProvider, BehaviorsProvider>()
                 .AddSingleton<SubscribedMethodsCache>()
                 .AddScoped<ISilverbackContext>(serviceProvider => serviceProvider.GetRequiredService<SilverbackContext>())

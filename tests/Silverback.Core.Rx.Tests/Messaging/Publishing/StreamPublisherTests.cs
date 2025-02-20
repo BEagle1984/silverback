@@ -30,7 +30,7 @@ public class StreamPublisherTests
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -75,7 +75,7 @@ public class StreamPublisherTests
     {
         int receivedEnumeratedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -108,7 +108,7 @@ public class StreamPublisherTests
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -149,7 +149,7 @@ public class StreamPublisherTests
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -218,7 +218,7 @@ public class StreamPublisherTests
         int receivedStreams = 0;
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -265,7 +265,7 @@ public class StreamPublisherTests
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -307,7 +307,7 @@ public class StreamPublisherTests
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -356,7 +356,7 @@ public class StreamPublisherTests
         int receivedEnvelopes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -399,7 +399,7 @@ public class StreamPublisherTests
         int receivedTestEventOnes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

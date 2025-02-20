@@ -31,7 +31,7 @@ public static class SilverbackBuilderAsObservableExtensions
 
         builder.Services
             .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()
-            .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
+            .AddSingleton<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
 
         return builder;
     }
