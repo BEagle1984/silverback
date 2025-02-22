@@ -448,6 +448,7 @@ public partial class PublisherFixture
     private class OtherMessageSubscriber
     {
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Required for routing")]
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test method")]
         public void Subscriber(TestEventTwo message) => throw new InvalidOperationException("This shouldn't be invoked.");
     }

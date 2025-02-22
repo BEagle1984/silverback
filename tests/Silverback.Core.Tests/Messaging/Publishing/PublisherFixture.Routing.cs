@@ -15,8 +15,6 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
-    private interface IService;
-
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscriber_WhenSubscribedToExactType()
     {
@@ -358,18 +356,5 @@ public partial class PublisherFixture
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Subscriber(TMessage message) => _messages.Add(message);
-    }
-
-    private class ServiceSubscriber : IService
-    {
-        private readonly TestingCollection<TestEventOne> _messages;
-
-        public ServiceSubscriber(TestingCollection<TestEventOne> messages)
-        {
-            _messages = messages;
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        public void Subscriber(TestEventOne message) => _messages.Add(message);
     }
 }
