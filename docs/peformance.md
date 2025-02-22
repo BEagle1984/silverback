@@ -40,19 +40,33 @@ The following benchmarks were executed on a Windows 11 machine with an Intel(R) 
 | PublishAsync with multiple async subscribers          | 5,734.0 ns | 23.99 ns | 22.44 ns | 0.4120 |    4279 B |
 | PublishAsync with multiple sync and async subscribers | 2,734.4 ns | 11.75 ns | 10.41 ns | 0.2708 |    2835 B |
 
+| Method                                                  | Mean       | Error    | StdDev   | Gen0   | Allocated |
+|-------------------------------------------------------- |-----------:|---------:|---------:|-------:|----------:|
+| 'Publish with single sync subscriber'                   |   528.8 ns |  3.25 ns |  2.88 ns | 0.0858 |     904 B |
+| 'Publish with single async subscriber'                  | 1,592.1 ns | 19.88 ns | 18.59 ns | 0.1297 |    1375 B |
+| 'Publish with multiple sync subscribers'                |   546.2 ns |  5.68 ns |  5.31 ns | 0.0858 |     904 B |
+| 'Publish with multiple async subscribers'               | 1,657.0 ns | 25.14 ns | 23.52 ns | 0.1297 |    1374 B |
+| 'Publish with multiple sync and async subscribers'      | 2,274.4 ns | 20.24 ns | 18.93 ns | 0.1717 |    1807 B |
+| 'PublishAsync with single sync subscriber'              |   557.9 ns |  3.79 ns |  3.36 ns | 0.0858 |     904 B |
+| 'PublishAsync with single async subscriber'             | 1,804.0 ns | 24.96 ns | 23.34 ns | 0.1965 |    2062 B |
+| 'PublishAsync with multiple sync subscribers'           |   564.2 ns |  2.78 ns |  2.60 ns | 0.0858 |     904 B |
+| 'PublishAsync with multiple async subscribers'          | 1,818.6 ns | 10.61 ns |  9.40 ns | 0.1965 |    2062 B |
+| 'PublishAsync with multiple sync and async subscribers' | 2,724.3 ns | 14.32 ns | 13.39 ns | 0.2747 |    2892 B |
+
+
 #### Comparison v5.0.0 vs. v4.5.1
 | Method                                                | Mean 4.5.1 | Mean 5.0.0 | Mean Diff | Allocated 4.5.1 | Allocated 5.0.0 | Allocated Diff |
 |-------------------------------------------------------|-----------:|-----------:|----------:|----------------:|----------------:|---------------:|
-| Publish with single sync subscriber                   |   3.482 us |   0.550 us |     -84 % |        10.49 KB |        0.875 KB |          -92 % |
-| Publish with single async subscriber                  |   5.229 us |   1.586 us |     -70 % |        11.40 KB |        1.335 KB |          -88 % |
-| Publish with multiple sync subscribers                |   4.036 us |   1.296 us |     -68 % |        10.91 KB |        1.391 KB |          -87 % |
-| Publish with multiple async subscribers               |   8.484 us |   4.283 us |     -50 % |        13.65 KB |        2.771 KB |          -80 % |
-| Publish with multiple sync and async subscribers      |   5.858 us |   2.253 us |     -62 % |        11.65 KB |        1.758 KB |          -85 % |
-| PublishAsync with single sync subscriber              |   3.396 us |   0.558 us |     -84 % |        10.32 KB |        0.875 KB |          -92 % |
-| PublishAsync with single async subscriber             |   5.861 us |   1.871 us |     -68 % |        11.11 KB |        1.959 KB |          -82 % |
-| PublishAsync with multiple sync subscribers           |   3.997 us |   1.286 us |     -68 % |        10.63 KB |        1.391 KB |          -87 % |
-| PublishAsync with multiple async subscribers          |  14.188 us |   5.734 us |     -60 % |        12.53 KB |        4.179 KB |          -67 % |
-| PublishAsync with multiple sync and async subscribers |   7.038 us |   2.734 us |     -61 % |        11.29 KB |        2.769 KB |          -75 % |
+| Publish with single sync subscriber                   |   3.482 us |   0.529 us |     -85 % |        10.49 KB |        0.904 KB |          -91 % |
+| Publish with single async subscriber                  |   5.229 us |   1.592 us |     -70 % |        11.40 KB |        1.375 KB |          -88 % |
+| Publish with multiple sync subscribers                |   4.036 us |   0.546 us |     -86 % |        10.91 KB |        0.904 KB |          -92 % |
+| Publish with multiple async subscribers               |   8.484 us |   1.657 us |     -80 % |        13.65 KB |        1.374 KB |          -90 % |
+| Publish with multiple sync and async subscribers      |   5.858 us |   2.274 us |     -61 % |        11.65 KB |        1.807 KB |          -85 % |
+| PublishAsync with single sync subscriber              |   3.396 us |   0.557 us |     -84 % |        10.32 KB |        0.904 KB |          -91 % |
+| PublishAsync with single async subscriber             |   5.861 us |   1.804 us |     -69 % |        11.11 KB |        2.062 KB |          -81 % |
+| PublishAsync with multiple sync subscribers           |   3.997 us |   0.564 us |     -86 % |        10.63 KB |        0.904 KB |          -91 % |
+| PublishAsync with multiple async subscribers          |  14.188 us |   1.818 us |     -87 % |        12.53 KB |        2.062 KB |          -84 % |
+| PublishAsync with multiple sync and async subscribers |   7.038 us |   2.724 us |     -61 % |        11.29 KB |        2.892 KB |          -74 % |
 
 ### Kafka Producer
 
