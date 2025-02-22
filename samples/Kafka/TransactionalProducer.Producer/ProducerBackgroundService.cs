@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Publishing;
@@ -12,44 +11,38 @@ namespace Silverback.Samples.Kafka.TransactionalProducer.Producer;
 
 public class ProducerBackgroundService : BackgroundService
 {
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IPublisher _publisher;
 
     private readonly ILogger<ProducerBackgroundService> _logger;
 
     public ProducerBackgroundService(
-        IServiceScopeFactory serviceScopeFactory,
+        IPublisher publisher,
         ILogger<ProducerBackgroundService> logger)
     {
-        _serviceScopeFactory = serviceScopeFactory;
+        _publisher = publisher;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Create a service scope and resolve the IPublisher
-        // (the IPublisher cannot be resolved from the root scope and cannot
-        // therefore be directly injected into the BackgroundService)
-        using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
-
         int number = 0;
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await ProduceMessagesAsync(publisher, ++number * 1000, stoppingToken);
+            await ProduceMessagesAsync(++number * 1000, stoppingToken);
 
             await Task.Delay(100, stoppingToken);
         }
     }
 
-    private async Task ProduceMessagesAsync(IPublisher publisher, int number, CancellationToken stoppingToken)
+    private async Task ProduceMessagesAsync(int number, CancellationToken stoppingToken)
     {
         try
         {
-            using IKafkaTransaction transaction = publisher.InitKafkaTransaction("secondary");
+            using IKafkaTransaction transaction = _publisher.InitKafkaTransaction("secondary");
             _logger.LogInformation("Transaction '{TransactionalIdSuffix}' initialized", transaction.TransactionalIdSuffix);
 
-            await publisher.PublishAsync(
+            await _publisher.PublishAsync(
                 new SampleMessage[]
                 {
                     new() { Number = number + 1 },

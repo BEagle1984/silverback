@@ -128,15 +128,19 @@ services:
     links:
       - emqx1
       - emqx2
+  
+  # HAProxy
   haproxy:
     image: haproxy:latest
     container_name: silverback-haproxy
     ports:
       - "1883:1883"   # MQTT
-      - "8083:8083"   # WebSocket/HTTP
-      - "18083:18083" # Dashboard
-    volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - "8083:8083"   # MQTT WebSocket/HTTP
+      - "18083:18083" # MQTT Dashboard
+      - "9092:9092"   # Kafka
+    configs:
+      - source: haproxy.cfg
+        target: /usr/local/etc/haproxy/haproxy.cfg
     depends_on:
       - emqx1
       - emqx2
@@ -187,7 +191,62 @@ configs:
           }
         }
       }
+  haproxy.cfg:
+    content: |
+      global
+          log stdout format raw local0
+
+      defaults
+          log global
+          mode tcp
+          timeout connect 5000ms
+          timeout client 50000ms
+          timeout server 50000ms
+
+      frontend mqtt-in
+          bind *:1883
+          default_backend emqx-mqtt
+
+      backend emqx-mqtt
+          balance roundrobin
+          server emqx1 emqx1:1883 check
+          server emqx2 emqx2:1883 check
+
+      frontend emqx-dashboard-in
+          bind *:18083
+          default_backend emqx-dashboard
+
+      backend emqx-dashboard
+          balance roundrobin
+          server emqx1 emqx1:18083 check
+          server emqx2 emqx2:18083 check
+
+      frontend emqx-websocket-in
+          bind *:8083
+          default_backend emqx-websocket
+
+      backend emqx-websocket
+          balance roundrobin
+          server emqx1 emqx1:8083 check      
       
+      frontend kafka-in
+          bind *:19092
+          default_backend kafka-backend
+
+      backend kafka-backend
+          balance roundrobin
+          server kafka-1 localhost:19092 check
+          server kafka-2 localhost:29092 check
+
+      frontend kafka-in-internal
+          bind *:9092
+          default_backend kafka-backend-internal
+
+      backend kafka-backend-internal
+          balance roundrobin
+          server kafka-1 kafka-1:9092 check
+          server kafka-2 kafka-2:9092 check
+
 networks:
   default:
     driver: bridge

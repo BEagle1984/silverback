@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Publishing;
@@ -15,17 +14,17 @@ public class ProducerBackgroundService : BackgroundService
 {
     private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory;
 
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IPublisher _publisher;
 
     private readonly ILogger<ProducerBackgroundService> _logger;
 
     public ProducerBackgroundService(
         IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory,
-        IServiceScopeFactory serviceScopeFactory,
+        IPublisher publisher,
         ILogger<ProducerBackgroundService> logger)
     {
         _schemaRegistryClientFactory = schemaRegistryClientFactory;
-        _serviceScopeFactory = serviceScopeFactory;
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -40,27 +39,21 @@ public class ProducerBackgroundService : BackgroundService
             "samples-json-schema-registry-value",
             new Schema(SampleMessage.Schema, null, SchemaType.Json, null, null));
 
-        // Create a service scope and resolve the IPublisher
-        // (the IPublisher cannot be resolved from the root scope and cannot
-        // therefore be directly injected into the BackgroundService)
-        using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
-
         int number = 0;
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await ProduceMessageAsync(publisher, ++number);
+            await ProduceMessageAsync(++number);
 
             await Task.Delay(100, stoppingToken);
         }
     }
 
-    private async Task ProduceMessageAsync(IPublisher publisher, int number)
+    private async Task ProduceMessageAsync(int number)
     {
         try
         {
-            await publisher.PublishAsync(
+            await _publisher.PublishAsync(
                 new SampleMessage
                 {
                     Number = number

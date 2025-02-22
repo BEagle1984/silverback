@@ -12,7 +12,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                 clients => clients
 
                     // The bootstrap server address is needed to connect
-                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .WithBootstrapServers("PLAINTEXT://localhost:19092")
 
                     // Add a consumer
                     .AddConsumer(
