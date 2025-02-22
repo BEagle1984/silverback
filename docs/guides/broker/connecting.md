@@ -54,14 +54,19 @@ services.AddSilverback()
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer(producer => producer
             .Produce<MyMessage>(endpoint => endpoint
-                .ProduceTo("my-topic")))
+                .ProduceTo("my-topic"))
+            .Produce<MyMessage2>(endpoint => endpoint
+                .ProduceTo("my-topic-2")))
         .AddConsumer(consumer => consumer
             .WithGroupId("consumer1")
             .AutoResetOffsetToEarliest()
-            .Consume<MyOtherMessage>(endpoint => endpoint
-                .ConsumeFrom("my-other-topic")
+            .Consume<MyMessage3>(endpoint => endpoint
+                .ConsumeFrom("my-topic-3")
+                .OnError(policy => policy.Retry(3).ThenSkip()))
+            .Consume<MyMessage4>(endpoint => endpoint
+                .ConsumeFrom("my-topic-4")
                 .EnableBatchProcessing(100, TimeSpan.FromSeconds(5))
-                .OnError(policy => policy.Retry(3).ThenSkip()))));
+                .OnError(policy => policy.Skip()))));
 ```
 # [MQTT](#tab/mqtt)
 ```csharp
@@ -85,6 +90,10 @@ services.AddSilverback()
                 .ProduceTo("testaments"))));
 ```
 ***
+
+> [!Tip]
+> A `KafkaProducer` can produce messages of different types to different topics (or the same message type to multiple topics). Similarly, a `KafkaConsumer` can consume messages from different topics. Each topic can have its own configuration (serializer/deserializer, etc.).\
+> The same applies to MQTT clients and topics.
 
 Since client configuration can become verbose, it’s best to separate it into a dedicated class using the <xref:Silverback.Messaging.Configuration.IBrokerClientsConfigurator> interface.
 
