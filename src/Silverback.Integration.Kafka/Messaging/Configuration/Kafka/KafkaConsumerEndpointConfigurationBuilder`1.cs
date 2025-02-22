@@ -209,7 +209,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
         Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> partitionOffsetsProvider) =>
         ConsumeFrom(
             topics,
-            topicPartitions => ValueTaskFactory.FromResult(partitionOffsetsProvider.Invoke(topicPartitions)));
+            topicPartitions => ValueTask.FromResult(partitionOffsetsProvider.Invoke(topicPartitions)));
 
     /// <summary>
     ///     Specifies the topics and a function that returns the partitions to be consumed, as well as the starting offsets.

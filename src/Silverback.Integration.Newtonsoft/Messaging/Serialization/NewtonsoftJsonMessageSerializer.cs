@@ -78,13 +78,13 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
         Check.NotNull(endpoint, nameof(endpoint));
 
         if (message == null)
-            return ValueTaskFactory.FromResult<Stream?>(null);
+            return ValueTask.FromResult<Stream?>(null);
 
         if (message is Stream inputStream)
-            return ValueTaskFactory.FromResult<Stream?>(inputStream);
+            return ValueTask.FromResult<Stream?>(inputStream);
 
         if (message is byte[] inputBytes)
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
+            return ValueTask.FromResult<Stream?>(new MemoryStream(inputBytes));
 
         Type type = message.GetType();
         string jsonString = JsonConvert.SerializeObject(message, type, Settings);
@@ -92,7 +92,7 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
         if (MustSetTypeHeader)
             headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-        return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
+        return ValueTask.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

@@ -70,7 +70,7 @@ public class AsyncEvent<TArg>
         Check.NotNull(arg, nameof(arg));
 
         if (_handlers == null)
-            return ValueTaskFactory.CompletedTask;
+            return ValueTask.CompletedTask;
 
         lock (_lockObject)
         {

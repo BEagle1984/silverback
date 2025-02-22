@@ -47,7 +47,7 @@ public class ChunkSequence : RawSequence
                          throw new InvalidOperationException("Chunk index header not found.");
 
         if (!EnsureOrdering(chunkIndex))
-            return ValueTaskFactory.FromResult(AddToSequenceResult.Success(0));
+            return ValueTask.FromResult(AddToSequenceResult.Success(0));
 
         return base.AddCoreAsync(envelope, sequence, throwIfUnhandled);
     }

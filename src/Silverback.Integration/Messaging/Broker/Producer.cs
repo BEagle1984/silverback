@@ -101,7 +101,7 @@ public abstract class Producer : IProducer, IDisposable
 
                     finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
 
-                    return ValueTaskFactory.CompletedTask;
+                    return ValueTask.CompletedTask;
                 },
                 _serviceProvider);
 
@@ -177,7 +177,7 @@ public abstract class Producer : IProducer, IDisposable
                         OnError,
                         finalContext);
 
-                    return ValueTaskFactory.CompletedTask;
+                    return ValueTask.CompletedTask;
                 },
                 _serviceProvider)
             {

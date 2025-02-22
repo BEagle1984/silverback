@@ -12,7 +12,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
@@ -37,7 +36,7 @@ public class ActivityProducerBehaviorFixture
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -59,7 +58,7 @@ public class ActivityProducerBehaviorFixture
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);

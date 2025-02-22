@@ -22,20 +22,20 @@ public sealed class BinaryMessageSerializer : IBinaryMessageSerializer, IEquatab
         Check.NotNull(endpoint, nameof(endpoint));
 
         if (message == null)
-            return ValueTaskFactory.FromResult<Stream?>(null);
+            return ValueTask.FromResult<Stream?>(null);
 
         if (message is Stream inputStream)
-            return ValueTaskFactory.FromResult<Stream?>(inputStream);
+            return ValueTask.FromResult<Stream?>(inputStream);
 
         if (message is byte[] inputBytes)
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
+            return ValueTask.FromResult<Stream?>(new MemoryStream(inputBytes));
 
         if (message is not IBinaryMessage binaryMessage)
             throw new ArgumentException("The message is not implementing the IBinaryMessage interface.", nameof(message));
 
         headers.AddOrReplace(DefaultMessageHeaders.MessageType, message.GetType().AssemblyQualifiedName);
 
-        return ValueTaskFactory.FromResult(binaryMessage.Content);
+        return ValueTask.FromResult(binaryMessage.Content);
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

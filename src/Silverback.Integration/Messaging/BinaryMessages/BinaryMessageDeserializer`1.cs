@@ -38,7 +38,7 @@ public sealed class BinaryMessageDeserializer<TModel> : IBinaryMessageDeserializ
         TModel binaryMessage = type == _type ? new TModel() : (TModel)Activator.CreateInstance(type)!;
         binaryMessage.Content = messageStream;
 
-        return ValueTaskFactory.FromResult(new DeserializedMessage(binaryMessage, type));
+        return ValueTask.FromResult(new DeserializedMessage(binaryMessage, type));
     }
 
     /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />

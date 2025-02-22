@@ -26,12 +26,12 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
 
         bool isBatchEnabled = context.Envelope.Endpoint.Configuration.Batch != null;
 
-        return ValueTaskFactory.FromResult(isBatchEnabled);
+        return ValueTask.FromResult(isBatchEnabled);
     }
 
     /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
     protected override ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
-        ValueTaskFactory.FromResult(SequenceIdPrefix);
+        ValueTask.FromResult(SequenceIdPrefix);
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
     protected override async ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)

@@ -71,7 +71,7 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
     {
         int prefixLength = ReadMessagePrefix(buffer);
         if (prefixLength > 0)
-            return ValueTaskFactory.FromResult(prefixLength);
+            return ValueTask.FromResult(prefixLength);
 
         return base.ReadAsync(buffer, cancellationToken);
     }

@@ -17,7 +17,6 @@ using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound;
@@ -66,7 +65,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -94,7 +93,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -122,7 +121,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -153,7 +152,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -184,7 +183,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);
@@ -215,7 +214,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                (_, _) => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             (_, _) => default,
             CancellationToken.None);

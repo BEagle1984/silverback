@@ -2,12 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker.Behaviors;
@@ -86,14 +86,14 @@ public class ProducerPipelineContextFixture
         Substitute.For<IOutboundEnvelope>(),
         Substitute.For<IProducer>(),
         [],
-        (_, _) => ValueTaskFactory.CompletedTask,
+        (_, _) => ValueTask.CompletedTask,
         Substitute.For<IServiceProvider>());
 
     private static ProducerPipelineContext<int> CreateContextWithCallbacks() => new(
         Substitute.For<IOutboundEnvelope>(),
         Substitute.For<IProducer>(),
         [],
-        (_, _) => ValueTaskFactory.CompletedTask,
+        (_, _) => ValueTask.CompletedTask,
         Substitute.For<IServiceProvider>())
     {
         OnSuccess = (_, _) =>

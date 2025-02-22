@@ -14,7 +14,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers;
 
@@ -154,7 +153,7 @@ internal static class SubscribedMethodInvoker
         ExecutionFlow executionFlow) =>
         executionFlow == ExecutionFlow.Async
             ? InvokeWithActivityAsync(subscribedMethod, target, arguments)
-            : ValueTaskFactory.FromResult(InvokeWithActivitySync(subscribedMethod, target, arguments));
+            : ValueTask.FromResult(InvokeWithActivitySync(subscribedMethod, target, arguments));
 
     private static async ValueTask<object?> InvokeWithActivityAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
         await subscribedMethod.ReturnType.AwaitAndUnwrapResultAsync(InvokeWithActivity(subscribedMethod.MethodInfo, target, arguments)).ConfigureAwait(false);

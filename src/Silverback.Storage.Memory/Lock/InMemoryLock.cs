@@ -83,7 +83,7 @@ public sealed class InMemoryLock : DistributedLock, IDisposable
         protected override ValueTask DisposeCoreAsync()
         {
             Dispose(true);
-            return ValueTaskFactory.CompletedTask;
+            return ValueTask.CompletedTask;
         }
     }
 }

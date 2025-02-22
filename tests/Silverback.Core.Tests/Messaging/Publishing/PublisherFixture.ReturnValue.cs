@@ -12,7 +12,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
@@ -38,7 +37,7 @@ public partial class PublisherFixture
 
         static TestCommandOne Handle1(TestEventOne message) => new();
         static Task<TestCommandOne> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne());
-        static ValueTask<TestCommandOne> Handle3(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        static ValueTask<TestCommandOne> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne());
         void Handle4(TestCommandOne message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -569,7 +568,7 @@ public partial class PublisherFixture
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTask.FromResult(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -586,7 +585,7 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public ValueTask<ICommand> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<ICommand>(new TestCommandOne());
+            ValueTask.FromResult<ICommand>(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -603,7 +602,7 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public ValueTask<IReadOnlyCollection<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>([new TestCommandOne(), new TestCommandOne()]);
+            ValueTask.FromResult<IReadOnlyCollection<TestCommandOne>>([new TestCommandOne(), new TestCommandOne()]);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -621,7 +620,7 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public ValueTask<IReadOnlyCollection<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>([new TestCommandOne(), new TestCommandOne()]);
+            ValueTask.FromResult<IReadOnlyCollection<ICommand>>([new TestCommandOne(), new TestCommandOne()]);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -640,7 +639,7 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public ValueTask<IAsyncEnumerable<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
+            ValueTask.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -659,7 +658,7 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public ValueTask<IAsyncEnumerable<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<IAsyncEnumerable<ICommand>>(new TestCommandTwo[] { new(), new() }.ToAsyncEnumerable());
+            ValueTask.FromResult<IAsyncEnumerable<ICommand>>(new TestCommandTwo[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -756,7 +755,7 @@ public partial class PublisherFixture
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTask.FromResult(new TestCommandOne());
     }
 
     private class UnhandledMessage;

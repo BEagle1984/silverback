@@ -41,7 +41,7 @@ public class FilterProducerBehavior : IProducerBehavior
             !context.Producer.EndpointConfiguration.Filter.ShouldProduce(context.Envelope))
         {
             _logger.LogFiltered(context.Envelope);
-            return ValueTaskFactory.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
         return next(context, cancellationToken);

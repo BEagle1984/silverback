@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Util;
 
 namespace Silverback.Lock;
 
@@ -18,7 +17,7 @@ internal sealed class NullLock : DistributedLock
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Returned to be disposed by the caller")]
     protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
-        ValueTaskFactory.FromResult<DistributedLockHandle>(new NullLockHandle());
+        ValueTask.FromResult<DistributedLockHandle>(new NullLockHandle());
 
     private sealed class NullLockHandle : DistributedLockHandle
     {
@@ -28,6 +27,6 @@ internal sealed class NullLock : DistributedLock
         {
         }
 
-        protected override ValueTask DisposeCoreAsync() => ValueTaskFactory.CompletedTask;
+        protected override ValueTask DisposeCoreAsync() => ValueTask.CompletedTask;
     }
 }

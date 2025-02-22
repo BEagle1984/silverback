@@ -48,7 +48,7 @@ internal sealed class SequenceStore : ISequenceStore
         if (sequence is ISequenceImplementation sequenceImpl)
             sequenceImpl.SetIsNew(false);
 
-        return ValueTaskFactory.FromResult((TSequence?)sequence);
+        return ValueTask.FromResult((TSequence?)sequence);
     }
 
     public async ValueTask<TSequence> AddAsync<TSequence>(TSequence sequence)

@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using NSubstitute;
 using Shouldly;
@@ -13,7 +14,6 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Diagnostics;
@@ -59,7 +59,7 @@ public class KafkaActivityEnricherFixture
             envelope,
             Substitute.For<IProducer>(),
             [],
-            (_, _) => ValueTaskFactory.CompletedTask,
+            (_, _) => ValueTask.CompletedTask,
             Substitute.For<IServiceProvider>());
 
         Activity activity = new("Test Activity");

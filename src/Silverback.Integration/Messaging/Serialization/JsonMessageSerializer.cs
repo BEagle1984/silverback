@@ -51,13 +51,13 @@ public sealed class JsonMessageSerializer : IMessageSerializer, IEquatable<JsonM
         Check.NotNull(endpoint, nameof(endpoint));
 
         if (message == null)
-            return ValueTaskFactory.FromResult<Stream?>(null);
+            return ValueTask.FromResult<Stream?>(null);
 
         if (message is Stream inputStream)
-            return ValueTaskFactory.FromResult<Stream?>(inputStream);
+            return ValueTask.FromResult<Stream?>(inputStream);
 
         if (message is byte[] inputBytes)
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
+            return ValueTask.FromResult<Stream?>(new MemoryStream(inputBytes));
 
         Type type = message.GetType();
 
@@ -65,7 +65,7 @@ public sealed class JsonMessageSerializer : IMessageSerializer, IEquatable<JsonM
             headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
         byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
-        return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(bytes));
+        return ValueTask.FromResult<Stream?>(new MemoryStream(bytes));
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

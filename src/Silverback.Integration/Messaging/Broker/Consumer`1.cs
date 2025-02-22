@@ -445,7 +445,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     private static ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         if (context.CurrentStepIndex >= context.Pipeline.Count)
-            return ValueTaskFactory.CompletedTask;
+            return ValueTask.CompletedTask;
 
         return context.Pipeline[context.CurrentStepIndex].HandleAsync(
             context,

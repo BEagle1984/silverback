@@ -71,7 +71,7 @@ public abstract class SequenceReaderBase : ISequenceReader
         string messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ??
                            "***default***";
 
-        return ValueTaskFactory.FromResult(messageId);
+        return ValueTask.FromResult(messageId);
     }
 
     /// <summary>
