@@ -34,12 +34,9 @@ public class JsonMessageDeserializerFixture
 
         serialized.Position = 0;
 
-        (object? deserialized, _) = await deserializer
-            .DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
+        (object? deserialized, _) = await deserializer.DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
 
-        TestEventOne? message2 = deserialized as TestEventOne;
-
-        message2.ShouldNotBeNull();
+        TestEventOne message2 = deserialized.ShouldBeOfType<TestEventOne>();
         message2.ShouldBeEquivalentTo(message);
     }
 

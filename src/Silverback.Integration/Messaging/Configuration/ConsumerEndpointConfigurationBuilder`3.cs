@@ -59,6 +59,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
         // Initialize default serializer according to TMessage type parameter
         if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))
             ConsumeBinaryMessages();
+        else if (typeof(StringMessage).IsAssignableFrom(typeof(TMessage)))
+            ConsumeStrings();
         else
             DeserializeJson();
     }

@@ -47,7 +47,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
         endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<BinaryMessage>>();
-        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Json);
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Binary);
     }
 
     [Fact]
@@ -58,6 +58,27 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
         endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+        endpoint.Deserializer.ShouldNotBeSameAs(DefaultDeserializers.Binary);
+    }
+
+    [Fact]
+    public void Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage()
+    {
+        TestConsumerEndpointConfigurationBuilder<StringMessage> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.Build();
+
+        endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage>>();
+    }
+
+    [Fact]
+    public void Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage()
+    {
+        TestConsumerEndpointConfigurationBuilder<StringMessage<TestEventOne>> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.Build();
+
+        endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventOne>>>();
     }
 
     [Fact]
@@ -197,6 +218,51 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             .Build();
 
         endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+    }
+
+    [Fact]
+    public void ConsumeBinaryMessages_ShouldSetTypeDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<CustomBinaryMessage> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
+
+        endpoint.Deserializer.ShouldBeOfType<BinaryMessageDeserializer<CustomBinaryMessage>>();
+    }
+
+    [Fact]
+    public void ConsumeStrings_ShouldSetDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeStrings().Build();
+
+        endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage>>();
+    }
+
+    [Fact]
+    public void ConsumeStrings_ShouldSetTypeDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeStrings().Build();
+
+        endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventOne>>>();
+    }
+
+    [Fact]
+    public void ConsumeStrings_ShouldSetConfiguredDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeStrings(
+            serializer => serializer
+                .UseDiscriminator<TestEventTwo>()
+                .WithEncoding(MessageEncoding.ASCII)).Build();
+
+        StringMessageDeserializer<StringMessage<TestEventTwo>> stringDeserializer =
+            endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventTwo>>>();
+        stringDeserializer.Encoding.ShouldBe(MessageEncoding.ASCII);
     }
 
     private sealed class CustomBinaryMessage : IBinaryMessage

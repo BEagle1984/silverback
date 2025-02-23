@@ -48,9 +48,6 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <summary>
     ///     Sets the serializer to an instance of <see cref="BinaryMessageSerializer" /> to produce the <see cref="IBinaryMessage" />.
     /// </summary>
-    /// <remarks>
-    ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary messages.
-    /// </remarks>
     /// <param name="serializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryMessageSerializerBuilder" /> and configures it.
     /// </param>
@@ -60,6 +57,22 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder ProduceBinaryMessages(Action<BinaryMessageSerializerBuilder>? serializerBuilderAction = null)
     {
         BinaryMessageSerializerBuilder serializerBuilder = new();
+        serializerBuilderAction?.Invoke(serializerBuilder);
+        return SerializeUsing(serializerBuilder.Build());
+    }
+
+    /// <summary>
+    ///     Sets the serializer to an instance of <see cref="StringMessageSerializer" /> to produce the <see cref="StringMessage" />.
+    /// </summary>
+    /// <param name="serializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="StringMessageSerializerBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ProduceStrings(Action<StringMessageSerializerBuilder>? serializerBuilderAction = null)
+    {
+        StringMessageSerializerBuilder serializerBuilder = new();
         serializerBuilderAction?.Invoke(serializerBuilder);
         return SerializeUsing(serializerBuilder.Build());
     }

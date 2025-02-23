@@ -71,6 +71,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
         // Initialize default serializer according to TMessage type parameter
         if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))
             ProduceBinaryMessages();
+        else if (typeof(StringMessage).IsAssignableFrom(typeof(TMessage)))
+            ProduceStrings();
         else
             SerializeAsJson();
     }

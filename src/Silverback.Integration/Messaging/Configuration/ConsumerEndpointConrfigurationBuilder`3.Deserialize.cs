@@ -50,12 +50,9 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Sets the serializer to an instance of <see cref="BinaryMessageDeserializer{TModel}" /> to wrap the consumed binary messages
+    ///     Sets the deserializer to an instance of <see cref="BinaryMessageDeserializer{TModel}" /> to wrap the consumed binary messages
     ///     into a <see cref="BinaryMessage" />.
     /// </summary>
-    /// <remarks>
-    ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary messages.
-    /// </remarks>
     /// <param name="deserializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryMessageDeserializerBuilder" /> and configures it.
     /// </param>
@@ -68,6 +65,33 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
 
         if (typeof(TMessage) != typeof(object))
             deserializerBuilder.UseModel(typeof(TMessage));
+
+        deserializerBuilderAction?.Invoke(deserializerBuilder);
+        return DeserializeUsing(deserializerBuilder.Build());
+    }
+
+    /// <summary>
+    ///     Sets the deserializer to an instance of <see cref="StringMessageDeserializer{TModel}" /> to return the consumed messages as strings.
+    /// </summary>
+    /// <param name="deserializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="StringMessageDeserializerBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ConsumeStrings(Action<StringMessageDeserializerBuilder>? deserializerBuilderAction = null)
+    {
+        StringMessageDeserializerBuilder deserializerBuilder = new();
+
+        if (typeof(TMessage).IsGenericType && typeof(TMessage).GetGenericTypeDefinition() == typeof(StringMessage<>))
+        {
+            Type genericType = typeof(TMessage).GetGenericArguments()[0];
+            deserializerBuilder.UseDiscriminator(genericType);
+        }
+        else if (typeof(TMessage) != typeof(object) && !typeof(StringMessage).IsAssignableFrom(typeof(TMessage)))
+        {
+            deserializerBuilder.UseDiscriminator<TMessage>();
+        }
 
         deserializerBuilderAction?.Invoke(deserializerBuilder);
         return DeserializeUsing(deserializerBuilder.Build());

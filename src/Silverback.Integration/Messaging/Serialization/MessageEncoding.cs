@@ -6,8 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Specifies the message encoding used by the <see cref="NewtonsoftJsonMessageSerializer" /> or
-///     <see cref="NewtonsoftJsonMessageDeserializer{TMessage}"/>.
+///     Specifies the message encoding.
 /// </summary>
 public enum MessageEncoding
 {

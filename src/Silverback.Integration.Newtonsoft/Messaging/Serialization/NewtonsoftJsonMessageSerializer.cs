@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +16,8 @@ namespace Silverback.Messaging.Serialization;
 /// </summary>
 public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquatable<NewtonsoftJsonMessageSerializer>
 {
+    private readonly Encoding _encoding;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="NewtonsoftJsonMessageSerializer" /> class.
     /// </summary>
@@ -34,6 +35,8 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
         Settings = settings;
         Encoding = encoding ?? MessageEncoding.UTF8;
         MustSetTypeHeader = mustSetTypeHeader ?? true;
+
+        _encoding = Encoding.ToEncoding();
     }
 
     /// <summary>
@@ -44,7 +47,6 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
     /// <summary>
     ///     Gets the message encoding. The default is UTF8.
     /// </summary>
-    [DefaultValue("UTF8")]
     public MessageEncoding Encoding { get; }
 
     /// <summary>
@@ -53,23 +55,6 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
     ///     the correct type to deserialize into.
     /// </summary>
     public bool MustSetTypeHeader { get; }
-
-    /// <summary>
-    ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.
-    /// </summary>
-    /// <value>
-    ///     A <see cref="System.Text.Encoding" /> that matches the current <see cref="MessageEncoding" />.
-    /// </value>
-    private Encoding SystemEncoding =>
-        Encoding switch
-        {
-            MessageEncoding.Default => System.Text.Encoding.Default,
-            MessageEncoding.ASCII => System.Text.Encoding.ASCII,
-            MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
-            MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
-            MessageEncoding.Unicode => System.Text.Encoding.Unicode,
-            _ => throw new InvalidOperationException("Unhandled encoding.")
-        };
 
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
@@ -92,7 +77,7 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
         if (MustSetTypeHeader)
             headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-        return ValueTask.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
+        return ValueTask.FromResult<Stream?>(new MemoryStream(_encoding.GetBytes(jsonString)));
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

@@ -15,7 +15,7 @@ namespace Silverback.Testing;
 public interface IKafkaTestingHelper : ITestingHelper
 {
     /// <summary>
-    ///     Gets a collection of of <see cref="IMockedConsumerGroup" /> representing all known consumer groups.
+    ///     Gets a collection of <see cref="IMockedConsumerGroup" /> representing all known consumer groups.
     /// </summary>
     /// <returns>
     ///     The collection of <see cref="IMockedConsumerGroup" />.

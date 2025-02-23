@@ -1,0 +1,39 @@
+// Copyright (c) 2024 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Diagnostics.CodeAnalysis;
+using Silverback.Messaging.Serialization;
+
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     The model used with the <see cref="StringMessageSerializer" /> and <see cref="StringMessageDeserializer{TMessage}" />.
+/// </summary>
+/// <typeparam name="T">
+///     The type discriminator.
+/// </typeparam>
+public sealed class StringMessage<T>(string? content) : StringMessage(content)
+{
+    /// <summary>
+    ///     Implicitly converts a <see cref="StringMessage{T}" /> to a <see cref="string" />.
+    /// </summary>
+    /// <param name="content">
+    ///     The message content.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="StringMessage{T}" /> wrapping the specified content.
+    /// </returns>
+    public static implicit operator StringMessage<T>(string? content) => new(content);
+
+    /// <summary>
+    ///     Creates a new <see cref="StringMessage" /> instance from the specified content.
+    /// </summary>
+    /// <param name="content">
+    ///     The message content.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="StringMessage" /> wrapping the specified content.
+    /// </returns>
+    [SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Convenience method")]
+    public static new StringMessage<T> FromString(string? content) => new(content);
+}

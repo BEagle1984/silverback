@@ -21,7 +21,7 @@ public sealed class JsonMessageDeserializerBuilder
 
     /// <summary>
     ///     Specifies the message type. The deserialization will work regardless of the message type header (ideal for interoperability) and
-    ///     by default the message type header will be omitted by the producer (unless a sub-type is being produced is called).
+    ///     by default the message type header will be omitted by the producer (unless a subtype is being produced is called).
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the message to serialize or deserialize.
@@ -37,7 +37,7 @@ public sealed class JsonMessageDeserializerBuilder
 
     /// <summary>
     ///     Specifies the message type. The deserialization will work regardless of the message type header (ideal for interoperability) and
-    ///     by default the message type header will be omitted by the producer (unless a sub-type is being produced is called).
+    ///     by default the message type header will be omitted by the producer (unless a subtype is being produced is called).
     /// </summary>
     /// <param name="messageType">
     ///     The type of the message to serialize or deserialize.
