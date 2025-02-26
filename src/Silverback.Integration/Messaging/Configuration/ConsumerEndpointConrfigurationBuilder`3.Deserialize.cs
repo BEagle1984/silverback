@@ -96,4 +96,31 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
         deserializerBuilderAction?.Invoke(deserializerBuilder);
         return DeserializeUsing(deserializerBuilder.Build());
     }
+
+    /// <summary>
+    ///     Sets the deserializer to an instance of <see cref="RawMessageDeserializer{TModel}" /> to return the consumed messages as raws.
+    /// </summary>
+    /// <param name="deserializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="RawMessageDeserializerBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ConsumeRaw(Action<RawMessageDeserializerBuilder>? deserializerBuilderAction = null)
+    {
+        RawMessageDeserializerBuilder deserializerBuilder = new();
+
+        if (typeof(TMessage).IsGenericType && typeof(TMessage).GetGenericTypeDefinition() == typeof(RawMessage<>))
+        {
+            Type genericType = typeof(TMessage).GetGenericArguments()[0];
+            deserializerBuilder.UseDiscriminator(genericType);
+        }
+        else if (typeof(TMessage) != typeof(object) && !typeof(RawMessage).IsAssignableFrom(typeof(TMessage)))
+        {
+            deserializerBuilder.UseDiscriminator<TMessage>();
+        }
+
+        deserializerBuilderAction?.Invoke(deserializerBuilder);
+        return DeserializeUsing(deserializerBuilder.Build());
+    }
 }

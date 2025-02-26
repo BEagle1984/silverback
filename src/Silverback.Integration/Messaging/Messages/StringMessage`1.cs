@@ -2,12 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     The model used with the <see cref="StringMessageSerializer" /> and <see cref="StringMessageDeserializer{TMessage}" />.
+///     Wraps a raw message <see cref="string"/>.
 /// </summary>
 /// <typeparam name="T">
 ///     The type discriminator.
@@ -15,7 +14,7 @@ namespace Silverback.Messaging.Messages;
 public sealed class StringMessage<T>(string? content) : StringMessage(content)
 {
     /// <summary>
-    ///     Implicitly converts a <see cref="StringMessage{T}" /> to a <see cref="string" />.
+    ///     Implicitly converts a <see cref="string" /> to a <see cref="StringMessage{T}" />.
     /// </summary>
     /// <param name="content">
     ///     The message content.

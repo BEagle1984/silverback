@@ -73,6 +73,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
             ProduceBinaryMessages();
         else if (typeof(StringMessage).IsAssignableFrom(typeof(TMessage)))
             ProduceStrings();
+        else if (typeof(RawMessage).IsAssignableFrom(typeof(TMessage)))
+            ProduceRaw();
         else
             SerializeAsJson();
     }

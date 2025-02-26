@@ -64,4 +64,30 @@ public partial class ProducerEndpointFixture
         topic.GetAllMessages()[0].Value.ShouldBe(null);
         topic.GetAllMessages()[1].Value.ShouldBe(null);
     }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceRawMessages()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(producer => producer.Produce<RawMessage<TestEventOne>>(endpoint => endpoint.ProduceTo("topic1")))
+                        .AddProducer(producer => producer.Produce<RawMessage<TestEventTwo>>(endpoint => endpoint.ProduceTo("topic2")))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishAsync((RawMessage<TestEventOne>)new byte[] { 0x01, 0x02, 0x03 });
+        await publisher.PublishAsync((RawMessage<TestEventTwo>)new byte[] { 0x04, 0x05, 0x06 });
+
+        IInMemoryTopic topic1 = Helper.GetTopic("topic1");
+        topic1.MessagesCount.ShouldBe(1);
+        topic1.GetAllMessages()[0].Value.ShouldBe([0x01, 0x02, 0x03]);
+        IInMemoryTopic topic2 = Helper.GetTopic("topic2");
+        topic2.MessagesCount.ShouldBe(1);
+        topic2.GetAllMessages()[0].Value.ShouldBe([0x04, 0x05, 0x06]);
+    }
 }

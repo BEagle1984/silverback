@@ -76,4 +76,12 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
         serializerBuilderAction?.Invoke(serializerBuilder);
         return SerializeUsing(serializerBuilder.Build());
     }
+
+    /// <summary>
+    ///     Sets the serializer to an instance of <see cref="RawMessageSerializer" /> to produce the <see cref="RawMessage" />.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ProduceRaw() => SerializeUsing(new RawMessageSerializer());
 }

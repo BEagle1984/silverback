@@ -72,6 +72,16 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
+    public void Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage()
+    {
+        TestConsumerEndpointConfigurationBuilder<RawMessage> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.Build();
+
+        endpoint.Deserializer.ShouldBeOfType<RawMessageDeserializer<RawMessage>>();
+    }
+
+    [Fact]
     public void Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage()
     {
         TestConsumerEndpointConfigurationBuilder<StringMessage<TestEventOne>> builder = new(Substitute.For<IServiceProvider>());
@@ -263,6 +273,38 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         StringMessageDeserializer<StringMessage<TestEventTwo>> stringDeserializer =
             endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventTwo>>>();
         stringDeserializer.Encoding.ShouldBe(MessageEncoding.ASCII);
+    }
+
+    [Fact]
+    public void ConsumeRaw_ShouldSetDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeRaw().Build();
+
+        endpoint.Deserializer.ShouldBeOfType<RawMessageDeserializer<RawMessage>>();
+    }
+
+    [Fact]
+    public void ConsumeRaw_ShouldSetTypeDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeRaw().Build();
+
+        endpoint.Deserializer.ShouldBeOfType<RawMessageDeserializer<RawMessage<TestEventOne>>>();
+    }
+
+    [Fact]
+    public void ConsumeRaws_ShouldSetConfiguredDeserializer()
+    {
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeRaw(
+            serializer => serializer
+                .UseDiscriminator<TestEventTwo>()).Build();
+
+        endpoint.Deserializer.ShouldBeOfType<RawMessageDeserializer<RawMessage<TestEventTwo>>>();
     }
 
     private sealed class CustomBinaryMessage : IBinaryMessage

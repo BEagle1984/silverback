@@ -61,10 +61,7 @@ public sealed class JsonMessageDeserializer<TMessage> : IMessageDeserializer, IE
 
         Type type = GetBaseType(headers);
 
-        if (messageStream == null)
-            return new DeserializedMessage(null, type);
-
-        if (messageStream.CanSeek && messageStream.Length == 0)
+        if (messageStream is null or { CanSeek: true, Length: 0 })
             return new DeserializedMessage(null, type);
 
         object deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, type, Options).ConfigureAwait(false) ??

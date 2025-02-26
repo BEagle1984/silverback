@@ -52,10 +52,7 @@ public sealed class StringMessageDeserializer<T> : IMessageDeserializer, IEquata
         Check.NotNull(headers, nameof(headers));
         Check.NotNull(endpoint, nameof(endpoint));
 
-        if (messageStream == null)
-            return new DeserializedMessage(CreateStringMessage(null), _type);
-
-        if (messageStream is { CanSeek: true, Length: 0 })
+        if (messageStream is null or { CanSeek: true, Length: 0 })
             return new DeserializedMessage(CreateStringMessage(null), _type);
 
         using StreamReader streamReader = new(messageStream, _encoding);

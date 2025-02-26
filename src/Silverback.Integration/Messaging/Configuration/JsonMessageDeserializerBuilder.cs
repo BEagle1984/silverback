@@ -116,6 +116,6 @@ public sealed class JsonMessageDeserializerBuilder
         (IMessageDeserializer?)Activator.CreateInstance(
             typeof(JsonMessageDeserializer<>).MakeGenericType(_messageType),
             _options,
-            _typeHeaderBehavior)
-        ?? throw new InvalidOperationException("Failed to create the JsonMessageDeserializer instance.");
+            _typeHeaderBehavior) ??
+        throw new InvalidOperationException("Failed to create the JsonMessageDeserializer instance.");
 }

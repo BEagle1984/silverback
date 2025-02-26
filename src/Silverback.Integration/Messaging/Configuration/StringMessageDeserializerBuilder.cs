@@ -72,6 +72,6 @@ public sealed class StringMessageDeserializerBuilder
     public IMessageDeserializer Build() =>
         (IMessageDeserializer?)Activator.CreateInstance(
             typeof(StringMessageDeserializer<>).MakeGenericType(_type),
-            _encoding)
-        ?? throw new InvalidOperationException("Failed to create the JsonMessageDeserializer instance.");
+            _encoding) ??
+        throw new InvalidOperationException("Failed to create the StringMessageDeserializer instance.");
 }

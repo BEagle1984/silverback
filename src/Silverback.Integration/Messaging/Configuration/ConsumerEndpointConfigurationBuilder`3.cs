@@ -61,6 +61,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
             ConsumeBinaryMessages();
         else if (typeof(StringMessage).IsAssignableFrom(typeof(TMessage)))
             ConsumeStrings();
+        else if (typeof(RawMessage).IsAssignableFrom(typeof(TMessage)))
+            ConsumeRaw();
         else
             DeserializeJson();
     }

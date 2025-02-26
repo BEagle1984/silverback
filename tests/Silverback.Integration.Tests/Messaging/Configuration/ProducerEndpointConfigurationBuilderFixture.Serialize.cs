@@ -59,6 +59,16 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
+    public void Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage()
+    {
+        TestProducerEndpointConfigurationBuilder<RawMessage> builder = new(Substitute.For<IServiceProvider>());
+
+        TestProducerEndpointConfiguration configuration = builder.Build();
+
+        configuration.Serializer.ShouldBeOfType<RawMessageSerializer>();
+    }
+
+    [Fact]
     public void SerializeAsJson_ShouldSetSerializer()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
@@ -115,6 +125,16 @@ public partial class ProducerEndpointConfigurationBuilderFixture
 
         StringMessageSerializer stringSerializer = configuration.Serializer.ShouldBeOfType<StringMessageSerializer>();
         stringSerializer.Encoding.ShouldBe(MessageEncoding.ASCII);
+    }
+
+    [Fact]
+    public void ProduceRaw_ShouldSetSerializer()
+    {
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestProducerEndpointConfiguration configuration = builder.ProduceRaw().Build();
+
+        configuration.Serializer.ShouldBeOfType<RawMessageSerializer>();
     }
 
     private sealed class CustomBinaryMessage : IBinaryMessage

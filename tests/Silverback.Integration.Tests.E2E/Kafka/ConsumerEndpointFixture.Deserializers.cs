@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -90,6 +91,58 @@ public partial class ConsumerEndpointFixture
             [
                 new StringMessage<TestEventOne>(null),
                 new StringMessage<TestEventOne>(null)
+            ],
+            ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldConsumeRawMessages()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume<RawMessage<TestEventOne>>("topic1", endpoint => endpoint.ConsumeFrom("topic1"))
+                                .Consume<RawMessage>("topic2", endpoint => endpoint.ConsumeFrom("topic2"))
+                                .Consume(
+                                    "topic3",
+                                    endpoint => endpoint
+                                        .ConsumeFrom("topic3")
+                                        .ConsumeRaw(deserializer => deserializer.UseDiscriminator<TestEventThree>()))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
+        IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
+        IProducer producer3 = Helper.GetProducerForEndpoint("topic3");
+
+        await producer1.RawProduceAsync([0x01, 0x02, 0x03]);
+        await producer2.RawProduceAsync([0x04, 0x05, 0x06]);
+        await producer3.RawProduceAsync([0x07, 0x08, 0x09]);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        RawMessage[] messages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<RawMessage>().ToArray();
+        messages.Length.ShouldBe(3);
+        messages.Select(message => message.GetType()).ShouldBe(
+            [
+                typeof(RawMessage<TestEventOne>),
+                typeof(RawMessage),
+                typeof(RawMessage<TestEventThree>)
+            ],
+            ignoreOrder: true);
+
+        messages.Select(message => message.Content.ReadAll()).ShouldBe(
+            [
+                [0x01, 0x02, 0x03],
+                [0x04, 0x05, 0x06],
+                [0x07, 0x08, 0x09]
             ],
             ignoreOrder: true);
     }
