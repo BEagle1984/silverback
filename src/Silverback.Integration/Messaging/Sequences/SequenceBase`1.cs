@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -17,6 +16,7 @@ using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
+using ActivitySources = Silverback.Messaging.Diagnostics.ActivitySources;
 
 namespace Silverback.Messaging.Sequences;
 
@@ -127,14 +127,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequenceImplementation.ProcessingCompletedTask" />
     public Task ProcessingCompletedTask => _processingCompleteTaskCompletionSource.Task;
 
-    /// <inheritdoc cref="ISequenceImplementation.ShouldCreateNewActivity" />
-    public bool ShouldCreateNewActivity => true;
-
     /// <inheritdoc cref="ISequence.StreamProvider" />
     public IMessageStreamProvider StreamProvider => _streamProvider;
-
-    /// <inheritdoc cref="ISequenceImplementation.Activity" />
-    public Activity? Activity { get; private set; }
 
     /// <inheritdoc cref="ISequence.ParentSequence" />
     public ISequence? ParentSequence { get; private set; }
@@ -187,9 +181,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
         _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
     }
-
-    /// <inheritdoc cref="ISequenceImplementation.SetActivity" />
-    void ISequenceImplementation.SetActivity(Activity activity) => Activity = activity;
 
     /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
     public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
@@ -305,6 +296,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             int pushedStreamsCount = await _streamProvider.PushAsync(
                     envelope,
                     throwIfUnhandled,
+                    static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
+                    envelope,
                     _abortCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 

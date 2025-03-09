@@ -12,7 +12,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
-using ActivitySources = Silverback.Messaging.Diagnostics.ActivitySources;
 
 namespace Silverback.Messaging.Sequences;
 
@@ -116,19 +115,6 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// </returns>
     protected virtual ValueTask AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => default;
 
-    private static void AddSequenceTagToActivity(ISequence sequence)
-    {
-        if (Activity.Current != null &&
-            sequence is ISequenceImplementation sequenceImplementation &&
-            sequenceImplementation.Activity != null &&
-            sequenceImplementation.ShouldCreateNewActivity)
-        {
-            Activity.Current.SetTag(
-                ActivityTagNames.SequenceActivity,
-                sequenceImplementation.Activity.Id);
-        }
-    }
-
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
     private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
     {
@@ -159,22 +145,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
                         await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
                     }
-                    finally
-                    {
-                        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation)
-                            sequenceImplementation.Activity?.Stop();
-                    }
                 })
             .FireAndForget();
-    }
-
-    private static void StartActivityIfNeeded(ISequence sequence)
-    {
-        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation &&
-            ActivitySources.StartSequenceActivity() is { } sequenceActivity)
-        {
-            sequenceImplementation.SetActivity(sequenceActivity);
-        }
     }
 
     private async Task<ISequence?> AddMessageToSequenceAsync(
@@ -197,6 +169,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             if (sequence == null)
                 return null;
 
+            Activity.Current?.SetTag(ActivityTagNames.SequenceId, sequence.SequenceId);
+
             await PublishSequenceIfNewAsync(context, next, sequence, cancellationToken).ConfigureAwait(false);
 
             addToSequenceResult = await sequence.AddAsync(
@@ -215,8 +189,6 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             }
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
-
-        AddSequenceTagToActivity(sequence);
 
         if (addToSequenceResult.IsAborted)
         {
@@ -276,8 +248,6 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     {
         if (sequence.IsNew)
         {
-            StartActivityIfNeeded(sequence);
-
             await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
 
             if (context.ProcessingTask != null)

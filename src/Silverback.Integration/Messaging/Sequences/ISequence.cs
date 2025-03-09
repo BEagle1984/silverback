@@ -83,14 +83,14 @@ public interface ISequence : IDisposable
     Exception? AbortException { get; }
 
     /// <summary>
-    ///     Gets the <see cref="ISequence" /> that were added to this sequence (e.g. the
-    ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+    ///     Gets the <see cref="ISequence" /> that were added to this sequence (e.g. the <see cref="ChunkSequence" /> whose aggregated
+    ///     message is added to a <see cref="BatchSequence" />).
     /// </summary>
     IReadOnlyCollection<ISequence> Sequences { get; }
 
     /// <summary>
-    ///     Gets the <see cref="ISequence" /> that contain this sequence (e.g. the
-    ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+    ///     Gets the <see cref="ISequence" /> that contain this sequence (e.g. the <see cref="ChunkSequence" /> whose aggregated message is
+    ///     added to a <see cref="BatchSequence" />).
     /// </summary>
     ISequence? ParentSequence { get; }
 

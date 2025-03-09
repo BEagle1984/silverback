@@ -37,33 +37,20 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     public override int StreamsCount => _lazyStreams.Count;
 
     /// <summary>
-    ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
-    ///     message has actually been pulled and processed.
-    /// </summary>
-    /// <param name="message">
-    ///     The message to be added.
-    /// </param>
-    /// <param name="cancellationToken">
-    ///     A <see cref="CancellationToken" /> used to cancel the operation.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task will complete only
-    ///     when the message has actually been pulled and processed and its result contains the number of
-    ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
-    /// </returns>
-    public Task<int> PushAsync(TMessage message, CancellationToken cancellationToken = default) =>
-        PushAsync(message, true, cancellationToken);
-
-    /// <summary>
-    ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
-    ///     message has actually been pulled and processed.
+    ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the message has actually been
+    ///     pulled and processed.
     /// </summary>
     /// <param name="message">
     ///     The message to be added.
     /// </param>
     /// <param name="throwIfUnhandled">
-    ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-    ///     message.
+    ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
+    /// </param>
+    /// <param name="onPullAction">
+    ///     An action to be executed when the message is pulled.
+    /// </param>
+    /// <param name="onPullActionArgument">
+    ///     The argument to be passed to the <paramref name="onPullAction" />.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> used to cancel the operation.
@@ -74,14 +61,19 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
     /// </returns>
     [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Global", Justification = "False positive")]
-    public async Task<int> PushAsync(TMessage message, bool throwIfUnhandled, CancellationToken cancellationToken = default)
+    public async Task<int> PushAsync(
+        TMessage message,
+        bool throwIfUnhandled = true,
+        Action<object?>? onPullAction = null,
+        object? onPullActionArgument = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(message, nameof(message));
 
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        List<Task> processingTasks = PushToCompatibleStreams(message, cancellationToken).ToList();
+        List<Task> processingTasks = PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken).ToList();
 
         if (processingTasks.Count > 0)
             await Task.WhenAll(processingTasks).ConfigureAwait(false);
@@ -199,6 +191,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private static bool PushIfCompatibleType(
         ILazyMessageStreamEnumerable lazyStream,
         TMessage message,
+        Action<object?>? onPullAction,
+        object? onPullActionArgument,
         CancellationToken cancellationToken,
         out Task messageProcessingTask)
     {
@@ -210,14 +204,14 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
         if (lazyStream.MessageType.IsInstanceOfType(message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(message, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(message, onPullAction, onPullActionArgument, cancellationToken);
             return true;
         }
 
         if (message is IEnvelope { Message: not null } envelope &&
             lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, onPullAction, onPullActionArgument, cancellationToken);
             return true;
         }
 
@@ -228,7 +222,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
         filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private IEnumerable<Task> PushToCompatibleStreams(TMessage message, CancellationToken cancellationToken)
+    private IEnumerable<Task> PushToCompatibleStreams(TMessage message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken)
     {
         foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
         {
@@ -237,7 +231,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
             if (cancellationToken.IsCancellationRequested)
                 yield break;
 
-            if (PushIfCompatibleType(lazyStream, message, cancellationToken, out Task processingTask))
+            if (PushIfCompatibleType(lazyStream, message, onPullAction, onPullActionArgument, cancellationToken, out Task processingTask))
             {
                 yield return processingTask;
             }

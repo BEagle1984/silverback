@@ -10,15 +10,15 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 
-public class ActivityExtensionsTests
+public class ActivityExtensionsFixture
 {
-    public ActivityExtensionsTests()
+    public ActivityExtensionsFixture()
     {
         Activity.DefaultIdFormat = ActivityIdFormat.W3C;
     }
 
     [Fact]
-    public void AddBaggageRange_SomeNewItems_ItemsAreAppended()
+    public void AddBaggageRange_ShouldAppendItems()
     {
         Activity activity = new("test");
         IList<KeyValuePair<string, string>> itemsToAdd =
@@ -43,7 +43,19 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
-    public void SetMessageHeaders_StartedActivity_TraceIdHeaderIsSet()
+    public void ClearBaggage_ShouldRemoveAllItems()
+    {
+        Activity activity = new("test");
+        activity.AddBaggage("key1", "value1");
+        activity.AddBaggage("key2", "value2");
+
+        activity.ClearBaggage();
+
+        activity.Baggage.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void SetMessageHeaders_ShouldSetTraceIdHeader()
     {
         MessageHeaderCollection headers = [];
 
@@ -55,7 +67,7 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
-    public void SetMessageHeaders_ActivityWithState_TraceStateHeaderIsSet()
+    public void SetMessageHeaders_ShouldSetTraceStateHeader()
     {
         MessageHeaderCollection headers = [];
 
@@ -68,7 +80,7 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
-    public void SetMessageHeaders_ActivityWithoutState_TraceStateHeaderIsNotSet()
+    public void SetMessageHeaders_ShouldNotSetTraceStateHeader_WhenTraceStateNotSet()
     {
         MessageHeaderCollection headers = [];
 
@@ -76,11 +88,11 @@ public class ActivityExtensionsTests
         activity.Start();
         activity.SetMessageHeaders(headers);
 
-        headers.ShouldNotContain(h => h.Name == DefaultMessageHeaders.TraceState);
+        headers.ShouldNotContain(header => header.Name == DefaultMessageHeaders.TraceState);
     }
 
     [Fact]
-    public void SetMessageHeaders_ActivityWithBaggage_BaggageHeaderIsSet()
+    public void SetMessageHeaders_ShouldSetBaggageHeader()
     {
         MessageHeaderCollection headers = [];
 
@@ -93,7 +105,7 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
-    public void SetMessageHeaders_ActivityWithoutBaggage_BaggageHeaderIsNotSet()
+    public void SetMessageHeaders_ShouldNotSetBaggageHeader_WhenBaggageNotSet()
     {
         MessageHeaderCollection headers = [];
 
@@ -105,23 +117,24 @@ public class ActivityExtensionsTests
     }
 
     [Fact]
-    public void SetTraceIdAndState_WithTraceIdHeader_ActivityParentIdIsSet()
+    public void SetTraceIdAndState_ShouldSetActivityParentId()
     {
         Activity activity = new("test");
         activity.SetTraceIdAndState("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01", "state=1");
         activity.Start();
 
         activity.ParentId.ShouldBe("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+        activity.TraceId.ToString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
         activity.Id.ShouldStartWith("00-0af7651916cd43dd8448eb211c80319c");
         activity.TraceStateString.ShouldBe("state=1");
     }
 
     [Fact]
-    public void AddEndpointName_ActivityTagIsAdded()
+    public void SetEndpointName_ShouldAddDestinationTag()
     {
         Activity activity = new("test");
-        activity.AddEndpointName("MyEndpoint");
+        activity.SetEndpointName("MyEndpoint");
 
-        activity.Tags.ShouldContain(kv => kv.Key == ActivityTagNames.MessageDestination && kv.Value == "MyEndpoint");
+        activity.Tags.ShouldContain(pair => pair.Key == ActivityTagNames.MessageDestination && pair.Value == "MyEndpoint");
     }
 }

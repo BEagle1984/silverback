@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Diagnostics;
@@ -12,8 +12,6 @@ internal static class ActivitySources
     private const string ProduceActivityName = "Silverback.Integration.Produce";
 
     private const string ConsumeActivityName = "Silverback.Integration.Consume";
-
-    private const string SequenceActivityName = "Silverback.Integration.Sequence";
 
     private static readonly ActivitySource ProduceActivitySource = new(ProduceActivityName);
 
@@ -27,7 +25,7 @@ internal static class ActivitySources
             null,
             null);
 
-        activity.AddEndpointName(envelope.EndpointConfiguration.RawName);
+        activity.SetEndpointName(envelope.EndpointConfiguration.RawName);
         activity.SetMessageHeaders(envelope.Headers);
 
         return activity;
@@ -36,7 +34,6 @@ internal static class ActivitySources
     public static Activity StartConsumeActivity(IRawInboundEnvelope envelope)
     {
         MessageHeaderCollection headers = envelope.Headers;
-
         string? traceIdFromHeader = headers.GetValue(DefaultMessageHeaders.TraceId);
         string? traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
 
@@ -46,29 +43,39 @@ internal static class ActivitySources
             traceIdFromHeader,
             traceState);
 
-        activity.AddEndpointName(envelope.Endpoint.RawName);
+        activity.SetEndpointName(envelope.Endpoint.RawName);
         activity.AddBaggageFromHeaders(headers);
 
         return activity;
     }
 
-    public static Activity? StartSequenceActivity()
+    public static void UpdateConsumeActivity(IRawInboundEnvelope envelope)
     {
-        Activity? messageActivity = Activity.Current;
-        Activity? sequenceActivity = ConsumeActivitySource.StartActivity(
-            SequenceActivityName,
-            ActivityKind.Internal,
-            new ActivityContext(
-                ActivityTraceId.CreateRandom(),
-                ActivitySpanId.CreateRandom(),
-                ActivityTraceFlags.None));
+        Activity? currentActivity = Activity.Current;
 
-        if (messageActivity != null && sequenceActivity?.Id != null)
-        {
-            messageActivity.SetTag(ActivityTagNames.SequenceActivity, sequenceActivity.Id);
-        }
+        if (currentActivity == null)
+            return;
 
-        return sequenceActivity;
+        using Activity activity = StartConsumeActivity(envelope);
+
+        FieldInfo? traceStateField = typeof(Activity).GetField("_traceState", BindingFlags.NonPublic | BindingFlags.Instance);
+        traceStateField?.SetValue(currentActivity, activity.TraceStateString);
+        FieldInfo? idField = typeof(Activity).GetField("_id", BindingFlags.NonPublic | BindingFlags.Instance);
+        idField?.SetValue(currentActivity, activity.Id);
+        FieldInfo? rootIdField = typeof(Activity).GetField("_rootId", BindingFlags.NonPublic | BindingFlags.Instance);
+        rootIdField?.SetValue(currentActivity, activity.RootId);
+        FieldInfo? parentIdField = typeof(Activity).GetField("_parentId", BindingFlags.NonPublic | BindingFlags.Instance);
+        parentIdField?.SetValue(currentActivity, activity.ParentId);
+        FieldInfo? parentSpanIdField = typeof(Activity).GetField("_parentSpanId", BindingFlags.NonPublic | BindingFlags.Instance);
+        parentSpanIdField?.SetValue(currentActivity, activity.ParentSpanId.ToString());
+        FieldInfo? traceIdField = typeof(Activity).GetField("_traceId", BindingFlags.NonPublic | BindingFlags.Instance);
+        traceIdField?.SetValue(currentActivity, activity.TraceId.ToString());
+        FieldInfo? spanIdField = typeof(Activity).GetField("_spanId", BindingFlags.NonPublic | BindingFlags.Instance);
+        spanIdField?.SetValue(currentActivity, activity.SpanId.ToString());
+
+        currentActivity.SetEndpointName(envelope.Endpoint.RawName);
+        currentActivity.ClearBaggage();
+        currentActivity.AddBaggageFromHeaders(envelope.Headers);
     }
 
     private static Activity ForceStartActivity(
@@ -78,16 +85,11 @@ internal static class ActivitySources
         string? traceIdFromHeader,
         string? traceState)
     {
-        Activity? activity = activitySource.StartWithTraceId(
-            activityName,
-            kind,
-            traceIdFromHeader,
-            traceState);
+        Activity? activity = activitySource.StartWithTraceId(activityName, kind, traceIdFromHeader, traceState);
 
         if (activity == null)
         {
-            // No one is listening to this activity. We just set the correct trace info to make sure
-            // subsequent activities contain that information as well.
+            // No one is listening, but we still force the activity to be started (the activity information might be logged)
             activity = new Activity(activityName);
 
             if (traceIdFromHeader != null)
@@ -102,12 +104,10 @@ internal static class ActivitySources
     private static void AddBaggageFromHeaders(this Activity activity, MessageHeaderCollection headers)
     {
         string? baggage = headers.GetValue(DefaultMessageHeaders.TraceBaggage);
-        if (baggage != null)
-        {
-            IReadOnlyCollection<KeyValuePair<string, string>> baggageItems =
-                ActivityBaggageSerializer.Deserialize(baggage);
 
-            activity.AddBaggageRange(baggageItems);
-        }
+        if (baggage == null)
+            return;
+
+        activity.AddBaggageRange(ActivityBaggageSerializer.Deserialize(baggage));
     }
 }

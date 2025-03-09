@@ -37,12 +37,16 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private bool _isComplete;
 
-    Task IMessageStreamEnumerable.PushAsync(object message, CancellationToken cancellationToken) =>
-        PushAsync((TMessage)message, cancellationToken);
+    private Action<object?>? _onPullAction;
 
-    /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,System.Threading.CancellationToken)" />
+    private object? _onPullActionArgument;
+
+    Task IMessageStreamEnumerable.PushAsync(object message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken) =>
+        PushAsync((TMessage)message, onPullAction, onPullActionArgument, cancellationToken);
+
+    /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,Action{object},object,CancellationToken)" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
-    public async Task PushAsync(TMessage message, CancellationToken cancellationToken = default)
+    public async Task PushAsync(TMessage message, Action<object?>? onPullAction = null, object? onPullActionArgument = null, CancellationToken cancellationToken = default)
     {
         Check.NotNull(message, nameof(message));
 
@@ -55,6 +59,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
         _current = message;
         _hasCurrent = true;
+        _onPullAction = onPullAction;
+        _onPullActionArgument = onPullActionArgument;
         SafelyRelease(_readSemaphore);
 
         await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
@@ -137,6 +143,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
             if (!_hasCurrent || _current == null)
                 continue;
 
+            _onPullAction?.Invoke(_onPullActionArgument);
+
             yield return _current;
         }
     }
@@ -148,6 +156,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         {
             if (!_hasCurrent || _current == null)
                 continue;
+
+            _onPullAction?.Invoke(_onPullActionArgument);
 
             yield return _current;
         }

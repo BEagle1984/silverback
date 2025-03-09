@@ -116,7 +116,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
             using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, finalCancellationToken),
+                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
                 _configuration,
                 stream,
                 _context.ServiceProvider);
@@ -143,7 +143,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
             using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, finalCancellationToken),
+                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
                 _configuration,
                 stream,
                 _context.ServiceProvider);

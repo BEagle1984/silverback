@@ -40,10 +40,9 @@ internal abstract class MessageStreamProvider : IMessageStreamProvider, IDisposa
     public abstract void AbortIfPending();
 
     /// <summary>
-    ///     Aborts the ongoing enumerations and the pending calls to
-    ///     <see cref="MessageStreamProvider{TMessage}.PushAsync(TMessage,System.Threading.CancellationToken)" />, then marks the
-    ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
-    ///     thrown by the enumerators and the <see cref="MessageStreamProvider{TMessage}.PushAsync(TMessage,System.Threading.CancellationToken)" /> method.
+    ///     Aborts the ongoing enumerations and the pending calls to <see cref="MessageStreamProvider{TMessage}.PushAsync" />, then marks the
+    ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be thrown by the enumerators
+    ///     and the <see cref="MessageStreamProvider{TMessage}.PushAsync" /> method.
     /// </summary>
     public abstract void Abort();
 

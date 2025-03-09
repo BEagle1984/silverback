@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging.Diagnostics;
 
@@ -24,8 +26,7 @@ public static class ActivityTagNames
     public const string MessageDestination = "messaging.destination";
 
     /// <summary>
-    ///     The name of the tag that references the activity created for the sequence where this message has been
-    ///     added.
+    ///     The name of the tag that contains the sequence identifier (e.g. the <see cref="BatchSequence"/> or <see cref="ChunkSequence"/> identifier).
     /// </summary>
-    public const string SequenceActivity = "messaging.sequence.activity";
+    public const string SequenceId = "messaging.sequence_id";
 }

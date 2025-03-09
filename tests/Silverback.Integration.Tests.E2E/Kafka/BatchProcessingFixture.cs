@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -849,5 +851,73 @@ public partial class BatchProcessingFixture : KafkaFixture
         receivedBatches[0].Count.ShouldBe(2);
         receivedBatches[1].Count.ShouldBe(2);
         completedBatches.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldUpdateActivity_WhenSubscribingToAsyncEnumerable()
+    {
+        List<string> expectedTraceIds = [];
+        List<string> actualTraceIds = [];
+        List<string> batchStartTraceIds = [];
+        List<string> batchEndTraceIds = [];
+        List<string> sequenceIds = [];
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(5))))
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            if (Activity.Current != null)
+                batchStartTraceIds.Add(Activity.Current.TraceId.ToString());
+
+            await foreach (TestEventOne unused in batch)
+            {
+                if (Activity.Current != null)
+                {
+                    actualTraceIds.Add(Activity.Current.TraceId.ToString());
+                    sequenceIds.Add(Activity.Current.Tags.SingleOrDefault(pair => pair.Key == ActivityTagNames.SequenceId).Value ?? string.Empty);
+                }
+            }
+
+            if (Activity.Current != null)
+                batchEndTraceIds.Add(Activity.Current.TraceId.ToString());
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 10; i++)
+        {
+            using Activity activity = new("TestActivity");
+            activity.Start();
+            expectedTraceIds.Add(activity.TraceId.ToString());
+
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        actualTraceIds.ShouldBe(expectedTraceIds);
+        batchStartTraceIds.ShouldBe([expectedTraceIds[0], expectedTraceIds[5]]);
+        batchEndTraceIds.ShouldBe([expectedTraceIds[4], expectedTraceIds[9]]);
+        sequenceIds.ShouldAllBe(sequenceId => !string.IsNullOrWhiteSpace(sequenceId));
+        sequenceIds.Take(5).ShouldAllBe(sequenceId => sequenceId == sequenceIds[0]);
+        sequenceIds.Skip(5).ShouldAllBe(sequenceId => sequenceId == sequenceIds[5]);
     }
 }
