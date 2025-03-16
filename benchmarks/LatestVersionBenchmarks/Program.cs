@@ -3,6 +3,5 @@
 
 using BenchmarkDotNet.Running;
 using Silverback.Benchmarks.Latest.Mediator;
-using Silverback.Benchmarks.Latest.Producer;
 
 BenchmarkRunner.Run<MediatorBenchmark>();
