@@ -98,7 +98,7 @@ public static class DefaultMessageHeaders
     /// <summary>
     ///     The header containing the serialized endpoint stored in the outbox.
     /// </summary>
-    internal const string SerializedEndpoint = DefaultMessageHeaders.InternalHeadersPrefix + "serialized-endpoint";
+    internal const string SerializedEndpoint = InternalHeadersPrefix + "serialized-endpoint";
 
     /// <summary>
     ///     The prefix used for the internal headers that are not supposed to be produced to the broker.

@@ -64,7 +64,7 @@ await _publisher.WrapAndPublishAsync(
     new MyMessage { ... },
     envelope => envelope
         .AddHeader("x-priority", 1))
-        .AddHeader("x-random", new Random().Next()));
+        .AddHeader("x-random", Random.Shared.Next()));
 ```
 
 ### WrapAndPublishBatch
@@ -78,7 +78,7 @@ public async Task PublishBatch(IEnumerable<MyMessage> messages)
         messages,
         envelope => envelope
             .AddHeader("x-priority", 1))
-            .AddHeader("x-random", new Random().Next()));
+            .AddHeader("x-random", Random.Shared.Next()));
 }
 ```
 

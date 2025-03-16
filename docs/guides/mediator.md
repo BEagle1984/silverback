@@ -145,7 +145,7 @@ services
 
 ### Delegate based subscription
 
-In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the [AddDelegateSubscriber](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions) method.
+In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the `AddDelegateSubscriber` method.
 
 ```csharp
 public class Startup

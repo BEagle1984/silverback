@@ -46,6 +46,8 @@
           href: broker/consuming/deserialization.md
         - name: Headers
           href: broker/consuming/headers.md
+        - name: Chunking
+          href: broker/consuming/chunking.md
         - name: Decryption
           href: broker/consuming/decryption.md
         - name: Tombstone

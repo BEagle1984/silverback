@@ -1,7 +1,7 @@
 ---
-uid: kafka-schema-registry-serializer
+uid: schema-registry
 ---
 
-# Kafka Schema Registry and Serializers
+# Confluent Schema Registry
 
 _...coming soon..._

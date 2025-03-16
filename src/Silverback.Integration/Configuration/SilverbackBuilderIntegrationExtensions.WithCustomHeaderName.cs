@@ -27,10 +27,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder WithCustomHeaderName(
-        this SilverbackBuilder builder,
-        string defaultHeaderName,
-        string customHeaderName)
+    public static SilverbackBuilder WithCustomHeaderName(this SilverbackBuilder builder, string defaultHeaderName, string customHeaderName)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNullOrEmpty(defaultHeaderName, nameof(defaultHeaderName));

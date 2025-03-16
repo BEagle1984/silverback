@@ -6,7 +6,7 @@ uid: sample-mqtt-binaryfile
 
 This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through Mqtt.
 
-See also: <xref:serialization>, <xref:deserialization>, <xref:chunking>~~~~
+See also: <xref:serialization>, <xref:deserialization>, <xref:producing-chunking>, <xref:consuming-chunking>
 
 ## Producer
 

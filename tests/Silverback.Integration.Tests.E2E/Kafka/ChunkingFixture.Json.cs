@@ -69,6 +69,7 @@ public partial class ChunkingFixture
             IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
             IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBe((i % chunksPerMessage).ToString(CultureInfo.InvariantCulture));
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
 
             if (envelope == firstEnvelope)
@@ -88,6 +89,59 @@ public partial class ChunkingFixture
             {
                 envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).ShouldBeNull();
             }
+        }
+
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .ShouldBe(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
+    }
+
+    [Fact]
+    public async Task Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames()
+    {
+        const int chunkSize = 10;
+        const int chunksPerMessage = 4;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-quack-index")
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(chunkSize)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 1; i <= 5; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(5);
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(5 * chunksPerMessage);
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.ShouldBeLessThanOrEqualTo(chunkSize));
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(5);
+
+        for (int i = 0; i < Helper.Spy.RawOutboundEnvelopes.Count; i++)
+        {
+            IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
+
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBeNullOrEmpty();
+            envelope.Headers.GetValue("x-quack-index").ShouldBe((i % chunksPerMessage).ToString(CultureInfo.InvariantCulture));
         }
 
         Helper.Spy.InboundEnvelopes
@@ -177,53 +231,6 @@ public partial class ChunkingFixture
             await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
-        }
-
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
-        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 1");
-        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 2");
-        Helper.Spy.InboundEnvelopes[2].Message.ShouldBeOfType<TestEventOne>().ContentEventOne.ShouldBe("Long message 3");
-
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(9);
-    }
-
-    [Fact]
-    public async Task Chunking_ShouldConsumeChunkedJsonWithMessageIdHeader()
-    {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-
-        for (int i = 1; i <= 3; i++)
-        {
-            TestEventOne message = new() { ContentEventOne = $"Long message {i}" };
-            byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
-
-            await producer.RawProduceAsync(
-                rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(TestEventOne)));
-            await producer.RawProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(TestEventOne)));
-            await producer.RawProduceAsync(
-                rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(TestEventOne)));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

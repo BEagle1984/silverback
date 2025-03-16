@@ -62,7 +62,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name and the message type.
+    ///     By default, the name will be generated concatenating the topic name and the message type.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
@@ -94,12 +94,12 @@ public partial class KafkaProducerConfigurationBuilder
     ///     Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).
     /// </summary>
     /// <typeparam name="TMessage">
-    ///     The type (or base type) of the messages being produced. This is used to setup the serializer and will determine the type of the
+    ///     The type (or base type) of the messages being produced. This is used to set up the serializer and will determine the type of the
     ///     message parameter in the nested configuration functions.
     /// </typeparam>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name and the message type.
+    ///     By default, the name will be generated concatenating the topic name and the message type.
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
