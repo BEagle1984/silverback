@@ -18,6 +18,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private Channel<T> _channel;
 
+    private Channel<T> _overflowChannel; // Used to store messages when the main channel is full, to ensure nothing is lost
+
     private TaskCompletionSource<bool> _readTaskCompletionSource = new();
 
     private CancellationTokenSource _readCancellationTokenSource = new();
@@ -32,7 +34,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         Id = id;
         _logger = logger;
 
-        _channel = CreateInnerChannel();
+        _channel = Channel.CreateBounded<T>(_capacity);
+        _overflowChannel = Channel.CreateUnbounded<T>();
         SequenceStore = new SequenceStore(logger);
     }
 
@@ -48,14 +51,36 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public void Complete() => _channel.Writer.TryComplete();
 
-    public ValueTask WriteAsync(T message, CancellationToken cancellationToken) => _channel.Writer.WriteAsync(message, cancellationToken);
+    public async ValueTask WriteAsync(T message, CancellationToken cancellationToken)
+    {
+        // Don't allow writing new messages until the overflow messages are processed
+        while (_overflowChannel.Reader.Count > 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
+        }
 
-    public ValueTask<T> ReadAsync() => _channel.Reader.ReadAsync(ReadCancellationToken);
+        await _channel.Writer.WriteAsync(message, cancellationToken).ConfigureAwait(false);
+    }
+
+    public ValueTask WriteOverflowAsync(T message) => _overflowChannel.Writer.WriteAsync(message, CancellationToken.None);
+
+    public async ValueTask<T> ReadAsync()
+    {
+        T message = await _channel.Reader.ReadAsync(ReadCancellationToken).ConfigureAwait(false);
+
+        if (_overflowChannel.Reader.TryRead(out T? overflowMessage))
+            await _channel.Writer.WriteAsync(overflowMessage, CancellationToken.None).ConfigureAwait(false);
+
+        return message;
+    }
 
     public void Reset()
     {
         _channel.Writer.TryComplete();
-        _channel = CreateInnerChannel();
+        _overflowChannel.Writer.TryComplete();
+        _channel = Channel.CreateBounded<T>(_capacity);
+        _overflowChannel = Channel.CreateUnbounded<T>();
         SequenceStore.Dispose();
         SequenceStore = new SequenceStore(_logger);
     }
@@ -116,6 +141,4 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         _isDisposed = true;
     }
-
-    private Channel<T> CreateInnerChannel() => Channel.CreateBounded<T>(_capacity);
 }

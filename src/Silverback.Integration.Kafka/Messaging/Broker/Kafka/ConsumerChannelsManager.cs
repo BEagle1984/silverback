@@ -1,10 +1,12 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -87,9 +89,32 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
                 channel.Id
             ]);
 
-        // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
-        // synchronously to stay within a single long-running thread with the Consume loop.
-        channel.WriteAsync(consumeResult, cancellationToken).SafeWait(cancellationToken);
+        try
+        {
+            // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
+            // synchronously to stay within a single long-running thread with the Consume loop.
+            channel.WriteAsync(consumeResult, cancellationToken).SafeWait(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            try
+            {
+                channel.WriteOverflowAsync(consumeResult).SafeWait(CancellationToken.None);
+            }
+            catch (ChannelClosedException)
+            {
+                _logger.LogConsumerLowLevelTrace(
+                    _consumer,
+                    "Failed to write message ({topic}[{partition}]@{offset}) to overflow channel {channel}.",
+                    () =>
+                    [
+                        consumeResult.Topic,
+                        consumeResult.Partition.Value,
+                        consumeResult.Offset.Value,
+                        channel.Id
+                    ]);
+            }
+        }
     }
 
     public bool IsReading(TopicPartition topicPartition) =>

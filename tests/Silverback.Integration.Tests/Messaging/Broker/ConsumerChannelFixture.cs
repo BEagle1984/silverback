@@ -38,6 +38,47 @@ public class ConsumerChannelFixture
     }
 
     [Fact]
+    public async Task ReadAsync_ShouldPullOverflowMessages()
+    {
+        ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage testMessage1 = new();
+        TestMessage testMessage2 = new();
+
+        await channel.WriteAsync(testMessage1, CancellationToken.None);
+        await channel.WriteOverflowAsync(testMessage2);
+
+        TestMessage readMessage1 = await channel.ReadAsync();
+        TestMessage readMessage2 = await channel.ReadAsync();
+        readMessage1.ShouldBeSameAs(testMessage1);
+        readMessage2.ShouldBeSameAs(testMessage2);
+    }
+
+    [Fact]
+    public async Task WriteAsync_ShouldBlockWhileOverflowChannelNotEmpty()
+    {
+        ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage testMessage1 = new();
+        TestMessage testMessage2 = new();
+        TestMessage testMessage3 = new();
+
+        await channel.WriteAsync(testMessage1, CancellationToken.None);
+        await channel.WriteOverflowAsync(testMessage2);
+        ValueTask writeTask = channel.WriteAsync(testMessage3, CancellationToken.None);
+
+        await Task.Delay(100);
+
+        writeTask.IsCompleted.ShouldBeFalse();
+
+        await channel.ReadAsync();
+        await channel.ReadAsync();
+
+        await Task.Delay(100);
+        await AsyncTestingUtil.WaitAsync(() => writeTask.IsCompleted);
+
+        writeTask.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
+    [Fact]
     public void Reset_ShouldCreateNewSequenceStore()
     {
         ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
