@@ -149,7 +149,6 @@ services:
   postgresql:
     image: postgres:17.0
     container_name: silverback-postgresql
-    restart: always
     ports:
       - "5432:5432"
     environment:
@@ -159,7 +158,6 @@ services:
   pgadmin:
     container_name: silverback-pgadmin
     image: dpage/pgadmin4:6.21
-    restart: always
     ports:
       - "8082:80"
     depends_on:
