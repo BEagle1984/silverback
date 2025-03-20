@@ -43,8 +43,8 @@ Silverback is designed for **serious workloads**, offering enterprise-grade capa
 
 ### Key Features
 
-🔀 **Powerful Mediator**\
-Enables seamless in-memory communication between components, featuring **Rx.NET** support for reactive programming.
+🔀 **Powerful Message Bus**\
+A simple but powerful in-memory message bus enables seamless communication between components, featuring **Rx.NET** support for reactive programming.
 
 🔗 **Seamless Message Broker Integration**\
 Silverback makes it easy to integrate with Kafka and MQTT, providing a streamlined and developer-friendly API to build event-driven architectures with minimal setup and configuration.

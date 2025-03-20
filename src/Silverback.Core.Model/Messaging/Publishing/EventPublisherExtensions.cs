@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Publishing;
 public static class EventPublisherExtensions
 {
     /// <summary>
-    ///     Publishes the specified event to its subscribers via the mediator and the method will not
+    ///     Publishes the specified event to its subscribers via the message bus and the method will not
     ///     complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
     ///     through a message broker).
     /// </summary>
@@ -31,7 +31,7 @@ public static class EventPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).Publish(eventMessage, throwIfUnhandled);
 
     /// <summary>
-    ///     Publishes the specified event to its subscribers via the mediator and the <see cref="Task" />
+    ///     Publishes the specified event to its subscribers via the message bus and the <see cref="Task" />
     ///     will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
     ///     through a message broker).
     /// </summary>
@@ -51,7 +51,7 @@ public static class EventPublisherExtensions
         Check.NotNull(publisher, nameof(publisher)).PublishAsync(eventMessage, false, cancellationToken);
 
     /// <summary>
-    ///     Publishes the specified event to its subscribers via the mediator and the <see cref="Task" />
+    ///     Publishes the specified event to its subscribers via the message bus and the <see cref="Task" />
     ///     will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
     ///     through a message broker).
     /// </summary>

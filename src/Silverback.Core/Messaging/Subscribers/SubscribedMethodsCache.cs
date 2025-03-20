@@ -20,13 +20,13 @@ internal sealed class SubscribedMethodsCache
 
     private readonly ConcurrentDictionary<Type, bool> _hasMessageStreamSubscriber = [];
 
-    private readonly MediatorOptions _options;
+    private readonly BusOptions _options;
 
     private bool? _hasAnyMessageStreamSubscriber;
 
     private IReadOnlyCollection<SubscribedMethod>? _subscribedMethods;
 
-    public SubscribedMethodsCache(MediatorOptions options)
+    public SubscribedMethodsCache(BusOptions options)
     {
         _options = Check.NotNull(options, nameof(options));
     }

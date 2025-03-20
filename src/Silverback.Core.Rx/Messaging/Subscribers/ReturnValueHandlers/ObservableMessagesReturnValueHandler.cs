@@ -16,17 +16,17 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// </summary>
 public class ObservableMessagesReturnValueHandler : IReturnValueHandler
 {
-    private readonly MediatorOptions _mediatorOptions;
+    private readonly BusOptions _busOptions;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ObservableMessagesReturnValueHandler" /> class.
     /// </summary>
-    /// <param name="mediatorOptions">
-    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
+    /// <param name="busOptions">
+    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
     /// </param>
-    public ObservableMessagesReturnValueHandler(MediatorOptions mediatorOptions)
+    public ObservableMessagesReturnValueHandler(BusOptions busOptions)
     {
-        _mediatorOptions = mediatorOptions;
+        _busOptions = busOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
@@ -35,7 +35,7 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
         returnValue.GetType().GetInterfaces().Any(
             i => i.IsGenericType &&
                  i.GetGenericTypeDefinition() == typeof(IObservable<>) &&
-                 _mediatorOptions.MessageTypes.Any(
+                 _busOptions.MessageTypes.Any(
                      messageType =>
                          messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 

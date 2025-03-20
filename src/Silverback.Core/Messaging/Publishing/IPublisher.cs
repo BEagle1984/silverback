@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
-///     Publishes messages via the mediator, forwarding them to the subscribers.
+///     Publishes messages via the message bus, forwarding them to the subscribers.
 /// </summary>
 public interface IPublisher
 {
@@ -18,7 +18,7 @@ public interface IPublisher
     public ISilverbackContext Context { get; }
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the method will not complete until all subscribers have
+    ///     Publishes the specified message to its subscribers via the message bus and the method will not complete until all subscribers have
     ///     processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <param name="message">
@@ -31,7 +31,7 @@ public interface IPublisher
     void Publish(object message, bool throwIfUnhandled = false);
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the method will not complete until all subscribers have
+    ///     Publishes the specified message to its subscribers via the message bus and the method will not complete until all subscribers have
     ///     processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <typeparam name="TResult">
@@ -51,7 +51,7 @@ public interface IPublisher
     IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false);
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the <see cref="Task" /> will not complete until all
+    ///     Publishes the specified message to its subscribers via the message bus and the <see cref="Task" /> will not complete until all
     ///     subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <param name="message">
@@ -66,7 +66,7 @@ public interface IPublisher
     Task PublishAsync(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the <see cref="Task" /> will not complete until all
+    ///     Publishes the specified message to its subscribers via the message bus and the <see cref="Task" /> will not complete until all
     ///     subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <param name="message">
@@ -85,7 +85,7 @@ public interface IPublisher
     Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the <see cref="Task" /> will not complete until all
+    ///     Publishes the specified message to its subscribers via the message bus and the <see cref="Task" /> will not complete until all
     ///     subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <typeparam name="TResult">
@@ -105,7 +105,7 @@ public interface IPublisher
     Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Publishes the specified message to its subscribers via the mediator and the <see cref="Task" /> will not complete until all
+    ///     Publishes the specified message to its subscribers via the message bus and the <see cref="Task" /> will not complete until all
     ///     subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).
     /// </summary>
     /// <typeparam name="TResult">

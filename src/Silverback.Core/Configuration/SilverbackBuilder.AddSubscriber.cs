@@ -58,7 +58,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddTransient(subscriberType);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }
@@ -155,7 +155,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddTransient(subscriberType, implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }
@@ -214,7 +214,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddTransient(implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
 
         return this;
     }
@@ -261,7 +261,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddScoped(subscriberType);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }
@@ -358,7 +358,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddScoped(subscriberType, implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
             subscriberType,
             options);
 
@@ -419,7 +419,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddScoped(implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
 
         return this;
     }
@@ -466,7 +466,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(subscriberType);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }
@@ -565,7 +565,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(subscriberType, implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }
@@ -626,7 +626,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(implementationFactory);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
 
         return this;
     }
@@ -689,7 +689,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(subscriberType, implementationInstance);
-        MediatorOptions.Subscriptions.Add(new TypeSubscription(subscriberType, implementationInstance, options));
+        BusOptions.Subscriptions.Add(new TypeSubscription(subscriberType, implementationInstance, options));
 
         return this;
     }
@@ -749,7 +749,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(implementationInstance);
-        MediatorOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
 
         return this;
     }

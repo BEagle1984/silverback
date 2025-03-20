@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Publishing;
 public interface IBehavior
 {
     /// <summary>
-    ///     Process, handles or transforms the messages being published via the mediator.
+    ///     Process, handles or transforms the messages being published via the message bus.
     /// </summary>
     /// <param name="publisher">
     ///     The <see cref="IPublisher" /> that is publishing the message.

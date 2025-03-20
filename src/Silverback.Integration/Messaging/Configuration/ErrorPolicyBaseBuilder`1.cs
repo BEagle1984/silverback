@@ -130,7 +130,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     }
 
     /// <summary>
-    ///     Specify a factory to create a message to be published via the mediator when this policy is
+    ///     Specify a factory to create a message to be published via the message bus when this policy is
     ///     applied. Useful to execute some custom code.
     /// </summary>
     /// <param name="factory">
@@ -147,7 +147,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     }
 
     /// <summary>
-    ///     Specify a factory to create a message to be published via the mediator when this policy is
+    ///     Specify a factory to create a message to be published via the message bus when this policy is
     ///     applied. Useful to execute some custom code.
     /// </summary>
     /// <param name="factory">

@@ -156,7 +156,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         RevertConnectedStatus();
 
-        _consumeLoopHandler.StopAsync().FireAndForget();
+        _consumeLoopHandler.StopAsync().SafeWait();
         Task.WhenAll(topicPartitionOffsets.Select(offset => _channelsManager.StopReadingAsync(offset.TopicPartition))).SafeWait();
 
         if (!Configuration.EnableAutoCommit)

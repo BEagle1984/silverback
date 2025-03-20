@@ -1,10 +1,10 @@
 ---
-uid: mediator
+uid: bus
 ---
 
-# Using the Mediator
+# Using the Message Bus
 
-The mediator is the central component of Silverback that allows you to publish messages and have them delivered to the appropriate subscribers.
+The message bus is the central component of Silverback that allows you to publish messages and have them delivered to the appropriate subscribers.
 
 ## Creating the Message Model
 
@@ -103,7 +103,7 @@ public async Task ExecuteCommand()
 
 Now, we need to write a subscriber method to process the published messages.
 
-Silverback’s mediator routes messages based on their type. When a message is published, Silverback evaluates the signatures of the subscribed methods and invokes those accepting the specific message type, a base type, or an implemented interface.
+Silverback’s message bus routes messages based on their type. When a message is published, Silverback evaluates the signatures of the subscribed methods and invokes those accepting the specific message type, a base type, or an implemented interface.
 
 ### Subscriber Class
 

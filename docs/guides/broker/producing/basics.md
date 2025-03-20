@@ -49,7 +49,7 @@ Each `AddProducer` call will result in a producer to be created. The `Produce<TM
 
 ## Producing Messages
 
-Once the producer is configured, you can use the `IPublisher` to send messages through the mediator and Silverback will take care of routing them to the appropriate producer.
+Once the producer is configured, you can use the `IPublisher` to send messages through the message bus and Silverback will take care of routing them to the appropriate producer.
 
 ```csharp
 await _publisher.PublishAsync(new MyMessage { ... });

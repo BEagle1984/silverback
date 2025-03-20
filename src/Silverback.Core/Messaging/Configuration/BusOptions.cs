@@ -9,9 +9,9 @@ using Silverback.Messaging.Subscribers.Subscriptions;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Stores the mediator configuration (subscribers, etc.).
+///     Stores the message bus configuration (subscribers, etc.).
 /// </summary>
-public class MediatorOptions
+public class BusOptions
 {
     /// <summary>
     ///     Gets the collection of <see cref="ISubscription" />. A single subscription can resolve to multiple subscribed methods.

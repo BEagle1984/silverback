@@ -60,7 +60,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </param>
     /// <param name="context">
     ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
-    ///     sequence gets published via the mediator.
+    ///     sequence gets published via the message bus.
     /// </param>
     /// <param name="enforceTimeout">
     ///     Specifies whether the timeout has to be enforced.

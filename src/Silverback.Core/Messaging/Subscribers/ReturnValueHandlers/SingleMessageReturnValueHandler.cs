@@ -14,23 +14,23 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// </summary>
 public class SingleMessageReturnValueHandler : IReturnValueHandler
 {
-    private readonly MediatorOptions _mediatorOptions;
+    private readonly BusOptions _busOptions;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SingleMessageReturnValueHandler" /> class.
     /// </summary>
-    /// <param name="mediatorOptions">
-    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
+    /// <param name="busOptions">
+    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
     /// </param>
-    public SingleMessageReturnValueHandler(MediatorOptions mediatorOptions)
+    public SingleMessageReturnValueHandler(BusOptions busOptions)
     {
-        _mediatorOptions = mediatorOptions;
+        _busOptions = busOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
     public bool CanHandle(object returnValue) =>
         returnValue != null &&
-        _mediatorOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
+        _busOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue) =>

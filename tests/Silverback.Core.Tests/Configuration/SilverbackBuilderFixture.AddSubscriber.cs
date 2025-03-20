@@ -24,7 +24,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -41,7 +41,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -64,7 +64,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -81,7 +81,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -98,7 +98,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -120,7 +120,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -138,7 +138,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -156,7 +156,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -181,7 +181,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -199,7 +199,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -217,7 +217,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -241,7 +241,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Transient);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -258,7 +258,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -275,7 +275,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -298,7 +298,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -315,7 +315,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -332,7 +332,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -354,7 +354,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -372,7 +372,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -390,7 +390,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -415,7 +415,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -433,7 +433,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -451,7 +451,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -475,7 +475,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Scoped);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -492,7 +492,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -509,7 +509,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -532,7 +532,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -549,7 +549,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -566,7 +566,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -588,7 +588,7 @@ public partial class SilverbackBuilderFixture
         builder.Services.ShouldContain(
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -606,7 +606,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -624,7 +624,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -649,7 +649,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -667,7 +667,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -685,7 +685,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -709,7 +709,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationFactory != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -727,7 +727,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -745,7 +745,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -770,7 +770,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&
@@ -788,7 +788,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -806,7 +806,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             subscription.Options.IsExclusive &&
@@ -830,7 +830,7 @@ public partial class SilverbackBuilderFixture
             service => service.ServiceType == typeof(TestSubscriber) &&
                        service.ImplementationInstance != null &&
                        service.Lifetime == ServiceLifetime.Singleton);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().ShouldContain(
             subscription => subscription.SubscriberType == typeof(TestSubscriber) &&
                             !subscription.Options.AutoSubscribeAllPublicMethods &&
                             !subscription.Options.IsExclusive &&

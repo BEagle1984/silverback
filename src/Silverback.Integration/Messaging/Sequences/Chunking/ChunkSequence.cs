@@ -27,7 +27,7 @@ public class ChunkSequence : RawSequence
     /// </param>
     /// <param name="context">
     ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
-    ///     sequence gets published via the mediator.
+    ///     sequence gets published via the message bus.
     /// </param>
     public ChunkSequence(string sequenceId, int? totalLength, ConsumerPipelineContext context)
         : base(sequenceId, context)

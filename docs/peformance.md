@@ -10,7 +10,7 @@ Silverback tries to improve the performance with every release and a huge effort
 
 The following benchmarks were executed on a Windows 11 machine with an Intel(R) Core(TM) i9-10850K CPU @ 3.60GHz and 32 GB RAM. The benchmarks are built using the [BenchmarkDotNet](https://benchmarkdotnet.org/) library and the source code is available on [GitHub](https://github.com/BEagle1984/silverback/tree/master/benchmarks).
 
-### Mediator
+### Message Bus
 
 #### v4.5.1
 | Method                                                | Mean      | Error     | StdDev    | Gen0   | Gen1   | Allocated |

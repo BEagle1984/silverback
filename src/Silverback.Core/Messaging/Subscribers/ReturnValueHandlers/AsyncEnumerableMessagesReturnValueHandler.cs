@@ -15,28 +15,28 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers;
 /// </summary>
 public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
 {
-    private readonly MediatorOptions _mediatorOptions;
+    private readonly BusOptions _busOptions;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="AsyncEnumerableMessagesReturnValueHandler" /> class.
     /// </summary>
-    /// <param name="mediatorOptions">
-    ///     The <see cref="MediatorOptions" /> that specify which message types have to be handled.
+    /// <param name="busOptions">
+    ///     The <see cref="BusOptions" /> that specify which message types have to be handled.
     /// </param>
-    public AsyncEnumerableMessagesReturnValueHandler(MediatorOptions mediatorOptions)
+    public AsyncEnumerableMessagesReturnValueHandler(BusOptions busOptions)
     {
-        _mediatorOptions = mediatorOptions;
+        _busOptions = busOptions;
     }
 
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
     public bool CanHandle(object returnValue) =>
         returnValue != null &&
         returnValue.GetType().GetInterfaces().Any(
-            i => i.IsGenericType &&
-                 i.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>) &&
-                 _mediatorOptions.MessageTypes.Any(
+            type => type.IsGenericType &&
+                 type.GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>) &&
+                 _busOptions.MessageTypes.Any(
                      messageType =>
-                         messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
+                         messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue)

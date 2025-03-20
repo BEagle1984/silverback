@@ -27,9 +27,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -48,9 +48,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -67,9 +67,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -86,9 +86,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -105,9 +105,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -124,9 +124,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriber`1");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriber`1");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -143,9 +143,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -162,9 +162,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -181,9 +181,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -200,9 +200,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -219,9 +219,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -238,9 +238,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResult`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResult`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -259,9 +259,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -280,9 +280,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -299,9 +299,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -318,9 +318,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -337,9 +337,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -356,9 +356,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT2`2");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT2`2");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -375,9 +375,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -394,9 +394,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -413,9 +413,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -432,9 +432,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -451,9 +451,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -470,9 +470,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT2`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT2`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -491,9 +491,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -512,9 +512,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -531,9 +531,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service1, object service2) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -550,9 +550,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service1, object service2) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -569,9 +569,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service1, object service2) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -588,9 +588,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service1, object service2) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT3`3");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT3`3");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -607,9 +607,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service1, object service2) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -626,9 +626,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service1, object service2) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -645,9 +645,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service1, object service2) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -664,9 +664,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service1, object service2) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -683,9 +683,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -702,9 +702,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT3`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT3`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -723,9 +723,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -744,9 +744,9 @@ public partial class SilverbackBuilderFixture
         {
         }
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -763,9 +763,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service1, object service2, object service3) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -782,9 +782,9 @@ public partial class SilverbackBuilderFixture
 
         Task Handle(TestEventOne message, object service1, object service2, object service3) => Task.CompletedTask;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -801,9 +801,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service1, object service2, object service3) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -820,9 +820,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask Handle(TestEventOne message, object service1, object service2, object service3) => default;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT4`4");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberT4`4");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -839,9 +839,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service1, object service2, object service3) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -858,9 +858,9 @@ public partial class SilverbackBuilderFixture
 
         int Handle(TestEventOne message, object service1, object service2, object service3) => 42;
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -877,9 +877,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service1, object service2, object service3) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -896,9 +896,9 @@ public partial class SilverbackBuilderFixture
 
         Task<int> Handle(TestEventOne message, object service1, object service2, object service3) => Task.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("AsyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,
@@ -915,9 +915,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2, object service3) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = true,
@@ -934,9 +934,9 @@ public partial class SilverbackBuilderFixture
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2, object service3) => ValueTask.FromResult(42);
 
-        builder.MediatorOptions.Subscriptions.Count.ShouldBe(1);
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT4`5");
-        builder.MediatorOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
+        builder.BusOptions.Subscriptions.Count.ShouldBe(1);
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().SubscriberType.Name.ShouldBe("SyncOrAsyncSubscriberWithResultT4`5");
+        builder.BusOptions.Subscriptions.OfType<TypeSubscription>().First().Options.ShouldBeEquivalentTo(
             new TypeSubscriptionOptions
             {
                 IsExclusive = false,

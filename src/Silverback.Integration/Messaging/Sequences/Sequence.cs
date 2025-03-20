@@ -18,7 +18,7 @@ public abstract class Sequence : SequenceBase<IInboundEnvelope>
     /// </param>
     /// <param name="context">
     ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
-    ///     sequence gets published via the mediator.
+    ///     sequence gets published via the message bus.
     /// </param>
     /// <param name="enforceTimeout">
     ///     A value indicating whether the timeout has to be enforced.

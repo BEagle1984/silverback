@@ -10,7 +10,7 @@ Silverback is designed as a modular framework, allowing you to include only the 
 
 ### Core Packages
 
-- **[Silverback.Core](https://www.nuget.org/packages/Silverback.Core/)** – The essential package, including the mediator and fundamental messaging components.
+- **[Silverback.Core](https://www.nuget.org/packages/Silverback.Core/)** – The essential package, including the message bus and fundamental messaging components.
 - **[Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model/)** – Enhances CQRS and event-driven architectures with improved semantics.
 
 ### Message Broker Integration
@@ -22,7 +22,7 @@ If you need to integrate with a message broker, choose the appropriate package:
 
 ### Additional Features
 
-- **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Enables Rx.NET integration, allowing observables from the mediator message stream.
+- **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Enables Rx.NET integration, allowing observables from the message bus stream.
 - **[Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/)** – Supports serialization using Newtonsoft.Json instead of System.Text.Json.
 - **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.
 
@@ -61,7 +61,7 @@ services.AddSilverback()
     .AddSingletonSubscriber<MyMessageHandler>();
 ```
 
-- **`AddSilverback`** enables the mediator and allows chaining additional configurations via the fluent API.
+- **`AddSilverback`** enables the message bus and allows chaining additional configurations via the fluent API.
 - **`WithConnectionToMessageBroker`** configures the connection to the message brokers (both Kafka and MQTT in this case).
 - **`AddSingletonSubscriber`** registers a message handler to process incoming messages.
 

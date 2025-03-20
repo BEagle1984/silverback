@@ -35,7 +35,7 @@ public class ServiceCollectionExtensionsFixture
 
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-        serviceProvider.GetService<MediatorOptions>().ShouldBeOfType<MediatorOptions>();
+        serviceProvider.GetService<BusOptions>().ShouldBeOfType<BusOptions>();
         serviceProvider.GetService<IPublisher>().ShouldBeOfType<Publisher>();
     }
 
@@ -47,7 +47,7 @@ public class ServiceCollectionExtensionsFixture
         serviceCollection.AddSilverback();
         serviceCollection.AddSilverback();
 
-        serviceCollection.GetAll<MediatorOptions>().Count.ShouldBe(1);
+        serviceCollection.GetAll<BusOptions>().Count.ShouldBe(1);
     }
 
     [Fact]

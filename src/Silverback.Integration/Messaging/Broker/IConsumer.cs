@@ -9,7 +9,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Broker;
 
 /// <summary>
-///     Consumes from one or more endpoints and pushes the received messages via the mediator.
+///     Consumes from one or more endpoints and pushes the received messages via the message bus.
 /// </summary>
 public interface IConsumer
 {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Represent a stream of messages being published via the mediator. It is an enumerable that is asynchronously pushed with messages.
+///     Represent a stream of messages being published via the message bus. It is an enumerable that is asynchronously pushed with messages.
 /// </summary>
 internal interface IMessageStreamEnumerable
 {

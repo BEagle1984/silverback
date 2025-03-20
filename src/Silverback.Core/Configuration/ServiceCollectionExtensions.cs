@@ -31,10 +31,10 @@ public static class ServiceCollectionExtensions
     /// </returns>
     public static SilverbackBuilder AddSilverback(this IServiceCollection services)
     {
-        if (!services.ContainsAny<MediatorOptions>())
+        if (!services.ContainsAny<BusOptions>())
         {
             services
-                .AddSingleton(new MediatorOptions())
+                .AddSingleton(new BusOptions())
                 .AddTransient<IPublisher, Publisher>()
                 .AddTransient<IStreamPublisher, StreamPublisher>()
                 .AddTransient<IBehaviorsProvider, BehaviorsProvider>()
