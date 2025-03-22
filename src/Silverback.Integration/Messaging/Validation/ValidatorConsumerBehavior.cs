@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Validation;
 
 /// <summary>
-///     Deserializes the messages being consumed using the configured <see cref="IMessageSerializer" />.
+///     Validates the consumed message.
 /// </summary>
 public class ValidatorConsumerBehavior : IConsumerBehavior
 {

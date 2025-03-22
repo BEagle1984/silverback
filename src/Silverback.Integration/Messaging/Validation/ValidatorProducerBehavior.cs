@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Validation;
 
 /// <summary>
-///     Determines whether the message is valid.
+///     Validates the message being produced.
 /// </summary>
 public class ValidatorProducerBehavior : IProducerBehavior
 {

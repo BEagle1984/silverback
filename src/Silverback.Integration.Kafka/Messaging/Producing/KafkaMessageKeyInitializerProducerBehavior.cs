@@ -12,8 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing;
 
 /// <summary>
-///     Sets the message id header with the value from the properties decorated with the <see cref="KafkaKeyMemberAttribute" />. The header
-///     will be used by the <see cref="Messaging.Broker.KafkaProducer" /> to set the message key.
+///     Sets the Kafka key with the value from the properties decorated with the <see cref="KafkaKeyMemberAttribute" />.
 /// </summary>
 public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
 {
@@ -31,7 +30,7 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
             string? key = GetKafkaKey(context);
 
             if (key != null)
-                context.Envelope.Headers.Add(DefaultMessageHeaders.MessageId, key);
+                context.Envelope.SetKafkaKey(key);
         }
 
         return next(context, cancellationToken);

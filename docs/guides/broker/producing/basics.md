@@ -267,6 +267,24 @@ await _publisher.WrapAndPublishAsync(
 
 For Kafka producers, you can also specify the partition to produce to or influence it using a partitioning key. More information can be found in the <xref:kafka-partitioning> guide.
 
+### Filtering
+
+An additional function can be used to filter the messages that should be produced to the specific endpoint. The function is called for each message and should return `true` if the message should be produced.
+
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers(...)
+        .AddProducer(producer => producer
+            .Produce<MyMessage>(endpoint => endpoint
+                .ProduceTo("my-even-messages")
+                .Filter(message => message.Number % 2 == 0))
+            .Produce<MyMessage>(endpoint => endpoint
+                .ProduceTo("my-odd-messages")
+                .Filter(message => message.Number % 2 == 1))));
+```
+
 ## Additional Resources
 
 For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](xref:Silverback).
