@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Serializing the Produced Messages | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Serializing the Produced Messages | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="../../../toc.html">
+    <meta property="docfx:tocrel" content="../../toc.html">
+  
+  <meta property="docfx:rel" content="../../../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="serialization">
+<h1 id="serializing-the-produced-messages">Serializing the Produced Messages</h1>
+
+<p>The message payload needs to be serialized into a byte array before it can be sent to the broker. By default, Silverback uses <code>System.Text.Json</code> to serialize the message payload. This can be customized tweaking the serializer settings, using another one of the built-in serializers or implementing a custom serializer.</p>
+<h2 id="json">JSON</h2>
+<h3 id="systemtextjson">System.Text.Json</h3>
+<p>The default serializer is <code>System.Text.Json</code>. It is used to serialize the message payload into a JSON string. The serializer settings can be customized using the <code>Configure</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJson(serializer =&gt; serializer
+                    .Configure(
+                        options =&gt;
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        })))));
+</code></pre>
+<h3 id="newtonsoftjson">Newtonsoft.Json</h3>
+<p>Silverback also provides a serializer based on <code>Newtonsoft.Json</code>. It is found in the <a href="https://www.nuget.org/packages/Silverback.Newtonsoft/">Silverback.Newtonsoft</a> package and can be enabled by calling the <code>SerializeAsJsonUsingNewtonsoft</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJsonUsingNewtonsoft())));
+</code></pre>
+<p>Optionally, the serializer settings can be customized using the <code>Configure</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJsonUsingNewtonsoft(serializer =&gt; serializer
+                    .Configure(
+                        settings =&gt;
+                        {
+                            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        }))));
+</code></pre>
+<h3 id="schema-registry">Schema Registry</h3>
+<p>To integrate with Confluent Schema Registry, you can use the dedicated JSON serializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This uses the Confluent serializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJsonUsingSchemaRegistry(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)
+                    .Configure(
+                        config =&gt;
+                        {
+                            config.AutoRegisterSchemas = false;
+                        }))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Confluent Schema Registry</a> guide.</p>
+</div>
+<h2 id="raw">Raw</h2>
+<p>The raw serializer is not a traditional serializer. Instead, it sends the message payload exactly as it is, without any transformation. This is particularly useful when the payload is already a byte array or a stream and does not require additional serialization.</p>
+<p>To publish a raw message, wrap the byte array or stream in one of the following types:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage-1.html">RawMessage&lt;T&gt;</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a></li>
+</ul>
+<p>The generic type parameter in <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage-1.html">RawMessage&lt;T&gt;</a> is used solely for message routing purposes, ensuring that the message is delivered to the correct endpoint, just as a custom derived class would.</p>
+<p>When the producer endpoint is configured to route a <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> or a derived class, the raw serializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;RawMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;))));
+</code></pre>
+<h3 id="binary">Binary</h3>
+<p>The binary serializer is similar to the raw serializer but supports the <code>x-message-type</code> header, meaning that these messages can be mixed with other (JSON-serialized) messages on the same topic and Silverback will be able to discriminate them.</p>
+<p>To publish a binary message, wrap the byte array or stream in one of the following types:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.BinaryMessage.html">BinaryMessage</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.BinaryMessage.html">BinaryMessage</a></li>
+<li>A custom class implementing <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a></li>
+</ul>
+<p>When the producer endpoint is configured to route a type implementing <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a>, the binary serializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyBinaryMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;))));
+</code></pre>
+<h2 id="string">String</h2>
+<p>The string serializer encodes a raw string into a byte array.</p>
+<p>To publish a string message, wrap the string in one of the following types:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage-1.html">StringMessage&lt;T&gt;</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a></li>
+</ul>
+<p>The generic type parameter in <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage-1.html">StringMessage&lt;T&gt;</a> is used solely for message routing purposes, ensuring that the message is delivered to the correct endpoint, just as a custom derived class would.</p>
+<p>When the producer endpoint is configured to route a <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a> or a derived class, the string serializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;StringMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;))));
+</code></pre>
+<p>The default encoding is UTF-8, but it can be customized using the <code>WithEncoding</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;StringMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .ProduceStrings(serializer =&gt; serializer
+                    .WithEncoding(MessageEncoding.Unicode)))));
+</code></pre>
+<h2 id="avro">Avro</h2>
+<p>To serialize in Avro format you can use the Avro serializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This serializer is based on the Confluent Avro serializer and requires a schema registry.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsAvro(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The C# message models can be generated from an Avro schema using <a href="https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/">AvroGen</a>.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Confluent Schema Registry</a> guide.</p>
+</div>
+<h2 id="protobuf">Protobuf</h2>
+<p>To serialize in Protobuf format you can use the Protobuf serializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This serializer is based on the Confluent Protobuf serializer and requires a schema registry.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsProtobuf(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Confluent Schema Registry</a> guide.</p>
+</div>
+<h2 id="custom-serializer">Custom Serializer</h2>
+<p>To implement a custom serializer, create a class implementing the <a class="xref" href="../../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> interface.</p>
+<pre><code class="lang-csharp">public class MyCustomSerializer : IMessageSerializer
+{
+    public ValueTask&lt;Stream?&gt; SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
+    {
+        // Implement the serialization logic here
+    }
+}
+</code></pre>
+<p>The custom serializer can be plugged in calling the <code>SerializeUsing</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeUsing(new MyCustomSerializer()))));
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../../samples/intro.html">Samples</a></li>
+<li><a class="xref" href="../consuming/deserialization.html">Deserializing the Consumed Messages</a> guide</li>
+</ul>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/producing/serialization.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

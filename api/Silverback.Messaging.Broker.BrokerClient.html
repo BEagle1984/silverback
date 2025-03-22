@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class BrokerClient
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class BrokerClient
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.BrokerClient">
+
+
+  <h1 id="Silverback_Messaging_Broker_BrokerClient" data-uid="Silverback.Messaging.Broker.BrokerClient" class="text-break">Class BrokerClient
+</h1>
+  <div class="markdown level0 summary"><p>Wraps the underlying client libraries (e.g. Kafka consumers and producers or Mqtt clients) and handles the connection
+lifecycle.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">BrokerClient</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_BrokerClient_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public abstract class BrokerClient : IBrokerClient, IDisposable, IAsyncDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient__ctor_System_String_Silverback_Diagnostics_ISilverbackLogger_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.%23ctor(System.String%2CSilverback.Diagnostics.ISilverbackLogger)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L30">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient__ctor_" data-uid="Silverback.Messaging.Broker.BrokerClient.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient__ctor_System_String_Silverback_Diagnostics_ISilverbackLogger_" data-uid="Silverback.Messaging.Broker.BrokerClient.#ctor(System.String,Silverback.Diagnostics.ISilverbackLogger)">BrokerClient(string, ISilverbackLogger)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected BrokerClient(string name, ISilverbackLogger logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The client name.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a></td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Disconnected.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Disconnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L57">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Disconnected_" data-uid="Silverback.Messaging.Broker.BrokerClient.Disconnected*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Disconnected" data-uid="Silverback.Messaging.Broker.BrokerClient.Disconnected">Disconnected</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent&lt;TArg&gt;</a> that is fired when the <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html#Silverback_Messaging_Broker_IBrokerClient_DisconnectAsync">DisconnectAsync()</a> method has been called
+and the client is disconnected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public AsyncEvent&lt;BrokerClient&gt; Disconnected { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Disconnecting.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Disconnecting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L54">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Disconnecting_" data-uid="Silverback.Messaging.Broker.BrokerClient.Disconnecting*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Disconnecting" data-uid="Silverback.Messaging.Broker.BrokerClient.Disconnecting">Disconnecting</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent&lt;TArg&gt;</a> that is fired when the <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html#Silverback_Messaging_Broker_IBrokerClient_DisconnectAsync">DisconnectAsync()</a> method is called
+and the client is disconnecting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public AsyncEvent&lt;BrokerClient&gt; Disconnecting { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_DisplayName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.DisplayName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L45">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_DisplayName_" data-uid="Silverback.Messaging.Broker.BrokerClient.DisplayName*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_DisplayName" data-uid="Silverback.Messaging.Broker.BrokerClient.DisplayName">DisplayName</h4>
+  <div class="markdown level1 summary"><p>Gets the name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string DisplayName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Initialized.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Initialized%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L51">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Initialized_" data-uid="Silverback.Messaging.Broker.BrokerClient.Initialized*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Initialized" data-uid="Silverback.Messaging.Broker.BrokerClient.Initialized">Initialized</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent&lt;TArg&gt;</a> that is fired when the <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html#Silverback_Messaging_Broker_IBrokerClient_ConnectAsync">ConnectAsync()</a> method has been called
+and the client has been successfully initialized. The connection with the broker will eventually be established.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public AsyncEvent&lt;BrokerClient&gt; Initialized { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Initializing.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Initializing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L48">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Initializing_" data-uid="Silverback.Messaging.Broker.BrokerClient.Initializing*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Initializing" data-uid="Silverback.Messaging.Broker.BrokerClient.Initializing">Initializing</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent&lt;TArg&gt;</a> that is fired when the <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html#Silverback_Messaging_Broker_IBrokerClient_ConnectAsync">ConnectAsync()</a> method is called
+and the client is initializing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public AsyncEvent&lt;BrokerClient&gt; Initializing { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Name.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Name%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L42">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Name_" data-uid="Silverback.Messaging.Broker.BrokerClient.Name*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Name" data-uid="Silverback.Messaging.Broker.BrokerClient.Name">Name</h4>
+  <div class="markdown level1 summary"><p>Gets the client name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string Name { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Status.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Status%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L60">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Status_" data-uid="Silverback.Messaging.Broker.BrokerClient.Status*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Status" data-uid="Silverback.Messaging.Broker.BrokerClient.Status">Status</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the client is connected to the broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ClientStatus Status { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.ClientStatus.html">ClientStatus</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_ConnectAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.ConnectAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L77">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_ConnectAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.ConnectAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_ConnectAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.ConnectAsync">ConnectAsync()</h4>
+  <div class="markdown level1 summary"><p>Initializes the connection to the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ValueTask ConnectAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_ConnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.ConnectCoreAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L157">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_ConnectCoreAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.ConnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_ConnectCoreAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.ConnectCoreAsync">ConnectCoreAsync()</h4>
+  <div class="markdown level1 summary"><p>Called when <a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html#Silverback_Messaging_Broker_BrokerClient_ConnectAsync">ConnectAsync()</a> is called to initialize the client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected abstract ValueTask ConnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_DisconnectAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.DisconnectAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L112">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_DisconnectAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.DisconnectAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_DisconnectAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.DisconnectAsync">DisconnectAsync()</h4>
+  <div class="markdown level1 summary"><p>Disconnects from the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ValueTask DisconnectAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_DisconnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.DisconnectCoreAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L165">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_DisconnectCoreAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.DisconnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_DisconnectCoreAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.DisconnectCoreAsync">DisconnectCoreAsync()</h4>
+  <div class="markdown level1 summary"><p>Called when <a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html#Silverback_Messaging_Broker_BrokerClient_DisconnectAsync">DisconnectAsync()</a> is called to disconnect the client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected abstract ValueTask DisconnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Dispose.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L63">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Dispose_" data-uid="Silverback.Messaging.Broker.BrokerClient.Dispose*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Dispose" data-uid="Silverback.Messaging.Broker.BrokerClient.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L133">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Dispose_" data-uid="Silverback.Messaging.Broker.BrokerClient.Dispose*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Broker.BrokerClient.Dispose(System.Boolean)">Dispose(bool)</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">disposing</span></td>
+        <td><p>A value indicating whether the method has been called by the <code>Dispose</code> method and not from the finalizer.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_DisposeAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.DisposeAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L70">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_DisposeAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.DisposeAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_DisposeAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.DisposeAsync">DisposeAsync()</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ValueTask DisposeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A task that represents the asynchronous dispose operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_DisposeCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.DisposeCoreAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L144">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_DisposeCoreAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.DisposeCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_DisposeCoreAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.DisposeCoreAsync">DisposeCoreAsync()</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual ValueTask DisposeCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A task that represents the asynchronous dispose operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_Finalize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.Finalize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L39">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_Finalize_" data-uid="Silverback.Messaging.Broker.BrokerClient.Finalize*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_Finalize" data-uid="Silverback.Messaging.Broker.BrokerClient.Finalize">~BrokerClient()</h4>
+  <div class="markdown level1 summary"><p>Finalizes an instance of the <a class="xref" href="Silverback.Messaging.Broker.BrokerClient.html">BrokerClient</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected ~BrokerClient()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient_ReconnectAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient.ReconnectAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L115">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_BrokerClient_ReconnectAsync_" data-uid="Silverback.Messaging.Broker.BrokerClient.ReconnectAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_BrokerClient_ReconnectAsync" data-uid="Silverback.Messaging.Broker.BrokerClient.ReconnectAsync">ReconnectAsync()</h4>
+  <div class="markdown level1 summary"><p>Disconnects and reconnects the client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ValueTask ReconnectAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Broker_BrokerClient_ReconnectAsync_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is used to recover when the consumer is stuck in state where it's not able to rollback or commit anymore.</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerClient.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerClient%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Broker/BrokerClient.cs/#L15" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class KafkaProducerConfigurationBuilder
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class KafkaProducerConfigurationBuilder
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder" class="text-break">Class KafkaProducerConfigurationBuilder
+</h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html">KafkaClientConfigurationBuilder</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a>, <span class="xref">ProducerConfig</span>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a>&gt;</div>
+    <div class="level2"><span class="xref">KafkaProducerConfigurationBuilder</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_Config">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.Config</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_This">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.This</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslMechanism_System_Nullable_Confluent_Kafka_SaslMechanism__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslMechanism(SaslMechanism?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithAcks_System_Nullable_Confluent_Kafka_Acks__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithAcks(Acks?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBootstrapServers_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithBootstrapServers(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMessageMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithMessageMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMessageCopyMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithMessageCopyMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReceiveMessageMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithReceiveMessageMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMaxInFlight_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithMaxInFlight(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataRefreshIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithTopicMetadataRefreshIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMetadataMaxAgeMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithMetadataMaxAgeMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataRefreshFastIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithTopicMetadataRefreshFastIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSparseTopicMetadataRefresh">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableSparseTopicMetadataRefresh()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSparseTopicMetadataRefresh">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableSparseTopicMetadataRefresh()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataPropagationMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithTopicMetadataPropagationMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicBlacklist_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithTopicBlacklist(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithDebug_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithDebug(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSocketTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketSendBufferBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSocketSendBufferBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketReceiveBufferBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSocketReceiveBufferBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSocketKeepalive">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableSocketKeepalive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSocketKeepalive">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableSocketKeepalive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSocketNagle">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableSocketNagle()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSocketNagle">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableSocketNagle()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketMaxFails_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSocketMaxFails(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerAddressTtl_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithBrokerAddressTtl(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerAddressFamily_System_Nullable_Confluent_Kafka_BrokerAddressFamily__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithBrokerAddressFamily(BrokerAddressFamily?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketConnectionSetupTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSocketConnectionSetupTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithConnectionsMaxIdleMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithConnectionsMaxIdleMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReconnectBackoffMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithReconnectBackoffMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReconnectBackoffMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithReconnectBackoffMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithStatisticsIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithStatisticsIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableApiVersionRequest">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableApiVersionRequest()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableApiVersionRequest">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableApiVersionRequest()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithApiVersionRequestTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithApiVersionRequestTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithApiVersionFallbackMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithApiVersionFallbackMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerVersionFallback_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithBrokerVersionFallback(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_AllowAutoCreateTopics">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.AllowAutoCreateTopics()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisallowAutoCreateTopics">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisallowAutoCreateTopics()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSecurityProtocol_System_Nullable_Confluent_Kafka_SecurityProtocol__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSecurityProtocol(SecurityProtocol?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCipherSuites_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCipherSuites(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCurvesList_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCurvesList(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslSigalgsList_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslSigalgsList(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslKeyLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyPassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslKeyPassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyPem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslKeyPem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCertificateLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCertificateLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCertificatePem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCertificatePem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCaLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaPem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCaPem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaCertificateStores_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCaCertificateStores(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCrlLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslCrlLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeystoreLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslKeystoreLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeystorePassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslKeystorePassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslProviders_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslProviders(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEngineLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslEngineLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEngineId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslEngineId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSslCertificateVerification">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableSslCertificateVerification()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSslCertificateVerification">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableSslCertificateVerification()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEndpointIdentificationAlgorithm_System_Nullable_Confluent_Kafka_SslEndpointIdentificationAlgorithm__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSslEndpointIdentificationAlgorithm(SslEndpointIdentificationAlgorithm?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosServiceName_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslKerberosServiceName(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosPrincipal_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslKerberosPrincipal(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosKinitCmd_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslKerberosKinitCmd(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosKeytab_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslKerberosKeytab(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosMinTimeBeforeRelogin_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslKerberosMinTimeBeforeRelogin(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslUsername_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslUsername(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslPassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslPassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerConfig_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerConfig(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSaslOauthbearerUnsecureJwt">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableSaslOauthbearerUnsecureJwt()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSaslOauthbearerUnsecureJwt">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableSaslOauthbearerUnsecureJwt()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerMethod_System_Nullable_Confluent_Kafka_SaslOauthbearerMethod__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerMethod(SaslOauthbearerMethod?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerClientId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerClientId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerClientSecret_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerClientSecret(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerScope_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerScope(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerExtensions_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerExtensions(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerTokenEndpointUrl_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithSaslOauthbearerTokenEndpointUrl(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithPluginLibraryPaths_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithPluginLibraryPaths(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientRack_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithClientRack(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithCancellationDelayMaxMs_System_Int32_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithCancellationDelayMaxMs(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithClientId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithRetryBackoffMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithRetryBackoffMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithRetryBackoffMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithRetryBackoffMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientDnsLookup_System_Nullable_Confluent_Kafka_ClientDnsLookup__">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.WithClientDnsLookup(ClientDnsLookup?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableMetricsPush">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.EnableMetricsPush()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableMetricsPush">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.DisableMetricsPush()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_BuildCore">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.BuildCore()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class KafkaProducerConfigurationBuilder : KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder__ctor_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.%23ctor(System.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L40">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder__ctor_System_IServiceProvider_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.#ctor(System.IServiceProvider)">KafkaProducerConfigurationBuilder(IServiceProvider)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder(IServiceProvider serviceProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_This.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.This%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L46">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_This_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.This*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_This" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.This">This</h4>
+  <div class="markdown level1 summary"><p>Gets this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override KafkaProducerConfigurationBuilder This { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_This">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.This</a></div>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_This_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is necessary to work around casting in the base classes.</p>
+</div>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Build%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L344">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Build_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Build" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfiguration Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_BuildCore.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.BuildCore%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L2768">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_BuildCore_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.BuildCore*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_BuildCore" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.BuildCore">BuildCore()</h4>
+  <div class="markdown level1 summary"><p>Builds the configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override KafkaProducerConfiguration BuildCore()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a></td>
+        <td><p>The configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_BuildCore">KafkaClientConfigurationBuilder&lt;KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder&gt;.BuildCore()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDeliveryReports.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDeliveryReports%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L255">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDeliveryReports_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDeliveryReports*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDeliveryReports" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDeliveryReports">DisableDeliveryReports()</h4>
+  <div class="markdown level1 summary"><p>Disable notification of delivery reports. This will enable &quot;fire and forget&quot; semantics and give a small boost in performance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisableDeliveryReports()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDisposeOnException.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDisposeOnException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L171">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDisposeOnException_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDisposeOnException*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableDisposeOnException" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableDisposeOnException">DisableDisposeOnException()</h4>
+  <div class="markdown level1 summary"><p>Specifies tjat the producer don't have to be disposed and recreated if a <span class="xref">Confluent.Kafka.KafkaException</span> is thrown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisableDisposeOnException()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableGaplessGuarantee.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableGaplessGuarantee%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L308">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableGaplessGuarantee_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableGaplessGuarantee*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableGaplessGuarantee" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableGaplessGuarantee">DisableGaplessGuarantee()</h4>
+  <div class="markdown level1 summary"><p>Disables the gapless guarantee.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisableGaplessGuarantee()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableIdempotence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableIdempotence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L282">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableIdempotence_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableIdempotence*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableIdempotence" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableIdempotence">DisableIdempotence()</h4>
+  <div class="markdown level1 summary"><p>The producer will <b>not</b> ensure that messages are successfully produced exactly once and in the original produce order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisableIdempotence()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableTransactions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableTransactions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L335">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableTransactions_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableTransactions*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisableTransactions" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisableTransactions">DisableTransactions()</h4>
+  <div class="markdown level1 summary"><p>Disables the Kafka transactions. The producer is limited to idempotent delivery (see <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence">EnableIdempotence()</a>).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisableTransactions()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisposeOnException.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisposeOnException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L159">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisposeOnException_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisposeOnException*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_DisposeOnException" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.DisposeOnException">DisposeOnException()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the producer has to be disposed and recreated if a <span class="xref">Confluent.Kafka.KafkaException</span> is thrown.
+This is the default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder DisposeOnException()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableDeliveryReports.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableDeliveryReports%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L243">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableDeliveryReports_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableDeliveryReports*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableDeliveryReports" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableDeliveryReports">EnableDeliveryReports()</h4>
+  <div class="markdown level1 summary"><p>Enable notification of delivery reports.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder EnableDeliveryReports()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableGaplessGuarantee.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableGaplessGuarantee%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L296">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableGaplessGuarantee_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableGaplessGuarantee*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableGaplessGuarantee" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableGaplessGuarantee">EnableGaplessGuarantee()</h4>
+  <div class="markdown level1 summary"><p>Specifies that an error that could result in a gap in the produced message series when a batch of messages fails, must raise a
+fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_MessageTimeoutMs">MessageTimeoutMs</a>
+are not covered by this guarantee. Requires <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence">EnableIdempotence()</a>=true.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder EnableGaplessGuarantee()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableIdempotence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L270">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableIdempotence*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableIdempotence">EnableIdempotence()</h4>
+  <div class="markdown level1 summary"><p>The producer will ensure that messages are successfully produced exactly once and in the original produce order.
+The following configuration properties are adjusted automatically (if not modified by the user) when idempotence is enabled:
+<code>max.in.flight.requests.per.connection=5</code> (must be less than or equal to 5), <code>retries=INT32_MAX</code> (must be greater than 0),
+<code>acks=all</code>, <code>queuing.strategy=fifo</code>. Producer instantiation will fail if user-supplied configuration is incompatible.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder EnableIdempotence()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableTransactions_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableTransactions(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L326">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableTransactions_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableTransactions*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableTransactions_System_String_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.EnableTransactions(System.String)">EnableTransactions(string)</h4>
+  <div class="markdown level1 summary"><p>Enables the Kafka transactions and sets the identifier to be used to identify the same transactional producer instance across
+process restarts. This allows the producer to guarantee that transactions corresponding to earlier instances of the same producer
+have been finalized prior to starting any new transaction, and that any zombie instances are fenced off.
+Requires broker version &gt;= 0.11.0.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder EnableTransactions(string transactionalId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">transactionalId</span></td>
+        <td><p>The identifier to be used to identify the same transactional producer instance across process restarts.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_IgnoreIfNotAcknowledged.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.IgnoreIfNotAcknowledged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L146">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_IgnoreIfNotAcknowledged_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.IgnoreIfNotAcknowledged*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_IgnoreIfNotAcknowledged" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.IgnoreIfNotAcknowledged">IgnoreIfNotAcknowledged()</h4>
+  <div class="markdown level1 summary"><p>Specifies that no exception has be thrown by the producer if the persistence is not acknowledge by the broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder IgnoreIfNotAcknowledged()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_System_Object___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce(System.Action%7BSilverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder%7BSystem.Object%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L57">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_System_Object___" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder{System.Object}})">Produce(Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;object&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder Produce(Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;object&gt;&gt; configurationBuilderAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;&gt;</td>
+        <td><span class="parametername">configurationBuilderAction</span></td>
+        <td><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_System_Object___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce(System.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder%7BSystem.Object%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L73">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder_System_Object___" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce(System.String,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder{System.Object}})">Produce(string?, Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;object&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder Produce(string? name, Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;object&gt;&gt; configurationBuilderAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+By default, the name will be generated concatenating the topic name and the message type.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;&gt;</td>
+        <td><span class="parametername">configurationBuilderAction</span></td>
+        <td><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce__1_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder___0___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce%60%601(System.Action%7BSilverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder%7B%60%600%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L89">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce__1_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder___0___" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce``1(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder{``0}})">Produce&lt;TMessage&gt;(Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder Produce&lt;TMessage&gt;(Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt; configurationBuilderAction) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">configurationBuilderAction</span></td>
+        <td><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type (or base type) of the messages being produced. This is used to setup the serializer and will determine the type of the
+message parameter in the nested configuration functions.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce__1_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder___0___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce%60%601(System.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder%7B%60%600%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L110">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_Produce__1_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointConfigurationBuilder___0___" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.Produce``1(System.String,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder{``0}})">Produce&lt;TMessage&gt;(string?, Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder Produce&lt;TMessage&gt;(string? name, Action&lt;KafkaProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt; configurationBuilderAction) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+By default, the name will be generated concatenating the topic name and the message type.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointConfigurationBuilder-1.html">KafkaProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">configurationBuilderAction</span></td>
+        <td><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type (or base type) of the messages being produced. This is used to set up the serializer and will determine the type of the
+message parameter in the nested configuration functions.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_ThrowIfNotAcknowledged.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.ThrowIfNotAcknowledged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L134">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_ThrowIfNotAcknowledged_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.ThrowIfNotAcknowledged*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_ThrowIfNotAcknowledged" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.ThrowIfNotAcknowledged">ThrowIfNotAcknowledged()</h4>
+  <div class="markdown level1 summary"><p>Specifies that an exception must be thrown by the producer if the persistence is not acknowledge by the broker.
+This is the default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder ThrowIfNotAcknowledged()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchNumMessages_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchNumMessages(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L523">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchNumMessages_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchNumMessages*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchNumMessages_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchNumMessages(System.Nullable{System.Int32})">WithBatchNumMessages(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum number of messages batched in one message set. The total message set size is also limited by
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_BatchSize">BatchSize</a> and <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MessageMaxBytes">MessageMaxBytes</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithBatchNumMessages(int? batchNumMessages)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">batchNumMessages</span></td>
+        <td><p>The maximum number of messages batched in one message set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchSize_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchSize(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L537">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchSize_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchSize*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithBatchSize_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithBatchSize(System.Nullable{System.Int32})">WithBatchSize(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum size (in bytes) of all messages batched in one message set, including the protocol framing overhead. This limit
+is applied after the first message has been added to the batch, regardless of the first message size, this is to ensure that messages
+that exceed the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_BatchSize">BatchSize</a> are still produced. The total message set size is also limited by
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_BatchNumMessages">BatchNumMessages</a> and <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MessageMaxBytes">MessageMaxBytes</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithBatchSize(int? batchSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">batchSize</span></td>
+        <td><p>The maximum size of all messages batched in one message set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionLevel_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionLevel(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L420">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionLevel_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionLevel*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionLevel_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionLevel(System.Nullable{System.Int32})">WithCompressionLevel(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the compression level parameter for the algorithm selected by configuration property <span class="xref">Confluent.Kafka.CompressionType</span>. Higher
+values will result in better compression at the cost of higher CPU usage. Usable range is algorithm-dependent: [0-9] for gzip,
+[0-12] for lz4, only 0 for snappy. -1 = codec-dependent default compression level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithCompressionLevel(int? compressionLevel)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">compressionLevel</span></td>
+        <td><p>The compression level parameter for the algorithm selected by configuration property <span class="xref">Confluent.Kafka.CompressionType</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionType_System_Nullable_Confluent_Kafka_CompressionType__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionType(System.Nullable%7BConfluent.Kafka.CompressionType%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L511">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionType_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionType*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithCompressionType_System_Nullable_Confluent_Kafka_CompressionType__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithCompressionType(System.Nullable{Confluent.Kafka.CompressionType})">WithCompressionType(CompressionType?)</h4>
+  <div class="markdown level1 summary"><p>Sets the compression codec to be used to compress message sets. This is the default value for all topics, may be overridden by the
+topic configuration property <code>compression.codec</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithCompressionType(CompressionType? compressionType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">CompressionType</span>?</td>
+        <td><span class="parametername">compressionType</span></td>
+        <td><p>The compression codec to be used to compress message sets.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithFlushTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithFlushTimeout(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L186">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithFlushTimeout_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithFlushTimeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithFlushTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithFlushTimeout(System.TimeSpan)">WithFlushTimeout(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Specifies the flush operation timeout. The default is 30 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithFlushTimeout(TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The flush operation timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithLingerMs_System_Nullable_System_Double__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithLingerMs(System.Nullable%7BSystem.Double%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L473">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithLingerMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithLingerMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithLingerMs_System_Nullable_System_Double__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithLingerMs(System.Nullable{System.Double})">WithLingerMs(double?)</h4>
+  <div class="markdown level1 summary"><p>Sets the delay in milliseconds to wait for messages in the producer queue to accumulate before constructing message batches to
+transmit to brokers. A higher value allows larger and more effective (less overhead, improved compression) batches of messages to
+accumulate at the expense of increased message delivery latency.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithLingerMs(double? lingerMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>?</td>
+        <td><span class="parametername">lingerMs</span></td>
+        <td><p>The delay to wait for messages in the producer queue to accumulate before constructing message batches.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageSendMaxRetries_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageSendMaxRetries(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L485">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageSendMaxRetries_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageSendMaxRetries*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageSendMaxRetries_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageSendMaxRetries(System.Nullable{System.Int32})">WithMessageSendMaxRetries(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets how many times to retry sending a failing message.<br>
+Note: retrying may cause reordering unless <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_EnableIdempotence">EnableIdempotence()</a> is set to <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithMessageSendMaxRetries(int? messageSendMaxRetries)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">messageSendMaxRetries</span></td>
+        <td><p>How many times to retry sending a failing message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageTimeoutMs_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageTimeoutMs(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L388">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageTimeoutMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithMessageTimeoutMs_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithMessageTimeoutMs(System.Nullable{System.Int32})">WithMessageTimeoutMs(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the local message timeout (in milliseconds). This value is only enforced locally and limits the time a produced message waits
+for successful delivery. A time of 0 is infinite. This is the maximum time to deliver a message (including retries) and a delivery
+error will occur when either the retry count or the message timeout are exceeded. The message timeout is automatically adjusted to
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_TransactionTimeoutMs">TransactionTimeoutMs</a> if  <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_TransactionalId">TransactionalId</a> is set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithMessageTimeoutMs(int? messageTimeoutMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">messageTimeoutMs</span></td>
+        <td><p>The local message timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithPartitioner_System_Nullable_Confluent_Kafka_Partitioner__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithPartitioner(System.Nullable%7BConfluent.Kafka.Partitioner%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L407">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithPartitioner_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithPartitioner*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithPartitioner_System_Nullable_Confluent_Kafka_Partitioner__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithPartitioner(System.Nullable{Confluent.Kafka.Partitioner})">WithPartitioner(Partitioner?)</h4>
+  <div class="markdown level1 summary"><p>Sets the partitioner to be used to decide the target partition for a message: <span class="xref">Confluent.Kafka.Partitioner.Random</span>
+to randomly distribute the messages, <span class="xref">Confluent.Kafka.Partitioner.Consistent</span> to use the CRC32 hash of the message key
+(empty and null keys are mapped to a single partition), <span class="xref">Confluent.Kafka.Partitioner.ConsistentRandom</span> to use the CRC32
+hash of the message key (but empty and null keys are randomly partitioned), <span class="xref">Confluent.Kafka.Partitioner.Murmur2</span> to use
+a Java Producer compatible Murmur2 hash of the message key (null keys are mapped to a single partition), or
+<span class="xref">Confluent.Kafka.Partitioner.Murmur2Random</span> to use a Java Producer compatible Murmur2 hash of the message key (but null
+keys are randomly partitioned).<br>
+The default is <span class="xref">Confluent.Kafka.Partitioner.ConsistentRandom</span>, while <span class="xref">Confluent.Kafka.Partitioner.Murmur2Random</span>
+is functionally equivalent to the default partitioner in the Java Producer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithPartitioner(Partitioner? partitioner)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Partitioner</span>?</td>
+        <td><span class="parametername">partitioner</span></td>
+        <td><p>The partitioner to be used to decide the target partition for a message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingBackpressureThreshold_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingBackpressureThreshold(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L499">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingBackpressureThreshold_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingBackpressureThreshold*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingBackpressureThreshold_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingBackpressureThreshold(System.Nullable{System.Int32})">WithQueueBufferingBackpressureThreshold(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's message accumulator.
+If the number of not yet transmitted requests equals or exceeds this number, produce request creation that would have otherwise
+been triggered (for example, in accordance with <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_LingerMs">LingerMs</a>) will be delayed. A lower number
+yields larger and more effective batches. A higher value can improve latency when using compression on slow machines.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithQueueBufferingBackpressureThreshold(int? queueBufferingBackpressureThreshold)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">queueBufferingBackpressureThreshold</span></td>
+        <td><p>The threshold of outstanding not yet transmitted broker requests.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxKbytes_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxKbytes(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L460">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxKbytes_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxKbytes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxKbytes_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxKbytes(System.Nullable{System.Int32})">WithQueueBufferingMaxKbytes(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum total message size sum allowed on the producer queue. This queue is shared by all topics and partitions. This
+property has higher priority than <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_QueueBufferingMaxMessages">QueueBufferingMaxMessages</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithQueueBufferingMaxKbytes(int? queueBufferingMaxKbytes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">queueBufferingMaxKbytes</span></td>
+        <td><p>The maximum total message size sum allowed on the producer queue.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxMessages_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxMessages(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L448">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxMessages_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxMessages*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithQueueBufferingMaxMessages_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithQueueBufferingMaxMessages(System.Nullable{System.Int32})">WithQueueBufferingMaxMessages(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithQueueBufferingMaxMessages(int? queueBufferingMaxMessages)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">queueBufferingMaxMessages</span></td>
+        <td><p>The maximum number of messages allowed on the producer queue.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithRequestTimeoutMs_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithRequestTimeoutMs(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L374">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithRequestTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithRequestTimeoutMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithRequestTimeoutMs_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithRequestTimeoutMs(System.Nullable{System.Int32})">WithRequestTimeoutMs(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the ack timeout of the producer request in milliseconds. This value is only enforced by the broker and relies on
+<code>request.required.acks</code> being != 0.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">requestTimeoutMs</span></td>
+        <td><p>The ack timeout of the producer request.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithStickyPartitioningLingerMs_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithStickyPartitioningLingerMs(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L552">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithStickyPartitioningLingerMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithStickyPartitioningLingerMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithStickyPartitioningLingerMs_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithStickyPartitioningLingerMs(System.Nullable{System.Int32})">WithStickyPartitioningLingerMs(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the delay in milliseconds to wait to assign new sticky partitions for each topic. By default this is set to double the time
+of <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_LingerMs">LingerMs</a>. To disable sticky behavior, set it to 0. This behavior affects messages with
+the key <code>null</code> in all cases, and messages with key lengths of zero when the <span class="xref">Confluent.Kafka.Partitioner.ConsistentRandom</span>
+partitioner is in use. These messages would otherwise be assigned randomly. A higher value allows for more effective batching of
+these messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithStickyPartitioningLingerMs(int? stickyPartitioningLingerMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">stickyPartitioningLingerMs</span></td>
+        <td><p>The delay in milliseconds to wait to assign new sticky partitions for each topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionAbortTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionAbortTimeout(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L231">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionAbortTimeout_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionAbortTimeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionAbortTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionAbortTimeout(System.TimeSpan)">WithTransactionAbortTimeout(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Specifies the transaction abort operation timeout. The default is 30 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithTransactionAbortTimeout(TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The transaction abort operation timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionCommitTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionCommitTimeout(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L216">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionCommitTimeout_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionCommitTimeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionCommitTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionCommitTimeout(System.TimeSpan)">WithTransactionCommitTimeout(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Specifies the transaction commit operation timeout. The default is 30 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithTransactionCommitTimeout(TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The transaction commit operation timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionTimeoutMs_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionTimeoutMs(System.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L437">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionTimeoutMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionTimeoutMs_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionTimeoutMs(System.Nullable{System.Int32})">WithTransactionTimeoutMs(int?)</h4>
+  <div class="markdown level1 summary"><p>Sets the maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction status update from
+the producer before proactively aborting the ongoing transaction. If this value is larger than the <code>transaction.max.timeout.ms</code>
+setting in the broker, the init transaction call will fail with ERR_INVALID_TRANSACTION_TIMEOUT. The transaction timeout automatically
+adjusts <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_MessageTimeoutMs">MessageTimeoutMs</a> and <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketTimeoutMs">SocketTimeoutMs</a> unless explicitly configured in which case
+they must not exceed the transaction timeout (<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketTimeoutMs">SocketTimeoutMs</a> must be at least 100ms lower than
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfiguration_TransactionTimeoutMs">TransactionTimeoutMs</a>).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithTransactionTimeoutMs(int? transactionTimeoutMs)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">transactionTimeoutMs</span></td>
+        <td><p>The maximum amount of time that the transaction coordinator will wait for a transaction status update from the producer before
+proactively aborting the ongoing transaction.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionsInitTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionsInitTimeout(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaProducerConfigurationBuilder.cs/#L201">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionsInitTimeout_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionsInitTimeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder_WithTransactionsInitTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.WithTransactionsInitTimeout(System.TimeSpan)">WithTransactionsInitTimeout(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Specifies the transactions init operation timeout. The default is 30 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaProducerConfigurationBuilder WithTransactionsInitTimeout(TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The transactions init operation timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder.html">KafkaProducerConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaProducerConfigurationBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaProducerConfigurationBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L2612" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

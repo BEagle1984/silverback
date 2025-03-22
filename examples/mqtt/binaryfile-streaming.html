@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>MQTT - Files Streaming | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="MQTT - Files Streaming | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+  
+  <meta property="docfx:rel" content="../../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="example-mqtt-binaryfile">
+<h1 id="mqtt---files-streaming">MQTT - Files Streaming</h1>
+
+<p>This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through Mqtt.</p>
+<p>See also: <a class="xref" href="../../guides/broker/producing/serialization.html">Serialization</a>, <a class="xref" href="../../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>, <a class="xref" href="../../guides/broker/producing/chunking.html">Chunking</a>~~~~</p>
+<h2 id="producer">Producer</h2>
+<p>The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom <code>BinaryMessage</code> to forward further metadata (the file name in this example).</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-custom-message" role="tab" aria-controls="tabpanel_1_producer-custom-message" data-tab="producer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_producer-controller" role="tab" aria-controls="tabpanel_1_producer-controller" data-tab="producer-controller" tabindex="-1">API Controller</a>
+</li>
+</ul>
+<section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
+<pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Mqtt as message broker
+            .WithConnectionToMessageBroker(
+                options =&gt; options
+                    .AddMqtt())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;();
+
+        // Add API controllers and SwaggerGen
+        services.AddControllers();
+        services.AddSwaggerGen();
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        // Enable middlewares to serve generated Swagger JSON and UI
+        app.UseSwagger().UseSwaggerUI(
+            uiOptions =&gt;
+            {
+                uiOptions.SwaggerEndpoint(
+                    &quot;/swagger/v1/swagger.json&quot;,
+                    $&quot;{GetType().Assembly.FullName} API&quot;);
+            });
+
+        // Enable routing and endpoints for controllers
+        app.UseRouting();
+        app.UseEndpoints(endpoints =&gt; { endpoints.MapControllers(); });
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddMqttClients(
+                clients =&gt; clients
+
+                    // Configure connection
+                    .ConnectViaTcp(&quot;localhost&quot;)
+
+                    // Add an MQTT client
+                    .AddClient(
+                        client =&gt; client
+                            .WithClientId(&quot;samples.binary-file.producer&quot;)
+
+                            // Produce the binary files to the samples/binary-files topic
+                            .Produce&lt;BinaryMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ProduceTo(&quot;samples/binary-files&quot;)
+                                    .WithAtLeastOnceQoS()
+                                    .Retain())));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-custom-message" role="tabpanel" data-tab="producer-custom-message" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Messages;
+
+public class CustomBinaryMessage : BinaryMessage
+{
+    [Header(&quot;x-filename&quot;)]
+    public string? Filename { get; set; }
+}
+</code></pre></section>
+<section id="tabpanel_1_producer-controller" role="tabpanel" data-tab="producer-controller" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.ProducerController">using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+using Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Controllers;
+
+[ApiController]
+[Route(&quot;[controller]&quot;)]
+public class ProducerController : ControllerBase
+{
+    private readonly IPublisher _publisher;
+
+    public ProducerController(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    [HttpPost(&quot;binary-file&quot;)]
+    public async Task&lt;IActionResult&gt; ProduceBinaryFileAsync(
+        string filePath,
+        string? contentType)
+    {
+        // Open specified file stream
+        await using FileStream fileStream = System.IO.File.OpenRead(filePath);
+
+        // Create a BinaryMessage that wraps the file stream
+        BinaryMessage binaryMessage = new(fileStream);
+
+        if (!string.IsNullOrEmpty(contentType))
+            binaryMessage.ContentType = contentType;
+
+        // Publish the BinaryMessage that will be routed to the outbound
+        // endpoint. The FileStream will be read and produced chunk by chunk,
+        // without the entire file being loaded into memory.
+        await _publisher.PublishAsync(binaryMessage);
+
+        return NoContent();
+    }
+
+    [HttpPost(&quot;custom-binary-file&quot;)]
+    public async Task&lt;IActionResult&gt; ProduceBinaryFileWithCustomHeadersAsync(
+        string filePath,
+        string? contentType)
+    {
+        // Open specified file stream
+        await using FileStream fileStream = System.IO.File.OpenRead(filePath);
+
+        // Create a CustomBinaryMessage that wraps the file stream. The
+        // CustomBinaryMessage extends the BinaryMessage adding an extra
+        // Filename property that is also exported as header.
+        CustomBinaryMessage binaryMessage = new()
+        {
+            Content = fileStream,
+            Filename = Path.GetFileName(filePath)
+        };
+
+        if (!string.IsNullOrEmpty(contentType))
+            binaryMessage.ContentType = contentType;
+
+        // Publish the BinaryMessage that will be routed to the outbound
+        // endpoint. The FileStream will be read and produced chunk by chunk,
+        // without the entire file being loaded into memory.
+        await _publisher.PublishAsync(binaryMessage);
+
+        return NoContent();
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer</a></em></p>
+<h2 id="consumer">Consumer</h2>
+<p>The consumer simply streams the file to a temporary folder in the local file system.</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-custom-message" role="tab" aria-controls="tabpanel_2_consumer-custom-message" data-tab="consumer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
+using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer;
+
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Enable Silverback
+        services.AddSilverback()
+
+            // Use Apache Mqtt as message broker
+            .WithConnectionToMessageBroker(
+                options =&gt; options
+                    .AddMqtt())
+
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;()
+
+            // Register the subscribers
+            .AddSingletonSubscriber&lt;BinaryFileSubscriber&gt;();
+    }
+
+    public void Configure()
+    {
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
+using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder
+            .AddMqttClients(
+                clients =&gt; clients
+
+                    // Configure connection
+                    .ConnectTo(&quot;localhost&quot;)
+
+                    // Add an MQTT client
+                    .AddClient(
+                        client =&gt; client
+                            .WithClientId(&quot;samples.binary-file.consumer&quot;)
+
+                            // Consume the binary files from the samples/binary-files topic.
+                            //
+                            // A CustomBinaryMessage is used instead of the built-in
+                            // BinaryMessage to be able to add the extra header
+                            // containing the file name.
+                            //
+                            // Since the CustomBinaryMessage extends the built-in
+                            // BinaryMessage, the serializer will be automatically
+                            // switched to the BinaryMessageSerializer.
+                            .Consume&lt;CustomBinaryMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ConsumeFrom(&quot;samples/binary-files&quot;)
+                                    .WithAtLeastOnceQoS()
+
+                                    // Retry each chunks sequence 5 times in case of an
+                                    // exception
+                                    .OnError(policy =&gt; policy.Retry(5)))));
+    }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-custom-message" role="tabpanel" data-tab="consumer-custom-message" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
+
+public class CustomBinaryMessage : BinaryMessage
+{
+    [Header(&quot;x-filename&quot;)]
+    public string? Filename { get; set; }
+}
+</code></pre></section>
+<section id="tabpanel_2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.BinaryFileSubscriber">using System;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
+
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers;
+
+public class BinaryFileSubscriber
+{
+    private const string OutputPath = &quot;../../temp&quot;;
+
+    private readonly ILogger&lt;BinaryFileSubscriber&gt; _logger;
+
+    public BinaryFileSubscriber(ILogger&lt;BinaryFileSubscriber&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task OnBinaryMessageReceivedAsync(CustomBinaryMessage binaryMessage)
+    {
+        EnsureTargetFolderExists();
+
+        string filename = Guid.NewGuid().ToString(&quot;N&quot;) + binaryMessage.Filename;
+
+        _logger.LogInformation(&quot;Saving binary file as {Filename}...&quot;, filename);
+
+        // Create a FileStream to save the file
+        using FileStream fileStream =
+            File.OpenWrite(Path.Combine(OutputPath, filename));
+
+        if (binaryMessage.Content != null)
+        {
+            // Asynchronously copy the message content to the FileStream.
+            // The message chunks are streamed directly and the entire file is
+            // never loaded into memory.
+            await binaryMessage.Content.CopyToAsync(fileStream);
+        }
+
+        _logger.LogInformation(
+            &quot;Written {FileStreamLength} bytes into {Filename}&quot;,
+            fileStream.Length,
+            filename);
+    }
+
+    private static void EnsureTargetFolderExists()
+    {
+        if (!Directory.Exists(OutputPath))
+            Directory.CreateDirectory(OutputPath);
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Consumer</a></em></p>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/examples/mqtt/binaryfile-streaming.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

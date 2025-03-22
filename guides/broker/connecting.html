@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Connecting to a Message Broker | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Connecting to a Message Broker | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+  
+  <meta property="docfx:rel" content="../../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="broker">
+<h1 id="connecting-to-a-message-broker">Connecting to a Message Broker</h1>
+
+<p>To connect Silverback to a message broker, you need to reference the appropriate integration package.</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_kafka" role="tab" aria-controls="tabpanel_1_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_mqtt" role="tab" aria-controls="tabpanel_1_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-poweshell">dotnet add package Silverback.Integration.Kafka
+</code></pre>
+</section>
+<section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-poweshell">dotnet add package Silverback.Integration.Mqtt
+</code></pre>
+</section>
+</div>
+
+<p>Once the package is referenced, add the broker to your Silverback configuration:</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_kafka" role="tab" aria-controls="tabpanel_2_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_mqtt" role="tab" aria-controls="tabpanel_2_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_2_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka());
+</code></pre>
+</section>
+<section id="tabpanel_2_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt());
+</code></pre>
+</section>
+</div>
+
+<p>You can also configure multiple brokers within the same application:</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddMqtt());
+</code></pre>
+<h2 id="configuring-clients-and-endpoints">Configuring Clients and Endpoints</h2>
+<p>The next step is configuring broker clients and endpoints for message consumption and production.</p>
+<div class="tabGroup" id="tabgroup_3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_3_kafka" role="tab" aria-controls="tabpanel_3_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_3_mqtt" role="tab" aria-controls="tabpanel_3_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_3_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;))
+            .Produce&lt;MyMessage2&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic-2&quot;)))
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;consumer1&quot;)
+            .AutoResetOffsetToEarliest()
+            .Consume&lt;MyMessage3&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic-3&quot;)
+                .OnError(policy =&gt; policy.Retry(3).ThenSkip()))
+            .Consume&lt;MyMessage4&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic-4&quot;)
+                .EnableBatchProcessing(100, TimeSpan.FromSeconds(5))
+                .OnError(policy =&gt; policy.Skip()))));
+</code></pre>
+</section>
+<section id="tabpanel_3_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(client =&gt; client
+            .WithClientId(&quot;my.client&quot;)
+            .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;messages/my&quot;)
+                .WithAtLeastOnceQoS()
+                .Retain()
+                .IgnoreNoMatchingSubscribersError())
+            .Consume(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;messages/other&quot;)
+                    .WithAtLeastOnceQoS()
+                    .OnError(policy =&gt; policy.Skip()))
+            .SendLastWillMessage&lt;TestamentMessage&gt;(lastWill =&gt; lastWill
+                .SendMessage(new TestamentMessage(){ ... })
+                .ProduceTo(&quot;testaments&quot;))));
+</code></pre>
+</section>
+</div>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p>A <code>KafkaProducer</code> can produce messages of different types to different topics (or the same message type to multiple topics). Similarly, a <code>KafkaConsumer</code> can consume messages from different topics. Each topic can have its own configuration (serializer/deserializer, etc.).<br>
+The same applies to MQTT clients and topics.</p>
+</div>
+<p>Since client configuration can become verbose, it’s best to separate it into a dedicated class using the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a> interface.</p>
+<div class="tabGroup" id="tabgroup_4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_4_kafka" role="tab" aria-controls="tabpanel_4_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_4_mqtt" role="tab" aria-controls="tabpanel_4_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_4_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddBrokerClientsConfigurator&lt;MyClientsConfigurator&gt;();
+</code></pre>
+</section>
+<section id="tabpanel_4_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddBrokerClientsConfigurator&lt;MyClientsConfigurator&gt;();
+</code></pre>
+</section>
+</div>
+<div class="tabGroup" id="tabgroup_5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_5_kafka" role="tab" aria-controls="tabpanel_5_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_5_mqtt" role="tab" aria-controls="tabpanel_5_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_5_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">public class MyClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder.AddKafkaClients(clients =&gt; clients
+            .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+            .AddProducer(producer =&gt; producer
+                .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;my-topic&quot;)))
+            .AddConsumer(consumer =&gt; consumer
+                .WithGroupId(&quot;consumer1&quot;)
+                .AutoResetOffsetToEarliest()
+                .Consume&lt;MyOtherMessage&gt;(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;my-other-topic&quot;)
+                    .EnableBatchProcessing(100, TimeSpan.FromSeconds(5))
+                    .OnError(policy =&gt; policy.Retry(3).ThenSkip()))));
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_5_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyClientsConfigurator : IBrokerClientsConfigurator
+{
+    public void Configure(BrokerClientsConfigurationBuilder builder)
+    {
+        builder.AddMqttClients(clients =&gt; clients
+            .ConnectViaTcp(&quot;localhost&quot;)
+            .AddClient(client =&gt; client
+                .WithClientId(&quot;my.client&quot;)
+                .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;messages/my&quot;)
+                    .WithAtLeastOnceQoS()
+                    .Retain()
+                    .IgnoreNoMatchingSubscribersError())
+                .Consume(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;messages/other&quot;)
+                        .WithAtLeastOnceQoS()
+                        .OnError(policy =&gt; policy.Skip()))
+                .SendLastWillMessage&lt;TestamentMessage&gt;(lastWill =&gt; lastWill
+                    .SendMessage(new TestamentMessage(){ ... })
+                    .ProduceTo(&quot;testaments&quot;))));
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p><a class="xref" href="../../api/Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a> implementations are registered as scoped services. You can register multiple implementations to split the configuration and inject dependencies (e.g., <code>IOptions</code> or <code>DbContext</code>) to load variables dynamically.</p>
+</div>
+<h2 id="connection-modes">Connection Modes</h2>
+<p>By default, Silverback connects to the message broker when the application starts. However, you can modify this behavior.</p>
+<p>You can postpone the connection to after the application has started using <code>BrokerClientConnectionMode.AfterStartup</code>.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .WithConnectionOptions(new BrokerClientConnectionOptions
+        {
+            Mode = BrokerClientConnectionMode.AfterStartup
+        }));
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p><a class="xref" href="callbacks.html">Callbacks</a> can be used to execute custom code when the connection is established.</p>
+</div>
+<p>You can also completely disable automatic connection and handle it manually when needed.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .WithConnectionOptions(new BrokerClientConnectionOptions
+        {
+            Mode = BrokerClientConnectionMode.Manual
+        }))
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)))
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .WithGroupId(&quot;consumer1&quot;)
+            .Consume&lt;MyOtherMessage&gt;(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-other-topic&quot;))));
+;
+</code></pre>
+<p>In this case, you must manually connect the clients:</p>
+<pre><code class="lang-csharp">public class MyService
+{
+    private readonly IBrokerClientCollection _clients;
+
+    public MyService(IBrokerClientCollection clients)
+    {
+        _clients = clients;
+    }
+
+    public async ValueTask ConnectAll()
+    {
+        await _clients.ConnectAllAsync();
+    }
+    
+    public async ValueTask ConnectConsumer()
+    {
+        await _clients[&quot;consumer1&quot;].ConnectAsync();
+    }
+    
+    public async ValueTask ConnectProducer()
+    {
+        await _clients[&quot;producer1&quot;].ConnectAsync();
+    }
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Assigning names to clients helps manage them individually.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>If your application is not using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>), you must connect the clients manually as shown above.</p>
+</div>
+<h2 id="graceful-shutdown">Graceful shutdown</h2>
+<p>Silverback automatically disconnects consumers and producers gracefully when the application stops. This ensures consistency and is performed regardless of the connection mode.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>If your application is not using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>), you must take care of the clients' graceful shutdown manually.</p>
+</div>
+<h2 id="consumers-management">Consumers Management</h2>
+<p>You can monitor and control consumers programmatically.</p>
+<p>The following example demonstrates how to monitor the total number of consumed messages, stop and start a consumer to temporarily pause it, and restart any consumers that have been disconnected due to an unhandled exception during message processing.</p>
+<pre><code class="lang-csharp">public class ConsumerManagementService
+{
+    private readonly IConsumerCollection _consumers;
+
+    public ConsumerManagementService(IConsumerCollection consumers)
+    {
+        _consumers = consumers;
+    }
+
+    public int GetTotalConsumedMessages()
+    {
+        int totalCount = 0;
+
+        foreach (IConsumer in _consumers
+        {
+            totalCount += consumer.StatusInfo.ConsumedMessagesCount;
+        }
+        
+        return totalCount;
+    }
+    
+    public async ValueTask Start(string consumerName)
+    {
+        await _consumers[consumerName].StartAsync();
+    }
+    
+    public async ValueTask Stop(string consumerName)
+    {
+        await _consumers[consumerName].StopAsync();
+    }
+
+    public async ValueTask RestartDisconnectedConsumers()
+    {
+        foreach (IConsumer consumer in _consumers)
+        {
+            if (consumer.Client.Status == ClientStatus.Disconnected)
+            {
+                await consumer.Client.ConnectAsync();
+            }
+        }
+    }
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Assigning unique names to clients helps manage them programmatically.</p>
+</div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="producing/basics.html">Producing Messages</a></li>
+<li><a class="xref" href="consuming/basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="../../samples/intro.html">Samples</a></li>
+</ul>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/connecting.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class MqttClientConfiguration
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class MqttClientConfiguration
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration" class="text-break">Class MqttClientConfiguration
+</h1>
+  <div class="markdown level0 summary"><p>The configuration used to connect with the MQTT broker. This is actually a wrapper around the
+<span class="xref">MQTTnet.MqttClientOptions</span> from the MQTTnet library.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">MqttClientConfiguration</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a>&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public sealed record MqttClientConfiguration : IValidatableSettings, IEquatable&lt;MqttClientConfiguration&gt;</code></pre>
+  </div>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AllowPacketFragmentation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AllowPacketFragmentation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L31">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AllowPacketFragmentation_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AllowPacketFragmentation*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AllowPacketFragmentation" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AllowPacketFragmentation">AllowPacketFragmentation</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the broker allows packet fragmentation.
+Unfortunately not all brokers (like AWS) do support fragmentation and will close the connection when receiving such packets.
+If such a service is used this flag must be set to <code>false</code>.
+The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool AllowPacketFragmentation { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationData.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationData%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationData" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationData">AuthenticationData</h4>
+  <div class="markdown level1 summary"><p>Gets the authentication data to be used for the custom authentication.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public byte[]? AuthenticationData { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationMethod.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationMethod%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L41">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationMethod_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationMethod*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_AuthenticationMethod" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.AuthenticationMethod">AuthenticationMethod</h4>
+  <div class="markdown level1 summary"><p>Gets the custom authentication method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? AuthenticationMethod { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_BackpressureLimit.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.BackpressureLimit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L68">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_BackpressureLimit_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.BackpressureLimit*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_BackpressureLimit" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.BackpressureLimit">BackpressureLimit</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of messages to be consumed and enqueued waiting to be processed.
+The default is 2.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int BackpressureLimit { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Channel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Channel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L41">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Channel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Channel*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Channel" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Channel">Channel</h4>
+  <div class="markdown level1 summary"><p>Gets the channel configuration (either <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html">MqttClientTcpConfiguration</a> or <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html">MqttClientWebSocketConfiguration</a>).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientChannelConfiguration? Channel { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.html">MqttClientChannelConfiguration</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_CleanSession.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.CleanSession%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L46">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_CleanSession_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.CleanSession*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_CleanSession" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.CleanSession">CleanSession</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether a clean non-persistent session has to be created for this client. The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool CleanSession { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ClientId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ClientId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L25">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ClientId_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ClientId*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ClientId" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ClientId">ClientId</h4>
+  <div class="markdown level1 summary"><p>Gets the client identifier. The default is <code>Guid.NewGuid().ToString()</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string ClientId { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ConsumerEndpoints.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ConsumerEndpoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L46">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ConsumerEndpoints_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ConsumerEndpoints*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ConsumerEndpoints" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ConsumerEndpoints">ConsumerEndpoints</h4>
+  <div class="markdown level1 summary"><p>Gets the configured consumer endpoints.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IValueReadOnlyCollection&lt;MqttConsumerEndpointConfiguration&gt; ConsumerEndpoints { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Collections.IValueReadOnlyCollection-1.html">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.html">MqttConsumerEndpointConfiguration</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Credentials.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Credentials%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L51">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Credentials_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Credentials*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Credentials" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Credentials">Credentials</h4>
+  <div class="markdown level1 summary"><p>Gets the credentials to be used to authenticate with the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IMqttClientCredentialsProvider? Credentials { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IMqttClientCredentialsProvider</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_EnhancedAuthenticationHandler.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.EnhancedAuthenticationHandler%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L56">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_EnhancedAuthenticationHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.EnhancedAuthenticationHandler*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_EnhancedAuthenticationHandler" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.EnhancedAuthenticationHandler">EnhancedAuthenticationHandler</h4>
+  <div class="markdown level1 summary"><p>Gets the handler for AUTH packets. This can happen when connecting or at any time while being already connected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IMqttEnhancedAuthenticationHandler? EnhancedAuthenticationHandler { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IMqttEnhancedAuthenticationHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_KeepAlivePeriod.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.KeepAlivePeriod%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L61">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_KeepAlivePeriod_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.KeepAlivePeriod*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_KeepAlivePeriod" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.KeepAlivePeriod">KeepAlivePeriod</h4>
+  <div class="markdown level1 summary"><p>Gets the communication timeout. The default is 10 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public TimeSpan KeepAlivePeriod { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaxDegreeOfParallelism.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaxDegreeOfParallelism%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L62">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaxDegreeOfParallelism_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaxDegreeOfParallelism*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaxDegreeOfParallelism" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaxDegreeOfParallelism">MaxDegreeOfParallelism</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of incoming message that can be processed concurrently.
+The default is 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int MaxDegreeOfParallelism { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaximumPacketSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaximumPacketSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L66">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaximumPacketSize_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaximumPacketSize*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_MaximumPacketSize" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.MaximumPacketSize">MaximumPacketSize</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum packet size in byte the client will process. The default is no limit.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public uint MaximumPacketSize { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProducerEndpoints.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProducerEndpoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L51">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProducerEndpoints_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProducerEndpoints*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProducerEndpoints" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProducerEndpoints">ProducerEndpoints</h4>
+  <div class="markdown level1 summary"><p>Gets the configured producer endpoints.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IValueReadOnlyCollection&lt;MqttProducerEndpointConfiguration&gt; ProducerEndpoints { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Collections.IValueReadOnlyCollection-1.html">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProtocolVersion.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProtocolVersion%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L30">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProtocolVersion_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProtocolVersion*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ProtocolVersion" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ProtocolVersion">ProtocolVersion</h4>
+  <div class="markdown level1 summary"><p>Gets the MQTT protocol version. The default is <span class="xref">MQTTnet.Formatter.MqttProtocolVersion.V500</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProtocolVersion ProtocolVersion { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">MqttProtocolVersion</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ReceiveMaximum.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ReceiveMaximum%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L72">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ReceiveMaximum_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ReceiveMaximum*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ReceiveMaximum" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ReceiveMaximum">ReceiveMaximum</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of QoS 1 and QoS 2 publications that can be received and processed concurrently. The default value is
+<code>null</code>, which means <code>65'535</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ushort ReceiveMaximum { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestProblemInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestProblemInformation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L78">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestProblemInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestProblemInformation*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestProblemInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestProblemInformation">RequestProblemInformation</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the reason string or user properties can be sent with any packet. The default is usually
+<code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool RequestProblemInformation { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestResponseInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestResponseInformation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L84">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestResponseInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestResponseInformation*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_RequestResponseInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.RequestResponseInformation">RequestResponseInformation</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the server should return the response information in the <i>CONNACK</i> packet. The default is
+usually <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool RequestResponseInformation { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_SessionExpiryInterval.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.SessionExpiryInterval%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L90">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_SessionExpiryInterval_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.SessionExpiryInterval*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_SessionExpiryInterval" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.SessionExpiryInterval">SessionExpiryInterval</h4>
+  <div class="markdown level1 summary"><p>Gets the session expiry interval in seconds. When set to 0 the session will expire when the connection is closed, while
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32.maxvalue">MaxValue</a> indicates that the session will never expire. The default is 0.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public uint SessionExpiryInterval { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Timeout.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Timeout%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L96">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Timeout_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Timeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Timeout" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Timeout">Timeout</h4>
+  <div class="markdown level1 summary"><p>Gets the timeout which will be applied at socket level and internal operations.
+The default value is the same as for sockets in .NET in general.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public TimeSpan Timeout { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TopicAliasMaximum.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TopicAliasMaximum%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L102">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TopicAliasMaximum_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TopicAliasMaximum*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TopicAliasMaximum" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TopicAliasMaximum">TopicAliasMaximum</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of topic aliases the server can send in the <i>PUBLISH</i> packet. The default is 0, meaning that no
+alias can be sent.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ushort TopicAliasMaximum { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint16">ushort</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TryPrivate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TryPrivate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L110">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TryPrivate_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TryPrivate*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_TryPrivate" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.TryPrivate">TryPrivate</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the bridge must attempt to indicate to the remote broker that it is a bridge and not an ordinary
+client. If successful, this means that the loop detection will be more effective and that the retained messages will be propagated
+correctly. Not all brokers support this feature, so it may be necessary to set it to <code>false</code> if your bridge does not connect
+properly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool TryPrivate { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_UserProperties.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.UserProperties%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_UserProperties_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.UserProperties*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_UserProperties" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.UserProperties">UserProperties</h4>
+  <div class="markdown level1 summary"><p>Gets the list of user properties to be sent with the <i>CONNECT</i> packet. They can be used to send connection related
+properties from the client to the server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IValueReadOnlyCollection&lt;MqttUserProperty&gt; UserProperties { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Collections.IValueReadOnlyCollection-1.html">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html">MqttUserProperty</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ValidateFeatures.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ValidateFeatures%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L116">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ValidateFeatures_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ValidateFeatures*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_ValidateFeatures" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.ValidateFeatures">ValidateFeatures</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the client should check if the configuration is valid for the selected protocol version.
+The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool ValidateFeatures { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WillMessage.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WillMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L56">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WillMessage_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WillMessage*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WillMessage" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WillMessage">WillMessage</h4>
+  <div class="markdown level1 summary"><p>Gets the optional last will message to be sent when the client ungracefully disconnects.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttLastWillMessageConfiguration? WillMessage { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L122">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSize_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSize*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSize" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSize">WriterBufferSize</h4>
+  <div class="markdown level1 summary"><p>Gets the default and initial size of the packet write buffer. It is recommended to set this to a value close to the usual expected
+packet size * 1.5. Do not change this value when no memory issues are experienced.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int WriterBufferSize { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSizeMax.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSizeMax%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L128">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSizeMax_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSizeMax*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_WriterBufferSizeMax" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.WriterBufferSizeMax">WriterBufferSizeMax</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum size of the buffer writer. The writer will reduce its internal buffer to this value after serializing a
+packet. Do not change this value when no memory issues are experienced.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int WriterBufferSizeMax { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Validate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfiguration.cs/#L76">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Validate_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Validate*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_Validate" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.Validate">Validate()</h4>
+  <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public void Validate()</code></pre>
+  </div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L19" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

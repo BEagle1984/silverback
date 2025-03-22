@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class KafkaConsumerConfiguration
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class KafkaConsumerConfiguration
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration" class="text-break">Class KafkaConsumerConfiguration
+</h1>
+  <div class="markdown level0 summary"><p>Wraps the <span class="xref">Confluent.Kafka.ConsumerConfig</span> adding the Silverback specific settings.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html">KafkaClientConfiguration</a>&lt;<span class="xref">ConsumerConfig</span>&gt;</div>
+    <div class="level2"><span class="xref">KafkaConsumerConfiguration</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html">KafkaClientConfiguration</a>&lt;<span class="xref">ConsumerConfig</span>&gt;&gt;</div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html">KafkaConsumerConfiguration</a>&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslMechanism">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslMechanism</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_Acks">KafkaClientConfiguration&lt;ConsumerConfig&gt;.Acks</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ClientId">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ClientId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_BootstrapServers">KafkaClientConfiguration&lt;ConsumerConfig&gt;.BootstrapServers</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MessageMaxBytes">KafkaClientConfiguration&lt;ConsumerConfig&gt;.MessageMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MessageCopyMaxBytes">KafkaClientConfiguration&lt;ConsumerConfig&gt;.MessageCopyMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ReceiveMessageMaxBytes">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ReceiveMessageMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MaxInFlight">KafkaClientConfiguration&lt;ConsumerConfig&gt;.MaxInFlight</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_TopicMetadataRefreshIntervalMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.TopicMetadataRefreshIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MetadataMaxAgeMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.MetadataMaxAgeMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_TopicMetadataRefreshFastIntervalMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.TopicMetadataRefreshFastIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_TopicMetadataRefreshSparse">KafkaClientConfiguration&lt;ConsumerConfig&gt;.TopicMetadataRefreshSparse</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_TopicMetadataPropagationMaxMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.TopicMetadataPropagationMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_TopicBlacklist">KafkaClientConfiguration&lt;ConsumerConfig&gt;.TopicBlacklist</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_Debug">KafkaClientConfiguration&lt;ConsumerConfig&gt;.Debug</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketTimeoutMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketSendBufferBytes">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketSendBufferBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketReceiveBufferBytes">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketReceiveBufferBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketKeepaliveEnable">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketKeepaliveEnable</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketNagleDisable">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketNagleDisable</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketMaxFails">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketMaxFails</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_BrokerAddressTtl">KafkaClientConfiguration&lt;ConsumerConfig&gt;.BrokerAddressTtl</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_BrokerAddressFamily">KafkaClientConfiguration&lt;ConsumerConfig&gt;.BrokerAddressFamily</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SocketConnectionSetupTimeoutMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SocketConnectionSetupTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ConnectionsMaxIdleMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ConnectionsMaxIdleMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ReconnectBackoffMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ReconnectBackoffMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ReconnectBackoffMaxMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ReconnectBackoffMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_StatisticsIntervalMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.StatisticsIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ApiVersionRequest">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ApiVersionRequest</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ApiVersionRequestTimeoutMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ApiVersionRequestTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ApiVersionFallbackMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ApiVersionFallbackMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_BrokerVersionFallback">KafkaClientConfiguration&lt;ConsumerConfig&gt;.BrokerVersionFallback</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_AllowAutoCreateTopics">KafkaClientConfiguration&lt;ConsumerConfig&gt;.AllowAutoCreateTopics</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SecurityProtocol">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SecurityProtocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCipherSuites">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCipherSuites</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCurvesList">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCurvesList</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslSigalgsList">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslSigalgsList</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslKeyLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslKeyLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslKeyPassword">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslKeyPassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslKeyPem">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslKeyPem</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCertificateLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCertificateLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCertificatePem">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCertificatePem</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCaLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCaLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCaPem">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCaPem</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCaCertificateStores">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCaCertificateStores</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslCrlLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslCrlLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslKeystoreLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslKeystoreLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslKeystorePassword">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslKeystorePassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslProviders">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslProviders</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslEngineLocation">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslEngineLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslEngineId">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslEngineId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_EnableSslCertificateVerification">KafkaClientConfiguration&lt;ConsumerConfig&gt;.EnableSslCertificateVerification</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SslEndpointIdentificationAlgorithm">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SslEndpointIdentificationAlgorithm</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslKerberosServiceName">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslKerberosServiceName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslKerberosPrincipal">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslKerberosPrincipal</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslKerberosKinitCmd">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslKerberosKinitCmd</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslKerberosKeytab">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslKerberosKeytab</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslKerberosMinTimeBeforeRelogin">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslKerberosMinTimeBeforeRelogin</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslUsername">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslUsername</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslPassword">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslPassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerConfig">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerConfig</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_EnableSaslOauthbearerUnsecureJwt">KafkaClientConfiguration&lt;ConsumerConfig&gt;.EnableSaslOauthbearerUnsecureJwt</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerMethod">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerMethod</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerClientId">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerClientId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerClientSecret">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerClientSecret</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerScope">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerScope</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerExtensions">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerExtensions</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_SaslOauthbearerTokenEndpointUrl">KafkaClientConfiguration&lt;ConsumerConfig&gt;.SaslOauthbearerTokenEndpointUrl</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_PluginLibraryPaths">KafkaClientConfiguration&lt;ConsumerConfig&gt;.PluginLibraryPaths</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ClientRack">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ClientRack</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_RetryBackoffMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.RetryBackoffMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_RetryBackoffMaxMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.RetryBackoffMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_ClientDnsLookup">KafkaClientConfiguration&lt;ConsumerConfig&gt;.ClientDnsLookup</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_EnableMetricsPush">KafkaClientConfiguration&lt;ConsumerConfig&gt;.EnableMetricsPush</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_CancellationDelayMaxMs">KafkaClientConfiguration&lt;ConsumerConfig&gt;.CancellationDelayMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public sealed record KafkaConsumerConfiguration : KafkaClientConfiguration&lt;ConsumerConfig&gt;, IValidatableSettings, IEquatable&lt;KafkaClientConfiguration&lt;ConsumerConfig&gt;&gt;, IEquatable&lt;KafkaConsumerConfiguration&gt;</code></pre>
+  </div>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoCommitIntervalMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoCommitIntervalMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L618">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoCommitIntervalMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoCommitIntervalMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoCommitIntervalMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoCommitIntervalMs">AutoCommitIntervalMs</h4>
+  <div class="markdown level1 summary"><p>Gets the frequency in milliseconds at which the consumer offsets are committed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? AutoCommitIntervalMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoOffsetReset.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoOffsetReset%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L555">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoOffsetReset_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoOffsetReset*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_AutoOffsetReset" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.AutoOffsetReset">AutoOffsetReset</h4>
+  <div class="markdown level1 summary"><p>Gets the action to take when there is no initial offset in the offset store or the desired offset is out of range:
+<span class="xref">Confluent.Kafka.AutoOffsetReset.Earliest</span> to automatically reset to the smallest offset,
+<span class="xref">Confluent.Kafka.AutoOffsetReset.Latest</span> to automatically reset to the largest offset, and
+<span class="xref">Confluent.Kafka.AutoOffsetReset.Error</span> to trigger an error (ERR__AUTO_OFFSET_RESET).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public AutoOffsetReset? AutoOffsetReset { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">AutoOffsetReset</span>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_BackpressureLimit.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.BackpressureLimit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L130">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_BackpressureLimit_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.BackpressureLimit*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_BackpressureLimit" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.BackpressureLimit">BackpressureLimit</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of messages to be consumed and enqueued waiting to be processed.
+When <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ProcessPartitionsIndependently">ProcessPartitionsIndependently</a> is set to <code>true</code> (default) the limit will be applied per partition.
+The default is 50.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int BackpressureLimit { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CheckCrcs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CheckCrcs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L687">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CheckCrcs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CheckCrcs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CheckCrcs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CheckCrcs">CheckCrcs</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the CRC32 of the consumed messages must be verified, ensuring no on-the-wire or on-disk corruption
+to the messages occurred. This check comes at slightly increased CPU usage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool? CheckCrcs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ClientSideOffsetStore.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ClientSideOffsetStore%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L60">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ClientSideOffsetStore_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ClientSideOffsetStore*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ClientSideOffsetStore" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ClientSideOffsetStore">ClientSideOffsetStore</h4>
+  <div class="markdown level1 summary"><p>Gets the settings for the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.IKafkaOffsetStore.html">IKafkaOffsetStore</a> to be used to store the offsets. The stored offsets will be used during
+the partitions assignment to determine the starting offset and ensure that each message is consumed only once.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaOffsetStoreSettings? ClientSideOffsetStore { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html">KafkaOffsetStoreSettings</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsetEach.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsetEach%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L73">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsetEach_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsetEach*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsetEach" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsetEach">CommitOffsetEach</h4>
+  <div class="markdown level1 summary"><p>Gets the number of message to be processed before committing the offset to the server. The most
+reliable level is 1, but it reduces throughput.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? CommitOffsetEach { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsets.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsets%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L41">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsets_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsets*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CommitOffsets" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CommitOffsets">CommitOffsets</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the offsets must be committed. The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool CommitOffsets { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ConsumeResultFields.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ConsumeResultFields%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L547">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ConsumeResultFields_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ConsumeResultFields*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ConsumeResultFields" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ConsumeResultFields">ConsumeResultFields</h4>
+  <div class="markdown level1 summary"><p>Gets a comma-separated list of fields that may be optionally set in <span class="xref">Confluent.Kafka.ConsumeResult&lt;TKey, TValue&gt;</span> objects returned by
+the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">Consume(TimeSpan)</a> method. Disabling fields that you do not require will improve
+throughput and reduce memory consumption. Allowed values: <code>headers</code>, <code>timestamp</code>, <code>topic</code>, <code>all</code>, <code>none</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? ConsumeResultFields { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CoordinatorQueryIntervalMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CoordinatorQueryIntervalMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L606">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CoordinatorQueryIntervalMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CoordinatorQueryIntervalMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_CoordinatorQueryIntervalMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.CoordinatorQueryIntervalMs">CoordinatorQueryIntervalMs</h4>
+  <div class="markdown level1 summary"><p>Gets the interval (in milliseconds) at which the current group coordinator must be queried. If the currently assigned coordinator
+is down the configured query interval will be divided by ten to more quickly recover in case of coordinator reassignment.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? CoordinatorQueryIntervalMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoCommit.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoCommit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L67">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoCommit_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoCommit*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoCommit" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoCommit">EnableAutoCommit</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the offsets must be automatically and periodically committed in the background.<br>
+Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this
+behaviour set specific start offsets per partition in the call to assign(). The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool EnableAutoCommit { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoRecovery%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L95">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoRecovery_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoRecovery*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnableAutoRecovery" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnableAutoRecovery">EnableAutoRecovery</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the consumer has to be automatically recycled when a <span class="xref">Confluent.Kafka.KafkaException</span>
+is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool EnableAutoRecovery { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnablePartitionEof.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnablePartitionEof%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L681">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnablePartitionEof_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnablePartitionEof*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_EnablePartitionEof" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.EnablePartitionEof">EnablePartitionEof</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the partition EOF event must be emitted whenever the consumer reaches the end of a partition.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool? EnablePartitionEof { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Endpoints.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Endpoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L140">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Endpoints_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Endpoints*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Endpoints" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Endpoints">Endpoints</h4>
+  <div class="markdown level1 summary"><p>Gets the configured endpoints.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IValueReadOnlyCollection&lt;KafkaConsumerEndpointConfiguration&gt; Endpoints { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Collections.IValueReadOnlyCollection-1.html">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointConfiguration.html">KafkaConsumerEndpointConfiguration</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchErrorBackoffMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchErrorBackoffMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L669">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchErrorBackoffMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchErrorBackoffMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchErrorBackoffMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchErrorBackoffMs">FetchErrorBackoffMs</h4>
+  <div class="markdown level1 summary"><p>Gets how long to postpone the next fetch request for a topic and partition in case of a fetch error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? FetchErrorBackoffMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMaxBytes.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMaxBytes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L658">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMaxBytes_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMaxBytes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMaxBytes" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMaxBytes">FetchMaxBytes</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum amount of data the broker shall return for a fetch request. The messages are fetched in batches by the consumer
+and if the first message batch in the first non-empty partition of the fetch request is larger than this value, then the message
+batch will still be returned to ensure that the consumer can make progress. The maximum message batch size accepted by the broker
+is defined via <code>message.max.bytes</code> (broker config) or <code>max.message.bytes</code> (broker topic config). This value is automatically
+adjusted upwards to be at least <code>message.max.bytes</code> (consumer config).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? FetchMaxBytes { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMinBytes.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMinBytes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L664">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMinBytes_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMinBytes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMinBytes" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchMinBytes">FetchMinBytes</h4>
+  <div class="markdown level1 summary"><p>Gets the minimum number of bytes that the broker must respond with. If <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchWaitMaxMs">FetchWaitMaxMs</a> expires the accumulated data
+will be sent to the client regardless of this setting.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? FetchMinBytes { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchQueueBackoffMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchQueueBackoffMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L643">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchQueueBackoffMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchQueueBackoffMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchQueueBackoffMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchQueueBackoffMs">FetchQueueBackoffMs</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum time in milliseconds to postpone the next fetch request for a topic+partition in case the current fetch queue thresholds (<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMinMessages">QueuedMinMessages</a>
+or <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMaxMessagesKbytes">QueuedMaxMessagesKbytes</a>) have been exceeded. This property may need to be decreased if the queue thresholds are set low and the application is experiencing long (~1s)
+delays between messages. Low values may increase CPU utilization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? FetchQueueBackoffMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchWaitMaxMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchWaitMaxMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L636">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchWaitMaxMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchWaitMaxMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchWaitMaxMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.FetchWaitMaxMs">FetchWaitMaxMs</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum time (in milliseconds) that the broker may wait to fill the fetch response with enough messages to match the
+size specified by <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMinBytes">FetchMinBytes</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? FetchWaitMaxMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GetMetadataTimeout.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GetMetadataTimeout%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L135">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GetMetadataTimeout_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GetMetadataTimeout*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GetMetadataTimeout" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GetMetadataTimeout">GetMetadataTimeout</h4>
+  <div class="markdown level1 summary"><p>Gets the timeout to wait for the metadata to be retrieved from the broker. The default is 30 seconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public TimeSpan GetMetadataTimeout { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupId_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupId*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupId" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupId">GroupId</h4>
+  <div class="markdown level1 summary"><p>Gets the client group id. All clients sharing the same group id belong to the same group. The default is <code>null</code>
+(which will internally be replaced with <code>&quot;not-set&quot;</code> since the underlying library requires a value).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? GroupId { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupInstanceId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupInstanceId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L563">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupInstanceId_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupInstanceId*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupInstanceId" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupInstanceId">GroupInstanceId</h4>
+  <div class="markdown level1 summary"><p>Gets the static instance id used to enable static group membership. Static group members are able to leave and rejoin a group within
+the configured <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SessionTimeoutMs">SessionTimeoutMs</a> without prompting a group rebalance. This should be used in combination with a larger
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SessionTimeoutMs">SessionTimeoutMs</a> to avoid group rebalances caused by transient unavailability (e.g. process restarts).
+Requires broker version &gt;= 2.3.0.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? GroupInstanceId { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocol.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocol%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L595">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocol_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocol*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocol" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocol">GroupProtocol</h4>
+  <div class="markdown level1 summary"><p>Gets the group protocol to use. Use <span class="xref">Confluent.Kafka.GroupProtocol.Classic</span> for the original protocol and <span class="xref">Confluent.Kafka.GroupProtocol.Consumer</span> for the new protocol introduced in KIP-848.
+Default is <span class="xref">Confluent.Kafka.GroupProtocol.Classic</span>, but will change to <span class="xref">Confluent.Kafka.GroupProtocol.Consumer</span> in next releases.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public GroupProtocol? GroupProtocol { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">GroupProtocol</span>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocolType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocolType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L589">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocolType_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocolType*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupProtocolType" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupProtocolType">GroupProtocolType</h4>
+  <div class="markdown level1 summary"><p>Gets the group protocol type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? GroupProtocolType { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupRemoteAssignor.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupRemoteAssignor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L600">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupRemoteAssignor_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupRemoteAssignor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_GroupRemoteAssignor" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.GroupRemoteAssignor">GroupRemoteAssignor</h4>
+  <div class="markdown level1 summary"><p>Gets the server-side assignor to use. Keep it <code>null</code> to make the server select a suitable assignor for the group. Available assignors: uniform or range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? GroupRemoteAssignor { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_HeartbeatIntervalMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.HeartbeatIntervalMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L584">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_HeartbeatIntervalMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.HeartbeatIntervalMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_HeartbeatIntervalMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.HeartbeatIntervalMs">HeartbeatIntervalMs</h4>
+  <div class="markdown level1 summary"><p>Gets the interval (in milliseconds) at which the heartbeats have to be sent to the broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? HeartbeatIntervalMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_IsolationLevel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.IsolationLevel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L676">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_IsolationLevel_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.IsolationLevel*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_IsolationLevel" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.IsolationLevel">IsolationLevel</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating how to read the messages written inside a transaction: <span class="xref">Confluent.Kafka.IsolationLevel.ReadCommitted</span>
+to only return transactional messages which have been committed, or <span class="xref">Confluent.Kafka.IsolationLevel.ReadUncommitted</span> to
+return all messages, even transactional messages which have been aborted.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IsolationLevel? IsolationLevel { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IsolationLevel</span>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxDegreeOfParallelism%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L123">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxDegreeOfParallelism*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxDegreeOfParallelism">MaxDegreeOfParallelism</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of incoming message that can be processed concurrently. Up to a
+message per each subscribed partition can be processed in parallel when processing them independently.
+The default is 100.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int MaxDegreeOfParallelism { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPartitionFetchBytes.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPartitionFetchBytes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L649">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPartitionFetchBytes_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPartitionFetchBytes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPartitionFetchBytes" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPartitionFetchBytes">MaxPartitionFetchBytes</h4>
+  <div class="markdown level1 summary"><p>Gets the initial maximum number of bytes per topic and partition to request when fetching messages from the broker. If the client
+encounters a message larger than this value it will gradually try to increase it until the entire message can be fetched.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? MaxPartitionFetchBytes { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollIntervalMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollIntervalMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L613">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollIntervalMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollIntervalMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollIntervalMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollIntervalMs">MaxPollIntervalMs</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum allowed time (in milliseconds) between calls to consume messages. If this interval is exceeded the consumer is
+considered failed and the group will rebalance in order to reassign the partitions to another consumer group member.<br>
+Warning: Offset commits may be not possible at this point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? MaxPollIntervalMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_PartitionAssignmentStrategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.PartitionAssignmentStrategy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L571">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_PartitionAssignmentStrategy_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.PartitionAssignmentStrategy*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_PartitionAssignmentStrategy" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.PartitionAssignmentStrategy">PartitionAssignmentStrategy</h4>
+  <div class="markdown level1 summary"><p>Gets the partition assignment strategy: <span class="xref">Confluent.Kafka.PartitionAssignmentStrategy.Range</span> to co-localize the partitions
+of several topics, <span class="xref">Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin</span> to evenly distribute the partitions among
+the consumer group members, <span class="xref">Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky</span> to evenly distribute the
+partitions and limit minimize the partitions movements. The default is <span class="xref">Confluent.Kafka.PartitionAssignmentStrategy.Range</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public PartitionAssignmentStrategy? PartitionAssignmentStrategy { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">PartitionAssignmentStrategy</span>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ProcessPartitionsIndependently.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ProcessPartitionsIndependently%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L106">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ProcessPartitionsIndependently_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ProcessPartitionsIndependently*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ProcessPartitionsIndependently" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ProcessPartitionsIndependently">ProcessPartitionsIndependently</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the partitions must be processed independently.
+When <code>true</code> a stream will be published per each partition and the sequences (<a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a>,
+<a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>, ...) cannot span across the partitions.
+The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool ProcessPartitionsIndependently { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ProcessPartitionsIndependently_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Settings this value to <code>false</code> implicitly sets the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism">MaxDegreeOfParallelism</a> to 1.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMaxMessagesKbytes.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMaxMessagesKbytes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L630">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMaxMessagesKbytes_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMaxMessagesKbytes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMaxMessagesKbytes" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMaxMessagesKbytes">QueuedMaxMessagesKbytes</h4>
+  <div class="markdown level1 summary"><p>Gets the maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue. This setting applies to
+the single consumer queue, regardless of the number of partitions. This value may be overshot by <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_FetchMaxBytes">FetchMaxBytes</a>. This
+property has higher priority than <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMinMessages">QueuedMinMessages</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? QueuedMaxMessagesKbytes { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMinMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMinMessages%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L623">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMinMessages_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMinMessages*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_QueuedMinMessages" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.QueuedMinMessages">QueuedMinMessages</h4>
+  <div class="markdown level1 summary"><p>Gets the minimum number of messages per topic and partition that the underlying library must try to maintain in the local consumer queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? QueuedMinMessages { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SendOffsetsToTransaction.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SendOffsetsToTransaction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L79">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SendOffsetsToTransaction_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SendOffsetsToTransaction*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SendOffsetsToTransaction" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SendOffsetsToTransaction">SendOffsetsToTransaction</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the consumer should commit the consumed offsets in the same transaction of the produced
+messages. The default is <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public bool SendOffsetsToTransaction { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SessionTimeoutMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SessionTimeoutMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L579">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SessionTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SessionTimeoutMs*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_SessionTimeoutMs" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SessionTimeoutMs">SessionTimeoutMs</h4>
+  <div class="markdown level1 summary"><p>Gets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_HeartbeatIntervalMs">HeartbeatIntervalMs</a> to indicate its liveness to the broker. If no heartbeat is received by the broker for a group
+member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. Also see
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollIntervalMs">MaxPollIntervalMs</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public int? SessionTimeoutMs { get; init; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MapCore.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MapCore%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L695">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MapCore_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MapCore*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MapCore" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MapCore">MapCore()</h4>
+  <div class="markdown level1 summary"><p>Maps to the Confluent client configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override ConsumerConfig MapCore()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ConsumerConfig</span></td>
+        <td><p>The Confluent client configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_MapCore">KafkaClientConfiguration&lt;ConsumerConfig&gt;.MapCore()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Validate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfiguration.cs/#L156">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Validate_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Validate*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_Validate" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.Validate">Validate()</h4>
+  <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override void Validate()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration-1.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfiguration_1_Validate">KafkaClientConfiguration&lt;ConsumerConfig&gt;.Validate()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/_autogenerated.cs/#L538" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

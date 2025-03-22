@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Using the Mediator | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Using the Mediator | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mediator">
+<h1 id="using-the-mediator">Using the Mediator</h1>
+
+<p>The mediator is the central component of Silverback that allows you to publish messages and have them delivered to the appropriate subscribers.</p>
+<h2 id="creating-the-message-model">Creating the Message Model</h2>
+<p>First, we need to create a message class. The message class can be any POCO class. Any CLR type can be used or referenced since messages are only exchanged in memory, making it similar to calling a method directly.</p>
+<pre><code class="lang-csharp">public class SampleMessage
+{
+    public string Content { get; set; }
+}
+</code></pre>
+<p>It is not mandatory, but it is recommended to use the <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> package (documented in the next chapter) to enhance semantics and improve code readability.</p>
+<h3 id="silverbackcoremodel">Silverback.Core.Model</h3>
+<p>Dedicated interfaces for events, commands, and queries are available in <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> to help define the meaning of each message, making the code more structured and readable.</p>
+<p>The <em>integration</em> variations are designed for messages exchanged via a message broker like Apache Kafka or MQTT.</p>
+<p>These are the available interfaces:</p>
+<ul>
+<li><a class="xref" href="../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a> is used to notify other services of an event that has occurred. Events are fire-and-forget messages, meaning no response is expected.</li>
+<li><a class="xref" href="../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a> and <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> are used to trigger actions in another service or component. Commands are typically consumed by a single subscriber and can return a value (of type <code>TResult</code>).</li>
+<li><a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> functions similarly to <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> but always returns a result, as it represents a data request.</li>
+<li>The <a class="xref" href="../api/Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a> interface identifies messages exchanged through a message broker. It has two specialized variations: <a class="xref" href="../api/Silverback.Messaging.Messages.IIntegrationEvent.html">IIntegrationEvent</a> and <a class="xref" href="../api/Silverback.Messaging.Messages.IIntegrationCommand.html">IIntegrationCommand</a>.</li>
+</ul>
+<h2 id="publishing-messages">Publishing Messages</h2>
+<p>To publish a message, you need an instance of <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>, which is registered with the DI container as a transient service.</p>
+<pre><code class="lang-csharp">using Silverback.Messaging.Publishing;
+
+public class MyPublishingService
+{
+    private readonly IPublisher _publisher;
+
+    public MyPublishingService(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    public async Task PublishSomething()
+    {
+        SampleMessage message = new SampleMessage
+        {
+            Content = &quot;Silverback rocks!&quot;
+        };
+        await _publisher.PublishAsync(message);
+    }
+}
+</code></pre>
+<p>The publisher provides both synchronous and asynchronous versions of each method.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The publisher is a transient service, meaning it can be resolved from the root provider and injected into singleton services, but it will throw an exception if the published message has to be handled by a scoped subscriber.
+Producing to a message broker does <em>not</em> require a scope and is therefore safe to be done from a singleton service.</p>
+</div>
+<h3 id="return-values">Return Values</h3>
+<p>Subscribers can return a result after processing a message.</p>
+<pre><code class="lang-csharp">public async Task&lt;QueryResult&gt; PublishSomething()
+{
+    MyQuery query = new MyQuery() { ... };
+    QueryResult result = await _publisher.PublishAsync(query);
+    return result.Single();
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The call to <code>Single()</code> is required because Silverback allows multiple subscribers for the same message, collecting multiple return values. This is unnecessary when using the specialized publishers described in the next chapter. The <code>ICommand</code> and <code>IQuery</code> interfaces specify the <code>TResult</code> type for better clarity.</p>
+</div>
+<h3 id="silverbackcoremodel-extensions">Silverback.Core.Model Extensions</h3>
+<p>Each message type (<a class="xref" href="../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>, and <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>) includes specialized extensions for <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to improve semantics and clarity.</p>
+<pre><code class="lang-csharp">public async Task PublishEvent()
+{
+    MyEvent myEvent = new MyEvent() { ... };
+    await _publisher.PublishEventAsync(myEvent);
+}
+
+public async Task ExecuteCommand()
+{
+    MyCommand myCommand = new MyCommand() { ... };
+    await _publisher.ExecuteCommandAsync(myCommand);
+}
+</code></pre>
+<h2 id="subscribing-to-messages">Subscribing to Messages</h2>
+<p>Now, we need to write a subscriber method to process the published messages.</p>
+<p>Silverback’s mediator routes messages based on their type. When a message is published, Silverback evaluates the signatures of the subscribed methods and invokes those accepting the specific message type, a base type, or an implemented interface.</p>
+<h3 id="subscriber-class">Subscriber Class</h3>
+<p>The preferred way to subscribe is by implementing message handling logic in a dedicated subscriber class.</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public async Task OnMessageReceived(SampleMessage message)
+    {
+        // Process message
+    }
+}
+</code></pre>
+<p>The subscriber class must be registered with the DI container using the <code>AddScopedSubscriber</code>, <code>AddSingletonSubscriber</code>, or <code>AddTransientSubscriber</code> extension methods.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddScopedSubscriber&lt;SubscribingService&gt;();
+    }
+}
+</code></pre>
+<p>By default, all public methods in a registered subscriber class (excluding the ones declared in the based classes) are subscribed. To subscribe non-public methods, or methods from the base classes, or customize the subscription options, use the <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> to decorate the methods.</p>
+<p>You can also disable automatic subscription of public methods:</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .AddScopedSubscriber&lt;SubscribingService&gt;(autoSubscribeAllPublicMethods: false);
+</code></pre>
+<h3 id="delegate-based-subscription">Delegate based subscription</h3>
+<p>In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the <code>AddDelegateSubscriber</code> method.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddDelegateSubscriber((SampleMessage message) =&gt;
+            {
+                // TODO: Process messages
+            });
+    }
+}
+</code></pre>
+<h3 id="supported-methods-and-parameters">Supported methods and parameters</h3>
+<p>The subscribed method (or delegate) can either be synchronous or asynchronous (returning a <code>Task</code> or a <code>ValueTask</code>).</p>
+<p>The first parameter must be the message and the parameter type can be the specific message, a base class or an implemented interface.</p>
+<p>The method can have other parameters that will be resolved using the service provider, or the cancellation token (see <a href="#cancellation">Cancellation</a>).</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public async Task OnMessageReceived(BasketCheckoutMessage message, CheckoutService service)
+    {
+        service.Checkout(message.BaksetId, message.UserId);
+    }
+}
+</code></pre>
+<p>or</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddDelegateSubscriber(
+                (BasketCheckoutMessage message, CheckoutService service) =&gt;
+                {
+                    service.Checkout(message.BaksetId, message.UserId);
+                });
+    }
+}
+</code></pre>
+<h3 id="return-values-1">Return values</h3>
+<p>A subscriber can also have a return value that can be collected by the publisher.</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public async Task&lt;SampleResult&gt; OnMessageReceived(SampleMessage message)
+    {
+        ...
+
+        return new SampleResult(...);
+    }
+}
+</code></pre>
+<p>Ideally, you should use the specialized interfaces <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> and <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> to define the return type and make it easier to handle the result.</p>
+<h3 id="return-new-messages-republishing">Return New Messages (Republishing)</h3>
+<p>The subscriber method can also return a message or a collection of messages (either <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a>, <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection<t></t></a> or <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a>, if using <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a>) that will be automatically republished to the internal bus.</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public async Task&lt;OtherSampleMessage&gt; OnMessageReceived(SampleMessage message)
+    {
+        ...
+
+        return new OtherSampleMessage
+        {
+            ...
+        };
+    }
+}
+</code></pre>
+<p>or</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public IEnumerable&lt;IMessage&gt; OnMessageReceived(IEnumerable&lt;SampleMessage&gt; messages) =&gt;
+        messages.SelectMany(message =&gt;
+        {
+            yield return new OtherSampleMessage1
+            {
+                ...
+            };
+            yield return new OtherSampleMessage2
+            {
+                ...
+            };
+        });
+}
+</code></pre>
+<p>Silverback recognizes only the messages implementing <a class="xref" href="../api/Silverback.Messaging.Messages.IMessage.html">IMessage</a> as messages to be republished (<a class="xref" href="../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>, and <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> all implement that interface), but you can register your own types, base types or interfaces.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .HandleMessagesOfType&lt;ICustomMessage&gt;();
+    }
+}
+</code></pre>
+<h2 id="cancellation">Cancellation</h2>
+<p>If a subscriber method accepts a <code>CancellationToken</code>, Silverback will forward the optional cancellation token to the subscribers.</p>
+<pre><code class="lang-csharp">await _publisher.ExecuteCommandAsync(myCommand, cancellationToken);
+</code></pre>
+<p>The cancellation token can be used to interrupt long-running operations or can be passed to other API such as HTTP requests or database operations supporting cancellation.</p>
+<pre><code class="lang-csharp">public async Task OnCommandReceived(MyCommand command, CancellationToken cancellationToken)
+{
+    while (...) // Long-running operation
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        // Processing
+    }
+}
+</code></pre>
+<h2 id="behaviors">Behaviors</h2>
+<p>Behaviors allow you to implement a custom pipeline (similar to the ASP.NET middleware), adding cross-cutting concerns like logging and validation.</p>
+<pre><code class="lang-csharp">public class TracingBehavior : IBehavior
+{
+    private readonly ITracer _tracer;
+
+    public TracingBehavior(ITracer tracer)
+    {
+        _tracer = tracer;
+    }
+    
+    public async Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        object message,
+        MessageHandler next)
+    {
+        try
+        {
+            _tracer.TraceProcessing(message);
+            object result = await next(message);
+            _tracer.TraceProcessed(message);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _tracer.TraceError(message, ex);
+            throw;
+        }
+    }
+}
+</code></pre>
+<p>Register the behavior with the DI container using <code>AddScopedBehavior</code>, <code>AddSingletonBehavior</code>, or <code>AddTransientBehavior</code>.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .AddScopedBehavior&lt;TracingBehavior&gt;();
+</code></pre>
+<p>If execution order is important, implement <a class="xref" href="../api/Silverback.ISorted.html">ISorted</a> and specify the <code>SortIndex</code>.</p>
+<pre><code class="lang-csharp">public class SortedBehavior : IBehavior, ISorted
+{
+    public int SortIndex =&gt; 120;
+    
+    public Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        object message,
+        MessageHandler next)
+    {
+        return next(message);
+    }
+}
+</code></pre>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/mediator.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,743 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class KafkaConsumer
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class KafkaConsumer
+   | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.KafkaConsumer">
+  
+  
+  <h1 id="Silverback_Messaging_Broker_KafkaConsumer" data-uid="Silverback.Messaging.Broker.KafkaConsumer" class="text-break">Class KafkaConsumer
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Consumer.html">Consumer</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html">Consumer</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaBroker.html">KafkaBroker</a>, <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a>&gt;</div>
+    <div class="level3"><span class="xref">KafkaConsumer</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_Broker">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.Broker</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_Endpoint">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.Endpoint</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.CommitCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html#Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__">Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;.RollbackCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Id">Consumer.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Broker">Consumer.Broker</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Endpoint">Consumer.Endpoint</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StatusInfo">Consumer.StatusInfo</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConnecting">Consumer.IsConnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConnected">Consumer.IsConnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConsuming">Consumer.IsConsuming</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsDisconnecting">Consumer.IsDisconnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ServiceProvider">Consumer.ServiceProvider</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsStopping">Consumer.IsStopping</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectAsync">Consumer.ConnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectAsync">Consumer.DisconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_TriggerReconnectAsync">Consumer.TriggerReconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartAsync">Consumer.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopAsync">Consumer.StopAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.CommitAsync(IBrokerMessageIdentifier)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.CommitAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.RollbackAsync(IBrokerMessageIdentifier)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.RollbackAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IncrementFailedAttempts_Silverback_Messaging_Messages_IRawInboundEnvelope_">Consumer.IncrementFailedAttempts(IRawInboundEnvelope)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Dispose">Consumer.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_HandleMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_Silverback_Messaging_Broker_IBrokerMessageIdentifier_Silverback_Messaging_Sequences_ISequenceStore_">Consumer.HandleMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, IBrokerMessageIdentifier, ISequenceStore)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus">Consumer.SetReadyStatus()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RevertReadyStatus">Consumer.RevertReadyStatus()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Dispose_System_Boolean_">Consumer.Dispose(Boolean)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_KafkaConsumer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class KafkaConsumer : Consumer&lt;KafkaBroker, KafkaConsumerEndpoint, KafkaOffset&gt;, IConsumer, IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_KafkaConsumer__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.%23ctor(Silverback.Messaging.Broker.KafkaBroker%2CSilverback.Messaging.KafkaConsumerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSilverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder%2CSilverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker%2CSystem.IServiceProvider%2CSilverback.Diagnostics.IInboundLogger%7BSilverback.Messaging.Broker.KafkaConsumer%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L69">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer__ctor_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_KafkaConsumer__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder,Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker,System.IServiceProvider,Silverback.Diagnostics.IInboundLogger{Silverback.Messaging.Broker.KafkaConsumer})">KafkaConsumer(KafkaBroker, KafkaConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IConfluentConsumerBuilder, IBrokerCallbacksInvoker, IServiceProvider, IInboundLogger&lt;KafkaConsumer&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaConsumer(KafkaBroker broker, KafkaConsumerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt; behaviorsProvider, IConfluentConsumerBuilder confluentConsumerBuilder, IBrokerCallbacksInvoker callbacksInvoker, IServiceProvider serviceProvider, IInboundLogger&lt;KafkaConsumer&gt; logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaBroker.html">KafkaBroker</a></td>
+        <td><span class="parametername">broker</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> that is instantiating the consumer.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a></td>
+        <td><span class="parametername">endpoint</span></td>
+        <td><p>The endpoint to be consumed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</td>
+        <td><span class="parametername">behaviorsProvider</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider&lt;TBehavior&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html">IConfluentConsumerBuilder</a></td>
+        <td><span class="parametername">confluentConsumerBuilder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html">IConfluentConsumerBuilder</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html">IBrokerCallbacksInvoker</a></td>
+        <td><span class="parametername">callbacksInvoker</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html">IBrokerCallbacksInvoker</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the needed services.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger&lt;TCategoryName&gt;</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_MemberId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.MemberId%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L98">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_MemberId_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.MemberId*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_MemberId" data-uid="Silverback.Messaging.Broker.KafkaConsumer.MemberId">MemberId</h4>
+  <div class="markdown level1 summary"><p>Gets the (dynamic) group member id of this consumer (as set by the broker).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string MemberId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.KafkaOffset%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L281">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">CommitCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task CommitCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a>&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">Silverback.Messaging.Broker.Consumer&lt;Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaConsumerEndpoint, Silverback.Messaging.Broker.KafkaOffset&gt;.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection&lt;Silverback.Messaging.Broker.KafkaOffset&gt;)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L216">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync">ConnectCoreAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ConnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectCoreAsync">Consumer.ConnectCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L224">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync">DisconnectCoreAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task DisconnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectCoreAsync">Consumer.DisconnectCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_GetCurrentSequenceStores.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.GetCurrentSequenceStores%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L106">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_GetCurrentSequenceStores_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetCurrentSequenceStores*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_GetCurrentSequenceStores" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetCurrentSequenceStores">GetCurrentSequenceStores()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IReadOnlyList&lt;ISequenceStore&gt; GetCurrentSequenceStores()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_GetCurrentSequenceStores">Consumer.GetCurrentSequenceStores()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamp_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartitionTimestamp%7D%2CSystem.TimeSpan)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L124">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamp_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_GetOffsetsForTimestamp_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetOffsetsForTimestamp(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)">GetOffsetsForTimestamp(IEnumerable&lt;TopicPartitionTimestamp&gt;, TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Look up the offsets for the given partitions by timestamp. The returned offset for each partition
+is the earliest offset for which the timestamp is greater than or equal to the given timestamp.
+If the provided timestamp exceeds that of the last message in the partition, a value of
+<code>Offset.End</code> (-1) will be returned.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;TopicPartitionOffset&gt; GetOffsetsForTimestamp(IEnumerable&lt;TopicPartitionTimestamp&gt; topicPartitionTimestamps, TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">Confluent.Kafka.TopicPartitionTimestamp</span>&gt;</td>
+        <td><span class="parametername">topicPartitionTimestamps</span></td>
+        <td><p>The list of partitions with the target timestamps.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The maximum amount of time to block waiting for the requested offsets.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">Confluent.Kafka.TopicPartitionOffset</span>&gt;</td>
+        <td><p>The list of offsets for each partition.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.KafkaOffset%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L309">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">RollbackCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task RollbackCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a>&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">Silverback.Messaging.Broker.Consumer&lt;Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaConsumerEndpoint, Silverback.Messaging.Broker.KafkaOffset&gt;.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection&lt;Silverback.Messaging.Broker.KafkaOffset&gt;)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L234">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync">StartCoreAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task StartCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartCoreAsync">Consumer.StartCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L267">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync">StopCoreAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task StopCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopCoreAsync">Consumer.StopCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L275">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync">WaitUntilConsumingStoppedCoreAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task WaitUntilConsumingStoppedCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_WaitUntilConsumingStoppedCoreAsync">Consumer.WaitUntilConsumingStoppedCoreAsync()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L23" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Binary Files | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Binary Files | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="binary-files">
+<h1 id="binary-files">Binary Files</h1>
+
+<p>Serializing a binary file (a stream or a byte array) using the regular <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> would mean to encode it in base64 and convert it to a UTF-8 encoded byte array. Beside not being very elegant this approach may cause you some trouble when integrating with other systems expecting the raw file content. This procedure would also result in the transferred byte array to be approximately a 30% bigger than the file itself.</p>
+<p>In this page it's shown how to use an <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> to more efficiently transfer raw binary files.</p>
+<h2 id="producer-configuration">Producer configuration</h2>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface is meant to transfer files over the message broker and is natively supported by Silverback. This means that the raw file content will be transferred in its original form.</p>
+<p>For convenience the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> class already implements the <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface. This class exposes a <code>ContentType</code> property as well, resulting in the <code>content-type</code> <a class="xref" href="headers.html">header</a> to be produced.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_producer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-fluent" data-tab="producer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_producer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-legacy" data-tab="producer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_producer-service" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-service" data-tab="producer-service" tabindex="-1">Publisher</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S_producer-fluent" role="tabpanel" data-tab="producer-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddOutbound&lt;IBinaryFileMessage&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;raw-files&quot;)));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S_producer-legacy" role="tabpanel" data-tab="producer-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;IBinaryFileMessage&gt;(
+                new KafkaProducerEndpoint(&quot;inventory-events&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    } 
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S_producer-service" role="tabpanel" data-tab="producer-service" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class FileTransferService
+{
+    private readonly IPublisher _publisher;
+
+    public FileTransferService(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    public async Task TransferFile(byte[] content, string contentType)
+    {
+        await _publihser.PublishAsync(
+            new BinaryFileMessage(content, contentType));
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<p>Otherwise you can implement the interface yourself or extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (e.g. to add some additional headers, as explained in the <a class="xref" href="headers.html">Message Headers</a> section).</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-fluent" data-tab="producer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-legacy" data-tab="producer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-model" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-model" data-tab="producer-custom-model" tabindex="-1">Message</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-service" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-service" data-tab="producer-custom-service" tabindex="-1">Publisher</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-1_producer-custom-fluent" role="tabpanel" data-tab="producer-custom-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddOutbound&lt;IBinaryFileMessage&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;raw-files&quot;)));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-1_producer-custom-legacy" role="tabpanel" data-tab="producer-custom-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;IBinaryFileMessage&gt;(
+                new KafkaProducerEndpoint(&quot;raw-files&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    } 
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-1_producer-custom-model" role="tabpanel" data-tab="producer-custom-model" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyBinaryFileMessage : BinaryFileMessage
+{
+    [Header(&quot;x-user-id&quot;)]
+    public Guid UserId { get; set; }
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-1_producer-custom-service" role="tabpanel" data-tab="producer-custom-service" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class FileTransferService
+{
+    private readonly IPublisher _publisher;
+
+    public FileTransferService(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
+    public async Task TransferFile(
+        byte[] content, 
+        string contentType,
+        Guid userId)
+    {
+        await _publihser.PublishAsync(
+            new MyBinaryFileMessage
+            {
+                Content = content,
+                ContentType = contentType,
+                UserId = userId
+            });
+    }
+}
+</code></pre>
+</section>
+</div>
+<h2 id="consumer-configuration">Consumer configuration</h2>
+<p>You don't need to do anything special to consume a binary file, if all necessary headers are in place (ensured by Silverback, if it was used to produce the message). The message will be wrapped again in a <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> that can be subscribed like any other message.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_consumer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-fluent" data-tab="consumer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_consumer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-legacy" data-tab="consumer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-2_consumer-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-2_consumer-fluent" role="tabpanel" data-tab="consumer-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;raw-files&quot;)
+                    .Configure(config =&gt;
+                        {
+                            config.GroupId = &quot;my-consumer&quot;
+                        }));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-2_consumer-legacy" role="tabpanel" data-tab="consumer-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(&quot;raw-files&quot;)
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    } 
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class FileSubscriberService
+{
+    public async Task OnFileReceived(IBinaryFileMessage message)
+    {
+        // ...your file handling logic...
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<p>If the message wasn't produced by Silverback chances are that the message type header is not there. In that case you need to explicitly configure the <a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> in the inbound endpoint.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" data-tab="consumer-explicit-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" data-tab="consumer-explicit-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" data-tab="consumer-explicit-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" role="tabpanel" data-tab="consumer-explicit-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;raw-files&quot;)
+                    .ConsumeBinaryFiles()
+                    .Configure(config =&gt;
+                        {
+                            config.GroupId = &quot;my-consumer&quot;
+                        }));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" role="tabpanel" data-tab="consumer-explicit-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(&quot;raw-files&quot;)
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    } ,
+                    Serializer = BinaryFileMessageSerializer.Default
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" role="tabpanel" data-tab="consumer-explicit-subscriber" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class FileSubscriberService
+{
+    public async Task OnFileReceived(IBinaryFileMessage message)
+    {
+        // ...your file handling logic...
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<p>If you need to read additional headers you can either extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (suggested approach) or subscribe to an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> .</p>
+<p>The following snippet assumes that the files aren't being streamed by a Silverback producer, otherwise it wouldn't be necessary to explicitly set the serializer and the type would be inferred from the <code>x-message-type</code> header.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" data-tab="consumer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" data-tab="consumer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-model" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-model" data-tab="consumer-custom-model" tabindex="-1">Message</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" data-tab="consumer-custom-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" role="tabpanel" data-tab="consumer-custom-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;raw-files&quot;)
+                    .ConsumeBinaryFiles(serializer =&gt; serializer.UseModel&lt;MyBinaryFileMessage&gt;()));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" role="tabpanel" data-tab="consumer-custom-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;IBinaryFileMessage&gt;(
+                new KafkaProducerEndpoint(&quot;raw-files&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    },
+                    Serializer = new BinaryFileMessageSerializer&lt;MyBinaryFileMessage&gt;()
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-model" role="tabpanel" data-tab="consumer-custom-model" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyBinaryFileMessage : BinaryFileMessage
+{
+    [Header(&quot;x-user-id&quot;)]
+    public Guid UserId { get; set; }
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" role="tabpanel" data-tab="consumer-custom-subscriber" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class FileSubscriberService
+{
+    public async Task OnFileReceived(MyBinaryFileMessage message)
+    {
+        // ...your file handling logic...
+    }
+}
+</code></pre>
+</section>
+</div>
+<h2 id="samples">Samples</h2>
+<ul>
+<li><a class="xref" href="../../samples/kafka/binaryfile-streaming.html">Kafka - Files Streaming</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/broker/binary-files.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

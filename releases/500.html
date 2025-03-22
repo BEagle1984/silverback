@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Release notes v5.x.x | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Release notes v5.x.x | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="releases-500">
+<h1 id="release-notes-v5xx">Release notes v5.x.x</h1>
+
+<h2 id="500-beta1"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.0.0-beta.1">5.0.0-beta.1</a></h2>
+<p>Silverback 5.0.0 is the most significant update in the library’s history, built on years of user feedback and real-world experience. This release is more than just an upgrade—it’s a <strong>complete refactoring</strong> that enhances flexibility, performance, and maintainability while laying a strong foundation for future innovations.</p>
+<h3 id="highlights">Highlights</h3>
+<ul>
+<li><strong>Improved Design &amp; Architecture</strong> – Addressing previous design limitations, this version introduces a more modular and extensible architecture, making it easier to customize and extend.</li>
+<li><strong>Enhanced Flexibility</strong> – With a restructured core, Silverback now adapts better to different messaging patterns and integration needs.</li>
+<li><strong>Performance Optimizations</strong> – Various internal improvements lead to lower overhead, faster processing, and better scalability.</li>
+<li><strong>Better Developer Experience</strong> – The API has been refined to be more intuitive and consistent, reducing complexity and improving usability.</li>
+<li><strong>Future-Proof Foundation</strong> – By tackling long-standing architectural challenges, this version paves the way for upcoming features and integrations.</li>
+</ul>
+<p>This release wouldn’t have been possible without the <strong>valuable feedback from the community</strong>, helping shape Silverback into a more <strong>powerful, robust, and future-ready</strong> framework.</p>
+<h3 id="whats-new">What's new</h3>
+<h3 id="todo-link-to-docs">(TODO: LINK TO DOCS)</h3>
+<ul>
+<li><p>Support Kafka cooperative sticky partition assignment strategy</p>
+</li>
+<li><p>Increase default <a class="xref" href="../api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism">KafkaConsumerEndpoint.MaxDegreeOfParallelism</a> to 100</p>
+</li>
+<li><p>TO-BE-REVIEWED</p>
+<ul>
+<li>New AddHeader overloads with only message</li>
+<li>New WithMessageId overloads with only message</li>
+<li>WithKafkaKey overloads with only message</li>
+<li>AddInbound/AddOutbound with message type (influencing AddHeader etc.)</li>
+<li>Default serializer is typed and now works with sub-typed (document in serializer page)</li>
+<li>BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)</li>
+<li>Builders for client config?</li>
+<li>New Storage packages (see...)</li>
+<li>Storage.SQLite, Storage.Postgres, ...</li>
+<li>New Outbox with Enlist for transaction</li>
+<li>StorageInitializer to create tables</li>
+<li>Client side offset storage (w/ transaction)</li>
+<li>Fluent API for connection options</li>
+<li>JsonSerializer typename handling none by default (Security)</li>
+<li>Outbound message filter</li>
+<li>Kafka transactions (including consumer, see...)</li>
+<li>Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing and in general too)</li>
+<li>Envelope.IsTombstone() and Kafka envelope extensions</li>
+<li>New improved EntityFrameworkDomainEventsPublisher</li>
+</ul>
+</li>
+<li><p>Clean up code and increase tests coverage</p>
+</li>
+<li><p>Reduce allocations</p>
+</li>
+<li><p>Improve builders for error policies</p>
+</li>
+<li><p>Support subscribers returning <code>ValueTask</code></p>
+</li>
+<li><p>Support exponential delay in <code>RetryErrorPolicy</code></p>
+</li>
+<li><p><code>WrapAndPublishAsync</code> methods added to &lt;xref:IPublisher&gt; (see &lt;xref:IntegrationPublisherExtensions&gt;) to allow envelope enrichment (setting headers, key, etc.) -&gt; TODO: LINKS TO CONCEPT PAGE</p>
+</li>
+<li><p>Add <code>WrapAndPublishBatchAsync</code> methods to &lt;xref:IPublisher&gt; (see &lt;xref:IntegrationPublisherExtensions&gt;) to allow envelope enrichment (setting headers, key, etc.) and efficient batching at protocol level (Kafka) -&gt; TODO: LINKS TO CONCEPT PAGE showing mapping etc.</p>
+</li>
+<li><p>Add support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing</p>
+</li>
+<li><p>Add &lt;xref:InboundEnvelopeBuilder&gt; and &lt;xref:OutboundEnvelopeBuilder&gt; to testing packages to help creating test envelopes</p>
+</li>
+<li><p>Add <code>IgnoreNoMatchingSubscribersError</code> setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message</p>
+</li>
+<li><p>Add <code>CancellationToken</code> support to in-memory message bus (TODO: see...)</p>
+</li>
+<li><p>Increase default <code>KafkaConsumer</code> backpressure limit to 50</p>
+</li>
+<li><p>Basic support for MQTT 5 request-response</p>
+</li>
+<li><p>Improved outbox worker reliability</p>
+</li>
+<li><p>Improved <code>ITestingHelper</code> to allow waiting for specific topics to be consumed</p>
+</li>
+<li><p>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.2.0">Confluent.Kafka 2.8.0</a></p>
+</li>
+</ul>
+<h3 id="breaking-changes">Breaking Changes</h3>
+<ul>
+<li>Changed some details in &lt;xref:Silverback.Messaging.Broker.IBroker&gt;/<a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> and their implementations</li>
+<li>Reorganized the configuration namespaces, some extension methods might have been moved to a different namespace, thus requiring a different <code>using</code>.</li>
+<li>Refactored the endpoint models
+<ul>
+<li>Changed the endpoint models to <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record">records</a> with init-only properties</li>
+<li>Removed constructors with parameters</li>
+<li>Refactored, redesigned and deprecated some properties</li>
+<li>Building the endpoints directly is still supported but the strongly recommended preferred way is to use the builders, therefore from now on the documentation will only show that approach</li>
+<li>TO-DO: Endpoint to Configuration and related renames (builders, etc.)</li>
+</ul>
+</li>
+<li>Removed the <code>IOutboundRouter</code> interface and all <code>AddOutbound</code> overloads accepting a custom <code>IOutboundRouter</code></li>
+<li>Removed all builders interfaces and exposed the actual classes directly (e.g. <code>ISilverbackBuilder</code> to <code>SilverbackBuilder</code>)</li>
+<li>Replaced <code>Endpoint</code>, <code>ProducerEndpoint</code> and <code>ConsumerEndpoint</code> with &lt;xref:EndpointConfiguration&gt;, &lt;xref:ProducerConfiguration&gt;, &lt;xref:ConsumerConfiguration&gt;</li>
+<li>Removed <code>IEndpoint</code>, <code>ProducerEndpoint</code> and <code>IConsumerEndpoint</code> interfaces</li>
+<li><code>SubscriptionOptions</code> to <code>TypeSubscriptionOption</code> / <code>DelegateSubscriptionOptions</code></li>
+<li>TO-BE-COMPARED / TO-BE-REVIEWED
+<ul>
+<li>IMessageSerializer</li>
+<li>IKafkaProducerEndpointNameResolver</li>
+<li>ConsumerBuilder / ProducerBuilder</li>
+<li>UseEndpointNameResolver to UseEndpointResolver (and interface name)</li>
+<li>ProduceTo with delegates only receive message instead of envelope (same for resolver)</li>
+<li>Endpoint builders functions now work with <code>TMessage</code> instead of <code>Envelope&lt;TMessage&gt;</code> (e.g. <code>ProducerTo</code>)</li>
+<li>AddOutboundEndpointsCheck renamed to AddProducersCheck</li>
+<li>IOutboundQueueHealthCheckService to IOutboxHealthCheckService</li>
+<li>Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)</li>
+<li>EndpointsConfiguration redesigned completely
+<ul>
+<li>Endpoints configuration moved completely under <code>Messaging.Configuration</code> namespace</li>
+</ul>
+</li>
+<li>KafkaEndpoint.Configure -&gt; KafkaConfiguration.ConfigureClient</li>
+<li>Broker -&gt; BrokerBase</li>
+<li>AddConsumer -&gt; AddConsumerAsync / GetProducer -&gt; GetProducerAsync</li>
+<li>BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -&gt; ConsumeBinaryMessages</li>
+<li>DistributedBackgroundService / RecurringDBS</li>
+<li>IOutboxReader / IOutboxWriter namespace + move to storage</li>
+<li>Publisher and behaviors to <code>ValueTask</code></li>
+<li><code>Helper.GetProducer</code> and other differences</li>
+<li><code>Add*BrokerCallbackHandler</code> to <code>Add*BrokerClientCallback</code> (<code>IBrokerCallback</code> to <code>IBrokerClientCallback</code>)</li>
+<li><code>IEndpointsConfiguredCallback</code> to <code>IBrokerClientsConfiguredCallback</code></li>
+<li>Removed <code>EndpointBuilder.WithName()</code> -&gt; replaced by name parameter</li>
+<li>Renamed Inbound namespace to Consuming and Outbound to Producing</li>
+<li>Split IMessageSerializer / IMessageDeserializer and rename UseFixedType to UseModel</li>
+<li>Removed Ping health check</li>
+<li>Kafka key not set to random Guid anymore (will be null if not explicitly set)</li>
+<li>Merged MessageId and KafkaKey headers -&gt; MessageId will not be initialized with random Guid anymore</li>
+<li>Deprecated the ProduceAsync with callback (it didn't make sense)</li>
+<li>Deprecated NullMessageHandlingStrategy (now tombstones can always be consumed both as <code>null</code> or as <code>Tombstone</code>)</li>
+<li>Moved <code>PublishToInternalBus</code></li>
+<li>WithKafkaKey -&gt; SetKafkaKey</li>
+<li>IBehavior will be invoked for produced messages only with EnableSubscribing (see also SortIndex)</li>
+</ul>
+</li>
+<li><code>BatchSettings</code>, <code>ChunkSettings</code>, <code>SequenceSettings</code>, <code> EncryptionSettings</code>, etc. renamed to <code>BatchConfiguration</code>, <code>ChunkConfiguration</code>, <code>SequenceConfiguration</code>, <code> EncryptionConfiguration</code>, etc.</li>
+<li>Deprecated EF package</li>
+<li>Changed integration of domain entities / domain events with DbContext</li>
+<li>Deprecated ExactlyOnceStrategy -&gt; replaced with ???client-side-offset-storage???</li>
+<li>Slight changes to policy builder (e.g. removed some overloads of PolicyBuilder.Retry/ThenRetru)</li>
+<li>Some changes to the <code>AddDelegateSubscriber</code> methods</li>
+<li>IBroker/IBrokerCollection -&gt; IProducerFactory / IConsumerCollection</li>
+<li>Additional changes to configuration</li>
+<li>Removed <code>AddConsumer</code>/<code>AddProducer</code> from <code>IBroker</code>/<code>IBrokerCollection</code></li>
+<li>e.g. <code>KafkaBroker.GetProducer</code> -&gt; <code>IProducerFactory.GetProducer(endpointName)</code>/<code>IProducerFactory.GetProducer&lt;TProducer&gt;(endpointName)</code>/<code>IProducerFactory.GetProducer(configuration)</code>/...</li>
+<li>Changes to Kafka callbacks (stats etc.) -&gt; replaced producer/consumer</li>
+<li>PartitionOffsetsProvider returns <code>ValueTask</code></li>
+<li>Many interfaces changed to return a <code>ValueTask</code> instead of <code>Task</code>:
+<ul>
+<li><code>IPublisher</code> async methods</li>
+<li><code>IBehavior</code>, <code>IProducerBehavior</code>, <code>IConsumerBehavior</code></li>
+</ul>
+</li>
+<li><code>IEventPublisher</code>, <code>ICommandPublisher</code> and <code>IQueryPublisher</code> replaced by extension methods on the &lt;xref:IPublisher&gt;
+<ul>
+<li>Removed the <code>UseModel</code> method</li>
+</ul>
+</li>
+</ul>
+<h3 id="deprecation-notice">Deprecation Notice</h3>
+<p>The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)</p>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/releases/500.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

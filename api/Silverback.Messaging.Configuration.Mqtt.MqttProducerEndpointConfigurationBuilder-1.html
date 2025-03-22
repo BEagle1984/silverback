@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1" class="text-break">Class MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;
+</h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html">EndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+    <div class="level3"><span class="xref">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html">IMessageSerializationBuilder</a>&lt;TMessage, <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader_System_String_System_Object_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader(string, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader__1_System_String_System_Object_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader&lt;TMessageChildType&gt;(string, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader_System_String_System_Func__0_System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader(string, Func&lt;TMessage, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader__1_System_String_System_Func___0_System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader&lt;TMessageChildType&gt;(string, Func&lt;TMessageChildType, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader(string, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddHeader&lt;TMessageChildType&gt;(string, Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_UseStrategy_Silverback_Messaging_Producing_IProduceStrategy_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.UseStrategy(IProduceStrategy)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_ProduceDirectly">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ProduceDirectly()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_StoreToOutbox_System_Func_Silverback_Messaging_Configuration_OutboxSettingsBuilder_Silverback_Messaging_Configuration_IOutboxSettingsImplementationBuilder__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.StoreToOutbox(Func&lt;OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_StoreToOutbox_Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.StoreToOutbox(OutboxSettings)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_EnableChunking_System_Int32_System_Boolean_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.EnableChunking(int, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_AddMessageEnricher_Silverback_Messaging_Producing_Enrichers_IOutboundMessageEnricher_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.AddMessageEnricher(IOutboundMessageEnricher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_EnableSubscribing">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.EnableSubscribing()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_DisableSubscribing">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.DisableSubscribing()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_Build">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.Build()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_Encrypt_Silverback_Messaging_Encryption_IEncryptionSettings_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.Encrypt(IEncryptionSettings)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_EncryptUsingAes_System_Byte___System_Byte___">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.EncryptUsingAes(byte[], byte[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_EncryptUsingAes_System_Byte___System_String_System_Byte___">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.EncryptUsingAes(byte[], string, byte[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_Filter_System_Func__0_System_Boolean__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.Filter(Func&lt;TMessage, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_Filter_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Boolean__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.Filter(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, bool&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SerializeUsing(IMessageSerializer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SerializeAsJson_System_Action_Silverback_Messaging_Configuration_JsonMessageSerializerBuilder__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SerializeAsJson(Action&lt;JsonMessageSerializerBuilder&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_ProduceBinaryMessages_System_Action_Silverback_Messaging_Configuration_BinaryMessageSerializerBuilder__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ProduceBinaryMessages(Action&lt;BinaryMessageSerializerBuilder&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_ProduceStrings_System_Action_Silverback_Messaging_Configuration_StringMessageSerializerBuilder__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ProduceStrings(Action&lt;StringMessageSerializerBuilder&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_ProduceRaw">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ProduceRaw()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SetMessageId_System_Func__0_System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SetMessageId(Func&lt;TMessage, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SetMessageId__1_System_Func___0_System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SetMessageId&lt;TMessageChildType&gt;(Func&lt;TMessageChildType, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SetMessageId_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SetMessageId(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder_4_SetMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__">ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.SetMessageId&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_ServiceProvider">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ServiceProvider</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_This">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.This</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_ValidateMessageAndWarn">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ValidateMessageAndWarn()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_ValidateMessageAndThrow">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ValidateMessageAndThrow()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_ValidateMessage_System_Boolean_">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.ValidateMessage(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_DisableMessageValidation">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.DisableMessageValidation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_Build">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.Build()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_CreateConfiguration">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.CreateConfiguration()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; : ProducerEndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;, IMessageSerializationBuilder&lt;TMessage, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt; where TMessage : class</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages being produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1__ctor_System_IServiceProvider_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.%23ctor(System.IServiceProvider%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L42">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1__ctor_System_IServiceProvider_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.#ctor(System.IServiceProvider,System.String)">MqttProducerEndpointConfigurationBuilder(IServiceProvider, string?)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">friendlyName</span></td>
+        <td><p>An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_This.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.This%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L48">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_This_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.This*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_This" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.This">This</h4>
+  <div class="markdown level1 summary"><p>Gets this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; This { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_This">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.This</a></div>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_This_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is necessary to work around casting in the base classes.</p>
+</div>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_CreateConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.CreateConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L216">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_CreateConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.CreateConfiguration*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_CreateConfiguration" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.CreateConfiguration">CreateConfiguration()</h4>
+  <div class="markdown level1 summary"><p>Creates the <code class="typeparamref">TConfiguration</code> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override MqttProducerEndpointConfiguration CreateConfiguration()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a></td>
+        <td><p>The endpoint.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html#Silverback_Messaging_Configuration_EndpointConfigurationBuilder_3_CreateConfiguration">EndpointConfigurationBuilder&lt;TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;&gt;.CreateConfiguration()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_IgnoreNoMatchingSubscribersError.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.IgnoreNoMatchingSubscribersError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L197">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_IgnoreNoMatchingSubscribersError_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.IgnoreNoMatchingSubscribersError*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_IgnoreNoMatchingSubscribersError" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.IgnoreNoMatchingSubscribersError">IgnoreNoMatchingSubscribersError()</h4>
+  <div class="markdown level1 summary"><p>Specifies that no exception should be thrown when no matching subscribers are found for the produced message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; IgnoreNoMatchingSubscribersError()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func__0_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.ProduceTo(System.Func%7B%600%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L77">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_Func__0_System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo(System.Func{`0,System.String})">ProduceTo(Func&lt;TMessage?, string&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the functions returning the target topic for each message being produced.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; ProduceTo(Func&lt;TMessage?, string&gt; topicFunction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessage, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">topicFunction</span></td>
+        <td><p>The function returning the target topic for the message being produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.ProduceTo(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L59">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo(System.String)">ProduceTo(string)</h4>
+  <div class="markdown level1 summary"><p>Specifies the target topic and optionally the target partition.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; ProduceTo(string topic)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">topic</span></td>
+        <td><p>The target topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func__0_System_String____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.ProduceTo(System.String%2CSystem.Func%7B%600%2CSystem.String%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L99">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceTo_System_String_System_Func__0_System_String____" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceTo(System.String,System.Func{`0,System.String[]})">ProduceTo(string, Func&lt;TMessage?, string[]&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the target topic format.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; ProduceTo(string topicFormatString, Func&lt;TMessage?, string[]&gt; topicArgumentsFunction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">topicFormatString</span></td>
+        <td><p>The topic format string that will be combined with the arguments returned by the <code class="paramref">topicArgumentsFunction</code>
+using a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string.format#system-string-format(system-string-system-object())">Format(string, params object[])</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessage, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</td>
+        <td><span class="parametername">topicArgumentsFunction</span></td>
+        <td><p>The function returning the arguments to be used to format the string.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceToDynamicTopic.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.ProduceToDynamicTopic%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L118">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceToDynamicTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceToDynamicTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ProduceToDynamicTopic" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ProduceToDynamicTopic">ProduceToDynamicTopic()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the target topic and, optionally, the target partition will be specified per each message using the envelope's
+<a class="xref" href="Silverback.Messaging.Messages.MqttEnvelopeExtensions.html#Silverback_Messaging_Messages_MqttEnvelopeExtensions_SetMqttDestinationTopic_Silverback_Messaging_Messages_IOutboundEnvelope_System_String_">SetMqttDestinationTopic(IOutboundEnvelope, string)</a> extension method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; ProduceToDynamicTopic()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_Retain.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.Retain%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L162">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_Retain_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.Retain*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_Retain" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.Retain">Retain()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the messages have to be sent with the retain flag, causing them to be persisted on the  broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; Retain()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Byte___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.Byte%5B%5D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L37">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Byte___" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.Byte[])">SetCorrelationData(byte[]?)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified correlation data to all produced messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(byte[]? correlationData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">correlationData</span></td>
+        <td><p>The correlation data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Byte____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%600%7D%2CSystem.Byte%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L159">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Byte____" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Byte[]})">SetCorrelationData(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, byte[]?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages, using a provider function to determine the correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, byte[]?&gt; correlationDataProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%600%7D%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L147">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String})">SetCorrelationData(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages, using a provider function to determine the correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string?&gt; correlationDataProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func__0_System_Byte____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.Func%7B%600%2CSystem.Byte%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L93">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func__0_System_Byte____" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.Func{`0,System.Byte[]})">SetCorrelationData(Func&lt;TMessage?, byte[]?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages, using a provider function to determine the correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(Func&lt;TMessage?, byte[]?&gt; correlationDataProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessage, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func__0_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.Func%7B%600%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L81">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_Func__0_System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.Func{`0,System.String})">SetCorrelationData(Func&lt;TMessage?, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages, using a provider function to determine the correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(Func&lt;TMessage?, string?&gt; correlationDataProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessage, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L25">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData(System.String)">SetCorrelationData(string?)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified correlation data to all produced messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData(string? correlationData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">correlationData</span></td>
+        <td><p>The correlation data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Byte___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.Byte%5B%5D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L68">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Byte___" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.Byte[])">SetCorrelationData&lt;TMessageChildType&gt;(byte[]?)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified correlation data to all produced messages of the specified child type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(byte[]? correlationData) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">correlationData</span></td>
+        <td><p>The correlation data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Byte____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.Byte%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L196">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Byte____" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Byte[]})">SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, byte[]?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages of the specified child type, using a provider function to determine the
+correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, byte[]?&gt; correlationDataProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessageChildType&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L179">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.String})">SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages of the specified child type, using a provider function to determine the
+correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, string?&gt; correlationDataProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessageChildType&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func___0_System_Byte____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.Func%7B%60%600%2CSystem.Byte%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L130">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func___0_System_Byte____" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.Func{``0,System.Byte[]})">SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, byte[]?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages of the specified child type, using a provider function to determine the
+correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, byte[]?&gt; correlationDataProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessageChildType, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func___0_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.Func%7B%60%600%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L113">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_Func___0_System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.Func{``0,System.String})">SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data to all produced messages of the specified child type, using a provider function to determine the
+correlation data for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, string?&gt; correlationDataProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessageChildType, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">correlationDataProvider</span></td>
+        <td><p>The correlation data provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetCorrelationData%60%601(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.CorrelationData.cs/#L52">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetCorrelationData__1_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetCorrelationData``1(System.String)">SetCorrelationData&lt;TMessageChildType&gt;(string?)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified correlation data to all produced messages of the specified child type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetCorrelationData&lt;TMessageChildType&gt;(string? correlationData) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">correlationData</span></td>
+        <td><p>The correlation data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%600%7D%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L90">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.String})">SetResponseTopic(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the response topic to all produced messages, using a provider function to determine the response topic for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string?&gt; responseTopicProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">responseTopicProvider</span></td>
+        <td><p>The response topic provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_Func__0_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic(System.Func%7B%600%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L53">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_Func__0_System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic(System.Func{`0,System.String})">SetResponseTopic(Func&lt;TMessage?, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the response topic to all produced messages, using a provider function to determine the response topic for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic(Func&lt;TMessage?, string?&gt; responseTopicProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessage, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">responseTopicProvider</span></td>
+        <td><p>The response topic provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L25">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic(System.String)">SetResponseTopic(string?)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified response topic to all produced messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic(string? responseTopic)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">responseTopic</span></td>
+        <td><p>The response topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic%60%601(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L110">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.String})">SetResponseTopic&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the response topic to all produced messages of the specified child type, using a provider function to determine the
+response topic for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic&lt;TMessageChildType&gt;(Func&lt;IOutboundEnvelope&lt;TMessageChildType&gt;, string?&gt; responseTopicProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessageChildType&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">responseTopicProvider</span></td>
+        <td><p>The response topic provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_Func___0_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic%60%601(System.Func%7B%60%600%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L73">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_Func___0_System_String__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic``1(System.Func{``0,System.String})">SetResponseTopic&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, string?&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the response topic to all produced messages of the specified child type, using a provider function to determine the
+response topic for each message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic&lt;TMessageChildType&gt;(Func&lt;TMessageChildType?, string?&gt; responseTopicProvider) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TMessageChildType, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">responseTopicProvider</span></td>
+        <td><p>The response topic provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.SetResponseTopic%60%601(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L40">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_SetResponseTopic__1_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.SetResponseTopic``1(System.String)">SetResponseTopic&lt;TMessageChildType&gt;(string)</h4>
+  <div class="markdown level1 summary"><p>Sets the specified response topic to all produced messages of the specified child type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; SetResponseTopic&lt;TMessageChildType&gt;(string responseTopic) where TMessageChildType : TMessage</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">responseTopic</span></td>
+        <td><p>The response topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessageChildType</span></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ThrowNoMatchingSubscribersError.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.ThrowNoMatchingSubscribersError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L209">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ThrowNoMatchingSubscribersError_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ThrowNoMatchingSubscribersError*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_ThrowNoMatchingSubscribersError" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.ThrowNoMatchingSubscribersError">ThrowNoMatchingSubscribersError()</h4>
+  <div class="markdown level1 summary"><p>Specifies that an exception should be thrown when no matching subscribers are found for the produced message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; ThrowNoMatchingSubscribersError()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_UseEndpointResolver__1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.UseEndpointResolver%60%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L144">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_UseEndpointResolver_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.UseEndpointResolver*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_UseEndpointResolver__1" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.UseEndpointResolver``1">UseEndpointResolver&lt;TResolver&gt;()</h4>
+  <div class="markdown level1 summary"><p>Specifies the type of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IMqttProducerEndpointResolver-1.html">IMqttProducerEndpointResolver&lt;TMessage&gt;</a> to be used to resolve the target topic for
+each message being produced.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; UseEndpointResolver&lt;TResolver&gt;() where TResolver : IMqttProducerEndpointResolver&lt;TMessage&gt;</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TResolver</span></td>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IMqttProducerEndpointResolver-1.html">IMqttProducerEndpointResolver&lt;TMessage&gt;</a> to be used.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtLeastOnceQoS.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.WithAtLeastOnceQoS%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.QoS.cs/#L43">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtLeastOnceQoS_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithAtLeastOnceQoS*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtLeastOnceQoS" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithAtLeastOnceQoS">WithAtLeastOnceQoS()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the messages have to be sent with the <i>at least once</i> quality of service level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; WithAtLeastOnceQoS()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtMostOnceQoS.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.WithAtMostOnceQoS%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.QoS.cs/#L34">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtMostOnceQoS_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithAtMostOnceQoS*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithAtMostOnceQoS" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithAtMostOnceQoS">WithAtMostOnceQoS()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the messages have to be sent with the <i>at most once</i> quality of service level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; WithAtMostOnceQoS()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithExactlyOnceQoS.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.WithExactlyOnceQoS%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.QoS.cs/#L52">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithExactlyOnceQoS_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithExactlyOnceQoS*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithExactlyOnceQoS" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithExactlyOnceQoS">WithExactlyOnceQoS()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the messages have to be sent with the <i>exactly once</i> quality of service level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; WithExactlyOnceQoS()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithMessageExpiration_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.WithMessageExpiration(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.cs/#L179">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithMessageExpiration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithMessageExpiration*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithMessageExpiration_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithMessageExpiration(System.TimeSpan)">WithMessageExpiration(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the message expiry interval. This interval defines the period of time that the broker stores
+the <i>PUBLISH</i> message for any matching subscribers that are not currently connected. When no
+message expiry interval is set, the broker must store the message for matching subscribers indefinitely.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; WithMessageExpiration(TimeSpan messageExpiryInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">messageExpiryInterval</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a> representing the message expiry interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.QoS.cs/#L22">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithQualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithQualityOfServiceLevel*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder`1.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)">WithQualityOfServiceLevel(MqttQualityOfServiceLevel)</h4>
+  <div class="markdown level1 summary"><p>Specifies the desired quality of service level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt; WithQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">MqttQualityOfServiceLevel</span></td>
+        <td><span class="parametername">qosLevel</span></td>
+        <td><p>The <span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html">IMessageSerializationBuilder&lt;TMessage, TBuilder&gt;</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerConfigurationBuilderNewtonsoftExtensions.html#Silverback_Messaging_Configuration_ProducerConfigurationBuilderNewtonsoftExtensions_SerializeAsJsonUsingNewtonsoft__2_Silverback_Messaging_Configuration_IMessageSerializationBuilder___0___1__System_Action_Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder__">ProducerConfigurationBuilderNewtonsoftExtensions.SerializeAsJsonUsingNewtonsoft&lt;TMessage, TBuilder&gt;(IMessageSerializationBuilder&lt;TMessage, TBuilder&gt;, Action&lt;NewtonsoftJsonMessageSerializerBuilder&gt;?)</a>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointConfigurationBuilder_1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointConfigurationBuilder`1.ResponseTopic.cs/#L14" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

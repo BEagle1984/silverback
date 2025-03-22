@@ -1,0 +1,621 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
+   | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Consumer`3">
+  
+  
+  <h1 id="Silverback_Messaging_Broker_Consumer_3" data-uid="Silverback.Messaging.Broker.Consumer`3" class="text-break">Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Consumer.html">Consumer</a></div>
+    <div class="level2"><span class="xref">Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;</span></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.RabbitConsumer.html">RabbitConsumer</a></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Id">Consumer.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StatusInfo">Consumer.StatusInfo</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConnecting">Consumer.IsConnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConnected">Consumer.IsConnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConsuming">Consumer.IsConsuming</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsDisconnecting">Consumer.IsDisconnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ServiceProvider">Consumer.ServiceProvider</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsStopping">Consumer.IsStopping</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectAsync">Consumer.ConnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectAsync">Consumer.DisconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_TriggerReconnectAsync">Consumer.TriggerReconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartAsync">Consumer.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopAsync">Consumer.StopAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.CommitAsync(IBrokerMessageIdentifier)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.CommitAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.RollbackAsync(IBrokerMessageIdentifier)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.RollbackAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IncrementFailedAttempts_Silverback_Messaging_Messages_IRawInboundEnvelope_">Consumer.IncrementFailedAttempts(IRawInboundEnvelope)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Dispose">Consumer.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_GetCurrentSequenceStores">Consumer.GetCurrentSequenceStores()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectCoreAsync">Consumer.ConnectCoreAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectCoreAsync">Consumer.DisconnectCoreAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartCoreAsync">Consumer.StartCoreAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopCoreAsync">Consumer.StopCoreAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_WaitUntilConsumingStoppedCoreAsync">Consumer.WaitUntilConsumingStoppedCoreAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_HandleMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_Silverback_Messaging_Broker_IBrokerMessageIdentifier_Silverback_Messaging_Sequences_ISequenceStore_">Consumer.HandleMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, IBrokerMessageIdentifier, ISequenceStore)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus">Consumer.SetReadyStatus()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RevertReadyStatus">Consumer.RevertReadyStatus()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Dispose_System_Boolean_">Consumer.Dispose(Boolean)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Consumer_3_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt; : Consumer, IConsumer, IDisposable where TBroker : IBroker where TEndpoint : IConsumerEndpoint where TIdentifier : IBrokerMessageIdentifier</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TBroker</span></td>
+        <td><p>The type of the related <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TEndpoint</span></td>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a> implementation used by this consumer implementation.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TIdentifier</span></td>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a> used by this broker implementation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3__ctor__0__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_Consumer__0__1__2___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.%23ctor(%600%2C%601%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSystem.IServiceProvider%2CSilverback.Diagnostics.IInboundLogger%7BSilverback.Messaging.Broker.Consumer%7B%600%2C%601%2C%602%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L51">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3__ctor_" data-uid="Silverback.Messaging.Broker.Consumer`3.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3__ctor__0__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_Consumer__0__1__2___" data-uid="Silverback.Messaging.Broker.Consumer`3.#ctor(`0,`1,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider,Silverback.Diagnostics.IInboundLogger{Silverback.Messaging.Broker.Consumer{`0,`1,`2}})">Consumer(TBroker, TEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider, IInboundLogger&lt;Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html">Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Consumer(TBroker broker, TEndpoint endpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IInboundLogger&lt;Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;&gt; logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBroker</span></td>
+        <td><span class="parametername">broker</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> that is instantiating the consumer.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TEndpoint</span></td>
+        <td><span class="parametername">endpoint</span></td>
+        <td><p>The endpoint to be consumed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</td>
+        <td><span class="parametername">behaviorsProvider</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider&lt;TBehavior&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the needed services.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html">Consumer</a>&lt;TBroker, TEndpoint, TIdentifier&gt;&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger&lt;TCategoryName&gt;</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_Broker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.Broker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L65">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_Broker_" data-uid="Silverback.Messaging.Broker.Consumer`3.Broker*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_Broker" data-uid="Silverback.Messaging.Broker.Consumer`3.Broker">Broker</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> that owns this consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TBroker Broker { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBroker</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_Endpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.Endpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L70">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_Endpoint_" data-uid="Silverback.Messaging.Broker.Consumer`3.Endpoint*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_Endpoint" data-uid="Silverback.Messaging.Broker.Consumer`3.Endpoint">Endpoint</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a> representing the endpoint that is being consumed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TEndpoint Endpoint { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEndpoint</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7B%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L103">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">CommitCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task CommitCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TIdentifier&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L73">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7B%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L106">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">RollbackCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task RollbackCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TIdentifier&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L88">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; brokerMessageIdentifiers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">brokerMessageIdentifiers</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L25" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

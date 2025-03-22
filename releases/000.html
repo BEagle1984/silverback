@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Release notes v0.x.x | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Release notes v0.x.x | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="releases-000">
+<h1 id="release-notes-v0xx">Release notes v0.x.x</h1>
+
+<h2 id="0100"><a href="https://github.com/BEagle1984/silverback/releases/tag/v0.10.0">0.10.0</a></h2>
+<h3 id="whats-new">What's new</h3>
+<ul>
+<li>Improve error handling: now all exceptions, including the ones thrown by the message serialzer can be handled through the error policies</li>
+<li>Improve logs: promoted some important logs to Information level, writing all processing errors as (at least) Warning and improved logged information quality (logged attributes)</li>
+<li>Add ability to modify messages and headers when moving them via &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt;</li>
+<li>Refactor message processing to a cleaner, more extensible and predictable API and behavior</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Fixed several small (and not so small) issues and bugs</li>
+</ul>
+<h2 id="080---090">0.8.0 - 0.9.0</h2>
+<p>Released two versions mostly to fix bugs, do some small adjustments according to some user feedbacks and update the external dependencies (e.g. Confluent.Kafka 1.0.1).</p>
+<h3 id="fixes-1">Fixes</h3>
+<ul>
+<li>Fix exception loading error policies from JSON in Silverback.Integration.Configuration [<a href="https://github.com/BEagle1984/silverback/issues/24">#24</a>]</li>
+</ul>
+<h2 id="070">0.7.0</h2>
+<h3 id="whats-new-1">What's new</h3>
+<ul>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.0.0">Confluent.Kafka 1.0.0</a></li>
+<li>Create a simple event store that perfectly integrates with the rest of the Silverback framework (see <a class="xref" href="../concepts/event-sourcing.html">Event Sourcing</a>)</li>
+<li>Add Silverback.Integration.InMemory package to mock the message broker behavior in your unit tests</li>
+<li>Several small optimizations and improvements</li>
+</ul>
+<h2 id="060">0.6.0</h2>
+<h3 id="whats-new-2">What's new</h3>
+<ul>
+<li>Add support for message headers</li>
+<li>Simplify message subscription even further: now all public methods of the types implementing the marker interface <em>ISubscriber</em> are automatically subscribed by default without having to annotate them with the <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> (this behavior is customizable)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.0-RC1">Confluent.Kafka 1.0.0-RC1</a></li>
+</ul>
+<h2 id="03x---05x">0.3.x - 0.5.x</h2>
+<p>Some releases where done adding quite a few features.</p>
+<h3 id="whats-new-3">What's new</h3>
+<ul>
+<li>Add Silverback.Integration.Configuration package to load the inbound/outbound configuration from the app.settings json</li>
+<li>Add batch processing</li>
+<li>Add parallel subscribers</li>
+<li>Add delegate subscription as an alternative to <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> based subscription</li>
+<li>Improve support for Rx.net</li>
+<li>Add support for legacy messages and POCO classes</li>
+<li>Add offset storage as an alternative and more optimized way to guarantee exactly once processing, storing just the offset of the last message instead of logging every message (see <a class="xref" href="../concepts/broker/inbound.html">Inbound Endpoint</a>)</li>
+<li>Add behaviors as a convenient way to implement your cross-cutting concerns (like logging, validation, etc.) to be plugged into the internal bus publishing pipeline (see <a class="xref" href="../concepts/bus/behaviors.html">Behaviors</a>)</li>
+<li>Add message chunking to automatically split the larger messages and rebuild them on the other end (see <a class="xref" href="../concepts/broker/chunking.html">Chunking</a>)</li>
+<li>...much more...and a huge amount of refactorings</li>
+</ul>
+<h3 id="fixes-2">Fixes</h3>
+<ul>
+<li>Several fixes and optimizations</li>
+</ul>
+<h2 id="032">0.3.2</h2>
+<p>The very first public release of Silverback! It included:</p>
+<ul>
+<li>In-process message bus</li>
+<li>Inbound/outbound connector for message broker abstraction</li>
+<li>Kafka broker implementation</li>
+<li>Outbox table pattern implementation</li>
+<li>Exactly once processing</li>
+<li>...</li>
+</ul>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/releases/000.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
