@@ -8,6 +8,7 @@ using Shouldly;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Sequences;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker;
@@ -44,13 +45,41 @@ public class ConsumerChannelFixture
         TestMessage testMessage1 = new();
         TestMessage testMessage2 = new();
 
-        await channel.WriteAsync(testMessage1, CancellationToken.None);
+        await channel.WriteOverflowAsync(testMessage1);
         await channel.WriteOverflowAsync(testMessage2);
 
         TestMessage readMessage1 = await channel.ReadAsync();
         TestMessage readMessage2 = await channel.ReadAsync();
         readMessage1.ShouldBeSameAs(testMessage1);
         readMessage2.ShouldBeSameAs(testMessage2);
+    }
+
+    [Fact]
+    public async Task ReadAsync_ShouldGuaranteeOrder_WhenOverflowMessagesAreAdded()
+    {
+        ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage testMessage1 = new();
+        TestMessage testMessage2 = new();
+        TestMessage testMessage3 = new();
+        TestMessage testMessage4 = new();
+
+        await channel.WriteOverflowAsync(testMessage1);
+        await channel.WriteOverflowAsync(testMessage2);
+        Task.Run(
+            async () =>
+            {
+                await channel.WriteAsync(testMessage3, CancellationToken.None);
+                await channel.WriteAsync(testMessage4, CancellationToken.None);
+            }).FireAndForget();
+
+        TestMessage readMessage1 = await channel.ReadAsync();
+        TestMessage readMessage2 = await channel.ReadAsync();
+        TestMessage readMessage3 = await channel.ReadAsync();
+        TestMessage readMessage4 = await channel.ReadAsync();
+        readMessage1.ShouldBeSameAs(testMessage1);
+        readMessage2.ShouldBeSameAs(testMessage2);
+        readMessage3.ShouldBeSameAs(testMessage3);
+        readMessage4.ShouldBeSameAs(testMessage4);
     }
 
     [Fact]

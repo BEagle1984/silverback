@@ -67,12 +67,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public async ValueTask<T> ReadAsync()
     {
-        T message = await _channel.Reader.ReadAsync(ReadCancellationToken).ConfigureAwait(false);
-
         if (_overflowChannel.Reader.TryRead(out T? overflowMessage))
-            await _channel.Writer.WriteAsync(overflowMessage, CancellationToken.None).ConfigureAwait(false);
+            return overflowMessage;
 
-        return message;
+        return await _channel.Reader.ReadAsync(ReadCancellationToken).ConfigureAwait(false);
     }
 
     public void Reset()
