@@ -8,7 +8,7 @@ uid: releases
 
 ### Fixes
 
-* Fix distributed background services graceful shutdown [[#247](https://github.com/BEagle1984/silverback/pull/247)]
+* Fix distributed background services graceful shutdown [[#247](https://github.com/BEagle1984/silverback/issues/247)]
 
 ## [4.6.1](https://github.com/BEagle1984/silverback/releases/tag/v4.6.1)
 
