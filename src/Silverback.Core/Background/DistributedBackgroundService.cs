@@ -77,7 +77,7 @@ namespace Silverback.Background
             _logger.LogBackgroundServiceStarting(this);
 
             // Run another task to avoid deadlocks
-            return Task.Factory.StartNew(
+            return Task.Run(
                 async () =>
                 {
                     try
@@ -106,9 +106,7 @@ namespace Silverback.Background
                             await Lock.ReleaseAsync().ConfigureAwait(false);
                     }
                 },
-                stoppingToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                stoppingToken);
         }
 
         /// <summary>
