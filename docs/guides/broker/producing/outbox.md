@@ -78,6 +78,9 @@ services
 ```
 ***
 
+> [!Important]
+> The endpoints must have a name assigned to be able to store the messages in the outbox. The name is used by the outbox worker to uniquely identify the actual target endpoint.
+
 ### Entity Framework DbContext
 
 When using Entity Framework, the `DbContext` must be configured to include the outbox and the locks table (if used). The tables must be provisioned via migrations or by creating them manually.
@@ -105,7 +108,7 @@ The default locking mechanism from the selected storage package is automatically
             .UsePostgreSqlAdvisoryLock(connectionString)))
 ```
 
->[!Note]
+> [!Note]
 > Both advisory locks and the custom locks table are implemented in the PostgreSQL storage package. The advisory locks are used by default, but you can switch to the custom locks table using `UsePostgreSqlTable`.
 
 ### Provisioning the Required Tables

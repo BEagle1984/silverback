@@ -36,7 +36,7 @@ services.AddSilverback()
 
 The `AddProducer` or `AddClient` method is used to configure the producer. The `Produce<TMessage>` method is used to wire up the producer for a specific message type. The `ProduceTo` method specifies the topic to which the messages should be sent.
 
-Each `AddProducer` call will result in a producer to be created. The `Produce<TMessage>` method can be called multiple times to configure multiple message types for the same producer, each with its own settings, and leading to optimized resource usage and sometimes overall performance in comparison to using a dedicated producer for each message type.
+Each `AddProducer` call will result in a producer being instantiated. The `Produce<TMessage>` method can be called multiple times to configure multiple message types for the same producer, each with its own settings, and leading to optimized resource usage and sometimes overall better performance in comparison to using a dedicated producer for each message type. The same applies to MQTT clients.
 
 > [!Note]
 > While Kafka producers and consumers are different entities, MQTT clients are used for both producing and consuming messages.
@@ -287,4 +287,8 @@ services.AddSilverback()
 
 ## Additional Resources
 
-For more information about the producer configuration possibilities refer to the other guides in this section and the [API Reference](xref:Silverback).
+* [API Reference](xref:Silverback)
+* <xref:bus> guide
+* <xref:consuming> guide
+* <xref:samples>
+* Other guides in this section for in-depth information about the producer capabilities

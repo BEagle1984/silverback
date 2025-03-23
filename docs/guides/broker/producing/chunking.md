@@ -33,4 +33,4 @@ services.AddSilverback()
 
 * [API Reference](xref:Silverback)
 * <xref:consuming-chunking> guide
-* <xref:default-headers>
+* <xref:default-headers> guide
