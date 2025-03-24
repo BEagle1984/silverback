@@ -7,7 +7,7 @@
     <License>MIT</License>
     <Copyright>Copyright (c) 2025 Sergio Aquilini</Copyright>
     <ProjectUrl>https://silverback-messaging.net</ProjectUrl>
-    <Tags>Bus Mediator CQRS Kafka Rabbit RabbitMQ MQTT Microservices</Tags>
+    <Tags>Event Bus Mediator CQRS Kafka MQTT Microservices</Tags>
     <PackageIcon>icon.png</PackageIcon>
     <!-- Reset warnings -->
     <NoWarn>

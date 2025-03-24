@@ -7,7 +7,7 @@ namespace Silverback.Messaging.Broker;
 
 /// <summary>
 ///     The primary identifier used by the message broker to recognize the exact message.
-///     It can represent a Kafka offset, RabbitMQ delivery tag or other similar constructs.
+///     It can represent a Kafka offset or other similar constructs.
 ///     If the message broker doesn't provide any message identifier, a local one can be created (e.g.
 ///     <c>Guid.NewGuid()</c>) and it will be used to match the message to be committed.
 /// </summary>
