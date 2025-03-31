@@ -11,6 +11,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Transactions;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -42,7 +43,8 @@ public partial class DomainEventsFixture
                                     .ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) => new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
@@ -95,7 +97,8 @@ public partial class DomainEventsFixture
                                     .ProduceTo(DefaultTopicName)
                                     .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
 
-        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) => new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
@@ -129,7 +132,7 @@ public partial class DomainEventsFixture
     }
 
     [Fact]
-    public async Task DomainEvents_ShouldBeProducedDuringSaveChangesAsync_WhenTransactionExists()
+    public async Task DomainEvents_ShouldBeProducedDuringSaveChangesAsync_WhenDbTransactionExists()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
@@ -150,7 +153,8 @@ public partial class DomainEventsFixture
                                     .ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) => new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {
@@ -194,6 +198,152 @@ public partial class DomainEventsFixture
     }
 
     [Fact]
+    public async Task DomainEvents_ShouldBeProducedDuringSaveChangesAsync_WhenKafkaTransactionExists()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+                .InitDbContext<TestDbContext>()
+                .AddSilverback()
+                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .EnableTransactions("transactional-id")
+                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<SilverbackContext>().InitKafkaTransaction();
+
+            await dbContext.SaveChangesAsync();
+
+            kafkaTransaction.Abort();
+        }
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        DefaultTopic.MessagesCount.ShouldBe(0);
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<SilverbackContext>().InitKafkaTransaction();
+
+            await dbContext.SaveChangesAsync();
+
+            Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+            DefaultTopic.MessagesCount.ShouldBe(0);
+
+            kafkaTransaction.Commit();
+        }
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        DefaultTopic.MessagesCount.ShouldBe(1);
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(2);
+        }
+    }
+
+    [Fact]
+    public async Task DomainEvents_ShouldBeProducedDuringSaveChangesAsync_WhenKafkaAndDbTransactionExists()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+                .InitDbContext<TestDbContext>()
+                .AddSilverback()
+                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .EnableTransactions("transactional-id")
+                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<SilverbackContext>().InitKafkaTransaction();
+            await using IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync();
+
+            await dbContext.SaveChangesAsync();
+
+            await transaction.RollbackAsync();
+            kafkaTransaction.Abort();
+        }
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        DefaultTopic.MessagesCount.ShouldBe(0);
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(0);
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<SilverbackContext>().InitKafkaTransaction();
+            await using IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync();
+
+            await dbContext.SaveChangesAsync();
+
+            Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+            DefaultTopic.MessagesCount.ShouldBe(0);
+
+            kafkaTransaction.Commit();
+            await transaction.CommitAsync();
+        }
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        DefaultTopic.MessagesCount.ShouldBe(1);
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(1);
+        }
+    }
+
+    [Fact]
     public async Task DomainEvents_ShouldBeStoredToOutboxDuringSaveChangesAsync_WhenTransactionExists()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
@@ -219,7 +369,8 @@ public partial class DomainEventsFixture
                                     .ProduceTo(DefaultTopicName)
                                     .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
 
-        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) => new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
+            new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {

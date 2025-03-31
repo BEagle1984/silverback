@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Transactions;
 /// </summary>
 public static class SilverbackContextKafkaTransactionExtensions
 {
-    private static readonly Guid KafkaTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");
+    private static readonly Guid KafkaTransactionObjectTypeId = new("638570b5-501f-4963-992a-3c6c1c465f51");
 
     /// <summary>
     ///     Initializes the Kafka transaction.
