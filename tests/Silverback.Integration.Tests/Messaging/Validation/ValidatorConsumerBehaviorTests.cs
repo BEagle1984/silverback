@@ -228,7 +228,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
             IRawInboundEnvelope? result = null;
             await new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -260,7 +260,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
             IRawInboundEnvelope? result = null;
             Func<Task> act = () => new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -290,7 +290,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
             IRawInboundEnvelope? result = null;
             await new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -321,7 +321,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
             IRawInboundEnvelope? result = null;
             Func<Task> act = () => new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;

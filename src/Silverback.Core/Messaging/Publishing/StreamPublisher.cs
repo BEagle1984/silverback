@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -19,7 +20,9 @@ namespace Silverback.Messaging.Publishing
         public IReadOnlyCollection<Task> Publish(IMessageStreamProvider streamProvider) =>
             _publisher.Publish<Task>(streamProvider);
 
-        public async Task<IReadOnlyCollection<Task>> PublishAsync(IMessageStreamProvider streamProvider) =>
-            await _publisher.PublishAsync<Task>(streamProvider).ConfigureAwait(false);
+        public async Task<IReadOnlyCollection<Task>> PublishAsync(
+            IMessageStreamProvider streamProvider,
+            CancellationToken cancellationToken = default) =>
+            await _publisher.PublishAsync<Task>(streamProvider, cancellationToken).ConfigureAwait(false);
     }
 }

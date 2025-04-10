@@ -251,6 +251,9 @@ namespace Silverback.Messaging.Messages
         {
             foreach (var lazyStream in _lazyStreams)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
                 if (PushIfCompatibleType(
                         lazyStream,
                         messageId,

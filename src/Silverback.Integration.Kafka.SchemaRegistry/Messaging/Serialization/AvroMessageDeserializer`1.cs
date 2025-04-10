@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry.Serdes;
@@ -25,16 +26,18 @@ namespace Silverback.Messaging.Serialization
         public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
-            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
+            var buffer = await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false);
             var deserialized = await DeserializeAsync<TMessage>(buffer, MessageComponentType.Value, context)
                 .ConfigureAwait(false);
 

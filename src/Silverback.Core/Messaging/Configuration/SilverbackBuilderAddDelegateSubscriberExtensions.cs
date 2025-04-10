@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Subscribers.Subscriptions;
@@ -112,6 +113,30 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
+            Func<TMessage, CancellationToken, Task> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, object> handler,
             SubscriptionOptions? options = null) =>
             AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
@@ -136,7 +161,55 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
+            Func<TMessage, CancellationToken, object> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, Task<object>> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<TMessage, CancellationToken, Task<object>> handler,
             SubscriptionOptions? options = null) =>
             AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
@@ -208,6 +281,30 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
+            Func<IEnumerable<TMessage>, CancellationToken, Task> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, object> handler,
             SubscriptionOptions? options = null) =>
             AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
@@ -232,7 +329,55 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
+            Func<IEnumerable<TMessage>, CancellationToken, object> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, Task<object>> handler,
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
+
+        /// <summary>
+        ///     Subscribes the specified delegate to the messages being published into the bus.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IBusOptions" /> to be configured.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be handled.
+        /// </typeparam>
+        /// <param name="handler">
+        ///     The message handler delegate.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<IEnumerable<TMessage>, CancellationToken, Task<object>> handler,
             SubscriptionOptions? options = null) =>
             AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 

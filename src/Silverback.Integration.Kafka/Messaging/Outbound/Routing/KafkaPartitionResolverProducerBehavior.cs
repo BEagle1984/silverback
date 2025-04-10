@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Behaviors;
@@ -19,7 +20,10 @@ namespace Silverback.Messaging.Outbound.Routing
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.EndpointNameResolver + 1;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        public async Task HandleAsync(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -36,7 +40,7 @@ namespace Silverback.Messaging.Outbound.Routing
                 }
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
     }
 }
