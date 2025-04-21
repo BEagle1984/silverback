@@ -3,7 +3,8 @@
   <PropertyGroup Label="Package information">
     <Authors>Sergio Aquilini</Authors>
     <Company>Silverback</Company>
-    <Description>Silverback is a simple but feature-rich framework to build reactive/event-driven applications or microservices.</Description>
+    <Description>Silverback is a powerful, elegant, and feature-rich message bus for .NET, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for Apache Kafka and MQTT, it offers robust features for reliability, consistency, and scalability.</Description>
+    <Description>Silverback is a powerful, elegant, and feature-rich message bus for .NET, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for Apache Kafka and MQTT, it offers robust features for reliability, consistency, and scalability.</Description>
     <License>MIT</License>
     <Copyright>Copyright (c) 2025 Sergio Aquilini</Copyright>
     <ProjectUrl>https://silverback-messaging.net</ProjectUrl>
@@ -17,11 +18,13 @@
     <EmbedUntrackedSources>false</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\graphics\icon.png" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
