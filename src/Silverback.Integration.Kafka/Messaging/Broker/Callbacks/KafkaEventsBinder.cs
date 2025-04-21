@@ -122,7 +122,7 @@ internal static class KafkaEventsBinder
             .Select(partition => new TopicPartitionOffset(partition, Offset.Unset))
             .ToList();
 
-        foreach (TopicPartitionOffset? topicPartitionOffset in topicPartitionOffsets)
+        foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {
             if (topicPartitionOffset.Offset != Offset.Unset)
                 logger.LogPartitionOffsetReset(topicPartitionOffset, consumerWrapper.Consumer);

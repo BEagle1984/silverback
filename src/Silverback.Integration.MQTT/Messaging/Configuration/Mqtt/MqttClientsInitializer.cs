@@ -105,7 +105,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         int i = 0;
         List<MqttProducer> producers = [];
 
-        foreach (MqttProducerEndpointConfiguration? endpointConfiguration in configuration.ProducerEndpoints)
+        foreach (MqttProducerEndpointConfiguration endpointConfiguration in configuration.ProducerEndpoints)
         {
             MqttClientConfiguration producerConfiguration = configuration with
             {

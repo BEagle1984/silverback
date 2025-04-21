@@ -371,7 +371,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (!Configuration.ProcessPartitionsIndependently)
                 _channelsManager.ResetAll();
 
-            foreach (TopicPartition? topicPartition in topicPartitions)
+            foreach (TopicPartition topicPartition in topicPartitions)
             {
                 if (Configuration.ProcessPartitionsIndependently)
                     _channelsManager.Reset(topicPartition);

@@ -65,7 +65,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
     {
         lock (_subscriptions)
         {
-            foreach (string? topic in topics)
+            foreach (string topic in topics)
             {
                 if (_subscriptions.Any(subscription => subscription.Topic == topic))
                     continue;

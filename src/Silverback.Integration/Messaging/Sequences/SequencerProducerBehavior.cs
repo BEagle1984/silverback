@@ -44,14 +44,14 @@ public class SequencerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        foreach (ISequenceWriter? sequenceWriter in _sequenceWriters)
+        foreach (ISequenceWriter sequenceWriter in _sequenceWriters)
         {
             if (!sequenceWriter.CanHandle(context.Envelope))
                 continue;
 
             IAsyncEnumerable<IOutboundEnvelope> envelopesEnumerable = sequenceWriter.ProcessMessageAsync(context.Envelope);
 
-            await foreach (IOutboundEnvelope? envelope in envelopesEnumerable.ConfigureAwait(false))
+            await foreach (IOutboundEnvelope envelope in envelopesEnumerable.ConfigureAwait(false))
             {
                 ProducerPipelineContext newContext = context.Clone(envelope);
                 await next(newContext, cancellationToken).ConfigureAwait(false);

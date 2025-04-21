@@ -258,7 +258,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             if (_failedAttemptsDictionary.IsEmpty)
                 return;
 
-            foreach (IBrokerMessageIdentifier? messageIdentifier in brokerMessageIdentifiers)
+            foreach (IBrokerMessageIdentifier messageIdentifier in brokerMessageIdentifiers)
             {
                 _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
             }

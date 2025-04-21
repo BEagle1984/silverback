@@ -59,7 +59,7 @@ internal sealed class BrokerClientsBootstrapper
     {
         BrokerClientsConfigurationBuilder brokerClientsConfigurationBuilder = new(scope.ServiceProvider);
 
-        foreach (IBrokerClientsConfigurator? configurator in scope.ServiceProvider.GetServices<IBrokerClientsConfigurator>())
+        foreach (IBrokerClientsConfigurator configurator in scope.ServiceProvider.GetServices<IBrokerClientsConfigurator>())
         {
             InvokeConfigurator(configurator, brokerClientsConfigurationBuilder);
         }

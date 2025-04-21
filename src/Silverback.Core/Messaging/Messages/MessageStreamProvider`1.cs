@@ -224,7 +224,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private IEnumerable<Task> PushToCompatibleStreams(TMessage message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken)
     {
-        foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
+        foreach (ILazyMessageStreamEnumerable lazyStream in _lazyStreams)
         {
             // Softly abort if the cancellation token is signaled, don't throw to avoid unnecessary logging when triggered by the
             // application shutdown

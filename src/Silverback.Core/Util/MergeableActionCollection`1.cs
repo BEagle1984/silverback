@@ -24,7 +24,7 @@ internal class MergeableActionCollection<T> : IReadOnlyCollection<MergedAction<T
 
     public void PrependToAll(Action<T> action)
     {
-        foreach (string? key in _actions.Keys)
+        foreach (string key in _actions.Keys)
         {
             _actions[key] = new MergedAction<T>(key, action + _actions[key].Action);
         }

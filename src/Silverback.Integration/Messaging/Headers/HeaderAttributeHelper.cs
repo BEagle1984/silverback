@@ -29,7 +29,7 @@ internal static class HeaderAttributeHelper
         if (properties.Count == 0)
             yield break;
 
-        foreach (DecoratedProperty? property in properties)
+        foreach (DecoratedProperty property in properties)
         {
             object? value = property.PropertyInfo.GetValue(message);
 
@@ -55,7 +55,7 @@ internal static class HeaderAttributeHelper
         if (properties.Count == 0)
             return;
 
-        foreach (DecoratedProperty? property in properties)
+        foreach (DecoratedProperty property in properties)
         {
             property.PropertyInfo.SetValue(
                 message,

@@ -50,7 +50,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 
     protected override void InitializeCore()
     {
-        foreach (MergedAction<KafkaProducerConfigurationBuilder>? mergedAction in _configurationActions.ProducerConfigurationActions)
+        foreach (MergedAction<KafkaProducerConfigurationBuilder> mergedAction in _configurationActions.ProducerConfigurationActions)
         {
             KafkaProducerConfigurationBuilder builder = new(ServiceProvider);
             mergedAction.Action.Invoke(builder);
