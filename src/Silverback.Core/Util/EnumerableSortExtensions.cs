@@ -8,26 +8,17 @@ namespace Silverback.Util;
 
 internal static class EnumerableSortExtensions
 {
-    public static IReadOnlyList<T> SortBySortIndex<T>(this IEnumerable<T> items)
+    public static IEnumerable<T> SortBySortIndex<T>(this IEnumerable<T> items) =>
+        items.OrderBy(item => item, new SortedComparer<T>());
+
+    private sealed class SortedComparer<T> : IComparer<T>
     {
-        List<T> notSortables = [];
-        List<ISorted> sortables = [];
-
-        foreach (T item in items)
+        public int Compare(T? x, T? y) => (x, y) switch
         {
-            if (item is ISorted sortedItem)
-                sortables.Add(sortedItem);
-            else
-                notSortables.Add(item);
-        }
-
-        sortables.Sort((x, y) => x.SortIndex.CompareTo(y.SortIndex));
-
-        List<T> result = new(sortables.Count + notSortables.Count);
-        result.AddRange(sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>());
-        result.AddRange(notSortables);
-        result.AddRange(sortables.Where(sorted => sorted.SortIndex > 0).Cast<T>());
-
-        return result;
+            (ISorted xSorted, ISorted ySorted) => xSorted.SortIndex.CompareTo(ySorted.SortIndex),
+            (ISorted xSorted, _) => xSorted.SortIndex > 0 ? 1 : -1,
+            (_, ISorted ySorted) => ySorted.SortIndex > 0 ? -1 : 1,
+            _ => 0
+        };
     }
 }

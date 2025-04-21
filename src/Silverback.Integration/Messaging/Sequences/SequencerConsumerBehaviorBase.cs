@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -43,7 +44,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         IEnumerable<ISequenceReader> sequenceReaders,
         ISilverbackLogger<SequencerConsumerBehaviorBase> logger)
     {
-        _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex();
+        _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex().ToList();
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
