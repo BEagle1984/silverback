@@ -62,15 +62,26 @@ internal static class MessageValidator
 
             if (value is IEnumerable<object> valueEnumerable)
             {
-                foreach (object? valueItem in valueEnumerable)
-                {
-                    result = ValidateNestedObject(valueItem, results);
-                }
+                result &= ValidateNestedEnumerable(valueEnumerable, results);
             }
             else
             {
-                result = ValidateNestedObject(value, results);
+                result &= ValidateNestedObject(value, results);
             }
+        }
+
+        return result;
+    }
+
+    private static bool ValidateNestedEnumerable(IEnumerable<object> enumerable, List<ValidationResult> results)
+    {
+        bool result = true;
+
+        foreach (object valueItem in enumerable)
+        {
+            bool nextResult = ValidateNestedObject(valueItem, results);
+            if (result)
+                result = nextResult;
         }
 
         return result;

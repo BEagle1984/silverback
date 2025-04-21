@@ -22,19 +22,18 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Validation;
 
-public class ValidatorProducerBehaviorTests
+public class ValidatorProducerBehaviorFixture
 {
     private readonly LoggerSubstitute<ValidatorProducerBehavior> _loggerSubstitute;
 
     private readonly IProducerLogger<ValidatorProducerBehavior> _producerLogger;
 
-    public ValidatorProducerBehaviorTests()
+    public ValidatorProducerBehaviorFixture()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddLoggerSubstitute(LogLevel.Trace)
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         _loggerSubstitute =
             (LoggerSubstitute<ValidatorProducerBehavior>)serviceProvider
@@ -46,7 +45,7 @@ public class ValidatorProducerBehaviorTests
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not working")]
-    public static TheoryData<TestValidationMessage> HandleAsync_None_WarningIsNotLogged_TestData =>
+    public static TheoryData<TestValidationMessage> HandleAsync_ShouldNotLog_WhenModeNone_TestData =>
     [
         new()
         {
@@ -73,7 +72,7 @@ public class ValidatorProducerBehaviorTests
     ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-    public static TheoryData<TestValidationMessage, string> HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData =>
+    public static TheoryData<TestValidationMessage, string> HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData =>
         new()
         {
             {
@@ -118,18 +117,54 @@ public class ValidatorProducerBehaviorTests
                     String10 = "123456",
                     IntRange = 5,
                     NumbersOnly = "123",
-                    Nested = new ValidationMessageNestedModel
+                    FirstNested = new ValidationMessageNestedModel
                     {
                         String5 = "123456"
                     }
                 },
                 $"Invalid message produced: {Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+            },
+            {
+                new TestValidationMessage
+                {
+                    Id = "1",
+                    String10 = "123456",
+                    IntRange = 5,
+                    NumbersOnly = "123",
+                    FirstNested = new ValidationMessageNestedModel
+                    {
+                        String5 = "123456"
+                    },
+                    SecondNested = new ValidationMessageNestedModel
+                    {
+                        String5 = "12345"
+                    }
+                },
+                $"Invalid message produced: {Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+            },
+            {
+                new TestValidationMessage
+                {
+                    Id = "1",
+                    String10 = "123456",
+                    IntRange = 5,
+                    NumbersOnly = "123",
+                    FirstNested = new ValidationMessageNestedModel
+                    {
+                        String5 = "123456"
+                    },
+                    SecondNested = new ValidationMessageNestedModel
+                    {
+                        String5 = "123456"
+                    }
+                },
+                $"Invalid message produced: {Environment.NewLine}- The field String5 must be a string with a maximum length of 5.{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
             }
         };
 
     [Theory]
-    [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
-    public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
+    [MemberData(nameof(HandleAsync_ShouldNotLog_WhenModeNone_TestData))]
+    public async Task HandleAsync_ShouldNotLog_WhenModeNone(IIntegrationMessage message)
     {
         TestProducerEndpointConfiguration configuration = new("topic1")
         {
@@ -192,10 +227,8 @@ public class ValidatorProducerBehaviorTests
     }
 
     [Theory]
-    [MemberData(nameof(HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData))]
-    public async Task HandleAsync_LogWarning_WarningIsLogged(
-        IIntegrationMessage message,
-        string expectedValidationMessage)
+    [MemberData(nameof(HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData))]
+    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(IIntegrationMessage message, string expectedValidationMessage)
     {
         TestProducerEndpointConfiguration configuration = new("topic1")
         {
