@@ -20,7 +20,8 @@ namespace Silverback.Tests.Core.Util
                 new SortedItem(50),
                 new SortedItem(-100),
                 new Item("unsorted3"),
-                new Item("unsorted2")
+                new Item("unsorted2"),
+                new SortedItem(0)
             };
 
             var sorted = items.SortBySortIndex();
@@ -30,6 +31,7 @@ namespace Silverback.Tests.Core.Util
                 {
                     new SortedItem(-100),
                     new SortedItem(-50),
+                    new SortedItem(0),
                     new Item("unsorted3"),
                     new Item("unsorted2"),
                     new SortedItem(50),
