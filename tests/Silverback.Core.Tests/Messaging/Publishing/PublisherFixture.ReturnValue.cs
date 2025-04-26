@@ -146,7 +146,14 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
                 .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
-        static IAsyncEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() }.ToAsyncEnumerable();
+        static async IAsyncEnumerable<TestCommandOne> Handle1(TestEventOne message)
+        {
+            await Task.Delay(1);
+            yield return new TestCommandOne();
+            await Task.Delay(1);
+            yield return new TestCommandOne();
+        }
+
         static Task<IAsyncEnumerable<TestCommandOne>> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
         static ValueTask<IAsyncEnumerable<TestCommandOne>> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
         void Handle4(TestCommandOne message) => republishedMessages.Add(message);

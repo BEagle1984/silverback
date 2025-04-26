@@ -81,5 +81,6 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddReturnValueHandlers(this IServiceCollection services) => services
         .AddSingleton<ReturnValueHandlerService>()
         .AddSingleton<IReturnValueHandler, SingleMessageReturnValueHandler>()
-        .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
+        .AddSingleton<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
+        .AddSingleton<IReturnValueHandler, AsyncEnumerableMessagesReturnValueHandler>();
 }
