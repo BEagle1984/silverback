@@ -49,7 +49,7 @@ public class CustomHeadersProducerBehavior : IProducerBehavior
 }
 ```
 
-The custom behavior must be registered at startup using the `AddSingletonBrokerBehavior`, `AddScopedBrokerBehavior`, or `AddTransientBrokerBehavior` method.
+The custom behavior must be registered at startup using the `AddSingletonBrokerBehavior`, or `AddTransientBrokerBehavior` method. The transient behavior will be resolved once per producer, while the singleton behavior will be shared.
 
 ```csharp
 services
@@ -58,6 +58,7 @@ services
     .AddSingletonBrokerBehavior<CustomHeadersProducerBehavior>();
 ```
 
+Additional services can be injected into the behavior constructor, or resolved via the `ServiceProvider` from the <xref:Silverback.Messaging.Producing.ProducerPipelineContext> if a scoped instance is required.
 
 ## Additional Resources
 

@@ -148,6 +148,8 @@ public abstract class Producer : IProducer, IDisposable
         Action<Exception, TState> onError,
         TState state)
     {
+        Check.NotNull(envelope, nameof(envelope));
+
         try
         {
             ProducerPipelineContext<TState> context = new(
@@ -179,7 +181,7 @@ public abstract class Producer : IProducer, IDisposable
 
                     return ValueTask.CompletedTask;
                 },
-                _serviceProvider)
+                envelope.Context?.ServiceProvider ?? _serviceProvider)
             {
                 OnSuccess = onSuccess,
                 OnError = onError,
@@ -277,6 +279,8 @@ public abstract class Producer : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
     {
+        Check.NotNull(envelope, nameof(envelope));
+
         try
         {
             ProducerPipelineContext context = new(
@@ -291,7 +295,7 @@ public abstract class Producer : IProducer, IDisposable
 
                     finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
                 },
-                _serviceProvider);
+                envelope.Context?.ServiceProvider ?? _serviceProvider);
 
             await ExecutePipelineAsync(context, cancellationToken).ConfigureAwait(false);
 
