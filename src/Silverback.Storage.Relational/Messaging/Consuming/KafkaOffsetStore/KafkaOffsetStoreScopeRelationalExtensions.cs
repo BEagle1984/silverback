@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 
 /// <summary>
-///     Adds the storage specific methods to the <see cref="KafkaOffsetStoreScope" />.
+///     Adds the storage-specific methods to the <see cref="KafkaOffsetStoreScope" />.
 /// </summary>
 public static class KafkaOffsetStoreScopeRelationalExtensions
 {

@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Adds the storage specific methods to the <see cref="ISilverbackContext" />.
+///     Adds the storage-specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
 public static class SilverbackContextStorageExtensions
 {

@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Adds the storage specific methods to the <see cref="Publisher" />.
+///     Adds the storage-specific methods to the <see cref="Publisher" />.
 /// </summary>
 public static class PublisherStorageExtensions
 {

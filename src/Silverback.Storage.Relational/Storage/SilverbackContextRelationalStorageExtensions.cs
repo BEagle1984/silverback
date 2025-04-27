@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Adds the relational storage specific methods to the <see cref="ISilverbackContext" />.
+///     Adds the relational storage-specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
 public static class SilverbackContextRelationalStorageExtensions
 {

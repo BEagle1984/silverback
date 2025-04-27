@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <summary>
-///     Exposes the methods to configure Silverback and enable its optional features adding the needed services to the
+///     Exposes the methods to configure Silverback and enable its optional features adding the necessary services to the
 ///     <see cref="IServiceCollection" />.
 /// </summary>
 public partial class SilverbackBuilder
