@@ -147,7 +147,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.AddKafkaTransaction(new KafkaTransaction(context));
 
-        context.RemoveKafkaTransaction();
+        context.ClearKafkaTransaction();
 
         Action act = () => context.GetKafkaTransaction();
         Exception exception = act.ShouldThrow<InvalidOperationException>();

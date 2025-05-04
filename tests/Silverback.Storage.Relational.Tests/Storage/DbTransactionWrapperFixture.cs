@@ -17,23 +17,27 @@ public class DbTransactionWrapperFixture
 {
     private readonly ISilverbackContext _context = Substitute.For<ISilverbackContext>();
 
-    [Fact]
-    public void Constructor_ShouldEnlistTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Constructor_ShouldEnlistTransaction(bool ownTransaction)
     {
         DbTransaction transaction = new TestTransaction();
 
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         transactionWrapper.ShouldNotBeNull();
         _context.Received(1).EnlistTransaction(Arg.Any<DbTransactionWrapper>());
     }
 
-    [Fact]
-    public void UnderlyingTransaction_ShouldReturnWrappedTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void UnderlyingTransaction_ShouldReturnWrappedTransaction(bool ownTransaction)
     {
         DbTransaction transaction = new TestTransaction();
 
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         transactionWrapper.UnderlyingTransaction.ShouldBe(transaction);
     }
@@ -43,7 +47,7 @@ public class DbTransactionWrapperFixture
     {
         DbTransaction transaction = new TestTransaction();
 
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, true);
 
         transactionWrapper.Equals(transactionWrapper).ShouldBeTrue();
     }
@@ -53,8 +57,8 @@ public class DbTransactionWrapperFixture
     {
         DbTransaction transaction = new TestTransaction();
 
-        object transactionWrapper1 = new DbTransactionWrapper(transaction, _context);
-        object transactionWrapper2 = new DbTransactionWrapper(transaction, _context);
+        object transactionWrapper1 = new DbTransactionWrapper(transaction, _context, true);
+        object transactionWrapper2 = new DbTransactionWrapper(transaction, _context, true);
 
         transactionWrapper1.Equals(transactionWrapper2).ShouldBeTrue();
     }
@@ -65,8 +69,8 @@ public class DbTransactionWrapperFixture
         DbTransaction transaction1 = new TestTransaction();
         DbTransaction transaction2 = new TestTransaction();
 
-        object transactionWrapper1 = new DbTransactionWrapper(transaction1, _context);
-        object transactionWrapper2 = new DbTransactionWrapper(transaction2, _context);
+        object transactionWrapper1 = new DbTransactionWrapper(transaction1, _context, true);
+        object transactionWrapper2 = new DbTransactionWrapper(transaction2, _context, true);
 
         transactionWrapper1.Equals(transactionWrapper2).ShouldBeFalse();
     }
@@ -76,16 +80,18 @@ public class DbTransactionWrapperFixture
     {
         DbTransaction transaction = new TestTransaction();
 
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, true);
 
         transactionWrapper.GetHashCode().ShouldBe(transaction.GetHashCode());
     }
 
-    [Fact]
-    public void Commit_ShouldCommitWrappedTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Commit_ShouldCommitWrappedTransaction(bool ownTransaction)
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         transactionWrapper.Commit();
 
@@ -93,11 +99,13 @@ public class DbTransactionWrapperFixture
         transaction.IsRolledBack.ShouldBeFalse();
     }
 
-    [Fact]
-    public async Task CommitAsync_ShouldCommitWrappedTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CommitAsync_ShouldCommitWrappedTransaction(bool ownTransaction)
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         await transactionWrapper.CommitAsync();
 
@@ -105,11 +113,13 @@ public class DbTransactionWrapperFixture
         transaction.IsRolledBack.ShouldBeFalse();
     }
 
-    [Fact]
-    public void Rollback_ShouldRollbackWrappedTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Rollback_ShouldRollbackWrappedTransaction(bool ownTransaction)
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         transactionWrapper.Rollback();
 
@@ -117,11 +127,13 @@ public class DbTransactionWrapperFixture
         transaction.IsRolledBack.ShouldBeTrue();
     }
 
-    [Fact]
-    public async Task RollbackAsync_ShouldRollbackWrappedTransaction()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RollbackAsync_ShouldRollbackWrappedTransaction(bool ownTransaction)
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, ownTransaction);
 
         await transactionWrapper.RollbackAsync();
 
@@ -130,27 +142,51 @@ public class DbTransactionWrapperFixture
     }
 
     [Fact]
-    public void Dispose_ShouldClearContextTransactionAndDisposeWrappedTransaction()
+    public void Dispose_ShouldClearContextTransactionAndDisposeWrappedTransaction_WhenOwned()
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, true);
 
         transactionWrapper.Dispose();
 
-        _context.Received(1).RemoveTransaction();
+        _context.Received(1).ClearStorageTransaction();
         transaction.IsDisposed.ShouldBeTrue();
     }
 
     [Fact]
-    public async Task DisposeAsync_ShouldClearContextTransactionAndDisposeWrappedTransaction()
+    public void Dispose_ShouldClearContextTransactionButNotDisposeWrappedTransaction_WhenNotOwned()
     {
         TestTransaction transaction = new();
-        DbTransactionWrapper transactionWrapper = new(transaction, _context);
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, false);
+
+        transactionWrapper.Dispose();
+
+        _context.Received(1).ClearStorageTransaction();
+        transaction.IsDisposed.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldClearContextTransactionAndDisposeWrappedTransaction_WhenOwned()
+    {
+        TestTransaction transaction = new();
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, true);
 
         await transactionWrapper.DisposeAsync();
 
-        _context.Received(1).RemoveTransaction();
+        _context.Received(1).ClearStorageTransaction();
         transaction.IsDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldClearContextTransactionButNotDisposeWrappedTransaction_WhenNotOwned()
+    {
+        TestTransaction transaction = new();
+        DbTransactionWrapper transactionWrapper = new(transaction, _context, false);
+
+        await transactionWrapper.DisposeAsync();
+
+        _context.Received(1).ClearStorageTransaction();
+        transaction.IsDisposed.ShouldBeFalse();
     }
 
     private class TestTransaction : DbTransaction

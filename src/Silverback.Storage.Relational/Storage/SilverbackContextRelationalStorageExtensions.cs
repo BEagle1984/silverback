@@ -21,11 +21,14 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
+    /// <param name="ownTransaction">
+    ///     A value indicating whether the transaction should be disposed when the <see cref="IStorageTransaction" /> is disposed.
+    /// </param>
     /// <returns>
     ///    The <see cref="IStorageTransaction" />.
     /// </returns>
-    public static IStorageTransaction EnlistDbTransaction(this ISilverbackContext context, DbTransaction transaction) =>
-        new DbTransactionWrapper(transaction, context);
+    public static IStorageTransaction EnlistDbTransaction(this ISilverbackContext context, DbTransaction transaction, bool ownTransaction = true) =>
+        new DbTransactionWrapper(transaction, context, ownTransaction);
 
     /// <summary>
     ///     Checks whether an active <see cref="DbTransaction" /> is set and returns it.

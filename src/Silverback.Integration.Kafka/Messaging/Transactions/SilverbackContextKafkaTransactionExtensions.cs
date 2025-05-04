@@ -48,7 +48,7 @@ public static class SilverbackContextKafkaTransactionExtensions
     internal static void AddKafkaTransaction(this ISilverbackContext context, KafkaTransaction kafkaTransaction) =>
         Check.NotNull(context, nameof(context)).AddObject(KafkaTransactionObjectTypeId, kafkaTransaction);
 
-    internal static void RemoveKafkaTransaction(this ISilverbackContext context) =>
+    internal static void ClearKafkaTransaction(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(KafkaTransactionObjectTypeId);
 
     internal static KafkaTransaction GetKafkaTransaction(this ISilverbackContext context) =>

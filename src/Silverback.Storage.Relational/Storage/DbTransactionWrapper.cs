@@ -14,10 +14,13 @@ internal sealed class DbTransactionWrapper : IStorageTransaction, IEquatable<DbT
 
     private readonly ISilverbackContext _context;
 
-    public DbTransactionWrapper(DbTransaction transaction, ISilverbackContext context)
+    private readonly bool _ownTransaction;
+
+    public DbTransactionWrapper(DbTransaction transaction, ISilverbackContext context, bool ownTransaction)
     {
         _transaction = Check.NotNull(transaction, nameof(transaction));
         _context = Check.NotNull(context, nameof(context));
+        _ownTransaction = ownTransaction;
 
         _context.EnlistTransaction(this);
     }
@@ -53,13 +56,16 @@ internal sealed class DbTransactionWrapper : IStorageTransaction, IEquatable<DbT
 
     public void Dispose()
     {
-        _context.RemoveTransaction();
-        _transaction.Dispose();
+        _context.ClearStorageTransaction();
+
+        if (_ownTransaction)
+            _transaction.Dispose();
     }
 
     public ValueTask DisposeAsync()
     {
-        _context.RemoveTransaction();
-        return _transaction.DisposeAsync();
+        _context.ClearStorageTransaction();
+
+        return _ownTransaction ? _transaction.DisposeAsync() : ValueTask.CompletedTask;
     }
 }

@@ -12,7 +12,7 @@ namespace Silverback.Storage;
 /// </summary>
 public static class SilverbackContextStorageExtensions
 {
-    private static readonly Guid StorageTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");
+    internal static readonly Guid StorageTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");
 
     /// <summary>
     ///     Specifies the transaction to be used for storage operations.
@@ -25,6 +25,18 @@ public static class SilverbackContextStorageExtensions
     /// </param>
     public static void EnlistTransaction(this ISilverbackContext context, IStorageTransaction transaction) =>
         Check.NotNull(context, nameof(context)).AddObject(StorageTransactionObjectTypeId, transaction);
+
+    /// <summary>
+    ///     Gets the current storage transaction.
+    /// </summary>
+    /// <param name="context">
+    ///     The <see cref="ISilverbackContext" />.
+    /// </param>
+    /// <returns>
+    ///     The current <see cref="IStorageTransaction" /> or <c>null</c> if no transaction is set.
+    /// </returns>
+    public static IStorageTransaction? GetStorageTransaction(this ISilverbackContext context) =>
+        Check.NotNull(context, nameof(context)).TryGetStorageTransaction(out IStorageTransaction? transaction) ? transaction : null;
 
     /// <summary>
     ///     Checks whether a storage transaction is set and returns it.
@@ -49,6 +61,6 @@ public static class SilverbackContextStorageExtensions
     /// <param name="context">
     ///     The <see cref="ISilverbackContext" />.
     /// </param>
-    public static void RemoveTransaction(this ISilverbackContext context) =>
+    public static void ClearStorageTransaction(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(StorageTransactionObjectTypeId);
 }

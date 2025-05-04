@@ -54,7 +54,7 @@ public class SilverbackContextStorageExtensionsFixture
         IStorageTransaction transaction = Substitute.For<IStorageTransaction>();
         context.EnlistTransaction(transaction);
 
-        context.RemoveTransaction();
+        context.ClearStorageTransaction();
 
         context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction).ShouldBeFalse();
         storedTransaction.ShouldBeNull();

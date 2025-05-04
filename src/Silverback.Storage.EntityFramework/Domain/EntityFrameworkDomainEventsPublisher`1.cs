@@ -94,31 +94,43 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
     /// </returns>
     public int SaveChangesAndPublishDomainEvents(bool acceptAllChangesOnSuccess = true)
     {
-        bool ownTransaction = false;
-        DbTransaction? transaction = _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+        DbTransaction? contextTransaction = _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+        IStorageTransaction? existingStorageTransaction = _publisher.Context.GetStorageTransaction();
+        IStorageTransaction? newStorageTransaction = null;
+        IStorageTransaction? previousStorageTransaction = null;
 
-        if (transaction == null)
+        if (contextTransaction == null && existingStorageTransaction != null)
         {
-            transaction = _dbContext.Database.BeginTransaction().GetDbTransaction();
-            ownTransaction = true;
+            // If the DbContext transaction is not set, we ensure that the storage won't use a transaction either
+            previousStorageTransaction = existingStorageTransaction;
+            _publisher.Context.ClearStorageTransaction();
         }
-
-        IStorageTransaction storageTransaction = _publisher.EnlistDbTransaction(transaction);
+        else if (contextTransaction != null && existingStorageTransaction == null)
+        {
+            // If the DbContext transaction is set, we ensure that the storage will use it
+            newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
+        }
+        else if (contextTransaction != null && existingStorageTransaction != null && contextTransaction != existingStorageTransaction.UnderlyingTransaction)
+        {
+            // If both transactions are set, but they are different, we ensure that the storage will use the DbContext transaction
+            previousStorageTransaction = existingStorageTransaction;
+            _publisher.Context.ClearStorageTransaction();
+            newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
+        }
 
         try
         {
             _domainEventsPublisher.PublishDomainEvents();
             int result = _saveChanges.Invoke(acceptAllChangesOnSuccess);
-
-            if (ownTransaction)
-                _dbContext.Database.CurrentTransaction!.Commit();
-
             return result;
         }
         finally
         {
-            if (ownTransaction)
-                storageTransaction.Dispose();
+            if (newStorageTransaction != null)
+                _publisher.Context.ClearStorageTransaction();
+
+            if (previousStorageTransaction != null)
+                _publisher.Context.EnlistTransaction(previousStorageTransaction);
         }
     }
 
@@ -140,31 +152,43 @@ public class EntityFrameworkDomainEventsPublisher<TDbContext>
         bool acceptAllChangesOnSuccess = true,
         CancellationToken cancellationToken = default)
     {
-        bool ownTransaction = false;
-        DbTransaction? transaction = _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+        DbTransaction? contextTransaction = _dbContext.Database.CurrentTransaction?.GetDbTransaction();
+        IStorageTransaction? existingStorageTransaction = _publisher.Context.GetStorageTransaction();
+        IStorageTransaction? newStorageTransaction = null;
+        IStorageTransaction? previousStorageTransaction = null;
 
-        if (transaction == null)
+        if (contextTransaction == null && existingStorageTransaction != null)
         {
-            transaction = (await _dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false)).GetDbTransaction();
-            ownTransaction = true;
+            // If the DbContext transaction is not set, we ensure that the storage won't use a transaction either
+            previousStorageTransaction = existingStorageTransaction;
+            _publisher.Context.ClearStorageTransaction();
         }
-
-        IStorageTransaction storageTransaction = _publisher.EnlistDbTransaction(transaction);
+        else if (contextTransaction != null && existingStorageTransaction == null)
+        {
+            // If the DbContext transaction is set, we ensure that the storage will use it
+            newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
+        }
+        else if (contextTransaction != null && existingStorageTransaction != null && contextTransaction != existingStorageTransaction.UnderlyingTransaction)
+        {
+            // If both transactions are set, but they are different, we ensure that the storage will use the DbContext transaction
+            previousStorageTransaction = existingStorageTransaction;
+            _publisher.Context.ClearStorageTransaction();
+            newStorageTransaction = _publisher.EnlistDbTransaction(contextTransaction);
+        }
 
         try
         {
             await _domainEventsPublisher.PublishDomainEventsAsync().ConfigureAwait(false);
             int result = await _saveChangesAsync.Invoke(acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait(false);
-
-            if (ownTransaction)
-                await _dbContext.Database.CurrentTransaction!.CommitAsync(cancellationToken).ConfigureAwait(false);
-
             return result;
         }
         finally
         {
-            if (ownTransaction)
-                storageTransaction.Dispose();
+            if (newStorageTransaction != null)
+                _publisher.Context.ClearStorageTransaction();
+
+            if (previousStorageTransaction != null)
+                _publisher.Context.EnlistTransaction(previousStorageTransaction);
         }
     }
 }

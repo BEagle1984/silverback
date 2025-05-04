@@ -67,8 +67,6 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
             dbContext.Add(MapToEntity(outboxMessage));
         }
 
-        dbContext.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
-
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 

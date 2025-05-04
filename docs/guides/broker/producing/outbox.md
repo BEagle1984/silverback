@@ -81,6 +81,27 @@ services
 > [!Important]
 > The endpoints must have a name assigned to be able to store the messages in the outbox. The name is used by the outbox worker to uniquely identify the actual target endpoint.
 
+### Transactionality
+
+You most probably want the writing to the outbox to be part of the same transaction as the other changes to the database. This is **not** done automatically, and you need to begin and **enlist** the transaction manually.
+
+```csharp
+await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
+{
+    publisher.EnlistDbTransaction(transaction.GetDbTransaction());
+
+    await publisher.PublishAsync(...);
+    await publisher.PublishAsync(...);
+    await publisher.PublishAsync(...);
+
+    await transaction.CommitAsync();
+}
+```
+
+The example above shows how to use Entity Framework, but the same applies to any other database access library. The important part is to enlist the transaction in the publisher before publishing the messages.
+
+This step is required even if using the <xref:Silverback.Domain.EntityFrameworkDomainEventsPublisher`1> to automatically publish the domain events when saving the changes to the database.
+
 ### Entity Framework DbContext
 
 When using Entity Framework, the `DbContext` must be configured to include the outbox and the locks table (if used). The tables must be provisioned via migrations or by creating them manually.

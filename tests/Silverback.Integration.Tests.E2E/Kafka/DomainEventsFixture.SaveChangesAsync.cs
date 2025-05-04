@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Transactions;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -26,22 +28,18 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -76,26 +74,22 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                "test",
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(
+                    "test",
+                    endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -136,22 +130,18 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -202,22 +192,19 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -227,7 +214,7 @@ public partial class DomainEventsFixture
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
             TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
             entity.SetValue(42);
-            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<SilverbackContext>().InitKafkaTransaction();
+            using IKafkaTransaction kafkaTransaction = scope.ServiceProvider.GetRequiredService<ISilverbackContext>().InitKafkaTransaction();
 
             await dbContext.SaveChangesAsync();
 
@@ -273,22 +260,19 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -348,26 +332,22 @@ public partial class DomainEventsFixture
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                "test",
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(
+                    "test",
+                    endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
 
         static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) =>
             new() { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
@@ -411,6 +391,121 @@ public partial class DomainEventsFixture
             TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
             dbContext.TestDomainEntities.Count().ShouldBe(1);
             dbContext.Outbox.Count().ShouldBe(1);
+        }
+    }
+
+    [Fact]
+    public async Task DomainEvents_ShouldBeStoredToOutboxDuringSaveChangesAsync_WhenNoTransactionExistsAndSavingMultipleTimes()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, IEnumerable<IMessage>>(HandleDomainEvent)
+            .AddDelegateSubscriber<TestCommandOne, IDbContextFactory<TestDbContext>, IPublisher>(HandleCommand)
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(
+                    "test",
+                    endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
+
+        static IEnumerable<IMessage> HandleDomainEvent(ValueChangedDomainEvent domainEvent)
+        {
+            yield return new TestEventOne { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+
+            if (domainEvent.Source?.Value == 42)
+                yield return new TestCommandOne();
+        }
+
+        static async Task HandleCommand(TestCommandOne command, IDbContextFactory<TestDbContext> dbContextFactory, IPublisher publisher)
+        {
+            await using TestDbContext dbContext = await dbContextFactory.CreateDbContextAsync();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(99);
+            await dbContext.SaveChangesAsync();
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = await scope.ServiceProvider.GetRequiredService<IDbContextFactory<TestDbContext>>().CreateDbContextAsync();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            await dbContext.SaveChangesAsync();
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(2);
+            dbContext.Outbox.Count().ShouldBe(2);
+        }
+    }
+
+    [Fact]
+    public async Task DomainEvents_ShouldBeStoredToOutboxDuringSaveChangesAsync_WhenTransactionExistsAndSavingMultipleTimesToScopedDbContext()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .AddDelegateSubscriber<ValueChangedDomainEvent, IEnumerable<IMessage>>(HandleDomainEvent)
+            .AddScopedSubscriber<AsyncCommandHandler>()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(
+                    "test",
+                    endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))));
+
+        static IEnumerable<IMessage> HandleDomainEvent(ValueChangedDomainEvent domainEvent)
+        {
+            yield return new TestEventOne { ContentEventOne = $"new value: {domainEvent.Source?.Value}" };
+
+            if (domainEvent.Source?.Value == 42)
+                yield return new TestCommandOne();
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            await dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync();
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(42);
+            await dbContext.SaveChangesAsync();
+            await transaction.RollbackAsync();
+        }
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            dbContext.TestDomainEntities.Count().ShouldBe(2);
+            dbContext.TestDomainEntities.Count(entity => entity.Value == 42).ShouldBe(1);
+            dbContext.Outbox.Count().ShouldBe(2);
         }
     }
 }

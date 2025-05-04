@@ -33,9 +33,12 @@ public static class PublisherStorageExtensions
     /// <param name="dbTransaction">
     ///     The transaction to be used.
     /// </param>
+    /// <param name="ownTransaction">
+    ///     A value indicating whether the transaction should be disposed when the <see cref="IStorageTransaction" /> is disposed.
+    /// </param>
     /// <returns>
     ///     The <see cref="IStorageTransaction" />.
     /// </returns>
-    public static IStorageTransaction EnlistDbTransaction(this IPublisher publisher, DbTransaction dbTransaction) =>
-        Check.NotNull(publisher, nameof(publisher)).Context.EnlistDbTransaction(dbTransaction);
+    public static IStorageTransaction EnlistDbTransaction(this IPublisher publisher, DbTransaction dbTransaction, bool ownTransaction = true) =>
+        Check.NotNull(publisher, nameof(publisher)).Context.EnlistDbTransaction(dbTransaction, ownTransaction);
 }

@@ -75,7 +75,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
         if (_isPending)
             Abort();
 
-        _context.RemoveKafkaTransaction();
+        _context.ClearKafkaTransaction();
     }
 
     internal void EnsureBegin()

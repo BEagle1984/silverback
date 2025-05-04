@@ -4,13 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Silverback.Util;
 
 namespace Silverback;
 
 internal class SilverbackContext : ISilverbackContext
 {
-    private readonly Dictionary<Guid, object> _objects = [];
+    private static readonly AsyncLocal<Dictionary<Guid, object>> Objects = new();
 
     public SilverbackContext(IServiceProvider serviceProvider)
     {
@@ -21,13 +22,13 @@ internal class SilverbackContext : ISilverbackContext
 
     public void AddObject(Guid objectTypeId, object obj)
     {
-        if (!_objects.TryAdd(objectTypeId, obj) && GetObject(objectTypeId) != obj)
+        if (!GetObjectsDictionary().TryAdd(objectTypeId, obj) && GetObject(objectTypeId) != obj)
             throw new InvalidOperationException($"An object of type {objectTypeId} has already been added.");
     }
 
-    public void SetObject(Guid objectTypeId, object obj) => _objects[objectTypeId] = obj;
+    public void SetObject(Guid objectTypeId, object obj) => GetObjectsDictionary()[objectTypeId] = obj;
 
-    public bool RemoveObject(Guid objectTypeId) => _objects.Remove(objectTypeId);
+    public bool RemoveObject(Guid objectTypeId) => GetObjectsDictionary().Remove(objectTypeId);
 
     public T GetObject<T>(Guid objectTypeId) => TryGetObject(objectTypeId, out T? obj)
         ? obj
@@ -52,7 +53,8 @@ internal class SilverbackContext : ISilverbackContext
         return false;
     }
 
-    public bool TryGetObject(Guid objectTypeId, [NotNullWhen(true)] out object? obj) => _objects.TryGetValue(objectTypeId, out obj);
+    public bool TryGetObject(Guid objectTypeId, [NotNullWhen(true)] out object? obj) =>
+        GetObjectsDictionary().TryGetValue(objectTypeId, out obj);
 
     public T GetOrAddObject<T>(Guid objectTypeId, Func<T> factory)
     {
@@ -77,4 +79,6 @@ internal class SilverbackContext : ISilverbackContext
         AddObject(objectTypeId, newObj);
         return newObj;
     }
+
+    private static IDictionary<Guid, object> GetObjectsDictionary() => Objects.Value ??= [];
 }

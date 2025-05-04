@@ -6,11 +6,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Domain;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -37,6 +39,7 @@ public partial class DomainEventsFixture : KafkaFixture
                 new EntityFrameworkDomainEventsPublisher<TestDbContext>(this, base.SaveChanges, base.SaveChangesAsync, publisher);
         }
 
+        [ActivatorUtilitiesConstructor]
         public TestDbContext(DbContextOptions options, IPublisher publisher)
             : base(options)
         {
@@ -49,8 +52,6 @@ public partial class DomainEventsFixture : KafkaFixture
         public DbSet<SilverbackOutboxMessage> Outbox { get; set; } = null!;
 
         public DbSet<SilverbackLock> Locks { get; set; } = null!;
-
-        public override int SaveChanges() => SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess) =>
             _eventsPublisher?.SaveChangesAndPublishDomainEvents(acceptAllChangesOnSuccess) ?? base.SaveChanges(acceptAllChangesOnSuccess);
@@ -75,4 +76,16 @@ public partial class DomainEventsFixture : KafkaFixture
     }
 
     private class ValueChangedDomainEvent : DomainEvent<TestDomainEntity>;
+
+    private sealed class AsyncCommandHandler(TestDbContext dbContext)
+    {
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
+        public async Task HandleCommand(TestCommandOne command)
+        {
+            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            entity.SetValue(99);
+            await dbContext.SaveChangesAsync();
+        }
+    }
 }

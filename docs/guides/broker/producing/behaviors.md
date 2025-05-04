@@ -58,7 +58,7 @@ services
     .AddSingletonBrokerBehavior<CustomHeadersProducerBehavior>();
 ```
 
-Additional services can be injected into the behavior constructor, or resolved via the `ServiceProvider` from the <xref:Silverback.Messaging.Producing.ProducerPipelineContext> if a scoped instance is required.
+Additional services can be injected into the behavior constructor, or resolved via the `ServiceProvider` from the <xref:Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext> if a scoped instance is required.
 
 ## Additional Resources
 
