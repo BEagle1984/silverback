@@ -14,7 +14,7 @@ namespace Silverback.Configuration;
 public static partial class SilverbackBuilderIntegrationExtensions
 {
     /// <summary>
-    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to setup the broker endpoints.
+    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to set up the broker endpoints.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
@@ -36,7 +36,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     }
 
     /// <summary>
-    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to setup the broker endpoints.
+    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to set up the broker endpoints.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
@@ -57,7 +57,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     }
 
     /// <summary>
-    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to setup the producers and consumers.
+    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to set up the producers and consumers.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.

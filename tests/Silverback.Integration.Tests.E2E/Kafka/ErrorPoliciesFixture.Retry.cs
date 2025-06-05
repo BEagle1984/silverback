@@ -793,6 +793,58 @@ public partial class ErrorPoliciesFixture
     }
 
     [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenMessageIsInvalidJson()
+    {
+        int tryCount = 0;
+        int completedBatches = 0;
+        int messagesCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(2)
+                                        .OnError(policy => policy.Retry(2).ThenSkip()))))
+                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            tryCount++;
+
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+                // Do nothing
+                messagesCount++;
+            }
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.RawProduceAsync("invalid"u8.ToArray());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
+
+        completedBatches.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task RetryPolicy_ShouldStopConsumer_WhenStillFailingAfterRetries()
     {
         int tryCount = 0;
