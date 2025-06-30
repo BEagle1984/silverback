@@ -81,6 +81,8 @@ public partial class DomainEventsFixture : KafkaFixture
     {
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
         public async Task HandleCommand(TestCommandOne command)
         {
             TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;

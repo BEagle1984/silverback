@@ -294,10 +294,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         // If the consumer is disconnecting the rollback is not needed
         if (Client.Status is ClientStatus.Disconnecting or ClientStatus.Disconnected)
-            return default;
+            return ValueTask.CompletedTask;
 
         if (IsStopping)
-            return default;
+            return ValueTask.CompletedTask;
 
         // If the partitions are being processed together we must rollback them all
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
@@ -308,9 +308,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         // cooperative rebalance the partitions are handled slightly differently, and they are reassigned before the rollback is over)
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
-            .Where(
-                topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition) &&
-                                        IsNotRevoked(topicPartitionOffset.TopicPartition))
+            .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition) &&
+                                           IsNotRevoked(topicPartitionOffset.TopicPartition))
             .AsReadOnlyCollection();
 
         if (IsStarted)
@@ -334,7 +333,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         Task.Run(() => RestartConsumeLoopAfterRollbackAsync(channelsManagerStoppingTasks, topicPartitionOffsets)).FireAndForget();
 
-        return default;
+        return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.Dispose(bool)" />

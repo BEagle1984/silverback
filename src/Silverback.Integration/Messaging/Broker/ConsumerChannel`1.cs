@@ -111,6 +111,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
             _readTaskCompletionSource.TrySetResult(true);
 
         await _readTaskCompletionSource.Task.ConfigureAwait(false);
+
+        await SequenceStore.AwaitAllProcessingAsync().ConfigureAwait(false);
     }
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)

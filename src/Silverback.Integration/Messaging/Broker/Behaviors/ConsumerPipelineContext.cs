@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Consuming.Transaction;
@@ -134,7 +135,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     }
 
     /// <summary>
-    ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g. when starting the
+    ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g., when starting the
     ///     processing of a <see cref="Sequence" />. This <see cref="Task" /> will complete when all subscribers return.
     /// </summary>
     public Task? ProcessingTask { get; internal set; }
@@ -157,10 +158,19 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     Gets the identifiers to be used to rollback in case of error.
     /// </summary>
     /// <returns>
-    ///     The identifiers to be used to rollback.
+    ///     The identifiers to be used to roll back.
     /// </returns>
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers() =>
-        Sequence?.GetRollbackIdentifiers() ?? [Envelope.BrokerMessageIdentifier];
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
+    {
+        // Always roll back all pending sequences because we assume that they will all be aborted anyway
+        if (SequenceStore.Count == 0)
+            return [Envelope.BrokerMessageIdentifier];
+
+        if (SequenceStore.Count == 1 && SequenceStore.First().IsPending)
+            return SequenceStore.First().GetRollbackIdentifiers();
+
+        return SequenceStore.Where(sequence => sequence.IsPending).SelectMany(sequence => sequence.GetRollbackIdentifiers()).ToList();
+    }
 
     /// <summary>
     ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.

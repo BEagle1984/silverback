@@ -142,6 +142,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
                 {
                     try
                     {
+                        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
                         await Client.ReconnectAsync().ConfigureAwait(false);
                     }
                     finally
@@ -340,7 +341,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected abstract ValueTask CommitCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
 
     /// <summary>
-    ///     If necessary notifies the message broker that the specified messages couldn't be processed
+    ///     If necessary, notifies the message broker that the specified messages couldn't be processed
     ///     successfully, to ensure that they will be consumed again.
     /// </summary>
     /// <param name="brokerMessageIdentifiers">

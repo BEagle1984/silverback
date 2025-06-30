@@ -30,7 +30,8 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
     {
         lock (_syncLock)
         {
-            ChangeStatus(ConsumerStatus.Stopped);
+            if (Status > ConsumerStatus.Stopped)
+                ChangeStatus(ConsumerStatus.Stopped);
         }
     }
 

@@ -93,7 +93,7 @@ public interface IConsumer
     ///         Confirms that the specified messages have been successfully processed.
     ///     </param>
     ///     <param>
-    ///         The acknowledgement will be sent to the message broker and the message will never be consumed
+    ///         The acknowledgement will be sent to the message broker, and the message will never be consumed
     ///         again (by the same logical consumer / consumer group).
     ///     </param>
     /// </summary>
@@ -107,10 +107,10 @@ public interface IConsumer
 
     /// <summary>
     ///     <param>
-    ///         Notifies that an error occured while processing the specified message.
+    ///         Notifies that an error occurred while processing the specified message.
     ///     </param>
     ///     <param>
-    ///         If necessary the information will be sent to the message broker to ensure that the message will
+    ///         If necessary, the information will be sent to the message broker to ensure that the message will
     ///         be consumed again.
     ///     </param>
     /// </summary>

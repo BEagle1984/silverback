@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -26,24 +25,20 @@ public partial class ErrorPoliciesFixture
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
+        byte[] invalidRawMessage = "<what?!>"u8.ToArray();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip()))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip()))))
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -75,24 +70,20 @@ public partial class ErrorPoliciesFixture
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!><what?!><what?!>");
+        byte[] invalidRawMessage = "<what?!><what?!><what?!>"u8.ToArray();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip()))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Skip()))))
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -125,34 +116,30 @@ public partial class ErrorPoliciesFixture
     }
 
     [Fact]
-    public async Task SkipPolicy_ShouldSkipSequence_WhenJsonBatchDeserializationFails()
+    public async Task SkipPolicy_ShouldSkipMessage_WhenJsonDeserializationFailsInBatch()
     {
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
-        byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
+        byte[] invalidRawMessage = "<what?!>"u8.ToArray();
         List<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(5)
-                                        .OnError(policy => policy.Skip()))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1) // Commit immediately to be able to reliably test commit not happening
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(5)
+                        .OnError(policy => policy.Skip()))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch)
+            .AddIntegrationSpy());
 
         async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -167,19 +154,10 @@ public partial class ErrorPoliciesFixture
             completedBatches++;
         }
 
+        // Produce 10 valid messages in total
+        // Starting with 3 valid messages, then 1 invalid message, then 1 valid message
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(
-            invalidRawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        receivedBatches.ShouldBeEmpty();
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
-
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             await producer.RawProduceAsync(
                 rawMessage,
@@ -189,12 +167,37 @@ public partial class ErrorPoliciesFixture
                 });
         }
 
-        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 6);
+        await producer.RawProduceAsync(
+            invalidRawMessage,
+            new MessageHeaderCollection
+            {
+                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+            });
+        await producer.RawProduceAsync(
+            rawMessage,
+            new MessageHeaderCollection
+            {
+                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+            });
 
-        receivedBatches.Count.ShouldBe(2);
-        receivedBatches[0].Count.ShouldBe(5);
-        receivedBatches[1].Count.ShouldBe(1);
-        completedBatches.ShouldBe(1);
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count == 1 && receivedBatches[0].Count == 4);
+        receivedBatches.Count.ShouldBe(1);
+        receivedBatches[0].Count.ShouldBe(4);
+
+        // Ensure nothing is committed yet
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
+
+        // Produce another 2 valid messages, then 1 invalid message and then 4 valid messages
+        // (10 valid messages in total, 2 invalid)
+        for (int i = 0; i < 2; i++)
+        {
+            await producer.RawProduceAsync(
+                rawMessage,
+                new MessageHeaderCollection
+                {
+                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                });
+        }
 
         await producer.RawProduceAsync(
             invalidRawMessage,

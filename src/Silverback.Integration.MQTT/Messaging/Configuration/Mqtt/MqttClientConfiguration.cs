@@ -56,7 +56,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public MqttLastWillMessageConfiguration? WillMessage { get; init; }
 
     /// <summary>
-    ///     Gets the maximum number of incoming message that can be processed concurrently.
+    ///     Gets the maximum number of incoming messages that can be processed concurrently.
     ///     The default is 1.
     /// </summary>
     public int MaxDegreeOfParallelism { get; init; } = 1;
