@@ -85,7 +85,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         return _confluentConsumer.ConsumerGroupMetadata;
     }
 
-    public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken)
+    public ConsumeResult<byte[]?, byte[]?>? Consume(TimeSpan timeout)
     {
         if (Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
             throw new InvalidOperationException("The consumer is not connected.");
@@ -93,7 +93,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-        return _confluentConsumer.Consume(cancellationToken);
+        return _confluentConsumer.Consume(timeout);
     }
 
     public void StoreOffset(TopicPartitionOffset topicPartitionOffset)

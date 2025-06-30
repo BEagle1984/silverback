@@ -448,6 +448,63 @@ public class KafkaConsumerConfigurationBuilderFixture
     }
 
     [Fact]
+    public void WithPollingTimeout_ShouldSetTimeout()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithPollingTimeout(TimeSpan.FromSeconds(42));
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.PollingTimeout.ShouldBe(TimeSpan.FromSeconds(42));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void WithPollingTimeout_ShouldThrow_WhenTimeoutIsZeroOrNegative(int seconds)
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        Action act = () => builder.WithPollingTimeout(TimeSpan.FromSeconds(seconds));
+
+        act.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void WithStallDetectionThreshold_ShouldSetStallDetectionThreshold()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithStallDetectionThreshold(TimeSpan.FromSeconds(42));
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.StallDetectionThreshold.ShouldBe(TimeSpan.FromSeconds(42));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void WithStallDetectionThreshold_ShouldThrow_WhenTimeoutIsZeroOrNegative(int seconds)
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        Action act = () => builder.WithStallDetectionThreshold(TimeSpan.FromSeconds(seconds));
+
+        act.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void WithStallDetectionThreshold_ShouldSetStallDetectionThresholdToNull()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithStallDetectionThreshold(null);
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.StallDetectionThreshold.ShouldBeNull();
+    }
+
+    [Fact]
     public void WithRangePartitionAssignmentStrategy_ShouldSetPartitionAssignmentStrategy()
     {
         KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();

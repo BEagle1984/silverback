@@ -154,6 +154,17 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     }
 
     [Fact]
+    public void LogStaleConsumer_ShouldLog()
+    {
+        _silverbackLogger.LogStaleConsumer(TimeSpan.FromMinutes(42), _consumer);
+
+        string expectedMessage =
+            "The consumer did not consume any message within the stall detection threshold (00:42:00) and will be restarted. |" +
+            " consumerName: consumer1";
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 2017);
+    }
+
+    [Fact]
     public void LogProduceNotAcknowledged_ShouldLog()
     {
         _silverbackLogger.LogProduceNotAcknowledged(_producer, new TopicPartition("topic1", 13));

@@ -68,7 +68,7 @@ public class KafkaKeyHelperBenchmark
         for (int i = 0; i < MessageCount; i++)
         {
             MessageWithSimpleKey message = _messageWithSimpleKeys[i];
-            message.MyKey = string.Empty;
+            message.MyKey = "";
             _ = KafkaKeyHelper.GetMessageKey(message);
         }
     }

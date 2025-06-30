@@ -123,7 +123,7 @@ public class OutboxWorkerServiceFixture
     }
 
     [Fact]
-    public async Task StartAsync_ShouldNotRetry_WhenCancelled()
+    public async Task StartAsync_ShouldNotRetry_WhenCanceled()
     {
         InMemoryLock memoryLock = new(new InMemoryLockSettings("test"), new SilverbackLoggerSubstitute<InMemoryLock>());
         IOutboxWorker outboxWorker = Substitute.For<IOutboxWorker>();

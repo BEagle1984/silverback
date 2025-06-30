@@ -67,7 +67,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     public bool EnableAutoCommit { get; init; } = true;
 
     /// <summary>
-    ///     Gets the number of message to be processed before committing the offset to the server. The most
+    ///     Gets the number of messages to be processed before committing the offset to the server. The most
     ///     reliable level is 1, but it reduces throughput.
     /// </summary>
     public int? CommitOffsetEach { get; init; }
@@ -133,6 +133,18 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     Gets the timeout to wait for the metadata to be retrieved from the broker. The default is 30 seconds.
     /// </summary>
     public TimeSpan GetMetadataTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    ///     Gets the timeout to wait for the consumer to poll for new messages before initiating a new poll. The default is 500 milliseconds.
+    /// </summary>
+    public TimeSpan PollingTimeout { get; init; } = TimeSpan.FromMilliseconds(100);
+
+    /// <summary>
+    ///     Gets the maximum time to wait for a message to be consumed before the consumer is considered stale. A stale consumer is
+    ///     automatically restarted.
+    ///     The default is <c>null</c>, which means that the consumer is never considered stale and is never restarted.
+    /// </summary>
+    public TimeSpan? StallDetectionThreshold { get; init; }
 
     /// <summary>
     ///     Gets the configured endpoints.

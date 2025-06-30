@@ -17,7 +17,7 @@ internal interface IConsumerChannel
     string Id { get; }
 
     /// <summary>
-    ///     Gets the <see cref="CancellationToken" /> that is cancelled when the reading stops.
+    ///     Gets the <see cref="CancellationToken" /> that is canceled when the reading stops.
     /// </summary>
     CancellationToken ReadCancellationToken { get; }
 

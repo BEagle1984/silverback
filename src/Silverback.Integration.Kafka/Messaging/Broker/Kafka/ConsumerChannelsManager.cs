@@ -72,7 +72,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         _channels.Values.ForEach(channel => channel.Reset());
     }
 
-    public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
+    public void Write(ConsumeResult<byte[]?, byte[]?>? consumeResult, CancellationToken cancellationToken)
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 

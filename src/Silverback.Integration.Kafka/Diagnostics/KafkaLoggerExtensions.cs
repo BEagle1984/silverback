@@ -27,6 +27,9 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, Exception?> ConsumingCanceled =
         SilverbackLoggerMessage.Define<string>(KafkaLogEvents.ConsumingCanceled);
 
+    private static readonly Action<ILogger, TimeSpan, string, Exception?> StaleConsumer =
+        SilverbackLoggerMessage.Define<TimeSpan, string>(KafkaLogEvents.StaleConsumer);
+
     private static readonly Action<ILogger, string, int, string, Exception?> ProduceNotAcknowledged =
         SilverbackLoggerMessage.Define<string, int, string>(KafkaLogEvents.ProduceNotAcknowledged);
 
@@ -141,7 +144,7 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogDebug =
         SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogDebug);
 
-    public static void LogConsuming(this ISilverbackLogger logger, ConsumeResult<byte[]?, byte[]?> consumeResult, KafkaConsumer consumer) =>
+    public static void LogConsuming(this ISilverbackLogger logger, ConsumeResult<byte[]?, byte[]?>? consumeResult, KafkaConsumer consumer) =>
         ConsumingMessage(logger.InnerLogger, consumeResult.Topic, consumeResult.Partition, consumeResult.Offset, consumer.DisplayName, null);
 
     public static void LogEndOfPartition(this ISilverbackLogger logger, ConsumeResult<byte[]?, byte[]?> consumeResult, KafkaConsumer consumer) =>
@@ -155,6 +158,9 @@ internal static class KafkaLoggerExtensions
 
     public static void LogConsumingCanceled(this ISilverbackLogger logger, KafkaConsumer consumer, Exception exception) =>
         ConsumingCanceled(logger.InnerLogger, consumer.DisplayName, exception);
+
+    public static void LogStaleConsumer(this ISilverbackLogger logger, TimeSpan stallDetectionThreshold, KafkaConsumer consumer) =>
+        StaleConsumer(logger.InnerLogger, stallDetectionThreshold, consumer.DisplayName, null);
 
     public static void LogProduceNotAcknowledged(this ISilverbackLogger logger, KafkaProducer producer, TopicPartition topicPartition) =>
         ProduceNotAcknowledged(logger.InnerLogger, topicPartition.Topic, topicPartition.Partition.Value, producer.DisplayName, null);
