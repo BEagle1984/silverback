@@ -440,7 +440,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _addingSemaphoreSlim.Wait();
         _addingSemaphoreSlim.Dispose();
 
-        // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
+        // If necessary, cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
         if (!SequencerBehaviorsTask.IsCompleted)
             _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
 
@@ -453,6 +453,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 GetType().Name,
                 SequenceId
             ]);
+
+        Context.Dispose();
     }
 
     /// <summary>
@@ -514,19 +516,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         ResetTimeout();
 
-        Task.Run(
-                async () =>
+        Task.Run(async () =>
+            {
+                int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
+
+                while (IsPending && !IsCompleting)
                 {
-                    int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
+                    await Task.Delay(interval).ConfigureAwait(false);
 
-                    while (IsPending && !IsCompleting)
-                    {
-                        await Task.Delay(interval).ConfigureAwait(false);
-
-                        if (IsPending && !IsCompleting)
-                            await EnforceTimeoutAsync().ConfigureAwait(false);
-                    }
-                })
+                    if (IsPending && !IsCompleting)
+                        await EnforceTimeoutAsync().ConfigureAwait(false);
+                }
+            })
             .FireAndForget();
     }
 

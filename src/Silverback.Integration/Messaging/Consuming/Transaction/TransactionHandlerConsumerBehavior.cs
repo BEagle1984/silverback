@@ -116,10 +116,12 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 _logger.LogConsumerLowLevelTrace(
                     "Sequence ended or aborted: processing task completed.",
                     context.Envelope);
-
-                context.Dispose();
             }
         }
+
+        // The processing take place in the context of the first element, and we can therefore dispose the further contexts immediately
+        if (!context.IsSequenceStart)
+            context.Dispose();
     }
 
     private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context) =>
