@@ -1,7 +1,7 @@
 name: sonar.$(date:yyyyMMdd)$(rev:.r)
 
 pool:
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
