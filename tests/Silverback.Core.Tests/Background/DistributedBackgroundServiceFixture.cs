@@ -83,12 +83,13 @@ public class DistributedBackgroundServiceFixture
                     .UseInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
+        string lockName = $"shared-lock-{Guid.NewGuid():N}";
         using TestDistributedBackgroundService service1 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings(lockName), serviceProvider));
         using TestDistributedBackgroundService service2 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings(lockName), serviceProvider));
 
         service2.DistributedLock.ShouldBeSameAs(service1.DistributedLock);
 

@@ -57,7 +57,7 @@ public abstract class DistributedBackgroundService : BackgroundService
                 }
                 catch (TaskCanceledException)
                 {
-                    // Don't log exception that is fired by the cancellation token.
+                    // Don't log exception fired by the cancellation token
                 }
                 catch (Exception ex)
                 {
