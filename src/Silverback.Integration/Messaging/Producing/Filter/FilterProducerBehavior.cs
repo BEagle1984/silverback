@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Producing.Filter;
 /// </summary>
 public class FilterProducerBehavior : IProducerBehavior
 {
-    private readonly IProducerLogger<IProducer> _logger;
+    private readonly ISilverbackLogger<IProducer> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="FilterProducerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
-    public FilterProducerBehavior(IProducerLogger<IProducer> logger)
+    public FilterProducerBehavior(ISilverbackLogger<IProducer> logger)
     {
         _logger = logger;
     }
@@ -40,7 +40,7 @@ public class FilterProducerBehavior : IProducerBehavior
         if (context.Producer.EndpointConfiguration.Filter != null &&
             !context.Producer.EndpointConfiguration.Filter.ShouldProduce(context.Envelope))
         {
-            _logger.LogFiltered(context.Envelope);
+            _logger.LogOutboundMessageFiltered(context.Envelope);
             return ValueTask.CompletedTask;
         }
 

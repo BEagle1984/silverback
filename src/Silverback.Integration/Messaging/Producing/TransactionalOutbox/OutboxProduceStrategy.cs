@@ -17,7 +17,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <summary>
-///     The messages are stored in a the transactional outbox table. The operation is therefore included in the database transaction
+///     The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
 ///     applying the message side effects to the local database. The <see cref="IOutboxWorker" /> takes care of asynchronously sending
 ///     the messages to the message broker.
 /// </summary>
@@ -25,7 +25,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 {
     private IOutboxWriter? _outboxWriter;
 
-    private IProducerLogger<OutboxProduceStrategy>? _logger;
+    private ISilverbackLogger<OutboxProduceStrategy>? _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxProduceStrategy" /> class.
@@ -55,7 +55,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         Check.NotNull(context, nameof(context));
 
         _outboxWriter ??= context.ServiceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, context.ServiceProvider);
-        _logger ??= context.ServiceProvider.GetRequiredService<IProducerLogger<OutboxProduceStrategy>>();
+        _logger ??= context.ServiceProvider.GetRequiredService<ISilverbackLogger<OutboxProduceStrategy>>();
 
         return new OutboxProduceStrategyImplementation(_outboxWriter, endpointConfiguration, context, _logger);
     }
@@ -78,7 +78,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         private readonly ProducerEndpointConfiguration _configuration;
 
-        private readonly IProducerLogger<OutboxProduceStrategy> _logger;
+        private readonly ISilverbackLogger<OutboxProduceStrategy> _logger;
 
         private readonly ISilverbackContext _context;
 
@@ -88,7 +88,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             IOutboxWriter outboxWriter,
             ProducerEndpointConfiguration configuration,
             ISilverbackContext context,
-            IProducerLogger<OutboxProduceStrategy> logger)
+            ISilverbackLogger<OutboxProduceStrategy> logger)
         {
             _outboxWriter = outboxWriter;
             _configuration = configuration;

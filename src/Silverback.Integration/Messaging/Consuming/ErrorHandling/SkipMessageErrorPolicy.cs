@@ -31,11 +31,11 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider,
-            serviceProvider.GetRequiredService<IConsumerLogger<SkipMessageErrorPolicy>>());
+            serviceProvider.GetRequiredService<ISilverbackLogger<SkipMessageErrorPolicy>>());
 
     private sealed class SkipMessageErrorPolicyImplementation : ErrorPolicyImplementation
     {
-        private readonly IConsumerLogger<SkipMessageErrorPolicy> _logger;
+        private readonly ISilverbackLogger<SkipMessageErrorPolicy> _logger;
 
         public SkipMessageErrorPolicyImplementation(
             int? maxFailedAttempts,
@@ -44,7 +44,7 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            IConsumerLogger<SkipMessageErrorPolicy> logger)
+            ISilverbackLogger<SkipMessageErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,
@@ -64,7 +64,7 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             Check.NotNull(context, nameof(context));
             Check.NotNull(exception, nameof(exception));
 
-            _logger.LogSkipped(context.Envelope);
+            _logger.LogMessageSkipped(context.Envelope);
 
             if (!await TryRollbackAsync(context, exception).ConfigureAwait(false))
                 await context.Consumer.TriggerReconnectAsync().ConfigureAwait(false);

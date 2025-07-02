@@ -37,7 +37,7 @@ public sealed class MqttProducer : Producer
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     public MqttProducer(
         string name,
@@ -45,7 +45,7 @@ public sealed class MqttProducer : Producer
         MqttClientConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
-        IProducerLogger<MqttProducer> logger)
+        ISilverbackLogger<MqttProducer> logger)
         : base(
             name,
             client,

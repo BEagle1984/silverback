@@ -26,7 +26,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
-    private readonly IConsumerLogger<KafkaConsumer> _logger;
+    private readonly ISilverbackLogger<KafkaConsumer> _logger;
 
     private readonly object _messagesSinceCommitLock = new();
 
@@ -66,10 +66,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     ///     The <see cref="IKafkaOffsetStoreFactory" />.
     /// </param>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in base class.")]
     public KafkaConsumer(
@@ -80,7 +80,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         IBrokerClientCallbacksInvoker callbacksInvoker,
         IKafkaOffsetStoreFactory offsetStoreFactory,
         IServiceProvider serviceProvider,
-        IConsumerLogger<KafkaConsumer> logger)
+        ISilverbackLogger<KafkaConsumer> logger)
         : base(
             name,
             client,
@@ -218,8 +218,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
     protected override ValueTask StartCoreAsync()
     {
-        // Start reading from the channels right away in case of static partitions assignment or if
-        // the consumer is restarting and the partition assignment is set already
+        // Start reading from the channels right away in case of static partitions assignment, or if the consumer is restarting and the
+        // partition assignment is set already
         if (Configuration.IsStaticAssignment || Client.Assignment.Count > 0)
         {
             foreach (TopicPartition topicPartition in Client.Assignment)
@@ -231,8 +231,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             SetConnectedStatus();
         }
 
-        // The consume loop must start immediately because the partitions assignment is received
-        // only after Consume is called once
+        // The consume loop must start immediately because the partitions assignment is received only after Consume is called once
         StartConsumeLoopHandler();
 
         return default;
@@ -270,15 +269,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             }
             else
             {
-                _logger.LogConsumerLowLevelTrace(
+                _logger.LogConsumerTrace(
                     this,
                     "Skipping commit of revoked partition: {topic}[{partition}]@{offset}.",
-                    () =>
-                    [
-                        offset.TopicPartition.Topic,
-                        offset.TopicPartition.Partition.Value,
-                        offset.Offset.Value
-                    ]);
+                    () => [offset.TopicPartition.Topic, offset.TopicPartition.Partition.Value, offset.Offset.Value]);
             }
         }
 
@@ -292,14 +286,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        // If the consumer is disconnecting the rollback is not needed
+        // If the consumer is disconnecting, the rollback is not needed
         if (Client.Status is ClientStatus.Disconnecting or ClientStatus.Disconnected)
             return ValueTask.CompletedTask;
 
         if (IsStopping)
             return ValueTask.CompletedTask;
 
-        // If the partitions are being processed together we must rollback them all
+        // If the partitions are being processed together, we must roll back them all
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
             brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
 
@@ -399,14 +393,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         _consumeLoopHandler.Start();
 
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             this,
             "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
-            () =>
-            [
-                _consumeLoopHandler.Id,
-                _consumeLoopHandler.Stopping.Id
-            ]);
+            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
     }
 
     private async Task RestartConsumeLoopHandlerAsync()
@@ -427,43 +417,35 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
     private async Task WaitUntilConsumeLoopHandlerStopsAsync()
     {
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             this,
             "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
-            () =>
-            [
-                _consumeLoopHandler.Id,
-                _consumeLoopHandler.Stopping.Id
-            ]);
+            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
+
         await _consumeLoopHandler.Stopping.ConfigureAwait(false);
-        _logger.LogConsumerLowLevelTrace(
+
+        _logger.LogConsumerTrace(
             this,
             "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
-            () =>
-            [
-                _consumeLoopHandler.Id,
-                _consumeLoopHandler.Stopping.Id
-            ]);
+            () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
     }
 
     private async Task WaitUntilChannelsManagerStopsAsync()
     {
-        _logger.LogConsumerLowLevelTrace(this, "Waiting until ChannelsManager stops...");
+        _logger.LogConsumerTrace(this, "Waiting until ChannelsManager stops...");
+
         await _channelsManager.Stopping.ConfigureAwait(false);
-        _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
+
+        _logger.LogConsumerTrace(this, "ChannelsManager stopped.");
     }
 
     private void StoreOffset(TopicPartitionOffset offset)
     {
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             this,
             "Storing offset {topic}[{partition}]@{offset}.",
-            () =>
-            [
-                offset.Topic,
-                offset.Partition.Value,
-                offset.Offset.Value
-            ]);
+            () => [offset.Topic, offset.Partition.Value, offset.Offset.Value]);
+
         Client.StoreOffset(offset);
     }
 

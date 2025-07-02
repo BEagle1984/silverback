@@ -24,15 +24,15 @@ namespace Silverback.Messaging.Consuming;
 /// </summary>
 public sealed class PublisherConsumerBehavior : IConsumerBehavior
 {
-    private readonly IConsumerLogger<PublisherConsumerBehavior> _logger;
+    private readonly ISilverbackLogger<PublisherConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
-    public PublisherConsumerBehavior(IConsumerLogger<PublisherConsumerBehavior> logger)
+    public PublisherConsumerBehavior(ISilverbackLogger<PublisherConsumerBehavior> logger)
     {
         _logger = logger;
     }
@@ -97,15 +97,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         context.ProcessingTask = processingTask;
 
-        _logger.LogConsumerLowLevelTrace(
-            "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}).",
+        _logger.LogProcessingTrace(
             context.Envelope,
-            () =>
-            [
-                sequence.GetType().Name,
-                sequence.SequenceId,
-                processingTask.Id
-            ]);
+            "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}).",
+            () => [sequence.GetType().Name, sequence.SequenceId, processingTask.Id]);
     }
 
     private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
@@ -128,14 +123,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is synchronous")]
     private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
-        _logger.LogConsumerLowLevelTrace(
-            "Publishing {sequenceType} '{sequenceId}'...",
+        _logger.LogProcessingTrace(
             context.Envelope,
-            () =>
-            [
-                sequence.GetType().Name,
-                sequence.SequenceId
-            ]);
+            "Publishing {sequenceType} '{sequenceId}'...",
+            () => [sequence.GetType().Name, sequence.SequenceId]);
 
         IStreamPublisher publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
@@ -143,14 +134,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         if (processingTasks.Count == 0)
         {
-            _logger.LogConsumerLowLevelTrace(
-                "No subscribers for {sequenceType} '{sequenceId}'.",
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId
-                ]);
+                "No subscribers for {sequenceType} '{sequenceId}'.",
+                () => [sequence.GetType().Name, sequence.SequenceId]);
 
             return Task.CompletedTask;
         }
@@ -182,7 +169,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                         {
                             // Call AbortIfPending to abort the uncompleted sequence, including the lazy streams
                             // which haven't been created yet. This is necessary for the Task.WhenAll to complete.
-                            // The actual exception is handled in the catch block and in there the sequence is
+                            // The actual exception is handled in the catch block, and in there the sequence is
                             // properly aborted, triggering the error policies and everything else.
                             (sequence.StreamProvider as MessageStreamProvider)?.AbortIfPending();
                             break;
@@ -191,7 +178,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
                     await Task.WhenAll(processingTasks).ConfigureAwait(false);
 
-                    _logger.LogLowLevelTrace(
+                    _logger.LogTrace(
                         "All {sequenceType} '{sequenceId}' subscribers completed. (sequence.IsCompleted={completed}, faultedTasks={faultedCount}/{tasksCount}).",
                         () =>
                         [
@@ -210,14 +197,10 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 }
                 finally
                 {
-                    _logger.LogConsumerLowLevelTrace(
-                        "{sequenceType} '{sequenceId}' processing completed.",
+                    _logger.LogProcessingTrace(
                         context.Envelope,
-                        () =>
-                        [
-                            sequence.GetType().Name,
-                            sequence.SequenceId
-                        ]);
+                        "{sequenceType} '{sequenceId}' processing completed.",
+                        () => [sequence.GetType().Name, sequence.SequenceId]);
                 }
             },
             CancellationToken.None); // Let this task run until completion

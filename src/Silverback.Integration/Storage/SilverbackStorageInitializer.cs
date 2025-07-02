@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Exposes the methods to configure Silverback and enable its optional features adding the needed services to the
+///     Exposes the methods to configure Silverback and enable its optional features adding the necessary services to the
 ///     <see cref="IServiceCollection" />.
 /// </summary>
 public class SilverbackStorageInitializer
@@ -16,7 +16,7 @@ public class SilverbackStorageInitializer
     ///     Initializes a new instance of the <see cref="SilverbackStorageInitializer" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     public SilverbackStorageInitializer(IServiceProvider serviceProvider)
     {
@@ -24,7 +24,7 @@ public class SilverbackStorageInitializer
     }
 
     /// <summary>
-    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </summary>
     public IServiceProvider ServiceProvider { get; }
 }

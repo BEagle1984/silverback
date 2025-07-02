@@ -82,9 +82,9 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
     public async ValueTask DisconnectAllAsync()
     {
         await _consumers.StopAllAsync().ConfigureAwait(false);
-        _logger.LogLowLevelTrace("All consumers stopped.", () => []);
+        _logger.LogTrace("All consumers stopped.");
         await _brokerClients.DisconnectAllAsync().ConfigureAwait(false);
-        _logger.LogLowLevelTrace("All clients disconnected.", () => []);
+        _logger.LogTrace("All clients disconnected.");
     }
 
     private async Task DelayRetryAsync(CancellationToken cancellationToken)

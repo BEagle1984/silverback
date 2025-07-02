@@ -24,7 +24,7 @@ public abstract class BrokerClientsInitializer : IBrokerClientsInitializer
     ///     Initializes a new instance of the <see cref="BrokerClientsInitializer" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger{TCategoryName}" />.

@@ -56,7 +56,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider,
-            serviceProvider.GetRequiredService<IConsumerLogger<RetryErrorPolicy>>());
+            serviceProvider.GetRequiredService<ISilverbackLogger<RetryErrorPolicy>>());
 
     private sealed class RetryErrorPolicyImplementation : ErrorPolicyImplementation
     {
@@ -68,7 +68,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
 
         private readonly TimeSpan? _maxDelay;
 
-        private readonly IConsumerLogger<RetryErrorPolicy> _logger;
+        private readonly ISilverbackLogger<RetryErrorPolicy> _logger;
 
         public RetryErrorPolicyImplementation(
             TimeSpan initialDelay,
@@ -81,7 +81,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            IConsumerLogger<RetryErrorPolicy> logger)
+            ISilverbackLogger<RetryErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,
@@ -143,13 +143,10 @@ public record RetryErrorPolicy : ErrorPolicyBase
             if (delay <= TimeSpan.Zero)
                 return;
 
-            _logger.LogConsumerTrace(
-                IntegrationLogEvents.RetryDelayed,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    delay
-                ]);
+                "Waiting {delay} milliseconds before retrying to process the message(s).",
+                () => [delay]);
 
             await Task.Delay(delay).ConfigureAwait(false);
         }

@@ -27,7 +27,7 @@ public record TestErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider,
-            Substitute.For<IConsumerLogger<TestErrorPolicy>>());
+            Substitute.For<ISilverbackLogger<TestErrorPolicy>>());
 
         return _implementation;
     }
@@ -41,7 +41,7 @@ public record TestErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            IConsumerLogger<TestErrorPolicy> logger)
+            ISilverbackLogger<TestErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,

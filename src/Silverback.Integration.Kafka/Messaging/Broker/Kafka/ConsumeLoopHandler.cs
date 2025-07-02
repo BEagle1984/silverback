@@ -88,10 +88,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             return;
         }
 
-        _logger.LogConsumerLowLevelTrace(
-            _consumer,
-            "Stopping ConsumeLoopHandler... | instanceId: {instanceId}",
-            () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler... | instanceId: {instanceId}", () => [Id]);
 
         await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
@@ -105,18 +102,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
         if (_isDisposed)
             return;
 
-        _logger.LogConsumerLowLevelTrace(
-            _consumer,
-            "Disposing ConsumeLoopHandler... | instanceId: {instanceId}",
-            () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "Disposing ConsumeLoopHandler... | instanceId: {instanceId}", () => [Id]);
 
         StopAsync().SafeWait();
         _cancellationTokenSource.Dispose();
 
-        _logger.LogConsumerLowLevelTrace(
-            _consumer,
-            "ConsumeLoopHandler disposed. | instanceId: {instanceId}",
-            () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "ConsumeLoopHandler disposed. | instanceId: {instanceId}", () => [Id]);
 
         _isDisposed = true;
     }
@@ -139,14 +130,10 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             _consumer,
             "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",
-            () =>
-            [
-                Id,
-                taskCompletionSource.Task.Id
-            ]);
+            () => [Id, taskCompletionSource.Task.Id]);
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -154,14 +141,10 @@ internal sealed class ConsumeLoopHandler : IDisposable
                 break;
         }
 
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             _consumer,
             "Consume loop stopped. | instanceId: {instanceId}, taskId: {taskId}",
-            () =>
-            [
-                Id,
-                taskCompletionSource.Task.Id
-            ]);
+            () => [Id, taskCompletionSource.Task.Id]);
 
         taskCompletionSource.TrySetResult(true);
 

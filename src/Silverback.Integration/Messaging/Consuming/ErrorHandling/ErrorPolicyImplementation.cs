@@ -29,7 +29,7 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
 
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IConsumerLogger<ErrorPolicyBase> _logger;
+    private readonly ISilverbackLogger<ErrorPolicyBase> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ErrorPolicyImplementation" /> class.
@@ -55,7 +55,7 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
     ///     The <see cref="IServiceProvider" />.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     protected ErrorPolicyImplementation(
         int? maxFailedAttempts,
@@ -64,7 +64,7 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
         Func<IRawInboundEnvelope, Exception, bool>? applyRule,
         Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
         IServiceProvider serviceProvider,
-        IConsumerLogger<ErrorPolicyBase> logger)
+        ISilverbackLogger<ErrorPolicyBase> logger)
     {
         _maxFailedAttempts = maxFailedAttempts;
         _excludedExceptions = Check.NotNull(excludedExceptions, nameof(excludedExceptions));
@@ -85,58 +85,42 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
         int failedAttempts =
             context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 
-        if (_maxFailedAttempts != null && failedAttempts > _maxFailedAttempts)
+        if (failedAttempts > _maxFailedAttempts)
         {
-            _logger.LogConsumerTrace(
-                IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    GetType().Name,
-                    failedAttempts,
-                    _maxFailedAttempts
-                ]);
+                "The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum attempts ({maxFailedAttempts}).",
+                () => [GetType().Name, failedAttempts, _maxFailedAttempts]);
 
             return false;
         }
 
         if (_includedExceptions.Count != 0 && _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
         {
-            _logger.LogConsumerTrace(
-                IntegrationLogEvents.PolicyExceptionNotIncluded,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    GetType().Name,
-                    exception.GetType().Name
-                ]);
+                "The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions.",
+                () => [GetType().Name, exception.GetType().Name]);
 
             return false;
         }
 
         if (_excludedExceptions.Any(type => type.IsInstanceOfType(exception)))
         {
-            _logger.LogConsumerTrace(
-                IntegrationLogEvents.PolicyExceptionExcluded,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    GetType().Name,
-                    exception.GetType().Name
-                ]);
+                "The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions.",
+                () => [GetType().Name, exception.GetType().Name]);
 
             return false;
         }
 
         if (_applyRule != null && !_applyRule.Invoke(context.Envelope, exception))
         {
-            _logger.LogConsumerTrace(
-                IntegrationLogEvents.PolicyApplyRuleReturnedFalse,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    GetType().Name
-                ]);
+                "The {policyType} will be skipped because the apply rule evaluated to false.",
+                () => [GetType().Name]);
 
             return false;
         }

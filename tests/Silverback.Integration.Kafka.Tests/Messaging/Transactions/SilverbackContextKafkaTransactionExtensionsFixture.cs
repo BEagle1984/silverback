@@ -64,7 +64,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
         context.SetConsumerPipelineContext(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 consumer: kafkaConsumer,
@@ -96,7 +96,7 @@ public class SilverbackContextKafkaTransactionExtensionsFixture
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
         context.SetConsumerPipelineContext(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 consumer: kafkaConsumer,

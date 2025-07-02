@@ -23,7 +23,7 @@ public class BrokerClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </summary>
     public IServiceProvider ServiceProvider { get; }
 }

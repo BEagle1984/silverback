@@ -19,20 +19,20 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
 
     private readonly IMqttClientWrapperFactory _clientWrapperFactory;
 
-    private readonly IProducerLogger<MqttProducer> _producerLogger;
+    private readonly ISilverbackLogger<MqttProducer> _producerLogger;
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _producerBehaviorsProvider;
 
-    private readonly IConsumerLogger<MqttConsumer> _consumerLogger;
+    private readonly ISilverbackLogger<MqttConsumer> _consumerLogger;
 
     private readonly IBrokerBehaviorsProvider<IConsumerBehavior> _consumerBehaviorsProvider;
 
     public MqttClientsInitializer(
         MqttClientsConfigurationActions configurationActions,
         IMqttClientWrapperFactory clientWrapperFactory,
-        IProducerLogger<MqttProducer> producerLogger,
+        ISilverbackLogger<MqttProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> producerBehaviorsProvider,
-        IConsumerLogger<MqttConsumer> consumerLogger,
+        ISilverbackLogger<MqttConsumer> consumerLogger,
         IBrokerBehaviorsProvider<IConsumerBehavior> consumerBehaviorsProvider,
         IServiceProvider serviceProvider,
         ISilverbackLogger<MqttClientsInitializer> logger)

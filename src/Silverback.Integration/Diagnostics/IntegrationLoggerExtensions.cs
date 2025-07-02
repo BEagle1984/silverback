@@ -9,14 +9,33 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
 
 namespace Silverback.Diagnostics;
 
 internal static class IntegrationLoggerExtensions
 {
+    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessage =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessage);
+
+    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessageError =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessageError);
+
+    private static readonly Action<ILogger, string, string, Exception?> ProcessingConsumedMessageFatalError =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProcessingConsumedMessageFatalError);
+
     private static readonly Action<ILogger, string, Exception?> ConsumerFatalError =
         SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ConsumerFatalError);
+
+    private static readonly Action<ILogger, string, string?, Exception?> MessageProduced =
+        SilverbackLoggerMessage.Define<string, string?>(IntegrationLogEvents.MessageProduced);
+
+    private static readonly Action<ILogger, string, Exception?> ErrorProducingMessage =
+        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ErrorProducingMessage);
+
+    private static readonly Action<ILogger, string, Exception?> OutboundMessageFiltered =
+        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.OutboundMessageFiltered);
 
     private static readonly Action<ILogger, string?, string, string, int, Exception?> MessageAddedToSequence =
         SilverbackLoggerMessage.Define<string?, string, string, int>(IntegrationLogEvents.MessageAddedToSequence);
@@ -66,15 +85,6 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, string, double, string, Exception?> BrokerClientReconnectError =
         SilverbackLoggerMessage.Define<string, double, string>(IntegrationLogEvents.BrokerClientReconnectError);
 
-    private static readonly Action<ILogger, string, string, Exception?> BrokerClientCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientCreated);
-
-    private static readonly Action<ILogger, string, string, Exception?> ConsumerCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerCreated);
-
-    private static readonly Action<ILogger, string, string, Exception?> ProducerCreated =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProducerCreated);
-
     private static readonly Action<ILogger, string, string, Exception?> ConsumerStartError =
         SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerStartError);
 
@@ -87,6 +97,36 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, string, string, string, Exception?> ConsumerRollbackError =
         SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.ConsumerRollbackError);
 
+    private static readonly Action<ILogger, string, string, Exception?> BrokerClientCreated =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.BrokerClientCreated);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConsumerCreated =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ConsumerCreated);
+
+    private static readonly Action<ILogger, string, string, Exception?> ProducerCreated =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.ProducerCreated);
+
+    private static readonly Action<ILogger, string, string, Exception?> RetryMessageProcessing =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RetryMessageProcessing);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> MessageMoved =
+        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.MessageMoved);
+
+    private static readonly Action<ILogger, string, string, Exception?> MessageSkipped =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.MessageSkipped);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> CannotMoveSequences =
+        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.CannotMoveSequence);
+
+    private static readonly Action<ILogger, string, string, Exception?> RollbackToRetryFailed =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RollbackToRetryFailed);
+
+    private static readonly Action<ILogger, string, string, Exception?> RollbackToSkipFailed =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.RollbackToSkipFailed);
+
+    private static readonly Action<ILogger, string, Exception?> StoringIntoOutbox =
+        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.StoringIntoOutbox);
+
     private static readonly Action<ILogger, int, Exception?> ReadingMessagesFromOutbox =
         SilverbackLoggerMessage.Define<int>(IntegrationLogEvents.ReadingMessagesFromOutbox);
 
@@ -96,11 +136,17 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, int, Exception?> ProcessingOutboxStoredMessage =
         SilverbackLoggerMessage.Define<int>(IntegrationLogEvents.ProcessingOutboxStoredMessage);
 
-    private static readonly Action<ILogger, Exception?> ErrorProducingOutboxStoredMessage =
-        SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProducingOutboxStoredMessage);
+    private static readonly Action<ILogger, string, Exception?> ErrorProducingOutboxStoredMessage =
+        SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.ErrorProducingOutboxStoredMessage);
 
     private static readonly Action<ILogger, Exception?> ErrorProcessingOutbox =
         SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProcessingOutbox);
+
+    private static readonly Action<ILogger, string, string, Exception?> InvalidMessageProduced =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.InvalidMessageProduced);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> InvalidMessageConsumed =
+        SilverbackLoggerMessage.Define<string, string, string>(IntegrationLogEvents.InvalidMessageConsumed);
 
     private static readonly Action<ILogger, string, Exception?> InvalidEndpointConfiguration =
         SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidEndpointConfiguration);
@@ -114,8 +160,83 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, string?, Exception?> EndpointBuilderError =
         SilverbackLoggerMessage.Define<string?>(IntegrationLogEvents.EndpointBuilderError);
 
+    public static void LogProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessage))
+            return;
+
+        ProcessingConsumedMessage(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
+
+    public static void LogProcessingError(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageError))
+            return;
+
+        ProcessingConsumedMessageError(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            exception);
+    }
+
+    public static void LogProcessingFatalError(
+        this ISilverbackLogger logger,
+        IRawInboundEnvelope envelope,
+        Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageFatalError))
+            return;
+
+        ProcessingConsumedMessageFatalError(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            exception);
+    }
+
     public static void LogConsumerFatalError(this ISilverbackLogger logger, IConsumer consumer, Exception exception) =>
         ConsumerFatalError(logger.InnerLogger, consumer.DisplayName, exception);
+
+    public static void LogProduced(this ISilverbackLogger logger, IOutboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
+
+        MessageProduced(
+            logger.InnerLogger,
+            envelope.EndpointConfiguration.DisplayName,
+            envelope.BrokerMessageIdentifier?.ToLogString(),
+            null);
+    }
+
+    public static void LogProduced(
+        this ISilverbackLogger logger,
+        EndpointConfiguration endpointConfiguration,
+        IBrokerMessageIdentifier? brokerMessageIdentifier)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
+
+        MessageProduced(
+            logger.InnerLogger,
+            endpointConfiguration.DisplayName,
+            brokerMessageIdentifier?.ToLogString(),
+            null);
+    }
+
+    public static void LogProduceError(this ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception) =>
+        ErrorProducingMessage(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName, exception);
+
+    public static void LogProduceError(this ISilverbackLogger logger, ProducerEndpointConfiguration endpointConfiguration, Exception exception) =>
+        ErrorProducingMessage(logger.InnerLogger, endpointConfiguration.DisplayName, exception);
+
+    public static void LogOutboundMessageFiltered(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
+        OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName, null);
 
     public static void LogMessageAddedToSequence(
         this ISilverbackLogger logger,
@@ -299,6 +420,89 @@ internal static class IntegrationLoggerExtensions
     public static void LogProducerCreated(this ISilverbackLogger logger, IProducer producer) =>
         ProducerCreated(logger.InnerLogger, producer.GetType().Name, producer.DisplayName, null);
 
+    public static void LogRetryProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.RetryMessageProcessing))
+            return;
+
+        RetryMessageProcessing(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
+
+    public static void LogMessageMoved(
+        this ISilverbackLogger logger,
+        IRawInboundEnvelope envelope,
+        EndpointConfiguration destinationEndpoint)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageMoved))
+            return;
+
+        MessageMoved(
+            logger.InnerLogger,
+            destinationEndpoint.DisplayName,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
+
+    public static void LogMessageSkipped(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageSkipped))
+            return;
+
+        MessageSkipped(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
+
+    public static void LogCannotMoveSequence(this ISilverbackLogger logger, IRawInboundEnvelope envelope, ISequence sequence)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequence))
+            return;
+
+        CannotMoveSequences(
+            logger.InnerLogger,
+            sequence.GetType().Name,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
+
+    public static void LogRollbackToRetryFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.RollbackToRetryFailed))
+            return;
+
+        RollbackToRetryFailed(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            exception);
+    }
+
+    public static void LogRollbackToSkipFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.RollbackToSkipFailed))
+            return;
+
+        RollbackToSkipFailed(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            exception);
+    }
+
+    public static void LogStoringIntoOutbox(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
+        StoringIntoOutbox(
+            logger.InnerLogger,
+            envelope.EndpointConfiguration.DisplayName,
+            null);
+
     public static void LogReadingMessagesFromOutbox(this ISilverbackLogger logger, int packageSize) =>
         ReadingMessagesFromOutbox(logger.InnerLogger, packageSize, null);
 
@@ -308,11 +512,40 @@ internal static class IntegrationLoggerExtensions
     public static void LogProcessingOutboxStoredMessage(this ISilverbackLogger logger, int currentIndex) =>
         ProcessingOutboxStoredMessage(logger.InnerLogger, currentIndex, null);
 
-    public static void LogErrorProducingOutboxStoredMessage(this ISilverbackLogger logger, Exception exception) =>
-        ErrorProducingOutboxStoredMessage(logger.InnerLogger, exception);
+    public static void LogErrorProducingOutboxStoredMessage(
+        this ISilverbackLogger logger,
+        OutboxMessage message,
+        Exception exception) =>
+        ErrorProducingOutboxStoredMessage(logger.InnerLogger, message.EndpointName, exception);
 
     public static void LogErrorProcessingOutbox(this ISilverbackLogger logger, Exception exception) =>
         ErrorProcessingOutbox(logger.InnerLogger, exception);
+
+    public static void LogInvalidMessageProduced(
+        this ISilverbackLogger logger,
+        IOutboundEnvelope envelope,
+        string validationErrors) =>
+        InvalidMessageProduced(
+            logger.InnerLogger,
+            validationErrors,
+            envelope.EndpointConfiguration.DisplayName,
+            null);
+
+    public static void LogInvalidMessageConsumed(
+        this ISilverbackLogger logger,
+        IRawInboundEnvelope envelope,
+        string validationErrors)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.InvalidMessageConsumed))
+            return;
+
+        InvalidMessageConsumed(
+            logger.InnerLogger,
+            validationErrors,
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString(),
+            null);
+    }
 
     public static void LogInvalidEndpointConfiguration(
         this ISilverbackLogger logger,
@@ -335,48 +568,48 @@ internal static class IntegrationLoggerExtensions
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogLowLevelTrace(this ISilverbackLogger logger, string message, Func<object[]> argumentsProvider)
+    public static void LogTrace(this ISilverbackLogger logger, string message, Func<object[]>? argumentsProvider = null)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
+        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
             return;
 
         logger.InnerLogger.Log(
-            IntegrationLogEvents.LowLevelTracing.Level,
-            IntegrationLogEvents.LowLevelTracing.EventId,
+            IntegrationLogEvents.Tracing.Level,
+            IntegrationLogEvents.Tracing.EventId,
             message,
-            argumentsProvider.Invoke());
+            argumentsProvider?.Invoke() ?? []);
     }
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogLowLevelTrace(
+    public static void LogTrace(
         this ISilverbackLogger logger,
         Exception? exception,
         string message,
-        Func<object[]> argumentsProvider)
+        Func<object[]>? argumentsProvider = null)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
+        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
             return;
 
         logger.InnerLogger.Log(
-            IntegrationLogEvents.LowLevelTracing.Level,
-            IntegrationLogEvents.LowLevelTracing.EventId,
+            IntegrationLogEvents.Tracing.Level,
+            IntegrationLogEvents.Tracing.EventId,
             exception,
             message,
-            argumentsProvider.Invoke());
+            argumentsProvider?.Invoke() ?? []);
     }
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
-    public static void LogConsumerLowLevelTrace(
+    public static void LogConsumerTrace(
         this ISilverbackLogger logger,
         IConsumer? consumer,
         string message,
         Func<object?[]>? argumentsProvider = null)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
+        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
             return;
 
         object?[] args =
@@ -386,9 +619,63 @@ internal static class IntegrationLoggerExtensions
         ];
 
         logger.InnerLogger.Log(
-            IntegrationLogEvents.LowLevelTracing.Level,
-            IntegrationLogEvents.LowLevelTracing.EventId,
+            IntegrationLogEvents.Tracing.Level,
+            IntegrationLogEvents.Tracing.EventId,
             message + " | consumerName: {consumerName}",
+            args);
+    }
+
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
+    public static void LogProcessingTrace(
+        this ISilverbackLogger logger,
+        IRawInboundEnvelope envelope,
+        string message,
+        Func<object?[]>? argumentsProvider = null)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
+            return;
+
+        object?[] args =
+        [
+            ..argumentsProvider?.Invoke() ?? [],
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString()
+        ];
+
+        logger.InnerLogger.Log(
+            IntegrationLogEvents.Tracing.Level,
+            IntegrationLogEvents.Tracing.EventId,
+            message + " | endpointName: {endpointName}, messageId: {messageId}",
+            args);
+    }
+
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
+    public static void LogProcessingTrace(
+        this ISilverbackLogger logger,
+        IRawInboundEnvelope envelope,
+        Exception? exception,
+        string message,
+        Func<object?[]>? argumentsProvider = null)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
+            return;
+
+        object?[] args =
+        [
+            ..argumentsProvider?.Invoke() ?? [],
+            envelope.Endpoint.DisplayName,
+            envelope.BrokerMessageIdentifier.ToLogString()
+        ];
+
+        logger.InnerLogger.Log(
+            IntegrationLogEvents.Tracing.Level,
+            IntegrationLogEvents.Tracing.EventId,
+            exception,
+            message + " | endpointName: {endpointName}, messageId: {messageId}",
             args);
     }
 }

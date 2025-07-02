@@ -26,7 +26,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessage { get; } = new(
         LogLevel.Information,
         GetEventId(1, nameof(ProcessingConsumedMessage)),
-        "Processing consumed message.");
+        "Processing consumed message. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message.
@@ -37,7 +37,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageError { get; } = new(
         LogLevel.Error,
         GetEventId(2, nameof(ProcessingConsumedMessageError)),
-        "Error occurred processing the consumed message.");
+        "Error occurred processing the consumed message. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an unhandled error occurs processing the
@@ -46,10 +46,10 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageFatalError { get; } = new(
         LogLevel.Critical,
         GetEventId(3, nameof(ProcessingConsumedMessageFatalError)),
-        "Fatal error occurred processing the consumed message. The client will be disconnected.");
+        "Fatal error occurred processing the consumed message. The client will be disconnected. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message and
+    ///     Gets the <see cref="LogEvent" /> representing the log written when an error occurs processing the consumed message, and
     ///     it isn't handled even by the <see cref="FatalExceptionLoggerConsumerBehavior" /> (which should never happen).
     /// </summary>
     public static LogEvent ConsumerFatalError { get; } = new(
@@ -63,7 +63,7 @@ public static class IntegrationLogEvents
     public static LogEvent MessageProduced { get; } = new(
         LogLevel.Information,
         GetEventId(5, nameof(MessageProduced)),
-        "Message produced.");
+        "Message produced. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs producing a message.
@@ -71,7 +71,7 @@ public static class IntegrationLogEvents
     public static LogEvent ErrorProducingMessage { get; } = new(
         LogLevel.Warning,
         GetEventId(6, nameof(ErrorProducingMessage)),
-        "Error occurred producing the message.");
+        "Error occurred producing the message. | endpointName: {endpointName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an outbound message is filtered out.
@@ -79,7 +79,7 @@ public static class IntegrationLogEvents
     public static LogEvent OutboundMessageFiltered { get; } = new(
         LogLevel.Debug,
         GetEventId(7, nameof(OutboundMessageFiltered)),
-        "Message filtered.");
+        "Message filtered. | endpointName: {endpointName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an inbound message is added to
@@ -109,7 +109,7 @@ public static class IntegrationLogEvents
         "{sequenceType} '{sequenceId}' completed. | length: {sequenceLength}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of a sequence of messages is aborted,
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of a sequence is aborted,
     ///     but not because of an error (an <see cref="SequenceProcessingError" /> is logged instead) or an incomplete sequence that gets
     ///     discarded (an <see cref="IncompleteSequenceAborted" /> or an <see cref="IncompleteSequenceSkipped" /> is logged instead).
     /// </summary>
@@ -129,8 +129,8 @@ public static class IntegrationLogEvents
         "length: {sequenceLength}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an incomplete sequence is aborted because a new
-    ///     sequence starts before the current one is completed or the timeout elapses before the sequence can be completed).
+    ///     Gets the <see cref="LogEvent" /> representing the log written when a sequence is aborted because a new one starts before it
+    ///     completes, or because it times out before completion.
     /// </summary>
     public static LogEvent IncompleteSequenceAborted { get; } = new(
         LogLevel.Warning,
@@ -140,7 +140,7 @@ public static class IntegrationLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an incomplete sequence is  skipped because the first
-    ///     consumed message of that sequence doesn't correspond to the actual sequence beginning (e.g. the first chunk).
+    ///     consumed message of that sequence doesn't correspond to the actual sequence beginning (e.g., the first chunk).
     /// </summary>
     public static LogEvent IncompleteSequenceSkipped { get; } = new(
         LogLevel.Warning,
@@ -288,72 +288,13 @@ public static class IntegrationLogEvents
         "Created {producerType}. | producerName: {producerName}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
-    ///     policy, when the maximum configured failed attempts for the policies are exceeded and the policy isn't
-    ///     applied anymore.
-    /// </summary>
-    public static LogEvent PolicyMaxFailedAttemptsExceeded { get; } = new(
-        LogLevel.Trace,
-        GetEventId(51, nameof(PolicyMaxFailedAttemptsExceeded)),
-        "The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum " +
-        "attempts ({maxFailedAttempts}).");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
-    ///     policy, when the policy isn't applied because the current exception type is not in the inclusion list.
-    /// </summary>
-    public static LogEvent PolicyExceptionNotIncluded { get; } = new(
-        LogLevel.Trace,
-        GetEventId(52, nameof(PolicyExceptionNotIncluded)),
-        "The {policyType} will be skipped because the {exceptionType} is not in the list of handled " +
-        "exceptions.");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
-    ///     policy, when the policy isn't applied because the current exception type is in the exclusion list.
-    /// </summary>
-    public static LogEvent PolicyExceptionExcluded { get; } = new(
-        LogLevel.Trace,
-        GetEventId(53, nameof(PolicyExceptionExcluded)),
-        "The {policyType} will be skipped because the {exceptionType} is in the list of excluded " +
-        "exceptions.");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
-    ///     policy, when the policy isn't applied because of it's apply rule.
-    /// </summary>
-    public static LogEvent PolicyApplyRuleReturnedFalse { get; } = new(
-        LogLevel.Trace,
-        GetEventId(54, nameof(PolicyApplyRuleReturnedFalse)),
-        "The {policyType} will be skipped because the apply rule evaluated to false.");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when all chained policies have been
-    ///     applied but the processing still failed and the consumer will therefore be stopped.
-    /// </summary>
-    public static LogEvent PolicyChainCompleted { get; } = new(
-        LogLevel.Trace,
-        GetEventId(55, nameof(PolicyChainCompleted)),
-        "All policies have been applied but the message(s) couldn't be successfully processed. " +
-        "The client will be disconnected.");
-
-    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be processed and the
     ///     <see cref="RetryErrorPolicy" /> is applied.
     /// </summary>
     public static LogEvent RetryMessageProcessing { get; } = new(
         LogLevel.Information,
-        GetEventId(56, nameof(RetryMessageProcessing)),
-        "The message(s) will be processed again.");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
-    ///     processed and a delay is applied before retrying it.
-    /// </summary>
-    public static LogEvent RetryDelayed { get; } = new(
-        LogLevel.Trace,
-        GetEventId(57, nameof(RetryDelayed)),
-        "Waiting {delay} milliseconds before retrying to process the message(s).");
+        GetEventId(51, nameof(RetryMessageProcessing)),
+        "The message(s) will be processed again. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
@@ -362,8 +303,8 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent MessageMoved { get; } = new(
         LogLevel.Information,
-        GetEventId(58, nameof(MessageMoved)),
-        "The message will be moved to the endpoint '{targetEndpointName}'.");
+        GetEventId(52, nameof(MessageMoved)),
+        "The message will be moved to the endpoint '{targetEndpointName}'. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
@@ -371,38 +312,40 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent MessageSkipped { get; } = new(
         LogLevel.Information,
-        GetEventId(59, nameof(MessageSkipped)),
-        "The message(s) will be skipped.");
+        GetEventId(53, nameof(MessageSkipped)),
+        "The message(s) will be skipped. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
     ///     <see cref="MoveMessageErrorPolicy" /> cannot be applied because the failing message belongs to a
-    ///     sequences (it's either chunked, being processed in batch, etc.).
+    ///     sequence (it's either chunked, being processed in batch, etc.).
     /// </summary>
-    public static LogEvent CannotMoveSequences { get; } = new(
+    public static LogEvent CannotMoveSequence { get; } = new(
         LogLevel.Warning,
-        GetEventId(60, nameof(CannotMoveSequences)),
-        "The message belongs to a {sequenceType} and cannot be moved.");
+        GetEventId(54, nameof(CannotMoveSequence)),
+        "The message belongs to a {sequenceType} and cannot be moved. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a the rollback initiated by
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
     ///     the <see cref="RetryErrorPolicy" /> fails with an exception. This will cause the consumer to be
     ///     disconnected and reconnected.
     /// </summary>
     public static LogEvent RollbackToRetryFailed { get; } = new(
         LogLevel.Warning,
         GetEventId(61, nameof(RollbackToRetryFailed)),
-        "Error occurred rolling back, the retry error policy cannot be applied. The consumer will be reconnected.");
+        "Error occurred rolling back, the retry error policy cannot be applied. The consumer will be reconnected. " +
+        "| endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a the rollback initiated by
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
     ///     the <see cref="SkipMessageErrorPolicy" /> fails with an exception. This will cause the consumer to be
     ///     disconnected and reconnected.
     /// </summary>
     public static LogEvent RollbackToSkipFailed { get; } = new(
         LogLevel.Warning,
         GetEventId(62, nameof(RollbackToSkipFailed)),
-        "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. The consumer will be reconnected.");
+        "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. " +
+        "The consumer will be reconnected. | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written
@@ -410,8 +353,8 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent StoringIntoOutbox { get; } = new(
         LogLevel.Debug,
-        GetEventId(73, nameof(StoringIntoOutbox)),
-        "Storing message into the transactional outbox.");
+        GetEventId(71, nameof(StoringIntoOutbox)),
+        "Storing message into the transactional outbox. | endpointName: {endpointName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
@@ -419,7 +362,7 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent ReadingMessagesFromOutbox { get; } = new(
         LogLevel.Trace,
-        GetEventId(74, nameof(ReadingMessagesFromOutbox)),
+        GetEventId(72, nameof(ReadingMessagesFromOutbox)),
         "Reading batch of {readBatchSize} messages from the outbox queue...");
 
     /// <summary>
@@ -428,7 +371,7 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent OutboxEmpty { get; } = new(
         LogLevel.Trace,
-        GetEventId(75, nameof(OutboxEmpty)),
+        GetEventId(73, nameof(OutboxEmpty)),
         "The outbox is empty.");
 
     /// <summary>
@@ -436,7 +379,7 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent ProcessingOutboxStoredMessage { get; } = new(
         LogLevel.Debug,
-        GetEventId(76, nameof(ProcessingOutboxStoredMessage)),
+        GetEventId(74, nameof(ProcessingOutboxStoredMessage)),
         "Processing outbox message {currentMessageIndex}.");
 
     /// <summary>
@@ -445,8 +388,8 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent ErrorProducingOutboxStoredMessage { get; } = new(
         LogLevel.Error,
-        GetEventId(77, nameof(ErrorProducingOutboxStoredMessage)),
-        "Failed to produce the message stored in the outbox.");
+        GetEventId(75, nameof(ErrorProducingOutboxStoredMessage)),
+        "Failed to produce the message stored in the outbox. | endpointName: {endpointName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the <see cref="IOutboxWorker" />
@@ -454,7 +397,7 @@ public static class IntegrationLogEvents
     /// </summary>
     public static LogEvent ErrorProcessingOutbox { get; } = new(
         LogLevel.Error,
-        GetEventId(78, nameof(ErrorProcessingOutbox)),
+        GetEventId(76, nameof(ErrorProcessingOutbox)),
         "Error occurred processing the outbox.");
 
     /// <summary>
@@ -464,7 +407,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidMessageProduced { get; } = new(
         LogLevel.Warning,
         GetEventId(81, nameof(InvalidMessageProduced)),
-        "Invalid message produced: {validationErrors}");
+        "Invalid message produced: {validationErrors} | endpointName: {endpointName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
@@ -473,7 +416,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidMessageConsumed { get; } = new(
         LogLevel.Warning,
         GetEventId(82, nameof(InvalidMessageConsumed)),
-        "Invalid message consumed: {validationErrors}");
+        "Invalid message consumed: {validationErrors} | endpointName: {endpointName}, messageId: {messageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint
@@ -512,11 +455,11 @@ public static class IntegrationLogEvents
         "Failed to configure endpoint '{endpointName}'.");
 
     /// <summary>
-    ///     Gets the <see cref="EventId" /> of the low level tracing logs.
+    ///     Gets the <see cref="EventId" /> of the unspecific tracing logs.
     /// </summary>
-    public static LogEvent LowLevelTracing { get; } = new(
+    public static LogEvent Tracing { get; } = new(
         LogLevel.Trace,
-        GetEventId(999, nameof(LowLevelTracing)),
+        GetEventId(999, nameof(Tracing)),
         "The actual message will vary.");
 
     private static EventId GetEventId(int id, string name) =>

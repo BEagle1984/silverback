@@ -19,15 +19,15 @@ namespace Silverback.Messaging.Consuming.Transaction;
 /// </summary>
 public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 {
-    private readonly IConsumerLogger<TransactionHandlerConsumerBehavior> _logger;
+    private readonly ISilverbackLogger<TransactionHandlerConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TransactionHandlerConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
-    public TransactionHandlerConsumerBehavior(IConsumerLogger<TransactionHandlerConsumerBehavior> logger)
+    public TransactionHandlerConsumerBehavior(ISilverbackLogger<TransactionHandlerConsumerBehavior> logger)
     {
         _logger = logger;
     }
@@ -48,7 +48,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             context.ReplaceServiceScope(scope);
             context.TransactionManager = new ConsumerTransactionManager(
                 context,
-                context.ServiceProvider.GetRequiredService<IConsumerLogger<ConsumerTransactionManager>>());
+                context.ServiceProvider.GetRequiredService<ISilverbackLogger<ConsumerTransactionManager>>());
             context.SilverbackContext.SetConsumerPipelineContext(context);
 
             _logger.LogProcessing(context.Envelope);
@@ -74,15 +74,11 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             // (-> if the exception bubbled up till this point, it's because it failed to be handled, and it's safer to stop the consumer)
             if (context.Sequence != null)
             {
-                await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)
-                    .ConfigureAwait(false);
+                await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
 
                 if (context.Sequence.Length > 0)
                 {
-                    _logger.LogConsumerLowLevelTrace(
-                        "Awaiting sequence processing completed before rethrowing.",
-                        context.Envelope);
-
+                    _logger.LogProcessingTrace(context.Envelope, "Awaiting sequence processing completed before rethrowing.");
                     await context.Sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
                 }
 
@@ -103,9 +99,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         // commit was performed or the error policies were applied before continuing
         if (context.IsSequenceEnd || context.Sequence.IsAborted)
         {
-            _logger.LogConsumerLowLevelTrace(
-                "Sequence ended or aborted: awaiting processing task.",
-                context.Envelope);
+            _logger.LogProcessingTrace(context.Envelope, "Sequence ended or aborted: awaiting processing task.");
 
             try
             {
@@ -113,9 +107,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             }
             finally
             {
-                _logger.LogConsumerLowLevelTrace(
-                    "Sequence ended or aborted: processing task completed.",
-                    context.Envelope);
+                _logger.LogProcessingTrace(context.Envelope, "Sequence ended or aborted: processing task completed.");
             }
         }
 
@@ -131,8 +123,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is sync")]
     private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
     {
-        ISequence sequence = context.Sequence ??
-                             throw new InvalidOperationException("Sequence is null.");
+        ISequence sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
         context = sequence.Context;
 
         try
@@ -141,20 +132,16 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             if (!context.IsSequenceStart)
             {
-                _logger.LogConsumerLowLevelTrace(
-                    "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                _logger.LogProcessingTrace(
                     context.Envelope,
-                    () =>
-                    [
-                        sequence.GetType().Name,
-                        sequence.SequenceId
-                    ]);
+                    "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                    () => [sequence.GetType().Name, sequence.SequenceId]);
             }
 
             LogSequenceCompletedTrace(context, sequence);
 
-            // Commit only if it is the start of the outer sequence (e.g. when combining batching and
-            // chunking), to avoid commits in the middle of the outer sequence (batch).
+            // Commit only if it is the start of the outer sequence (e.g., when combining batching and chunking), to avoid commits in the
+            // middle of the outer sequence (batch).
             if (context.IsSequenceStart && !sequence.IsAborted)
             {
                 await context.TransactionManager.CommitAsync().ConfigureAwait(false);
@@ -184,28 +171,19 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         // (a ChunkSequence may be added to another sequence only after the message is complete and deserialized)
         while (processingTask != null)
         {
-            _logger.LogConsumerLowLevelTrace(
-                "Awaiting {sequenceType} '{sequenceId}' processing task.",
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId
-                ]);
+                "Awaiting {sequenceType} '{sequenceId}' processing task.",
+                () => [sequence.GetType().Name, sequence.SequenceId]);
 
             await processingTask.ConfigureAwait(false);
 
-            _logger.LogConsumerLowLevelTrace(
-                "Successfully awaited {sequenceType} '{sequenceId}' processing task.",
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId
-                ]);
+                "Successfully awaited {sequenceType} '{sequenceId}' processing task.",
+                () => [sequence.GetType().Name, sequence.SequenceId]);
 
-            // Break if this isn't the beginning of the outer sequence
-            // (e.g. when combining batching and chunking)
+            // Break if this isn't the beginning of the outer sequence (e.g., when combining batching and chunking)
             if (!context.IsSequenceStart)
                 return (context, sequence);
 
@@ -224,49 +202,25 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     {
         if (!context.IsSequenceStart)
         {
-            string logMessage =
-                "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning " +
-                "of the outer sequence. No action will be performed.";
-
-            _logger.LogConsumerLowLevelTrace(
-                logMessage,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId
-                ]);
+                "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                () => [sequence.GetType().Name, sequence.SequenceId]);
         }
 
         if (sequence.IsPending)
         {
-            string logMessage =
-                "{sequenceType} '{sequenceId}' processing seems completed but the sequence is " +
-                "still pending: " +
-                "ProcessingTask.Status={processingTaskStatus}, " +
-                "ProcessingTask.Id={processingTaskId})";
-
-            _logger.LogConsumerLowLevelTrace(
-                logMessage,
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId,
-                    context.ProcessingTask?.Status,
-                    context.ProcessingTask?.Id
-                ]);
+                "{sequenceType} '{sequenceId}' processing seems completed but the sequence is still pending: ProcessingTask.Status={processingTaskStatus}, ProcessingTask.Id={processingTaskId})",
+                () => [sequence.GetType().Name, sequence.SequenceId, context.ProcessingTask?.Status, context.ProcessingTask?.Id]);
         }
         else
         {
-            _logger.LogConsumerLowLevelTrace(
-                "{sequenceType} '{sequenceId}' processing completed.",
+            _logger.LogProcessingTrace(
                 context.Envelope,
-                () =>
-                [
-                    sequence.GetType().Name,
-                    sequence.SequenceId
-                ]);
+                "{sequenceType} '{sequenceId}' processing completed.",
+                () => [sequence.GetType().Name, sequence.SequenceId]);
         }
     }
 

@@ -66,7 +66,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
             new MqttClientConfiguration(),
             Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
             serviceProvider,
-            Substitute.For<IConsumerLogger<MqttConsumer>>());
+            Substitute.For<ISilverbackLogger<MqttConsumer>>());
 
         _producer = new MqttProducer(
             "producer1",
@@ -83,7 +83,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             serviceProvider,
-            Substitute.For<IProducerLogger<MqttProducer>>());
+            Substitute.For<ISilverbackLogger<MqttProducer>>());
     }
 
     [Fact]

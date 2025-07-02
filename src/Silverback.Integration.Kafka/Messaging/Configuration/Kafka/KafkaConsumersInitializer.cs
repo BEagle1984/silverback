@@ -24,7 +24,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
 
     private readonly ISilverbackLoggerFactory _silverbackLoggerFactory;
 
-    private readonly IConsumerLogger<KafkaConsumer> _consumerLogger;
+    private readonly ISilverbackLogger<KafkaConsumer> _consumerLogger;
 
     private readonly IBrokerBehaviorsProvider<IConsumerBehavior> _behaviorsProvider;
 
@@ -33,7 +33,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
         IKafkaOffsetStoreFactory offsetStoreFactory,
         ISilverbackLoggerFactory silverbackLoggerFactory,
-        IConsumerLogger<KafkaConsumer> consumerLogger,
+        ISilverbackLogger<KafkaConsumer> consumerLogger,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
         ISilverbackLogger<KafkaConsumersInitializer> logger)

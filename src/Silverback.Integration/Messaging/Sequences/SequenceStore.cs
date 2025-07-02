@@ -57,14 +57,9 @@ internal sealed class SequenceStore : ISequenceStore
         Check.NotNull(sequence, nameof(sequence));
         Check.ThrowObjectDisposedIf(IsDisposed, this);
 
-        _logger.LogLowLevelTrace(
+        _logger.LogTrace(
             "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
-            () =>
-            [
-                sequence.GetType().Name,
-                sequence.SequenceId,
-                _id
-            ]);
+            () => [sequence.GetType().Name, sequence.SequenceId, _id]);
 
         if (_store.TryGetValue(sequence.SequenceId, out ISequence? oldSequence))
             await oldSequence.AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
@@ -76,14 +71,7 @@ internal sealed class SequenceStore : ISequenceStore
 
     public ValueTask RemoveAsync(string sequenceId)
     {
-        _logger.LogLowLevelTrace(
-            "Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.",
-            () =>
-            [
-                sequenceId,
-                _id
-            ]);
-
+        _logger.LogTrace("Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.", () => [sequenceId, _id]);
         _store.Remove(sequenceId);
         return default;
     }
@@ -100,7 +88,7 @@ internal sealed class SequenceStore : ISequenceStore
         if (IsDisposed)
             return;
 
-        _logger.LogLowLevelTrace("Disposing sequence store {sequenceStoreId}", () => [_id]);
+        _logger.LogTrace("Disposing sequence store {sequenceStoreId}", () => [_id]);
 
         await _store.Values.AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
 

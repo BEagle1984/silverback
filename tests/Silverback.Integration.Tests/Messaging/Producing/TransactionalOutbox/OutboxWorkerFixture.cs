@@ -30,7 +30,7 @@ public class OutboxWorkerFixture
 
     private readonly IProducer _producer2 = Substitute.For<IProducer>();
 
-    private readonly IProducerLogger<OutboxWorker> _producerLogger = Substitute.For<IProducerLogger<OutboxWorker>>();
+    private readonly ISilverbackLogger<OutboxWorker> _logger = Substitute.For<ISilverbackLogger<OutboxWorker>>();
 
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public OutboxWorkerFixture()
@@ -62,34 +62,34 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                     Task.Run(
                         async () =>
                         {
                             await Task.Delay(5);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                         }).FireAndForget());
         _producer2
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                     Task.Run(
                         async () =>
                         {
                             await Task.Delay(5);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                         }).FireAndForget());
 
         await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
@@ -100,7 +100,7 @@ public class OutboxWorkerFixture
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = enforceMessageOrder },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
 
@@ -123,24 +123,24 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                 {
                     if (Interlocked.Increment(ref tries) is 2 or 5)
                         throw new InvalidOperationException("Test");
 
-                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                        .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                 });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
         await act.ShouldThrowAsync<OutboxProcessingException>();
@@ -173,24 +173,24 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                 {
                     if (Interlocked.Increment(ref tries) is 2 or 5)
                         throw new InvalidOperationException("Test");
 
-                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                        .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                 });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
         result.ShouldBeTrue();
@@ -219,21 +219,21 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                 {
                     if (Interlocked.Increment(ref tries) is 2 or 5)
                     {
-                        callInfo.ArgAt<Action<Exception, OutboxWorker.ProduceState>>(3)
-                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                        callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
+                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
                     }
                     else
                     {
-                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                            .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                            .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                     }
                 });
 
@@ -241,7 +241,7 @@ public class OutboxWorkerFixture
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
         await act.ShouldThrowAsync<OutboxProcessingException>();
@@ -274,21 +274,21 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                 {
                     if (Interlocked.Increment(ref tries) is 2 or 5)
                     {
-                        callInfo.ArgAt<Action<Exception, OutboxWorker.ProduceState>>(3)
-                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                        callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
+                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
                     }
                     else
                     {
-                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                            .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                            .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                     }
                 });
 
@@ -296,7 +296,7 @@ public class OutboxWorkerFixture
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
         result.ShouldBeTrue();
@@ -329,9 +329,9 @@ public class OutboxWorkerFixture
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-                    Arg.Any<OutboxWorker.ProduceState>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                    Arg.Any<Action<Exception, OutboxMessage>>(),
+                    Arg.Any<OutboxMessage>()))
             .Do(
                 callInfo =>
                 {
@@ -339,8 +339,8 @@ public class OutboxWorkerFixture
                         async () =>
                         {
                             await Task.Delay(10);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxWorker.ProduceState>(4));
+                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
+                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
                         }).FireAndForget();
 
                     if (Interlocked.Increment(ref processed) == 5)
@@ -351,7 +351,7 @@ public class OutboxWorkerFixture
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = enforceMessageOrder },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _producerLogger);
+            _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(cancellationTokenSource.Token);
         await act.ShouldThrowAsync<OperationCanceledException>();
@@ -367,7 +367,7 @@ public class OutboxWorkerFixture
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<byte[]>(),
             Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
-            Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
-            Arg.Any<OutboxWorker.ProduceState>());
+            Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+            Arg.Any<Action<Exception, OutboxMessage>>(),
+            Arg.Any<OutboxMessage>());
 }

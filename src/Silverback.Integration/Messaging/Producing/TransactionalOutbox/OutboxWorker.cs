@@ -8,8 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -23,7 +21,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
     private readonly IProducerCollection _producers;
 
-    private readonly IProducerLogger<OutboxWorker> _logger;
+    private readonly ISilverbackLogger<OutboxWorker> _logger;
 
     private readonly ConcurrentBag<OutboxMessage> _producedMessages = [];
 
@@ -44,13 +42,13 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     ///     The <see cref="IProducerCollection" />.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     public OutboxWorker(
         OutboxWorkerSettings settings,
         IOutboxReader outboxReader,
         IProducerCollection producers,
-        IProducerLogger<OutboxWorker> logger)
+        ISilverbackLogger<OutboxWorker> logger)
     {
         _settings = Check.NotNull(settings, nameof(settings));
         _outboxReader = Check.NotNull(outboxReader, nameof(outboxReader));
@@ -133,14 +131,14 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
                 outboxMessage.Headers,
                 OnProduceSuccess,
                 OnProduceError,
-                new ProduceState(producer, producer.EndpointConfiguration, outboxMessage));
+                outboxMessage);
         }
         catch (Exception ex)
         {
             _failed = true;
             _pendingProduceCountdown.Signal();
 
-            _logger.LogErrorProducingOutboxStoredMessage(ex);
+            _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, ex);
 
             // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
             if (_settings.EnforceMessageOrder)
@@ -148,20 +146,18 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         }
     }
 
-    private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, ProduceState state)
+    private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, OutboxMessage outboxMessage)
     {
-        _producedMessages.Add(state.OutboxMessage);
+        _producedMessages.Add(outboxMessage);
         _pendingProduceCountdown.Signal();
     }
 
-    private void OnProduceError(Exception exception, ProduceState state)
+    private void OnProduceError(Exception exception, OutboxMessage outboxMessage)
     {
         _failed = true;
         _pendingProduceCountdown.Signal();
 
-        _logger.LogErrorProducingOutboxStoredMessage(
-            new OutboundEnvelope(state.OutboxMessage.Content, state.OutboxMessage.Headers, state.EndpointConfiguration, state.Producer),
-            exception);
+        _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, exception);
     }
 
     private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.EndpointName);
@@ -169,6 +165,4 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     private Task AcknowledgeAllAsync() => _outboxReader.AcknowledgeAsync(_producedMessages);
 
     private Task WaitAllAsync() => _pendingProduceCountdown.WaitAsync();
-
-    internal record struct ProduceState(IProducer Producer, ProducerEndpointConfiguration EndpointConfiguration, OutboxMessage OutboxMessage);
 }

@@ -14,15 +14,15 @@ namespace Silverback.Messaging.Validation;
 /// </summary>
 public class ValidatorProducerBehavior : IProducerBehavior
 {
-    private readonly IProducerLogger<ValidatorProducerBehavior> _logger;
+    private readonly ISilverbackLogger<ValidatorProducerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ValidatorProducerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
-    public ValidatorProducerBehavior(IProducerLogger<ValidatorProducerBehavior> logger)
+    public ValidatorProducerBehavior(ISilverbackLogger<ValidatorProducerBehavior> logger)
     {
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -43,7 +43,7 @@ public class ValidatorProducerBehavior : IProducerBehavior
                 context.Envelope.EndpointConfiguration.MessageValidationMode,
                 out string? validationErrors))
         {
-            _logger.LogInvalidMessage(context.Envelope, validationErrors);
+            _logger.LogInvalidMessageProduced(context.Envelope, validationErrors);
         }
 
         await next(context, cancellationToken).ConfigureAwait(false);

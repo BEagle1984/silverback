@@ -61,7 +61,7 @@ public class KafkaGroupIdFilterAttributeFixture
                 Substitute.For<IBrokerClientCallbacksInvoker>(),
                 Substitute.For<IKafkaOffsetStoreFactory>(),
                 Substitute.For<IServiceProvider>(),
-                Substitute.For<IConsumerLogger<KafkaConsumer>>()),
+                Substitute.For<ISilverbackLogger<KafkaConsumer>>()),
             new KafkaOffset(new TopicPartitionOffset("test", 0, 42)));
 
         bool result = new KafkaGroupIdFilterAttribute("group1", "group2").MustProcess(envelope);

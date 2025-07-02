@@ -26,7 +26,7 @@ public class ValidatorProducerBehaviorFixture
 {
     private readonly LoggerSubstitute<ValidatorProducerBehavior> _loggerSubstitute;
 
-    private readonly IProducerLogger<ValidatorProducerBehavior> _producerLogger;
+    private readonly ISilverbackLogger<ValidatorProducerBehavior> _logger;
 
     public ValidatorProducerBehaviorFixture()
     {
@@ -39,8 +39,8 @@ public class ValidatorProducerBehaviorFixture
             (LoggerSubstitute<ValidatorProducerBehavior>)serviceProvider
                 .GetRequiredService<ILogger<ValidatorProducerBehavior>>();
 
-        _producerLogger = serviceProvider
-            .GetRequiredService<IProducerLogger<ValidatorProducerBehavior>>();
+        _logger = serviceProvider
+            .GetRequiredService<ISilverbackLogger<ValidatorProducerBehavior>>();
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -173,7 +173,7 @@ public class ValidatorProducerBehaviorFixture
         OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
+        await new ValidatorProducerBehavior(_logger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -206,7 +206,7 @@ public class ValidatorProducerBehaviorFixture
         OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -237,7 +237,7 @@ public class ValidatorProducerBehaviorFixture
         OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
+        await new ValidatorProducerBehavior(_logger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -253,7 +253,7 @@ public class ValidatorProducerBehaviorFixture
 
         result.ShouldNotBeNull();
         result!.Message.ShouldNotBeNull();
-        expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
+        expectedValidationMessage += " | endpointName: topic1";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1081);
     }
 
@@ -270,7 +270,7 @@ public class ValidatorProducerBehaviorFixture
         OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),

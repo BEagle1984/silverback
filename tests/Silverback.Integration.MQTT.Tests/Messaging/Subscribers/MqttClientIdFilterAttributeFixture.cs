@@ -52,7 +52,7 @@ public class MqttClientIdFilterAttributeFixture
                 },
                 Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
                 serviceProvider,
-                Substitute.For<IConsumerLogger<MqttConsumer>>()),
+                Substitute.For<ISilverbackLogger<MqttConsumer>>()),
             new MqttMessageIdentifier(consumerClientId, "42"));
 
         bool result = new MqttClientIdFilterAttribute("client1", "client2").MustProcess(inboundEnvelope);

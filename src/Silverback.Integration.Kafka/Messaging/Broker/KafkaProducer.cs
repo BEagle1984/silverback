@@ -41,7 +41,7 @@ public sealed class KafkaProducer : Producer
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     public KafkaProducer(
         string name,
@@ -49,7 +49,7 @@ public sealed class KafkaProducer : Producer
         KafkaProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
-        IProducerLogger<KafkaProducer> logger)
+        ISilverbackLogger<KafkaProducer> logger)
         : base(
             name,
             client,

@@ -17,7 +17,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 {
     private readonly KafkaClientsConfigurationActions _configurationActions;
 
-    private readonly IProducerLogger<KafkaProducer> _producerLogger;
+    private readonly ISilverbackLogger<KafkaProducer> _producerLogger;
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
 
@@ -27,7 +27,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 
     public KafkaProducersInitializer(
         KafkaClientsConfigurationActions configurationActions,
-        IProducerLogger<KafkaProducer> producerLogger,
+        ISilverbackLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IConfluentProducerWrapperFactory confluentProducerWrapperFactory,
         IKafkaTransactionalProducerCollection transactionalProducers,

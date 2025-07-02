@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker;
 /// <inheritdoc cref="Consumer{TIdentifier}" />
 public class MqttConsumer : Consumer<MqttMessageIdentifier>
 {
-    private readonly IConsumerLogger<MqttConsumer> _logger;
+    private readonly ISilverbackLogger<MqttConsumer> _logger;
 
     private readonly ConsumerChannelsManager _channelsManager;
 
@@ -50,10 +50,10 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     public MqttConsumer(
         string name,
@@ -61,7 +61,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         MqttClientConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
-        IConsumerLogger<MqttConsumer> logger)
+        ISilverbackLogger<MqttConsumer> logger)
         : base(
             name,
             client,

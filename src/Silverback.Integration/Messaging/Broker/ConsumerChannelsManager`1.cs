@@ -50,12 +50,12 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         if (channel.ReadCancellationToken.IsCancellationRequested && !channel.ReadTask.IsCompleted)
         {
-            _logger.LogConsumerLowLevelTrace(
+            _logger.LogConsumerTrace(
                 _consumer,
                 "Deferring processing loop startup of channel {channel}...",
                 () => [channel.Id]);
 
-            // If the cancellation is still pending await it and restart after successful stop
+            // If the cancellation is still pending, await it and restart after successful stop
             Task.Run(
                     async () =>
                     {
@@ -77,7 +77,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             _consumer,
             "Stopping processing loop of channel {channel}...",
             () => [channel.Id]);
@@ -93,7 +93,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         StopReadingAsync().SafeWait();
         GetChannels().OfType<IDisposable>().ForEach(channel => channel.Dispose());
 
-        _logger.LogConsumerLowLevelTrace(_consumer, "All channels disposed.");
+        _logger.LogConsumerTrace(_consumer, "All channels disposed.");
 
         _isDisposed = true;
     }
@@ -105,14 +105,14 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     {
         try
         {
-            _logger.LogConsumerLowLevelTrace(
+            _logger.LogConsumerTrace(
                 _consumer,
                 "Starting processing loop of channel {channel}...",
                 () => [channel.Id]);
 
             while (!channel.ReadCancellationToken.IsCancellationRequested)
             {
-                _logger.LogConsumerLowLevelTrace(
+                _logger.LogConsumerTrace(
                     _consumer,
                     "Reading channel {channel}...",
                     () => [channel.Id]);
@@ -122,7 +122,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         }
         catch (OperationCanceledException)
         {
-            _logger.LogConsumerLowLevelTrace(
+            _logger.LogConsumerTrace(
                 _consumer,
                 "Exiting processing loop of channel {channel} (operation canceled).",
                 () => [channel.Id]);
@@ -131,7 +131,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         {
             // Ignore the ChannelClosedException as it might be thrown because of a race condition during retry and in any case
             // it means that operation is being canceled
-            _logger.LogConsumerLowLevelTrace(
+            _logger.LogConsumerTrace(
                 _consumer,
                 "Exiting processing loop of channel {channel} (channel closed).",
                 () => [channel.Id]);
@@ -146,7 +146,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
         }
 
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             _consumer,
             "Exited processing loop of channel {channel}.",
             () => [channel.Id]);

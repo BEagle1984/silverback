@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Validation;
 /// </summary>
 public class ValidatorConsumerBehavior : IConsumerBehavior
 {
-    private readonly IConsumerLogger<ValidatorConsumerBehavior> _logger;
+    private readonly ISilverbackLogger<ValidatorConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ValidatorConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
-    public ValidatorConsumerBehavior(IConsumerLogger<ValidatorConsumerBehavior> logger)
+    public ValidatorConsumerBehavior(ISilverbackLogger<ValidatorConsumerBehavior> logger)
     {
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -44,7 +44,7 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
                 context.Envelope.Endpoint.Configuration.MessageValidationMode,
                 out string? validationErrors))
         {
-            _logger.LogInvalidMessage(context.Envelope, validationErrors);
+            _logger.LogInvalidMessageConsumed(context.Envelope, validationErrors);
         }
 
         await next(context, cancellationToken).ConfigureAwait(false);

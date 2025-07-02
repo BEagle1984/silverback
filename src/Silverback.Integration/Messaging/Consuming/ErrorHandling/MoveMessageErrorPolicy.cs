@@ -60,7 +60,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             MessageToPublishFactory,
             serviceProvider.GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
             serviceProvider,
-            serviceProvider.GetRequiredService<IConsumerLogger<MoveMessageErrorPolicy>>());
+            serviceProvider.GetRequiredService<ISilverbackLogger<MoveMessageErrorPolicy>>());
 
     private sealed class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
     {
@@ -70,7 +70,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
         private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
 
-        private readonly IConsumerLogger<MoveMessageErrorPolicy> _logger;
+        private readonly ISilverbackLogger<MoveMessageErrorPolicy> _logger;
 
         private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
@@ -87,7 +87,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IBrokerOutboundMessageEnrichersFactory enricherFactory,
             IServiceProvider serviceProvider,
-            IConsumerLogger<MoveMessageErrorPolicy> logger)
+            ISilverbackLogger<MoveMessageErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,
@@ -110,7 +110,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
             if (context.Sequence != null)
             {
-                _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
+                _logger.LogCannotMoveSequence(context.Envelope, context.Sequence);
                 return false;
             }
 
@@ -153,7 +153,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
             await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
 
-            _logger.LogMoved(envelope, _producer.EndpointConfiguration);
+            _logger.LogMessageMoved(envelope, _producer.EndpointConfiguration);
         }
     }
 }

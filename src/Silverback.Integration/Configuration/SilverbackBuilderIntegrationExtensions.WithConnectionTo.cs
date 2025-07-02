@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Diagnostics;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -54,7 +53,6 @@ public static partial class SilverbackBuilderIntegrationExtensions
 
         AddClientsManagement(builder);
         AddOutboundRouting(builder);
-        AddLoggers(builder);
         AddEnrichers(builder);
         AddBrokerBehaviors(builder);
 
@@ -92,17 +90,8 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .Services
             .AddSingleton<IMessageWrapper>(_ => MessageWrapper.Instance);
 
-    private static void AddLoggers(SilverbackBuilder builder) =>
-        builder
-            .Services
-            .AddSingleton(typeof(IConsumerLogger<>), typeof(ConsumerLogger<>))
-            .AddSingleton(typeof(IProducerLogger<>), typeof(ProducerLogger<>))
-            .AddSingleton<InternalConsumerLoggerFactory>()
-            .AddSingleton<InternalProducerLoggerFactory>();
-
     private static void AddEnrichers(SilverbackBuilder builder) =>
         builder
-            .AddTypeBasedExtensibleFactory<IBrokerLogEnricherFactory, BrokerLogEnricherFactory>()
             .AddTypeBasedExtensibleFactory<IActivityEnricherFactory, ActivityEnricherFactory>()
             .Services
             .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>();

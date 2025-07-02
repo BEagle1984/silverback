@@ -14,7 +14,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 {
     private readonly ConsumerPipelineContext _context;
 
-    private readonly IConsumerLogger<ConsumerTransactionManager> _logger;
+    private readonly ISilverbackLogger<ConsumerTransactionManager> _logger;
 
     private readonly object _syncLock = new();
 
@@ -31,9 +31,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
-    public ConsumerTransactionManager(
-        ConsumerPipelineContext context,
-        IConsumerLogger<ConsumerTransactionManager> logger)
+    public ConsumerTransactionManager(ConsumerPipelineContext context, ISilverbackLogger<ConsumerTransactionManager> logger)
     {
         _context = context;
         _logger = logger;
@@ -58,7 +56,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             if (_commitTask != null)
             {
-                _logger.LogConsumerLowLevelTrace("Not committing consumer transaction because it was already committed.", _context.Envelope);
+                _logger.LogProcessingTrace(_context.Envelope, "Not committing consumer transaction because it was already committed.");
                 return _commitTask;
             }
 
@@ -80,7 +78,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             if (_abortTask != null)
             {
-                _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
+                _logger.LogProcessingTrace(_context.Envelope, "Not aborting consumer transaction because it was already aborted.");
                 return _abortTask;
             }
 
@@ -98,18 +96,18 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private async Task CommitCoreAsync()
     {
-        _logger.LogConsumerLowLevelTrace("Committing consumer transaction...", _context.Envelope);
+        _logger.LogProcessingTrace(_context.Envelope, "Committing consumer transaction...");
 
         await Committing.InvokeAsync(_context).ConfigureAwait(false);
         await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
         await Committed.InvokeAsync(_context).ConfigureAwait(false);
 
-        _logger.LogConsumerLowLevelTrace("Consumer transaction committed.", _context.Envelope);
+        _logger.LogProcessingTrace(_context.Envelope, "Consumer transaction committed.");
     }
 
     private async Task<bool> RollbackCoreAsync(Exception? exception, bool commitConsumer, bool stopConsuming)
     {
-        _logger.LogConsumerLowLevelTrace("Aborting consumer transaction...", _context.Envelope, exception);
+        _logger.LogProcessingTrace(_context.Envelope, exception, "Aborting consumer transaction...");
 
         await Aborting.InvokeAsync(_context).ConfigureAwait(false);
 
@@ -130,7 +128,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         await Aborted.InvokeAsync(_context).ConfigureAwait(false);
 
-        _logger.LogConsumerLowLevelTrace("Consumer transaction aborted.", _context.Envelope);
+        _logger.LogProcessingTrace(_context.Envelope, "Consumer transaction aborted.");
 
         return true;
     }

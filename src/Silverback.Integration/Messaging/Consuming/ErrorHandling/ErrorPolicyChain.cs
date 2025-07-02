@@ -50,7 +50,7 @@ public class ErrorPolicyChain : IErrorPolicy
             StackMaxFailedAttempts(Policies)
                 .Select(policy => policy.Build(serviceProvider))
                 .Cast<ErrorPolicyImplementation>(),
-            serviceProvider.GetRequiredService<IConsumerLogger<ErrorPolicyChainImplementation>>());
+            serviceProvider.GetRequiredService<ISilverbackLogger<ErrorPolicyChain>>());
 
     private IReadOnlyCollection<ErrorPolicyBase> StackMaxFailedAttempts(IReadOnlyCollection<ErrorPolicyBase> policies)
     {
@@ -74,13 +74,11 @@ public class ErrorPolicyChain : IErrorPolicy
 
     private sealed class ErrorPolicyChainImplementation : IErrorPolicyImplementation
     {
-        private readonly IConsumerLogger<ErrorPolicyChainImplementation> _logger;
+        private readonly ISilverbackLogger<ErrorPolicyChain> _logger;
 
         private readonly IReadOnlyCollection<ErrorPolicyImplementation> _policies;
 
-        public ErrorPolicyChainImplementation(
-            IEnumerable<ErrorPolicyImplementation> policies,
-            IConsumerLogger<ErrorPolicyChainImplementation> logger)
+        public ErrorPolicyChainImplementation(IEnumerable<ErrorPolicyImplementation> policies, ISilverbackLogger<ErrorPolicyChain> logger)
         {
             _policies = Check.NotNull(policies, nameof(policies)).ToList();
             Check.HasNoNulls(_policies, nameof(policies));
@@ -100,7 +98,9 @@ public class ErrorPolicyChain : IErrorPolicy
             if (nextPolicy != null)
                 return nextPolicy.HandleErrorAsync(context, exception);
 
-            _logger.LogConsumerTrace(IntegrationLogEvents.PolicyChainCompleted, context.Envelope);
+            _logger.LogProcessingTrace(
+                context.Envelope,
+                "All policies have been applied but the message(s) couldn't be successfully processed. The client will be disconnected.");
 
             return Task.FromResult(false);
         }

@@ -166,5 +166,5 @@ public class ConfluentConsumerWrapperFixture
         Substitute.For<IBrokerClientCallbacksInvoker>(),
         Substitute.For<IKafkaOffsetStoreFactory>(),
         Substitute.For<IServiceProvider>(),
-        Substitute.For<IConsumerLogger<KafkaConsumer>>());
+        Substitute.For<ISilverbackLogger<KafkaConsumer>>());
 }

@@ -7,7 +7,7 @@ using Silverback.Configuration;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Exposes the methods to configure the connection with the message broker(s) and add the needed services to the
+///     Exposes the methods to configure the connection with the message broker(s) and add the necessary services to the
 ///     <see cref="IServiceCollection" />.
 /// </summary>
 public sealed partial class BrokerOptionsBuilder

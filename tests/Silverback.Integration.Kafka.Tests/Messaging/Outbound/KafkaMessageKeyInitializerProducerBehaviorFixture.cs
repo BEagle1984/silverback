@@ -42,7 +42,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IProducerLogger<KafkaProducer>>());
+            Substitute.For<ISilverbackLogger<KafkaProducer>>());
     }
 
     [Fact]

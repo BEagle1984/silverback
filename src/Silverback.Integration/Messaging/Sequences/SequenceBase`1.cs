@@ -73,7 +73,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     The <see cref="IMessageStreamProvider" /> to be pushed. A new one will be created if not provided.
     /// </param>
     /// <param name="trackIdentifiers">
-    ///     Specifies whether the message identifiers have to be collected, in order to be used for the commit
+    ///     Specifies whether the message identifiers have to be collected to be used for the commit
     ///     later on.
     /// </param>
     protected SequenceBase(
@@ -307,19 +307,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             Length++;
 
-            if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
+            if (Length == TotalLength || IsLastMessage(envelope))
             {
                 TotalLength = Length;
                 IsCompleting = true;
 
-                _logger.LogLowLevelTrace(
+                _logger.LogTrace(
                     "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
-                    () =>
-                    [
-                        GetType().Name,
-                        SequenceId,
-                        TotalLength
-                    ]);
+                    () => [GetType().Name, SequenceId, TotalLength]);
             }
 
             if (IsCompleting)
@@ -329,27 +324,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogLowLevelTrace(
+            _logger.LogTrace(
                 ex,
                 "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () =>
-                [
-                    GetType().Name,
-                    SequenceId
-                ]);
+                () => [GetType().Name, SequenceId]);
 
             return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
         }
         catch (Exception ex)
         {
-            _logger.LogLowLevelTrace(
+            _logger.LogTrace(
                 ex,
                 "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () =>
-                [
-                    GetType().Name,
-                    SequenceId
-                ]);
+                () => [GetType().Name, SequenceId]);
 
             throw;
         }
@@ -385,14 +372,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!IsPending)
             return;
 
-        _logger.LogLowLevelTrace(
+        _logger.LogTrace(
             "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
-            () =>
-            [
-                GetType().Name,
-                SequenceId,
-                Length
-            ]);
+            () => [GetType().Name, SequenceId, Length]);
 
         IsComplete = true;
         IsCompleting = false;
@@ -414,13 +396,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!disposing)
             return;
 
-        _logger.LogLowLevelTrace(
-            "Disposing {sequenceType} '{sequenceId}'...",
-            () =>
-            [
-                GetType().Name,
-                SequenceId
-            ]);
+        _logger.LogTrace("Disposing {sequenceType} '{sequenceId}'...", () => [GetType().Name, SequenceId]);
 
         _abortingTaskCompletionSource?.Task.SafeWait();
 
@@ -429,13 +405,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _sequences?.ForEach(sequence => sequence.Dispose());
 
-        _logger.LogLowLevelTrace(
-            "Waiting adding semaphore ({sequenceType} '{sequenceId}')...",
-            () =>
-            [
-                GetType().Name,
-                SequenceId
-            ]);
+        _logger.LogTrace("Waiting adding semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
 
         _addingSemaphoreSlim.Wait();
         _addingSemaphoreSlim.Dispose();
@@ -446,13 +416,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _isDisposed = true;
 
-        _logger.LogLowLevelTrace(
-            "{sequenceType} '{sequenceId}' disposed.",
-            () =>
-            [
-                GetType().Name,
-                SequenceId
-            ]);
+        _logger.LogTrace("{sequenceType} '{sequenceId}' disposed.", () => [GetType().Name, SequenceId]);
 
         Context.Dispose();
     }
@@ -553,22 +517,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         if (alreadyAborted)
         {
-            // Multiple calls to AbortAsync should await until the sequence is aborted for real,
-            // otherwise the TransactionHandlerConsumerBehavior could continue before the abort
-            // is done, preventing the error policies to be correctly and successfully applied.
+            // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
+            // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
             await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
             return;
         }
 
-        _logger.LogLowLevelTrace(
+        _logger.LogTrace(
             AbortException,
             "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
-            () =>
-            [
-                GetType().Name,
-                SequenceId,
-                AbortReason
-            ]);
+            () => [GetType().Name, SequenceId, AbortReason]);
 
         await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
         if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))

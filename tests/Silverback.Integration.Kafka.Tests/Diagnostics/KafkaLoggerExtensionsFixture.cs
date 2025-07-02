@@ -49,7 +49,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
 
         IConfluentProducerWrapper confluentProducerWrapper = Substitute.For<IConfluentProducerWrapper>();
         confluentProducerWrapper.DisplayName.Returns("producer1");
@@ -68,7 +68,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IProducerLogger<KafkaProducer>>());
+            Substitute.For<ISilverbackLogger<KafkaProducer>>());
 
         _transactionalProducerWrapper = Substitute.For<IConfluentProducerWrapper>();
         _transactionalProducerWrapper.DisplayName.Returns("producer1");

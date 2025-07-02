@@ -25,7 +25,7 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
 
     private readonly ProducerCollection _producers;
 
-    private readonly IProducerLogger<KafkaProducer> _producerLogger;
+    private readonly ISilverbackLogger<KafkaProducer> _producerLogger;
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
 
@@ -37,7 +37,7 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         IConfluentProducerWrapperFactory factory,
         BrokerClientCollection clients,
         ProducerCollection producers,
-        IProducerLogger<KafkaProducer> producerLogger,
+        ISilverbackLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         RootServiceProvider rootServiceProvider)
     {
@@ -47,7 +47,7 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
 
-        // Ensure that the root service provider is used to resolve the needed service, to avoid premature disposal
+        // Ensure that the root service provider is used to resolve the necessary service, to avoid premature disposal
         _serviceProvider = rootServiceProvider.ServiceProvider;
     }
 
@@ -116,5 +116,5 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         KafkaProducerConfiguration Configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> BehaviorsProvider,
         IServiceProvider ServiceProvider,
-        IProducerLogger<KafkaProducer> ProducerLogger);
+        ISilverbackLogger<KafkaProducer> ProducerLogger);
 }

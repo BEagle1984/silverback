@@ -52,13 +52,13 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     The <see cref="IBrokerClient" />.
     /// </param>
     /// <param name="endpointsConfiguration">
-    ///     The endpoints configuration.
+    ///     The endpoints' configuration.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
@@ -101,7 +101,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     public IConsumerStatusInfo StatusInfo => _statusInfo;
 
     /// <summary>
-    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </summary>
     protected IServiceProvider ServiceProvider { get; }
 
@@ -132,7 +132,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             _isReconnecting = true;
         }
 
-        _logger.LogConsumerLowLevelTrace(this, "Triggering reconnect.");
+        _logger.LogConsumerTrace(this, "Triggering reconnect.");
 
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
         await StopAsync(false).ConfigureAwait(false);
@@ -172,7 +172,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         IsStarting = true;
 
-        _logger.LogConsumerLowLevelTrace(this, "Starting consumer...");
+        _logger.LogConsumerTrace(this, "Starting consumer...");
 
         try
         {
@@ -186,7 +186,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
             IsStarted = true;
 
-            _logger.LogConsumerLowLevelTrace(this, "Consumer started.");
+            _logger.LogConsumerTrace(this, "Consumer started.");
         }
         catch (Exception ex)
         {
@@ -213,7 +213,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         IsStopping = true;
 
-        _logger.LogConsumerLowLevelTrace(this, "Stopping consumer...");
+        _logger.LogConsumerTrace(this, "Stopping consumer...");
 
         try
         {
@@ -236,7 +236,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             _startStopSemaphore.Release();
         }
 
-        _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
+        _logger.LogConsumerTrace(this, "Consumer stopped.");
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
@@ -476,7 +476,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private async ValueTask WaitUntilConsumingStoppedAsync()
     {
-        _logger.LogConsumerLowLevelTrace(this, "Waiting until consumer stops...");
+        _logger.LogConsumerTrace(this, "Waiting until consumer stops...");
 
         try
         {
@@ -486,7 +486,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         }
         finally
         {
-            _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
+            _logger.LogConsumerTrace(this, "Consumer stopped.");
         }
     }
 }

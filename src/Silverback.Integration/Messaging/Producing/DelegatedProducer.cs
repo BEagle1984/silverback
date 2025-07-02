@@ -24,7 +24,7 @@ internal abstract class DelegatedProducer : Producer
             endpointConfiguration,
             serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             serviceProvider,
-            serviceProvider.GetRequiredService<IProducerLogger<Producer>>())
+            serviceProvider.GetRequiredService<ISilverbackLogger<Producer>>())
     {
     }
 

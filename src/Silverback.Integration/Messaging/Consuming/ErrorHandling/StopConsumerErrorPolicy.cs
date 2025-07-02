@@ -30,8 +30,7 @@ public record StopConsumerErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider,
-            serviceProvider
-                .GetRequiredService<IConsumerLogger<StopConsumerErrorPolicy>>());
+            serviceProvider.GetRequiredService<ISilverbackLogger<StopConsumerErrorPolicy>>());
 
     private sealed class StopConsumerErrorPolicyImplementation : ErrorPolicyImplementation
     {
@@ -42,7 +41,7 @@ public record StopConsumerErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            IConsumerLogger<StopConsumerErrorPolicy> logger)
+            ISilverbackLogger<StopConsumerErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,

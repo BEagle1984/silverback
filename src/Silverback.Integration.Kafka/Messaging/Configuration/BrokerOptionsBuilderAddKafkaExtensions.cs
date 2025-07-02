@@ -59,7 +59,6 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddTransient<KafkaOffsetStoreScope>(services => services.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope());
 
         AddChunkEnricher(brokerOptionsBuilder);
-        AddBrokerLogEnrichers(brokerOptionsBuilder);
         AddActivityEnrichers(brokerOptionsBuilder);
         AddOffsetsTracker(brokerOptionsBuilder);
 
@@ -73,17 +72,6 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
 
         if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
             factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new KafkaChunkEnricher());
-    }
-
-    private static void AddBrokerLogEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)
-    {
-        BrokerLogEnricherFactory factory = brokerOptionsBuilder.SilverbackBuilder.Services.GetSingletonServiceInstance<BrokerLogEnricherFactory>() ??
-                                           throw new InvalidOperationException("BrokerLogEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
-
-        if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
-            factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new KafkaLogEnricher());
-        if (!factory.HasFactory<KafkaConsumerEndpointConfiguration>())
-            factory.AddFactory<KafkaConsumerEndpointConfiguration>(_ => new KafkaLogEnricher());
     }
 
     private static void AddActivityEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)

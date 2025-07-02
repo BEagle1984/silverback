@@ -27,7 +27,7 @@ public class ValidatorConsumerBehaviorFixture
 
     private readonly LoggerSubstitute<ValidatorConsumerBehavior> _loggerSubstitute;
 
-    private readonly IConsumerLogger<ValidatorConsumerBehavior> _consumerLogger;
+    private readonly ISilverbackLogger<ValidatorConsumerBehavior> _logger;
 
     public ValidatorConsumerBehaviorFixture()
     {
@@ -44,8 +44,8 @@ public class ValidatorConsumerBehaviorFixture
             (LoggerSubstitute<ValidatorConsumerBehavior>)_serviceProvider
                 .GetRequiredService<ILogger<ValidatorConsumerBehavior>>();
 
-        _consumerLogger = _serviceProvider
-            .GetRequiredService<IConsumerLogger<ValidatorConsumerBehavior>>();
+        _logger = _serviceProvider
+            .GetRequiredService<ISilverbackLogger<ValidatorConsumerBehavior>>();
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -185,7 +185,7 @@ public class ValidatorConsumerBehaviorFixture
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
+        await new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
             {
@@ -219,7 +219,7 @@ public class ValidatorConsumerBehaviorFixture
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
             {
@@ -247,10 +247,10 @@ public class ValidatorConsumerBehaviorFixture
             null,
             endpoint,
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset("a", "42"));
 
         IRawInboundEnvelope? result = null;
-        await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
+        await new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
             {
@@ -260,7 +260,7 @@ public class ValidatorConsumerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
+        expectedValidationMessage += " | endpointName: topic1, messageId: 42";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1082);
     }
 
@@ -283,7 +283,7 @@ public class ValidatorConsumerBehaviorFixture
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
             {

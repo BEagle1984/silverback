@@ -58,7 +58,7 @@ public class KafkaTransactionFixture
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
         context.SetConsumerPipelineContext(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 identifier: new KafkaOffset("test", 1, 42),
@@ -99,7 +99,7 @@ public class KafkaTransactionFixture
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
         ISequence sequence = Substitute.For<ISequence>();
         sequence.GetCommitIdentifiers().Returns(
         [
@@ -150,7 +150,7 @@ public class KafkaTransactionFixture
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
-            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+            Substitute.For<ISilverbackLogger<KafkaConsumer>>());
         context.SetConsumerPipelineContext(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 identifier: new KafkaOffset("test", 1, 42),

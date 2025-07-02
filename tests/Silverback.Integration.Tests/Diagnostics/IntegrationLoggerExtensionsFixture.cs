@@ -16,6 +16,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
@@ -31,11 +32,10 @@ public class IntegrationLoggerExtensionsFixture
 
     public IntegrationLoggerExtensionsFixture()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddLoggerSubstitute(LogLevel.Trace)
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         _loggerSubstitute =
             (LoggerSubstitute<IntegrationLoggerExtensionsFixture>)serviceProvider
@@ -43,6 +43,63 @@ public class IntegrationLoggerExtensionsFixture
 
         _silverbackLogger = serviceProvider
             .GetRequiredService<ISilverbackLogger<IntegrationLoggerExtensionsFixture>>();
+    }
+
+    [Fact]
+    public void LogProcessing_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProcessing(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "Processing consumed message. | endpointName: test, messageId: 42",
+            1001);
+    }
+
+    [Fact]
+    public void LogProcessingError_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProcessingError(envelope, new InvalidDataException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            typeof(InvalidDataException),
+            "Error occurred processing the consumed message. | endpointName: test, messageId: 42",
+            1002);
+    }
+
+    [Fact]
+    public void LogProcessingFatalError_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProcessingFatalError(envelope, new InvalidCastException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Critical,
+            typeof(InvalidCastException),
+            "Fatal error occurred processing the consumed message. The client will be disconnected. | endpointName: test, messageId: 42",
+            1003);
     }
 
     [Fact]
@@ -55,6 +112,90 @@ public class IntegrationLoggerExtensionsFixture
             typeof(InvalidCastException),
             "Fatal error occurred processing the consumed message. The client will be disconnected. | consumerName: consumer1",
             1004);
+    }
+
+    [Fact]
+    public void LogProduced_ShouldLogEnvelope()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            new TestProducerEndpointConfiguration("test1"),
+            Substitute.For<IProducer>(),
+            null,
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProduced(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "Message produced. | endpointName: test1, messageId: 42",
+            1005);
+    }
+
+    [Fact]
+    public void LogProduced_ShouldLogEndpointConfiguration()
+    {
+        TestProducerEndpointConfiguration endpointConfiguration = new("test1");
+
+        _silverbackLogger.LogProduced(endpointConfiguration, new TestOffset("a", "42"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "Message produced. | endpointName: test1, messageId: 42",
+            1005);
+    }
+
+    [Fact]
+    public void LogProduceError_ShouldLogEnvelope()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            new TestProducerEndpointConfiguration("test1"),
+            Substitute.For<IProducer>());
+
+        _silverbackLogger.LogProduceError(envelope, new InvalidDataException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(InvalidDataException),
+            "Error occurred producing the message. | endpointName: test1",
+            1006);
+    }
+
+    [Fact]
+    public void LogProduceError_ShouldLogEndpointConfiguration()
+    {
+        TestProducerEndpointConfiguration endpointConfiguration = new("test1");
+
+        _silverbackLogger.LogProduceError(endpointConfiguration, new InvalidDataException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(InvalidDataException),
+            "Error occurred producing the message. | endpointName: test1",
+            1006);
+    }
+
+    [Fact]
+    public void LogOutboundMessageFiltered_ShouldLog()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            new TestProducerEndpointConfiguration("test1"),
+            Substitute.For<IProducer>());
+
+        _silverbackLogger.LogOutboundMessageFiltered(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Debug,
+            null,
+            "Message filtered. | endpointName: test1",
+            1007);
     }
 
     [Fact]
@@ -329,6 +470,139 @@ public class IntegrationLoggerExtensionsFixture
     }
 
     [Fact]
+    public void LogRetryProcessing_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogRetryProcessing(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "The message(s) will be processed again. | endpointName: test, messageId: 42",
+            1051);
+    }
+
+    [Fact]
+    public void LogMessageMoved_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+        TestProducerEndpointConfiguration destinationEndpointConfiguration = new("dest");
+
+        _silverbackLogger.LogMessageMoved(envelope, destinationEndpointConfiguration);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "The message will be moved to the endpoint 'dest'. | endpointName: test, messageId: 42",
+            1052);
+    }
+
+    [Fact]
+    public void LogMessageSkipped_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogMessageSkipped(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "The message(s) will be skipped. | endpointName: test, messageId: 42",
+            1053);
+    }
+
+    [Fact]
+    public void LogCannotMoveSequence_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogCannotMoveSequence(envelope, new FakeSequence());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "The message belongs to a FakeSequence and cannot be moved. | endpointName: test, messageId: 42",
+            1054);
+    }
+
+    [Fact]
+    public void LogRollbackToRetryFailed_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogRollbackToRetryFailed(envelope, new InvalidOperationException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(InvalidOperationException),
+            "Error occurred rolling back, the retry error policy cannot be applied. The consumer will be reconnected. | endpointName: test, messageId: 42",
+            1061);
+    }
+
+    [Fact]
+    public void LogRollbackToSkipFailed_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogRollbackToSkipFailed(envelope, new InvalidOperationException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(InvalidOperationException),
+            "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. The consumer will be reconnected. | endpointName: test, messageId: 42",
+            1062);
+    }
+
+    [Fact]
+    public void LogStoringIntoOutbox_ShouldLog()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            new TestProducerEndpointConfiguration("test1"),
+            Substitute.For<IProducer>());
+
+        _silverbackLogger.LogStoringIntoOutbox(envelope);
+
+        _loggerSubstitute.Received(
+            LogLevel.Debug,
+            null,
+            "Storing message into the transactional outbox. | endpointName: test1",
+            1071);
+    }
+
+    [Fact]
     public void LogReadingMessagesFromOutbox_ShouldLog()
     {
         _silverbackLogger.LogReadingMessagesFromOutbox(42);
@@ -337,7 +611,7 @@ public class IntegrationLoggerExtensionsFixture
             LogLevel.Trace,
             null,
             "Reading batch of 42 messages from the outbox queue...",
-            1074);
+            1072);
     }
 
     [Fact]
@@ -345,7 +619,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogOutboxEmpty();
 
-        _loggerSubstitute.Received(LogLevel.Trace, null, "The outbox is empty.", 1075);
+        _loggerSubstitute.Received(LogLevel.Trace, null, "The outbox is empty.", 1073);
     }
 
     [Fact]
@@ -353,19 +627,21 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogProcessingOutboxStoredMessage(13);
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13.", 1076);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13.", 1074);
     }
 
     [Fact]
     public void LogErrorProducingOutboxStoredMessage_ShouldLog()
     {
-        _silverbackLogger.LogErrorProducingOutboxStoredMessage(new ArithmeticException());
+        _silverbackLogger.LogErrorProducingOutboxStoredMessage(
+            new OutboxMessage(null, null, "test"),
+            new ArithmeticException());
 
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(ArithmeticException),
-            "Failed to produce the message stored in the outbox.",
-            1077);
+            "Failed to produce the message stored in the outbox. | endpointName: test",
+            1075);
     }
 
     [Fact]
@@ -377,7 +653,44 @@ public class IntegrationLoggerExtensionsFixture
             LogLevel.Error,
             typeof(InvalidCredentialException),
             "Error occurred processing the outbox.",
-            1078);
+            1076);
+    }
+
+    [Fact]
+    public void LogInvalidMessageProduced_ShouldLog()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            new TestProducerEndpointConfiguration("test1"),
+            Substitute.For<IProducer>());
+
+        _silverbackLogger.LogInvalidMessageProduced(envelope, "[error messages]");
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Invalid message produced: [error messages] | endpointName: test1",
+            1081);
+    }
+
+    [Fact]
+    public void LogInvalidMessageConsumed_ShouldLog()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogInvalidMessageConsumed(envelope, "[error messages]");
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Invalid message consumed: [error messages] | endpointName: test, messageId: 42",
+            1082);
     }
 
     [Fact]
@@ -396,10 +709,9 @@ public class IntegrationLoggerExtensionsFixture
     public void LogEndpointConfiguratorError_ShouldLog()
     {
         _silverbackLogger.LogEndpointConfiguratorError(
-            new GenericBrokerClientsConfigurator(
-                _ =>
-                {
-                }),
+            new GenericBrokerClientsConfigurator(_ =>
+            {
+            }),
             new BrokerConfigurationException());
 
         _loggerSubstitute.Received(
@@ -434,24 +746,19 @@ public class IntegrationLoggerExtensionsFixture
     }
 
     [Fact]
-    public void LogLowLevelTrace_NoException_ShouldLog()
+    public void LogTrace_ShouldLog()
     {
         string expectedMessage = "Message A 42 True";
 
-        _silverbackLogger.LogLowLevelTrace(
-            "Message {string} {int} {bool}",
-            () => ["A", 42, true]);
+        _silverbackLogger.LogTrace("Message {string} {int} {bool}", () => ["A", 42, true]);
 
         _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
     }
 
     [Fact]
-    public void LogLowLevelTrace_WithException_ShouldLog()
+    public void LogTrace_ShouldLog_WhenExceptionSpecified()
     {
-        _silverbackLogger.LogLowLevelTrace(
-            new InvalidComObjectException(),
-            "Message {string} {int} {bool}",
-            () => ["A", 42, true]);
+        _silverbackLogger.LogTrace(new InvalidComObjectException(), "Message {string} {int} {bool}", () => ["A", 42, true]);
 
         _loggerSubstitute.Received(
             LogLevel.Trace,
@@ -461,12 +768,9 @@ public class IntegrationLoggerExtensionsFixture
     }
 
     [Fact]
-    public void LogConsumerLowLevelTrace_ShouldLog()
+    public void LogConsumerTrace_ShouldLog()
     {
-        _silverbackLogger.LogConsumerLowLevelTrace(
-            new TestConsumer(),
-            "Message {string} {int} {bool}",
-            () => ["A", 42, true]);
+        _silverbackLogger.LogConsumerTrace(new TestConsumer(), "Message {string} {int} {bool}", () => ["A", 42, true]);
 
         _loggerSubstitute.Received(
             LogLevel.Trace,
@@ -476,14 +780,44 @@ public class IntegrationLoggerExtensionsFixture
     }
 
     [Fact]
-    public void LogConsumerLowLevelTrace_NoArguments_ShouldLog()
+    public void LogProcessingTrace_ShouldLog()
     {
-        _silverbackLogger.LogConsumerLowLevelTrace(new TestConsumer(), "Message");
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProcessingTrace(envelope, "Message {string} {int} {bool}", () => ["A", 42, true]);
 
         _loggerSubstitute.Received(
             LogLevel.Trace,
             null,
-            "Message | consumerName: consumer1",
+            "Message A 42 True | endpointName: test, messageId: 42",
+            1999);
+    }
+
+    [Fact]
+    public void LogProcessingTrace_ShouldLog_WhenExceptionSpecified()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "42"));
+
+        _silverbackLogger.LogProcessingTrace(
+            envelope,
+            new InvalidComObjectException(),
+            "Message {string} {int} {bool}",
+            () => ["A", 42, true]);
+
+        _loggerSubstitute.Received(
+            LogLevel.Trace,
+            typeof(InvalidComObjectException),
+            "Message A 42 True | endpointName: test, messageId: 42",
             1999);
     }
 

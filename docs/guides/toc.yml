@@ -74,7 +74,7 @@
       href: broker/default-headers.md
     - name: Testing
       href: broker/testing.md
-- name: Logging
+- name: Logging and Tracing
   href: logging.md
 - name: DDD Domain Events
   href: domain-events.md

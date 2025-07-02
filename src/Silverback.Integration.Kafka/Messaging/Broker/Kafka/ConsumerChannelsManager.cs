@@ -78,16 +78,10 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         PartitionChannel channel = GetOrCreateChannel(consumeResult.TopicPartition);
 
-        _logger.LogConsumerLowLevelTrace(
+        _logger.LogConsumerTrace(
             _consumer,
             "Writing message ({topic}[{partition}]@{offset}) to channel {channel}.",
-            () =>
-            [
-                consumeResult.Topic,
-                consumeResult.Partition.Value,
-                consumeResult.Offset.Value,
-                channel.Id
-            ]);
+            () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
 
         try
         {
@@ -103,16 +97,10 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             }
             catch (ChannelClosedException)
             {
-                _logger.LogConsumerLowLevelTrace(
+                _logger.LogConsumerTrace(
                     _consumer,
                     "Failed to write message ({topic}[{partition}]@{offset}) to overflow channel {channel}.",
-                    () =>
-                    [
-                        consumeResult.Topic,
-                        consumeResult.Partition.Value,
-                        consumeResult.Offset.Value,
-                        channel.Id
-                    ]);
+                    () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
             }
         }
     }
@@ -153,10 +141,9 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         if (consumeResult.IsPartitionEOF)
         {
             _logger.LogEndOfPartition(consumeResult, _consumer);
-            _callbacksInvoker.Invoke<IKafkaPartitionEofCallback>(
-                handler => handler.OnEndOfTopicPartitionReached(
-                    consumeResult.TopicPartition,
-                    _consumer));
+            _callbacksInvoker.Invoke<IKafkaPartitionEofCallback>(handler => handler.OnEndOfTopicPartitionReached(
+                consumeResult.TopicPartition,
+                _consumer));
             return;
         }
 

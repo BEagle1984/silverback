@@ -23,7 +23,7 @@ public abstract class Producer : IProducer, IDisposable
 
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IProducerLogger<IProducer> _logger;
+    private readonly ISilverbackLogger<IProducer> _logger;
 
     private bool _isDisposed;
 
@@ -43,10 +43,10 @@ public abstract class Producer : IProducer, IDisposable
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IProducerLogger{TCategoryName}" />.
+    ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
     protected Producer(
         string name,
@@ -54,7 +54,7 @@ public abstract class Producer : IProducer, IDisposable
         ProducerEndpointConfiguration endpointConfiguration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
-        IProducerLogger<IProducer> logger)
+        ISilverbackLogger<IProducer> logger)
     {
         Name = Check.NotNullOrEmpty(name, nameof(name));
         EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
@@ -87,6 +87,8 @@ public abstract class Producer : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
+        Check.NotNull(envelope, nameof(envelope));
+
         try
         {
             ProducerPipelineContext context = new(
@@ -99,7 +101,7 @@ public abstract class Producer : IProducer, IDisposable
                         finalContext.BrokerMessageIdentifier =
                             ((Producer)finalContext.Producer).ProduceCore(finalContext.Envelope);
 
-                    finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
 
                     return ValueTask.CompletedTask;
                 },
@@ -162,14 +164,14 @@ public abstract class Producer : IProducer, IDisposable
                     {
                         ProducerPipelineContext<TState> finalContextWithCallbacks = (ProducerPipelineContext<TState>)finalContext;
                         ((OutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
-                        finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                        finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
                         finalContextWithCallbacks.OnSuccess!.Invoke(identifier, finalContextWithCallbacks.CallbackState!);
                     }
 
                     static void OnError(Exception exception, ProducerPipelineContext finalContext)
                     {
                         ProducerPipelineContext<TState> finalContextWithCallbacks = (ProducerPipelineContext<TState>)finalContext;
-                        finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
+                        finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
                         finalContextWithCallbacks.OnError!.Invoke(exception, finalContextWithCallbacks.CallbackState!);
                     }
 
@@ -205,13 +207,13 @@ public abstract class Producer : IProducer, IDisposable
             OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
-            _logger.LogProduced(EndpointConfiguration, headers, brokerMessageIdentifier);
+            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
 
             return brokerMessageIdentifier;
         }
         catch (Exception ex)
         {
-            _logger.LogProduceError(EndpointConfiguration, headers, ex);
+            _logger.LogProduceError(EndpointConfiguration, ex);
             throw;
         }
     }
@@ -224,13 +226,13 @@ public abstract class Producer : IProducer, IDisposable
             OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
-            _logger.LogProduced(EndpointConfiguration, headers, brokerMessageIdentifier);
+            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
 
             return brokerMessageIdentifier;
         }
         catch (Exception ex)
         {
-            _logger.LogProduceError(EndpointConfiguration, headers, ex);
+            _logger.LogProduceError(EndpointConfiguration, ex);
             throw;
         }
     }
@@ -293,7 +295,7 @@ public abstract class Producer : IProducer, IDisposable
                         finalContext.BrokerMessageIdentifier =
                             await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope, finalCancellationToken).ConfigureAwait(false);
 
-                    finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                    finalContext.ServiceProvider.GetRequiredService<ISilverbackLogger<IProducer>>().LogProduced(finalContext.Envelope);
                 },
                 envelope.Context?.ServiceProvider ?? _serviceProvider);
 
@@ -320,13 +322,13 @@ public abstract class Producer : IProducer, IDisposable
                 new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this),
                 cancellationToken).ConfigureAwait(false);
 
-            _logger.LogProduced(EndpointConfiguration, headers, brokerMessageIdentifier);
+            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
 
             return brokerMessageIdentifier;
         }
         catch (Exception ex)
         {
-            _logger.LogProduceError(EndpointConfiguration, headers, ex);
+            _logger.LogProduceError(EndpointConfiguration, ex);
             throw;
         }
     }
@@ -343,13 +345,13 @@ public abstract class Producer : IProducer, IDisposable
                 new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this),
                 cancellationToken).ConfigureAwait(false);
 
-            _logger.LogProduced(EndpointConfiguration, headers, brokerMessageIdentifier);
+            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
 
             return brokerMessageIdentifier;
         }
         catch (Exception ex)
         {
-            _logger.LogProduceError(EndpointConfiguration, headers, ex);
+            _logger.LogProduceError(EndpointConfiguration, ex);
             throw;
         }
     }
@@ -376,7 +378,7 @@ public abstract class Producer : IProducer, IDisposable
     ///     Publishes the specified message and returns its identifier.
     /// </summary>
     /// <remarks>
-    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+    ///     In this implementation, the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <typeparam name="TState">
@@ -454,15 +456,15 @@ public abstract class Producer : IProducer, IDisposable
             envelope,
             static (identifier, state) =>
             {
-                state.Logger.LogProduced(state.EndpointConfiguration, state.Headers, identifier);
+                state.Logger.LogProduced(state.EndpointConfiguration, identifier);
                 state.OnSuccess.Invoke(identifier);
             },
             static (exception, state) =>
             {
-                state.Logger.LogProduceError(state.EndpointConfiguration, state.Headers, exception);
+                state.Logger.LogProduceError(state.EndpointConfiguration, exception);
                 state.OnError.Invoke(exception);
             },
-            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, envelope.Headers, Logger: _logger));
+            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, Logger: _logger));
 
     private void RawProduce<TState>(
         IOutboundEnvelope envelope,
@@ -473,12 +475,12 @@ public abstract class Producer : IProducer, IDisposable
             envelope,
             static (identifier, innerState) =>
             {
-                innerState.Logger.LogProduced(innerState.EndpointConfiguration, innerState.Headers, identifier);
+                innerState.Logger.LogProduced(innerState.EndpointConfiguration, identifier);
                 innerState.OnSuccess.Invoke(identifier, innerState.State);
             },
             static (exception, innerState) =>
             {
-                innerState.Logger.LogProduceError(innerState.EndpointConfiguration, innerState.Headers, exception);
+                innerState.Logger.LogProduceError(innerState.EndpointConfiguration, exception);
                 innerState.OnError.Invoke(exception, innerState.State);
             },
             (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, envelope.Headers, State: state, Logger: _logger));

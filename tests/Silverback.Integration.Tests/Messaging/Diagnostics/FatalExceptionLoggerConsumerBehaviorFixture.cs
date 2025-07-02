@@ -25,22 +25,19 @@ public class FatalExceptionLoggerConsumerBehaviorFixture
 {
     private readonly LoggerSubstitute<FatalExceptionLoggerConsumerBehavior> _loggerSubstitute;
 
-    private readonly IConsumerLogger<FatalExceptionLoggerConsumerBehavior> _consumerLogger;
+    private readonly ISilverbackLogger<FatalExceptionLoggerConsumerBehavior> _logger;
 
     public FatalExceptionLoggerConsumerBehaviorFixture()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddLoggerSubstitute(LogLevel.Trace)
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddLoggerSubstitute(LogLevel.Trace)
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
-        _loggerSubstitute =
-            (LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>)serviceProvider
-                .GetRequiredService<ILogger<FatalExceptionLoggerConsumerBehavior>>();
+        _loggerSubstitute = (LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>)serviceProvider
+            .GetRequiredService<ILogger<FatalExceptionLoggerConsumerBehavior>>();
 
-        _consumerLogger = serviceProvider
-            .GetRequiredService<IConsumerLogger<FatalExceptionLoggerConsumerBehavior>>();
+        _logger = serviceProvider.GetRequiredService<ISilverbackLogger<FatalExceptionLoggerConsumerBehavior>>();
     }
 
     [Fact]
@@ -55,7 +52,7 @@ public class FatalExceptionLoggerConsumerBehaviorFixture
 
         try
         {
-            await new FatalExceptionLoggerConsumerBehavior(_consumerLogger).HandleAsync(
+            await new FatalExceptionLoggerConsumerBehavior(_logger).HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
@@ -83,7 +80,7 @@ public class FatalExceptionLoggerConsumerBehaviorFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(_consumerLogger).HandleAsync(
+        Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(_logger).HandleAsync(
             new ConsumerPipelineContext(
                 rawEnvelope,
                 Substitute.For<IConsumer>(),
