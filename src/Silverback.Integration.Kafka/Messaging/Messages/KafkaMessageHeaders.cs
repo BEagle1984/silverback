@@ -17,6 +17,11 @@ public static class KafkaMessageHeaders
     public const string Timestamp = "x-kafka-message-timestamp";
 
     /// <summary>
+    ///     The header that will be filled with the key of the message consumed from Kafka.
+    /// </summary>
+    public const string MessageKey = DefaultMessageHeaders.MessageKey;
+
+    /// <summary>
     ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the GroupId of
     ///     the consumer that consumed the message that failed to be processed.
     /// </summary>

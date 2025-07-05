@@ -12,27 +12,27 @@ namespace Silverback.Messaging.Producing.Enrichers;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be enriched.
 /// </typeparam>
-public class MessageIdOutboundHeadersEnricher<TMessage> : GenericOutboundHeadersEnricher<TMessage>
+public class KafkaKeyOutboundHeadersEnricher<TMessage> : GenericOutboundHeadersEnricher<TMessage>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageIdOutboundHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundHeadersEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="valueProvider">
     ///     The header value provider function.
     /// </param>
-    public MessageIdOutboundHeadersEnricher(Func<TMessage?, object?> valueProvider)
-        : base(DefaultMessageHeaders.MessageId, valueProvider)
+    public KafkaKeyOutboundHeadersEnricher(Func<TMessage?, object?> valueProvider)
+        : base(KafkaMessageHeaders.MessageKey, valueProvider)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageIdOutboundHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundHeadersEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="valueProvider">
     ///     The header value provider function.
     /// </param>
-    public MessageIdOutboundHeadersEnricher(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
-        : base(DefaultMessageHeaders.MessageId, valueProvider)
+    public KafkaKeyOutboundHeadersEnricher(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+        : base(KafkaMessageHeaders.MessageKey, valueProvider)
     {
     }
 }

@@ -239,42 +239,4 @@ public class OutboundEnvelopeFixture
         envelope.Headers.ShouldContain(new MessageHeader("one", "1"));
         envelope.Headers.ShouldNotContain(new MessageHeader("one", "2"));
     }
-
-    [Fact]
-    public void SetMessageId_ShouldSetMessageId()
-    {
-        OutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-
-        envelope.SetMessageId("one").SetMessageId("two");
-
-        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "two"));
-    }
-
-    [Fact]
-    public void GetMessageId_ShouldReturnHeaderValue()
-    {
-        OutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            [new MessageHeader("x-message-id", "test-id")],
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-
-        envelope.GetMessageId().ShouldBe("test-id");
-    }
-
-    [Fact]
-    public void GetMessageId_ShouldReturnNull_WhenHeaderNotSet()
-    {
-        OutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-
-        envelope.GetMessageId().ShouldBeNull();
-    }
 }

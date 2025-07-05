@@ -18,8 +18,7 @@ internal static class KafkaHeadersMappingExtensions
         Confluent.Kafka.Headers kafkaHeaders = [];
         headers
             .Where(
-                header => header.Name != DefaultMessageHeaders.MessageId &&
-                          !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
+                header => !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
             .ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
         return kafkaHeaders;
     }

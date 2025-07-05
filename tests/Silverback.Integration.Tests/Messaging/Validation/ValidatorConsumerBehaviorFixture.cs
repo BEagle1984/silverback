@@ -260,7 +260,7 @@ public class ValidatorConsumerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        expectedValidationMessage += " | endpointName: topic1, messageId: 42";
+        expectedValidationMessage += " | endpointName: topic1, brokerMessageId: 42";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1082);
     }
 

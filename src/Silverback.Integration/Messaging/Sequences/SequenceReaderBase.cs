@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences;
@@ -64,18 +63,10 @@ public abstract class SequenceReaderBase : ISequenceReader
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
     ///     the recognized sequence identifier, or <c>null</c>.
     /// </returns>
-    protected virtual ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context)
-    {
-        Check.NotNull(context, nameof(context));
-
-        string messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ??
-                           "***default***";
-
-        return ValueTask.FromResult(messageId);
-    }
+    protected abstract ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context);
 
     /// <summary>
-    ///     Determines if the current message correspond with the beginning of a new sequence.
+    ///     Determines if the current message corresponds with the beginning of a new sequence.
     /// </summary>
     /// <param name="sequenceId">
     ///     The sequence identifier.

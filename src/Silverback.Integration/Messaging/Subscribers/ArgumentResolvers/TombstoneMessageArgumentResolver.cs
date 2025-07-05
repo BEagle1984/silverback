@@ -43,14 +43,14 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
         IInboundEnvelope envelope = (IInboundEnvelope)Check.NotNull(message, nameof(message));
         Check.NotNull(parameterType, nameof(parameterType));
 
-        string? messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+        string? messageKey = envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey);
 
         if (parameterType.IsGenericType)
         {
             Type messageType = parameterType.GetGenericArguments()[0];
-            return Activator.CreateInstance(typeof(Tombstone<>).MakeGenericType(messageType), messageId)!;
+            return Activator.CreateInstance(typeof(Tombstone<>).MakeGenericType(messageType), messageKey)!;
         }
 
-        return new Tombstone(messageId);
+        return new Tombstone(messageKey);
     }
 }

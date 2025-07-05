@@ -199,10 +199,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 
         if (message.Key != null)
-        {
-            string deserializedKafkaKey = Encoding.UTF8.GetString(message.Key);
-            headers.AddOrReplace(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
-        }
+            headers.AddOrReplace(KafkaMessageHeaders.MessageKey, Encoding.UTF8.GetString(message.Key));
 
         headers.AddOrReplace(KafkaMessageHeaders.Timestamp, message.Timestamp.UtcDateTime.ToString("O"));
 

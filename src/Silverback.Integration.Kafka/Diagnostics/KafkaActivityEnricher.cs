@@ -53,7 +53,7 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
 
     private static void SetMessageKey(Activity activity, MessageHeaderCollection messageHeaderCollection)
     {
-        string? kafkaKeyHeaderValue = messageHeaderCollection.GetValue(DefaultMessageHeaders.MessageId);
+        string? kafkaKeyHeaderValue = messageHeaderCollection.GetValue(KafkaMessageHeaders.MessageKey);
 
         if (kafkaKeyHeaderValue != null)
             activity.SetTag(KafkaMessageKey, kafkaKeyHeaderValue);

@@ -6,6 +6,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -331,7 +332,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<TMessage?, object?> valueProvider) =>
-        SetMessageId(valueProvider);
+        AddMessageEnricher(new KafkaKeyOutboundHeadersEnricher<TMessage>(valueProvider));
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -346,7 +347,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
-        where TMessageChildType : TMessage => SetMessageId(valueProvider);
+        where TMessageChildType : TMessage =>
+        AddMessageEnricher(new KafkaKeyOutboundHeadersEnricher<TMessageChildType>(valueProvider));
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -358,7 +360,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> valueProvider) =>
-        SetMessageId(valueProvider);
+        AddMessageEnricher(new KafkaKeyOutboundHeadersEnricher<TMessage>(valueProvider));
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -373,7 +375,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
-        where TMessageChildType : TMessage => SetMessageId(valueProvider);
+        where TMessageChildType : TMessage =>
+        AddMessageEnricher(new KafkaKeyOutboundHeadersEnricher<TMessageChildType>(valueProvider));
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>

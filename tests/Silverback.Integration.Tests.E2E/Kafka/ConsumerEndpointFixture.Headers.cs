@@ -20,29 +20,24 @@ public partial class ConsumerEndpointFixture
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeCustomHeaders()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventWithHeaders>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducer(
-            producer => producer
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<object>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
-                        .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
-                        .AddHeader("x-static", 42)));
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventWithHeaders>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<object>(endpoint => endpoint
+                .ProduceTo(DefaultTopicName)
+                .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
+                .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
+                .AddHeader("x-static", 42)));
 
         await producer.ProduceAsync(
             new TestEventWithHeaders
@@ -64,21 +59,18 @@ public partial class ConsumerEndpointFixture
     }
 
     [Fact]
-    public async Task ConsumerEndpoint_ShouldSetKaKeyHeader()
+    public async Task ConsumerEndpoint_ShouldSetKafkaKeyHeader()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -90,27 +82,27 @@ public partial class ConsumerEndpointFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
-        Helper.Spy.InboundEnvelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "100"));
-        Helper.Spy.InboundEnvelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "200"));
-        Helper.Spy.InboundEnvelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "300"));
+        Helper.Spy.InboundEnvelopes[0].Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "100"));
+        Helper.Spy.InboundEnvelopes[0].GetKafkaKey().ShouldBe("100");
+        Helper.Spy.InboundEnvelopes[1].Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "200"));
+        Helper.Spy.InboundEnvelopes[1].GetKafkaKey().ShouldBe("200");
+        Helper.Spy.InboundEnvelopes[2].Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "300"));
+        Helper.Spy.InboundEnvelopes[2].GetKafkaKey().ShouldBe("300");
     }
 
     [Fact]
     public async Task ConsumerEndpoint_ShouldSetTimestampHeader()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 

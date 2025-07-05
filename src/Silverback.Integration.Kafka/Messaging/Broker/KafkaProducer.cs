@@ -162,13 +162,10 @@ public sealed class KafkaProducer : Producer
         }
     }
 
-    private static byte[]? GetKafkaKey(IOutboundEnvelope envelope)
-    {
-        if (!envelope.Headers.TryGetValue(DefaultMessageHeaders.MessageId, out string? kafkaKey) || kafkaKey == null)
-            return null;
-
-        return Encoding.UTF8.GetBytes(kafkaKey);
-    }
+    private static byte[]? GetKafkaKey(IOutboundEnvelope envelope) =>
+        envelope.Headers.TryGetValue(KafkaMessageHeaders.MessageKey, out string? kafkaKey) && kafkaKey != null
+            ? Encoding.UTF8.GetBytes(kafkaKey)
+            : null;
 
     private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)
     {

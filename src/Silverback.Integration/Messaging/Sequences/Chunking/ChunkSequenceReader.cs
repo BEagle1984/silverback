@@ -28,12 +28,24 @@ public class ChunkSequenceReader : SequenceReaderBase
     {
         Check.NotNull(context, nameof(context));
 
+        string? chunkMessageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId);
         int? chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
         int? chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
         bool? isLastChunk = context.Envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk);
 
-        // Skip chunking if the message is not chunked or it consists of a single chunk
-        return ValueTask.FromResult(chunkIndex != null && chunksCount is null or > 1 && (isLastChunk != true || chunkIndex > 0));
+        // Skip chunking if any of the required headers is missing, or if there's only one chunk
+        return ValueTask.FromResult(chunkMessageId != null && chunkIndex != null && chunksCount is null or > 1 && (isLastChunk != true || chunkIndex > 0));
+    }
+
+    /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
+    protected override ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context)
+    {
+        Check.NotNull(context, nameof(context));
+
+        string messageKey = context.Envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId) ??
+                            throw new InvalidOperationException("Message id header not found.");
+
+        return ValueTask.FromResult($"chunk-{messageKey}");
     }
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />

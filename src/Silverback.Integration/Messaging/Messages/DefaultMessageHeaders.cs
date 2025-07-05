@@ -13,23 +13,20 @@ namespace Silverback.Messaging.Messages;
 public static class DefaultMessageHeaders
 {
     /// <summary>
-    ///     The message identifier.
-    /// </summary>
-    /// <remarks>
-    ///     This header is used as Kafka key when producing the message and filled with the value of the Kafka key when consuming.
-    /// </remarks>
-    public const string MessageId = "x-message-id";
-
-    /// <summary>
     ///     The assembly qualified name of the message type. Used by the default <see cref="JsonMessageSerializer" />.
     /// </summary>
     public const string MessageType = "x-message-type";
 
     /// <summary>
-    ///     If an exception is thrown the failed attempts will be incremented and stored as header. This is necessary for the error policies
-    ///     to work.
+    ///     If an exception is thrown, the failed attempts will be incremented and stored as header. This is necessary for the error
+    ///     policies to work.
     /// </summary>
     public const string FailedAttempts = "x-failed-attempts";
+
+    /// <summary>
+    ///     The message identifier used to uniquely identify the message each chunk belongs to.
+    /// </summary>
+    public const string ChunkMessageId = "x-message-id";
 
     /// <summary>
     ///     The message chunk index, used when chunking is enabled.
@@ -42,7 +39,7 @@ public static class DefaultMessageHeaders
     public const string ChunksCount = "x-chunk-count";
 
     /// <summary>
-    ///     A boolean value indicating whether the message is the last one of a chunks sequence, used when
+    ///     A boolean value indicating whether the message is the last one of a chunk sequence, used when
     ///     chunking is enabled.
     /// </summary>
     public const string IsLastChunk = "x-chunk-last";
@@ -94,6 +91,15 @@ public static class DefaultMessageHeaders
     ///     the message failed to be processed.
     /// </summary>
     public const string FailureReason = "x-failure-reason";
+
+    /// <summary>
+    ///     The unified message key (can be the Kafka key or another identifier, depending on the broker).
+    /// </summary>
+    /// <remarks>
+    ///     This header is currently required for some legacy features like <see cref="Tombstone" /> mapping and chunking but may be removed
+    ///     in the future.
+    /// </remarks>
+    internal const string MessageKey = InternalHeadersPrefix + "message-key";
 
     /// <summary>
     ///     The header containing the serialized endpoint stored in the outbox.

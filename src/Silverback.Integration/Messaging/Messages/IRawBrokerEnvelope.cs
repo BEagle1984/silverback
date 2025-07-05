@@ -19,12 +19,4 @@ public interface IRawBrokerEnvelope
     ///     Gets or sets the serialized message body.
     /// </summary>
     Stream? RawMessage { get; set; }
-
-    /// <summary>
-    ///     Gets the message id header (<see cref="DefaultMessageHeaders.MessageId" />) value.
-    /// </summary>
-    /// <returns>
-    ///     The message id or <c>null</c> if not found.
-    /// </returns>
-    string? GetMessageId();
 }

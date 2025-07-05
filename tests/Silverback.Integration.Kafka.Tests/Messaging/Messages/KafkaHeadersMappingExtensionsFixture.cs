@@ -27,12 +27,12 @@ public class KafkaHeadersMappingExtensionsFixture
     }
 
     [Fact]
-    public void ToConfluentHeaders_ShouldIgnoreMessageIdHeader()
+    public void ToConfluentHeaders_ShouldIgnoreMessageKeyHeader()
     {
         MessageHeaderCollection headers = new()
         {
             { "one", "1" },
-            { DefaultMessageHeaders.MessageId, "1234" },
+            { DefaultMessageHeaders.MessageKey, "1234" },
             { "two", "2" }
         };
 

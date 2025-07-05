@@ -112,7 +112,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
+                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -121,7 +121,7 @@ public class TombstoneMessageArgumentResolverFixture
         object value = resolver.GetValue(envelope, typeof(Tombstone));
 
         Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
-        tombstone.MessageId.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
+                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -140,7 +140,7 @@ public class TombstoneMessageArgumentResolverFixture
         object value = resolver.GetValue(envelope, typeof(ITombstone));
 
         Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
-        tombstone.MessageId.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
+                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -159,7 +159,7 @@ public class TombstoneMessageArgumentResolverFixture
         object value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
 
         Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone.MessageId.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
+                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -178,6 +178,6 @@ public class TombstoneMessageArgumentResolverFixture
         object value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
 
         Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone.MessageId.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 }

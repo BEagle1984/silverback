@@ -67,7 +67,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
     {
         MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
-        builder.ProduceTo("some-topic").SetResponseTopic(envelope => envelope.GetMessageId());
+        builder.ProduceTo("some-topic").SetResponseTopic(envelope => envelope.Headers.GetValue("my-response-topic"));
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
@@ -79,7 +79,7 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
     {
         MqttProducerEndpointConfigurationBuilder<IIntegrationEvent> builder = new(Substitute.For<IServiceProvider>());
 
-        builder.ProduceTo("some-topic").SetResponseTopic<TestEventOne>(envelope => envelope.GetMessageId());
+        builder.ProduceTo("some-topic").SetResponseTopic<TestEventOne>(envelope => envelope.Headers.GetValue("my-response-topic"));
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);

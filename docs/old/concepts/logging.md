@@ -61,7 +61,7 @@ Id | Level | Message | Reference
 :-- | :-- | :-- | :--
 1001 | Information | Processing inbound message. | [ProcessingInboundMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage)
 1002 | Error | Error occurred processing the inbound message. | [ErrorProcessingInboundMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage)
-1003 | Debug | Message '{messageId}' added to {sequenceType} '{sequenceId}'. &#124; length: {sequenceLength} | [MessageAddedToSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence)
+1003 | Debug | Message {brokerMessageId} added to {sequenceType} '{sequenceId}'. &#124; length: {sequenceLength} | [MessageAddedToSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence)
 1004 | Debug | Started new {sequenceType} '{sequenceId}'. | [SequenceStarted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted)
 1005 | Debug | {sequenceType} '{sequenceId}' completed. &#124; length: {sequenceLength} | [SequenceCompleted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted)
 1006 | Debug | The {sequenceType} '{sequenceId}' processing has been aborted. &#124; length: {sequenceLength}, reason: {reason} | [SequenceProcessingAborted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted)
@@ -162,7 +162,7 @@ Id | Level | Message | Reference
 
 Id | Level | Message | Reference
 :-- | :-- | :-- | :--
-4011 | Debug | Consuming message '{messageId}' from topic '{topic}'. | [ConsumingMessage](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConsumingMessage)
+4011 | Debug | Consuming message {brokerMessageId} from topic '{topic}'. | [ConsumingMessage](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConsumingMessage)
 4021 | Warning | Error occurred connecting to the MQTT broker. &#124; clientId: {clientId} | [ConnectError](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectError)
 4022 | Debug | Error occurred retrying to connect to the MQTT broker. &#124; clientId: {clientId} | [ConnectRetryError](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError)
 4023 | Warning | Connection with the MQTT broker lost. The client will try to reconnect. &#124; clientId: {clientId} | [ConnectionLost](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectionLost)

@@ -20,7 +20,7 @@ public static class MqttLogEvents
     public static LogEvent ConsumingMessage { get; } = new(
         LogLevel.Debug,
         GetEventId(11, nameof(ConsumingMessage)),
-        "Consuming message {messageId} from topic {topic}. | consumerName: {consumerName}");
+        "Consuming message {brokerMessageId} from topic {topic}. | consumerName: {consumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be acknowledged.
@@ -28,7 +28,7 @@ public static class MqttLogEvents
     public static LogEvent AcknowledgeFailed { get; } = new(
         LogLevel.Warning,
         GetEventId(12, nameof(AcknowledgeFailed)),
-        "Failed to acknowledge message {messageId} from topic {topic}. | consumerName: {consumerName}");
+        "Failed to acknowledge message {brokerMessageId} from topic {topic}. | consumerName: {consumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.

@@ -16,11 +16,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
 public class KafkaEnvelopeExtensionsFixture
 {
     [Fact]
-    public void GetKafkaKey_ShouldReturnMessageIdHeaderValueForInboundEnvelope()
+    public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForInboundEnvelope()
     {
         InboundEnvelope envelope = new(
             null,
-            [new MessageHeader(DefaultMessageHeaders.MessageId, "test")],
+            [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
@@ -31,11 +31,11 @@ public class KafkaEnvelopeExtensionsFixture
     }
 
     [Fact]
-    public void GetKafkaKey_ShouldReturnMessageIdHeaderValueForOutboundEnvelope()
+    public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForOutboundEnvelope()
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
-            [new MessageHeader(DefaultMessageHeaders.MessageId, "test")],
+            [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -46,7 +46,7 @@ public class KafkaEnvelopeExtensionsFixture
     }
 
     [Fact]
-    public void GetKafkaKey_ShouldReturnNull_WhenMessageIdHeaderIsNotSet()
+    public void GetKafkaKey_ShouldReturnNull_WhenMessageKeyHeaderIsNotSet()
     {
         InboundEnvelope envelope = new(
             null,
@@ -61,7 +61,7 @@ public class KafkaEnvelopeExtensionsFixture
     }
 
     [Fact]
-    public void SetKafkaKey_ShouldSetMessageIdHeader()
+    public void SetKafkaKey_ShouldSetMessageKeyHeader()
     {
         OutboundEnvelope envelope = new(
             new TestEventOne(),
@@ -72,7 +72,7 @@ public class KafkaEnvelopeExtensionsFixture
 
         envelope.SetKafkaKey("test");
 
-        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "test"));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "test"));
     }
 
     [Fact]

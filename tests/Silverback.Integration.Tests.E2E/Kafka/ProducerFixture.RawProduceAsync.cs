@@ -22,20 +22,16 @@ public partial class ProducerFixture
     [Fact]
     public async Task RawProduceAsync_ShouldProduceByteArray()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -62,20 +58,16 @@ public partial class ProducerFixture
     [Fact]
     public async Task RawProduceAsync_ShouldProduceStream()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -102,32 +94,28 @@ public partial class ProducerFixture
     [Fact]
     public async Task RawProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "1001" } });
+            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "1001" } });
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "2002" } });
+            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "2002" } });
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "3003" } });
+            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "3003" } });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);

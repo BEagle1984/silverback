@@ -26,7 +26,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessage { get; } = new(
         LogLevel.Information,
         GetEventId(1, nameof(ProcessingConsumedMessage)),
-        "Processing consumed message. | endpointName: {endpointName}, messageId: {messageId}");
+        "Processing consumed message. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message.
@@ -37,7 +37,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageError { get; } = new(
         LogLevel.Error,
         GetEventId(2, nameof(ProcessingConsumedMessageError)),
-        "Error occurred processing the consumed message. | endpointName: {endpointName}, messageId: {messageId}");
+        "Error occurred processing the consumed message. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an unhandled error occurs processing the
@@ -46,7 +46,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageFatalError { get; } = new(
         LogLevel.Critical,
         GetEventId(3, nameof(ProcessingConsumedMessageFatalError)),
-        "Fatal error occurred processing the consumed message. The client will be disconnected. | endpointName: {endpointName}, messageId: {messageId}");
+        "Fatal error occurred processing the consumed message. The client will be disconnected. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log written when an error occurs processing the consumed message, and
@@ -63,7 +63,7 @@ public static class IntegrationLogEvents
     public static LogEvent MessageProduced { get; } = new(
         LogLevel.Information,
         GetEventId(5, nameof(MessageProduced)),
-        "Message produced. | endpointName: {endpointName}, messageId: {messageId}");
+        "Message produced. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs producing a message.
@@ -88,7 +88,7 @@ public static class IntegrationLogEvents
     public static LogEvent MessageAddedToSequence { get; } = new(
         LogLevel.Debug,
         GetEventId(11, nameof(MessageAddedToSequence)),
-        "Message '{messageId}' added to {sequenceType} '{sequenceId}'. | length: {sequenceLength}");
+        "Message {brokerMessageId} added to {sequenceType} {sequenceId}. | length: {sequenceLength}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the first message of a new
@@ -97,7 +97,7 @@ public static class IntegrationLogEvents
     public static LogEvent SequenceStarted { get; } = new(
         LogLevel.Debug,
         GetEventId(12, nameof(SequenceStarted)),
-        "Started new {sequenceType} '{sequenceId}'.");
+        "Started new {sequenceType} {sequenceId}.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when all messages belonging to the
@@ -106,7 +106,7 @@ public static class IntegrationLogEvents
     public static LogEvent SequenceCompleted { get; } = new(
         LogLevel.Debug,
         GetEventId(13, nameof(SequenceCompleted)),
-        "{sequenceType} '{sequenceId}' completed. | length: {sequenceLength}");
+        "{sequenceType} {sequenceId} completed. | length: {sequenceLength}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of a sequence is aborted,
@@ -116,7 +116,7 @@ public static class IntegrationLogEvents
     public static LogEvent SequenceProcessingAborted { get; } = new(
         LogLevel.Debug,
         GetEventId(14, nameof(SequenceProcessingAborted)),
-        "The {sequenceType} '{sequenceId}' processing has been aborted. | " +
+        "The {sequenceType} {sequenceId} processing has been aborted. | " +
         "length: {sequenceLength}, reason: {reason}");
 
     /// <summary>
@@ -125,7 +125,7 @@ public static class IntegrationLogEvents
     public static LogEvent SequenceProcessingError { get; } = new(
         LogLevel.Error,
         GetEventId(15, nameof(SequenceProcessingError)),
-        "Error occurred processing the {sequenceType} '{sequenceId}'. | " +
+        "Error occurred processing the {sequenceType} {sequenceId}. | " +
         "length: {sequenceLength}");
 
     /// <summary>
@@ -135,7 +135,7 @@ public static class IntegrationLogEvents
     public static LogEvent IncompleteSequenceAborted { get; } = new(
         LogLevel.Warning,
         GetEventId(16, nameof(IncompleteSequenceAborted)),
-        "Aborted incomplete {sequenceType} '{sequenceId}'. | " +
+        "Aborted incomplete {sequenceType} {sequenceId}. | " +
         "length: {sequenceLength}");
 
     /// <summary>
@@ -145,7 +145,7 @@ public static class IntegrationLogEvents
     public static LogEvent IncompleteSequenceSkipped { get; } = new(
         LogLevel.Warning,
         GetEventId(17, nameof(IncompleteSequenceSkipped)),
-        "Skipped incomplete sequence '{sequenceId}'. The first message is missing.");
+        "Skipped incomplete sequence {sequenceId}. The first message is missing.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs executing the timeout action on a
@@ -154,7 +154,7 @@ public static class IntegrationLogEvents
     public static LogEvent SequenceTimeoutError { get; } = new(
         LogLevel.Warning,
         GetEventId(18, nameof(SequenceTimeoutError)),
-        "Error occurred executing the timeout for the {sequenceType} '{sequenceId}'.");
+        "Error occurred executing the timeout for the {sequenceType} {sequenceId}.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when initializing the
@@ -294,7 +294,7 @@ public static class IntegrationLogEvents
     public static LogEvent RetryMessageProcessing { get; } = new(
         LogLevel.Information,
         GetEventId(51, nameof(RetryMessageProcessing)),
-        "The message(s) will be processed again. | endpointName: {endpointName}, messageId: {messageId}");
+        "The message(s) will be processed again. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
@@ -304,7 +304,7 @@ public static class IntegrationLogEvents
     public static LogEvent MessageMoved { get; } = new(
         LogLevel.Information,
         GetEventId(52, nameof(MessageMoved)),
-        "The message will be moved to the endpoint '{targetEndpointName}'. | endpointName: {endpointName}, messageId: {messageId}");
+        "The message will be moved to the endpoint {targetEndpointName}. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be
@@ -313,7 +313,7 @@ public static class IntegrationLogEvents
     public static LogEvent MessageSkipped { get; } = new(
         LogLevel.Information,
         GetEventId(53, nameof(MessageSkipped)),
-        "The message(s) will be skipped. | endpointName: {endpointName}, messageId: {messageId}");
+        "The message(s) will be skipped. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
@@ -323,7 +323,7 @@ public static class IntegrationLogEvents
     public static LogEvent CannotMoveSequence { get; } = new(
         LogLevel.Warning,
         GetEventId(54, nameof(CannotMoveSequence)),
-        "The message belongs to a {sequenceType} and cannot be moved. | endpointName: {endpointName}, messageId: {messageId}");
+        "The message belongs to a {sequenceType} and cannot be moved. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
@@ -334,7 +334,7 @@ public static class IntegrationLogEvents
         LogLevel.Warning,
         GetEventId(61, nameof(RollbackToRetryFailed)),
         "Error occurred rolling back, the retry error policy cannot be applied. The consumer will be reconnected. " +
-        "| endpointName: {endpointName}, messageId: {messageId}");
+        "| endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a rollback initiated by
@@ -345,7 +345,7 @@ public static class IntegrationLogEvents
         LogLevel.Warning,
         GetEventId(62, nameof(RollbackToSkipFailed)),
         "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. " +
-        "The consumer will be reconnected. | endpointName: {endpointName}, messageId: {messageId}");
+        "The consumer will be reconnected. | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written
@@ -416,7 +416,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidMessageConsumed { get; } = new(
         LogLevel.Warning,
         GetEventId(82, nameof(InvalidMessageConsumed)),
-        "Invalid message consumed: {validationErrors} | endpointName: {endpointName}, messageId: {messageId}");
+        "Invalid message consumed: {validationErrors} | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint
@@ -425,7 +425,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidEndpointConfiguration { get; } = new(
         LogLevel.Critical,
         GetEventId(101, nameof(InvalidEndpointConfiguration)),
-        "Invalid configuration for endpoint '{endpointName}'.");
+        "Invalid configuration for endpoint {endpointName}.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown from
@@ -452,7 +452,7 @@ public static class IntegrationLogEvents
     public static LogEvent EndpointBuilderError { get; } = new(
         LogLevel.Critical,
         GetEventId(104, nameof(InvalidEndpointConfiguration)),
-        "Failed to configure endpoint '{endpointName}'.");
+        "Failed to configure endpoint {endpointName}.");
 
     /// <summary>
     ///     Gets the <see cref="EventId" /> of the unspecific tracing logs.

@@ -13,7 +13,7 @@ public interface ITombstone
     /// <summary>
     ///     Gets the message identifier.
     /// </summary>
-    string? MessageId { get; }
+    string? MessageKey { get; }
 
     /// <summary>
     ///     Gets the type of the message.

@@ -647,7 +647,7 @@ internal static class IntegrationLoggerExtensions
         logger.InnerLogger.Log(
             IntegrationLogEvents.Tracing.Level,
             IntegrationLogEvents.Tracing.EventId,
-            message + " | endpointName: {endpointName}, messageId: {messageId}",
+            message + " | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}",
             args);
     }
 
@@ -675,7 +675,7 @@ internal static class IntegrationLoggerExtensions
             IntegrationLogEvents.Tracing.Level,
             IntegrationLogEvents.Tracing.EventId,
             exception,
-            message + " | endpointName: {endpointName}, messageId: {messageId}",
+            message + " | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}",
             args);
     }
 }

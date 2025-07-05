@@ -69,6 +69,8 @@ public partial class ChunkingFixture
             IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
             IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId).ShouldNotBeNull();
+            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId).ShouldBe(firstEnvelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId));
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBe((i % chunksPerMessage).ToString(CultureInfo.InvariantCulture));
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
 
@@ -271,19 +273,19 @@ public partial class ChunkingFixture
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("2", 1, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("2", 2, true, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),

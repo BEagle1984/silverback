@@ -70,7 +70,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).ShouldBeNull();
+        envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey).ShouldBeNull();
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "1"));
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "One=1,Two=2"));
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             },
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "Heidi!" }
+                { KafkaMessageHeaders.MessageKey, "Heidi!" }
             },
             new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
@@ -157,38 +157,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
-    }
-
-    [Fact]
-    public async Task HandleAsync_ShouldGenerateKafkaKey_WhenChunkingIsEnabled()
-    {
-        OutboundEnvelope<NoKeyMembersMessage> envelope = new(
-            new NoKeyMembersMessage
-            {
-                Id = Guid.NewGuid(),
-                One = "1",
-                Two = "2",
-                Three = "3"
-            },
-            null,
-            new KafkaProducerEndpointConfiguration
-            {
-                Chunk = new ChunkSettings { Size = 42 }
-            },
-            _kafkaProducer);
-
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(
-                envelope,
-                _kafkaProducer,
-                [],
-                (_, _) => ValueTask.CompletedTask,
-                Substitute.For<IServiceProvider>()),
-            (_, _) => default,
-            CancellationToken.None);
-
-        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).ShouldNotBeNullOrEmpty();
+        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "Heidi!"));
     }
 
     [Fact]
@@ -219,7 +188,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldNotContain(header => header.Name == DefaultMessageHeaders.MessageId);
+        envelope.Headers.ShouldNotContain(header => header.Name == KafkaMessageHeaders.MessageKey);
     }
 
     public void Dispose() => _kafkaProducer.Dispose();

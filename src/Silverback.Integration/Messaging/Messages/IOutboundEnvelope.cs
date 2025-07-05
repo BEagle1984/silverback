@@ -79,17 +79,6 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     IOutboundEnvelope AddHeaderIfNotExists(string name, object? newValue);
 
     /// <summary>
-    ///     Sets the message id header (<see cref="DefaultMessageHeaders.MessageId" />).
-    /// </summary>
-    /// <param name="value">
-    ///     The message id.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
-    /// </returns>
-    IOutboundEnvelope SetMessageId(object? value);
-
-    /// <summary>
     ///     Gets the destination endpoint for the specific message.
     /// </summary>
     /// <returns>

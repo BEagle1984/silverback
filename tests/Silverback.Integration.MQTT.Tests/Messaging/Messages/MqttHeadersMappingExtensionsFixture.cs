@@ -30,26 +30,6 @@ public class MqttHeadersMappingExtensionsFixture
     }
 
     [Fact]
-    public void ToUserProperties_ShouldMapMessageId()
-    {
-        MessageHeaderCollection headers = new()
-        {
-            { "one", "1" },
-            { DefaultMessageHeaders.MessageId, "1234" },
-            { "two", "2" }
-        };
-
-        List<MqttUserProperty> userProperties = headers.ToUserProperties();
-
-        userProperties.ShouldBe(
-        [
-            new MqttUserProperty("one", "1"),
-            new MqttUserProperty(DefaultMessageHeaders.MessageId, "1234"),
-            new MqttUserProperty("two", "2")
-        ]);
-    }
-
-    [Fact]
     public void ToUserProperties_ShouldIgnoreMqttResponseHeaders()
     {
         MessageHeaderCollection headers = new()

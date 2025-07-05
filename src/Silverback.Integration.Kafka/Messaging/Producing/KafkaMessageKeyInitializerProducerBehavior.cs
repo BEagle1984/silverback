@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -17,7 +16,7 @@ namespace Silverback.Messaging.Producing;
 public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
-    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageKeyInitializer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
@@ -25,25 +24,14 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(DefaultMessageHeaders.MessageId))
+        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(KafkaMessageHeaders.MessageKey))
         {
-            string? key = GetKafkaKey(context);
+            string? key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
             if (key != null)
                 context.Envelope.SetKafkaKey(key);
         }
 
         return next(context, cancellationToken);
-    }
-
-    private static string? GetKafkaKey(ProducerPipelineContext context)
-    {
-        string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
-
-        // Ensure a key is set if the message is chunked to make sure all chunks are produced to the same partition
-        if (keyFromMessage == null && context.Envelope.EndpointConfiguration.Chunk != null)
-            return Guid.NewGuid().ToString();
-
-        return keyFromMessage;
     }
 }

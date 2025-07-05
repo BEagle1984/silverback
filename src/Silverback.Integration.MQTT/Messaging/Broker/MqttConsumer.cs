@@ -104,7 +104,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
             MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
 
-            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
+            headers.AddIfNotExists(DefaultMessageHeaders.MessageKey, message.Id);
 
             if (message.ApplicationMessage.ResponseTopic != null)
                 headers.AddIfNotExists(MqttMessageHeaders.ResponseTopic, message.ApplicationMessage.ResponseTopic);

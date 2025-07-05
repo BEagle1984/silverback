@@ -27,32 +27,6 @@ public class RawInboundEnvelopeFixture
     }
 
     [Fact]
-    public void GetMessageId_ShouldReturnHeaderValue()
-    {
-        RawInboundEnvelope envelope = new(
-            (Stream?)null,
-            [new MessageHeader("x-message-id", "test-id")],
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
-
-        envelope.GetMessageId().ShouldBe("test-id");
-    }
-
-    [Fact]
-    public void GetMessageId_ShouldReturnNull_WhenHeaderNotSet()
-    {
-        RawInboundEnvelope envelope = new(
-            (Stream?)null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
-
-        envelope.GetMessageId().ShouldBeNull();
-    }
-
-    [Fact]
     public void CloneReplacingRawMessage_ShouldClone()
     {
         RawInboundEnvelope envelope = new(

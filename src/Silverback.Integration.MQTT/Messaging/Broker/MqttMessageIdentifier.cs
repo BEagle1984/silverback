@@ -3,14 +3,11 @@
 
 using System;
 using Silverback.Messaging.Consuming.ErrorHandling;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker;
 
 /// <summary>
-///     The MQTT broker doesn't provide any message identifier, so the identifier is either the
-///     <see cref="DefaultMessageHeaders.MessageId" /> header value or a client-side generated
-///     <see cref="Guid" />.
+///     The MQTT broker doesn't provide any message identifier, so this is a client-side generated identifier (GUID).
 /// </summary>
 /// <remarks>
 ///     Generating the identifier client-side might prevent some Silverback features to work properly

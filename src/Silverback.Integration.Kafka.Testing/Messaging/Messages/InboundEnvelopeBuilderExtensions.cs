@@ -77,7 +77,7 @@ public static class InboundEnvelopeBuilderExtensions
     /// </returns>
     public static InboundEnvelopeBuilder<TMessage> WithKafkaKey<TMessage>(this InboundEnvelopeBuilder<TMessage> builder, string key)
         where TMessage : class =>
-        Check.NotNull(builder, nameof(builder)).AddHeader(DefaultMessageHeaders.MessageId, key);
+        Check.NotNull(builder, nameof(builder)).AddHeader(KafkaMessageHeaders.MessageKey, key);
 
     /// <summary>
     ///     Sets the timestamp of the message consumed from Kafka.

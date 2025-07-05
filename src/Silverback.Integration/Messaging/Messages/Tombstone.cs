@@ -13,17 +13,17 @@ public class Tombstone : ITombstone
     /// <summary>
     ///     Initializes a new instance of the <see cref="Tombstone" /> class.
     /// </summary>
-    /// <param name="messageId">
+    /// <param name="messageKey">
     ///     The message identifier.
     /// </param>
-    public Tombstone(string? messageId)
+    public Tombstone(string? messageKey)
     {
-        MessageId = messageId;
+        MessageKey = messageKey;
     }
 
-    /// <inheritdoc cref="ITombstone.MessageId" />
-    [Header(DefaultMessageHeaders.MessageId)]
-    public string? MessageId { get; }
+    /// <inheritdoc cref="ITombstone.MessageKey" />
+    [Header(DefaultMessageHeaders.MessageKey)]
+    public string? MessageKey { get; }
 
     /// <inheritdoc cref="ITombstone.MessageType" />
     public virtual Type MessageType { get; } = typeof(object);

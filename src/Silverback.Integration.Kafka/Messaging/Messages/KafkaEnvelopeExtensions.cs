@@ -22,7 +22,7 @@ public static class KafkaEnvelopeExtensions
     ///     The Kafka message key.
     /// </returns>
     public static string? GetKafkaKey(this IBrokerEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(DefaultMessageHeaders.MessageId);
+        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(KafkaMessageHeaders.MessageKey);
 
     /// <summary>
     ///     Sets the key of the message to be produced to Kafka.
@@ -39,7 +39,7 @@ public static class KafkaEnvelopeExtensions
     public static IOutboundEnvelope SetKafkaKey(this IOutboundEnvelope envelope, string key)
     {
         Check.NotNull(envelope, nameof(envelope));
-        envelope.SetMessageId(key);
+        envelope.AddOrReplaceHeader(KafkaMessageHeaders.MessageKey, key);
         return envelope;
     }
 
@@ -68,7 +68,7 @@ public static class KafkaEnvelopeExtensions
         (KafkaOffset)Check.NotNull(envelope, nameof(envelope)).BrokerMessageIdentifier;
 
     /// <summary>
-    ///     Gets destination topic.
+    ///     Gets the destination topic.
     /// </summary>
     /// <param name="envelope">
     ///     The envelope containing the message.

@@ -83,13 +83,13 @@ public partial class ErrorPoliciesFixture
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, true, typeof(TestEventOne)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

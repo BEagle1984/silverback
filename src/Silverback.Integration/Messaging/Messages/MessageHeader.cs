@@ -7,7 +7,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     An header added to the message being sent over a message broker.
+///     A header added to the message being sent over a message broker.
 /// </summary>
 public record MessageHeader
 {

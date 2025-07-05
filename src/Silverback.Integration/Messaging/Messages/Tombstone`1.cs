@@ -18,11 +18,11 @@ public class Tombstone<TMessage> : Tombstone, ITombstone<TMessage>
     /// <summary>
     ///     Initializes a new instance of the <see cref="Tombstone{TMessage}" /> class.
     /// </summary>
-    /// <param name="messageId">
+    /// <param name="messageKey">
     ///     The message identifier.
     /// </param>
-    public Tombstone(string messageId)
-        : base(messageId)
+    public Tombstone(string messageKey)
+        : base(messageKey)
     {
     }
 

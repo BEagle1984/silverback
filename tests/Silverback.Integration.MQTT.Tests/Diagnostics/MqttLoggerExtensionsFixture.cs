@@ -16,12 +16,10 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Xunit;
-using MqttUserProperty = MQTTnet.Packets.MqttUserProperty;
 
 namespace Silverback.Tests.Integration.Mqtt.Diagnostics;
 
@@ -94,8 +92,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                 "client1",
                 new MqttApplicationMessage
                 {
-                    Topic = "some-topic",
-                    UserProperties = [new MqttUserProperty(DefaultMessageHeaders.MessageId, "123")]
+                    Topic = "some-topic"
                 },
                 new MqttPublishPacket(),
                 (_, _) => Task.CompletedTask));
@@ -117,8 +114,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                 "client1",
                 new MqttApplicationMessage
                 {
-                    Topic = "some-topic",
-                    UserProperties = [new MqttUserProperty(DefaultMessageHeaders.MessageId, "123")]
+                    Topic = "some-topic"
                 },
                 new MqttPublishPacket(),
                 (_, _) => Task.CompletedTask));

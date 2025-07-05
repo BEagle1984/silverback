@@ -19,8 +19,6 @@ internal abstract record RawBrokerEnvelope : IRawBrokerEnvelope
 
     public Stream? RawMessage { get; set; }
 
-    public string? GetMessageId() => Headers.GetValue(DefaultMessageHeaders.MessageId);
-
     // We abuse records for their cloning ability, but we revert to the reference equality because they are not fully immutable
     public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
 

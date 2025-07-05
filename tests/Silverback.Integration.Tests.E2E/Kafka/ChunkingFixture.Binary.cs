@@ -209,13 +209,13 @@ public partial class ChunkingFixture
 
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3));
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
             await producer.RawProduceAsync(
                 rawMessage.Skip(3).Take(3).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
             await producer.RawProduceAsync(
                 rawMessage.Skip(6).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3));
+                HeadersHelper.GetChunkHeaders("1", 2, 3));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -260,13 +260,13 @@ public partial class ChunkingFixture
 
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryMessage)));
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(BinaryMessage)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(3).Take(3).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(BinaryMessage)));
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(BinaryMessage)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(6).ToArray(),
-                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(BinaryMessage)));
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(BinaryMessage)));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -309,19 +309,19 @@ public partial class ChunkingFixture
 
         await producer.RawProduceAsync(
             rawMessage1.Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("6", 0));
+            HeadersHelper.GetChunkHeaders("6", 0));
         await producer.RawProduceAsync(
             rawMessage1.Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("6", 0));
+            HeadersHelper.GetChunkHeaders("6", 0));
         await producer.RawProduceAsync(
             rawMessage1.Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("6", 0));
+            HeadersHelper.GetChunkHeaders("6", 0));
         await producer.RawProduceAsync(
             rawMessage1.Skip(3).Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("6", 1));
+            HeadersHelper.GetChunkHeaders("6", 1));
         await producer.RawProduceAsync(
             rawMessage1.Skip(6).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("6", 2, true));
+            HeadersHelper.GetChunkHeaders("6", 2, true));
 
         await producer.RawProduceAsync(
             rawMessage2.Take(3).ToArray(),
@@ -385,22 +385,22 @@ public partial class ChunkingFixture
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 0, 3));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, 3));
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 1, 3));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, 3));
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 0));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 0));
         await producer.RawProduceAsync(
             rawMessage2.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 1));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 1));
         await producer.RawProduceAsync(
             rawMessage3.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("3", 0));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 0));
         await producer.RawProduceAsync(
             rawMessage3.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("3", 1));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 1));
 
         await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
 
@@ -409,13 +409,13 @@ public partial class ChunkingFixture
 
         await producer.RawProduceAsync(
             rawMessage3.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("3", 2, true));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 2, true));
         await producer.RawProduceAsync(
             rawMessage2.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 2, true));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 2, true));
         await producer.RawProduceAsync(
             rawMessage1.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 2, 3));
+            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, 3));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

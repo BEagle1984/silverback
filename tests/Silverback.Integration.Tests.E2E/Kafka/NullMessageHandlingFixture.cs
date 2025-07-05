@@ -27,20 +27,17 @@ public class NullMessageHandlingFixture : KafkaFixture
     {
         Tombstone? tombstone = null;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<Tombstone>(Handle)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<Tombstone>(Handle)
+            .AddIntegrationSpy());
 
         void Handle(Tombstone message) => tombstone = message;
 
@@ -49,14 +46,14 @@ public class NullMessageHandlingFixture : KafkaFixture
             (byte[]?)null,
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "42" }
+                { KafkaMessageHeaders.MessageKey, "42" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone>();
-        tombstone!.MessageId.ShouldBe("42");
+        tombstone!.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -64,20 +61,17 @@ public class NullMessageHandlingFixture : KafkaFixture
     {
         Tombstone? tombstone = null;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<Tombstone<TestEventOne>>(Handle)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<Tombstone<TestEventOne>>(Handle)
+            .AddIntegrationSpy());
 
         void Handle(Tombstone<TestEventOne> message) => tombstone = message;
 
@@ -87,14 +81,14 @@ public class NullMessageHandlingFixture : KafkaFixture
             new MessageHeaderCollection
             {
                 { DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName },
-                { DefaultMessageHeaders.MessageId, "42" }
+                { KafkaMessageHeaders.MessageKey, "42" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageId.ShouldBe("42");
+        tombstone!.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -102,20 +96,17 @@ public class NullMessageHandlingFixture : KafkaFixture
     {
         Tombstone? tombstone = null;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<Tombstone<TestEventOne>>(Handle)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<Tombstone<TestEventOne>>(Handle)
+            .AddIntegrationSpy());
 
         void Handle(Tombstone<TestEventOne> message) => tombstone = message;
 
@@ -124,14 +115,14 @@ public class NullMessageHandlingFixture : KafkaFixture
             (byte[]?)null,
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "42" }
+                { KafkaMessageHeaders.MessageKey, "42" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageId.ShouldBe("42");
+        tombstone!.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -140,20 +131,17 @@ public class NullMessageHandlingFixture : KafkaFixture
         TestEventOne? consumedMessage = null;
         bool consumed = false;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<TestEventOne?>(Handle)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne?>(Handle)
+            .AddIntegrationSpy());
 
         void Handle(TestEventOne? message)
         {
@@ -166,7 +154,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             (byte[]?)null,
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "42" }
+                { KafkaMessageHeaders.MessageKey, "42" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -181,20 +169,17 @@ public class NullMessageHandlingFixture : KafkaFixture
     {
         IInboundEnvelope<TestEventOne>? consumedEnvelope = null;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(Handle)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(Handle)
+            .AddIntegrationSpy());
 
         void Handle(IInboundEnvelope<TestEventOne> envelope) => consumedEnvelope = envelope;
 
@@ -203,7 +188,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             (byte[]?)null,
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.MessageId, "42" }
+                { KafkaMessageHeaders.MessageKey, "42" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

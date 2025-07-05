@@ -68,12 +68,6 @@ internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
         return this;
     }
 
-    public IOutboundEnvelope SetMessageId(object? value)
-    {
-        Headers.AddOrReplace(DefaultMessageHeaders.MessageId, value);
-        return this;
-    }
-
     public ProducerEndpoint GetEndpoint() => _endpoint ??= EndpointConfiguration.EndpointResolver.GetEndpoint(this);
 
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with

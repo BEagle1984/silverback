@@ -12,61 +12,58 @@ namespace Silverback.Tests.Integration.E2E.TestTypes;
 public static class HeadersHelper
 {
     public static MessageHeader[] GetHeaders(string kafkaKey, Type? messageType = null, string? contentType = null) =>
-        GetHeadersCore(null, kafkaKey, messageType, contentType).ToArray();
+        GetHeadersCore(kafkaKey, messageType, contentType).ToArray();
 
     public static MessageHeader[] GetChunkHeaders(
-        string kafkaKey,
+        string chunkMessageId,
         int chunkIndex,
         int chunksCount,
         Type? messageType = null,
         string? contentType = null) =>
-        GetChunkHeadersCore(null, kafkaKey, chunkIndex, chunksCount, null, messageType, contentType).ToArray();
+        GetChunkHeadersCore(chunkMessageId, null, chunkIndex, chunksCount, null, messageType, contentType).ToArray();
 
-    public static MessageHeader[] GetChunkHeaders(
-        string kafkaKey,
-        int chunkIndex,
-        bool isLastChunk,
-        Type? messageType = null,
-        string? contentType = null) =>
-        GetChunkHeadersCore(null, kafkaKey, chunkIndex, null, isLastChunk, messageType, contentType).ToArray();
-
-    public static MessageHeader[] GetChunkHeaders(
-        string kafkaKey,
-        int chunkIndex,
-        Type? messageType = null,
-        string? contentType = null) =>
-        GetChunkHeadersCore(null, kafkaKey, chunkIndex, null, null, messageType, contentType).ToArray();
-
-    public static MessageHeader[] GetChunkHeadersWithMessageId(
-        string messageId,
+    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
+        string chunkMessageId,
         int chunkIndex,
         int chunksCount,
         Type? messageType = null,
         string? contentType = null) =>
-        GetChunkHeadersCore(messageId, null, chunkIndex, chunksCount, null, messageType, contentType).ToArray();
+        GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, chunksCount, null, messageType, contentType).ToArray();
 
-    public static MessageHeader[] GetChunkHeadersWithMessageId(
-        string messageId,
+    public static MessageHeader[] GetChunkHeaders(
+        string chunkMessageId,
         int chunkIndex,
         bool isLastChunk,
         Type? messageType = null,
         string? contentType = null) =>
-        GetChunkHeadersCore(messageId, null, chunkIndex, null, isLastChunk, messageType, contentType).ToArray();
+        GetChunkHeadersCore(chunkMessageId, null, chunkIndex, null, isLastChunk, messageType, contentType).ToArray();
 
-    public static MessageHeader[] GetChunkHeadersWithMessageId(
-        string messageId,
+    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
+        string chunkMessageId,
+        int chunkIndex,
+        bool isLastChunk,
+        Type? messageType = null,
+        string? contentType = null) =>
+        GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, null, isLastChunk, messageType, contentType).ToArray();
+
+    public static MessageHeader[] GetChunkHeaders(
+        string chunkMessageId,
         int chunkIndex,
         Type? messageType = null,
         string? contentType = null) =>
-        GetChunkHeadersCore(messageId, null, chunkIndex, null, null, messageType, contentType).ToArray();
+        GetChunkHeadersCore(chunkMessageId, null, chunkIndex, null, null, messageType, contentType).ToArray();
 
-    private static IEnumerable<MessageHeader> GetHeadersCore(string? messageId, string? kafkaKey, Type? messageType, string? contentType)
+    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
+        string chunkMessageId,
+        int chunkIndex,
+        Type? messageType = null,
+        string? contentType = null) =>
+        GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, null, null, messageType, contentType).ToArray();
+
+    private static IEnumerable<MessageHeader> GetHeadersCore(string? kafkaKey, Type? messageType, string? contentType)
     {
-        if (!string.IsNullOrEmpty(messageId))
-            yield return new MessageHeader(DefaultMessageHeaders.MessageId, messageId);
-
         if (!string.IsNullOrEmpty(kafkaKey))
-            yield return new MessageHeader(DefaultMessageHeaders.MessageId, kafkaKey);
+            yield return new MessageHeader(KafkaMessageHeaders.MessageKey, kafkaKey);
 
         if (messageType != null)
             yield return new MessageHeader(DefaultMessageHeaders.MessageType, messageType.AssemblyQualifiedName);
@@ -76,7 +73,7 @@ public static class HeadersHelper
     }
 
     private static IEnumerable<MessageHeader> GetChunkHeadersCore(
-        string? messageId,
+        string? chunkMessageId,
         string? kafkaKey,
         int chunkIndex,
         int? chunksCount,
@@ -84,21 +81,14 @@ public static class HeadersHelper
         Type? messageType,
         string? contentType)
     {
-        foreach (MessageHeader header in GetHeadersCore(messageId, kafkaKey, messageType, contentType))
-        {
+        foreach (MessageHeader header in GetHeadersCore(kafkaKey, messageType, contentType))
             yield return header;
-        }
 
-        yield return new MessageHeader(
-            DefaultMessageHeaders.ChunkIndex,
-            chunkIndex.ToString(CultureInfo.InvariantCulture));
+        yield return new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId);
+        yield return new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex.ToString(CultureInfo.InvariantCulture));
 
         if (chunksCount != null)
-        {
-            yield return new MessageHeader(
-                DefaultMessageHeaders.ChunksCount,
-                chunksCount.Value.ToString(CultureInfo.InvariantCulture));
-        }
+            yield return new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount.Value.ToString(CultureInfo.InvariantCulture));
 
         if (isLastChunk != null)
             yield return new MessageHeader(DefaultMessageHeaders.IsLastChunk, isLastChunk.ToString());
