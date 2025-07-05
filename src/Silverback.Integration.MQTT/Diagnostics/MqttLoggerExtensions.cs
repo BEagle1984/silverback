@@ -10,7 +10,6 @@ using Silverback.Messaging.Broker.Mqtt;
 
 namespace Silverback.Diagnostics;
 
-// TODO: Move something to ConsumerLogger or ProducerLogger (enriched)?
 internal static class MqttLoggerExtensions
 {
     private static readonly Action<ILogger, string, string, string, Exception?> ConsumingMessage =

@@ -130,7 +130,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
         WaitFlushingCompletes();
 
-        _connectCancellationTokenSource?.Dispose(); // TODO: Check if it doesn't cause exceptions
+        _connectCancellationTokenSource?.Dispose();
         _connectCancellationTokenSource = null;
 
         _publishCancellationTokenSource?.Dispose();

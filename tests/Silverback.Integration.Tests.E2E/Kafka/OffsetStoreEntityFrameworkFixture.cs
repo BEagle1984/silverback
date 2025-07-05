@@ -49,7 +49,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
+                            .AddMockedKafka()
                             .AddEntityFrameworkKafkaOffsetStore())
                     .AddKafkaClients(
                         clients => clients
@@ -166,7 +166,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
                         .AddEntityFrameworkKafkaOffsetStore())
                 .AddKafkaClients(
                     clients => clients
@@ -253,7 +253,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
+                        .AddMockedKafka()
                         .AddEntityFrameworkKafkaOffsetStore())
                 .AddKafkaClients(
                     clients => clients
@@ -381,7 +381,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
 
     private class TestDbContext : DbContext
     {
-        [ActivatorUtilitiesConstructor] // TODO: Can be removed? https://github.com/dotnet/efcore/issues/25273
+        [ActivatorUtilitiesConstructor]
         public TestDbContext(DbContextOptions options)
             : base(options)
         {

@@ -46,7 +46,6 @@ public abstract partial class TestingHelper
 
         try
         {
-            // TODO: Filter consumers by type (Kafka vs. MQTT)?
             while (_consumers.Any(consumer => consumer.StatusInfo.Status < ConsumerStatus.Connected))
             {
                 cancellationToken.ThrowIfCancellationRequested();
