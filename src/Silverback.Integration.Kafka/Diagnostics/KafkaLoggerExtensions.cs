@@ -78,8 +78,8 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, string?, Exception?> TransactionsInitialized =
         SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionsInitialized);
 
-    private static readonly Action<ILogger, string, string?, Exception?> TransactionBegan =
-        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionBegan);
+    private static readonly Action<ILogger, string, string?, Exception?> TransactionStarted =
+        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionStarted);
 
     private static readonly Action<ILogger, string, string?, Exception?> TransactionCommitted =
         SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionCommitted);
@@ -285,8 +285,8 @@ internal static class KafkaLoggerExtensions
     public static void LogTransactionsInitialized(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
         TransactionsInitialized(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
 
-    public static void LogTransactionBegan(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
-        TransactionBegan(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
+    public static void LogTransactionStarted(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
+        TransactionStarted(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
 
     public static void LogTransactionCommitted(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
         TransactionCommitted(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);

@@ -104,7 +104,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         try
         {
             confluentProducer.BeginTransaction();
-            _logger.LogTransactionBegan(this);
+            _logger.LogTransactionStarted(this);
         }
         catch (KafkaException)
         {

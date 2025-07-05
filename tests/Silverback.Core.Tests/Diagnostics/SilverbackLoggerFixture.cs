@@ -30,7 +30,7 @@ public class SilverbackLoggerFixture
         logger.Received(
             LogLevel.Information,
             null,
-            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService...");
+            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService");
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class SilverbackLoggerFixture
         logger.Received(
             LogLevel.Error,
             null,
-            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService...");
+            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService");
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class SilverbackLoggerFixture
         logger.Received(
             LogLevel.Information,
             null,
-            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService...");
+            "Starting background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService");
     }
 
     [Fact]
@@ -97,11 +97,11 @@ public class SilverbackLoggerFixture
         logger.Received(
             LogLevel.Warning,
             typeof(InvalidOperationException),
-            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed.");
+            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed");
         logger.Received(
             LogLevel.Error,
             typeof(TimeoutException),
-            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed.");
+            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed");
     }
 
     [Fact]
@@ -130,11 +130,11 @@ public class SilverbackLoggerFixture
         logger.Received(
             LogLevel.Error,
             typeof(InvalidOperationException),
-            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed.");
+            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestService execution failed");
         logger.Received(
             LogLevel.Warning,
             typeof(InvalidOperationException),
-            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestOtherService execution failed.");
+            "Background service Silverback.Tests.Core.Diagnostics.SilverbackLoggerFixture+TestOtherService execution failed");
     }
 
     [Fact]

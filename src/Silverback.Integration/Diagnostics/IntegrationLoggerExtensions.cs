@@ -621,7 +621,7 @@ internal static class IntegrationLoggerExtensions
         logger.InnerLogger.Log(
             IntegrationLogEvents.Tracing.Level,
             IntegrationLogEvents.Tracing.EventId,
-            message + " | consumerName: {consumerName}",
+            message + " | ConsumerName: {ConsumerName}",
             args);
     }
 
@@ -647,7 +647,7 @@ internal static class IntegrationLoggerExtensions
         logger.InnerLogger.Log(
             IntegrationLogEvents.Tracing.Level,
             IntegrationLogEvents.Tracing.EventId,
-            message + " | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}",
+            message + " | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
             args);
     }
 
@@ -675,7 +675,7 @@ internal static class IntegrationLoggerExtensions
             IntegrationLogEvents.Tracing.Level,
             IntegrationLogEvents.Tracing.EventId,
             exception,
-            message + " | endpointName: {endpointName}, brokerMessageId: {brokerMessageId}",
+            message + " | EndpointName: {EndpointName}, BrokerMessageId: {BrokerMessageId}",
             args);
     }
 }

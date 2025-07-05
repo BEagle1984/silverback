@@ -21,8 +21,7 @@ public static class CoreLogEvents
     public static LogEvent SubscriberResultDiscarded { get; } = new(
         LogLevel.Debug,
         GetEventId(11, nameof(SubscriberResultDiscarded)),
-        "Discarding result of type {type} because it doesn't match the expected return type " +
-        "{expectedType}.");
+        "Discarding result of type {Type} because doesn't match expected return type {ExpectedType}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written the
@@ -31,7 +30,7 @@ public static class CoreLogEvents
     public static LogEvent BackgroundServiceStarting { get; } = new(
         LogLevel.Information,
         GetEventId(41, nameof(BackgroundServiceStarting)),
-        "Starting background service {backgroundService}...");
+        "Starting background service {BackgroundService}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs executing the
@@ -40,7 +39,7 @@ public static class CoreLogEvents
     public static LogEvent BackgroundServiceException { get; } = new(
         LogLevel.Error,
         GetEventId(42, nameof(BackgroundServiceException)),
-        "Background service {backgroundService} execution failed.");
+        "Background service {BackgroundService} execution failed");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
@@ -49,7 +48,7 @@ public static class CoreLogEvents
     public static LogEvent RecurringBackgroundServiceStopped { get; } = new(
         LogLevel.Information,
         GetEventId(51, nameof(RecurringBackgroundServiceStopped)),
-        "Background service {backgroundService} stopped.");
+        "Background service {BackgroundService} stopped");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
@@ -58,7 +57,7 @@ public static class CoreLogEvents
     public static LogEvent RecurringBackgroundServiceSleeping { get; } = new(
         LogLevel.Debug,
         GetEventId(52, nameof(RecurringBackgroundServiceSleeping)),
-        "Background service {backgroundService} sleeping for {delay} milliseconds.");
+        "Background service {BackgroundService} sleeping for {Delay} ms");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a distributed lock is acquired by the current instance.
@@ -66,7 +65,7 @@ public static class CoreLogEvents
     public static LogEvent LockAcquired { get; } = new(
         LogLevel.Information,
         GetEventId(61, nameof(LockAcquired)),
-        "Lock {lockName} acquired.");
+        "Lock {LockName} acquired");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a distributed lock is released.
@@ -74,7 +73,7 @@ public static class CoreLogEvents
     public static LogEvent LockReleased { get; } = new(
         LogLevel.Information,
         GetEventId(62, nameof(LockAcquired)),
-        "Lock {lockName} released.");
+        "Lock {LockName} released");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a distributed lock is lost.
@@ -82,7 +81,7 @@ public static class CoreLogEvents
     public static LogEvent LockLost { get; } = new(
         LogLevel.Error,
         GetEventId(63, nameof(LockLost)),
-        "Lock {lockName} lost.");
+        "Lock {LockName} lost");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception occurs while trying to acquire a lock.
@@ -90,7 +89,7 @@ public static class CoreLogEvents
     public static LogEvent AcquireLockFailed { get; } = new(
         LogLevel.Error,
         GetEventId(64, nameof(LockLost)),
-        "Failed to acquire lock {lockName}.");
+        "Failed to acquire lock {LockName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a concurrency related exception occurs while trying to
@@ -99,7 +98,7 @@ public static class CoreLogEvents
     public static LogEvent AcquireLockConcurrencyException { get; } = new(
         LogLevel.Information,
         GetEventId(65, nameof(LockLost)),
-        "Failed to acquire lock {lockName}.");
+        "Failed to acquire lock {LockName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception occurs while trying to release a lock.
@@ -107,7 +106,7 @@ public static class CoreLogEvents
     public static LogEvent ReleaseLockFailed { get; } = new(
         LogLevel.Error,
         GetEventId(66, nameof(LockLost)),
-        "Failed to release lock {lockName}.");
+        "Failed to release lock {LockName}");
 
     private static EventId GetEventId(int id, string name) => new(id, $"Silverback.Core_{name}");
 }

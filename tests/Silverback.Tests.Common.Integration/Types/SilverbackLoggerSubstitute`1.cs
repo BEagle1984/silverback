@@ -24,7 +24,7 @@ public class SilverbackLoggerSubstitute<TCategory> : ISilverbackLogger<TCategory
         string? exceptionMessage = null) =>
         _logger.Received(logLevel, exceptionType, message, eventId, exceptionMessage);
 
-    public bool DidNotReceive(
+    public void DidNotReceive(
         LogLevel logLevel,
         Type? exceptionType,
         string? message = null,

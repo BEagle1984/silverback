@@ -20,7 +20,7 @@ public static class MqttLogEvents
     public static LogEvent ConsumingMessage { get; } = new(
         LogLevel.Debug,
         GetEventId(11, nameof(ConsumingMessage)),
-        "Consuming message {brokerMessageId} from topic {topic}. | consumerName: {consumerName}");
+        "Consuming message {BrokerMessageId} from topic {Topic} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be acknowledged.
@@ -28,7 +28,7 @@ public static class MqttLogEvents
     public static LogEvent AcknowledgeFailed { get; } = new(
         LogLevel.Warning,
         GetEventId(12, nameof(AcknowledgeFailed)),
-        "Failed to acknowledge message {brokerMessageId} from topic {topic}. | consumerName: {consumerName}");
+        "Failed to acknowledge message {BrokerMessageId} from topic {Topic} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.
@@ -36,7 +36,7 @@ public static class MqttLogEvents
     public static LogEvent ConnectError { get; } = new(
         LogLevel.Warning,
         GetEventId(21, nameof(ConnectError)),
-        "Error occurred connecting to the MQTT broker. | clientName: {clientName}, clientId: {clientId}, broker: {broker}");
+        "Error occurred connecting to MQTT | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying to connect to the
@@ -45,7 +45,7 @@ public static class MqttLogEvents
     public static LogEvent ConnectRetryError { get; } = new(
         LogLevel.Debug,
         GetEventId(22, nameof(ConnectRetryError)),
-        "Error occurred retrying to connect to the MQTT broker. | clientName: {clientName}, clientId: {clientId}, broker: {broker}");
+        "Error occurred retrying to connect to MQTT | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
@@ -54,7 +54,7 @@ public static class MqttLogEvents
     public static LogEvent ConnectionLost { get; } = new(
         LogLevel.Warning,
         GetEventId(23, nameof(ConnectionLost)),
-        "Connection with the MQTT broker lost. The client will try to reconnect. | clientName: {clientName}, clientId: {clientId}, broker: {broker}");
+        "Connection to MQTT lost; the client will try to reconnect | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
@@ -63,7 +63,7 @@ public static class MqttLogEvents
     public static LogEvent Reconnected { get; } = new(
         LogLevel.Information,
         GetEventId(24, nameof(Reconnected)),
-        "Connection with the MQTT broker reestablished. | clientName: {clientName}, clientId: {clientId}, broker: {broker}");
+        "Connection to MQTT reestablished | ClientName: {ClientName}, ClientId: {ClientId}, Broker: {Broker}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer
@@ -72,7 +72,7 @@ public static class MqttLogEvents
     public static LogEvent ProducerQueueProcessingCanceled { get; } = new(
         LogLevel.Debug,
         GetEventId(31, nameof(ProducerQueueProcessingCanceled)),
-        "Producer queue processing was canceled. | clientName: {clientName}, clientId: {clientId}");
+        "Producer queue processing canceled | ClientName: {ClientName}, ClientId: {ClientId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer subscribes to a topic or pattern.
@@ -80,7 +80,7 @@ public static class MqttLogEvents
     public static LogEvent ConsumerSubscribed { get; } = new(
         LogLevel.Information,
         GetEventId(41, nameof(ConsumerSubscribed)),
-        "Consumer subscribed to {topicPattern}. | clientName: {clientName}, clientId: {clientId}, consumerName: {consumerName}");
+        "Consumer subscribed to {topicPattern} | ClientName: {ClientName}, ClientId: {ClientId}, ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -92,7 +92,7 @@ public static class MqttLogEvents
     public static LogEvent MqttClientLogError { get; } = new(
         LogLevel.Error,
         GetEventId(101, nameof(MqttClientLogError)),
-        "Error from MqttClient ({source}): '{logMessage}'.");
+        "Error from MqttClient ({Source}): '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -104,7 +104,7 @@ public static class MqttLogEvents
     public static LogEvent MqttClientLogWarning { get; } = new(
         LogLevel.Warning,
         GetEventId(102, nameof(MqttClientLogWarning)),
-        "Warning from MqttClient ({source}): '{logMessage}'.");
+        "Warning from MqttClient ({Source}): '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -116,7 +116,7 @@ public static class MqttLogEvents
     public static LogEvent MqttClientLogInformation { get; } = new(
         LogLevel.Information,
         GetEventId(103, nameof(MqttClientLogInformation)),
-        "Information from MqttClient ({source}): '{logMessage}'.");
+        "Information from MqttClient ({Source}): '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -128,7 +128,7 @@ public static class MqttLogEvents
     public static LogEvent MqttClientLogVerbose { get; } = new(
         LogLevel.Trace,
         GetEventId(104, nameof(MqttClientLogVerbose)),
-        "Verbose from MqttClient ({source}): '{logMessage}'.");
+        "Verbose from MqttClient ({Source}): '{LogMessage}'");
 
     private static EventId GetEventId(int id, string name) =>
         new(4000 + id, $"Silverback.Integration.MQTT_{name}");

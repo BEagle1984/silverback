@@ -94,7 +94,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Consuming message some-topic[13]@42. | consumerName: consumer1",
+            "Consuming message some-topic[13]@42 | ConsumerName: consumer1",
             2011);
     }
 
@@ -113,7 +113,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Partition EOF reached: some-topic[13]@42. | consumerName: consumer1",
+            "Partition EOF reached: some-topic[13]@42 | ConsumerName: consumer1",
             2012);
     }
 
@@ -125,7 +125,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(KafkaException),
-            "Error occurred trying to pull the next message. The consumer will try to recover. | consumerName: consumer1",
+            "Error occurred trying to pull next message; the consumer will try to recover | ConsumerName: consumer1",
             2013);
     }
 
@@ -134,11 +134,11 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     {
         _silverbackLogger.LogKafkaExceptionNoAutoRecovery(_consumer, new KafkaException(ErrorCode.Local_Fail));
 
-        string expectedMessage =
-            "Error occurred trying to pull the next message. The consumer will be stopped. " +
-            "Enable auto recovery to allow Silverback to automatically try to recover " +
-            "(EnableAutoRecovery=true in the consumer configuration). | consumerName: consumer1";
-        _loggerSubstitute.Received(LogLevel.Error, typeof(KafkaException), expectedMessage, 2014);
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            typeof(KafkaException),
+            "Error occurred trying to pull next message; the consumer will be stopped (auto recovery disabled for consumer) | ConsumerName: consumer1",
+            2014);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Trace,
             typeof(TimeoutException),
-            "Consuming canceled. | consumerName: consumer1",
+            "Consuming canceled | ConsumerName: consumer1",
             2016);
     }
 
@@ -161,7 +161,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "The message was produced to topic1[13], but no acknowledgement was received. | producerName: producer1",
+            "Message produced to topic1[13] but not acknowledged | ProducerName: producer1",
             2022);
     }
 
@@ -173,7 +173,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Assigned partition test[13]@42. | consumerName: consumer1",
+            "Assigned partition test[13]@42 | ConsumerName: consumer1",
             2031);
     }
 
@@ -185,7 +185,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Assigned partition test[2]. | consumerName: consumer1",
+            "Assigned partition test[2] | ConsumerName: consumer1",
             2032);
     }
 
@@ -197,7 +197,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "test[2] offset will be reset to 42. | consumerName: consumer1",
+            "test[2] offset will be reset to 42 | ConsumerName: consumer1",
             2033);
     }
 
@@ -209,7 +209,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Revoked partition test[2] (offset was 42). | consumerName: consumer1",
+            "Revoked partition test[2]@42 | ConsumerName: consumer1",
             2034);
     }
 
@@ -221,7 +221,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Partition test[2] paused at offset 42. | consumerName: consumer1",
+            "Partition test[2] paused at offset 42 | ConsumerName: consumer1",
             2035);
     }
 
@@ -233,7 +233,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Partition test[2] resumed. | consumerName: consumer1",
+            "Partition test[2] resumed | ConsumerName: consumer1",
             2036);
     }
 
@@ -245,7 +245,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Successfully committed offset test[2]@42. | consumerName: consumer1",
+            "Successfully committed offset test[2]@42 | ConsumerName: consumer1",
             2037);
     }
 
@@ -259,7 +259,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Error occurred committing the offset test[2]@42: 'Broker: Request timed out' (7). | consumerName: consumer1",
+            "Error occurred committing offset test[2]@42: 'Broker: Request timed out' (7) | ConsumerName: consumer1",
             2038);
     }
 
@@ -271,7 +271,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22). | consumerName: consumer1",
+            "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22) | ConsumerName: consumer1",
             2039);
     }
 
@@ -283,7 +283,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Fatal error in Kafka consumer: 'Broker: Request timed out' (7). | consumerName: consumer1",
+            "Fatal error in Kafka consumer: 'Broker: Request timed out' (7) | ConsumerName: consumer1",
             2040);
     }
 
@@ -295,7 +295,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Kafka consumer statistics received: { json } | consumerName: consumer1",
+            "Kafka consumer statistics received: { json } | ConsumerName: consumer1",
             2041);
     }
 
@@ -307,7 +307,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Kafka producer statistics received: { json } | producerName: producer1",
+            "Kafka producer statistics received: { json } | ProducerName: producer1",
             2042);
     }
 
@@ -319,7 +319,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(JsonException),
-            "The received statistics JSON couldn't be deserialized.",
+            "Statistics JSON couldn't be deserialized",
             2043);
     }
 
@@ -330,10 +330,11 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             new LogMessage("-", SyslogLevel.Warning, "-", "Poll timeout"),
             _consumer);
 
-        string expectedMessage =
-            "Warning event from Confluent.Kafka consumer: 'Poll timeout'. " +
-            "-> The consumer will try to recover. | consumerName: consumer1";
-        _loggerSubstitute.Received(LogLevel.Warning, null, expectedMessage, 2060);
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Warning from Confluent.Kafka consumer: 'Poll timeout'; the consumer will try to recover | ConsumerName: consumer1",
+            2060);
     }
 
     [Fact]
@@ -343,11 +344,11 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             new LogMessage("-", SyslogLevel.Warning, "-", "Poll timeout"),
             _consumer);
 
-        string expectedMessage =
-            "Warning event from Confluent.Kafka consumer: 'Poll timeout'. " +
-            "-> Enable auto recovery to allow Silverback to automatically try to recover " +
-            "(EnableAutoRecovery=true in the consumer configuration). | consumerName: consumer1";
-        _loggerSubstitute.Received(LogLevel.Error, null, expectedMessage, 2061);
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Warning from Confluent.Kafka consumer: 'Poll timeout'; auto recovery disabled for consumer | ConsumerName: consumer1",
+            2061);
     }
 
     [Fact]
@@ -355,16 +356,16 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     {
         _silverbackLogger.LogTransactionsInitialized(_transactionalProducerWrapper);
 
-        string expectedMessage = "Transactions initialized. | producerName: producer1, transactionalId: transactional1";
+        string expectedMessage = "Transactions initialized | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 2070);
     }
 
     [Fact]
-    public void LogTransactionBegan_ShouldLog()
+    public void LogTransactionStarted_ShouldLog()
     {
-        _silverbackLogger.LogTransactionBegan(_transactionalProducerWrapper);
+        _silverbackLogger.LogTransactionStarted(_transactionalProducerWrapper);
 
-        string expectedMessage = "Transaction began. | producerName: producer1, transactionalId: transactional1";
+        string expectedMessage = "Transaction started | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 2071);
     }
 
@@ -373,7 +374,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     {
         _silverbackLogger.LogTransactionCommitted(_transactionalProducerWrapper);
 
-        string expectedMessage = "Transaction committed. | producerName: producer1, transactionalId: transactional1";
+        string expectedMessage = "Transaction committed | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 2072);
     }
 
@@ -382,7 +383,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     {
         _silverbackLogger.LogTransactionAborted(_transactionalProducerWrapper);
 
-        string expectedMessage = "Transaction aborted. | producerName: producer1, transactionalId: transactional1";
+        string expectedMessage = "Transaction aborted | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 2073);
     }
 
@@ -393,7 +394,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             _transactionalProducerWrapper,
             new TopicPartitionOffset("topic1", 13, 42));
 
-        string expectedMessage = "Offset topic1[13]@42 sent to transaction. | producerName: producer1, transactionalId: transactional1";
+        string expectedMessage = "Offset topic1[13]@42 sent to transaction | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 2074);
     }
 
@@ -407,7 +408,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Critical,
             null,
-            "Alert event from Confluent.Kafka producer: 'The broker is burning'. | producerName: producer1",
+            "Alert from Confluent.Kafka producer: 'The broker is burning' | ProducerName: producer1",
             2201);
     }
 
@@ -421,7 +422,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Error event from Confluent.Kafka producer: 'The broker is burning'. | producerName: producer1",
+            "Error from Confluent.Kafka producer: 'The broker is burning' | ProducerName: producer1",
             2202);
     }
 
@@ -435,7 +436,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Warning event from Confluent.Kafka producer: 'The broker is burning'. | producerName: producer1",
+            "Warning from Confluent.Kafka producer: 'The broker is burning' | ProducerName: producer1",
             2203);
     }
 
@@ -449,7 +450,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Notice event from Confluent.Kafka producer: 'The broker is burning'. | producerName: producer1",
+            "Notice from Confluent.Kafka producer: 'The broker is burning' | ProducerName: producer1",
             2204);
     }
 
@@ -463,7 +464,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Debug event from Confluent.Kafka producer: 'The broker is burning'. | producerName: producer1",
+            "Debug from Confluent.Kafka producer: 'The broker is burning' | ProducerName: producer1",
             2205);
     }
 
@@ -477,7 +478,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Critical,
             null,
-            "Alert event from Confluent.Kafka consumer: 'The broker is burning'. | consumerName: consumer1",
+            "Alert from Confluent.Kafka consumer: 'The broker is burning' | ConsumerName: consumer1",
             2211);
     }
 
@@ -491,7 +492,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Error event from Confluent.Kafka consumer: 'The broker is burning'. | consumerName: consumer1",
+            "Error from Confluent.Kafka consumer: 'The broker is burning' | ConsumerName: consumer1",
             2212);
     }
 
@@ -505,7 +506,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Warning event from Confluent.Kafka consumer: 'The broker is burning'. | consumerName: consumer1",
+            "Warning from Confluent.Kafka consumer: 'The broker is burning' | ConsumerName: consumer1",
             2213);
     }
 
@@ -519,7 +520,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Notice event from Confluent.Kafka consumer: 'The broker is burning'. | consumerName: consumer1",
+            "Notice from Confluent.Kafka consumer: 'The broker is burning' | ConsumerName: consumer1",
             2214);
     }
 
@@ -533,7 +534,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Debug event from Confluent.Kafka consumer: 'The broker is burning'. | consumerName: consumer1",
+            "Debug from Confluent.Kafka consumer: 'The broker is burning' | ConsumerName: consumer1",
             2215);
     }
 
@@ -545,7 +546,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Error in Kafka admin client: 'Broker: Specified group generation id is not valid' (22).",
+            "Error in Kafka admin client: 'Broker: Specified group generation id is not valid' (22)",
             2301);
     }
 
@@ -557,7 +558,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Fatal error in Kafka admin client: 'Broker: Request timed out' (7).",
+            "Fatal error in Kafka admin client: 'Broker: Request timed out' (7)",
             2302);
     }
 
@@ -569,7 +570,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Critical,
             null,
-            "Alert event from Confluent.Kafka admin client: 'The broker is burning'.",
+            "Alert from Confluent.Kafka admin client: 'The broker is burning'",
             2311);
     }
 
@@ -581,7 +582,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             null,
-            "Error event from Confluent.Kafka admin client: 'The broker is burning'.",
+            "Error from Confluent.Kafka admin client: 'The broker is burning'",
             2312);
     }
 
@@ -593,7 +594,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Warning event from Confluent.Kafka admin client: 'The broker is burning'.",
+            "Warning from Confluent.Kafka admin client: 'The broker is burning'",
             2313);
     }
 
@@ -605,7 +606,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Notice event from Confluent.Kafka admin client: 'The broker is burning'.",
+            "Notice from Confluent.Kafka admin client: 'The broker is burning'",
             2314);
     }
 
@@ -617,7 +618,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Debug event from Confluent.Kafka admin client: 'The broker is burning'.",
+            "Debug from Confluent.Kafka admin client: 'The broker is burning'",
             2315);
     }
 

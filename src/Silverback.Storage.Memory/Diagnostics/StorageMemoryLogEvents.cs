@@ -14,13 +14,13 @@ namespace Silverback.Diagnostics;
 public static class StorageMemoryLogEvents
 {
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an ambient transaction is detected but it's not
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an ambient transaction is detected, but it's not
     ///     supported by the in-memory outbox implementation.
     /// </summary>
     public static LogEvent OutboxTransactionUnsupported { get; } = new(
         LogLevel.Warning,
         GetEventId(1, nameof(OutboxTransactionUnsupported)),
-        "The ambient transaction is not supported by the in-memory outbox implementation. The messages will be stored outside the transaction.");
+        "Ambient transaction not supported by the in-memory outbox implementation; the messages will be stored ignoring the transaction");
 
     private static EventId GetEventId(int id, string name) =>
         new(6000 + id, $"Silverback.Storage.Memory_{name}");

@@ -195,7 +195,7 @@ public class ValidatorConsumerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null);
     }
 
     [Theory]
@@ -229,7 +229,7 @@ public class ValidatorConsumerBehaviorFixture
             CancellationToken.None).AsTask();
         await act.ShouldNotThrowAsync();
         result.ShouldNotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null);
     }
 
     [Theory]
@@ -260,7 +260,7 @@ public class ValidatorConsumerBehaviorFixture
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        expectedValidationMessage += " | endpointName: topic1, brokerMessageId: 42";
+        expectedValidationMessage += " | EndpointName: topic1, BrokerMessageId: 42";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1082);
     }
 

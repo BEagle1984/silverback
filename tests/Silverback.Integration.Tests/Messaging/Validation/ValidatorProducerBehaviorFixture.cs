@@ -189,14 +189,14 @@ public class ValidatorProducerBehaviorFixture
 
         result.ShouldNotBeNull();
         result!.Message.ShouldNotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null);
     }
 
     [Theory]
     [InlineData(MessageValidationMode.None)]
     [InlineData(MessageValidationMode.LogWarning)]
     [InlineData(MessageValidationMode.ThrowException)]
-    public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
+    public async Task HandleAsync_ShouldNotLogAndNotThrow_WhenMessageIsValid(MessageValidationMode validationMode)
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
         TestProducerEndpointConfiguration configuration = new("topic1")
@@ -223,7 +223,7 @@ public class ValidatorProducerBehaviorFixture
         await act.ShouldNotThrowAsync();
         result.ShouldNotBeNull();
         result!.Message.ShouldNotBeNull();
-        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).ShouldBeTrue();
+        _loggerSubstitute.DidNotReceive(LogLevel.Warning, null);
     }
 
     [Theory]
@@ -253,12 +253,12 @@ public class ValidatorProducerBehaviorFixture
 
         result.ShouldNotBeNull();
         result!.Message.ShouldNotBeNull();
-        expectedValidationMessage += " | endpointName: topic1";
+        expectedValidationMessage += " | EndpointName: topic1";
         _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1081);
     }
 
     [Fact]
-    public async Task HandleAsync_ThrowException_ExceptionIsThrown()
+    public async Task HandleAsync_ShouldThrowException_WhenModeIsThrowException()
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =

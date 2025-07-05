@@ -21,7 +21,7 @@ public static class KafkaLogEvents
     public static LogEvent ConsumingMessage { get; } = new(
         LogLevel.Debug,
         GetEventId(11, nameof(ConsumingMessage)),
-        "Consuming message {topic}[{partition}]@{offset}. | consumerName: {consumerName}");
+        "Consuming message {Topic}[{Partition}]@{Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the end of partition is
@@ -30,7 +30,7 @@ public static class KafkaLogEvents
     public static LogEvent EndOfPartition { get; } = new(
         LogLevel.Information,
         GetEventId(12, nameof(EndOfPartition)),
-        "Partition EOF reached: {topic}[{partition}]@{offset}. | consumerName: {consumerName}");
+        "Partition EOF reached: {Topic}[{Partition}]@{Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a <see cref="KafkaException" /> is thrown inside the
@@ -39,7 +39,7 @@ public static class KafkaLogEvents
     public static LogEvent KafkaExceptionAutoRecovery { get; } = new(
         LogLevel.Warning,
         GetEventId(13, nameof(KafkaExceptionAutoRecovery)),
-        "Error occurred trying to pull the next message. The consumer will try to recover. | consumerName: {consumerName}");
+        "Error occurred trying to pull next message; the consumer will try to recover | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a <see cref="KafkaException" /> is thrown inside the
@@ -48,10 +48,8 @@ public static class KafkaLogEvents
     public static LogEvent KafkaExceptionNoAutoRecovery { get; } = new(
         LogLevel.Error,
         GetEventId(14, nameof(KafkaExceptionNoAutoRecovery)),
-        "Error occurred trying to pull the next message. The consumer will be stopped. " +
-        "Enable auto recovery to allow Silverback to automatically try to recover " +
-        "(EnableAutoRecovery=true in the consumer configuration)." +
-        " | consumerName: {consumerName}");
+        "Error occurred trying to pull next message; the consumer will be stopped (auto recovery disabled for consumer)" +
+        " | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the <c>Consume</c> is aborted
@@ -60,7 +58,7 @@ public static class KafkaLogEvents
     public static LogEvent ConsumingCanceled { get; } = new(
         LogLevel.Trace,
         GetEventId(16, nameof(ConsumingCanceled)),
-        "Consuming canceled. | consumerName: {consumerName}");
+        "Consuming canceled | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is sent to the
@@ -70,7 +68,7 @@ public static class KafkaLogEvents
     public static LogEvent ProduceNotAcknowledged { get; } = new(
         LogLevel.Warning,
         GetEventId(22, nameof(ProduceNotAcknowledged)),
-        "The message was produced to {topic}[{partition}], but no acknowledgement was received. | producerName: {producerName}");
+        "Message produced to {Topic}[{Partition}] but not acknowledged | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a static partition assignment is set for the consumer.
@@ -81,7 +79,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionStaticallyAssigned { get; } = new(
         LogLevel.Information,
         GetEventId(31, nameof(PartitionStaticallyAssigned)),
-        "Assigned partition {topic}[{partition}]@{offset}. | consumerName: {consumerName}");
+        "Assigned partition {Topic}[{Partition}]@{Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new consumer group partition
@@ -93,7 +91,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionAssigned { get; } = new(
         LogLevel.Information,
         GetEventId(32, nameof(PartitionAssigned)),
-        "Assigned partition {topic}[{partition}]. | consumerName: {consumerName}");
+        "Assigned partition {Topic}[{Partition}] | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the offset of an assigned
@@ -102,7 +100,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionOffsetReset { get; } = new(
         LogLevel.Debug,
         GetEventId(33, nameof(PartitionOffsetReset)),
-        "{topic}[{partition}] offset will be reset to {offset}. | consumerName: {consumerName}");
+        "{Topic}[{Partition}] offset will be reset to {Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a group partition assignment
@@ -114,7 +112,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionRevoked { get; } = new(
         LogLevel.Information,
         GetEventId(34, nameof(PartitionRevoked)),
-        "Revoked partition {topic}[{partition}] (offset was {offset}). | consumerName: {consumerName}");
+        "Revoked partition {Topic}[{Partition}]@{Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is paused.
@@ -122,7 +120,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionPaused { get; } = new(
         LogLevel.Debug,
         GetEventId(35, nameof(PartitionPaused)),
-        "Partition {topic}[{partition}] paused at offset {offset}. | consumerName: {consumerName}");
+        "Partition {Topic}[{Partition}] paused at offset {Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is resumed.
@@ -130,7 +128,7 @@ public static class KafkaLogEvents
     public static LogEvent PartitionResumed { get; } = new(
         LogLevel.Debug,
         GetEventId(36, nameof(PartitionResumed)),
-        "Partition {topic}[{partition}] resumed. | consumerName: {consumerName}");
+        "Partition {Topic}[{Partition}] resumed | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an offset is successfully committed.
@@ -138,7 +136,7 @@ public static class KafkaLogEvents
     public static LogEvent OffsetCommitted { get; } = new(
         LogLevel.Debug,
         GetEventId(37, nameof(OffsetCommitted)),
-        "Successfully committed offset {topic}[{partition}]@{offset}. | consumerName: {consumerName}");
+        "Successfully committed offset {Topic}[{Partition}]@{Offset} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs committing the offset.
@@ -146,10 +144,10 @@ public static class KafkaLogEvents
     public static LogEvent OffsetCommitError { get; } = new(
         LogLevel.Error,
         GetEventId(38, nameof(OffsetCommitError)),
-        "Error occurred committing the offset {topic}[{partition}]@{offset}: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
+        "Error occurred committing offset {Topic}[{Partition}]@{Offset}: '{ErrorReason}' ({ErrorCode}) | ConsumerName: {ConsumerName}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non fatal error is reported
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported
     ///     by the <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
@@ -158,19 +156,19 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerError { get; } = new(
         LogLevel.Warning,
         GetEventId(39, nameof(ConfluentConsumerError)),
-        "Error in Kafka consumer: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
+        "Error in Kafka consumer: '{ErrorReason}' ({ErrorCode}) | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
     ///     the <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
-    ///     Non fatal errors are reported with a different event id.
+    ///     Non-fatal errors are reported with a different event id.
     /// </remarks>
     public static LogEvent ConfluentConsumerFatalError { get; } = new(
         LogLevel.Error,
         GetEventId(40, nameof(ConfluentConsumerFatalError)),
-        "Fatal error in Kafka consumer: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
+        "Fatal error in Kafka consumer: '{ErrorReason}' ({ErrorCode}) | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer statistics are
@@ -179,7 +177,7 @@ public static class KafkaLogEvents
     public static LogEvent ConsumerStatisticsReceived { get; } = new(
         LogLevel.Debug,
         GetEventId(41, nameof(ConsumerStatisticsReceived)),
-        "Kafka consumer statistics received: {statistics} | consumerName: {consumerName}");
+        "Kafka consumer statistics received: {Statistics} | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the producer statistics are
@@ -188,7 +186,7 @@ public static class KafkaLogEvents
     public static LogEvent ProducerStatisticsReceived { get; } = new(
         LogLevel.Debug,
         GetEventId(42, nameof(ProducerStatisticsReceived)),
-        "Kafka producer statistics received: {statistics} | producerName: {producerName}");
+        "Kafka producer statistics received: {Statistics} | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the statistics JSON cannot be
@@ -197,16 +195,16 @@ public static class KafkaLogEvents
     public static LogEvent StatisticsDeserializationError { get; } = new(
         LogLevel.Error,
         GetEventId(43, nameof(StatisticsDeserializationError)),
-        "The received statistics JSON couldn't be deserialized.");
+        "Statistics JSON couldn't be deserialized");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.
-    ///     The consumer will automatically recover from these situation (<c>EnableAutoRecovery</c> is <c>true</c>).
+    ///     The consumer will automatically recover from this situation (<c>EnableAutoRecovery</c> is <c>true</c>).
     /// </summary>
     public static LogEvent PollTimeoutAutoRecovery { get; } = new(
         LogLevel.Warning,
         GetEventId(60, nameof(PollTimeoutAutoRecovery)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -> The consumer will try to recover. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}'; the consumer will try to recover | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.
@@ -215,9 +213,7 @@ public static class KafkaLogEvents
     public static LogEvent PollTimeoutNoAutoRecovery { get; } = new(
         LogLevel.Error,
         GetEventId(61, nameof(PollTimeoutNoAutoRecovery)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -> Enable auto recovery to " +
-        "allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer " +
-        "configuration). | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}'; auto recovery disabled for consumer | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the transactional producer has been initialized.
@@ -225,15 +221,15 @@ public static class KafkaLogEvents
     public static LogEvent TransactionsInitialized { get; } = new(
         LogLevel.Trace,
         GetEventId(70, nameof(TransactionsInitialized)),
-        "Transactions initialized. | producerName: {producerName}, transactionalId: {transactionalId}");
+        "Transactions initialized | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new transaction is started.
     /// </summary>
-    public static LogEvent TransactionBegan { get; } = new(
+    public static LogEvent TransactionStarted { get; } = new(
         LogLevel.Trace,
-        GetEventId(71, nameof(TransactionBegan)),
-        "Transaction began. | producerName: {producerName}, transactionalId: {transactionalId}");
+        GetEventId(71, nameof(TransactionStarted)),
+        "Transaction started | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a transaction is committed.
@@ -241,7 +237,7 @@ public static class KafkaLogEvents
     public static LogEvent TransactionCommitted { get; } = new(
         LogLevel.Information,
         GetEventId(72, nameof(TransactionCommitted)),
-        "Transaction committed. | producerName: {producerName}, transactionalId: {transactionalId}");
+        "Transaction committed | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a transaction is aborted.
@@ -249,7 +245,7 @@ public static class KafkaLogEvents
     public static LogEvent TransactionAborted { get; } = new(
         LogLevel.Information,
         GetEventId(73, nameof(TransactionAborted)),
-        "Transaction aborted. | producerName: {producerName}, transactionalId: {transactionalId}");
+        "Transaction aborted | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an offset is sent to the transaction.
@@ -257,7 +253,7 @@ public static class KafkaLogEvents
     public static LogEvent OffsetSentToTransaction { get; } = new(
         LogLevel.Debug,
         GetEventId(74, nameof(OffsetSentToTransaction)),
-        "Offset {topic}[{partition}]@{offset} sent to transaction. | producerName: {producerName}, transactionalId: {transactionalId}");
+        "Offset {Topic}[{Partition}]@{Offset} sent to transaction | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -269,7 +265,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentProducerLogCritical { get; } = new(
         LogLevel.Critical,
         GetEventId(201, nameof(ConfluentProducerLogCritical)),
-        "{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | producerName: {producerName}");
+        "{SysLogLevel} from Confluent.Kafka producer: '{LogMessage}' | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -281,7 +277,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentProducerLogError { get; } = new(
         LogLevel.Error,
         GetEventId(202, nameof(ConfluentProducerLogError)),
-        "{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | producerName: {producerName}");
+        "{SysLogLevel} from Confluent.Kafka producer: '{LogMessage}' | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -293,7 +289,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentProducerLogWarning { get; } = new(
         LogLevel.Warning,
         GetEventId(203, nameof(ConfluentProducerLogWarning)),
-        "{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | producerName: {producerName}");
+        "{SysLogLevel} from Confluent.Kafka producer: '{LogMessage}' | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -305,7 +301,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentProducerLogInformation { get; } = new(
         LogLevel.Information,
         GetEventId(204, nameof(ConfluentProducerLogInformation)),
-        "{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | producerName: {producerName}");
+        "{SysLogLevel} from Confluent.Kafka producer: '{LogMessage}' | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -317,7 +313,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentProducerLogDebug { get; } = new(
         LogLevel.Debug,
         GetEventId(205, nameof(ConfluentProducerLogDebug)),
-        "{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | producerName: {producerName}");
+        "{SysLogLevel} from Confluent.Kafka producer: '{LogMessage}' | ProducerName: {ProducerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -329,7 +325,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerLogCritical { get; } = new(
         LogLevel.Critical,
         GetEventId(211, nameof(ConfluentConsumerLogCritical)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}' | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -341,7 +337,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerLogError { get; } = new(
         LogLevel.Error,
         GetEventId(212, nameof(ConfluentConsumerLogError)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}' | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -353,7 +349,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerLogWarning { get; } = new(
         LogLevel.Warning,
         GetEventId(213, nameof(ConfluentConsumerLogWarning)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}' | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -365,7 +361,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerLogInformation { get; } = new(
         LogLevel.Information,
         GetEventId(214, nameof(ConfluentConsumerLogInformation)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}' | ConsumerName: {ConsumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -377,10 +373,10 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentConsumerLogDebug { get; } = new(
         LogLevel.Debug,
         GetEventId(215, nameof(ConfluentConsumerLogDebug)),
-        "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
+        "{SysLogLevel} from Confluent.Kafka consumer: '{LogMessage}' | ConsumerName: {ConsumerName}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non fatal error is reported
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported
     ///     by the <see cref="Confluent.Kafka.AdminClient" />.
     /// </summary>
     /// <remarks>
@@ -389,19 +385,19 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientError { get; } = new(
         LogLevel.Warning,
         GetEventId(301, nameof(ConfluentAdminClientError)),
-        "Error in Kafka admin client: '{errorReason}' ({errorCode}).");
+        "Error in Kafka admin client: '{ErrorReason}' ({ErrorCode})");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
     ///     the <see cref="Confluent.Kafka.AdminClient" />.
     /// </summary>
     /// <remarks>
-    ///     Non fatal errors are reported with a different event id.
+    ///     Non-fatal errors are reported with a different event id.
     /// </remarks>
     public static LogEvent ConfluentAdminClientFatalError { get; } = new(
         LogLevel.Error,
         GetEventId(302, nameof(ConfluentAdminClientFatalError)),
-        "Fatal error in Kafka admin client: '{errorReason}' ({errorCode}).");
+        "Fatal error in Kafka admin client: '{ErrorReason}' ({ErrorCode})");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -413,7 +409,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientLogCritical { get; } = new(
         LogLevel.Critical,
         GetEventId(311, nameof(ConfluentAdminClientLogCritical)),
-        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+        "{SysLogLevel} from Confluent.Kafka admin client: '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -425,7 +421,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientLogError { get; } = new(
         LogLevel.Error,
         GetEventId(312, nameof(ConfluentAdminClientLogError)),
-        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+        "{SysLogLevel} from Confluent.Kafka admin client: '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -437,7 +433,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientLogWarning { get; } = new(
         LogLevel.Warning,
         GetEventId(313, nameof(ConfluentAdminClientLogWarning)),
-        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+        "{SysLogLevel} from Confluent.Kafka admin client: '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -449,7 +445,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientLogInformation { get; } = new(
         LogLevel.Information,
         GetEventId(314, nameof(ConfluentAdminClientLogInformation)),
-        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+        "{SysLogLevel} from Confluent.Kafka admin client: '{LogMessage}'");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
@@ -461,7 +457,7 @@ public static class KafkaLogEvents
     public static LogEvent ConfluentAdminClientLogDebug { get; } = new(
         LogLevel.Debug,
         GetEventId(315, nameof(ConfluentAdminClientLogDebug)),
-        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+        "{SysLogLevel} from Confluent.Kafka admin client: '{LogMessage}'");
 
     private static EventId GetEventId(int id, string name) =>
         new(2000 + id, $"Silverback.Integration.Kafka_{name}");

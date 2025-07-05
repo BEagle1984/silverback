@@ -102,7 +102,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            $"Consuming message {applicationMessage.Id} from topic some-topic. | consumerName: consumer1",
+            $"Consuming message {applicationMessage.Id} from topic some-topic | ConsumerName: consumer1",
             4011);
     }
 
@@ -124,7 +124,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(TimeoutException),
-            $"Failed to acknowledge message {applicationMessage.Id} from topic some-topic. | consumerName: consumer1",
+            $"Failed to acknowledge message {applicationMessage.Id} from topic some-topic | ConsumerName: consumer1",
             4012);
     }
 
@@ -136,7 +136,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(MqttCommunicationException),
-            "Error occurred connecting to the MQTT broker. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
+            "Error occurred connecting to MQTT | ClientName: client1, ClientId: id1, Broker: Unspecified/test-broker:1234",
             4021);
     }
 
@@ -148,7 +148,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             typeof(MqttCommunicationException),
-            "Error occurred retrying to connect to the MQTT broker. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
+            "Error occurred retrying to connect to MQTT | ClientName: client1, ClientId: id1, Broker: Unspecified/test-broker:1234",
             4022);
     }
 
@@ -160,7 +160,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Connection with the MQTT broker lost. The client will try to reconnect. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
+            "Connection to MQTT lost; the client will try to reconnect | ClientName: client1, ClientId: id1, Broker: Unspecified/test-broker:1234",
             4023);
     }
 
@@ -172,7 +172,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Connection with the MQTT broker reestablished. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
+            "Connection to MQTT reestablished | ClientName: client1, ClientId: id1, Broker: Unspecified/test-broker:1234",
             4024);
     }
 
@@ -184,7 +184,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Producer queue processing was canceled. | clientName: client1, clientId: id1",
+            "Producer queue processing canceled | ClientName: client1, ClientId: id1",
             4031);
     }
 
@@ -196,7 +196,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Consumer subscribed to my/topic/#. | clientName: client1, clientId: id1, consumerName: consumer1",
+            "Consumer subscribed to my/topic/# | ClientName: client1, ClientId: id1, ConsumerName: consumer1",
             4041);
     }
 
@@ -212,7 +212,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidOperationException),
-            "Error from MqttClient (source): 'error 42 occurred'.",
+            "Error from MqttClient (source): 'error 42 occurred'",
             4101);
     }
 
@@ -228,7 +228,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(InvalidOperationException),
-            "Warning from MqttClient (source): 'warning 13'.",
+            "Warning from MqttClient (source): 'warning 13'",
             4102);
     }
 
@@ -244,7 +244,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Information from MqttClient (source): 'info whatever'.",
+            "Information from MqttClient (source): 'info whatever'",
             4103);
     }
 
@@ -260,7 +260,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Trace,
             null,
-            "Verbose from MqttClient (source): 'info whatever'.",
+            "Verbose from MqttClient (source): 'info whatever'",
             4104);
     }
 

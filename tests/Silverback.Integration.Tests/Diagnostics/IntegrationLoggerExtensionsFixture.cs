@@ -60,7 +60,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Processing consumed message. | endpointName: test, brokerMessageId: 42",
+            "Processing consumed message | EndpointName: test, BrokerMessageId: 42",
             1001);
     }
 
@@ -79,7 +79,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidDataException),
-            "Error occurred processing the consumed message. | endpointName: test, brokerMessageId: 42",
+            "Error occurred processing consumed message | EndpointName: test, BrokerMessageId: 42",
             1002);
     }
 
@@ -98,7 +98,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(InvalidCastException),
-            "Fatal error occurred processing the consumed message. The client will be disconnected. | endpointName: test, brokerMessageId: 42",
+            "Fatal error occurred processing consumed message; the client will be disconnected | EndpointName: test, BrokerMessageId: 42",
             1003);
     }
 
@@ -110,7 +110,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(InvalidCastException),
-            "Fatal error occurred processing the consumed message. The client will be disconnected. | consumerName: consumer1",
+            "Fatal error occurred processing consumed message; the client will be disconnected | ConsumerName: consumer1",
             1004);
     }
 
@@ -130,7 +130,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Message produced. | endpointName: test1, brokerMessageId: 42",
+            "Message produced | EndpointName: test1, BrokerMessageId: 42",
             1005);
     }
 
@@ -144,7 +144,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Message produced. | endpointName: test1, brokerMessageId: 42",
+            "Message produced | EndpointName: test1, BrokerMessageId: 42",
             1005);
     }
 
@@ -162,7 +162,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(InvalidDataException),
-            "Error occurred producing the message. | endpointName: test1",
+            "Error occurred producing message | EndpointName: test1",
             1006);
     }
 
@@ -176,7 +176,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(InvalidDataException),
-            "Error occurred producing the message. | endpointName: test1",
+            "Error occurred producing message | EndpointName: test1",
             1006);
     }
 
@@ -194,7 +194,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Message filtered. | endpointName: test1",
+            "Message filtered | EndpointName: test1",
             1007);
     }
 
@@ -213,7 +213,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Message 42 added to FakeSequence fake1. | length: 3",
+            "Message 42 added to FakeSequence fake1 | Length: 3",
             1011);
     }
 
@@ -222,7 +222,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogSequenceStarted(new FakeSequence());
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "Started new FakeSequence fake1.", 1012);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "Started new FakeSequence fake1", 1012);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogSequenceCompleted(new FakeSequence());
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "FakeSequence fake1 completed. | length: 3", 1013);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "FakeSequence fake1 completed | Length: 3", 1013);
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "The FakeSequence fake1 processing has been aborted. | length: 3, reason: ConsumerAborted",
+            "FakeSequence fake1 processing has been aborted | Length: 3, Reason: ConsumerAborted",
             1014);
     }
 
@@ -253,7 +253,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidDataException),
-            "Error occurred processing the FakeSequence fake1. | length: 3",
+            "Error occurred processing FakeSequence fake1 | Length: 3",
             1015);
     }
 
@@ -265,7 +265,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Aborted incomplete FakeSequence fake1. | length: 3",
+            "Aborted incomplete FakeSequence fake1 | Length: 3",
             1016);
     }
 
@@ -277,7 +277,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Skipped incomplete sequence fake1. The first message is missing.",
+            "Skipped incomplete sequence fake1 (missing first message)",
             1017);
     }
 
@@ -289,7 +289,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(TimeoutException),
-            "Error occurred executing the timeout for the FakeSequence fake1.",
+            "Error occurred executing timeout for FakeSequence fake1",
             1018);
     }
 
@@ -301,7 +301,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(AuthenticationException),
-            "Error occurred initializing the broker client(s).",
+            "Error occurred initializing broker clients",
             1021);
     }
 
@@ -310,7 +310,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogBrokerClientInitializing(new TestClient());
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient initializing... | clientName: client1", 1022);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient initializing | ClientName: client1", 1022);
     }
 
     [Fact]
@@ -318,7 +318,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogBrokerClientInitialized(new TestClient());
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient initialized. | clientName: client1", 1023);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient initialized | ClientName: client1", 1023);
     }
 
     [Fact]
@@ -326,7 +326,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogBrokerClientDisconnecting(new TestClient());
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient disconnecting... | clientName: client1", 1024);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "TestClient disconnecting | ClientName: client1", 1024);
     }
 
     [Fact]
@@ -334,7 +334,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogBrokerClientDisconnected(new TestClient());
 
-        _loggerSubstitute.Received(LogLevel.Information, null, "TestClient disconnected. | clientName: client1", 1025);
+        _loggerSubstitute.Received(LogLevel.Information, null, "TestClient disconnected | ClientName: client1", 1025);
     }
 
     [Fact]
@@ -345,7 +345,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(ArgumentNullException),
-            "Error occurred initializing TestClient. | clientName: client1",
+            "Error occurred initializing TestClient | ClientName: client1",
             1026);
     }
 
@@ -357,7 +357,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(ArgumentNullException),
-            "Error occurred disconnecting TestClient. | clientName: client1",
+            "Error occurred disconnecting TestClient | ClientName: client1",
             1027);
     }
 
@@ -369,7 +369,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(ArgumentNullException),
-            "Failed to reconnect the TestClient. Will retry in 42 milliseconds. | clientName: client1",
+            "Failed to reconnect TestClient; retry in 42 ms | ClientName: client1",
             1028);
     }
 
@@ -381,7 +381,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidCastException),
-            "Error occurred (re)starting the TestConsumer. | consumerName: consumer1",
+            "Error occurred (re)starting TestConsumer | ConsumerName: consumer1",
             1031);
     }
 
@@ -393,7 +393,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidCastException),
-            "Error occurred stopping the TestConsumer. | consumerName: consumer1",
+            "Error occurred stopping TestConsumer | ConsumerName: consumer1",
             1032);
     }
 
@@ -411,7 +411,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(TimeoutException),
-            "TestConsumer commit failed. | consumerName: consumer1, identifiers: a@42, b@13",
+            "TestConsumer commit failed | ConsumerName: consumer1, BrokerMessageId: a@42, b@13",
             1033);
     }
 
@@ -429,7 +429,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(TimeoutException),
-            "TestConsumer rollback failed. | consumerName: consumer1, identifiers: a@42, b@13",
+            "TestConsumer rollback failed | ConsumerName: consumer1, BrokerMessageId: a@42, b@13",
             1034);
     }
 
@@ -441,7 +441,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Created TestClient. | clientName: client1",
+            "Created TestClient | ClientName: client1",
             1041);
     }
 
@@ -453,7 +453,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Created TestConsumer. | consumerName: consumer1",
+            "Created TestConsumer | ConsumerName: consumer1",
             1042);
     }
 
@@ -465,7 +465,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Created TestProducer. | producerName: producer1",
+            "Created TestProducer | ProducerName: producer1",
             1043);
     }
 
@@ -484,7 +484,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "The message(s) will be processed again. | endpointName: test, brokerMessageId: 42",
+            "The message(s) will be processed again | EndpointName: test, BrokerMessageId: 42",
             1051);
     }
 
@@ -504,7 +504,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "The message will be moved to the endpoint dest. | endpointName: test, brokerMessageId: 42",
+            "The message will be moved to dest | EndpointName: test, BrokerMessageId: 42",
             1052);
     }
 
@@ -523,7 +523,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "The message(s) will be skipped. | endpointName: test, brokerMessageId: 42",
+            "The message(s) will be skipped | EndpointName: test, BrokerMessageId: 42",
             1053);
     }
 
@@ -542,7 +542,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "The message belongs to a FakeSequence and cannot be moved. | endpointName: test, brokerMessageId: 42",
+            "The message belongs to a FakeSequence and cannot be moved | EndpointName: test, BrokerMessageId: 42",
             1054);
     }
 
@@ -561,7 +561,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(InvalidOperationException),
-            "Error occurred rolling back, the retry error policy cannot be applied. The consumer will be reconnected. | endpointName: test, brokerMessageId: 42",
+            "Error occurred rolling back, retry error policy cannot be applied; the consumer will be reconnected | EndpointName: test, BrokerMessageId: 42",
             1061);
     }
 
@@ -580,7 +580,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(InvalidOperationException),
-            "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. The consumer will be reconnected. | endpointName: test, brokerMessageId: 42",
+            "Error occurred rolling back transaction or committing offset, skip error policy cannot be applied; the consumer will be reconnected | EndpointName: test, BrokerMessageId: 42",
             1062);
     }
 
@@ -598,7 +598,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Storing message into the transactional outbox. | endpointName: test1",
+            "Storing message into outbox | EndpointName: test1",
             1071);
     }
 
@@ -610,7 +610,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Trace,
             null,
-            "Reading batch of 42 messages from the outbox queue...",
+            "Reading batch of 42 messages from outbox",
             1072);
     }
 
@@ -619,7 +619,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogOutboxEmpty();
 
-        _loggerSubstitute.Received(LogLevel.Trace, null, "The outbox is empty.", 1073);
+        _loggerSubstitute.Received(LogLevel.Trace, null, "Outbox empty", 1073);
     }
 
     [Fact]
@@ -627,7 +627,7 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogProcessingOutboxStoredMessage(13);
 
-        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13.", 1074);
+        _loggerSubstitute.Received(LogLevel.Debug, null, "Processing outbox message 13", 1074);
     }
 
     [Fact]
@@ -640,7 +640,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(ArithmeticException),
-            "Failed to produce the message stored in the outbox. | endpointName: test",
+            "Failed to produce message from outbox | EndpointName: test",
             1075);
     }
 
@@ -652,7 +652,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidCredentialException),
-            "Error occurred processing the outbox.",
+            "Error occurred processing outbox",
             1076);
     }
 
@@ -670,7 +670,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Invalid message produced: [error messages] | endpointName: test1",
+            "Invalid message produced: [error messages] | EndpointName: test1",
             1081);
     }
 
@@ -689,7 +689,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Invalid message consumed: [error messages] | endpointName: test, brokerMessageId: 42",
+            "Invalid message consumed: [error messages] | EndpointName: test, BrokerMessageId: 42",
             1082);
     }
 
@@ -701,7 +701,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(BrokerConfigurationException),
-            "Invalid configuration for endpoint test.",
+            "Invalid configuration for endpoint test",
             1101);
     }
 
@@ -717,7 +717,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(BrokerConfigurationException),
-            "Error occurred configuring the endpoints. | configurator: GenericBrokerClientsConfigurator",
+            "Error occurred configuring endpoints | Configurator: GenericBrokerClientsConfigurator",
             1102);
     }
 
@@ -729,7 +729,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Error,
             typeof(InvalidCredentialException),
-            "Error occurred invoking the callback handler(s).",
+            "Error occurred invoking callback handlers",
             1103);
     }
 
@@ -741,7 +741,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(BrokerConfigurationException),
-            "Failed to configure endpoint test.",
+            "Failed to configure endpoint test",
             1104);
     }
 
@@ -775,7 +775,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Trace,
             null,
-            "Message A 42 True | consumerName: consumer1",
+            "Message A 42 True | ConsumerName: consumer1",
             1999);
     }
 
@@ -794,7 +794,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Trace,
             null,
-            "Message A 42 True | endpointName: test, brokerMessageId: 42",
+            "Message A 42 True | EndpointName: test, BrokerMessageId: 42",
             1999);
     }
 
@@ -817,7 +817,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Trace,
             typeof(InvalidComObjectException),
-            "Message A 42 True | endpointName: test, brokerMessageId: 42",
+            "Message A 42 True | EndpointName: test, BrokerMessageId: 42",
             1999);
     }
 

@@ -22,7 +22,7 @@ public class DefaultMqttNetLoggerFixture
         silverbackLogger.Received(
             LogLevel.Trace,
             typeof(TestException),
-            "Verbose from MqttClient (source): 'message 1 2'.",
+            "Verbose from MqttClient (source): 'message 1 2'",
             4104);
     }
 
@@ -37,7 +37,7 @@ public class DefaultMqttNetLoggerFixture
         silverbackLogger.Received(
             LogLevel.Information,
             typeof(TestException),
-            "Information from MqttClient (source): 'message 1 2'.",
+            "Information from MqttClient (source): 'message 1 2'",
             4103);
     }
 
@@ -52,7 +52,7 @@ public class DefaultMqttNetLoggerFixture
         silverbackLogger.Received(
             LogLevel.Warning,
             typeof(TestException),
-            "Warning from MqttClient (source): 'message 1 2'.",
+            "Warning from MqttClient (source): 'message 1 2'",
             4102);
     }
 
@@ -67,7 +67,7 @@ public class DefaultMqttNetLoggerFixture
         silverbackLogger.Received(
             LogLevel.Error,
             typeof(TestException),
-            "Error from MqttClient (source): 'message 1 2'.",
+            "Error from MqttClient (source): 'message 1 2'",
             4101);
     }
 }

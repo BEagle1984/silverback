@@ -31,128 +31,113 @@ public class CoreLoggerExtensionsFixture
     [Fact]
     public void LogSubscriberResultDiscarded_ShouldLog()
     {
-        string expectedMessage =
-            "Discarding result of type TypeName because it doesn't match the expected return type " +
-            "ExpectedTypeName.";
-
         _silverbackLogger.LogSubscriberResultDiscarded("TypeName", "ExpectedTypeName");
 
-        _logger.Received(LogLevel.Debug, null, expectedMessage, 11);
+        _logger.Received(
+            LogLevel.Debug,
+            null,
+            "Discarding result of type TypeName because doesn't match expected return type ExpectedTypeName",
+            11);
     }
 
     [Fact]
     public void LogBackgroundServiceStarting_ShouldLog()
     {
-        string expectedMessage =
-            "Starting background service " +
-            "Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService...";
-
         _silverbackLogger.LogBackgroundServiceStarting(new FakeBackgroundService());
 
-        _logger.Received(LogLevel.Information, null, expectedMessage, 41);
+        _logger.Received(
+            LogLevel.Information,
+            null,
+            "Starting background service Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService",
+            41);
     }
 
     [Fact]
     public void LogBackgroundServiceException_ShouldLog()
     {
-        string expectedMessage =
-            "Background service " +
-            "Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService " +
-            "execution failed.";
-
         _silverbackLogger.LogBackgroundServiceException(
             new FakeBackgroundService(),
             new TimeoutException());
 
-        _logger.Received(LogLevel.Error, typeof(TimeoutException), expectedMessage, 42);
+        _logger.Received(
+            LogLevel.Error,
+            typeof(TimeoutException),
+            "Background service Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService execution failed",
+            42);
     }
 
     [Fact]
     public void LogRecurringBackgroundServiceStopped_ShouldLog()
     {
-        string expectedMessage =
-            "Background service " +
-            "Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService " +
-            "stopped.";
-
         _silverbackLogger.LogRecurringBackgroundServiceStopped(new FakeBackgroundService());
 
-        _logger.Received(LogLevel.Information, null, expectedMessage, 51);
+        _logger.Received(
+            LogLevel.Information,
+            null,
+            "Background service Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService stopped",
+            51);
     }
 
     [Fact]
     public void LogRecurringBackgroundServiceSleeping_ShouldLog()
     {
-        string expectedMessage =
-            "Background service " +
-            "Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService " +
-            "sleeping for 10000 milliseconds.";
-
         _silverbackLogger.LogRecurringBackgroundServiceSleeping(
             new FakeBackgroundService(),
             TimeSpan.FromSeconds(10));
 
-        _logger.Received(LogLevel.Debug, null, expectedMessage, 52);
+        _logger.Received(
+            LogLevel.Debug,
+            null,
+            "Background service Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService sleeping for 10000 ms",
+            52);
     }
 
     [Fact]
     public void LogLockAcquired_ShouldLog()
     {
-        string expectedMessage = "Lock my-lock acquired.";
-
         _silverbackLogger.LogLockAcquired("my-lock");
 
-        _logger.Received(LogLevel.Information, null, expectedMessage, 61);
+        _logger.Received(LogLevel.Information, null, "Lock my-lock acquired", 61);
     }
 
     [Fact]
     public void LogLockReleased_ShouldLog()
     {
-        string expectedMessage = "Lock my-lock released.";
-
         _silverbackLogger.LogLockReleased("my-lock");
 
-        _logger.Received(LogLevel.Information, null, expectedMessage, 62);
+        _logger.Received(LogLevel.Information, null, "Lock my-lock released", 62);
     }
 
     [Fact]
     public void LogLockLost_ShouldLog()
     {
-        string expectedMessage = "Lock my-lock lost.";
-
         _silverbackLogger.LogLockLost("my-lock", new ArithmeticException());
 
-        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 63);
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), "Lock my-lock lost", 63);
     }
 
     [Fact]
     public void LogAcquireLockFailed_ShouldLog()
     {
-        string expectedMessage = "Failed to acquire lock my-lock.";
-
         _silverbackLogger.LogAcquireLockFailed("my-lock", new ArithmeticException());
 
-        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 64);
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), "Failed to acquire lock my-lock", 64);
     }
 
     [Fact]
     public void LogAcquireLockConcurrencyException_ShouldLog()
     {
-        string expectedMessage = "Failed to acquire lock my-lock.";
-
         _silverbackLogger.LogAcquireLockConcurrencyException("my-lock", new ArithmeticException());
 
-        _logger.Received(LogLevel.Information, typeof(ArithmeticException), expectedMessage, 65);
+        _logger.Received(LogLevel.Information, typeof(ArithmeticException), "Failed to acquire lock my-lock", 65);
     }
 
     [Fact]
     public void LogReleaseLockFailed_ShouldLog()
     {
-        string expectedMessage = "Failed to release lock my-lock.";
-
         _silverbackLogger.LogReleaseLockFailed("my-lock", new ArithmeticException());
 
-        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 66);
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), "Failed to release lock my-lock", 66);
     }
 
     private sealed class FakeBackgroundService : DistributedBackgroundService

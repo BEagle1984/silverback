@@ -28,36 +28,29 @@ public class LoggerSubstitute : ILogger
         int? eventId = null,
         string? exceptionMessage = null)
     {
-        bool containsMatchingCall = ContainsMatchingCall(
-            logLevel,
-            exceptionType,
-            message,
-            eventId,
-            exceptionMessage);
+        if (ContainsMatchingCall(logLevel, exceptionType, message, eventId, exceptionMessage))
+            return;
 
-        if (!containsMatchingCall)
-        {
-            string receivedCallsDump = string.Join(
-                ", ",
-                _receivedCalls.Select(
-                    call =>
-                        $"\r\n* {call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
-            throw new InvalidOperationException($"No matching call received. Received calls: {receivedCallsDump}");
-        }
+        string receivedCallsDump = string.Join(
+            ", ",
+            _receivedCalls.Select(call =>
+                $"\r\n* {call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
+        throw new LoggerSubstituteException($"No matching call received. Received calls: {receivedCallsDump}");
     }
 
-    public bool DidNotReceive(
+    public void DidNotReceive(
         LogLevel logLevel,
         Type? exceptionType,
         string? message = null,
         int? eventId = null,
-        string? exceptionMessage = null) =>
-        !ContainsMatchingCall(
-            logLevel,
-            exceptionType,
-            message,
-            eventId,
-            exceptionMessage);
+        string? exceptionMessage = null)
+    {
+        if (!ContainsMatchingCall(logLevel, exceptionType, message, eventId, exceptionMessage))
+            return;
+
+        string receivedCallDump = $"{logLevel}, \"{message}\", {exceptionType?.Name ?? "no exception"}, {eventId}";
+        throw new LoggerSubstituteException($"Received unexpected call: {receivedCallDump}");
+    }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
         _receivedCalls.Add(new ReceivedCall(logLevel, exception, formatter.Invoke(state, exception), eventId.Id));
@@ -73,13 +66,12 @@ public class LoggerSubstitute : ILogger
         string? message,
         int? eventId,
         string? exceptionMessage) =>
-        _receivedCalls.Any(
-            call =>
-                call.LogLevel == logLevel &&
-                call.Exception?.GetType() == exceptionType
-                && (message == null || call.Message == message)
-                && (eventId == null || call.EventId == eventId)
-                && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
+        _receivedCalls.Any(call =>
+            call.LogLevel == logLevel &&
+            call.Exception?.GetType() == exceptionType
+            && (message == null || call.Message == message)
+            && (eventId == null || call.EventId == eventId)
+            && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
 
     private sealed class ReceivedCall
     {
