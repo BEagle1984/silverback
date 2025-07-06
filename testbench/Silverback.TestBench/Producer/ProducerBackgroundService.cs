@@ -69,7 +69,7 @@ public class ProducerBackgroundService : BackgroundService
                 _messagesTracker.TrackProduced(message);
                 _mainViewModel.Trace.TraceProduced(
                     message.MessageId,
-                    message.TargetTopicViewModel,
+                    _mainViewModel.GetTopic(message.TargetTopicName),
                     new LogEntry(DateTime.UtcNow, "Message produced", null));
 
                 TimeSpan produceDelay = topic.ProduceDelay;

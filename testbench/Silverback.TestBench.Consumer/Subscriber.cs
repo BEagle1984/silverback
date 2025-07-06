@@ -84,7 +84,7 @@ public class Subscriber
         }
 
         _logger.LogInformation(
-            "Successfully processed message '{MessageId}' from topic '{TopicName}'",
+            "Successfully processed message {MessageId} from topic {TopicName}",
             envelope.Message.MessageId,
             envelope.Endpoint.RawName);
     }

@@ -38,13 +38,13 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
         _pendingMessages.TryAdd(message.MessageId, message);
 
         _mainViewModel.OverallMessagesStatistics.IncrementProducedCount();
-        message.TargetTopicViewModel.Statistics.IncrementProducedCount();
+        _mainViewModel.GetTopic(message.TargetTopicName).Statistics.IncrementProducedCount();
     }
 
     public void TrackProduceError(RoutableTestBenchMessage message)
     {
         _mainViewModel.OverallMessagesStatistics.IncrementProduceErrorsCount();
-        message.TargetTopicViewModel.Statistics.IncrementProduceErrorsCount();
+        _mainViewModel.GetTopic(message.TargetTopicName).Statistics.IncrementProduceErrorsCount();
     }
 
     public TopicViewModel? TrackConsumed(string subscribedTopicName)
@@ -94,21 +94,21 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         foreach (RoutableTestBenchMessage message in lostMessages)
         {
-            if (TrackLost(message.TargetTopicViewModel, message.MessageId))
+            if (TrackLost(_mainViewModel.GetTopic(message.TargetTopicName), message.MessageId))
             {
                 _logger.LogCritical(
                     "Message {MessageId} produced on topic {Topic} was not consumed within the expected time ({Threshold})" +
                     "and is considered lost",
                     message.MessageId,
-                    message.TargetTopicViewModel.TopicName,
+                    _mainViewModel.GetTopic(message.TargetTopicName).TopicName,
                     LostMessagesThreshold);
 
                 LogEntry logEntry = _mainViewModel.Logs.AddFatal(
                     DateTime.UtcNow,
-                    $"Message {message.MessageId} produced on topic {message.TargetTopicViewModel.TopicName} was not consumed within the expected time ({LostMessagesThreshold}) and is considered lost",
+                    $"Message {message.MessageId} produced on topic {_mainViewModel.GetTopic(message.TargetTopicName).TopicName} was not consumed within the expected time ({LostMessagesThreshold}) and is considered lost",
                     null);
 
-                _mainViewModel.Trace.TraceLost(message.MessageId, message.TargetTopicViewModel, logEntry);
+                _mainViewModel.Trace.TraceLost(message.MessageId, _mainViewModel.GetTopic(message.TargetTopicName), logEntry);
             }
         }
     }

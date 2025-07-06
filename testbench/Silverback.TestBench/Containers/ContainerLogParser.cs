@@ -66,10 +66,10 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Application is shutting down\.\.\.")]
     private static partial Regex ApplicationShuttingDownRegex();
 
-    [GeneratedRegex(@"Processing consumed message.*endpointName: (?<topicName>.*?)(?=,.*?messageId: (?<messageId>.+?)(?=,|$))")]
+    [GeneratedRegex(@"Processing consumed message.*EndpointName: (?<topicName>.*?)(?=,.*?messageId: (?<messageId>.+?)(?=,|$))")]
     private static partial Regex MessageProcessingRegex();
 
-    [GeneratedRegex(@"Successfully processed message '(?<messageId>[^']+)' from topic '(?<topicName>[^']+)'")]
+    [GeneratedRegex(@"Successfully processed message (?<messageId>[^']+) from topic (?<topicName>[^\s]+)")]
     private static partial Regex MessageProcessedRegex();
 
     [GeneratedRegex(@"Assigned partition (?<topicName>.+)\[(?<partition>\d+)\]")]
@@ -78,10 +78,10 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Revoked partition (?<topicName>.+)\[(?<partition>\d+)\]")]
     private static partial Regex PartitionRevokedRegex();
 
-    [GeneratedRegex(@"Consumer subscribed to (?<topicName>.+?)\.")]
+    [GeneratedRegex(@"Consumer subscribed to (?<topicName>.+?) |")]
     private static partial Regex TopicSubscribedRegex();
 
-    [GeneratedRegex(@"All clients disconnected\.")]
+    [GeneratedRegex(@"All clients disconnected")]
     private static partial Regex AllClientsDisconnectedRegex();
 
     [GeneratedRegex(@"^\$share/[^/]+/")]

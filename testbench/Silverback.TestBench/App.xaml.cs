@@ -66,7 +66,7 @@ public partial class App
             .Build();
 
         _logger = _host.Services.GetRequiredService<ILogger<App>>();
-        _logger.LogInformation("Application started");
+        _logger.LogInformation("Application starting");
 
         _host.Services.GetRequiredService<SilverbackStorageInitializer>().CreatePostgreSqlOutboxAsync(PostgreSqlConnectionString).Wait();
 

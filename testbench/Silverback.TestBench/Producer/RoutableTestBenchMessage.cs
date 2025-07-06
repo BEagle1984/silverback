@@ -14,7 +14,7 @@ public class RoutableTestBenchMessage : TestBenchMessage
 
     public RoutableTestBenchMessage(TopicViewModel targetTopicConfiguration)
     {
-        TargetTopicViewModel = targetTopicConfiguration;
+        TargetTopicName = targetTopicConfiguration.TopicName;
 
         double produceDelayTotalMilliseconds = targetTopicConfiguration.ProduceDelay.TotalMilliseconds;
         SimulatedProcessingTime = TimeSpan.FromMilliseconds(Random.Next(0, (int)(produceDelayTotalMilliseconds * 0.9)));
@@ -29,5 +29,5 @@ public class RoutableTestBenchMessage : TestBenchMessage
 
     [JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]
-    public TopicViewModel TargetTopicViewModel { get; }
+    public string TargetTopicName { get; }
 }

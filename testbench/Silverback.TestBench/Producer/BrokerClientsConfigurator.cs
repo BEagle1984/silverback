@@ -34,8 +34,8 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                     endpoint => endpoint
                                         .ProduceTo(topic.TopicName)
                                         .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                                        .Filter(message => message?.TargetTopicViewModel.TopicName == topic.TopicName)
-                                        .SetMessageId(message => message?.MessageId));
+                                        .Filter(message => message?.TargetTopicName == topic.TopicName)
+                                        .SetKafkaKey(message => message?.MessageId)); // Causes an exception because the 
                             }
                         }))
             .AddMqttClients(
@@ -53,8 +53,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                         .ProduceTo(topic.TopicName)
                                         .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
                                         .WithAtLeastOnceQoS()
-                                        .Filter(message => message?.TargetTopicViewModel.TopicName == topic.TopicName)
-                                        .SetMessageId(message => message?.MessageId));
+                                        .Filter(message => message?.TargetTopicName == topic.TopicName));
                             }
                         }));
 }
