@@ -61,6 +61,16 @@ public static class KafkaLogEvents
         "Consuming canceled | ConsumerName: {ConsumerName}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer did not consume any message within the
+    ///     stall detection threshold.
+    /// </summary>
+    public static LogEvent StaleConsumer { get; } = new(
+        LogLevel.Information,
+        GetEventId(17, nameof(StaleConsumer)),
+        "No message consumed within the stall detection threshold ({StallDetectionThreshold}); the consumer will restart" +
+        " | ConsumerName: {ConsumerName}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is sent to the
     ///     broker but no acknowledge is received. This is logged only if <c>ThrowIfNotAcknowledged</c> is
     ///     <c>false</c>.

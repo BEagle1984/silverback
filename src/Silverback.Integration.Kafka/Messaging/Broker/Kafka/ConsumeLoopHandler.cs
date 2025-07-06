@@ -29,6 +29,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
 
+    private DateTime _lastSuccessfulConsume = DateTime.UtcNow;
+
     private bool _isDisposed;
 
     public ConsumeLoopHandler(
@@ -114,20 +116,6 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _isDisposed = true;
     }
 
-    private static ConsumeResult<byte[]?, byte[]?> Consume(IConfluentConsumerWrapper client, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return client.Consume(cancellationToken);
-        }
-        catch (Exception)
-        {
-            // Ignore exceptions if the client is being disconnected
-            cancellationToken.ThrowIfCancellationRequested();
-            throw;
-        }
-    }
-
     private async Task ConsumeAsync(TaskCompletionSource<bool> taskCompletionSource, CancellationToken cancellationToken)
     {
         // Clear the current activity to ensure we don't propagate the previous traceId
@@ -136,6 +124,9 @@ internal sealed class ConsumeLoopHandler : IDisposable
             _consumer,
             "Starting consume loop | InstanceId: {InstanceId}, TaskId: {TaskId}",
             () => [Id, taskCompletionSource.Task.Id]);
+
+        // Reset the last successful consume time to avoid false stall detection
+        _lastSuccessfulConsume = DateTime.UtcNow;
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -163,8 +154,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         try
         {
-            ConsumeResult<byte[]?, byte[]?> consumeResult = Consume(_consumer.Client, cancellationToken);
+            ConsumeResult<byte[]?, byte[]?>? consumeResult = Consume(_consumer.Client, cancellationToken);
 
+            if (consumeResult == null)
+                return CheckConsumerStall();
+
+            _lastSuccessfulConsume = DateTime.UtcNow;
             _logger.LogConsuming(consumeResult, _consumer);
 
             _offsetsTracker?.TrackOffset(consumeResult.TopicPartitionOffset);
@@ -176,8 +171,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         }
         catch (ChannelClosedException ex)
         {
-            // Ignore the ChannelClosedException as it might be thrown in case of retry
-            // (see ConsumerChannelsManager.Reset method)
+            // Ignore the ChannelClosedException as it might be thrown in case of retry (see ConsumerChannelsManager.Reset method)
             _logger.LogConsumingCanceled(_consumer, ex);
         }
         catch (Exception ex)
@@ -187,6 +181,41 @@ internal sealed class ConsumeLoopHandler : IDisposable
         }
 
         return true;
+    }
+
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Temporary tracing")]
+    private ConsumeResult<byte[]?, byte[]?>? Consume(IConfluentConsumerWrapper client, CancellationToken cancellationToken)
+    {
+        try
+        {
+            ConsumeResult<byte[]?, byte[]?>? result = client.Consume(_consumer.Configuration.PollingTimeout);
+            cancellationToken.ThrowIfCancellationRequested();
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            // Ignore exceptions if the client is being disconnected
+            cancellationToken.ThrowIfCancellationRequested();
+            throw;
+        }
+    }
+
+    private bool CheckConsumerStall()
+    {
+        if (!_consumer.Configuration.StallDetectionThreshold.HasValue ||
+            DateTime.UtcNow - _lastSuccessfulConsume <= _consumer.Configuration.StallDetectionThreshold)
+        {
+            return true;
+        }
+
+        _logger.LogStaleConsumer(_consumer.Configuration.StallDetectionThreshold.Value, _consumer);
+        _consumer.TriggerReconnectAsync().FireAndForget();
+
+        return false;
     }
 
     private void AutoRecoveryIfEnabled(Exception ex)

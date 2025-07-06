@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 
@@ -39,15 +38,15 @@ public interface IConfluentConsumerWrapper : IBrokerClient
 
     /// <summary>
     ///     Poll for new messages (or events). This call blocks until a <see cref="ConsumeResult{TKey,TValue}" /> is available or the
-    ///     operation has been cancelled.
+    ///     operation has been canceled.
     /// </summary>
-    /// <param name="cancellationToken">
-    ///     A <see cref="CancellationToken" /> used to cancel the operation.
+    /// <param name="timeout">
+    ///     The maximum period of time the call may block.
     /// </param>
     /// <returns>
     ///     The next <see cref="ConsumeResult{TKey,TValue}" />.
     /// </returns>
-    ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken);
+    ConsumeResult<byte[]?, byte[]?>? Consume(TimeSpan timeout);
 
     /// <summary>
     ///     Stores the specified offset for the specified partition. <br />

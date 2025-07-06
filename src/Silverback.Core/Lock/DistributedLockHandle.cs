@@ -21,7 +21,7 @@ public abstract class DistributedLockHandle : IDisposable, IAsyncDisposable
     }
 
     /// <summary>
-    ///     Gets a <see cref="CancellationToken" /> that will be cancelled if the lock is lost.
+    ///     Gets a <see cref="CancellationToken" /> that will be canceled if the lock is lost.
     /// </summary>
     public abstract CancellationToken LockLostToken { get; }
 
