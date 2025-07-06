@@ -27,10 +27,10 @@ public interface IBrokerMessageIdentifiersTracker
     IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers();
 
     /// <summary>
-    ///     Gets the identifiers to be used to rollback in case of error.
+    ///     Gets the identifiers to be used to roll back in case of error.
     /// </summary>
     /// <returns>
-    ///     The identifiers to be used to rollback.
+    ///     The identifiers to be used to roll back.
     /// </returns>
     IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers();
 }

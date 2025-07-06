@@ -142,14 +142,13 @@ public interface ISequence : IDisposable
     ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
 
     /// <summary>
-    ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
-    ///     enumeration returned prematurely.
+    ///     Aborts the sequence processing. Used, for example, to signal that an exception occurred or the enumeration returned prematurely.
     /// </summary>
     /// <param name="reason">
     ///     The abort reason.
     /// </param>
     /// <param name="exception">
-    ///     The exception that caused the abort, if an exception was thrown.
+    ///     The exception that caused the abort if an exception was thrown.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
@@ -165,7 +164,7 @@ public interface ISequence : IDisposable
     IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers();
 
     /// <summary>
-    ///     Gets the identifiers to be used to rollback in case of error.
+    ///     Gets the identifiers to be used to roll back in case of error.
     /// </summary>
     /// <returns>
     ///     The identifiers to be used to rollback.

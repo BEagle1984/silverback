@@ -25,6 +25,42 @@ public class OffsetsTrackerFixture
     }
 
     [Fact]
+    public void TrackOffset_ShouldKeepLatestCommitOffsetPerPartition()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 2));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 3));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 2, 4));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 2, 5));
+
+        tracker.GetCommitOffsets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 3),
+                new KafkaOffset("topic", 2, 5)
+            ],
+            ignoreOrder: true);
+    }
+
+    [Fact]
+    public void TrackOffset_ShouldKeepFirstRollbackOffsetPerPartition()
+    {
+        OffsetsTracker tracker = new();
+
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 2));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 1, 3));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 2, 4));
+        tracker.TrackOffset(new TopicPartitionOffset("topic", 2, 5));
+
+        tracker.GetRollbackOffSets().ShouldBe(
+            [
+                new KafkaOffset("topic", 1, 2),
+                new KafkaOffset("topic", 2, 4)
+            ],
+            ignoreOrder: true);
+    }
+
+    [Fact]
     public void UntrackPartition_ShouldRemovePartitionOffsets()
     {
         OffsetsTracker tracker = new();

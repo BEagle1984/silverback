@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 /// </summary>
 public sealed class SimpleMessageIdentifiersTracker : IBrokerMessageIdentifiersTracker
 {
-    private readonly List<IBrokerMessageIdentifier> _identifiers = [];
+    private readonly HashSet<IBrokerMessageIdentifier> _identifiers = [];
 
     /// <inheritdoc cref="IBrokerMessageIdentifiersTracker.TrackIdentifier" />
     public void TrackIdentifier(IBrokerMessageIdentifier identifier) => _identifiers.Add(identifier);

@@ -39,4 +39,20 @@ public class SimpleMessageIdentifierTrackerFixture
             new TestOffset("2", "2")
         ]);
     }
+
+    [Fact]
+    public void TrackIdentifier_ShouldAddIdentifierDiscardingDuplicates()
+    {
+        SimpleMessageIdentifiersTracker tracker = new();
+
+        tracker.TrackIdentifier(new TestOffset("1", "1"));
+        tracker.TrackIdentifier(new TestOffset("2", "2"));
+        tracker.TrackIdentifier(new TestOffset("1", "1"));
+
+        tracker.GetCommitIdentifiers().ShouldBe(
+        [
+            new TestOffset("1", "1"),
+            new TestOffset("2", "2")
+        ]);
+    }
 }

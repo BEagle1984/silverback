@@ -155,7 +155,7 @@ public sealed class ConsumerPipelineContext : IDisposable
         Sequence?.GetCommitIdentifiers() ?? [Envelope.BrokerMessageIdentifier];
 
     /// <summary>
-    ///     Gets the identifiers to be used to rollback in case of error.
+    ///     Gets the identifiers to be used to roll back in case of error.
     /// </summary>
     /// <returns>
     ///     The identifiers to be used to roll back.
@@ -163,13 +163,15 @@ public sealed class ConsumerPipelineContext : IDisposable
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
         // Always roll back all pending sequences because we assume that they will all be aborted anyway
-        if (SequenceStore.Count == 0)
+        IReadOnlyCollection<ISequence> pendingSequences = SequenceStore.GetPendingSequences();
+
+        if (pendingSequences.Count == 0)
             return [Envelope.BrokerMessageIdentifier];
 
-        if (SequenceStore.Count == 1 && SequenceStore.First().IsPending)
-            return SequenceStore.First().GetRollbackIdentifiers();
+        if (pendingSequences.Count == 1)
+            return pendingSequences.Single().GetRollbackIdentifiers();
 
-        return SequenceStore.Where(sequence => sequence.IsPending).SelectMany(sequence => sequence.GetRollbackIdentifiers()).ToList();
+        throw new InvalidOperationException("Concurrent sequences not supported.");
     }
 
     /// <summary>

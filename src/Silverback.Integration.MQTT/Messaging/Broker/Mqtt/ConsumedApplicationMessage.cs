@@ -15,7 +15,7 @@ internal sealed class ConsumedApplicationMessage
     public ConsumedApplicationMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
     {
         _eventArgs = eventArgs;
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.NewGuid().ToString("N");
     }
 
     public string Id { get; }

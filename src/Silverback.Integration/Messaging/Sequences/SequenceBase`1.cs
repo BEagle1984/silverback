@@ -187,10 +187,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         StreamProvider.CreateStream<TMessage>(filters);
 
     /// <inheritdoc cref="ISequence.AddAsync" />
-    public ValueTask<AddToSequenceResult> AddAsync(
-        IRawInboundEnvelope envelope,
-        ISequence? sequence,
-        bool throwIfUnhandled)
+    public ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -207,11 +204,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
 
         if (reason == SequenceAbortReason.Error && exception == null)
-        {
-            throw new ArgumentNullException(
-                nameof(exception),
-                "The exception must be specified if the reason is Error.");
-        }
+            throw new ArgumentNullException(nameof(exception), "The exception must be specified if the reason is Error.");
 
         return AbortCoreAsync(reason, exception);
     }
@@ -219,31 +212,31 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers()
     {
-        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetCommitIdentifiers() ?? [];
-
-        if (_sequences != null)
+        // Merge identifiers from the child sequences to ensure that they are all taken into account for the commit
+        if (_sequences != null && _identifiersTracker != null)
         {
-            identifiers = identifiers
-                .Union(_sequences.SelectMany(sequence => sequence.GetCommitIdentifiers()))
-                .AsReadOnlyCollection();
+            foreach (IBrokerMessageIdentifier offset in _sequences.SelectMany(sequence => sequence.GetCommitIdentifiers()))
+            {
+                _identifiersTracker?.TrackIdentifier(offset);
+            }
         }
 
-        return identifiers;
+        return _identifiersTracker?.GetCommitIdentifiers() ?? [];
     }
 
     /// <inheritdoc cref="ISequence.GetRollbackIdentifiers" />
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
-        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetRollbackIdentifiers() ?? [];
-
-        if (_sequences != null)
+        // Merge identifiers from the child sequences to ensure that they are all taken into account for the rollback
+        if (_sequences != null && _identifiersTracker != null)
         {
-            identifiers = identifiers
-                .Union(_sequences.SelectMany(sequence => sequence.GetRollbackIdentifiers()))
-                .AsReadOnlyCollection();
+            foreach (IBrokerMessageIdentifier offset in _sequences.SelectMany(sequence => sequence.GetRollbackIdentifiers()))
+            {
+                _identifiersTracker?.TrackIdentifier(offset);
+            }
         }
 
-        return identifiers;
+        return _identifiersTracker?.GetRollbackIdentifiers() ?? [];
     }
 
     /// <inheritdoc cref="IDisposable.Dispose" />

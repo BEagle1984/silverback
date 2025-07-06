@@ -137,7 +137,7 @@ public partial class ErrorPoliciesFixture
     }
 
     [Fact]
-    public async Task SkipPolicy_ShouldRetryBatchAndSkipMessage_WhenJsonDeserializationFailsInBatch()
+    public async Task RetryAndSkipPolicies_ShouldRetryBatchAndSkipMessage_WhenJsonDeserializationFailsInBatch()
     {
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
@@ -154,7 +154,75 @@ public partial class ErrorPoliciesFixture
                 .WithBootstrapServers("PLAINTEXT://e2e")
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
-                    .Consume(endpoint => endpoint
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(5)
+                        .OnError(policy => policy.Retry(3).ThenSkip()))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne testEvent in batch)
+            {
+                list.Add(testEvent);
+            }
+
+            completedBatches++;
+        }
+
+        // Produce 3 valid messages, 1 invalid message, 3 valid messages, 1 invalid message and then 4 valid messages (10 valid messages in total)
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(invalidRawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(invalidRawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.Count.ShouldBe(8);
+        completedBatches.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(3);
+        receivedBatches[1].Count.ShouldBe(3);
+        receivedBatches[2].Count.ShouldBe(3);
+        receivedBatches[3].Count.ShouldBe(5);
+        receivedBatches[4].Count.ShouldBe(1);
+        receivedBatches[5].Count.ShouldBe(1);
+        receivedBatches[6].Count.ShouldBe(1);
+        receivedBatches[7].Count.ShouldBe(5);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(12);
+    }
+
+    [Fact]
+    public async Task RetryAndSkipPolicies_ShouldRetryBatchAndSkipMessage_WhenJsonDeserializationFailsInBatchOfChunkedMessages()
+    {
+        TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
+        byte[] invalidRawMessage = "<what?!>"u8.ToArray();
+        List<List<TestEventOne>> receivedBatches = [];
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .EnableBatchProcessing(5)
                         .OnError(policy => policy.Retry(3).ThenSkip()))))
@@ -179,44 +247,25 @@ public partial class ErrorPoliciesFixture
         for (int i = 0; i < 3; i++)
         {
             await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders($"{i}", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders($"{i}", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders($"{i}", 2, 3));
         }
 
-        await producer.RawProduceAsync(
-            invalidRawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
-        for (int i = 0; i < 3; i++)
-        {
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
-        }
-
-        await producer.RawProduceAsync(
-            invalidRawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
-        for (int i = 0; i < 4; i++)
-        {
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
-        }
+        await producer.RawProduceAsync(invalidRawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(invalidRawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -230,6 +279,6 @@ public partial class ErrorPoliciesFixture
         receivedBatches[5].Count.ShouldBe(1);
         receivedBatches[6].Count.ShouldBe(1);
         receivedBatches[7].Count.ShouldBe(5);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(12);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(18);
     }
 }

@@ -134,7 +134,7 @@ public partial class ErrorPoliciesFixture
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .CommitOffsetEach(1) // Commit immediately to be able to reliably test commit not happening
-                    .Consume(endpoint => endpoint
+                    .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .EnableBatchProcessing(5)
                         .OnError(policy => policy.Skip()))))
@@ -159,26 +159,12 @@ public partial class ErrorPoliciesFixture
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         for (int i = 0; i < 3; i++)
         {
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
+            await producer.RawProduceAsync(rawMessage);
         }
 
-        await producer.RawProduceAsync(
-            invalidRawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
-        await producer.RawProduceAsync(
-            rawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
+        await producer.RawProduceAsync(invalidRawMessage);
+
+        await producer.RawProduceAsync(rawMessage);
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Count == 1 && receivedBatches[0].Count == 4);
         receivedBatches.Count.ShouldBe(1);
@@ -189,31 +175,13 @@ public partial class ErrorPoliciesFixture
 
         // Produce another 2 valid messages, then 1 invalid message and then 4 valid messages
         // (10 valid messages in total, 2 invalid)
-        for (int i = 0; i < 2; i++)
-        {
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
-        }
-
-        await producer.RawProduceAsync(
-            invalidRawMessage,
-            new MessageHeaderCollection
-            {
-                { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-            });
-        for (int i = 0; i < 4; i++)
-        {
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
-                });
-        }
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(invalidRawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
+        await producer.RawProduceAsync(rawMessage);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

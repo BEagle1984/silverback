@@ -70,6 +70,12 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     public Offset Offset { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether the offset is one of the special values (i.e. <see cref="Offset.Unset" />,
+    ///     <see cref="Offset.Beginning" />, <see cref="Offset.End" />).
+    /// </summary>
+    public bool IsSpecial => Offset.IsSpecial;
+
+    /// <summary>
     ///     Less than operator.
     /// </summary>
     /// <param name="left">

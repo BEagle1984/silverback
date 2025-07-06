@@ -72,8 +72,11 @@ public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposab
     /// <param name="includeUnbounded">
     ///     A value indicating whether the <see cref="UnboundedSequence" /> instances have to be returned as well.
     /// </param>
+    /// <param name="includeChildren">
+    ///     A value indicating whether the child sequences have to be returned as well (e.g., a chunk sequence inside a batch sequence).
+    /// </param>
     /// <returns>
     ///     The collection of sequences.
     /// </returns>
-    IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false);
+    IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false, bool includeChildren = false);
 }

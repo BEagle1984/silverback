@@ -37,7 +37,7 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
         _rollbackOffsets.AddOrUpdate(
             offset.TopicPartition,
             static (_, newOffset) => newOffset,
-            static (_, existingOffset, newOffset) => existingOffset.Offset == Offset.Unset ? newOffset : existingOffset,
+            static (_, existingOffset, newOffset) => newOffset < existingOffset || existingOffset.IsSpecial ? newOffset : existingOffset,
             offset);
     }
 
