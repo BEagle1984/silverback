@@ -9,7 +9,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost;
 
 public abstract class E2EFixture : IDisposable
 {
-    // Use a semaphore to prevent parallel execution, instead of relying on the XUnit mechanism
+    // Use semaphore to prevent parallel execution, instead of relying on the XUnit mechanism
     private static readonly SemaphoreSlim Semaphore = new(1);
 
     protected E2EFixture(ITestOutputHelper testOutputHelper)

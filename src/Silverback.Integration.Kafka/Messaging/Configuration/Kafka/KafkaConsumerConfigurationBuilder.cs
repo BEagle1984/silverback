@@ -43,6 +43,10 @@ public partial class KafkaConsumerConfigurationBuilder
 
     private TimeSpan? _getMetadataTimeout;
 
+    private TimeSpan? _pollingTimeout;
+
+    private TimeSpan? _stallDetectionThreshold;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaConsumerConfigurationBuilder" /> class.
     /// </summary>
@@ -406,6 +410,41 @@ public partial class KafkaConsumerConfigurationBuilder
     }
 
     /// <summary>
+    ///     Sets the timeout to wait for the consumer to poll for new messages before initiating a new poll. The default is 100 milliseconds.
+    /// </summary>
+    /// <param name="pollingTimeout">
+    ///     The timeout to wait for the consumer to poll for new messages.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithPollingTimeout(TimeSpan pollingTimeout)
+    {
+        _pollingTimeout = Check.GreaterThan(pollingTimeout, nameof(pollingTimeout), TimeSpan.Zero);
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the maximum time to wait for a message to be consumed before the consumer is considered stale. A stale consumer is
+    ///     automatically restarted.
+    ///     The default is <c>null</c>, which means that the consumer is never considered stale and is never restarted.
+    /// </summary>
+    /// <param name="stallDetectionThreshold">
+    ///     The maximum time to wait for a message to be consumed before the consumer is considered stale.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithStallDetectionThreshold(TimeSpan? stallDetectionThreshold)
+    {
+        if (stallDetectionThreshold.HasValue)
+            Check.GreaterThan(stallDetectionThreshold.Value, nameof(stallDetectionThreshold), TimeSpan.Zero);
+
+        _stallDetectionThreshold = stallDetectionThreshold;
+        return this;
+    }
+
+    /// <summary>
     ///     Sets a comma-separated list of fields that may be optionally set in <see cref="ConsumeResult{TKey,TValue}" /> objects returned by
     ///     the <see cref="Consumer{TKey,TValue}.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve
     ///     throughput and reduce memory consumption. Allowed values: <c>headers</c>, <c>timestamp</c>, <c>topic</c>, <c>all</c>, <c>none</c>.
@@ -508,20 +547,20 @@ public partial class KafkaConsumerConfigurationBuilder
     public KafkaConsumerConfigurationBuilder WithRangePartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.Range);
 
     /// <summary>
-    ///   Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute
-    ///  the partitions among the consumer group members.
+    ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute
+    ///     the partitions among the consumer group members.
     /// </summary>
     /// <returns>
-    ///    The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder WithRoundRobinPartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.RoundRobin);
 
     /// <summary>
-    ///   Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute
-    ///  the partitions and minimize the partitions movements.
+    ///     Sets the partition assignment strategy to <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute
+    ///     the partitions and minimize the partitions movements.
     /// </summary>
     /// <returns>
-    ///   The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder WithCooperativeStickyPartitionAssignmentStrategy() => WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky);
 
@@ -785,6 +824,8 @@ public partial class KafkaConsumerConfigurationBuilder
             EnableAutoRecovery = _enableAutoRecovery ?? configuration.EnableAutoRecovery,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,
             GetMetadataTimeout = _getMetadataTimeout ?? configuration.GetMetadataTimeout,
+            PollingTimeout = _pollingTimeout ?? configuration.PollingTimeout,
+            StallDetectionThreshold = _stallDetectionThreshold ?? configuration.StallDetectionThreshold,
             ProcessPartitionsIndependently = _processPartitionsIndependently ?? configuration.ProcessPartitionsIndependently,
             Endpoints = _endpoints.Values.AsValueReadOnlyCollection()
         };

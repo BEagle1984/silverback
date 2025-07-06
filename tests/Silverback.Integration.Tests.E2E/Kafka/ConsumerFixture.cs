@@ -134,7 +134,7 @@ public class ConsumerFixture : KafkaFixture
     public async Task StopAsync_ShouldCancelProcessing()
     {
         bool received = false;
-        bool cancelled = false;
+        bool canceled = false;
         using CancellationTokenSource antiDeadlockCancellationTokenSource = new();
         using SemaphoreSlim semaphore = new(0);
 
@@ -163,7 +163,7 @@ public class ConsumerFixture : KafkaFixture
                 await Task.Delay(10, CancellationToken.None);
             }
 
-            cancelled = true;
+            canceled = true;
 
             await semaphore.WaitAsync(CancellationToken.None);
         }
@@ -180,8 +180,8 @@ public class ConsumerFixture : KafkaFixture
 
             consumer.StopAsync().FireAndForget();
 
-            await AsyncTestingUtil.WaitAsync(() => cancelled);
-            cancelled.ShouldBeTrue();
+            await AsyncTestingUtil.WaitAsync(() => canceled);
+            canceled.ShouldBeTrue();
             consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Consuming);
 
             semaphore.Release();

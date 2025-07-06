@@ -169,12 +169,11 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         IsRebalanceScheduled = true;
 
         // Rebalance asynchronously to mimic the real Kafka
-        Task.Run(
-            async () =>
-            {
-                await Task.Delay(50).ConfigureAwait(false);
-                await RebalanceAsync().ConfigureAwait(false);
-            }).FireAndForget();
+        Task.Run(async () =>
+        {
+            await Task.Delay(50).ConfigureAwait(false);
+            await RebalanceAsync().ConfigureAwait(false);
+        }).FireAndForget();
     }
 
     public async Task<RebalanceResult> RebalanceAsync()
@@ -189,13 +188,12 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             if (_subscriptions.Count == 0)
                 return RebalanceResult.Empty;
 
-            _subscribedConsumers.ForEach(
-                consumer =>
-                {
-                    consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
-                    consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
-                    consumer.Consumer.OnRebalancing();
-                });
+            _subscribedConsumers.ForEach(consumer =>
+            {
+                consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
+                consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
+                consumer.Consumer.OnRebalancing();
+            });
 
             EnsurePartitionAssignmentsDictionaryIsInitialized();
             IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
@@ -206,10 +204,13 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
                 PartitionAssignmentStrategy.CooperativeSticky =>
                     CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
 
-                // RoundRobin and Range strategies aren't properly implemented but it shouldn't make any difference for the in-memory tests
+                // RoundRobin and Range strategies aren't properly implemented, but it shouldn't make any difference for the in-memory tests
                 _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
             };
             InvokePartitionsRevokedCallbacks(result);
+
+            // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
+            await Task.Delay(20).ConfigureAwait(false);
 
             IsRebalancing = false;
 
@@ -227,7 +228,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         _partitionAssignments[consumer].Partitions;
 
     public TopicPartitionOffset? GetCommittedOffset(TopicPartition topicPartition) =>
-        _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? offset) ? offset : null;
+        _committedOffsets.GetValueOrDefault(topicPartition);
 
     public long GetCommittedOffsetsCount(string topic) =>
         _committedOffsets.Values.Where(offset => offset.Topic == topic).Sum(offset => offset.Offset);
@@ -277,24 +278,21 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         _subscriptions
             .Select(subscription => subscription.Consumer)
             .Where(consumer => !_partitionAssignments.ContainsKey(consumer))
-            .ForEach(
-                consumer =>
-                {
-                    _partitionAssignments[consumer] = new SubscriptionPartitionAssignment(consumer);
-                });
+            .ForEach(consumer =>
+            {
+                _partitionAssignments[consumer] = new SubscriptionPartitionAssignment(consumer);
+            });
 
     private PartitionAssignmentStrategy GetAssignmentStrategy()
     {
-        if (_subscriptions.TrueForAll(
-            subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
-                            subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky)))
+        if (_subscriptions.TrueForAll(subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
+                                                      subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky)))
         {
             return PartitionAssignmentStrategy.CooperativeSticky;
         }
 
-        if (_subscriptions.TrueForAll(
-            subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
-                            subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.RoundRobin)))
+        if (_subscriptions.TrueForAll(subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
+                                                      subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.RoundRobin)))
         {
             return PartitionAssignmentStrategy.RoundRobin;
         }
@@ -305,9 +303,8 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
     private List<TopicPartition> GetPartitionsToAssign() =>
         _subscriptions.Select(subscription => subscription.Topic).Distinct()
             .Select(topicName => _topicCollection.Get(topicName, BootstrapServers))
-            .SelectMany(
-                topic =>
-                    topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
+            .SelectMany(topic =>
+                topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
             .ToList();
 
     private void InvokePartitionsRevokedCallbacks(RebalanceResult result)
@@ -326,9 +323,8 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
     private Task<Task[]> WaitUntilPartitionsAssignedAsync() =>
         Task.WhenAll(
-            _subscribedConsumers.Select(
-                consumer =>
-                    Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
+            _subscribedConsumers.Select(consumer =>
+                Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
 
     private bool HasFinishedConsuming(IMockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames)
     {
@@ -340,21 +336,20 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
         return consumer.Assignment
             .Where(partition => topicNames.Count == 0 || topicNames.Contains(partition.Topic, StringComparer.Ordinal))
-            .All(
-                topicPartition =>
-                {
-                    IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
-                    Offset lastOffset = topic.Partitions[topicPartition.Partition].LastOffset;
+            .All(topicPartition =>
+            {
+                IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
+                Offset lastOffset = topic.Partitions[topicPartition.Partition].LastOffset;
 
-                    if (lastOffset < 0)
-                        return true;
+                if (lastOffset < 0)
+                    return true;
 
-                    if (string.IsNullOrEmpty(consumer.Config.GroupId))
-                        return consumer.GetStoredOffset(topicPartition).Offset > lastOffset;
+                if (string.IsNullOrEmpty(consumer.Config.GroupId))
+                    return consumer.GetStoredOffset(topicPartition).Offset > lastOffset;
 
-                    return _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? committedOffset) &&
-                           committedOffset.Offset > lastOffset;
-                });
+                return _committedOffsets.TryGetValue(topicPartition, out TopicPartitionOffset? committedOffset) &&
+                       committedOffset.Offset > lastOffset;
+            });
     }
 
     private sealed class SubscribedConsumer

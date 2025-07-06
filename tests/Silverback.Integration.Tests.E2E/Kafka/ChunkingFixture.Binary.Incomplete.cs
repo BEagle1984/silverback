@@ -275,7 +275,7 @@ public partial class ChunkingFixture
     }
 
     [Fact]
-    public async Task Chunking_RebalanceWithIncompleteBinaryMessage_AbortedAndNotCommitted()
+    public async Task Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         int aborted = 0;

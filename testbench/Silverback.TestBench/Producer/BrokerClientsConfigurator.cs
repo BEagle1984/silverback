@@ -18,42 +18,38 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder
-            .AddKafkaClients(
-                clients => clients
-                    .AddProducer(
-                        producer =>
-                        {
-                            producer
-                                .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092")
-                                .WithClientId("testbench-producer");
+            .AddKafkaClients(clients => clients
+                .AddProducer(producer =>
+                {
+                    producer
+                        .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092")
+                        .WithClientId("testbench-producer");
 
-                            foreach (KafkaTopicViewModel topic in _mainViewModel.KafkaTopics)
-                            {
-                                producer.Produce<RoutableTestBenchMessage>(
-                                    $"kafka-{topic.TopicName}",
-                                    endpoint => endpoint
-                                        .ProduceTo(topic.TopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                                        .Filter(message => message?.TargetTopicName == topic.TopicName)
-                                        .SetKafkaKey(message => message?.MessageId)); // Causes an exception because the 
-                            }
-                        }))
-            .AddMqttClients(
-                clients => clients
-                    .AddClient(
-                        client =>
-                        {
-                            client.ConnectViaTcp("localhost").WithClientId("testbench-producer");
+                    foreach (KafkaTopicViewModel topic in _mainViewModel.KafkaTopics)
+                    {
+                        producer.Produce<RoutableTestBenchMessage>(
+                            $"kafka-{topic.TopicName}",
+                            endpoint => endpoint
+                                .ProduceTo(topic.TopicName)
+                                .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
+                                .Filter(message => message?.TargetTopicName == topic.TopicName)
+                                .SetKafkaKey(message => message?.MessageId));
+                    }
+                }))
+            .AddMqttClients(clients => clients
+                .AddClient(client =>
+                {
+                    client.ConnectViaTcp("localhost").WithClientId("testbench-producer");
 
-                            foreach (MqttTopicViewModel topic in _mainViewModel.MqttTopics)
-                            {
-                                client.Produce<RoutableTestBenchMessage>(
-                                    $"mqtt-{topic.TopicName}",
-                                    endpoint => endpoint
-                                        .ProduceTo(topic.TopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                                        .WithAtLeastOnceQoS()
-                                        .Filter(message => message?.TargetTopicName == topic.TopicName));
-                            }
-                        }));
+                    foreach (MqttTopicViewModel topic in _mainViewModel.MqttTopics)
+                    {
+                        client.Produce<RoutableTestBenchMessage>(
+                            $"mqtt-{topic.TopicName}",
+                            endpoint => endpoint
+                                .ProduceTo(topic.TopicName)
+                                .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
+                                .WithAtLeastOnceQoS()
+                                .Filter(message => message?.TargetTopicName == topic.TopicName));
+                    }
+                }));
 }

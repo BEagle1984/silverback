@@ -320,7 +320,7 @@ public partial class ChunkingFixture
     }
 
     [Fact]
-    public async Task Chunking_SingleChunkBinaryMessageConsumedInBatch_ProducedAndConsumed()
+    public async Task Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch()
     {
         const int messagesCount = 15;
         const int chunkSize = 50;

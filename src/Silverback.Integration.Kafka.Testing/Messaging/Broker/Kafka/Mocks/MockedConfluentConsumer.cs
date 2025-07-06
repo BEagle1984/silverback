@@ -92,14 +92,13 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public int AddBrokers(string brokers) => throw new NotSupportedException();
 
-    public ConsumeResult<byte[]?, byte[]?> Consume(int millisecondsTimeout) =>
-        throw new NotSupportedException();
+    public ConsumeResult<byte[]?, byte[]?>? Consume(int millisecondsTimeout) => Consume(TimeSpan.FromMilliseconds(millisecondsTimeout));
 
     public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
     {
         ConsumeResult<byte[]?, byte[]?>? result;
 
-        while (!TryConsume(cancellationToken, out result))
+        while (!TryConsume(cancellationToken, out result) || result == null)
         {
             Thread.Sleep(10);
         }
@@ -107,7 +106,40 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         return result;
     }
 
-    public ConsumeResult<byte[]?, byte[]?> Consume(TimeSpan timeout) => throw new NotSupportedException();
+    public ConsumeResult<byte[]?, byte[]?>? Consume(TimeSpan timeout)
+    {
+        DateTime startTime = DateTime.UtcNow;
+        while (DateTime.UtcNow - startTime < timeout)
+        {
+            // A cancellation token is still needed to avoid blocking too long for cases when the partition assignment is delayed
+            // by a lot (health check tests, for example)
+            using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromMilliseconds(100));
+
+            try
+            {
+                if (TryConsume(cancellationTokenSource.Token, out ConsumeResult<byte[]?, byte[]?>? result))
+                {
+                    // Only return a result if it is not null, otherwise continue trying to consume
+                    if (result != null)
+                        return result;
+                }
+                else
+                {
+                    // Break early if the partitions are not assigned yet (e.g., during rebalancing)
+                    return null;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Swallow the exception since the caller doesn't expect it from this method
+                return null;
+            }
+
+            Thread.Sleep(10);
+        }
+
+        return null;
+    }
 
     public void Subscribe(IEnumerable<string> topics)
     {
@@ -135,7 +167,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     }
 
     public void Assign(TopicPartition partition) =>
-        Assign(new[] { new TopicPartitionOffset(partition, Offset.Unset) });
+        Assign([new TopicPartitionOffset(partition, Offset.Unset)]);
 
     public void Assign(TopicPartitionOffset partition) => Assign([partition]);
 
@@ -275,10 +307,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         PartitionsRevokedHandler?.Invoke(
             this,
-            topicPartitions.Select(
-                    topicPartition => _currentOffsets.GetValueOrDefault(
-                        topicPartition,
-                        new TopicPartitionOffset(topicPartition, Offset.Unset)))
+            topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
+                    topicPartition,
+                    new TopicPartitionOffset(topicPartition, Offset.Unset)))
                 .ToList());
 
         if (Config.EnableAutoCommit != false && !string.IsNullOrEmpty(Config.GroupId))
@@ -298,21 +329,24 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    private bool TryConsume(CancellationToken cancellationToken, [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
+    private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
     {
         Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        EnsurePartitionsAssigned(cancellationToken);
+        if (!EnsurePartitionsAssigned(cancellationToken))
+        {
+            result = null;
+            return false;
+        }
 
-        // Process the assigned partitions starting from the one that consumed less messages
+        // Process the assigned partitions starting from the one that consumed fewer messages
         IOrderedEnumerable<TopicPartitionOffset> topicPartitionsOffsets =
             _currentOffsets.Values
-                .Where(
-                    topicPartitionOffset => !IsPaused(
-                        topicPartitionOffset.Topic,
-                        topicPartitionOffset.Partition))
+                .Where(topicPartitionOffset => !IsPaused(
+                    topicPartitionOffset.Topic,
+                    topicPartitionOffset.Partition))
                 .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -339,18 +373,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
 
         result = null;
-        return false;
+        return true;
     }
 
-    private void EnsurePartitionsAssigned(CancellationToken cancellationToken)
+    private bool EnsurePartitionsAssigned(CancellationToken cancellationToken)
     {
         if (PartitionsAssigned)
-            return;
+            return true;
 
-        while (_consumerGroup.IsRebalancing || _consumerGroup.IsRebalanceScheduled)
-        {
-            Task.Delay(10, cancellationToken).SafeWait(cancellationToken);
-        }
+        if (_consumerGroup.IsRebalancing || _consumerGroup.IsRebalanceScheduled)
+            return false;
 
         if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
             Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait(cancellationToken);
@@ -375,6 +407,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         PartitionsAssigned = true;
 
         _consumerGroup.NotifyAssignmentComplete(this);
+
+        return true;
     }
 
     private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
@@ -394,7 +428,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         else if (offset.IsSpecial)
             offset = topic.GetFirstOffset(topicPartitionOffset.Partition);
 
-        // If the partition is empty the first offset would be Offset.Unset
+        // If the partition is empty, the first offset would be Offset.Unset
         if (offset.IsSpecial)
             offset = new Offset(0);
 
@@ -444,9 +478,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             if (isAutoCommit)
             {
                 List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
-                    .Select(
-                        topicPartitionOffset =>
-                            new TopicPartitionOffsetError(topicPartitionOffset, null))
+                    .Select(topicPartitionOffset =>
+                        new TopicPartitionOffsetError(topicPartitionOffset, null))
                     .ToList();
 
                 OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
