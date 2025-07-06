@@ -88,11 +88,13 @@ internal sealed class ConsumeLoopHandler : IDisposable
             return;
         }
 
-        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler... | instanceId: {instanceId}", () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
 
         await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
         IsConsuming = false;
+
+        _logger.LogConsumerTrace(_consumer, "Stopping ConsumeLoopHandler, awaiting stopping token | InstanceId: {InstanceId}", () => [Id]);
 
         await Stopping.ConfigureAwait(false);
     }
@@ -102,12 +104,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
         if (_isDisposed)
             return;
 
-        _logger.LogConsumerTrace(_consumer, "Disposing ConsumeLoopHandler... | instanceId: {instanceId}", () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "Disposing ConsumeLoopHandler | InstanceId: {InstanceId}", () => [Id]);
 
         StopAsync().SafeWait();
         _cancellationTokenSource.Dispose();
 
-        _logger.LogConsumerTrace(_consumer, "ConsumeLoopHandler disposed. | instanceId: {instanceId}", () => [Id]);
+        _logger.LogConsumerTrace(_consumer, "ConsumeLoopHandler disposed | InstanceId: {InstanceId}", () => [Id]);
 
         _isDisposed = true;
     }
@@ -132,7 +134,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         Activity.Current = null;
         _logger.LogConsumerTrace(
             _consumer,
-            "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",
+            "Starting consume loop | InstanceId: {InstanceId}, TaskId: {TaskId}",
             () => [Id, taskCompletionSource.Task.Id]);
 
         while (!cancellationToken.IsCancellationRequested)
@@ -143,7 +145,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
         _logger.LogConsumerTrace(
             _consumer,
-            "Consume loop stopped. | instanceId: {instanceId}, taskId: {taskId}",
+            "Consume loop stopped | InstanceId: {InstanceId}, TaskId: {TaskId}",
             () => [Id, taskCompletionSource.Task.Id]);
 
         taskCompletionSource.TrySetResult(true);

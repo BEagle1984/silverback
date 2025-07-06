@@ -252,7 +252,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        // Filter out the partitions that have been revoked (during the cooperative rebalance the partitions are handled slightly differently,
+        // Discard the partitions that have been revoked (during the cooperative rebalance, the partitions are handled slightly differently,
         // and they are reassigned before the commit is over)
         IEnumerable<KafkaOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Where(kafkaOffset => IsNotRevoked(kafkaOffset.TopicPartition));
@@ -268,7 +268,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             {
                 _logger.LogConsumerTrace(
                     this,
-                    "Skipping commit of revoked partition: {topic}[{partition}]@{offset}.",
+                    "Skipping commit of revoked partition {Topic}[{Partition}]@{Offset}",
                     () => [offset.TopicPartition.Topic, offset.TopicPartition.Partition.Value, offset.Offset.Value]);
             }
         }
@@ -294,9 +294,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
             brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
 
-        // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the pending
-        // sequences, but we don't want to pause/resume the partitions we aren't processing) and the ones that have been revoked (during the
-        // cooperative rebalance the partitions are handled slightly differently, and they are reassigned before the rollback is over)
+        // Discard the partitions that:
+        // - aren't being processed anymore (during a rebalance the rollback might be triggered aborting the pending sequences, but we don't
+        //   want to pause/resume the partitions we aren't processing)
+        // - have been revoked (during the cooperative rebalance, the partitions are handled slightly differently, and they are reassigned
+        //   before the rollback is over)
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
             .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition) &&
@@ -378,7 +380,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         {
             _logger.LogConsumerStartError(this, ex);
 
-            // Try to recover from error
+            // Try to recover from the error
             await TriggerReconnectAsync().ConfigureAwait(false);
         }
     }
@@ -392,7 +394,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         _logger.LogConsumerTrace(
             this,
-            "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
+            "ConsumeLoopHandler started | InstanceId: {InstanceId}, TaskId: {TaskId}",
             () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
     }
 
@@ -416,31 +418,31 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         _logger.LogConsumerTrace(
             this,
-            "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
+            "Waiting ConsumeLoopHandler stop | InstanceId: {InstanceId}, TaskId: {TaskId}",
             () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
 
         await _consumeLoopHandler.Stopping.ConfigureAwait(false);
 
         _logger.LogConsumerTrace(
             this,
-            "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
+            "ConsumeLoopHandler stopped | InstanceId: {InstanceId}, TaskId: {TaskId}.",
             () => [_consumeLoopHandler.Id, _consumeLoopHandler.Stopping.Id]);
     }
 
     private async Task WaitUntilChannelsManagerStopsAsync()
     {
-        _logger.LogConsumerTrace(this, "Waiting until ChannelsManager stops...");
+        _logger.LogConsumerTrace(this, "Waiting ChannelsManager stop");
 
         await _channelsManager.Stopping.ConfigureAwait(false);
 
-        _logger.LogConsumerTrace(this, "ChannelsManager stopped.");
+        _logger.LogConsumerTrace(this, "ChannelsManager stopped");
     }
 
     private void StoreOffset(TopicPartitionOffset offset)
     {
         _logger.LogConsumerTrace(
             this,
-            "Storing offset {topic}[{partition}]@{offset}.",
+            "Storing offset {Topic}[{Partition}]@{Offset}",
             () => [offset.Topic, offset.Partition.Value, offset.Offset.Value]);
 
         Client.StoreOffset(offset);

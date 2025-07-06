@@ -80,7 +80,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         _logger.LogConsumerTrace(
             _consumer,
-            "Writing message ({topic}[{partition}]@{offset}) to channel {channel}.",
+            "Writing message ({Topic}[{Partition}]@{Offset}) to channel {Channel}",
             () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
 
         try
@@ -99,7 +99,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             {
                 _logger.LogConsumerTrace(
                     _consumer,
-                    "Failed to write message ({topic}[{partition}]@{offset}) to overflow channel {channel}.",
+                    "Failed to write message ({Topic}[{Partition}]@{Offset}) to overflow channel {Channel}",
                     () => [consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value, channel.Id]);
             }
         }
