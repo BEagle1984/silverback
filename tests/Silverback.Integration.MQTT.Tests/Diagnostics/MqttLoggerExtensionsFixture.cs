@@ -72,12 +72,12 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
             new MqttClientConfiguration
             {
                 ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
-                    [
-                        new MqttProducerEndpointConfiguration
-                        {
-                            EndpointResolver = new MqttStaticProducerEndpointResolver("topic1")
-                        }
-                    ])
+                [
+                    new MqttProducerEndpointConfiguration
+                    {
+                        EndpointResolver = new MqttStaticProducerEndpointResolver("topic1")
+                    }
+                ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             serviceProvider,
@@ -126,6 +126,18 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
             typeof(TimeoutException),
             $"Failed to acknowledge message {applicationMessage.Id} from topic some-topic | ConsumerName: consumer1",
             4012);
+    }
+
+    [Fact]
+    public void LogNoMatchingSubscribers_ShouldLog()
+    {
+        _silverbackLogger.LogNoMatchingSubscribers("my/topic");
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "No matching subscribers found for the produced message | Topic: my/topic",
+            4013);
     }
 
     [Fact]

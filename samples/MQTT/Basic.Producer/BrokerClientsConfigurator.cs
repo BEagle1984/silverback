@@ -25,6 +25,6 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                     .ProduceTo("samples/basic")
                                     .WithAtLeastOnceQoS()
                                     .Retain()
-                                    .IgnoreNoMatchingSubscribersError())));
+                                    .LogNoMatchingSubscribersWarning())));
     }
 }

@@ -31,6 +31,14 @@ public static class MqttLogEvents
         "Failed to acknowledge message {BrokerMessageId} from topic {Topic} | ConsumerName: {ConsumerName}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when no matching subscribers are found for a produced message.
+    /// </summary>
+    public static LogEvent NoMatchingSubscribers { get; } = new(
+        LogLevel.Warning,
+        GetEventId(13, nameof(NoMatchingSubscribers)),
+        "No matching subscribers found for the produced message | Topic: {Topic}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.
     /// </summary>
     public static LogEvent ConnectError { get; } = new(

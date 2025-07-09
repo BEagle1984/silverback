@@ -111,25 +111,36 @@ public partial class MqttProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void IgnoreNoMatchingSubscribersError_ShouldSetIgnoreNoMatchingSubscribersError()
+    public void IgnoreNoMatchingSubscribers_ShouldSetNoMatchingSubscribersBehavior()
     {
         MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
-        builder.ProduceTo("some-topic").IgnoreNoMatchingSubscribersError();
+        builder.ProduceTo("some-topic").IgnoreNoMatchingSubscribers();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.IgnoreNoMatchingSubscribersError.ShouldBeTrue();
+        configuration.NoMatchingSubscribersBehavior.ShouldBe(NoMatchingSubscribersBehavior.Ignore);
     }
 
     [Fact]
-    public void ThrowNoMatchingSubscribersError_ShouldSetIgnoreNoMatchingSubscribersError()
+    public void LogNoMatchingSubscribersWarning_ShouldSetNoMatchingSubscribersBehavior()
+    {
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        builder.ProduceTo("some-topic").LogNoMatchingSubscribersWarning();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
+        configuration.NoMatchingSubscribersBehavior.ShouldBe(NoMatchingSubscribersBehavior.LogWarning);
+    }
+
+    [Fact]
+    public void ThrowNoMatchingSubscribersError_ShouldSetNoMatchingSubscribersBehavior()
     {
         MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo("some-topic").ThrowNoMatchingSubscribersError();
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
-        configuration.IgnoreNoMatchingSubscribersError.ShouldBeFalse();
+        configuration.NoMatchingSubscribersBehavior.ShouldBe(NoMatchingSubscribersBehavior.Throw);
     }
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]

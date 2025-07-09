@@ -28,7 +28,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
 
     private uint? _messageExpiryInterval;
 
-    private bool? _ignoreNoMatchingSubscribersError;
+    private NoMatchingSubscribersBehavior? _noMatchingSubscribersBehavior;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> class.
@@ -117,16 +117,15 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> ProduceToDynamicTopic()
     {
-        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(
-            envelope =>
-            {
-                string? destinationTopic = envelope.GetMqttDestinationTopic();
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(envelope =>
+        {
+            string? destinationTopic = envelope.GetMqttDestinationTopic();
 
-                if (string.IsNullOrEmpty(destinationTopic))
-                    throw new InvalidOperationException("The destination topic is not set.");
+            if (string.IsNullOrEmpty(destinationTopic))
+                throw new InvalidOperationException("The destination topic is not set.");
 
-                return destinationTopic;
-            });
+            return destinationTopic;
+        });
 
         return this;
     }
@@ -194,9 +193,21 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttProducerEndpointConfigurationBuilder<TMessage> IgnoreNoMatchingSubscribersError()
+    public MqttProducerEndpointConfigurationBuilder<TMessage> IgnoreNoMatchingSubscribers()
     {
-        _ignoreNoMatchingSubscribersError = true;
+        _noMatchingSubscribersBehavior = NoMatchingSubscribersBehavior.Ignore;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that a warning should be logged when no matching subscribers are found for the produced message.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttProducerEndpointConfigurationBuilder<TMessage> LogNoMatchingSubscribersWarning()
+    {
+        _noMatchingSubscribersBehavior = NoMatchingSubscribersBehavior.LogWarning;
         return this;
     }
 
@@ -208,7 +219,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> ThrowNoMatchingSubscribersError()
     {
-        _ignoreNoMatchingSubscribersError = false;
+        _noMatchingSubscribersBehavior = NoMatchingSubscribersBehavior.Throw;
         return this;
     }
 
@@ -223,7 +234,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
             QualityOfServiceLevel = _qualityOfServiceLevel ?? configuration.QualityOfServiceLevel,
             Retain = _retain ?? configuration.Retain,
             MessageExpiryInterval = _messageExpiryInterval ?? configuration.MessageExpiryInterval,
-            IgnoreNoMatchingSubscribersError = _ignoreNoMatchingSubscribersError ?? configuration.IgnoreNoMatchingSubscribersError
+            NoMatchingSubscribersBehavior = _noMatchingSubscribersBehavior ?? configuration.NoMatchingSubscribersBehavior
         };
     }
 }

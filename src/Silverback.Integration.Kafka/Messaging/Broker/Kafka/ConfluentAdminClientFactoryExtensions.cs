@@ -28,6 +28,7 @@ public static class ConfluentAdminClientFactoryExtensions
     /// </returns>
     public static IAdminClient GetClient(this IConfluentAdminClientFactory factory, Action<KafkaClientConfigurationBuilder> builderAction)
     {
+        Check.NotNull(factory, nameof(factory));
         Check.NotNull(builderAction, nameof(builderAction));
 
         KafkaClientConfigurationBuilder builder = new();

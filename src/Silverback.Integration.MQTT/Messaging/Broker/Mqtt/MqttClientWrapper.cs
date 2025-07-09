@@ -58,13 +58,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        _subscribedTopicsFilters = Configuration.ConsumerEndpoints.SelectMany(
-                endpoint => endpoint.Topics.Select(
-                    topic =>
-                        new MqttTopicFilterBuilder()
-                            .WithTopic(topic)
-                            .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
-                            .Build()))
+        _subscribedTopicsFilters = Configuration.ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Select(topic =>
+                new MqttTopicFilterBuilder()
+                    .WithTopic(topic)
+                    .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
+                    .Build()))
             .ToArray();
 
         _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
@@ -118,9 +116,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     protected override async ValueTask DisconnectCoreAsync()
     {
-        await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(
-            callback => callback
-                .OnClientDisconnectingAsync(Configuration)).ConfigureAwait(false);
+        await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(callback => callback
+            .OnClientDisconnectingAsync(Configuration)).ConfigureAwait(false);
 
         if (_connectCancellationTokenSource != null)
             await _connectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
@@ -279,14 +276,25 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             await Task.Delay(1, cancellationToken).ConfigureAwait(false);
         }
 
-        MqttClientPublishResult? result = await _mqttClient.PublishAsync(
-                mqttApplicationMessage,
-                cancellationToken)
-            .ConfigureAwait(false);
+        MqttClientPublishResult? result = await _mqttClient.PublishAsync(mqttApplicationMessage, cancellationToken).ConfigureAwait(false);
 
-        if (result.ReasonCode != MqttClientPublishReasonCode.Success &&
-            (result.ReasonCode != MqttClientPublishReasonCode.NoMatchingSubscribers ||
-             !queuedMessage.Endpoint.Configuration.IgnoreNoMatchingSubscribersError))
+        if (result.ReasonCode == MqttClientPublishReasonCode.Success)
+            return;
+
+        if (result.ReasonCode == MqttClientPublishReasonCode.NoMatchingSubscribers)
+        {
+            switch (queuedMessage.Endpoint.Configuration.NoMatchingSubscribersBehavior)
+            {
+                case NoMatchingSubscribersBehavior.LogWarning:
+                    _logger.LogNoMatchingSubscribers(queuedMessage.Endpoint.Topic);
+                    return;
+                case NoMatchingSubscribersBehavior.Throw:
+                    throw new MqttProduceException(
+                        $"No matching subscribers found for the message produced to {queuedMessage.Endpoint.Topic}.",
+                        result);
+            }
+        }
+        else
         {
             throw new MqttProduceException(
                 $"Error occurred producing the message to the MQTT broker ({result.ReasonCode}: '{result.ReasonString}'). See the Result property for details.",

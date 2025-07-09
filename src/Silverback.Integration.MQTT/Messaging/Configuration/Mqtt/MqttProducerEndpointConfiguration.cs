@@ -31,11 +31,9 @@ public sealed record MqttProducerEndpointConfiguration : ProducerEndpointConfigu
     public uint MessageExpiryInterval { get; init; }
 
     /// <summary>
-    ///     Gets a value indicating whether the producer should ignore the <i>NoMatchingSubscribers</i> error. When set to <c>true</c>, the
-    ///     error will be logged as a warning but the producer will not throw an exception.
-    ///     The default is <c>false</c>.
+    ///     Gets a value indicating the behavior when no matching subscribers are found for the produced message.
     /// </summary>
-    public bool IgnoreNoMatchingSubscribersError { get; init; }
+    public NoMatchingSubscribersBehavior NoMatchingSubscribersBehavior { get; init; }
 
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()

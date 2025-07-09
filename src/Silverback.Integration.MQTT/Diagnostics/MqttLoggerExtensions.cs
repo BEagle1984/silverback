@@ -18,6 +18,9 @@ internal static class MqttLoggerExtensions
     private static readonly Action<ILogger, string, string, string, Exception?> AcknowledgeFailed =
         SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.AcknowledgeFailed);
 
+    private static readonly Action<ILogger, string, Exception?> NoMatchingSubscribers =
+        SilverbackLoggerMessage.Define<string>(MqttLogEvents.NoMatchingSubscribers);
+
     private static readonly Action<ILogger, string, string, string, Exception?> ConnectError =
         SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectError);
 
@@ -70,6 +73,9 @@ internal static class MqttLoggerExtensions
             applicationMessage.ApplicationMessage.Topic,
             consumer.DisplayName,
             exception);
+
+    public static void LogNoMatchingSubscribers(this ISilverbackLogger logger, string topic) =>
+        NoMatchingSubscribers(logger.InnerLogger, topic, null);
 
     public static void LogConnectError(
         this ISilverbackLogger logger,
