@@ -71,7 +71,8 @@ public sealed class KafkaTransactionalProducer : IProducer
         throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
 
     /// <inheritdoc cref="IProducer.Produce{TState}(object?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
-    public void Produce<TState>(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotImplementedException();
+    public void Produce<TState>(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
+        throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>

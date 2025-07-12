@@ -77,7 +77,7 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
 
     public Task<List<IncrementalAlterConfigsResult>> IncrementalAlterConfigsAsync(
         Dictionary<ConfigResource, List<ConfigEntry>> configs,
-        IncrementalAlterConfigsOptions? options = null) => throw new NotImplementedException();
+        IncrementalAlterConfigsOptions? options = null) => throw new NotSupportedException();
 
     public Task<List<DescribeConfigsResult>> DescribeConfigsAsync(
         IEnumerable<ConfigResource> resources,

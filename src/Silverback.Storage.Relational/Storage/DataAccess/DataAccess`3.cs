@@ -14,7 +14,6 @@ using Silverback.Util;
 
 namespace Silverback.Storage.DataAccess;
 
-// TODO: Test directly (all implementations)
 internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     where TConnection : DbConnection
     where TTransaction : DbTransaction

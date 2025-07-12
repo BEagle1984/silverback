@@ -80,10 +80,10 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
         }
 
         _subscribeSemaphore.Release();
-        _completeSemaphore.Wait(); // TODO: Needs cancellation token?
+        _completeSemaphore.Wait();
 
         if (_exception != null)
-            throw _exception; // TODO: Wrap into another exception?
+            throw _exception;
 
         return _subscription;
     }
