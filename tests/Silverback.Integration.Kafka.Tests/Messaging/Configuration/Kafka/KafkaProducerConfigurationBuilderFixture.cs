@@ -339,6 +339,18 @@ public class KafkaProducerConfigurationBuilderFixture
         configuration.TransactionalId.ShouldBeNull();
     }
 
+    [Fact]
+    public void WithSendOffsetToTransactionTimeout_ShouldSetSendOffsetToTransactionTimeout()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.WithSendOffsetToTransactionTimeout(TimeSpan.FromHours(42));
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.ShouldNotBeNull();
+        configuration.SendOffsetToTransactionTimeout.ShouldBe(TimeSpan.FromHours(42));
+    }
+
     private static KafkaProducerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>
         GetBuilderWithValidConfiguration().Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 

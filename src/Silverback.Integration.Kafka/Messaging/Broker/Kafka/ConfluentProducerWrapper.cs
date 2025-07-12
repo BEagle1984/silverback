@@ -157,7 +157,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
         try
         {
-            confluentProducer.SendOffsetsToTransaction(offsets, groupMetadata, TimeSpan.Zero); // TODO: Timespan from config
+            confluentProducer.SendOffsetsToTransaction(offsets, groupMetadata, Configuration.SendOffsetToTransactionTimeout);
 
             foreach (TopicPartitionOffset offset in offsets)
             {

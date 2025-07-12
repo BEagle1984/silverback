@@ -31,6 +31,8 @@ public partial class KafkaProducerConfigurationBuilder
 
     private TimeSpan? _transactionAbortTimeout;
 
+    private TimeSpan? _sendOffsetToTransactionTimeout;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducerConfigurationBuilder" /> class.
     /// </summary>
@@ -332,8 +334,23 @@ public partial class KafkaProducerConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder DisableTransactions() =>
-        WithTransactionalId(null);
+    public KafkaProducerConfigurationBuilder DisableTransactions() => WithTransactionalId(null);
+
+    /// <summary>
+    ///     Specifies the timeout for sending the offset to the transaction. The default is 10 seconds.
+    /// </summary>
+    /// <param name="timeout">
+    ///     The timeout for sending the offset to the transaction.
+    /// </param>
+    /// ///
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder WithSendOffsetToTransactionTimeout(TimeSpan timeout)
+    {
+        _sendOffsetToTransactionTimeout = timeout;
+        return this;
+    }
 
     /// <summary>
     ///     Builds the <see cref="KafkaProducerConfiguration" /> instance.
@@ -353,6 +370,7 @@ public partial class KafkaProducerConfigurationBuilder
             TransactionsInitTimeout = _transactionsInitTimeout ?? configuration.TransactionsInitTimeout,
             TransactionCommitTimeout = _transactionCommitTimeout ?? configuration.TransactionCommitTimeout,
             TransactionAbortTimeout = _transactionAbortTimeout ?? configuration.TransactionAbortTimeout,
+            SendOffsetToTransactionTimeout = _sendOffsetToTransactionTimeout ?? configuration.SendOffsetToTransactionTimeout,
             Endpoints = _endpoints.Values.AsValueReadOnlyCollection()
         };
 

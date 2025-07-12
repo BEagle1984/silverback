@@ -53,6 +53,11 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     public TimeSpan TransactionAbortTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
+    ///     Gets the timeout for sending the offset to the transaction. The default is 10 seconds.
+    /// </summary>
+    public TimeSpan SendOffsetToTransactionTimeout { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>
     ///     Gets the configured endpoints.
     /// </summary>
     public IValueReadOnlyCollection<KafkaProducerEndpointConfiguration> Endpoints { get; init; } = ValueReadOnlyCollection.Empty<KafkaProducerEndpointConfiguration>();
