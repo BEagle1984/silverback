@@ -85,6 +85,21 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
 
         if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             throw new BrokerConfigurationException($"{nameof(ThrowIfNotAcknowledged)} cannot be set to true if delivery reports are not enabled.");
+
+        if (FlushTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(FlushTimeout)} must be greater than zero.");
+
+        if (TransactionsInitTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(TransactionsInitTimeout)} must be greater than zero.");
+
+        if (TransactionCommitTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(TransactionCommitTimeout)} must be greater than zero.");
+
+        if (TransactionAbortTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(TransactionAbortTimeout)} must be greater than zero.");
+
+        if (SendOffsetToTransactionTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(SendOffsetToTransactionTimeout)} must be greater than zero.");
     }
 
     internal override ProducerConfig ToConfluentConfig()

@@ -68,6 +68,11 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public int BackpressureLimit { get; init; } = 2;
 
     /// <summary>
+    ///     Gets the maximum time to wait for the acknowledgment operation to complete. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan AcknowledgmentTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
     ///     Gets a value indicating whether the headers (user properties) are supported according to the configured protocol version.
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
@@ -76,10 +81,10 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public void Validate()
     {
         if (ProducerEndpoints == null)
-            throw new BrokerConfigurationException("ProducerEndpoints cannot be null.");
+            throw new BrokerConfigurationException($"{nameof(ProducerEndpoints)} cannot be null.");
 
         if (ConsumerEndpoints == null)
-            throw new BrokerConfigurationException("ConsumerEndpoints cannot be null.");
+            throw new BrokerConfigurationException($"{nameof(ConsumerEndpoints)} cannot be null.");
 
         if (ProducerEndpoints.Count == 0 && ConsumerEndpoints.Count == 0)
             throw new BrokerConfigurationException("At least one endpoint must be configured.");
@@ -91,10 +96,10 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         CheckDuplicateConsumerTopics();
 
         if (string.IsNullOrEmpty(ClientId))
-            throw new BrokerConfigurationException($"A {nameof(ClientId)} is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"{nameof(ClientId)} is required to connect with the message broker.");
 
         if (Channel == null)
-            throw new BrokerConfigurationException("The channel configuration is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"{nameof(Channel)} configuration is required to connect with the message broker.");
 
         Channel.Validate();
         UserProperties.ForEach(property => property.Validate());
@@ -105,8 +110,8 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
             if (ConsumerEndpoints.Any(endpoint => endpoint.Deserializer.RequireHeaders))
             {
                 throw new BrokerConfigurationException(
-                    "Wrong serializer configuration. Since headers (user properties) are not " +
-                    "supported by MQTT prior to version 5, the serializer must be configured with an " +
+                    "Wrong deserializer configuration. Since headers (user properties) are not " +
+                    "supported by MQTT prior to version 5, the deserializer must be configured with an " +
                     "hardcoded message type.");
             }
 
@@ -114,10 +119,13 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         }
 
         if (MaxDegreeOfParallelism < 1)
-            throw new BrokerConfigurationException("The maximum degree of parallelism must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater or equal to 1.");
 
         if (BackpressureLimit < 1)
-            throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(BackpressureLimit)} must be greater or equal to 1.");
+
+        if (AcknowledgmentTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException($"{nameof(AcknowledgmentTimeout)} must be greater than zero.");
     }
 
     internal MqttClientOptions GetMqttClientOptions()

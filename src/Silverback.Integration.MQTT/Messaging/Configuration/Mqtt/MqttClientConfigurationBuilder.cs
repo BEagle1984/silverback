@@ -39,6 +39,8 @@ public partial class MqttClientConfigurationBuilder
 
     private AddressFamily? _addressFamily;
 
+    private TimeSpan? _acknowledgmentTimeout;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
     /// </summary>
@@ -1036,6 +1038,21 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
+    ///     Sets the maximum time to wait for the acknowledgment operation to complete. The default is 30 seconds.
+    /// </summary>
+    /// <param name="timeout">
+    ///     The maximum time to wait for the acknowledgment operation to complete.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder WithAcknowledgmentTimeout(TimeSpan timeout)
+    {
+        _acknowledgmentTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
+        return this;
+    }
+
+    /// <summary>
     ///     Builds the <see cref="MqttClientConfiguration" /> instance.
     /// </summary>
     /// <returns>
@@ -1083,7 +1100,8 @@ public partial class MqttClientConfigurationBuilder
         _configuration = _configuration with
         {
             MaxDegreeOfParallelism = _maxDegreeOfParallelism ?? _configuration.MaxDegreeOfParallelism,
-            BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit
+            BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit,
+            AcknowledgmentTimeout = _acknowledgmentTimeout ?? _configuration.AcknowledgmentTimeout
         };
 
         _configuration.Validate();

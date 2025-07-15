@@ -483,7 +483,7 @@ public class KafkaConsumerConfigurationFixture
         else
         {
             Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-            exception.Message.ShouldBe("The get metadata timeout must be greater than 0.");
+            exception.Message.ShouldBe("The get metadata timeout must be greater than zero.");
         }
     }
 

@@ -187,7 +187,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </returns>
     public KafkaProducerConfigurationBuilder WithFlushTimeout(TimeSpan timeout)
     {
-        _flushTimeout = timeout;
+        _flushTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
         return this;
     }
 
@@ -202,7 +202,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </returns>
     public KafkaProducerConfigurationBuilder WithTransactionsInitTimeout(TimeSpan timeout)
     {
-        _transactionsInitTimeout = timeout;
+        _transactionsInitTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
         return this;
     }
 
@@ -217,7 +217,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </returns>
     public KafkaProducerConfigurationBuilder WithTransactionCommitTimeout(TimeSpan timeout)
     {
-        _transactionCommitTimeout = timeout;
+        _transactionCommitTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
         return this;
     }
 
@@ -232,7 +232,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </returns>
     public KafkaProducerConfigurationBuilder WithTransactionAbortTimeout(TimeSpan timeout)
     {
-        _transactionAbortTimeout = timeout;
+        _transactionAbortTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
         return this;
     }
 
@@ -348,7 +348,7 @@ public partial class KafkaProducerConfigurationBuilder
     /// </returns>
     public KafkaProducerConfigurationBuilder WithSendOffsetToTransactionTimeout(TimeSpan timeout)
     {
-        _sendOffsetToTransactionTimeout = timeout;
+        _sendOffsetToTransactionTimeout = Check.GreaterThan(timeout, nameof(timeout), TimeSpan.Zero);
         return this;
     }
 

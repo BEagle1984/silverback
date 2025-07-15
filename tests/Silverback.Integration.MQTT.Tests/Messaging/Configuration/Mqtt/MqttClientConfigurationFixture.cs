@@ -151,7 +151,7 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("A ClientId is required to connect with the message broker.*");
+        exception.Message.ShouldMatch("ClientId is required to connect with the message broker.*");
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("The channel configuration is required.*");
+        exception.Message.ShouldMatch("Channel configuration is required.*");
     }
 
     [Fact]
@@ -257,7 +257,7 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldMatch("Wrong serializer configuration. Since headers.*");
+        exception.Message.ShouldMatch("Wrong deserializer configuration. Since headers.*");
     }
 
     [Fact]
@@ -343,7 +343,7 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The maximum degree of parallelism must be greater or equal to 1.");
+        exception.Message.ShouldBe("MaxDegreeOfParallelism must be greater or equal to 1.");
     }
 
     [Theory]
@@ -359,7 +359,23 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         Exception exception = act.ShouldThrow<BrokerConfigurationException>();
-        exception.Message.ShouldBe("The backpressure limit must be greater or equal to 1.");
+        exception.Message.ShouldBe("BackpressureLimit must be greater or equal to 1.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenAcknowledgmentTimeoutIsLessThanOrEqualToZero(int value)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            AcknowledgmentTimeout = TimeSpan.FromSeconds(value)
+        };
+
+        Action act = configuration.Validate;
+
+        Exception exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("AcknowledgmentTimeout must be greater than zero.");
     }
 
     [Fact]

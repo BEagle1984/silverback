@@ -188,7 +188,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
             throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
 
         if (GetMetadataTimeout <= TimeSpan.Zero)
-            throw new BrokerConfigurationException("The get metadata timeout must be greater than 0.");
+            throw new BrokerConfigurationException("The get metadata timeout must be greater than zero.");
 
         if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
             throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");

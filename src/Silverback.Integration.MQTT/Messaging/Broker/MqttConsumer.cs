@@ -220,8 +220,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     {
         try
         {
-            // TODO: Can pass a cancellation token?
-            await consumedMessage.AcknowledgeAsync(CancellationToken.None).ConfigureAwait(false);
+            using CancellationTokenSource cancellationTokenSource = new(Configuration.AcknowledgmentTimeout);
+            await consumedMessage.AcknowledgeAsync(cancellationTokenSource.Token).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

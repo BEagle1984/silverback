@@ -31,7 +31,7 @@ public sealed record BatchSettings : IValidatableSettings
             throw new BrokerConfigurationException("The batch size must be greater or equal to 1.");
 
         if (MaxWaitTime != null && MaxWaitTime <= TimeSpan.Zero)
-            throw new BrokerConfigurationException("The specified max wait time must be greater than 0.");
+            throw new BrokerConfigurationException("The specified max wait time must be greater than zero.");
 
         if (MaxWaitTime is { TotalMilliseconds: > int.MaxValue })
             throw new BrokerConfigurationException("The max wait time in milliseconds must be lower or equal to Int32.MaxValue.");

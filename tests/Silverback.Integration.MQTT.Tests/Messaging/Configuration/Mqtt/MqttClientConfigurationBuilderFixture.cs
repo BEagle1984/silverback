@@ -358,15 +358,14 @@ public class MqttClientConfigurationBuilderFixture
     {
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
-        builder.SendLastWillMessage<TestEventOne>(
-            lastWill => lastWill
-                .SendMessage(
-                    new TestEventOne
-                    {
-                        Content = "I died!"
-                    })
-                .WithDelay(TimeSpan.FromSeconds(42))
-                .ProduceTo("testaments"));
+        builder.SendLastWillMessage<TestEventOne>(lastWill => lastWill
+            .SendMessage(
+                new TestEventOne
+                {
+                    Content = "I died!"
+                })
+            .WithDelay(TimeSpan.FromSeconds(42))
+            .ProduceTo("testaments"));
 
         MqttClientConfiguration configuration = builder.Build();
         configuration.WillMessage.ShouldNotBeNull();
@@ -960,6 +959,17 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration configuration = builder.Build();
         configuration.BackpressureLimit.ShouldBe(42);
+    }
+
+    [Fact]
+    public void WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithAcknowledgmentTimeout(TimeSpan.FromSeconds(42));
+
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.AcknowledgmentTimeout.ShouldBe(TimeSpan.FromSeconds(42));
     }
 
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>

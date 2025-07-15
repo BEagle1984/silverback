@@ -155,6 +155,86 @@ public class KafkaProducerConfigurationFixture
         act.ShouldNotThrow();
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenFlushTimeoutIsZeroOrNegative(int flushTimeout)
+    {
+        KafkaProducerConfiguration configuration = GetValidConfiguration() with
+        {
+            FlushTimeout = TimeSpan.FromMilliseconds(flushTimeout)
+        };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("FlushTimeout must be greater than zero.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenTransactionsInitTimeoutIsZeroOrNegative(int transactionsInitTimeout)
+    {
+        KafkaProducerConfiguration configuration = GetValidConfiguration() with
+        {
+            TransactionsInitTimeout = TimeSpan.FromMilliseconds(transactionsInitTimeout)
+        };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("TransactionsInitTimeout must be greater than zero.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenTransactionCommitTimeoutIsZeroOrNegative(int transactionCommitTimeout)
+    {
+        KafkaProducerConfiguration configuration = GetValidConfiguration() with
+        {
+            TransactionCommitTimeout = TimeSpan.FromMilliseconds(transactionCommitTimeout)
+        };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("TransactionCommitTimeout must be greater than zero.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenTransactionAbortTimeoutIsZeroOrNegative(int transactionAbortTimeout)
+    {
+        KafkaProducerConfiguration configuration = GetValidConfiguration() with
+        {
+            TransactionAbortTimeout = TimeSpan.FromMilliseconds(transactionAbortTimeout)
+        };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("TransactionAbortTimeout must be greater than zero.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenSendOffsetToTransactionTimeoutIsZeroOrNegative(int sendOffsetToTransactionTimeout)
+    {
+        KafkaProducerConfiguration configuration = GetValidConfiguration() with
+        {
+            SendOffsetToTransactionTimeout = TimeSpan.FromMilliseconds(sendOffsetToTransactionTimeout)
+        };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("SendOffsetToTransactionTimeout must be greater than zero.");
+    }
+
     [Fact]
     public void ToConfluentConfig_ShouldReturnConfluentConfig()
     {
