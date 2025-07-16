@@ -114,6 +114,17 @@ public partial class KafkaClientsConfigurationBuilder
     public partial KafkaClientsConfigurationBuilder WithAcks(Acks? acks);
 
     /// <summary>
+    ///     Sets the client identifier.
+    /// </summary>
+    /// <param name="clientId">
+    ///     The client identifier.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithClientId(string? clientId);
+
+    /// <summary>
     ///     Sets the comma-separated list of brokers (host or host:port).
     /// </summary>
     /// <param name="bootstrapServers">

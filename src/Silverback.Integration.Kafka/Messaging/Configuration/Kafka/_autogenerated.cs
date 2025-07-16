@@ -1079,6 +1079,12 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    public partial KafkaClientsConfigurationBuilder WithClientId(string? clientId)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithClientId(clientId));
+        return this;
+    }
+
     public partial KafkaClientsConfigurationBuilder WithBootstrapServers(string? bootstrapServers)
     {
         _sharedConfigurationActions.Add(builder => builder.WithBootstrapServers(bootstrapServers));

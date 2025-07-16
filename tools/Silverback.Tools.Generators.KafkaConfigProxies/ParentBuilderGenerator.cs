@@ -170,9 +170,7 @@ public class ParentBuilderGenerator : BuilderGenerator
     {
         IEnumerable<PropertyInfo> properties =
             ReflectionHelper.GetProperties(ProxiedType, true)
-                .Where(
-                    property => !IgnoredProperties.Contains(property) &&
-                                property.Name != "ClientId");
+                .Where(property => !IgnoredProperties.Contains(property));
 
         foreach (PropertyInfo property in properties)
         {

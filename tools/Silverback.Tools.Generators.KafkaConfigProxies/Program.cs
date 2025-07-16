@@ -6,7 +6,15 @@ using Confluent.Kafka;
 using Confluent.SchemaRegistry;
 using Silverback.Tools.Generators.KafkaConfigProxies;
 
-if (args.Length == 0)
+if (args.Length == 1 && (args[0] == "--schemaregistry" || args[0] == "-sr"))
+{
+    Console.Write(new SchemaRegistryProxyClassGenerator(typeof(SchemaRegistryConfig)).Generate());
+
+    Console.WriteLine();
+
+    Console.Write(new SchemaRegistryBuilderGenerator(typeof(SchemaRegistryConfig)).Generate());
+}
+else
 {
     Console.Write(new ParentProxyClassGenerator(typeof(ClientConfig)).Generate());
     Console.WriteLine();
@@ -21,16 +29,4 @@ if (args.Length == 0)
     Console.Write(new BuilderGenerator(typeof(ConsumerConfig)).Generate());
     Console.WriteLine();
     Console.Write(new BuilderGenerator(typeof(ProducerConfig)).Generate());
-}
-else if (args.Length == 1 && (args[0] == "--schemaregistry" || args[0] == "-sr"))
-{
-    Console.Write(new SchemaRegistryProxyClassGenerator(typeof(SchemaRegistryConfig)).Generate());
-
-    Console.WriteLine();
-
-    Console.Write(new SchemaRegistryBuilderGenerator(typeof(SchemaRegistryConfig)).Generate());
-}
-else
-{
-    Console.WriteLine("Invalid arguments.");
 }
