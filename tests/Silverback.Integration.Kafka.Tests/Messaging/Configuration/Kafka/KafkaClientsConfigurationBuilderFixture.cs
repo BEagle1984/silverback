@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
@@ -222,5 +223,61 @@ public class KafkaClientsConfigurationBuilderFixture
         consumers[0].Configuration.GroupId.ShouldBe("group1");
         consumers[0].Configuration.EnablePartitionEof.ShouldBe(true);
         consumers[0].Configuration.FetchMinBytes.ShouldBe(42);
+    }
+
+    [Fact]
+    public async Task AddDefaultProducerConfiguration_ShouldSetDefaultValues()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(broker => broker.AddKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://unittest")
+                        .AddDefaultProducerConfiguration(
+                            producer => producer
+                                .WithCompressionType(CompressionType.Snappy))
+                        .AddProducer("producer1", producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                        .AddProducer("producer2", producer => producer.Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
+
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        producers.Count.ShouldBe(2);
+        KafkaProducer producer1 = producers.GetProducerForEndpoint("topic1").ShouldBeOfType<KafkaProducer>();
+        producer1.Configuration.CompressionType.ShouldBe(CompressionType.Snappy);
+        KafkaProducer producer2 = producers.GetProducerForEndpoint("topic2").ShouldBeOfType<KafkaProducer>();
+        producer2.Configuration.CompressionType.ShouldBe(CompressionType.Snappy);
+    }
+
+    [Fact]
+    public async Task AddDefaultConsumerConfiguration_ShouldSetDefaultValues()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(broker => broker.AddKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://unittest")
+                        .AddDefaultConsumerConfiguration(
+                            consumer => consumer
+                                .WithGroupId("TestGroup"))
+                        .AddConsumer("consumer1", consumer => consumer.Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                        .AddConsumer("consumer2", consumer => consumer.Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
+
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
+
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        consumers.Count.ShouldBe(2);
+        KafkaConsumer consumer1 = consumers["consumer1"].ShouldBeOfType<KafkaConsumer>();
+        consumer1.Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        consumer1.Configuration.Endpoints.First().RawName.ShouldBe("topic1");
+        KafkaConsumer consumer2 = consumers["consumer2"].ShouldBeOfType<KafkaConsumer>();
+        consumer2.Configuration.Endpoints.First().Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventTwo>>();
+        consumer2.Configuration.Endpoints.First().RawName.ShouldBe("topic2");
     }
 }

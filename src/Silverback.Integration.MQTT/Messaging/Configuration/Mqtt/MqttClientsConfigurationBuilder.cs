@@ -13,13 +13,47 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
-///     Configures the MQTT producers and consumers.
+///     Configures the MQTT clients building the <see cref="MqttClientConfiguration" />.
 /// </summary>
 public sealed partial class MqttClientsConfigurationBuilder
 {
     private readonly MergeableActionCollection<MqttClientConfigurationBuilder> _configurationActions = [];
 
     private readonly List<Action<MqttClientConfigurationBuilder>> _sharedConfigurationActions = [];
+
+    /// <summary>
+    ///     Adds an MQTT client.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder AddClient(Action<MqttClientConfigurationBuilder> configurationBuilderAction) =>
+        AddClient(Guid.NewGuid().ToString(), configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds an MQTT client or updates its configuration if a client with the same name already exists.
+    /// </summary>
+    /// <param name="name">
+    ///     The producer name, used to merge the configuration with the existing one.
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder AddClient(string name, Action<MqttClientConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNullOrEmpty(name, nameof(name));
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        _configurationActions.AddOrAppend(name, configurationBuilderAction);
+
+        return this;
+    }
 
     /// <summary>
     ///     Specifies the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V500" />.
@@ -752,40 +786,6 @@ public sealed partial class MqttClientsConfigurationBuilder
     public MqttClientsConfigurationBuilder LimitBackpressure(int backpressureLimit)
     {
         _sharedConfigurationActions.Add(builder => builder.LimitBackpressure(backpressureLimit));
-        return this;
-    }
-
-    /// <summary>
-    ///     Adds an MQTT client.
-    /// </summary>
-    /// <param name="configurationBuilderAction">
-    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder AddClient(Action<MqttClientConfigurationBuilder> configurationBuilderAction) =>
-        AddClient(Guid.NewGuid().ToString(), configurationBuilderAction);
-
-    /// <summary>
-    ///     Adds an MQTT client or updates its configuration if a client with the same name already exists.
-    /// </summary>
-    /// <param name="name">
-    ///     The producer name, used to merge the configuration with the existing one.
-    /// </param>
-    /// <param name="configurationBuilderAction">
-    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder AddClient(string name, Action<MqttClientConfigurationBuilder> configurationBuilderAction)
-    {
-        Check.NotNullOrEmpty(name, nameof(name));
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
-
-        _configurationActions.AddOrAppend(name, configurationBuilderAction);
-
         return this;
     }
 

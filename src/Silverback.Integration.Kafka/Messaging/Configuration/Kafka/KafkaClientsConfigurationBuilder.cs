@@ -17,6 +17,10 @@ public partial class KafkaClientsConfigurationBuilder
 {
     private readonly KafkaClientsConfigurationActions _configurationActions = new();
 
+    private readonly List<Action<KafkaProducerConfigurationBuilder>> _defaultProducerConfigurationActions = [];
+
+    private readonly List<Action<KafkaConsumerConfigurationBuilder>> _defaultConsumerConfigurationActions = [];
+
     private readonly List<Action<IKafkaClientConfigurationBuilder>> _sharedConfigurationActions = [];
 
     /// <summary>
@@ -83,6 +87,44 @@ public partial class KafkaClientsConfigurationBuilder
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
         _configurationActions.ConsumerConfigurationActions.AddOrAppend(name, configurationBuilderAction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Add a default producer configuration that will be applied to all the producers.<br/>
+    ///     This configuration action will be applied before any other producer-specific configuration action.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder AddDefaultProducerConfiguration(Action<KafkaProducerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        _defaultProducerConfigurationActions.Add(configurationBuilderAction);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Add a default consumer configuration that will be applied to all the consumers.<br/>
+    ///     This configuration action will be applied before any other consumer-specific configuration action.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder AddDefaultConsumerConfiguration(Action<KafkaConsumerConfigurationBuilder> configurationBuilderAction)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        _defaultConsumerConfigurationActions.Add(configurationBuilderAction);
 
         return this;
     }
@@ -1050,6 +1092,16 @@ public partial class KafkaClientsConfigurationBuilder
 
     internal KafkaClientsConfigurationActions GetConfigurationActions()
     {
+        foreach (Action<KafkaProducerConfigurationBuilder> defaultAction in _defaultProducerConfigurationActions)
+        {
+            _configurationActions.ProducerConfigurationActions.PrependToAll(defaultAction.Invoke);
+        }
+
+        foreach (Action<KafkaConsumerConfigurationBuilder> defaultAction in _defaultConsumerConfigurationActions)
+        {
+            _configurationActions.ConsumerConfigurationActions.PrependToAll(defaultAction.Invoke);
+        }
+
         foreach (Action<IKafkaClientConfigurationBuilder> sharedAction in _sharedConfigurationActions)
         {
             _configurationActions.ProducerConfigurationActions.PrependToAll(sharedAction.Invoke);

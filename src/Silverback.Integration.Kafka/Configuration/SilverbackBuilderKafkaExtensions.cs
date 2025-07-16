@@ -10,12 +10,12 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <summary>
-///     Adds the <c>AddKafkaEndpoints</c> method to the <see cref="SilverbackBuilder" />.
+///     Adds the <see cref="AddKafkaClients" /> method to the <see cref="SilverbackBuilder" />.
 /// </summary>
 public static class SilverbackBuilderKafkaExtensions
 {
     /// <summary>
-    ///     Adds a Kafka client.
+    ///     Adds the Kafka clients.
     /// </summary>
     /// <param name="silverbackBuilder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
