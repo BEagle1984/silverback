@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 public class ActivityBaggageSerializerTests
 {
     [Fact]
-    public void Serialize_SomeItems_SerializedStringReturned()
+    public void Serialize_ShouldSerializeToString()
     {
         List<KeyValuePair<string, string?>> itemsToAdd =
         [
@@ -26,7 +26,7 @@ public class ActivityBaggageSerializerTests
     }
 
     [Fact]
-    public void TryDeserialize_ValidString_CorrectlyDeserializedItems()
+    public void TryDeserialize_ShouldDeserialize()
     {
         string value = "key1=value1, key2 = value2, invalidPair,=valueonly,keyonly=,,=,";
 
@@ -43,7 +43,7 @@ public class ActivityBaggageSerializerTests
     [InlineData(null)]
     [InlineData(",")]
     [InlineData("(null)")]
-    public void TryDeserialize_InvalidString_EmptyCollectionReturned(string? deserializeValue)
+    public void TryDeserialize_ShouldReturnEmptyCollection_WhenInputNotValid(string? deserializeValue)
     {
         IReadOnlyCollection<KeyValuePair<string, string>> result = ActivityBaggageSerializer.Deserialize(deserializeValue!);
 

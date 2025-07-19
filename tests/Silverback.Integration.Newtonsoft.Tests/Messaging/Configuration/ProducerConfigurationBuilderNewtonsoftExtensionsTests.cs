@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration;
 public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
 {
     [Fact]
-    public void SerializeAsJsonUsingNewtonsoft_Default_SerializerSet()
+    public void SerializeAsJsonUsingNewtonsoft_ShouldSetSerializer()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -24,7 +24,7 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void SerializeAsJsonUsingNewtonsoft_Configure_SerializerAndOptionsSet()
+    public void SerializeAsJsonUsingNewtonsoft_ShouldSetSerializerAndOptions()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -42,7 +42,7 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void SerializeAsJsonUsingNewtonsoft_WithEncoding_SerializerAndOptionsSet()
+    public void SerializeAsJsonUsingNewtonsoft_ShouldSetSerializerWithEncoding()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 

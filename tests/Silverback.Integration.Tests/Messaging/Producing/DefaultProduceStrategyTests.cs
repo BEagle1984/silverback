@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.Messaging.Producing;
 public class DefaultProduceStrategyTests
 {
     [Fact]
-    public void Equals_SameType_ReturnsTrue()
+    public void Equals_ShouldReturnTrue_WhenSameType()
     {
         DefaultProduceStrategy strategy = new();
         DefaultProduceStrategy otherStrategy = new();
@@ -20,7 +20,7 @@ public class DefaultProduceStrategyTests
     }
 
     [Fact]
-    public void Equals_DifferentType_ReturnsFalse()
+    public void Equals_ShouldReturnFalse_WhenDifferentType()
     {
         DefaultProduceStrategy strategy = new();
         OutboxProduceStrategy otherStrategy = new(new InMemoryOutboxSettings());

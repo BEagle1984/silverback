@@ -22,7 +22,7 @@ public class SymmetricEncryptStreamTests
     private static readonly byte[] ClearTextMessage = [0x1, 0x2, 0x3, 0x4, 0x5];
 
     [Fact]
-    public async Task ReadAsync_UsingDefaultAesAlgorithmWithDefaultSettings_MessageIsSuccessfullyEncrypted()
+    public async Task ReadAsync_ShouldEncrypt_WhenUsingDefaultAesAlgorithmWithDefaultSettings()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -39,7 +39,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_UsingDefaultAesAlgorithmWithDefaultSettings_MessageIsSuccessfullyEncrypted()
+    public void Read_ShouldEncrypt_WhenUsingDefaultAesAlgorithmWithDefaultSettings()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -56,7 +56,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_UsingRijndaelWithCustomSettings_MessageIsSuccessfullyEncrypted()
+    public async Task ReadAsync_ShouldEncrypt_WhenUsingRijndaelWithCustomSettings()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -77,7 +77,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_UsingRijndaelWithCustomSettings_MessageIsSuccessfullyEncrypted()
+    public void Read_ShouldEncrypt_WhenUsingRijndaelWithCustomSettings()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -98,7 +98,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_SpecifyingIV_MessageIsSuccessfullyEncrypted()
+    public async Task ReadAsync_ShouldEncrypt_WhenSpecifyingIV()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -116,7 +116,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_SpecifyingIV_MessageIsSuccessfullyEncrypted()
+    public void Read_ShouldEncrypt_WhenSpecifyingIV()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -134,7 +134,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_SpecifyingIV_IVIsNotPrepended()
+    public async Task ReadAsync_ShouldNotPrependIV_WhenHardcodedIV()
     {
         byte[] iv = GenerateKey(128);
 
@@ -155,7 +155,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_SpecifyingIV_IVIsNotPrepended()
+    public void Read_ShouldNotPrependIV_WhenHardcodedIV()
     {
         byte[] iv = GenerateKey(128);
 
@@ -176,7 +176,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_WithoutSpecifyingIV_IVIsGeneratedAndPrepended()
+    public async Task ReadAsync_ShouldGenerateAndPrependIV_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -191,7 +191,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_WithoutSpecifyingIV_IVIsGeneratedAndPrepended()
+    public void Read_ShouldGenerateAndPrependIV_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(ClearTextMessage),
@@ -206,7 +206,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_TwiceWithSameIV_ResultIsEqual()
+    public async Task ReadAsync_ShouldReturnSameStream_WhenUsingSameIV()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -229,7 +229,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_TwiceWithSameIV_ResultIsEqual()
+    public void Read_ShouldReturnSameStream_WhenUsingSameIV()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -252,7 +252,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_TwiceWithoutSpecifyingIV_ResultIsDifferent()
+    public async Task ReadAsync_ShouldReturnDifferentStream_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -273,7 +273,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_TwiceWithoutSpecifyingIV_ResultIsDifferent()
+    public void Read_ShouldReturnDifferentStream_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -294,7 +294,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_TwiceWithoutSpecifyingIV_GeneratedIVIsDifferent()
+    public async Task ReadAsync_ShouldGenerateDifferentIV_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -319,7 +319,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_TwiceWithoutSpecifyingIV_GeneratedIVIsDifferent()
+    public void Read_ShouldGenerateDifferentIV_WhenIVNotSet()
     {
         SymmetricEncryptStream cryptoStream1 = new(
             new MemoryStream(ClearTextMessage),
@@ -344,7 +344,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_EmptyStream_EmptyStreamEncrypted()
+    public async Task ReadAsync_ShouldReturnEmptyStream_WhenEmptyStream()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(),
@@ -360,7 +360,7 @@ public class SymmetricEncryptStreamTests
     }
 
     [Fact]
-    public void Read_EmptyStream_EmptyStreamEncrypted()
+    public void Read_ShouldReturnEmptyStream_WhenEmptyStream()
     {
         SymmetricEncryptStream cryptoStream = new(
             new MemoryStream(),

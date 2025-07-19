@@ -15,7 +15,7 @@ namespace Silverback.Tests.Core.Messaging.Messages;
 public class MessageStreamEnumerableTests
 {
     [Fact]
-    public async Task PushAsyncGetEnumeratorAndCompleteAsync_SomeMessages_MessagesPushedAndReceived()
+    public async Task PushAsyncGetEnumeratorAndCompleteAsync_ShouldPush()
     {
         MessageStreamEnumerable<Message> stream = new();
         bool success = false;
@@ -46,7 +46,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task PushAsyncGetAsyncEnumeratorAndCompleteAsync_SomeMessages_MessagesPushedAndReceived()
+    public async Task PushAsyncGetAsyncEnumeratorAndCompleteAsync_ShouldPush()
     {
         MessageStreamEnumerable<Message> stream = new();
         bool success = false;
@@ -77,7 +77,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileEnumerating_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileEnumerating()
     {
         MessageStreamEnumerable<Message> stream = new();
         using IEnumerator<Message> enumerator = stream.GetEnumerator();
@@ -108,7 +108,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileAsyncEnumerating_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileAsyncEnumerating()
     {
         MessageStreamEnumerable<Message> stream = new();
         await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
@@ -140,7 +140,7 @@ public class MessageStreamEnumerableTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
-    public async Task CompleteAsync_WhileEnumerating_EnumerationCompleted()
+    public async Task CompleteAsync_ShouldCompleteWhileEnumerating()
     {
         bool completed = false;
         MessageStreamEnumerable<Message> stream = new();
@@ -166,7 +166,7 @@ public class MessageStreamEnumerableTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
-    public async Task CompleteAsync_WhileAsyncEnumerating_EnumerationCompleted()
+    public async Task CompleteAsync_ShouldCompleteWhileAsyncEnumerating()
     {
         bool completed = false;
         MessageStreamEnumerable<Message> stream = new();
@@ -192,7 +192,7 @@ public class MessageStreamEnumerableTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
-    public async Task Abort_WhileEnumerating_EnumerationAborted()
+    public async Task Abort_ShouldAbortWhileEnumerating()
     {
         bool completed = false;
         MessageStreamEnumerable<int> stream = new();
@@ -219,7 +219,7 @@ public class MessageStreamEnumerableTests
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
-    public async Task Abort_WhileAsyncEnumerating_EnumerationAborted()
+    public async Task Abort_ShouldAbortWhileAsyncEnumerating()
     {
         bool completed = false;
         MessageStreamEnumerable<int> stream = new();
@@ -244,7 +244,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task Abort_WhilePushing_PushAborted()
+    public async Task Abort_ShouldAbortWhilePushing()
     {
         bool pushed = false;
         MessageStreamEnumerable<Message> stream = new();
@@ -268,7 +268,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task CompleteAsync_TryPushingAfterComplete_ExceptionThrown()
+    public async Task CompleteAsync_ShouldCauseExceptionToBeThrown_WhenTryPushingAfterComplete()
     {
         MessageStreamEnumerable<Message> stream = new();
 
@@ -279,7 +279,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
-    public async Task Dispose_TryPushingAfterDispose_ExceptionThrown()
+    public async Task Dispose_ShouldCauseExceptionToBeThrown_WhenTryPushingAfterDispose()
     {
         MessageStreamEnumerable<Message> stream = new();
         stream.Dispose();

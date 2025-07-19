@@ -1,0 +1,127 @@
+// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
+using Silverback.Configuration;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
+using Silverback.Tests.Integration.E2E.TestHost;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace Silverback.Tests.Integration.E2E.Kafka;
+
+public class MultipleBrokersTests : KafkaTests
+{
+    public MultipleBrokersTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
+    [Fact]
+    public async Task MultipleBrokers_ShouldCorrectlyProduceAndConsume_WhenTopicNamesAreOverlapping()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e-1")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("group1")
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e-2")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("group2")
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new Broker1Message());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(1);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+
+        await publisher.PublishAsync(new Broker2Message());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-2");
+    }
+
+    [Fact]
+    public async Task MultipleBrokers_ShouldCorrectlyProduceAndConsume_WhenTopicNamesAndGroupIdsAreOverlapping()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e-1")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e-2")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new Broker1Message());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts
+
+        await publisher.PublishAsync(new Broker2Message());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.InboundEnvelopes[0].Message.ShouldBeOfType<Broker1Message>();
+        Helper.Spy.InboundEnvelopes[0].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-1");
+        Helper.Spy.InboundEnvelopes[1].Message.ShouldBeOfType<Broker2Message>();
+        Helper.Spy.InboundEnvelopes[1].Consumer.ShouldBeOfType<KafkaConsumer>().Configuration.BootstrapServers.ShouldBe("PLAINTEXT://e2e-2");
+    }
+
+    private sealed class Broker1Message : IIntegrationMessage;
+
+    private sealed class Broker2Message : IIntegrationMessage;
+}

@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking;
 public class ChunkStreamTests
 {
     [Fact]
-    public async Task CopyToAsync_MessageStreamCopied()
+    public async Task CopyToAsync_ShouldCopyMessageStream()
     {
         MessageStreamProvider<IRawInboundEnvelope> streamProvider = new();
         ChunkStream chunkStream = new(streamProvider.CreateStream<IRawInboundEnvelope>());
@@ -48,7 +48,7 @@ public class ChunkStreamTests
     }
 
     [Fact]
-    public async Task CopyTo_MessageStreamCopied()
+    public async Task CopyTo_ShouldCopyMessageStream()
     {
         MessageStreamProvider<IRawInboundEnvelope> streamProvider = new();
         ChunkStream chunkStream = new(streamProvider.CreateStream<IRawInboundEnvelope>());

@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
 public class BinaryMessageHandlerConsumerBehaviorTests
 {
     [Fact]
-    public async Task HandleAsync_BinaryMessage_BinaryMessageReturned()
+    public async Task HandleAsync_ShouldReplaceEnvelopeWithBinaryMessage()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =
@@ -56,7 +56,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_NoBinaryMessageHeaders_EnvelopeUntouched()
+    public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenNotBinaryMessage()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         RawInboundEnvelope envelope = new(
@@ -85,7 +85,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_EndpointWithBinaryMessageSerializer_EnvelopeUntouched()
+    public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenEndpointHasBinaryMessageSerializer()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =

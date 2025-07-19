@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
 public class BinaryMessageDeserializerTests
 {
     [Fact]
-    public async Task SerializeDeserializeAsync_Message_CorrectlyDeserialized()
+    public async Task DeserializeAsync_ShouldReturnBinaryMessage()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         MessageHeaderCollection headers = [];
@@ -32,7 +32,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task SerializeDeserializeAsync_CustomModel_CorrectlyDeserialized()
+    public async Task DeserializeAsync_ShouldReturnCustomModel()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         MessageHeaderCollection headers = [];
@@ -47,7 +47,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_Stream_BinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnBinaryMessageFromStream()
     {
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = [];
@@ -64,7 +64,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_ByteArrayWithTypeHeader_CustomBinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnCustomModelFromTypeHeader()
     {
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = new()
@@ -84,7 +84,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_ByteArrayWithHardcodedType_CustomBinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnCustomModelFromHardcodedType()
     {
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = [];
@@ -101,7 +101,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_NullMessage_BinaryWithNullContentReturned()
+    public async Task DeserializeAsync_ShouldReturnBinaryWithNullContent()
     {
         (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(null, [], TestConsumerEndpoint.GetDefault());
@@ -115,7 +115,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_EmptyMessage_BinaryWithEmptyContentReturned()
+    public async Task DeserializeAsync_ShouldReturnBinaryWithEmptyContent()
     {
         (object? deserialized, Type type) = await new BinaryMessageDeserializer<BinaryMessage>()
             .DeserializeAsync(
@@ -129,7 +129,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_WithHardcodedType_CustomBinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnCustomModelFromStreamAndTypeHeader()
     {
         MemoryStream rawContent = new([0x01, 0x02, 0x03, 0x04, 0x05]);
         MessageHeaderCollection headers = [];
@@ -147,7 +147,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_NullMessageWithHardcodedType_CustomBinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnCustomModelFromStreamAndHardcodedType()
     {
         MessageHeaderCollection headers = [];
 
@@ -164,7 +164,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_EmptyMessageWithHardcodedType_CustomBinaryReturned()
+    public async Task DeserializeAsync_ShouldReturnEmptyCustomModel()
     {
         MessageHeaderCollection headers = [];
 
@@ -181,7 +181,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public async Task DeserializeAsync_BadTypeHeader_ExceptionThrown()
+    public async Task DeserializeAsync_ShouldThrow_WhenBadTypeHeader()
     {
         Stream rawContent = BytesUtil.GetRandomStream();
         MessageHeaderCollection headers = new()
@@ -199,7 +199,7 @@ public class BinaryMessageDeserializerTests
     }
 
     [Fact]
-    public void Equals_SameInstance_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameInstance()
     {
         BinaryMessageDeserializer<BinaryMessage> deserializer1 = new();
         BinaryMessageDeserializer<BinaryMessage> deserializer2 = deserializer1;
@@ -211,7 +211,7 @@ public class BinaryMessageDeserializerTests
 
     [Fact]
     [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
-    public void Equals_DifferentType_FalseReturned()
+    public void Equals_ShouldReturnFalse_WhenDifferentType()
     {
         BinaryMessageDeserializer<BinaryMessage> deserializer1 = new();
         BinaryMessageDeserializer<InheritedBinaryMessage> deserializer2 = new();

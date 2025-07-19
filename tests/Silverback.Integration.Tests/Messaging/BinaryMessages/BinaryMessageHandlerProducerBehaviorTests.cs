@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
 public class BinaryMessageHandlerProducerBehaviorTests
 {
     [Fact]
-    public async Task HandleAsync_BinaryMessage_RawContentProduced()
+    public async Task HandleAsync_ShouldSetRawMessage()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
@@ -40,11 +40,11 @@ public class BinaryMessageHandlerProducerBehaviorTests
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        result!.RawMessage.ShouldBeSameAs(message.Content);
+        result.RawMessage.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
-    public async Task HandleAsync_InheritedBinaryMessage_RawContentProduced()
+    public async Task HandleAsync_ShouldSetRawMessageFromCustomBinaryMessage()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
@@ -65,11 +65,36 @@ public class BinaryMessageHandlerProducerBehaviorTests
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        result!.RawMessage.ShouldBeSameAs(message.Content);
+        result.RawMessage.ShouldBeSameAs(message.Content);
     }
 
     [Fact]
-    public async Task HandleAsync_NonBinaryMessage_EnvelopeUntouched()
+    public async Task HandleAsync_ShouldNotReplaceEnvelope()
+    {
+        TestEventOne message = new() { Content = "hey!" };
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+
+        IOutboundEnvelope? result = null;
+        await new BinaryMessageHandlerProducerBehavior().HandleAsync(
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                (_, _) => ValueTask.CompletedTask,
+                Substitute.For<IServiceProvider>()),
+            (context, _) =>
+            {
+                result = context.Envelope;
+                return default;
+            },
+            CancellationToken.None);
+
+        result.ShouldNotBeNull();
+        result!.ShouldBeSameAs(envelope);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenEndpointHasBinaryMessageSerializer()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         TestProducerEndpointConfiguration endpointConfiguration = new("test")
@@ -94,32 +119,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
             CancellationToken.None);
 
         result.ShouldNotBeNull();
-        result!.ShouldBeSameAs(envelope);
-    }
-
-    [Fact]
-    public async Task HandleAsync_EndpointWithBinaryMessageSerializer_EnvelopeUntouched()
-    {
-        TestEventOne message = new() { Content = "hey!" };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
-
-        IOutboundEnvelope? result = null;
-        await new BinaryMessageHandlerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(
-                envelope,
-                Substitute.For<IProducer>(),
-                [],
-                (_, _) => ValueTask.CompletedTask,
-                Substitute.For<IServiceProvider>()),
-            (context, _) =>
-            {
-                result = context.Envelope;
-                return default;
-            },
-            CancellationToken.None);
-
-        result.ShouldNotBeNull();
-        result!.ShouldBeSameAs(envelope);
+        result.ShouldBeSameAs(envelope);
     }
 
     private sealed class InheritedBinaryMessage : BinaryMessage;

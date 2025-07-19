@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences;
 public class SequenceStoreTests
 {
     [Fact]
-    public async Task GetAsync_ExistingSequence_SequenceReturned()
+    public async Task GetAsync_ShouldReturnExistingSequence()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -34,7 +34,7 @@ public class SequenceStoreTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task GetAsync_PartialId_SequenceReturnedIfMatchPrefixIsTrue(bool matchPrefix)
+    public async Task GetAsync_ShouldReturnPartialMatch_WhenMatchPrefixIsTrue(bool matchPrefix)
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -55,7 +55,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task GetAsync_NotExistingSequence_NullReturned()
+    public async Task GetAsync_ShouldReturnNull_WhenSequenceNotExist()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -70,7 +70,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task AddAsync_NewSequence_SequenceAddedAndReturned()
+    public async Task AddAsync_ShouldAddAndReturnSequence_WhenNewSequence()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -83,7 +83,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task AddAsync_ExistingSequence_SequenceAbortedAndReplaced()
+    public async Task AddAsync_ShouldAbortAndReplaceSequence_WhenOtherSequenceExists()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -100,7 +100,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task AddAsyncAndGetAsync_Sequence_IsNewFlagAutomaticallyHandled()
+    public async Task AddAsyncAndGetAsync_ShouldHandleIsNewFlag()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -115,7 +115,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task Remove_ExistingSequence_SequenceRemoved()
+    public async Task Remove_ShouldRemoveExistingSequence()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -132,7 +132,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task Remove_NotExistingSequence_NoExceptionThrown()
+    public async Task Remove_ShouldNotThrow_WhenSequenceNotExist()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
@@ -149,7 +149,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public void GetPendingSequences_EmptyStore_EmptyCollectionReturned()
+    public void GetPendingSequences_ShouldReturnEmptyCollection_WhenStoreIsEmpty()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
 
@@ -159,7 +159,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task GetPendingSequences_WithIncompleteSequence_PendingSequencesReturned()
+    public async Task GetPendingSequences_ShouldReturnPendingSequence()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
 
@@ -175,7 +175,7 @@ public class SequenceStoreTests
     }
 
     [Fact]
-    public async Task GetPendingSequences_WithAllCompleteOrAbortedSequences_EmptyCollectionReturned()
+    public async Task GetPendingSequences_ShouldReturnEmptyCollection_WhenAllSequencesCompleteOrAborted()
     {
         SequenceStore store = new(new SilverbackLoggerSubstitute<SequenceStore>());
 

@@ -11,7 +11,7 @@ namespace Silverback.Tests.Core.Model.Domain;
 public class DomainEntityTests
 {
     [Fact]
-    public void AddEvent_EventInstance_AddedToCollection()
+    public void AddEvent_ShouldAddEventInstance()
     {
         TestAggregateRoot entity = new();
 
@@ -25,7 +25,7 @@ public class DomainEntityTests
     }
 
     [Fact]
-    public void AddEvent_EventType_AddedToCollection()
+    public void AddEvent_ShouldAddEventType()
     {
         TestAggregateRoot entity = new();
 
@@ -39,7 +39,7 @@ public class DomainEntityTests
     }
 
     [Fact]
-    public void AddEvent_SameEventTypeWithoutAllowMultiple_AddedOnlyOnceToCollection()
+    public void AddEvent_ShouldDiscardDuplicatedEvents_WhenNotAllowMultiple()
     {
         TestAggregateRoot entity = new();
 
@@ -51,7 +51,7 @@ public class DomainEntityTests
     }
 
     [Fact]
-    public void ClearMessages_WithSomePendingMessages_MessagesCleared()
+    public void ClearMessages_ShouldClearEvents()
     {
         TestAggregateRoot entity = new();
 

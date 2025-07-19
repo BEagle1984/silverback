@@ -1,0 +1,59 @@
+﻿// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using Shouldly;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Producing.EndpointResolvers;
+using Xunit;
+
+namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
+
+public class KafkaProducerEndpointConfigurationTests
+{
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenIsValid()
+    {
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration();
+
+        Action act = configuration.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenSerializerIsNull()
+    {
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenEndpointIsNull()
+    {
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { EndpointResolver = null! };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenStrategyIsNull()
+    {
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Strategy = null! };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    private static KafkaProducerEndpointConfiguration GetValidConfiguration() => new()
+    {
+        EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")
+    };
+}

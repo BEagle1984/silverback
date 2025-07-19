@@ -1,0 +1,113 @@
+﻿// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Shouldly;
+using Silverback.Util;
+using Xunit;
+
+namespace Silverback.Tests.Core.Util;
+
+[SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Test methods")]
+public class EnumerableAsCollectionExtensionsTests
+{
+    [Fact]
+    public void AsReadOnlyCollection_ShouldReturnNewEquivalentCollection_WhenEnumerableIsPassed()
+    {
+        IEnumerable<int> enumerable = GetEnumerable();
+
+        static IEnumerable<int> GetEnumerable()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
+
+        IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
+
+        collection.ShouldNotBeSameAs(enumerable);
+        collection.ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void AsReadOnlyCollection_ShouldReturnSameObject_WhenListIsPassed()
+    {
+        List<int> enumerable = [1, 2, 3, 4];
+
+        IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
+
+        collection.ShouldBeSameAs(enumerable);
+    }
+
+    [Fact]
+    public void AsReadOnlyList_ShouldReturnNewEquivalentList_WhenEnumerableIsPassed()
+    {
+        IEnumerable<int> enumerable = GetEnumerable();
+
+        static IEnumerable<int> GetEnumerable()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
+
+        IReadOnlyList<int> list = enumerable.AsReadOnlyList();
+
+        list.ShouldNotBeSameAs(enumerable);
+        list.ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void AsReadOnlyList_ShouldReturnSameObject_WhenListIsPassed()
+    {
+        int[] enumerable = [1, 2, 3, 4];
+
+        IReadOnlyList<int> list = enumerable.AsReadOnlyList();
+
+        list.ShouldBeSameAs(enumerable);
+    }
+
+    [Fact]
+    public void AsList_ShouldReturnNewEquivalentList_WhenEnumerableIsPassed()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
+
+        List<int> list = enumerable.AsList();
+
+        list.ShouldNotBeSameAs(enumerable);
+        list.ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void AsList_ShouldReturnSameObject_WhenListIsPassed()
+    {
+        List<int> enumerable = [1, 2, 3, 4];
+
+        List<int> list = enumerable.AsList();
+
+        list.ShouldBeSameAs(enumerable);
+    }
+
+    [Fact]
+    public void AsArray_ShouldReturnNewEquivalentArray_WhenEnumerableIsPassed()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
+
+        int[] array = enumerable.AsArray();
+
+        array.ShouldNotBeSameAs(enumerable);
+        array.ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void AsArray_ShouldReturnSameObject_WhenArrayIsPassed()
+    {
+        int[] enumerable = [1, 2, 3, 4];
+
+        int[] array = enumerable.AsArray();
+
+        array.ShouldBeSameAs(enumerable);
+    }
+}

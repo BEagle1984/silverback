@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
 public class BinaryMessageSerializerTests
 {
     [Fact]
-    public async Task SerializeAsync_Message_TypeHeaderAdded()
+    public async Task SerializeAsync_ShouldAddTypeHeader()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         MessageHeaderCollection headers = [];
@@ -33,7 +33,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_Stream_ReturnedUnmodified()
+    public async Task SerializeAsync_ShouldNotModifyStream()
     {
         MemoryStream messageStream = new(Encoding.UTF8.GetBytes("test"));
 
@@ -48,7 +48,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
+    public async Task SerializeAsync_ShouldNotModifyByteArray()
     {
         byte[] messageBytes = Encoding.UTF8.GetBytes("test");
 
@@ -63,7 +63,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_BinaryMessage_RawContentProduced()
+    public async Task SerializeAsync_ShouldReturnBinaryMessageContent()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         MessageHeaderCollection headers = [];
@@ -74,7 +74,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_InheritedBinaryMessage_RawContentProduced()
+    public async Task SerializeAsync_ShouldReturnCustomBinaryMessageContent()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         MessageHeaderCollection headers = [];
@@ -85,7 +85,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_NonBinaryMessage_ExceptionThrown()
+    public async Task SerializeAsync_ShouldThrow_WhenNotBinaryMessage()
     {
         TestEventOne message = new() { Content = "hey!" };
         MessageHeaderCollection headers = [];
@@ -96,7 +96,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_NullMessage_NullReturned()
+    public async Task SerializeAsync_ShouldReturnNull_WhenMessageNull()
     {
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(
             null,
@@ -107,7 +107,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_NullMessageWithHardcodedType_NullReturned()
+    public async Task SerializeAsync_ShouldReturnNull_WhenMessageNullRegardlessOfHardcodedType()
     {
         Stream? serialized = await new BinaryMessageSerializer()
             .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
@@ -116,7 +116,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_SameInstance_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameInstance()
     {
         BinaryMessageSerializer serializer1 = new();
         BinaryMessageSerializer serializer2 = serializer1;
@@ -127,7 +127,7 @@ public class BinaryMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_SameSettings_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameSettings()
     {
         BinaryMessageSerializer serializer1 = new();
         BinaryMessageSerializer serializer2 = new();

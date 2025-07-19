@@ -1,0 +1,96 @@
+// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using Shouldly;
+using Silverback.Lock;
+using Silverback.Messaging.Producing.TransactionalOutbox;
+using Xunit;
+
+namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
+
+public class OutboxWorkerSettingsTests
+{
+    [Fact]
+    public void Constructor_ShouldDeriveLockSettingsFromOutboxSettings()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings());
+
+        settings.DistributedLock.ShouldBeOfType<TestLockSettings>();
+    }
+
+    [Fact]
+    public void Constructor_ShouldThrow_WhenLockSettingsCannotBeDerived()
+    {
+        Action act = () =>
+        {
+            OutboxWorkerSettings dummy = new(new TestOutboxSettingsNoLock());
+        };
+
+        act.ShouldThrow<SilverbackConfigurationException>();
+    }
+
+    [Fact]
+    public void Constructor_ShouldSetLockSettings_WhenSpecified()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettingsNoLock(), new TestLockSettings());
+
+        settings.DistributedLock.ShouldBeOfType<TestLockSettings>();
+    }
+
+    [Fact]
+    public void Constructor_ShouldNotThrow_WhenNullLockIsSpecified()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettingsNoLock(), null);
+
+        settings.DistributedLock.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenSettingsAreValid()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings());
+
+        Action act = settings.Validate;
+
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenIntervalIsOutOfRange()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings())
+        {
+            Interval = TimeSpan.FromSeconds(-42)
+        };
+
+        Action act = settings.Validate;
+
+        act.ShouldThrow<SilverbackConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenBatchSizeIsOutOfRange()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings())
+        {
+            BatchSize = -42
+        };
+
+        Action act = settings.Validate;
+
+        act.ShouldThrow<SilverbackConfigurationException>();
+    }
+
+    private record TestOutboxSettings : OutboxSettings
+    {
+        public override DistributedLockSettings GetCompatibleLockSettings() => new TestLockSettings();
+    }
+
+    private record TestLockSettings() : DistributedLockSettings("lock");
+
+    private record TestOutboxSettingsNoLock : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
+}

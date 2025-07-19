@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Kafka.Testing.Messaging.Broker.Kafka.Mock
 public class CooperativeStickyRebalanceStrategyTests
 {
     [Fact]
-    public void Rebalance_FirstRebalance_PartitionsAssigned()
+    public void Rebalance_ShouldAssignPartitionsAtFirstRebalance()
     {
         List<TopicPartition> partitions =
         [
@@ -64,7 +64,7 @@ public class CooperativeStickyRebalanceStrategyTests
     }
 
     [Fact]
-    public void Rebalance_FirstRebalanceWithMixedSubscriptions_PartitionsAssigned()
+    public void Rebalance_ShouldAssignPartitionsAtFirstRebalanceWithMixedSubscriptions()
     {
         List<TopicPartition> partitions =
         [
@@ -121,7 +121,7 @@ public class CooperativeStickyRebalanceStrategyTests
     }
 
     [Fact]
-    public void Rebalance_AddingOneConsumer_PartitionsReassigned()
+    public void Rebalance_ShouldReassignPartitions_WhenAddingOneConsumer()
     {
         List<TopicPartition> partitions =
         [
@@ -192,7 +192,7 @@ public class CooperativeStickyRebalanceStrategyTests
     }
 
     [Fact]
-    public void Rebalance_RemovingOneConsumer_PartitionsReassigned()
+    public void Rebalance_ShouldReassignPartitions_WhenRemovingOneConsumer()
     {
         List<TopicPartition> partitions =
         [

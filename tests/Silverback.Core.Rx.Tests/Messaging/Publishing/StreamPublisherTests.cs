@@ -24,7 +24,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing;
 public class StreamPublisherTests
 {
     [Fact]
-    public async Task Publish_MessageStreamProvider_StreamedMessagesReceived()
+    public async Task Publish_ShouldPublishProviderAndReceiveStreamedMessages()
     {
         int receivedStreams = 0;
         int receivedEvents = 0;
@@ -71,7 +71,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProvider_MessagesNotAutomaticallyEnumerated()
+    public async Task Publish_ShouldNotAutomaticallyEnumerateMessages()
     {
         int receivedEnumeratedStreams = 0;
 
@@ -104,7 +104,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_SimpleMessageAndObservableOfMessages_StreamSubscribersNotInvoked()
+    public async Task Publish_ShouldNotInvokeStreamSubscriberForSimpleMessage()
     {
         int receivedStreams = 0;
 
@@ -145,7 +145,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProvider_OnlyRequiredStreamsPublished()
+    public async Task Publish_ShouldPublishRequiredStreamsOnly()
     {
         int receivedStreams = 0;
 
@@ -213,7 +213,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProvider_ProcessExceptionRethrown()
+    public async Task Publish_ShouldRethrowProcessException()
     {
         int receivedStreams = 0;
         int received = 0;
@@ -261,7 +261,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task PublishAsync_MessageStreamProvider_ProcessExceptionRethrown()
+    public async Task PublishAsync_ShouldRethrowProcessException()
     {
         int received = 0;
 
@@ -303,7 +303,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task PublishAsync_MessageStreamProviderAbortedAfterException_AllPendingTasksCompleted()
+    public async Task PublishAsync_ShouldCompleteAllPendingTasks_WhenAbortedAfterException()
     {
         int received = 0;
 
@@ -350,7 +350,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProviderOfEnvelopes_StreamedEnvelopesReceived()
+    public async Task Publish_ShouldStreamEnvelopes()
     {
         int receivedStreams = 0;
         int receivedEnvelopes = 0;
@@ -393,7 +393,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProviderOfEnvelopes_StreamedUnwrappedMessagesReceived()
+    public async Task Publish_ShouldUnwrapEnvelopes()
     {
         int receivedStreams = 0;
         int receivedTestEventOnes = 0;

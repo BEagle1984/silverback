@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 public class KafkaOffsetTests
 {
     [Fact]
-    public void Constructor_WithTopicPartitionOffset_ProperlyConstructed()
+    public void Constructor_ShouldInitWithTopicPartitionOffset()
     {
         KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 42));
 
@@ -25,7 +25,7 @@ public class KafkaOffsetTests
     [InlineData(5, 10, true)]
     [InlineData(5, 3, false)]
     [InlineData(5, 5, false)]
-    public void LessThanOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
+    public void LessThanOperator_ShouldCompareOffsets(int valueA, int valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
@@ -39,7 +39,7 @@ public class KafkaOffsetTests
     [InlineData(10, 5, true)]
     [InlineData(1, 3, false)]
     [InlineData(5, 5, false)]
-    public void GreaterThanOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
+    public void GreaterThanOperator_ShouldCompareOffsets(int valueA, int valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
@@ -53,7 +53,7 @@ public class KafkaOffsetTests
     [InlineData(5, 10, true)]
     [InlineData(5, 3, false)]
     [InlineData(5, 5, true)]
-    public void LessThanOrEqualOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
+    public void LessThanOrEqualOperator_ShouldCompareOffsets(int valueA, int valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
@@ -67,10 +67,7 @@ public class KafkaOffsetTests
     [InlineData(10, 5, true)]
     [InlineData(1, 3, false)]
     [InlineData(5, 5, true)]
-    public void GreaterThanOrEqualOperator_SomeOffsets_ProperlyCompared(
-        int valueA,
-        int valueB,
-        bool expectedResult)
+    public void GreaterThanOrEqualOperator_ShouldCompareOffsets(int valueA, int valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
@@ -85,7 +82,7 @@ public class KafkaOffsetTests
     [InlineData(5, 3, false)]
     [InlineData(5, 5, true)]
     [InlineData(5, null, false)]
-    public void EqualityOperator_SomeOffsets_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
+    public void EqualityOperator_ShouldCompareOffsets(int valueA, int? valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
@@ -100,7 +97,7 @@ public class KafkaOffsetTests
     [InlineData(1, 3, true)]
     [InlineData(5, 5, false)]
     [InlineData(5, null, true)]
-    public void InequalityOperator_SomeOffsets_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
+    public void InequalityOperator_ShouldCompareOffsets(int valueA, int? valueB, bool expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
@@ -115,7 +112,7 @@ public class KafkaOffsetTests
     [InlineData(1, 3, -1)]
     [InlineData(5, 5, 0)]
     [InlineData(5, null, 1)]
-    public void CompareTo_AnotherKafkaOffset_ProperlyCompared(int valueA, int? valueB, int expectedResult)
+    public void CompareTo_ShouldCompareOffsets(int valueA, int? valueB, int expectedResult)
     {
         KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
         KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
@@ -126,7 +123,7 @@ public class KafkaOffsetTests
     }
 
     [Fact]
-    public void EqualsOffset_SameInstance_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameInstance()
     {
         KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 0, 42));
 
@@ -136,7 +133,7 @@ public class KafkaOffsetTests
     }
 
     [Fact]
-    public void EqualsObject_SameInstance_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameObjectInstance()
     {
         KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 0, 42));
 
@@ -150,7 +147,7 @@ public class KafkaOffsetTests
     [InlineData("abc", 0, 1, "abc", 1, 1, false)]
     [InlineData("abc", 0, 1, "abc", 0, 2, false)]
     [InlineData("abc", 0, 1, "def", 0, 1, false)]
-    public void EqualsOffset_AnotherKafkaOffset_ProperlyCompared(
+    public void Equals_ShouldCompareWithOffset(
         string topic1,
         int partition1,
         long offset1,
@@ -172,7 +169,7 @@ public class KafkaOffsetTests
     [InlineData("abc", 0, 1, "abc", 1, 1, false)]
     [InlineData("abc", 0, 1, "abc", 0, 2, false)]
     [InlineData("abc", 0, 1, "def", 0, 1, false)]
-    public void EqualsObject_AnotherKafkaOffset_ProperlyCompared(
+    public void Equals_ShouldCompareWithObject(
         string topic1,
         int partition1,
         long offset1,
@@ -191,7 +188,7 @@ public class KafkaOffsetTests
 
     [Fact]
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Test code")]
-    public void EqualsOffset_Null_FalseReturned()
+    public void Equals_ShouldReturnFalse_WhenOtherOffsetIsNull()
     {
         KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
 
@@ -202,7 +199,7 @@ public class KafkaOffsetTests
 
     [Fact]
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Test code")]
-    public void EqualsObject_Null_FalseReturned()
+    public void Equals_ShouldReturnFalse_WhenOtherObjectIsNull()
     {
         KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
 
@@ -212,7 +209,7 @@ public class KafkaOffsetTests
     }
 
     [Fact]
-    public void Equals_DifferentOffsetType_FalseReturned()
+    public void Equals_ShouldReturnFalse_WhenOffsetTypeMismatch()
     {
         KafkaOffset offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
         TestOtherOffset offset2 = new("test-topic", "42");

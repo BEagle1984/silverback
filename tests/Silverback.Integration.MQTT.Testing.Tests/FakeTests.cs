@@ -1,0 +1,12 @@
+// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using Xunit;
+
+namespace Silverback.Tests.Integration.Mqtt.Testing;
+
+public class FakeTests
+{
+    [Fact]
+    public void Test() => Assert.True(true);
+}

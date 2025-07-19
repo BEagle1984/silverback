@@ -11,7 +11,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers.Subscriptions;
 public class SubscriptionCollectionExtensionsTests
 {
     [Fact]
-    public void AddTypedSubscriptionIfNotExists_NewType_Added()
+    public void AddTypedSubscriptionIfNotExists_ShouldAddNewType()
     {
         List<ISubscription> collection = [];
 
@@ -22,7 +22,7 @@ public class SubscriptionCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddTypedSubscriptionIfNotExists_ExistingType_NotAdded()
+    public void AddTypedSubscriptionIfNotExists_ShouldNotAddExistingType()
     {
         List<ISubscription> collection = [];
 

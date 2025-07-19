@@ -17,7 +17,7 @@ public class SymmetricDecryptStreamTests
     private readonly byte[] _clearTextMessage = [0x1, 0x2, 0x3, 0x4, 0x5];
 
     [Fact]
-    public async Task ReadAsync_UsingAesWithDefaultSettings_MessageIsSuccessfullyDecrypted()
+    public async Task ReadAsync_ShouldDecrypt_WhenUsingAesWithDefaultSettings()
     {
         MemoryStream cypherMessage = new(
         [
@@ -39,7 +39,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public void Read_UsingAesWithDefaultSettings_MessageIsSuccessfullyDecrypted()
+    public void Read_ShouldDecrypt_WhenUsingAesWithDefaultSettings()
     {
         MemoryStream cypherMessage = new(
         [
@@ -61,7 +61,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_UsingRijndaelWithCustomSettings_MessageIsSuccessfullyDecrypted()
+    public async Task ReadAsync_ShouldDecrypt_WhenUsingRijndaelWithCustomSettings()
     {
         MemoryStream cypherMessage = new(
         [
@@ -88,7 +88,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public void Read_UsingRijndaelWithCustomSettings_MessageIsSuccessfullyDecrypted()
+    public void Read_ShouldDecrypt_WhenUsingRijndaelWithCustomSettings()
     {
         MemoryStream cypherMessage = new(
         [
@@ -115,7 +115,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_SpecifyingIV_MessageIsSuccessfullyDecrypted()
+    public async Task ReadAsync_ShouldDecrypt_WhenSpecifyingIV()
     {
         MemoryStream cypherMessage = new(
         [
@@ -137,7 +137,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public void Read_SpecifyingIV_MessageIsSuccessfullyDecrypted()
+    public void Read_ShouldDecrypt_WhenSpecifyingIV()
     {
         MemoryStream cypherMessage = new(
         [
@@ -159,7 +159,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_WithoutSpecifyingIV_IVIsExtractedAndMessageIsSuccessfullyDecrypted()
+    public async Task ReadAsync_ShouldDecrypt_WhenIVNotSpecified()
     {
         MemoryStream cypherMessage = new(
         [
@@ -181,7 +181,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public void Read_WithoutSpecifyingIV_IVIsExtractedAndMessageIsSuccessfullyDecrypted()
+    public void Read_ShouldDecrypt_ShouldDecrypt_WhenIVNotSpecified()
     {
         MemoryStream cypherMessage = new(
         [
@@ -203,7 +203,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public async Task ReadAsync_EmptyStream_EmptyStreamReturned()
+    public async Task ReadAsync_ShouldReturnEmptyStream_WhenEmptyStream()
     {
         SymmetricDecryptStream cryptoStream = new(
             new MemoryStream(),
@@ -217,7 +217,7 @@ public class SymmetricDecryptStreamTests
     }
 
     [Fact]
-    public void Read_EmptyStream_EmptyStreamReturned()
+    public void Read_ShouldReturnEmptyStream_WhenEmptyStream()
     {
         SymmetricDecryptStream cryptoStream = new(
             new MemoryStream(),

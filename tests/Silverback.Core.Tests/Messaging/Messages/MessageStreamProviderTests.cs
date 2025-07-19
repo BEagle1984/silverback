@@ -18,7 +18,7 @@ public class MessageStreamProviderTests
     private interface IEvent : IMessage;
 
     [Fact]
-    public async Task PushAsync_Messages_RelayedToMatchingStreams()
+    public async Task PushAsync_ShouldRelayToMatchingStreams()
     {
         MessageStreamProvider<IMessage> provider = new();
 
@@ -48,7 +48,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_Messages_ReturnedAfterMessagesProcessed()
+    public async Task PushAsync_ShouldReturnAfterMessagesProcessed()
     {
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<IEvent> stream = provider.CreateStream<IEvent>();
@@ -73,7 +73,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_MessageWithoutMatchingStream_ExceptionThrown()
+    public async Task PushAsync_ShouldThrow_WhenNoMatchingStream()
     {
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
@@ -87,7 +87,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_MessageWithoutMatchingStreamDisablingException_NoExceptionThrown()
+    public async Task PushAsync_ShouldNotThrow_WhenNoMatchingStreamButExceptionDisabled()
     {
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
@@ -101,7 +101,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_Envelopes_RelayedToStream()
+    public async Task PushAsync_ShouldRelayEnvelope()
     {
         MessageStreamProvider<TestEnvelope> provider = new();
         IMessageStreamEnumerable<TestEnvelope> stream = provider.CreateStream<TestEnvelope>();
@@ -123,7 +123,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_Envelopes_UnwrappedAndRelayedToMatchingStreams()
+    public async Task PushAsync_ShouldUnwrapEnvelope()
     {
         MessageStreamProvider<TestEnvelope> provider = new();
         IMessageStreamEnumerable<IEvent> eventsStream = provider.CreateStream<IEvent>();
@@ -152,7 +152,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_EnvelopeWithoutMatchingStream_ExceptionThrown()
+    public async Task PushAsync_ShouldThrow_WhenEnvelopeNoMatchingStream()
     {
         MessageStreamProvider<IEnvelope> provider = new();
         IMessageStreamEnumerable<TestEventOne> stream = provider.CreateStream<TestEventOne>();
@@ -166,7 +166,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileEnumeratingStream_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileEnumeratingStream()
     {
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
@@ -198,7 +198,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileAsyncEnumeratingStream_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileAsyncEnumeratingStream()
     {
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
@@ -230,7 +230,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileEnumeratingMultipleStreams_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileEnumeratingMultipleStreams()
     {
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream1 = provider.CreateStream<int>();
@@ -273,7 +273,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task PushAsync_WhileAsyncEnumeratingMultipleStreams_BackpressureIsHandled()
+    public async Task PushAsync_ShouldHandleBackpressureWhileAsyncEnumeratingMultipleStreams_BackpressureIsHandled()
     {
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream1 = provider.CreateStream<int>();
@@ -316,7 +316,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task CompleteAsync_WhileEnumeratingStream_EnumerationCompleted()
+    public async Task CompleteAsync_ShouldCompleteEnumeration()
     {
         int? count = null;
         MessageStreamProvider<int> provider = new();
@@ -341,7 +341,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task CompleteAsync_WhileAsyncEnumeratingStreams_EnumerationCompleted()
+    public async Task CompleteAsync_ShouldCompleteAsyncEnumeration()
     {
         int? count = null;
         MessageStreamProvider<int> provider = new();
@@ -366,7 +366,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task Abort_WhileEnumeratingStream_EnumerationAborted()
+    public async Task Abort_ShouldAbortEnumeration()
     {
         int? count = null;
         MessageStreamProvider<int> provider = new();
@@ -393,7 +393,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task Abort_WhileAsyncEnumeratingStreams_EnumerationAborted()
+    public async Task Abort_ShouldAbortAsyncEnumeration()
     {
         int? count = null;
         MessageStreamProvider<int> provider = new();
@@ -420,7 +420,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public async Task CreateLazyStream_PushingMessages_StreamCreatedWhenMatchingMessagePushed()
+    public async Task CreateLazyStream_ShouldCreateStream_WhenMatchingMessagePushed()
     {
         MessageStreamProvider<IEvent> provider = new();
         ILazyMessageStreamEnumerable<TestEventTwo> lazyStream = provider.CreateLazyStream<TestEventTwo>();
@@ -463,7 +463,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public void CreateLazyStream_CalledTwiceForSameType_NewInstanceReturned()
+    public void CreateLazyStream_ShouldReturnNewInstance_WhenCalledTwiceForSameType()
     {
         MessageStreamProvider<IMessage> provider = new();
         ILazyMessageStreamEnumerable<IEvent> stream1 = provider.CreateLazyStream<IEvent>();
@@ -473,7 +473,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public void CreateLazyStream_GenericAndNonGenericVersions_EquivalentInstanceReturned()
+    public void CreateLazyStream_ShouldReturnEquivalentInstance_WhenGenericAndNonGenericVersionsAreUsed()
     {
         MessageStreamProvider<IMessage> provider = new();
 
@@ -484,7 +484,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public void CreateStream_CalledTwiceForSameType_NewInstanceReturned()
+    public void CreateStream_ShouldReturnNewInstance_WhenCalledTwiceForSameType()
     {
         MessageStreamProvider<IMessage> provider = new();
         IMessageStreamEnumerable<IEvent> stream1 = provider.CreateStream<IEvent>();
@@ -494,7 +494,7 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
-    public void CreateStream_GenericAndNonGenericVersions_EquivalentInstanceReturned()
+    public void CreateStream_ShouldReturnEquivalentInstance_WhenGenericAndNonGenericVersionsAreUsed()
     {
         MessageStreamProvider<IMessage> provider = new();
 

@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics;
 public class KafkaStatisticsDeserializerTests
 {
     [Fact]
-    public void TryDeserialize_ValidStatisticsJson_StatisticsProperlyDeserialized()
+    public void TryDeserialize_ShouldDeserializeValidStatisticsJson()
     {
         ResourcesHelper resourcesHelper = new(GetType().Assembly);
         string json = resourcesHelper.GetAsString("Silverback.Tests.Integration.Kafka.Resources.statistics.json");
@@ -300,7 +300,7 @@ public class KafkaStatisticsDeserializerTests
     }
 
     [Fact]
-    public void TryDeserialize_InvalidStatisticsJson_NullStatisticsReturned()
+    public void TryDeserialize_ShouldReturnNull_WhenJsonNotValid()
     {
         string json = "{ WTF?! }";
 

@@ -12,7 +12,7 @@ namespace Silverback.Tests.Core.Collections;
 public class ValueReadOnlyCollectionExtensionsTests
 {
     [Fact]
-    public void AsValueReadOnlyCollection_Enumerable_NewInstanceReturned()
+    public void AsValueReadOnlyCollection_ShouldReturnNewInstanceFromEnumerable()
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
@@ -23,7 +23,7 @@ public class ValueReadOnlyCollectionExtensionsTests
     }
 
     [Fact]
-    public void AsValueReadOnlyCollection_List_NewInstanceReturned()
+    public void AsValueReadOnlyCollection_ShouldReturnNewInstanceFromList()
     {
         List<int> list = [1, 2, 3];
 
@@ -34,7 +34,7 @@ public class ValueReadOnlyCollectionExtensionsTests
     }
 
     [Fact]
-    public void AsValueReadOnlyCollection_Array_NewInstanceReturned()
+    public void AsValueReadOnlyCollection_ShouldReturnNewInstanceFromArray()
     {
         int[] array = [1, 2, 3];
 
@@ -45,7 +45,7 @@ public class ValueReadOnlyCollectionExtensionsTests
     }
 
     [Fact]
-    public void AsValueReadOnlyCollection_ValueCollection_SameInstanceReturned()
+    public void AsValueReadOnlyCollection_ShouldReturnSameValueCollectionInstance()
     {
         IReadOnlyCollection<int> collection = new List<int> { 1, 2, 3, 4 }.AsValueReadOnlyCollection();
 

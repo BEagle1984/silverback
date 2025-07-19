@@ -1,0 +1,237 @@
+// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+using NSubstitute;
+using Shouldly;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Chunking;
+using Xunit;
+
+namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking;
+
+public class ChunkEnricherFactoryTests
+{
+    [Fact]
+    public void GetEnricher_ShouldReturnChunkEnricherAccordingToEndpointType()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("topic1"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("topic1"),
+            Substitute.For<IServiceProvider>());
+
+        enricher1.ShouldBeOfType<ChunkEnricher1>();
+        enricher2.ShouldBeOfType<ChunkEnricher2>();
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldThrow_WhenNullSettingsArePassed()
+    {
+        ChunkEnricherFactory factory = new();
+
+        Action act = () => factory.GetEnricher(null!, Substitute.For<IServiceProvider>());
+
+        act.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldReturnNullEnricher_WhenFactoryNotRegistered()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("topic1"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("topic2"),
+            Substitute.For<IServiceProvider>());
+
+        enricher1.ShouldBeOfType<NullChunkEnricher>();
+        enricher2.ShouldBeSameAs(enricher1);
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldReturnCachedInstance()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("topic1"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("topic1"),
+            Substitute.For<IServiceProvider>());
+
+        enricher2.ShouldBeSameAs(enricher1);
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldReturnCachedInstance_WhenOverridden()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
+
+        ProducerEndpointConfiguration endpoint1 = new ProducerEndpointConfiguration1("topic1");
+        IChunkEnricher enricher1 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
+
+        enricher1.ShouldBeOfType<OverrideChunkEnricher>();
+        enricher2.ShouldBeSameAs(enricher1);
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldReturnCachedInstanceByTypeRegardlessOfSettings()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+
+        IChunkEnricher enricher1A1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1A2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("B"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("B"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("A"),
+            Substitute.For<IServiceProvider>());
+
+        enricher1A1.ShouldBeSameAs(enricher1A2);
+        enricher1B1.ShouldBeSameAs(enricher1B2);
+        enricher1A1.ShouldBeSameAs(enricher1B1);
+        enricher2A1.ShouldBeSameAs(enricher2A2);
+        enricher2A1.ShouldNotBeSameAs(enricher1A1);
+    }
+
+    [Fact]
+    public void GetEnricher_ShouldReturnCachedInstanceRegardlessOfTypeAndSettings_WhenOverridden()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
+
+        IChunkEnricher enricher1A1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1A2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("B"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("B"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("A"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("A"),
+            Substitute.For<IServiceProvider>());
+
+        enricher1A1.ShouldBeSameAs(enricher1A2);
+        enricher1B1.ShouldBeSameAs(enricher1B2);
+        enricher1A1.ShouldBeSameAs(enricher1B1);
+        enricher2A1.ShouldBeSameAs(enricher2A2);
+        enricher2A1.ShouldNotBeSameAs(enricher1A1);
+    }
+
+    [Fact]
+    public void AddFactory_ShouldThrow_WhenFactoryAlreadyRegisteredForSameType()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+
+        Action act = () => factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+
+        Exception exception = act.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("The factory for the specified discriminator type is already registered.");
+    }
+
+    [Fact]
+    public void OverrideFactories_ShouldOverrideAllFactories()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpointConfiguration2>(_ => new ChunkEnricher2());
+
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
+
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpointConfiguration1("topic1"),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpointConfiguration2("topic2"),
+            Substitute.For<IServiceProvider>());
+
+        enricher1.ShouldBeOfType<OverrideChunkEnricher>();
+        enricher2.ShouldBeOfType<OverrideChunkEnricher>();
+    }
+
+    [Fact]
+    public void HasFactory_ShouldReturnTrue_WhenFactoryIsRegistered()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+
+        bool result = factory.HasFactory<ProducerEndpointConfiguration1>();
+
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void HasFactory_ShouldReturnFalse_WhenFactoryIsNotRegistered()
+    {
+        ChunkEnricherFactory factory = new();
+        factory.AddFactory<ProducerEndpointConfiguration1>(_ => new ChunkEnricher1());
+
+        bool result = factory.HasFactory<ProducerEndpointConfiguration2>();
+
+        result.ShouldBeFalse();
+    }
+
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test class")]
+    private record ProducerEndpointConfiguration1(string Topic) : ProducerEndpointConfiguration;
+
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test class")]
+    private record ProducerEndpointConfiguration2(string Topic) : ProducerEndpointConfiguration;
+
+    private class ChunkEnricher1 : IChunkEnricher
+    {
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+    }
+
+    private class ChunkEnricher2 : IChunkEnricher
+    {
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+    }
+
+    private class OverrideChunkEnricher : IChunkEnricher
+    {
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+    }
+}

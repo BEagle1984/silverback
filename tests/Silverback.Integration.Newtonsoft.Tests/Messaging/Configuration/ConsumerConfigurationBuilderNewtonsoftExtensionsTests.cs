@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration;
 public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
 {
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_Default_DeserializerSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializer()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -25,7 +25,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_WithSetMessageType_TypedDeserializerSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerWithMessageType()
     {
         TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
@@ -35,7 +35,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseModelWithGenericArgument_DeserializerSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerWithTypeViaUseModelWithGenericArgument()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -47,7 +47,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseModel_DeserializerSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerWithTypeViaUseModel()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -59,7 +59,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_Configure_DeserializerAndOptionsSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerAndOptions()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -77,7 +77,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_WithEncoding_DeserializerAndEncodingSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerAndEncoding()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
@@ -91,7 +91,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseModelAndConfigure_DeserializerAndOptionsSet()
+    public void DeserializeJsonUsingNewtonsoft_ShouldSetDeserializerAndModelAndOptions()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 

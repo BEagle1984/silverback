@@ -1,0 +1,119 @@
+﻿// Copyright (c) 2025 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
+using Shouldly;
+using Silverback.Util;
+using Xunit;
+
+namespace Silverback.Tests.Core.Util;
+
+public class DynamicCountdownEventTests
+{
+    [Fact]
+    public void AddCount_ShouldIncreaseCurrentCount()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount();
+        countdownEvent.AddCount(3);
+
+        countdownEvent.CurrentCount.ShouldBe(4);
+    }
+
+    [Fact]
+    public void Reset_ShouldResetCurrentCount()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(3);
+        countdownEvent.Reset();
+
+        countdownEvent.CurrentCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public void Reset_ShouldResetCurrentCountToSpecifiedValue()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(3);
+        countdownEvent.Reset(5);
+
+        countdownEvent.CurrentCount.ShouldBe(5);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Reviewed")]
+    public void AddCount_ShouldThrow_WhenCountIsZeroOrNegative(int count)
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        Action act = () => countdownEvent.AddCount(count);
+
+        act.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void Signal_ShouldDecreaseCurrentCount()
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(5);
+        countdownEvent.Signal(2);
+        countdownEvent.Signal();
+
+        countdownEvent.CurrentCount.ShouldBe(2);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Reviewed")]
+    public void Signal_ShouldThrow_WhenCountIsZeroOrNegative(int count)
+    {
+        using DynamicCountdownEvent countdownEvent = new();
+
+        Action act = () => countdownEvent.Signal(count);
+
+        act.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public async Task Signal_ShouldReleaseSemaphore_WhenCountReachesZero()
+    {
+        DynamicCountdownEvent countdownEvent = new();
+
+        countdownEvent.AddCount(2);
+
+        Task waitTask = countdownEvent.WaitAsync();
+        await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(50));
+        waitTask.IsCompleted.ShouldBeFalse();
+
+        countdownEvent.Signal();
+        await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(50));
+        waitTask.IsCompleted.ShouldBeFalse();
+
+        countdownEvent.Signal();
+        await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted, TimeSpan.FromMilliseconds(200));
+        waitTask.IsCompleted.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task WaitAsync_ShouldCancelWait_WhenCancellationTokenIsSet()
+    {
+        DynamicCountdownEvent countdownEvent = new();
+        countdownEvent.AddCount(2);
+
+        Task waitTask = countdownEvent.WaitAsync(new CancellationTokenSource(10).Token);
+
+        await AsyncTestingUtil.WaitAsync(() => waitTask.IsCompleted);
+        waitTask.IsCompleted.ShouldBeTrue();
+        waitTask.Status.ShouldBe(TaskStatus.Canceled);
+    }
+}

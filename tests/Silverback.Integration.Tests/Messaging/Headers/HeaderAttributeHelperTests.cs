@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.Headers;
 public class HeaderAttributeHelperTests
 {
     [Fact]
-    public void GetHeaders_DecoratedMessage_HeadersReturned()
+    public void GetHeaders_ShouldReturnHeadersFromDecoratedMessage()
     {
         TestEventWithHeaders message = new()
         {
@@ -39,18 +39,7 @@ public class HeaderAttributeHelperTests
     }
 
     [Fact]
-    public void GetHeaders_DecoratedPropertyPublishingDefaultValue_HeaderWithDefaultValueReturned()
-    {
-        TestEventWithHeaders message = new();
-
-        List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
-
-        result.ShouldContain(new MessageHeader("x-string-default", null));
-        result.ShouldContain(new MessageHeader("x-int-default", "0"));
-    }
-
-    [Fact]
-    public void GetHeaders_DecoratedPropertyWithoutPublishingDefaultValue_HeaderNotReturned()
+    public void GetHeaders_ShouldDiscardHeadersWithDefaultValue()
     {
         TestEventWithHeaders message = new();
 
@@ -61,7 +50,18 @@ public class HeaderAttributeHelperTests
     }
 
     [Fact]
-    public void SetFromHeaders_DecoratedMessage_PropertiesSet()
+    public void GetHeaders_ShouldReturnHeadersWithDefaultValue_WhenPublishDefaultValueIsSet()
+    {
+        TestEventWithHeaders message = new();
+
+        List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
+
+        result.ShouldContain(new MessageHeader("x-string-default", null));
+        result.ShouldContain(new MessageHeader("x-int-default", "0"));
+    }
+
+    [Fact]
+    public void SetFromHeaders_ShouldMapFromDecoratedMessage()
     {
         MessageHeaderCollection headers = new()
         {
