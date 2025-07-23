@@ -42,10 +42,10 @@ Each `AddProducer` call will result in a producer being instantiated. The `Produ
 > While Kafka producers and consumers are different entities, MQTT clients are used for both producing and consuming messages.
 
 > [!Tip]
-> Assigning a name to the producer or client and its endpoints is optional but can be useful for logging and debugging purposes, as well as for direct access to the producer or client instance for advanced scenarios. Furthermore, it allows you to ensure that each client and endpoint is only configured once, even if you duplicate the declaration (for example if needed in multiple feature slices).
+> Assigning a name to the producer or client and its endpoints is optional but can be useful for logging and debugging purposes, as well as for direct access to the producer or client instance for advanced scenarios. Furthermore, it allows you to ensure that each client and endpoint is only configured once, even if you duplicate the declaration (for example, if needed in multiple feature slices).
 
 > [!Tip]
-> For a more in-depth documentation about the configuration of the underlying libraries refer to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTNet documentation]([MQTTNet documentation](https://github.com/chkr1011/MQTTnet/wiki) respectively.
+> For more in-depth documentation about the configuration of the underlying libraries, refer to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTNet documentation]([MQTTNet documentation](https://github.com/chkr1011/MQTTnet/wiki) respectively.
 
 ## Producing Messages
 
@@ -69,7 +69,7 @@ await _publisher.WrapAndPublishAsync(
 
 ### WrapAndPublishBatch
 
-The `WrapAndPublishBatch` and `WrapAndPublishBatchAsync` methods can be used to publish multiple messages in a single batch, leveraging the batching capabilities of Kafka for a much greater throughput (see [benchmarks](xref:performance)).
+The `WrapAndPublishBatch` and `WrapAndPublishBatchAsync` methods can be used to publish multiple messages in a single batch, leveraging the batching capabilities of Kafka for much greater throughput (see [benchmarks](xref:performance)).
 
 ```csharp
 public async Task PublishBatch(IEnumerable<MyMessage> messages)
@@ -82,7 +82,7 @@ public async Task PublishBatch(IEnumerable<MyMessage> messages)
 }
 ```
 
-Some overloads allow you to specify a mapping function, so that you can use a streaming source and build the message models on-the-fly before they are wrapped.
+Some overloads allow you to specify a mapping function so that you can use a streaming source and build the message models on-the-fly before they are wrapped.
 
 ```csharp
 public async Task PublishBatch(IAsyncEnumerable<Order> orderEntities)
