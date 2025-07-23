@@ -29,23 +29,19 @@ public class KafkaTransactionsTests : KafkaTests
     [Fact]
     public async Task KafkaTransactions_ShouldProduceInTransaction()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -70,23 +66,19 @@ public class KafkaTransactionsTests : KafkaTests
     [Fact]
     public async Task KafkaTransactions_ShouldRollbackProduce()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -113,44 +105,34 @@ public class KafkaTransactionsTests : KafkaTests
         int processedInputMessages = 0;
         int committedOutputMessages = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "output",
-                                        eventTwo => int.Parse(eventTwo!.ContentEventTwo!, CultureInfo.InvariantCulture))))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "input1",
-                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture)))
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "input2",
-                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("input")
-                                .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("output")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
-                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(
+                        "output",
+                        eventTwo => int.Parse(eventTwo!.ContentEventTwo!, CultureInfo.InvariantCulture))))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(
+                        "input1",
+                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture)))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(
+                        "input2",
+                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("input")
+                    .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("output")
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
+            .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+            .AddIntegrationSpy());
 
         async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
@@ -209,35 +191,28 @@ public class KafkaTransactionsTests : KafkaTests
         int processedInputMessages = 0;
         int committedOutputMessages = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input1"))
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input2")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("input")
-                                .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("output")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
-                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input1"))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input2")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("input")
+                    .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("output")
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
+            .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+            .AddIntegrationSpy());
 
         async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
@@ -293,35 +268,28 @@ public class KafkaTransactionsTests : KafkaTests
         int processedInputMessages = 0;
         int committedOutputMessages = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("input")
-                                .ProcessAllPartitionsTogether()
-                                .Consume(endpoint => endpoint.ConsumeFrom("input").EnableBatchProcessing(batchSize)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("output")
-                                .Consume<TestEventThree>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
-                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("input")
+                    .ProcessAllPartitionsTogether()
+                    .Consume(endpoint => endpoint.ConsumeFrom("input").EnableBatchProcessing(batchSize)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("output")
+                    .Consume<TestEventThree>(endpoint => endpoint.ConsumeFrom("output"))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
+            .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+            .AddIntegrationSpy());
 
         async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
@@ -365,42 +333,41 @@ public class KafkaTransactionsTests : KafkaTests
         int processedInputMessages = 0;
         int committedOutputMessages = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("input")
-                                .SendOffsetsToTransaction()
-                                .Consume(endpoint => endpoint.ConsumeFrom("input")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("output")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<TestEventOne, IPublisher>(HandleInput)
-                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("input")
+                    .SendOffsetsToTransaction()
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint.ConsumeFrom("input")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("output")
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+            .AddDelegateSubscriber<TestEventOne, IPublisher>(HandleInput)
+            .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+            .AddIntegrationSpy());
 
         async ValueTask HandleInput(TestEventOne eventOne, IPublisher publisher)
         {
-            IKafkaTransaction transaction = publisher.InitKafkaTransaction();
+            using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
             await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = eventOne.ContentEventOne });
-            Interlocked.Increment(ref processedInputMessages);
+            int i = Interlocked.Increment(ref processedInputMessages);
 
-            transaction.Commit();
+            if (i > 3)
+                transaction.Commit();
+            else
+                transaction.Abort();
         }
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
@@ -410,10 +377,17 @@ public class KafkaTransactionsTests : KafkaTests
         await publisher.PublishEventAsync(new TestEventOne());
         await publisher.PublishEventAsync(new TestEventOne());
 
+        // The first 3 messages don't commit the transaction
+        await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= 3);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").ShouldBe(0);
+
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne());
+
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= 3);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(true);
         committedOutputMessages.ShouldBe(3);
-        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").ShouldBe(3);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").ShouldBe(6);
     }
 
     [Fact]
@@ -424,49 +398,39 @@ public class KafkaTransactionsTests : KafkaTests
         int processedInputMessages = 0;
         int committedOutputMessages = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("transactional-id")
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "output",
-                                        eventTwo => int.Parse(eventTwo!.ContentEventTwo!, CultureInfo.InvariantCulture))))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "input1",
-                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture)))
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint.ProduceTo(
-                                        "input2",
-                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("input")
-                                .SendOffsetsToTransaction()
-                                .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("output")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
-                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .EnableTransactions("transactional-id")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(
+                        "output",
+                        eventTwo => int.Parse(eventTwo!.ContentEventTwo!, CultureInfo.InvariantCulture))))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(
+                        "input1",
+                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture)))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(
+                        "input2",
+                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("input")
+                    .SendOffsetsToTransaction()
+                    .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("output")
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
+            .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+            .AddIntegrationSpy());
 
         async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
-            IKafkaTransaction transaction = publisher.InitKafkaTransaction();
+            using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
             await foreach (TestEventOne eventOne in batch)
             {
@@ -503,9 +467,8 @@ public class KafkaTransactionsTests : KafkaTests
         await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= batchSize * 2);
         await Task.Delay(100);
         committedOutputMessages.ShouldBe(batchSize * 2);
-        await AsyncTestingUtil.WaitAsync(
-            () => Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1") >= batchSize
-                  && Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2") >= batchSize);
+        await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1") >= batchSize
+                                               && Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2") >= batchSize);
         Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").ShouldBe(batchSize);
         Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").ShouldBe(batchSize);
 
@@ -526,27 +489,23 @@ public class KafkaTransactionsTests : KafkaTests
     [Fact]
     public async Task KafkaTransactions_ShouldProduceIndirectMessagesInTransaction()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services =>
-            {
-                services
-                    .AddLogging()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddProducer(
-                                producer => producer
-                                    .EnableTransactions("transactional-id")
-                                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddDelegateSubscriber<TestEventOne, IIntegrationEvent>(HandleEventOne)
-                    .AddIntegrationSpyAndSubscriber();
-            });
+        await Host.ConfigureServicesAndRunAsync(services =>
+        {
+            services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddProducer(producer => producer
+                        .EnableTransactions("transactional-id")
+                        .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddDelegateSubscriber<TestEventOne, IIntegrationEvent>(HandleEventOne)
+                .AddIntegrationSpyAndSubscriber();
+        });
 
         // Republished messages must share the original IPublisher in order to be part of the same transaction
         static IIntegrationEvent HandleEventOne(TestEventOne message) => new TestEventTwo();
