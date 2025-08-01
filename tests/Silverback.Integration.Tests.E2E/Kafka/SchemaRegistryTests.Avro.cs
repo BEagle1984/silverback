@@ -33,7 +33,7 @@ public partial class SchemaRegistryTests
                                 .Produce<AvroMessage>(
                                     endpoint => endpoint
                                         .SerializeAsAvro(
-                                            json => json
+                                            avro => avro
                                                 .ConnectToSchemaRegistry("http://e2e:4242")
                                                 .Configure(
                                                     config =>
@@ -47,7 +47,7 @@ public partial class SchemaRegistryTests
                                 .Consume<AvroMessage>(
                                     endpoint => endpoint
                                         .DeserializeAvro(
-                                            json => json
+                                            avro => avro
                                                 .ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
@@ -99,7 +99,7 @@ public partial class SchemaRegistryTests
                                 .Produce<AvroMessage>(
                                     endpoint => endpoint
                                         .SerializeAsAvro(
-                                            json => json
+                                            avro => avro
                                                 .ConnectToSchemaRegistry("http://e2e:4242")
                                                 .Configure(
                                                     config =>
@@ -112,7 +112,7 @@ public partial class SchemaRegistryTests
                                 .WithGroupId(DefaultGroupId)
                                 .Consume<AvroMessage>(
                                     endpoint => endpoint
-                                        .DeserializeAvro(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                                        .DeserializeAvro(avro => avro.ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
@@ -153,14 +153,14 @@ public partial class SchemaRegistryTests
                             producer => producer
                                 .Produce<AvroMessage>(
                                     endpoint => endpoint
-                                        .SerializeAsAvro(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                                        .SerializeAsAvro(avro => avro.ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ProduceTo(DefaultTopicName)))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume<AvroMessage>(
                                     endpoint => endpoint
-                                        .DeserializeAvro(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                                        .DeserializeAvro(avro => avro.ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 

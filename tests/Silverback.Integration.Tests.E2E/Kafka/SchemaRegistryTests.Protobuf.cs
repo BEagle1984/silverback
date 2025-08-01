@@ -33,7 +33,7 @@ public partial class SchemaRegistryTests
                                 .Produce<ProtobufMessage>(
                                     endpoint => endpoint
                                         .SerializeAsProtobuf(
-                                            json => json
+                                            protobuf => protobuf
                                                 .ConnectToSchemaRegistry("http://e2e:4242")
                                                 .Configure(
                                                     config =>
@@ -47,7 +47,7 @@ public partial class SchemaRegistryTests
                                 .Consume<ProtobufMessage>(
                                     endpoint => endpoint
                                         .DeserializeProtobuf(
-                                            json => json
+                                            protobuf => protobuf
                                                 .ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
@@ -88,14 +88,14 @@ public partial class SchemaRegistryTests
                             producer => producer
                                 .Produce<ProtobufMessage>(
                                     endpoint => endpoint
-                                        .SerializeAsProtobuf(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                                        .SerializeAsProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ProduceTo(DefaultTopicName)))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume<ProtobufMessage>(
                                     endpoint => endpoint
-                                        .DeserializeProtobuf(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                                        .DeserializeProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
                                         .ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
@@ -130,7 +130,7 @@ public partial class SchemaRegistryTests
                                 .Produce<ProtobufMessage>(
                                     endpoint => endpoint
                                         .SerializeAsProtobuf(
-                                            json => json
+                                            protobuf => protobuf
                                                 .ConnectToSchemaRegistry("http://e2e:4242")
                                                 .Configure(
                                                     config =>
@@ -145,7 +145,7 @@ public partial class SchemaRegistryTests
                                 .Consume<ProtobufMessage>(
                                     endpoint => endpoint
                                         .DeserializeProtobuf(
-                                            json => json
+                                            protobuf => protobuf
                                                 .ConnectToSchemaRegistry("http://e2e:4242").Configure(
                                                     config =>
                                                     {
