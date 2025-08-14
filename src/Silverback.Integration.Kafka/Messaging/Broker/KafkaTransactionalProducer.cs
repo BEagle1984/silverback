@@ -139,8 +139,7 @@ public sealed class KafkaTransactionalProducer : IProducer
 
     private async ValueTask<KafkaProducer> GetProducerForTransactionAsync(IOutboundEnvelope envelope)
     {
-        KafkaTransaction transaction = envelope.Context?.GetKafkaTransaction()
-                                       ?? throw new MissingKafkaTransactionException();
+        KafkaTransaction transaction = envelope.Context?.GetKafkaTransaction() ?? throw new MissingKafkaTransactionException();
 
         KafkaProducer producer = await _transactionalProducers.GetOrCreateAsync(Name, Configuration, envelope, transaction).ConfigureAwait(false);
 

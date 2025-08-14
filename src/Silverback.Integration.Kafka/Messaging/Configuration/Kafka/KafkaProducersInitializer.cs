@@ -92,7 +92,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 
     private List<KafkaTransactionalProducer> InitializeTransactionalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
     {
-        int i = 0;
         List<KafkaTransactionalProducer> producers = [];
 
         foreach (KafkaProducerEndpointConfiguration endpointConfiguration in configuration.Endpoints)
@@ -102,10 +101,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
                 Endpoints = new[] { endpointConfiguration }.AsValueReadOnlyCollection()
             };
 
-            KafkaTransactionalProducer producer = new(
-                configuration.Endpoints.Count > 0 ? $"{name}-{++i}" : name,
-                trimmedConfiguration,
-                _transactionalProducers);
+            KafkaTransactionalProducer producer = new(name, trimmedConfiguration, _transactionalProducers);
 
             AddProducer(producer, routing);
             producers.Add(producer);

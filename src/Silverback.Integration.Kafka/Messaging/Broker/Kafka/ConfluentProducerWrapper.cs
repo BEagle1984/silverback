@@ -23,6 +23,8 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
+    private bool _hasInitializedTransactions;
+
     public ConfluentProducerWrapper(
         string name,
         IConfluentProducerBuilder producerBuilder,
@@ -83,10 +85,14 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     {
         IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
 
+        if (_hasInitializedTransactions)
+            return;
+
         try
         {
             confluentProducer.InitTransactions(Configuration.TransactionsInitTimeout);
             _logger.LogTransactionsInitialized(this);
+            _hasInitializedTransactions = true;
         }
         catch (KafkaException)
         {
@@ -104,6 +110,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         try
         {
             confluentProducer.BeginTransaction();
+            _hasInitializedTransactions = true;
             _logger.LogTransactionStarted(this);
         }
         catch (KafkaException)
@@ -202,5 +209,6 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     {
         _confluentProducer?.Dispose();
         _confluentProducer = null;
+        _hasInitializedTransactions = false;
     }
 }
