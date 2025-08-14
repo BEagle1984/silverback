@@ -87,7 +87,7 @@ public class KafkaEnvelopeExtensionsTests
 
         DateTime? timestamp = envelope.GetKafkaTimestamp();
 
-        timestamp.ShouldBe(new DateTime(1984, 06, 23, 02, 42, 42));
+        timestamp.ShouldBe(new DateTime(1984, 06, 23, 02, 42, 42, DateTimeKind.Utc));
     }
 
     [Fact]
