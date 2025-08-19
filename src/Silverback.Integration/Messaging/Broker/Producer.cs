@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
+using OutboundEnvelopeFactory = Silverback.Messaging.Messages.OutboundEnvelopeFactory;
 
 namespace Silverback.Messaging.Broker;
 
@@ -78,11 +80,14 @@ public abstract class Producer : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.EndpointConfiguration" />
     public ProducerEndpointConfiguration EndpointConfiguration { get; }
 
+    /// <inheritdoc cref="IProducer.EnvelopeFactory" />
+    public abstract IOutboundEnvelopeFactory EnvelopeFactory { get; }
+
     /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
     public IBrokerMessageIdentifier? Produce(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null) =>
-        Produce(OutboundEnvelopeFactory.CreateEnvelope(message, headers, EndpointConfiguration, this));
+        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration));
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
@@ -124,7 +129,7 @@ public abstract class Producer : IProducer, IDisposable
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        Produce(OutboundEnvelopeFactory.CreateEnvelope(message, headers, EndpointConfiguration, this), onSuccess, onError);
+        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration), onSuccess, onError);
 
     /// <inheritdoc cref="IProducer.Produce{TState}(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     public void Produce<TState>(
@@ -133,7 +138,7 @@ public abstract class Producer : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
         TState state) =>
-        Produce(OutboundEnvelopeFactory.CreateEnvelope(message, headers, EndpointConfiguration, this), onSuccess, onError, state);
+        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration), onSuccess, onError, state);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>

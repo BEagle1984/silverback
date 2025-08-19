@@ -1,4 +1,5 @@
-﻿// Copyright (c) 2025 Sergio Aquilini
+﻿// TODO: DELETE
+// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;

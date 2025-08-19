@@ -34,7 +34,7 @@ namespace Silverback.ExtensibleFactories;
 /// </typeparam>
 public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> : ITypeBasedExtensibleFactory
     where TService : notnull
-    where TDiscriminatorBase : IEquatable<TDiscriminatorBase>
+    where TDiscriminatorBase : class
 {
     private readonly Dictionary<Type, Func<IServiceProvider, TService>> _factories = [];
 

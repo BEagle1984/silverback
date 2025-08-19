@@ -76,6 +76,8 @@ public sealed class KafkaProducer : Producer
     /// <inheritdoc cref="Producer.EndpointConfiguration" />
     public new KafkaProducerEndpointConfiguration EndpointConfiguration { get; }
 
+    public override IOutboundEnvelopeFactory EnvelopeFactory { get; } = new KafkaOutboundEnvelopeFactory(this);
+
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
         ProduceCoreAsync(envelope, CancellationToken.None).SafeWait();
