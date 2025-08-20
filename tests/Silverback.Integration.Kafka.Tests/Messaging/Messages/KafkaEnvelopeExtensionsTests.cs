@@ -80,14 +80,14 @@ public class KafkaEnvelopeExtensionsTests
     {
         InboundEnvelope envelope = new(
             null,
-            [new MessageHeader(KafkaMessageHeaders.Timestamp, new DateTime(1984, 06, 23, 02, 42, 42))],
+            [new MessageHeader(KafkaMessageHeaders.Timestamp, "2025-08-20T13:35:02.9050000Z")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
         DateTime? timestamp = envelope.GetKafkaTimestamp();
 
-        timestamp.ShouldBe(new DateTime(1984, 06, 23, 02, 42, 42, DateTimeKind.Utc));
+        timestamp.ShouldBe(new DateTime(2025, 08, 20, 13, 35, 02, 905, DateTimeKind.Utc));
     }
 
     [Fact]

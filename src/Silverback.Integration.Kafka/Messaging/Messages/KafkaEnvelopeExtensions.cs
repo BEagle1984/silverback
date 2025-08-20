@@ -52,11 +52,8 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The timestamp of the message.
     /// </returns>
-    public static DateTime? GetKafkaTimestamp(this IRawInboundEnvelope envelope)
-    {
-        DateTime? dateTime = Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp);
-        return dateTime == null ? null : DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
-    }
+    public static DateTime? GetKafkaTimestamp(this IRawInboundEnvelope envelope) =>
+        Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)?.ToUniversalTime();
 
     /// <summary>
     ///     Gets the offset of the message consumed from Kafka.
