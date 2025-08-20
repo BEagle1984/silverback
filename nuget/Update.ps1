@@ -95,7 +95,7 @@ function Pack-All()
         Write-Host ""
         Write-Host "Packing..."
 
-        dotnet pack -c $global:buildConfiguration $projectFilePath -o . --no-build --nologo -v q
+        dotnet pack -c $global:buildConfiguration $projectFilePath -o . --no-build --nologo -v q -p:PublishRepositoryUrl=true -p:PackageReleaseNotes=https://silverback-messaging.net/releases.html
 
         Write-Host ""
 
