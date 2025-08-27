@@ -19,7 +19,7 @@ public class JsonMessageDeserializerBuilderTests
         IMessageDeserializer deserializer = builder.Build();
 
         JsonMessageDeserializer<object> jsonDeserializer = deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
-        jsonDeserializer.TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Optional);
+        jsonDeserializer.TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Mandatory);
     }
 
     [Fact]
@@ -29,7 +29,8 @@ public class JsonMessageDeserializerBuilderTests
 
         IMessageDeserializer deserializer = builder.UseModel<TestEventOne>().Build();
 
-        deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        JsonMessageDeserializer<TestEventOne> jsonDeserializer = deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
+        jsonDeserializer.TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Ignore);
     }
 
     [Fact]

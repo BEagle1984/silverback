@@ -206,7 +206,7 @@ public partial class BatchProcessingTests
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
                                 .LimitParallelism(2)
-                                .Consume<TestEventOne>(
+                                .Consume<TestEventWithKafkaKey>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(2))))

@@ -74,8 +74,10 @@ public class JsonMessageDeserializerTests
         type.ShouldBe(typeof(TestEventOne));
     }
 
-    [Fact]
-    public async Task DeserializeAsync_ShouldDeserializeChildType()
+    [Theory]
+    [InlineData(JsonMessageDeserializerTypeHeaderBehavior.Optional)]
+    [InlineData(JsonMessageDeserializerTypeHeaderBehavior.Mandatory)]
+    public async Task DeserializeAsync_ShouldDeserializeChildType_WhenObservingMessageTypeHeader(JsonMessageDeserializerTypeHeaderBehavior typeHeaderBehavior)
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = new()
@@ -83,7 +85,7 @@ public class JsonMessageDeserializerTests
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new();
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 

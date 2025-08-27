@@ -361,7 +361,7 @@ public class KafkaTransactionsTests : KafkaTests
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId("output")
-                                .Consume<TestEventThree>(endpoint => endpoint.ConsumeFrom("output"))))
+                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
                 .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
                 .AddIntegrationSpy());

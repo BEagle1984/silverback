@@ -34,7 +34,10 @@ public sealed class JsonMessageDeserializer<TMessage> : IMessageDeserializer, IE
         JsonMessageDeserializerTypeHeaderBehavior? typeHeaderBehavior = null)
     {
         Options = options;
-        TypeHeaderBehavior = typeHeaderBehavior ?? JsonMessageDeserializerTypeHeaderBehavior.Optional;
+        TypeHeaderBehavior = typeHeaderBehavior ??
+                             (_type == typeof(object)
+                                 ? JsonMessageDeserializerTypeHeaderBehavior.Mandatory
+                                 : JsonMessageDeserializerTypeHeaderBehavior.Ignore);
     }
 
     /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />

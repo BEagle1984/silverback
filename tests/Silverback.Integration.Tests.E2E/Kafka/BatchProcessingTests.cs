@@ -761,7 +761,7 @@ public partial class BatchProcessingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
+                                .Consume(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(10))))
@@ -816,7 +816,7 @@ public partial class BatchProcessingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
+                                .Consume(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(2)

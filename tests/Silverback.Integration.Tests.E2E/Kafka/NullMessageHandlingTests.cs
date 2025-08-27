@@ -35,7 +35,7 @@ public class NullMessageHandlingTests : KafkaTests
                 .WithBootstrapServers("PLAINTEXT://e2e")
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
-                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
             .AddDelegateSubscriber<Tombstone>(Handle)
             .AddIntegrationSpy());
 

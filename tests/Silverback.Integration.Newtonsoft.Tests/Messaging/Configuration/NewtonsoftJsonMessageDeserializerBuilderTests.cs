@@ -12,14 +12,14 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration;
 public class NewtonsoftJsonMessageDeserializerBuilderTests
 {
     [Fact]
-    public void Build_ShouldReturnDefaultDeserializer()
+    public void Build_ShouldReturnDefaultDeserializer_WhenTypeNotSpecified()
     {
         NewtonsoftJsonMessageDeserializerBuilder builder = new();
 
         IMessageDeserializer deserializer = builder.Build();
 
-        deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
-        deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>().TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Optional);
+        NewtonsoftJsonMessageDeserializer<object> newtonsoftDeserializer = deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        newtonsoftDeserializer.TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Mandatory);
     }
 
     [Fact]
@@ -29,7 +29,8 @@ public class NewtonsoftJsonMessageDeserializerBuilderTests
 
         IMessageDeserializer deserializer = builder.UseModel<TestEventOne>().Build();
 
-        deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
+        NewtonsoftJsonMessageDeserializer<TestEventOne> newtonsoftDeserializer = deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
+        newtonsoftDeserializer.TypeHeaderBehavior.ShouldBe(JsonMessageDeserializerTypeHeaderBehavior.Ignore);
     }
 
     [Fact]

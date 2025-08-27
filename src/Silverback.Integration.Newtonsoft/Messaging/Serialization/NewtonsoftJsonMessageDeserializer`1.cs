@@ -42,7 +42,10 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeseri
     {
         Settings = settings;
         Encoding = encoding ?? MessageEncoding.UTF8;
-        TypeHeaderBehavior = typeHeaderBehavior ?? JsonMessageDeserializerTypeHeaderBehavior.Optional;
+        TypeHeaderBehavior = typeHeaderBehavior ??
+                             (_type == typeof(object)
+                                 ? JsonMessageDeserializerTypeHeaderBehavior.Mandatory
+                                 : JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         _encoding = Encoding.ToEncoding();
     }

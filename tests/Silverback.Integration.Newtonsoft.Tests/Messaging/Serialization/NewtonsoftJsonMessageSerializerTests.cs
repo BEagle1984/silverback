@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Shouldly;
@@ -27,7 +26,7 @@ public class NewtonsoftJsonMessageSerializerTests
 
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+        byte[] expected = "{\"Content\":\"the message\"}"u8.ToArray();
         serialized.ReadAll().ShouldBe(expected);
     }
 
@@ -60,7 +59,7 @@ public class NewtonsoftJsonMessageSerializerTests
     [Fact]
     public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes("test");
+        byte[] messageBytes = "test"u8.ToArray();
 
         NewtonsoftJsonMessageSerializer serializer = new();
 
@@ -75,7 +74,7 @@ public class NewtonsoftJsonMessageSerializerTests
     [Fact]
     public async Task SerializeAsync_Stream_ReturnedUnmodified()
     {
-        MemoryStream stream = new(Encoding.UTF8.GetBytes("test"));
+        MemoryStream stream = new("test"u8.ToArray());
 
         NewtonsoftJsonMessageSerializer serializer = new();
 

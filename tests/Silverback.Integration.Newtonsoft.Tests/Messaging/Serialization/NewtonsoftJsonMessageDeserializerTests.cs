@@ -43,7 +43,7 @@ public class NewtonsoftJsonMessageDeserializerTests
     [Fact]
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader()
     {
-        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new();
@@ -73,16 +73,18 @@ public class NewtonsoftJsonMessageDeserializerTests
         type.ShouldBe(typeof(TestEventOne));
     }
 
-    [Fact]
-    public async Task DeserializeAsync_ShouldDeserializeChildType()
+    [Theory]
+    [InlineData(JsonMessageDeserializerTypeHeaderBehavior.Optional)]
+    [InlineData(JsonMessageDeserializerTypeHeaderBehavior.Mandatory)]
+    public async Task DeserializeAsync_ShouldDeserializeChildType_WhenObservingMessageTypeHeader(JsonMessageDeserializerTypeHeaderBehavior typeHeaderBehavior)
     {
-        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = new()
         {
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        NewtonsoftJsonMessageDeserializer<IEvent> deserializer = new();
+        NewtonsoftJsonMessageDeserializer<IEvent> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, _) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 

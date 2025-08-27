@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
 using Silverback.Samples.Kafka.Basic.Common;
 
 namespace Silverback.Samples.Kafka.Basic.Consumer;
@@ -12,6 +13,6 @@ public class SampleMessageSubscriber
         _logger = logger;
     }
 
-    public void OnMessageReceived(SampleMessage message) =>
-        _logger.LogInformation("Received {MessageNumber}", message.Number);
+    public void OnMessageReceived(IInboundEnvelope<SampleMessage> message) =>
+        _logger.LogInformation("Received {MessageNumber}", message.Message.Number);
 }

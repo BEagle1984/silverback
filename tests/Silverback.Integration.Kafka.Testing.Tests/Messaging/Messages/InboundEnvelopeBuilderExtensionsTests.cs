@@ -51,7 +51,7 @@ public class InboundEnvelopeBuilderExtensionsTests
     public void WithKafkaTimestamp_ShouldSetKafkaTimestamp()
     {
         InboundEnvelopeBuilder<TestEventOne> builder = new();
-        DateTime timestamp = new(1984, 6, 23, 2, 42, 42);
+        DateTime timestamp = new(1984, 6, 23, 2, 42, 42, DateTimeKind.Utc);
 
         builder.WithKafkaTimestamp(timestamp);
 

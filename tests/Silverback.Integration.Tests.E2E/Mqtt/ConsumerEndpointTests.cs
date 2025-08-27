@@ -175,7 +175,7 @@ public partial class ConsumerEndpointTests : MqttTests
                         .AddClient(
                             client => client
                                 .WithClientId("client2")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -218,15 +218,15 @@ public partial class ConsumerEndpointTests : MqttTests
                         .AddClient(
                             client => client
                                 .WithClientId("client2")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom($"$share/group1/{DefaultTopicName}")))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom($"$share/group1/{DefaultTopicName}")))
                         .AddClient(
                             client => client
                                 .WithClientId("client3")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom($"$share/group2/{DefaultTopicName}")))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom($"$share/group2/{DefaultTopicName}")))
                         .AddClient(
                             client => client
                                 .WithClientId("client4")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
