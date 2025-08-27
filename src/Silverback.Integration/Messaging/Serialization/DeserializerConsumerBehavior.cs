@@ -31,13 +31,15 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
 
     private static async Task<IInboundEnvelope> DeserializeAsync(ConsumerPipelineContext context)
     {
-        IRawInboundEnvelope envelope = context.Envelope;
+        IInboundEnvelope envelope = context.Envelope;
 
-        if (envelope is IInboundEnvelope { Message: not null } inboundEnvelope)
-            return inboundEnvelope;
+        if (envelope.Message != null)
+            return envelope;
 
-        (object? deserializedObject, Type deserializedType) =
-            await envelope.Endpoint.Configuration.Deserializer.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
+        (object? deserializedObject, Type deserializedType) = await envelope.Endpoint.Configuration.Deserializer.DeserializeAsync(
+            envelope.RawMessage,
+            envelope.Headers,
+            envelope.Endpoint).ConfigureAwait(false);
 
         envelope.Headers.AddOrReplace(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
 

@@ -70,7 +70,7 @@ public class ChunkSequenceReader : SequenceReaderBase
         ChunkSequence sequence = new(sequenceId, chunksCount, context);
 
         // Replace the envelope with the stream that will be pushed with all the chunks.
-        ChunkStream chunkStream = new(sequence.CreateStream<IRawInboundEnvelope>());
+        ChunkStream chunkStream = new(sequence.CreateStream<IInboundEnvelope>());
         context.Envelope = context.Envelope.CloneReplacingRawMessage(chunkStream);
 
         return sequence;

@@ -33,7 +33,7 @@ internal sealed class BrokerOutboundMessageEnrichersFactory : IBrokerOutboundMes
 
     private sealed class NullEnricher : IMovePolicyMessageEnricher
     {
-        public void Enrich(IRawInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
+        public void Enrich(IInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
         {
             // Do nothing
         }

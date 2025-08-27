@@ -25,6 +25,11 @@ public interface ISequence : IDisposable
     string SequenceId { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether the messages are raw (not yet deserialized, decrypted, etc.).
+    /// </summary>
+    bool IsRawMessages { get; }
+
+    /// <summary>
     ///     Gets the length of the sequence so far.
     /// </summary>
     int Length { get; }
@@ -139,7 +144,7 @@ public interface ISequence : IDisposable
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
     ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
-    ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
+    ValueTask<AddToSequenceResult> AddAsync(IInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
 
     /// <summary>
     ///     Aborts the sequence processing. Used, for example, to signal that an exception occurred or the enumeration returned prematurely.

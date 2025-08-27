@@ -184,7 +184,7 @@ public class ValidatorConsumerBehaviorTests
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         await new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
@@ -218,7 +218,7 @@ public class ValidatorConsumerBehaviorTests
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
@@ -249,7 +249,7 @@ public class ValidatorConsumerBehaviorTests
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         await new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>
@@ -282,7 +282,7 @@ public class ValidatorConsumerBehaviorTests
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorConsumerBehavior(_logger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             (context, _) =>

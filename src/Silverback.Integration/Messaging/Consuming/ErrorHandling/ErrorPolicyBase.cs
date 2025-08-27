@@ -30,12 +30,12 @@ public abstract record ErrorPolicyBase : IErrorPolicy
     /// <summary>
     ///     Gets the custom apply rule function.
     /// </summary>
-    public Func<IRawInboundEnvelope, Exception, bool>? ApplyRule { get; init; }
+    public Func<IInboundEnvelope, Exception, bool>? ApplyRule { get; init; }
 
     /// <summary>
     ///     Gets the factory that builds the message to be published after the policy is applied.
     /// </summary>
-    public Func<IRawInboundEnvelope, Exception, object?>? MessageToPublishFactory { get; init; }
+    public Func<IInboundEnvelope, Exception, object?>? MessageToPublishFactory { get; init; }
 
     /// <inheritdoc cref="IErrorPolicy.Build" />
     public IErrorPolicyImplementation Build(IServiceProvider serviceProvider) => BuildCore(serviceProvider);

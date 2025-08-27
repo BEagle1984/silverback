@@ -31,7 +31,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
         await next(context, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async ValueTask<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
+    private static async ValueTask<IInboundEnvelope> HandleAsync(IInboundEnvelope envelope)
     {
         if (envelope.Endpoint.Configuration.Deserializer is IBinaryMessageDeserializer)
             return envelope;

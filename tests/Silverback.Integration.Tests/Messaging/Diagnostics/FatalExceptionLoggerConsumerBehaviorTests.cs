@@ -43,7 +43,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldLogException()
     {
-        RawInboundEnvelope rawEnvelope = new(
+        InboundEnvelope rawEnvelope = new(
             new byte[5],
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -73,7 +73,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldRethrow()
     {
-        RawInboundEnvelope rawEnvelope = new(
+        InboundEnvelope rawEnvelope = new(
             new byte[5],
             null,
             TestConsumerEndpoint.GetDefault(),

@@ -37,8 +37,7 @@ public class InboundSpyBrokerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope is IInboundEnvelope inboundEnvelope)
-            _integrationSpy.AddInboundEnvelope(inboundEnvelope);
+        _integrationSpy.AddInboundEnvelope(context.Envelope);
 
         return next(context, cancellationToken);
     }

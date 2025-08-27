@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Sequences;
 ///     Represent an incomplete sequence (missing the first message) and is used to signal the pipeline to ignore
 ///     the message.
 /// </summary>
-public class IncompleteSequence : RawSequence
+public class IncompleteSequence : Sequence
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="IncompleteSequence" /> class.
@@ -25,4 +25,7 @@ public class IncompleteSequence : RawSequence
         : base(sequenceId, context)
     {
     }
+
+    /// <inheritdoc cref="Sequence.IsRawMessages" />
+    public override bool IsRawMessages => true;
 }

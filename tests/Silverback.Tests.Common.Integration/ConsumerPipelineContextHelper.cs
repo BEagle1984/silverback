@@ -21,7 +21,7 @@ namespace Silverback.Tests;
 public static class ConsumerPipelineContextHelper
 {
     public static ConsumerPipelineContext CreateSubstitute(
-        IRawInboundEnvelope? envelope = null,
+        IInboundEnvelope? envelope = null,
         IServiceProvider? serviceProvider = null,
         IConsumerTransactionManager? transactionManager = null,
         IConsumer? consumer = null,
@@ -31,7 +31,7 @@ public static class ConsumerPipelineContextHelper
         ISequence? sequence = null)
     {
         ConsumerPipelineContext context = new(
-            envelope ?? new RawInboundEnvelope(
+            envelope ?? new InboundEnvelope(
                 Stream.Null,
                 [],
                 endpoint ?? TestConsumerEndpoint.GetDefault(),

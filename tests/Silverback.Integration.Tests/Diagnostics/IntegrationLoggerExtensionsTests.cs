@@ -48,7 +48,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessing_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -67,7 +67,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingError_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -86,7 +86,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingFatalError_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -201,7 +201,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageAddedToSequence_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -472,7 +472,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRetryProcessing_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -491,7 +491,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageMoved_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -511,7 +511,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageSkipped_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -530,7 +530,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogCannotMoveSequence_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -549,7 +549,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRollbackToRetryFailed_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -568,7 +568,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRollbackToSkipFailed_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -677,7 +677,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogInvalidMessageConsumed_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -782,7 +782,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingTrace_ShouldLog()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -801,7 +801,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingTrace_ShouldLog_WhenExceptionSpecified()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -874,7 +874,7 @@ public class IntegrationLoggerExtensionsTests
 
         public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
 
-        public int IncrementFailedAttempts(IRawInboundEnvelope envelope) => throw new NotSupportedException();
+        public int IncrementFailedAttempts(IInboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     private class TestProducer : IProducer

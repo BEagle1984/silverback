@@ -22,7 +22,7 @@ public class KafkaOffsetStoreScopeTests
     {
         TestOffsetStore store = new();
 
-        IRawInboundEnvelope envelope = Substitute.For<IRawInboundEnvelope>();
+        IInboundEnvelope envelope = Substitute.For<IInboundEnvelope>();
         envelope.BrokerMessageIdentifier.Returns(new KafkaOffset("topic1", 3, 42));
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope);
 

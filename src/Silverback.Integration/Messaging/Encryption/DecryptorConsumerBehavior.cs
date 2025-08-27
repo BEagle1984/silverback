@@ -41,7 +41,7 @@ public class DecryptorConsumerBehavior : IConsumerBehavior
         await next(context, cancellationToken).ConfigureAwait(false);
     }
 
-    private void DecryptIfNeeded(IRawInboundEnvelope envelope)
+    private void DecryptIfNeeded(IInboundEnvelope envelope)
     {
         if (envelope.Endpoint.Configuration.Encryption == null || envelope.RawMessage == null)
             return;

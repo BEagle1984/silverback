@@ -296,7 +296,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     }
 
     /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
-    public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
+    public int IncrementFailedAttempts(IInboundEnvelope envelope)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -389,7 +389,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         IBrokerMessageIdentifier brokerMessageIdentifier,
         ISequenceStore sequenceStore)
     {
-        RawInboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
+        InboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
         ConsumerPipelineContext context = new(envelope, this, sequenceStore, _behaviors, ServiceProvider);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);

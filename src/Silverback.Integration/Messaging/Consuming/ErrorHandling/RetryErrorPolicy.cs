@@ -78,8 +78,8 @@ public record RetryErrorPolicy : ErrorPolicyBase
             int? maxFailedAttempts,
             IReadOnlyCollection<Type> excludedExceptions,
             IReadOnlyCollection<Type> includedExceptions,
-            Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-            Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
+            Func<IInboundEnvelope, Exception, bool>? applyRule,
+            Func<IInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
             ISilverbackLogger<RetryErrorPolicy> logger)
             : base(

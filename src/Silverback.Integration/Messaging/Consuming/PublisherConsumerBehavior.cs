@@ -48,25 +48,20 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         if (context.Sequence != null)
         {
-            if (context.Sequence is RawSequence)
-            {
-                await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled, cancellationToken)
-                    .ConfigureAwait(false);
-            }
+            if (context.Sequence.IsRawMessages)
+                await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled, cancellationToken).ConfigureAwait(false);
             else
-            {
                 await PublishSequenceAsync(context.Sequence, context, cancellationToken).ConfigureAwait(false);
-            }
         }
         else
         {
             bool throwIfUnhandled = context.Envelope.Endpoint.Configuration.ThrowIfUnhandled;
 
-            if (context.Envelope is IInboundEnvelope envelope && HasMessageStreamSubscriber(context))
+            if (HasMessageStreamSubscriber(context))
             {
                 UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
-                AddToSequenceResult result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
+                AddToSequenceResult result = await unboundedSequence.AddAsync(context.Envelope, null, false).ConfigureAwait(false);
 
                 if (unboundedSequence is { IsAborted: true, AbortException: not null })
                     throw unboundedSequence.AbortException;

@@ -27,14 +27,14 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         [
             new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         ];
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             rawContent,
             headers,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
@@ -59,14 +59,14 @@ public class BinaryMessageHandlerConsumerBehaviorTests
     public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenNotBinaryMessage()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             rawContent,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
@@ -97,14 +97,14 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             Deserializer = new BinaryMessageDeserializer<BinaryMessage>()
         };
 
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             rawContent,
             headers,
             endpointConfiguration.GetDefaultEndpoint(),
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IRawInboundEnvelope? result = null;
+        IInboundEnvelope? result = null;
         await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,

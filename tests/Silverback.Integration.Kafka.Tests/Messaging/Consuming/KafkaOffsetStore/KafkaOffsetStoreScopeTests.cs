@@ -51,7 +51,7 @@ public class KafkaOffsetStoreScopeTests
     public async Task StoreOffsetAsync_ShouldForwardEnvelopeOffsetToStore()
     {
         IKafkaOffsetStore offsetStore = Substitute.For<IKafkaOffsetStore>();
-        IRawInboundEnvelope envelope = Substitute.For<IRawInboundEnvelope>();
+        IInboundEnvelope envelope = Substitute.For<IInboundEnvelope>();
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope: envelope);
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 

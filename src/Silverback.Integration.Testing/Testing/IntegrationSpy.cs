@@ -14,7 +14,7 @@ public class IntegrationSpy : IIntegrationSpy
 
     private readonly List<IOutboundEnvelope> _rawOutboundEnvelopes = [];
 
-    private readonly List<IRawInboundEnvelope> _rawInboundEnvelopes = [];
+    private readonly List<IInboundEnvelope> _rawInboundEnvelopes = [];
 
     private readonly List<IInboundEnvelope> _inboundEnvelopes = [];
 
@@ -46,7 +46,7 @@ public class IntegrationSpy : IIntegrationSpy
 
     /// <inheritdoc cref="IIntegrationSpy.RawInboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes
+    public IReadOnlyList<IInboundEnvelope> RawInboundEnvelopes
     {
         get
         {
@@ -99,12 +99,12 @@ public class IntegrationSpy : IIntegrationSpy
     }
 
     /// <summary>
-    ///     Adds an item to the <see cref="RawInboundEnvelope" />.
+    ///     Adds an item to the <see cref="RawInboundEnvelopes" />.
     /// </summary>
     /// <param name="envelope">
-    ///     The <see cref="IRawInboundEnvelope" /> to add.
+    ///     The <see cref="IInboundEnvelope" /> to add.
     /// </param>
-    public void AddRawInboundEnvelope(IRawInboundEnvelope envelope)
+    public void AddRawInboundEnvelope(IInboundEnvelope envelope)
     {
         lock (_rawInboundEnvelopes)
         {

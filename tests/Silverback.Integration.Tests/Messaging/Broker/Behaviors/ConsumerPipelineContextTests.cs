@@ -33,7 +33,7 @@ public class ConsumerPipelineContextTests
     [Fact]
     public void Clone_ShouldReturnNewContextWithProvidedEnvelope()
     {
-        IRawInboundEnvelope? newEnvelope = Substitute.For<IRawInboundEnvelope>();
+        IInboundEnvelope? newEnvelope = Substitute.For<IInboundEnvelope>();
         ConsumerPipelineContext context = CreateContext();
 
         ConsumerPipelineContext clonedContext = context.Clone(newEnvelope);
@@ -48,7 +48,7 @@ public class ConsumerPipelineContextTests
     }
 
     private static ConsumerPipelineContext CreateContext() => new(
-        Substitute.For<IRawInboundEnvelope>(),
+        Substitute.For<IInboundEnvelope>(),
         Substitute.For<IConsumer>(),
         Substitute.For<ISequenceStore>(),
         [],

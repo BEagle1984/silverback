@@ -22,14 +22,11 @@ internal static class SerializationHelper
         return type == null || type.IsAssignableFrom(baseType) ? baseType : type;
     }
 
-    public static IInboundEnvelope CreateTypedInboundEnvelope(
-        IRawInboundEnvelope rawInboundEnvelope,
-        object? deserializedMessage,
-        Type messageType)
+    public static IInboundEnvelope CreateTypedInboundEnvelope(IInboundEnvelope rawInboundEnvelope, object? deserializedMessage, Type messageType)
     {
         ConstructorInfo constructor = Constructors.GetOrAdd(
             messageType,
-            type => typeof(InboundEnvelope<>).MakeGenericType(type).GetConstructor([typeof(IRawInboundEnvelope), type])!);
+            type => typeof(InboundEnvelope<>).MakeGenericType(type).GetConstructor([typeof(IInboundEnvelope), type])!);
 
         return constructor.Invoke([rawInboundEnvelope, deserializedMessage]) as IInboundEnvelope
                ?? throw new InvalidOperationException("Failed to create the typed envelope.");

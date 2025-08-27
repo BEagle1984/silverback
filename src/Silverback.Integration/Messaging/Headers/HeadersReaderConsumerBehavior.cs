@@ -23,8 +23,7 @@ public class HeadersReaderConsumerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope is IInboundEnvelope inboundEnvelope)
-            HeaderAttributeHelper.SetFromHeaders(inboundEnvelope.Message, inboundEnvelope.Headers);
+        HeaderAttributeHelper.SetFromHeaders(context.Envelope.Message, context.Envelope.Headers);
 
         await next(context, cancellationToken).ConfigureAwait(false);
     }

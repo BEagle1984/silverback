@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Sequences.Chunking;
 /// <summary>
 ///     A sequence of chunks that belong to the same message.
 /// </summary>
-public class ChunkSequence : RawSequence
+public class ChunkSequence : Sequence
 {
     private int? _lastIndex;
 
@@ -35,11 +35,11 @@ public class ChunkSequence : RawSequence
         TotalLength = totalLength;
     }
 
-    /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
-    protected override ValueTask<AddToSequenceResult> AddCoreAsync(
-        IRawInboundEnvelope envelope,
-        ISequence? sequence,
-        bool throwIfUnhandled)
+    /// <inheritdoc cref="Sequence.IsRawMessages" />
+    public override bool IsRawMessages => true;
+
+    /// <inheritdoc cref="Sequence.AddAsync" />
+    public override ValueTask<AddToSequenceResult> AddAsync(IInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -49,11 +49,11 @@ public class ChunkSequence : RawSequence
         if (!EnsureOrdering(chunkIndex))
             return ValueTask.FromResult(AddToSequenceResult.Success(0));
 
-        return base.AddCoreAsync(envelope, sequence, throwIfUnhandled);
+        return base.AddAsync(envelope, sequence, throwIfUnhandled);
     }
 
-    /// <inheritdoc cref="SequenceBase{TEnvelope}.IsLastMessage" />
-    protected override bool IsLastMessage(IRawInboundEnvelope envelope)
+    /// <inheritdoc cref="Sequence.IsLastMessage" />
+    protected override bool IsLastMessage(IInboundEnvelope envelope)
     {
         Check.NotNull(envelope, nameof(envelope));
 

@@ -18,11 +18,11 @@ namespace Silverback.Messaging.Sequences.Chunking;
 /// </summary>
 public sealed class ChunkStream : Stream
 {
-    private readonly IMessageStreamEnumerable<IRawInboundEnvelope> _source;
+    private readonly IMessageStreamEnumerable<IInboundEnvelope> _source;
 
-    private IEnumerator<IRawInboundEnvelope>? _syncEnumerator;
+    private IEnumerator<IInboundEnvelope>? _syncEnumerator;
 
-    private IAsyncEnumerator<IRawInboundEnvelope>? _asyncEnumerator;
+    private IAsyncEnumerator<IInboundEnvelope>? _asyncEnumerator;
 
     private Memory<byte> _currentChunk;
 
@@ -34,7 +34,7 @@ public sealed class ChunkStream : Stream
     /// <param name="source">
     ///     The chunks composing this stream.
     /// </param>
-    public ChunkStream(IMessageStreamEnumerable<IRawInboundEnvelope> source)
+    public ChunkStream(IMessageStreamEnumerable<IInboundEnvelope> source)
     {
         Check.NotNull(source, nameof(source));
 

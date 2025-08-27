@@ -23,9 +23,9 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
 
     private readonly List<Type> _excludedExceptions = [];
 
-    private Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
+    private Func<IInboundEnvelope, Exception, bool>? _applyRule;
 
-    private Func<IRawInboundEnvelope, Exception, object?>? _messageToPublishFactory;
+    private Func<IInboundEnvelope, Exception, object?>? _messageToPublishFactory;
 
     /// <summary>
     ///     Gets this instance.
@@ -105,7 +105,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ApplyWhen(Func<IRawInboundEnvelope, bool> applyRule)
+    public TBuilder ApplyWhen(Func<IInboundEnvelope, bool> applyRule)
     {
         Check.NotNull(applyRule, nameof(applyRule));
         _applyRule = (envelope, _) => applyRule.Invoke(envelope);
@@ -122,7 +122,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ApplyWhen(Func<IRawInboundEnvelope, Exception, bool> applyRule)
+    public TBuilder ApplyWhen(Func<IInboundEnvelope, Exception, bool> applyRule)
     {
         Check.NotNull(applyRule, nameof(applyRule));
         _applyRule = applyRule;
@@ -139,7 +139,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder Publish(Func<IRawInboundEnvelope, object?> factory)
+    public TBuilder Publish(Func<IInboundEnvelope, object?> factory)
     {
         Check.NotNull(factory, nameof(factory));
         _messageToPublishFactory = (envelope, _) => factory.Invoke(envelope);
@@ -156,7 +156,7 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
     /// <returns>
     ///     The policy builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder Publish(Func<IRawInboundEnvelope, Exception, object?> factory)
+    public TBuilder Publish(Func<IInboundEnvelope, Exception, object?> factory)
     {
         Check.NotNull(factory, nameof(factory));
         _messageToPublishFactory = factory;

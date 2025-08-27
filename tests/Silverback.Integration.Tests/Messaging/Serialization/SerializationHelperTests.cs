@@ -181,7 +181,7 @@ public class SerializationHelperTests
     public void CreateTypedInboundEnvelope_ShouldReturnEnvelope()
     {
         TestConsumerEndpoint endpoint = TestConsumerEndpoint.GetDefault();
-        RawInboundEnvelope rawEnvelope = new(
+        InboundEnvelope rawEnvelope = new(
             [],
             [new MessageHeader("one", "1"), new MessageHeader("two", "2")],
             endpoint,
@@ -189,7 +189,7 @@ public class SerializationHelperTests
             new TestOffset());
         TestEventOne message = new();
 
-        IRawInboundEnvelope envelope = SerializationHelper.CreateTypedInboundEnvelope(rawEnvelope, message, typeof(TestEventOne));
+        IInboundEnvelope envelope = SerializationHelper.CreateTypedInboundEnvelope(rawEnvelope, message, typeof(TestEventOne));
 
         InboundEnvelope<TestEventOne> eventOneEnvelope = envelope.ShouldBeOfType<InboundEnvelope<TestEventOne>>();
         eventOneEnvelope.Message.ShouldBe(message);

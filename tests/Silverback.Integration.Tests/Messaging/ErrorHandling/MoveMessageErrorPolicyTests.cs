@@ -169,7 +169,7 @@ public class MoveMessageErrorPolicyTests
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
         byte[] rawContent = BytesUtil.GetRandomBytes();
-        RawInboundEnvelope inboundEnvelope = new(
+        InboundEnvelope inboundEnvelope = new(
             new MemoryStream(rawContent),
             null,
             TestConsumerEndpoint.GetDefault(),

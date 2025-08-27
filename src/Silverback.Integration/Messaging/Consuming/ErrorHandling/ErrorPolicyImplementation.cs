@@ -23,9 +23,9 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
 
     private readonly IReadOnlyCollection<Type> _includedExceptions;
 
-    private readonly Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
+    private readonly Func<IInboundEnvelope, Exception, bool>? _applyRule;
 
-    private readonly Func<IRawInboundEnvelope, Exception, object?>? _messageToPublishFactory;
+    private readonly Func<IInboundEnvelope, Exception, object?>? _messageToPublishFactory;
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -61,8 +61,8 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
         int? maxFailedAttempts,
         IReadOnlyCollection<Type> excludedExceptions,
         IReadOnlyCollection<Type> includedExceptions,
-        Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-        Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
+        Func<IInboundEnvelope, Exception, bool>? applyRule,
+        Func<IInboundEnvelope, Exception, object?>? messageToPublishFactory,
         IServiceProvider serviceProvider,
         ISilverbackLogger<ErrorPolicyBase> logger)
     {

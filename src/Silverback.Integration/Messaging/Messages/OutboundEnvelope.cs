@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
@@ -10,7 +9,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
+internal record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
 {
     private ProducerEndpoint? _endpoint;
 
@@ -42,13 +41,7 @@ internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
 
     public ISilverbackContext? Context { get; }
 
-    public virtual Type MessageType => Message?.GetType() ?? typeof(object);
-
-    public bool IsTombstone => Message is null or ITombstone;
-
     public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
-
-    public object? Message { get; init; }
 
     public IOutboundEnvelope AddHeader(string name, object value)
     {

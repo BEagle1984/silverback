@@ -24,7 +24,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task CanHandle_ShouldReturnTrue_WhenAllHeadersWithCountAreSet()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -48,7 +48,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task CanHandle_ShouldReturnTrue_WhenAllHeadersWithIsLastChunkAreSet()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -72,7 +72,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task CanHandle_ShouldReturnFalse_WhenChunkMessageIdMissing()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -95,7 +95,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task CanHandle_ShouldReturnFalse_WhenChunkIndexMissing()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -118,7 +118,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task CanHandle_ShouldReturnFalse_WhenChunkCountIsOne()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -142,7 +142,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task GetSequence_ShouldReturnNewSequence_WhenFirstChunk()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -169,7 +169,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task GetSequence_ShouldReturnExistingSequence()
     {
-        RawInboundEnvelope envelope1 = new(
+        InboundEnvelope envelope1 = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -180,7 +180,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
             Substitute.For<IConsumer>(),
             new TestOffset());
-        RawInboundEnvelope envelope2 = new(
+        InboundEnvelope envelope2 = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
@@ -219,7 +219,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     [Fact]
     public async Task GetSequence_ShouldReturnIncompleteSequence_WhenFirstChunkMissing()
     {
-        RawInboundEnvelope envelope = new(
+        InboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -18,7 +19,7 @@ public class MqttEnvelopeExtensionsTests
     public void GetMqttResponseTopic_ShouldReturnResponseTopic()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             [new MessageHeader(MqttMessageHeaders.ResponseTopic, "topic/1")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -33,7 +34,7 @@ public class MqttEnvelopeExtensionsTests
     public void GetMqttResponseTopic_ShouldReturnNull_WhenHeaderNotSet()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -63,7 +64,7 @@ public class MqttEnvelopeExtensionsTests
     public void GetMqttCorrelationData_ShouldReturnCorrelationDataAsByteArray()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             [new MessageHeader(MqttMessageHeaders.CorrelationData, "AQIDBA==")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -78,7 +79,7 @@ public class MqttEnvelopeExtensionsTests
     public void GetMqttCorrelationDataAsString_ShouldReturnCorrelationData()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             [new MessageHeader(MqttMessageHeaders.CorrelationData, "e2NvcnJlbGF0aW9uLWRhdGF9")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -93,7 +94,7 @@ public class MqttEnvelopeExtensionsTests
     public void GetMqttCorrelationDataAsString_ShouldReturnNull_WhenHeaderNotSet()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),

@@ -31,10 +31,10 @@ public interface IIntegrationSpy
     IReadOnlyList<IOutboundEnvelope> RawOutboundEnvelopes { get; }
 
     /// <summary>
-    ///     Gets the list of <see cref="IRawInboundEnvelope" /> corresponding to all the inbound messages, before
+    ///     Gets the list of <see cref="IInboundEnvelope" /> corresponding to all the inbound messages, before
     ///     they are even processed by the consumer pipeline.
     /// </summary>
-    IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes { get; }
+    IReadOnlyList<IInboundEnvelope> RawInboundEnvelopes { get; }
 
     /// <summary>
     ///     Gets the list of <see cref="IInboundEnvelope" /> corresponding to all the inbound messages that have been

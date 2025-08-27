@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using Confluent.Kafka;
 using NSubstitute;
 using Shouldly;
@@ -19,7 +20,7 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForInboundEnvelope()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -49,7 +50,7 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaKey_ShouldReturnNull_WhenMessageKeyHeaderIsNotSet()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -79,7 +80,7 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaTimestamp_ShouldReturnTimestampHeaderValue()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             [new MessageHeader(KafkaMessageHeaders.Timestamp, "2025-08-20T13:35:02.9050000Z")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -94,7 +95,7 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaTimestamp_ShouldReturnNull_WhenTimestampHeaderIsNotSet()
     {
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -110,7 +111,7 @@ public class KafkaEnvelopeExtensionsTests
     {
         KafkaOffset offset = new(new TopicPartition("test", 1), 42);
         InboundEnvelope envelope = new(
-            null,
+            Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),

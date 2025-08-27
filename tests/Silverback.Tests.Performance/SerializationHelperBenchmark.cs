@@ -25,13 +25,13 @@ namespace Silverback.Tests.Performance;
 [MemoryDiagnoser]
 public class SerializationHelperBenchmark
 {
-    private readonly IRawInboundEnvelope _rawInboundEnvelope;
+    private readonly IInboundEnvelope _rawInboundEnvelope;
 
     private readonly TestEventOne _testEventOne = new();
 
     public SerializationHelperBenchmark()
     {
-        _rawInboundEnvelope = new RawInboundEnvelope(
+        _rawInboundEnvelope = new InboundEnvelope(
             new byte[42],
             [],
             new KafkaConsumerEndpoint("topic", 0, new KafkaConsumerEndpointConfiguration()),
@@ -53,7 +53,7 @@ public class SerializationHelperBenchmark
 
     [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Local", Justification = "test code")]
     private static IInboundEnvelope LegacyCreateTypedInboundEnvelope(
-        IRawInboundEnvelope rawInboundEnvelope,
+        IInboundEnvelope rawInboundEnvelope,
         object? deserializedMessage,
         Type messageType) =>
         (InboundEnvelope)Activator.CreateInstance(

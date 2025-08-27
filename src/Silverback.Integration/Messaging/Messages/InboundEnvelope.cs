@@ -1,17 +1,17 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-/// <inheritdoc cref="IRawInboundEnvelope" />
-internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
+/// <inheritdoc cref="IInboundEnvelope" />
+internal record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
 {
-    public InboundEnvelope(IRawInboundEnvelope envelope)
+    public InboundEnvelope(IInboundEnvelope envelope)
         : this(
             envelope.RawMessage,
             envelope.Headers,
@@ -21,7 +21,7 @@ internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     {
     }
 
-    public InboundEnvelope(IRawInboundEnvelope envelope, object? message)
+    public InboundEnvelope(IInboundEnvelope envelope, object? message)
         : this(
             message,
             envelope.RawMessage,
@@ -33,30 +33,54 @@ internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     }
 
     public InboundEnvelope(
-        Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IConsumer consumer,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
-    {
-    }
-
-    public InboundEnvelope(
         object? message,
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
+        : this(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
     {
         Message = message;
     }
 
-    public virtual Type MessageType => Message?.GetType() ?? typeof(object);
+    public InboundEnvelope(
+        byte[]? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : this(
+            rawMessage != null ? new MemoryStream(rawMessage) : null,
+            headers,
+            endpoint,
+            consumer,
+            brokerMessageIdentifier)
+    {
+    }
 
-    public object? Message { get; set; }
+    public InboundEnvelope(
+        Stream? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : base(rawMessage, headers)
+    {
+        Endpoint = Check.NotNull(endpoint, nameof(endpoint));
+        BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+        Consumer = Check.NotNull(consumer, nameof(consumer));
+    }
 
-    public bool IsTombstone => Message is null or ITombstone;
+    public ConsumerEndpoint Endpoint { get; }
+
+    public IConsumer Consumer { get; }
+
+    public IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
+
+    public IInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
+    {
+        RawMessage = newRawMessage,
+        Headers = new MessageHeaderCollection(Headers)
+    };
 }

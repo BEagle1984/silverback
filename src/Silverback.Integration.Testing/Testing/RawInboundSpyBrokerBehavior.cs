@@ -10,8 +10,7 @@ using Silverback.Util;
 namespace Silverback.Testing;
 
 /// <summary>
-///     Added at the very beginning of the consumer pipeline, forwards the untouched
-///     <see cref="IRawInboundEnvelope" /> to the <see cref="IIntegrationSpy" />.
+///     Added at the very beginning of the consumer pipeline, forwards the untouched <see cref="IInboundEnvelope" /> to the <see cref="IIntegrationSpy" />.
 /// </summary>
 public class RawInboundSpyBrokerBehavior : IConsumerBehavior
 {

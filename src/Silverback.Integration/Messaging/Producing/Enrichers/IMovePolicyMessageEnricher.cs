@@ -24,7 +24,7 @@ public interface IMovePolicyMessageEnricher
     ///     The exception thrown during the message processing.
     /// </param>
     void Enrich(
-        IRawInboundEnvelope inboundEnvelope,
+        IInboundEnvelope inboundEnvelope,
         IOutboundEnvelope outboundEnvelope,
         Exception exception);
 }

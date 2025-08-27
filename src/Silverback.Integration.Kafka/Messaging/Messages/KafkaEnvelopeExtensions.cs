@@ -52,7 +52,7 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The timestamp of the message.
     /// </returns>
-    public static DateTime? GetKafkaTimestamp(this IRawInboundEnvelope envelope) =>
+    public static DateTime? GetKafkaTimestamp(this IInboundEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue<DateTime>(KafkaMessageHeaders.Timestamp)?.ToUniversalTime();
 
     /// <summary>
@@ -64,7 +64,7 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The offset of the message.
     /// </returns>
-    public static KafkaOffset GetKafkaOffset(this IRawInboundEnvelope envelope) =>
+    public static KafkaOffset GetKafkaOffset(this IInboundEnvelope envelope) =>
         (KafkaOffset)Check.NotNull(envelope, nameof(envelope)).BrokerMessageIdentifier;
 
     /// <summary>

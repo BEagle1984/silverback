@@ -68,7 +68,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
 
         // Store the original envelope in case it is replaced in the GetSequence method (see ChunkSequenceReader)
-        IRawInboundEnvelope originalEnvelope = context.Envelope;
+        IInboundEnvelope originalEnvelope = context.Envelope;
 
         // Store the previous sequence since it must be added to the new one (e.g. ChunkSequence into BatchSequence)
         ISequence? previousSequence = context.Sequence;
@@ -154,7 +154,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next,
         ISequenceReader sequenceReader,
-        IRawInboundEnvelope originalEnvelope,
+        IInboundEnvelope originalEnvelope,
         ISequence? previousSequence,
         CancellationToken cancellationToken)
     {

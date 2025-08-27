@@ -31,7 +31,7 @@ internal static class ActivitySources
         return activity;
     }
 
-    public static Activity StartConsumeActivity(IRawInboundEnvelope envelope)
+    public static Activity StartConsumeActivity(IInboundEnvelope envelope)
     {
         MessageHeaderCollection headers = envelope.Headers;
         string? traceIdFromHeader = headers.GetValue(DefaultMessageHeaders.TraceId);
@@ -49,7 +49,7 @@ internal static class ActivitySources
         return activity;
     }
 
-    public static void UpdateConsumeActivity(IRawInboundEnvelope envelope)
+    public static void UpdateConsumeActivity(IInboundEnvelope envelope)
     {
         Activity? currentActivity = Activity.Current;
 

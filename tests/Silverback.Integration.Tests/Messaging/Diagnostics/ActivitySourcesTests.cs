@@ -26,7 +26,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -44,7 +44,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceState, "my-state" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -55,7 +55,7 @@ public class ActivitySourcesTests
     [Fact]
     public void StartConsumeActivity_ShouldStartActivity_WhenHeadersNotSet()
     {
-        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
+        IInboundEnvelope envelope = CreateInboundEnvelope([]);
 
         ActivitySources.StartConsumeActivity(envelope);
 
@@ -74,7 +74,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceBaggage, "key1=value1" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -84,7 +84,7 @@ public class ActivitySourcesTests
     [Fact]
     public void StartConsumeActivity_ShouldSetMessageDestinationTag()
     {
-        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
+        IInboundEnvelope envelope = CreateInboundEnvelope([]);
         ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -96,7 +96,7 @@ public class ActivitySourcesTests
     {
         using TestActivityListener listener = new();
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
+        IInboundEnvelope envelope = CreateInboundEnvelope([]);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         listener.Activities.ShouldContain(activity);
@@ -115,7 +115,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -135,7 +135,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceState, "my-state" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -150,7 +150,7 @@ public class ActivitySourcesTests
         activity.Start();
         string traceId = activity.TraceId.ToString();
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
+        IInboundEnvelope envelope = CreateInboundEnvelope([]);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -172,7 +172,7 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceBaggage, "key1=value1" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -186,7 +186,7 @@ public class ActivitySourcesTests
         using Activity activity = new("activity");
         activity.Start();
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
+        IInboundEnvelope envelope = CreateInboundEnvelope([]);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
@@ -201,14 +201,14 @@ public class ActivitySourcesTests
             { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
         };
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
+        IInboundEnvelope envelope = CreateInboundEnvelope(headers);
         ActivitySources.UpdateConsumeActivity(envelope);
 
         Activity.Current.ShouldBeNull();
     }
 
-    private static IRawInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>
-        new RawInboundEnvelope(
+    private static IInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>
+        new InboundEnvelope(
             Stream.Null,
             headers,
             new TestConsumerEndpointConfiguration("Endpoint").GetDefaultEndpoint(),

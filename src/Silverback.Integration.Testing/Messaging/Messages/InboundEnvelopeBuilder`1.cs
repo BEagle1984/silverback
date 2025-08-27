@@ -258,7 +258,7 @@ public class InboundEnvelopeBuilder<TMessage>
 
         public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
 
-        public int IncrementFailedAttempts(IRawInboundEnvelope envelope) => throw new NotSupportedException();
+        public int IncrementFailedAttempts(IInboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     internal class MockBrokerMessageIdentifier : IBrokerMessageIdentifier

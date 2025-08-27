@@ -148,5 +148,5 @@ public interface IConsumer
     /// <returns>
     ///     The current failed attempts count after the increment.
     /// </returns>
-    int IncrementFailedAttempts(IRawInboundEnvelope envelope);
+    int IncrementFailedAttempts(IInboundEnvelope envelope);
 }

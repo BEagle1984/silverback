@@ -110,7 +110,7 @@ public class TombstoneMessageArgumentResolverTests
     {
         TombstoneMessageArgumentResolver resolver = new();
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new RawInboundEnvelope(
+            new InboundEnvelope(
                 (byte[]?)null,
                 [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
@@ -129,7 +129,7 @@ public class TombstoneMessageArgumentResolverTests
     {
         TombstoneMessageArgumentResolver resolver = new();
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new RawInboundEnvelope(
+            new InboundEnvelope(
                 (byte[]?)null,
                 [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
@@ -148,7 +148,7 @@ public class TombstoneMessageArgumentResolverTests
     {
         TombstoneMessageArgumentResolver resolver = new();
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new RawInboundEnvelope(
+            new InboundEnvelope(
                 (byte[]?)null,
                 [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),
@@ -167,7 +167,7 @@ public class TombstoneMessageArgumentResolverTests
     {
         TombstoneMessageArgumentResolver resolver = new();
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new RawInboundEnvelope(
+            new InboundEnvelope(
                 (byte[]?)null,
                 [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
                 TestConsumerEndpoint.GetDefault(),

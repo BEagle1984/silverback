@@ -1,13 +1,12 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Tests.Types;
 
-public sealed class FakeSequence : SequenceBase<IInboundEnvelope>
+public sealed class FakeSequence : Sequence
 {
     public FakeSequence()
         : base("fake1", ConsumerPipelineContextHelper.CreateSubstitute())

@@ -94,8 +94,8 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
-        Action act1 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, bool>)null!);
-        Action act2 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, Exception, bool>)null!);
+        Action act1 = () => builder.ApplyWhen((Func<IInboundEnvelope, bool>)null!);
+        Action act2 = () => builder.ApplyWhen((Func<IInboundEnvelope, Exception, bool>)null!);
 
         act1.ShouldThrow<ArgumentNullException>();
         act2.ShouldThrow<ArgumentNullException>();
@@ -130,8 +130,8 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
-        Action act1 = () => builder.Publish((Func<IRawInboundEnvelope, object?>)null!);
-        Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
+        Action act1 = () => builder.Publish((Func<IInboundEnvelope, object?>)null!);
+        Action act2 = () => builder.Publish((Func<IInboundEnvelope, Exception, object?>)null!);
 
         act1.ShouldThrow<ArgumentNullException>();
         act2.ShouldThrow<ArgumentNullException>();

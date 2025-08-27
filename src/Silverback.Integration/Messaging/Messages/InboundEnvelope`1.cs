@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages;
 internal sealed record InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
     where TMessage : class
 {
-    public InboundEnvelope(IRawInboundEnvelope envelope, TMessage? message)
+    public InboundEnvelope(IInboundEnvelope envelope, TMessage? message)
         : base(envelope, message)
     {
         Message = message;

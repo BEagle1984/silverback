@@ -27,7 +27,7 @@ public class ActivityConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldStartNewActivityAndSetParentIdFromHeader()
     {
-        RawInboundEnvelope rawEnvelope = new(
+        InboundEnvelope rawEnvelope = new(
             new byte[5],
             new MessageHeaderCollection
             {
@@ -67,7 +67,7 @@ public class ActivityConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldStartNewActivity_WhenNoHeaderIsSet()
     {
-        RawInboundEnvelope rawEnvelope = new(
+        InboundEnvelope rawEnvelope = new(
             new byte[5],
             new MessageHeaderCollection
             {

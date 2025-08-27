@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Producing.Enrichers;
 
 internal sealed class KafkaMovePolicyMessageEnricher : IMovePolicyMessageEnricher<KafkaProducerEndpoint>, IMovePolicyMessageEnricher<KafkaConsumerEndpoint>
 {
-    public void Enrich(IRawInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
+    public void Enrich(IInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
     {
         KafkaConsumer consumer = (KafkaConsumer)inboundEnvelope.Consumer;
         KafkaConsumerEndpoint consumerEndpoint = (KafkaConsumerEndpoint)inboundEnvelope.Endpoint;

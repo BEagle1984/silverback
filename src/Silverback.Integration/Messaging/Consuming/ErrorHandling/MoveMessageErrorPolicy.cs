@@ -83,8 +83,8 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             int? maxFailedAttempts,
             IReadOnlyCollection<Type> excludedExceptions,
             IReadOnlyCollection<Type> includedExceptions,
-            Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-            Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
+            Func<IInboundEnvelope, Exception, bool>? applyRule,
+            Func<IInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IBrokerOutboundMessageEnrichersFactory enricherFactory,
             IServiceProvider serviceProvider,
             ISilverbackLogger<MoveMessageErrorPolicy> logger)
@@ -129,15 +129,15 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             return true;
         }
 
-        private async ValueTask PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
+        private async ValueTask PublishToNewEndpointAsync(IInboundEnvelope envelope, Exception exception)
         {
             _producer ??= _producers.GetProducerForEndpoint(_endpointName);
 
             IOutboundEnvelope outboundEnvelope =
-                envelope is IInboundEnvelope deserializedEnvelope
+                envelope.Message != null
                     ? OutboundEnvelopeFactory.CreateEnvelope(
-                        deserializedEnvelope.Message,
-                        deserializedEnvelope.Headers,
+                        envelope.Message,
+                        envelope.Headers,
                         _producer.EndpointConfiguration,
                         _producer)
                     : OutboundEnvelopeFactory.CreateEnvelope(

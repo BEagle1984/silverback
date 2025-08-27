@@ -19,22 +19,22 @@ public class ChunkStreamTests
     [Fact]
     public async Task CopyToAsync_ShouldCopyMessageStream()
     {
-        MessageStreamProvider<IRawInboundEnvelope> streamProvider = new();
-        ChunkStream chunkStream = new(streamProvider.CreateStream<IRawInboundEnvelope>());
-        MemoryStream output = new(Encoding.UTF8.GetBytes("some junk-"));
+        MessageStreamProvider<IInboundEnvelope> streamProvider = new();
+        ChunkStream chunkStream = new(streamProvider.CreateStream<IInboundEnvelope>());
+        MemoryStream output = new("some junk-"u8.ToArray());
 
         Task copyTask = chunkStream.CopyToAsync(output);
 
         await streamProvider.PushAsync(
-            new RawInboundEnvelope(
-                Encoding.UTF8.GetBytes("Silver"),
+            new InboundEnvelope(
+                "Silver"u8.ToArray(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
-            new RawInboundEnvelope(
-                Encoding.UTF8.GetBytes("back"),
+            new InboundEnvelope(
+                "back"u8.ToArray(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
@@ -50,22 +50,22 @@ public class ChunkStreamTests
     [Fact]
     public async Task CopyTo_ShouldCopyMessageStream()
     {
-        MessageStreamProvider<IRawInboundEnvelope> streamProvider = new();
-        ChunkStream chunkStream = new(streamProvider.CreateStream<IRawInboundEnvelope>());
-        MemoryStream output = new(Encoding.UTF8.GetBytes("some junk-"));
+        MessageStreamProvider<IInboundEnvelope> streamProvider = new();
+        ChunkStream chunkStream = new(streamProvider.CreateStream<IInboundEnvelope>());
+        MemoryStream output = new("some junk-"u8.ToArray());
 
         Task copyTask = Task.Run(() => chunkStream.CopyTo(output));
 
         await streamProvider.PushAsync(
-            new RawInboundEnvelope(
-                Encoding.UTF8.GetBytes("Silver"),
+            new InboundEnvelope(
+                "Silver"u8.ToArray(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
-            new RawInboundEnvelope(
-                Encoding.UTF8.GetBytes("back"),
+            new InboundEnvelope(
+                "back"u8.ToArray(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),

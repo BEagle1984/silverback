@@ -21,8 +21,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     ///     Initializes a new instance of the <see cref="SequenceReaderBase" /> class.
     /// </summary>
     /// <param name="handlesRawMessages">
-    ///     A value indicating whether this reader handles the raw messages, before they are being deserialized,
-    ///     decrypted, etc.
+    ///     A value indicating whether this reader handles the raw messages before they are being deserialized, decrypted, etc.
     /// </param>
     protected SequenceReaderBase(bool handlesRawMessages = false)
     {
@@ -149,7 +148,7 @@ public abstract class SequenceReaderBase : ISequenceReader
         async ValueTask AwaitOrAbortPreviousSequenceAsync(ISequence sequence)
         {
             // Prevent Sequence and RawSequence to mess with each other
-            if (HandlesRawMessages && sequence is Sequence || !HandlesRawMessages && sequence is RawSequence)
+            if (HandlesRawMessages != sequence.IsRawMessages)
                 return;
 
             if (!sequence.IsComplete)

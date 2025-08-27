@@ -10,9 +10,9 @@ namespace Silverback.Tests.Integration.E2E.Util;
 
 public static class EnvelopesExtensions
 {
-    public static string? GetRawMessageAsString(this IRawInboundEnvelope envelope) =>
+    public static string? GetRawMessageAsString(this IInboundEnvelope envelope) =>
         envelope.RawMessage == null ? null : Encoding.UTF8.GetString(envelope.RawMessage.ReReadAll());
 
-    public static IReadOnlyCollection<string?> GetRawMessageAsString(this IEnumerable<IRawInboundEnvelope> envelopes) =>
+    public static IReadOnlyCollection<string?> GetRawMessageAsString(this IEnumerable<IInboundEnvelope> envelopes) =>
         envelopes.Select(GetRawMessageAsString).ToList();
 }

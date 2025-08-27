@@ -160,7 +160,7 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, string?, Exception?> EndpointBuilderError =
         SilverbackLoggerMessage.Define<string?>(IntegrationLogEvents.EndpointBuilderError);
 
-    public static void LogProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    public static void LogProcessing(this ISilverbackLogger logger, IInboundEnvelope envelope)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessage))
             return;
@@ -172,7 +172,7 @@ internal static class IntegrationLoggerExtensions
             null);
     }
 
-    public static void LogProcessingError(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    public static void LogProcessingError(this ISilverbackLogger logger, IInboundEnvelope envelope, Exception exception)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageError))
             return;
@@ -184,10 +184,7 @@ internal static class IntegrationLoggerExtensions
             exception);
     }
 
-    public static void LogProcessingFatalError(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        Exception exception)
+    public static void LogProcessingFatalError(this ISilverbackLogger logger, IInboundEnvelope envelope, Exception exception)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.ProcessingConsumedMessageFatalError))
             return;
@@ -238,10 +235,7 @@ internal static class IntegrationLoggerExtensions
     public static void LogOutboundMessageFiltered(this ISilverbackLogger logger, IOutboundEnvelope envelope) =>
         OutboundMessageFiltered(logger.InnerLogger, envelope.EndpointConfiguration.DisplayName, null);
 
-    public static void LogMessageAddedToSequence(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        ISequence sequence)
+    public static void LogMessageAddedToSequence(this ISilverbackLogger logger, IInboundEnvelope envelope, ISequence sequence)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.MessageAddedToSequence))
             return;
@@ -420,7 +414,7 @@ internal static class IntegrationLoggerExtensions
     public static void LogProducerCreated(this ISilverbackLogger logger, IProducer producer) =>
         ProducerCreated(logger.InnerLogger, producer.GetType().Name, producer.DisplayName, null);
 
-    public static void LogRetryProcessing(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    public static void LogRetryProcessing(this ISilverbackLogger logger, IInboundEnvelope envelope)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.RetryMessageProcessing))
             return;
@@ -432,10 +426,7 @@ internal static class IntegrationLoggerExtensions
             null);
     }
 
-    public static void LogMessageMoved(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        EndpointConfiguration destinationEndpoint)
+    public static void LogMessageMoved(this ISilverbackLogger logger, IInboundEnvelope envelope, EndpointConfiguration destinationEndpoint)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.MessageMoved))
             return;
@@ -448,7 +439,7 @@ internal static class IntegrationLoggerExtensions
             null);
     }
 
-    public static void LogMessageSkipped(this ISilverbackLogger logger, IRawInboundEnvelope envelope)
+    public static void LogMessageSkipped(this ISilverbackLogger logger, IInboundEnvelope envelope)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.MessageSkipped))
             return;
@@ -460,7 +451,7 @@ internal static class IntegrationLoggerExtensions
             null);
     }
 
-    public static void LogCannotMoveSequence(this ISilverbackLogger logger, IRawInboundEnvelope envelope, ISequence sequence)
+    public static void LogCannotMoveSequence(this ISilverbackLogger logger, IInboundEnvelope envelope, ISequence sequence)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequence))
             return;
@@ -473,7 +464,7 @@ internal static class IntegrationLoggerExtensions
             null);
     }
 
-    public static void LogRollbackToRetryFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    public static void LogRollbackToRetryFailed(this ISilverbackLogger logger, IInboundEnvelope envelope, Exception exception)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.RollbackToRetryFailed))
             return;
@@ -485,7 +476,7 @@ internal static class IntegrationLoggerExtensions
             exception);
     }
 
-    public static void LogRollbackToSkipFailed(this ISilverbackLogger logger, IRawInboundEnvelope envelope, Exception exception)
+    public static void LogRollbackToSkipFailed(this ISilverbackLogger logger, IInboundEnvelope envelope, Exception exception)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.RollbackToSkipFailed))
             return;
@@ -531,10 +522,7 @@ internal static class IntegrationLoggerExtensions
             envelope.EndpointConfiguration.DisplayName,
             null);
 
-    public static void LogInvalidMessageConsumed(
-        this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
-        string validationErrors)
+    public static void LogInvalidMessageConsumed(this ISilverbackLogger logger, IInboundEnvelope envelope, string validationErrors)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.InvalidMessageConsumed))
             return;
@@ -630,7 +618,7 @@ internal static class IntegrationLoggerExtensions
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public static void LogProcessingTrace(
         this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
+        IInboundEnvelope envelope,
         string message,
         Func<object?[]>? argumentsProvider = null)
     {
@@ -656,7 +644,7 @@ internal static class IntegrationLoggerExtensions
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public static void LogProcessingTrace(
         this ISilverbackLogger logger,
-        IRawInboundEnvelope envelope,
+        IInboundEnvelope envelope,
         Exception? exception,
         string message,
         Func<object?[]>? argumentsProvider = null)

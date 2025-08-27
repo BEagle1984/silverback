@@ -24,7 +24,7 @@ public sealed class ConsumerPipelineContext : IDisposable
 
     private IConsumerTransactionManager? _transactionManager;
 
-    private IRawInboundEnvelope _envelope;
+    private IInboundEnvelope _envelope;
 
     private bool _isDisposed;
 
@@ -40,7 +40,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     The <see cref="IConsumer" /> that triggered this pipeline.
     /// </param>
     /// <param name="sequenceStore">
-    ///     The <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
+    ///     The <see cref="ISequenceStore" /> used to temporarily store the pending sequences being consumed.
     /// </param>
     /// <param name="pipeline">
     ///     The behaviors composing the pipeline.
@@ -49,7 +49,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
     public ConsumerPipelineContext(
-        IRawInboundEnvelope envelope,
+        IInboundEnvelope envelope,
         IConsumer consumer,
         ISequenceStore sequenceStore,
         IReadOnlyList<IConsumerBehavior> pipeline,
@@ -68,7 +68,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     public IConsumer Consumer { get; }
 
     /// <summary>
-    ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
+    ///     Gets the <see cref="ISequenceStore" /> used to temporarily store the pending sequences being consumed.
     /// </summary>
     public ISequenceStore SequenceStore { get; }
 
@@ -128,7 +128,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// <summary>
     ///     Gets or sets the envelopes containing the messages being processed.
     /// </summary>
-    public IRawInboundEnvelope Envelope
+    public IInboundEnvelope Envelope
     {
         get => _envelope;
         set => _envelope = Check.NotNull(value, nameof(value));
@@ -219,7 +219,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// <returns>
     ///     The cloned context.
     /// </returns>
-    public ConsumerPipelineContext Clone(IRawInboundEnvelope? newEnvelope = null) =>
+    public ConsumerPipelineContext Clone(IInboundEnvelope? newEnvelope = null) =>
         new(newEnvelope ?? Envelope, Consumer, SequenceStore, Pipeline, ServiceProvider)
         {
             CurrentStepIndex = CurrentStepIndex

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
+
 using Silverback.Util;
 
 namespace Silverback.Messaging.Validation;
@@ -38,9 +38,9 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
-            context.Envelope is IInboundEnvelope { Message: not null } deserializedEnvelope &&
+            context.Envelope.Message != null &&
             !MessageValidator.IsValid(
-                deserializedEnvelope.Message,
+                context.Envelope.Message,
                 context.Envelope.Endpoint.Configuration.MessageValidationMode,
                 out string? validationErrors))
         {
