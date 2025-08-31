@@ -9,7 +9,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
+internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
 {
     private ProducerEndpoint? _endpoint;
 
@@ -68,13 +68,4 @@ internal record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
         RawMessage = newRawMessage,
         Headers = new MessageHeaderCollection(Headers)
     };
-
-    public IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)
-        where TNewMessage : class =>
-        new OutboundEnvelope<TNewMessage>(
-            newMessage,
-            Headers,
-            EndpointConfiguration,
-            Producer,
-            Context);
 }

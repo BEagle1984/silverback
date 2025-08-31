@@ -885,6 +885,8 @@ public class IntegrationLoggerExtensionsTests
 
         public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
 
+        public IOutboundEnvelopeFactory EnvelopeFactory { get; }
+
         public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 
         public IBrokerMessageIdentifier Produce(IOutboundEnvelope envelope) => throw new NotSupportedException();

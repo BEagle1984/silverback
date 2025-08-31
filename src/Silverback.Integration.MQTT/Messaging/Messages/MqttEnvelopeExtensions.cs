@@ -100,7 +100,7 @@ public static class MqttEnvelopeExtensions
         SetMqttCorrelationData(envelope, correlationData.ToUtf8Bytes());
 
     /// <summary>
-    ///     Gets destination topic.
+    ///     Gets the destination topic.
     /// </summary>
     /// <param name="envelope">
     ///     The envelope containing the message.

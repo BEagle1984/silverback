@@ -5,7 +5,7 @@ namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IOutboundEnvelope" />
 /// <typeparam name="TMessage">
-///     The type of the message being produced.
+///     The type of the wrapped message.
 /// </typeparam>
 public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope, IEnvelope<TMessage>
 {

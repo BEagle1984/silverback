@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using NSubstitute;
 using Silverback.Messaging.Broker;
@@ -33,9 +34,17 @@ public sealed record TestProducerEndpointConfiguration : ProducerEndpointConfigu
 
     public TestProducerEndpoint GetDefaultEndpoint() =>
         (TestProducerEndpoint)EndpointResolver.GetEndpoint(
-            new OutboundEnvelope<TestEventOne>(
+            new TestOutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 null,
                 this,
                 Substitute.For<IProducer>()));
+}
+
+internal record TestOutboundEnvelope<TMessage> : OutboundEnvelope<TMessage> where TMessage : class
+{
+    public TestOutboundEnvelope(TMessage? message, IReadOnlyCollection<MessageHeader>? headers, ProducerEndpointConfiguration endpointConfiguration, IProducer producer, ISilverbackContext? context = null)
+        : base(message, headers, endpointConfiguration, producer, context)
+    {
+    }
 }

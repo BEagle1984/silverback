@@ -28,6 +28,8 @@ internal class DelegatedProducer<T> : DelegatedProducer
         _state = state;
     }
 
+    public override IOutboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException("The envelope factory is not available for delegated producers.");
+
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope) =>
         throw new NotSupportedException("Only asynchronous operations are supported.");

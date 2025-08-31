@@ -62,6 +62,7 @@ public sealed class KafkaProducer : Producer
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _logger = Check.NotNull(logger, nameof(logger));
 
+        EnvelopeFactory = new KafkaOutboundEnvelopeFactory<string>(this);
         EndpointConfiguration = Configuration.Endpoints.Single();
     }
 
@@ -76,7 +77,8 @@ public sealed class KafkaProducer : Producer
     /// <inheritdoc cref="Producer.EndpointConfiguration" />
     public new KafkaProducerEndpointConfiguration EndpointConfiguration { get; }
 
-    public override IOutboundEnvelopeFactory EnvelopeFactory { get; } = new KafkaOutboundEnvelopeFactory(this);
+    /// <inheritdoc cref="Producer.EnvelopeFactory" />
+    public override IOutboundEnvelopeFactory EnvelopeFactory { get; }
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>

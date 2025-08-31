@@ -12,6 +12,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 
 public class KafkaProducerEndpointConfigurationBuilderTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
         null,
         new KafkaProducerEndpointConfiguration(),

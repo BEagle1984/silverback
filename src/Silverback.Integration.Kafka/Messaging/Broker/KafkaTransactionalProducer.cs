@@ -41,6 +41,7 @@ public sealed class KafkaTransactionalProducer : IProducer
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _transactionalProducers = Check.NotNull(transactionalProducers, nameof(transactionalProducers));
 
+        EnvelopeFactory = new KafkaOutboundEnvelopeFactory<string>(this);
         EndpointConfiguration = configuration.Endpoints.Single();
     }
 
@@ -57,6 +58,9 @@ public sealed class KafkaTransactionalProducer : IProducer
 
     /// <inheritdoc cref="IProducer.EndpointConfiguration" />
     public ProducerEndpointConfiguration EndpointConfiguration { get; }
+
+    /// <inheritdoc cref="IProducer.EnvelopeFactory" />
+    public IOutboundEnvelopeFactory EnvelopeFactory { get; }
 
     /// <inheritdoc cref="IProducer.Produce(object?, IReadOnlyCollection{MessageHeader}?)" />
     public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>

@@ -746,13 +746,13 @@ internal class MessageWrapper : IMessageWrapper
         }
     }
 
-    private static OutboundEnvelope<TMessage> CreateOutboundEnvelope<TMessage>(
+    private static IOutboundEnvelope<TMessage> CreateOutboundEnvelope<TMessage>(
         TMessage? message,
         IProducer producer,
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext context)
         where TMessage : class =>
-        new(message, null, endpointConfiguration, producer, context);
+        producer.EnvelopeFactory.Create(message, null, endpointConfiguration, context);
 
     private static IProduceStrategyImplementation GetProduceStrategy(
         ProducerEndpointConfiguration endpointConfiguration,

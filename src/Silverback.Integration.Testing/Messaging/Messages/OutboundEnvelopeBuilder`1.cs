@@ -130,7 +130,7 @@ public class OutboundEnvelopeBuilder<TMessage>
     ///  The <see cref="IOutboundEnvelope{TMessage}" /> instance.
     /// </returns>
     public IOutboundEnvelope<TMessage> Build() =>
-        new OutboundEnvelope<TMessage>(
+        new TestOutboundEnvelope<TMessage>(
             _message,
             _headers,
             _endpointConfiguration ?? new MockProducerEndpointConfiguration(),
@@ -145,6 +145,8 @@ public class OutboundEnvelopeBuilder<TMessage>
         public string DisplayName => Name;
 
         public ProducerEndpointConfiguration EndpointConfiguration { get; } = new MockProducerEndpointConfiguration();
+
+        public IOutboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
 
         public IBrokerClient Client => throw new NotSupportedException();
 

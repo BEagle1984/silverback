@@ -102,11 +102,10 @@ public partial class ProducerTests
         for (int i = 1; i <= 3; i++)
         {
             await producer.ProduceAsync(
-                OutboundEnvelopeFactory.CreateEnvelope(
+                producer.EnvelopeFactory.Create(
                     new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
                     new MessageHeaderCollection { { "x-custom", $"test {i}" }, { "two", "2" } },
-                    producer.EndpointConfiguration,
-                    producer));
+                    producer.EndpointConfiguration));
         }
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();

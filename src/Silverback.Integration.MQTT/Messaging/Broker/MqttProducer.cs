@@ -57,6 +57,7 @@ public sealed class MqttProducer : Producer
         Client = Check.NotNull(client, nameof(client));
         Configuration = Check.NotNull(configuration, nameof(configuration));
 
+        EnvelopeFactory = new MqttOutboundEnvelopeFactory<byte[]>(this);
         EndpointConfiguration = Configuration.ProducerEndpoints.Single();
     }
 
@@ -70,6 +71,9 @@ public sealed class MqttProducer : Producer
 
     /// <inheritdoc cref="Producer.EndpointConfiguration" />
     public new MqttProducerEndpointConfiguration EndpointConfiguration { get; }
+
+    /// <inheritdoc cref="Producer.EnvelopeFactory" />
+    public override IOutboundEnvelopeFactory EnvelopeFactory { get; }
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>

@@ -22,28 +22,22 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenTopicFunctionIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => "topic1",
-                                                "2" => "topic2",
-                                                "3" => "topic3",
-                                                _ => throw new InvalidOperationException()
-                                            })))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(message => message?.ContentEventOne switch
+                        {
+                            "1" => "topic1",
+                            "2" => "topic2",
+                            "3" => "topic3",
+                            _ => throw new InvalidOperationException()
+                        })))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -70,34 +64,29 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenTopicAndPartitionFunctionsAreSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => "topic1",
-                                                "2" => "topic2",
-                                                "3" => "topic3",
-                                                _ => throw new InvalidOperationException(),
-                                            },
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => 2,
-                                                "2" => 3,
-                                                _ => Partition.Any
-                                            })))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(
+                            message => message?.ContentEventOne switch
+                            {
+                                "1" => "topic1",
+                                "2" => "topic2",
+                                "3" => "topic3",
+                                _ => throw new InvalidOperationException(),
+                            },
+                            message => message?.ContentEventOne switch
+                            {
+                                "1" => 2,
+                                "2" => 3,
+                                _ => Partition.Any
+                            })))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -130,29 +119,24 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenTopicFormatIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            "topic{0}",
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => ["1"],
-                                                "2" => ["2"],
-                                                "3" => ["3"],
-                                                _ => throw new InvalidOperationException(),
-                                            })))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(
+                            "topic{0}",
+                            message => message?.ContentEventOne switch
+                            {
+                                "1" => ["1"],
+                                "2" => ["2"],
+                                "3" => ["3"],
+                                _ => throw new InvalidOperationException(),
+                            })))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -179,20 +163,16 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenMessageBasedEndpointResolverIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSingleton<MessageBasedEndpointResolver>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<MessageBasedEndpointResolver>()))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSingleton<MessageBasedEndpointResolver>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<MessageBasedEndpointResolver>()))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -225,20 +205,16 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenHeadersBasedEndpointResolverIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSingleton<HeaderBasedEndpointResolver>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<HeaderBasedEndpointResolver>()))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSingleton<HeaderBasedEndpointResolver>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<HeaderBasedEndpointResolver>()))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -275,17 +251,13 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceToDynamicEndpointSetViaEnvelopeExtensions()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint.ProduceToDynamicTopic()))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceToDynamicTopic()))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
@@ -308,18 +280,14 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceTombstoneToDynamicEndpoint()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo((IIntegrationEvent? _) => DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo((IIntegrationEvent? _) => DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
@@ -330,22 +298,37 @@ public partial class ProducerEndpointTests
     }
 
     [Fact]
+    public async Task ProducerEndpoint_ShouldProduceTombstoneFromNullToDynamicEndpoint()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo((IIntegrationEvent? _) => DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishAsync<TestEventOne>(null, envelope => envelope.SetKafkaKey("42"));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        DefaultTopic.GetAllMessages()[0].Value.ShouldBeNull();
+        DefaultTopic.GetAllMessages()[0].Key.ShouldBe("42"u8.ToArray());
+    }
+
+    [Fact]
     public async Task ProducerEndpoint_ShouldProduceCollectionToDynamicEndpoint()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(
-                                        (IIntegrationEvent? message) =>
-                                            message is TestEventOne ? "topic1" : "topic2")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo((IIntegrationEvent? message) =>
+                        message is TestEventOne ? "topic1" : "topic2")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(
@@ -363,20 +346,15 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceCollectionWithTombstonesToDynamicEndpoint()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(
-                                        (IIntegrationEvent? message) =>
-                                            message == null ? "tombstones" : "events")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo((IIntegrationEvent? message) =>
+                        message == null ? "tombstones" : "events")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishBatchAsync(

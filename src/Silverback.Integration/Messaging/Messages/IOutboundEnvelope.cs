@@ -96,22 +96,4 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ///     The new envelope.
     /// </returns>
     IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
-
-    /// <summary>
-    ///     Clones the envelope and replaces the contained message with the specified one.
-    /// </summary>
-    /// <remarks>
-    ///     The raw message will be cleared.
-    /// </remarks>
-    /// <typeparam name="TNewMessage">
-    ///     The type of the new message.
-    /// </typeparam>
-    /// <param name="newMessage">
-    ///     The new message to be set.
-    /// </param>
-    /// <returns>
-    ///     The new envelope.
-    /// </returns>
-    IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)
-        where TNewMessage : class;
 }

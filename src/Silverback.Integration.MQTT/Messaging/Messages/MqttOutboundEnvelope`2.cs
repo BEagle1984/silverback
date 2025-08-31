@@ -8,16 +8,17 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
-internal abstract record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
+internal record MqttOutboundEnvelope<TMessage, TKey> : MqttOutboundEnvelope<TKey>, IMqttOutboundEnvelope<TMessage, TKey>
     where TMessage : class
 {
-    protected OutboundEnvelope(
+    public MqttOutboundEnvelope(
         TMessage? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
-        ISilverbackContext? context = null)
-        : base(message, headers, endpointConfiguration, producer, context)
+        ISilverbackContext? context = null,
+        IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+        : base(message, headers, endpointConfiguration, producer, context, brokerMessageIdentifier)
     {
         Message = message;
     }

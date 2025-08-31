@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,9 +11,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
-using OutboundEnvelopeFactory = Silverback.Messaging.Messages.OutboundEnvelopeFactory;
 
 namespace Silverback.Messaging.Broker;
 
@@ -209,7 +206,7 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
+            IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
@@ -228,7 +225,7 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
+            IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
@@ -248,7 +245,7 @@ public abstract class Producer : IProducer, IDisposable
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        RawProduce(new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this), onSuccess, onError);
+        RawProduce(EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration), onSuccess, onError);
 
     /// <inheritdoc cref="IProducer.RawProduce{TState}(byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     public void RawProduce<TState>(
@@ -257,7 +254,7 @@ public abstract class Producer : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
         TState state) =>
-        RawProduce(new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this), onSuccess, onError, state);
+        RawProduce(EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration), onSuccess, onError, state);
 
     /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
     public void RawProduce(
@@ -265,7 +262,7 @@ public abstract class Producer : IProducer, IDisposable
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        RawProduce(new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this), onSuccess, onError);
+        RawProduce(EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration), onSuccess, onError);
 
     /// <inheritdoc cref="IProducer.RawProduce{TState}(Stream?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     public void RawProduce<TState>(
@@ -274,14 +271,14 @@ public abstract class Producer : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
         TState state) =>
-        RawProduce(new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this), onSuccess, onError, state);
+        RawProduce(EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration), onSuccess, onError, state);
 
     /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
     public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null,
         CancellationToken cancellationToken = default) =>
-        ProduceAsync(OutboundEnvelopeFactory.CreateEnvelope(message, headers, EndpointConfiguration, this), cancellationToken);
+        ProduceAsync(EnvelopeFactory.Create(message, headers, EndpointConfiguration), cancellationToken);
 
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
@@ -324,7 +321,7 @@ public abstract class Producer : IProducer, IDisposable
         try
         {
             IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this),
+                EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration),
                 cancellationToken).ConfigureAwait(false);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
@@ -347,7 +344,7 @@ public abstract class Producer : IProducer, IDisposable
         try
         {
             IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this),
+                EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration),
                 cancellationToken).ConfigureAwait(false);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);

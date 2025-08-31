@@ -12,20 +12,19 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-// TODO: MIGHT WORK ANYWAY -> Get rid of this class and implement directly in Kafka / MQTT versions -> Kafka version must be generic to work with different key types
 internal abstract class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
 {
-    private readonly MethodInfo _createEnvelopeMethod;
+    private readonly MethodInfo _createMethod;
 
-    private readonly ConcurrentDictionary<Type, MethodInfo> _createEnvelopeMethodsCache = new();
+    private readonly ConcurrentDictionary<Type, MethodInfo> _createMethodsCache = new();
 
     protected OutboundEnvelopeFactory(IProducer producer)
     {
         Producer = Check.NotNull(producer, nameof(producer));
 
-        _createEnvelopeMethod = GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                                    .FirstOrDefault(methodInfo => methodInfo is { Name: nameof(Create), IsGenericMethod: true }) ??
-                                throw new InvalidOperationException($"{nameof(Create)} method not found.");
+        _createMethod = GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                            .FirstOrDefault(methodInfo => methodInfo is { Name: nameof(Create), IsGenericMethod: true }) ??
+                        throw new InvalidOperationException($"{nameof(Create)} method not found.");
     }
 
     protected IProducer Producer { get; }
@@ -41,19 +40,20 @@ internal abstract class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
         if (message == null)
             return CreateForNullMessage(headers, endpointConfiguration, context);
 
-        MethodInfo genericMethod = _createEnvelopeMethodsCache.GetOrAdd(
+        MethodInfo genericMethod = _createMethodsCache.GetOrAdd(
             message.GetType(),
             static (type, createEnvelopeMethod) => createEnvelopeMethod.MakeGenericMethod(type),
-            _createEnvelopeMethod);
+            _createMethod);
 
         return (IOutboundEnvelope)genericMethod.Invoke(this, [message, headers, endpointConfiguration, context])!;
     }
 
     public abstract IOutboundEnvelope<TMessage> Create<TMessage>(
-        TMessage message,
+        TMessage? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null);
+        ISilverbackContext? context = null)
+        where TMessage : class;
 
     protected abstract IOutboundEnvelope CreateForNullMessage(
         IReadOnlyCollection<MessageHeader>? headers,

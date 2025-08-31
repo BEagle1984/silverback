@@ -10,7 +10,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Enrichers;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.ErrorHandling;
@@ -133,18 +132,9 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
         {
             _producer ??= _producers.GetProducerForEndpoint(_endpointName);
 
-            IOutboundEnvelope outboundEnvelope =
-                envelope.Message != null
-                    ? OutboundEnvelopeFactory.CreateEnvelope(
-                        envelope.Message,
-                        envelope.Headers,
-                        _producer.EndpointConfiguration,
-                        _producer)
-                    : OutboundEnvelopeFactory.CreateEnvelope(
-                        envelope.RawMessage,
-                        envelope.Headers,
-                        _producer.EndpointConfiguration,
-                        _producer);
+            IOutboundEnvelope outboundEnvelope = envelope.Message != null
+                ? _producer.EnvelopeFactory.Create(envelope.Message, envelope.Headers, _producer.EndpointConfiguration)
+                : _producer.EnvelopeFactory.Create(envelope.RawMessage, envelope.Headers, _producer.EndpointConfiguration);
 
             IMovePolicyMessageEnricher enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
             enricher.Enrich(envelope, outboundEnvelope, exception);
