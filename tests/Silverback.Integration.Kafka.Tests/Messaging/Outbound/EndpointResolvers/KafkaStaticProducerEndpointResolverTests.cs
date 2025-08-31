@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolver
 
 public class KafkaStaticProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
         null,
         new KafkaProducerEndpointConfiguration(),

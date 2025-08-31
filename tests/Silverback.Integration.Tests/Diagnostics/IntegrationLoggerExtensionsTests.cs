@@ -20,6 +20,7 @@ using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Diagnostics;
@@ -117,7 +118,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProduced_ShouldLogEnvelope()
     {
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             new TestProducerEndpointConfiguration("test1"),
@@ -151,7 +152,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProduceError_ShouldLogEnvelope()
     {
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             new TestProducerEndpointConfiguration("test1"),
@@ -183,7 +184,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogOutboundMessageFiltered_ShouldLog()
     {
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             new TestProducerEndpointConfiguration("test1"),
@@ -587,7 +588,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogStoringIntoOutbox_ShouldLog()
     {
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             new TestProducerEndpointConfiguration("test1"),
@@ -659,7 +660,7 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogInvalidMessageProduced_ShouldLog()
     {
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             new TestProducerEndpointConfiguration("test1"),
@@ -885,7 +886,7 @@ public class IntegrationLoggerExtensionsTests
 
         public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
 
-        public IOutboundEnvelopeFactory EnvelopeFactory { get; }
+        public IOutboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
 
         public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 

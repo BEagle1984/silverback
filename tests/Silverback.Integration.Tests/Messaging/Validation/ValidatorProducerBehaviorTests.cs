@@ -170,7 +170,7 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.None
         };
-        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_logger).HandleAsync(
@@ -203,7 +203,7 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = validationMode
         };
-        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestValidationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(
@@ -234,7 +234,7 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.LogWarning
         };
-        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_logger).HandleAsync(
@@ -267,7 +267,7 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.ThrowException
         };
-        OutboundEnvelope envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestValidationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(

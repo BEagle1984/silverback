@@ -6,7 +6,6 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -21,7 +20,7 @@ public class DynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldReturnEndpoint()
     {
         ProducerEndpoint endpoint = _endpointResolver.GetEndpoint(
-            new OutboundEnvelope<TestEventOne>(
+            new TestOutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 null,
                 new TestProducerEndpointConfiguration(),
@@ -35,7 +34,7 @@ public class DynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldThrow_WhenMessageTypeMismatch()
     {
         Action act = () => _endpointResolver.GetEndpoint(
-            new OutboundEnvelope<TestEventTwo>(
+            new TestOutboundEnvelope<TestEventTwo>(
                 new TestEventTwo(),
                 null,
                 new TestProducerEndpointConfiguration(),

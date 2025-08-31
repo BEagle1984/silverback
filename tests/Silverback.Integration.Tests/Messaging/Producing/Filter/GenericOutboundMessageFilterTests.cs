@@ -4,7 +4,6 @@
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Filter;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -17,12 +16,12 @@ public class GenericOutboundMessageFilterTests
     [Fact]
     public void ShouldProduce_ShouldEvaluateMessageFilter()
     {
-        OutboundEnvelope<TestEventOne> envelope1 = new(
+        TestOutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
-        OutboundEnvelope<TestEventOne> envelope2 = new(
+        TestOutboundEnvelope<TestEventOne> envelope2 = new(
             new TestEventOne { Content = "no" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -37,12 +36,12 @@ public class GenericOutboundMessageFilterTests
     [Fact]
     public void ShouldProduce_ShouldEvaluateEnvelopeFilter()
     {
-        OutboundEnvelope<TestEventOne> envelope1 = new(
+        TestOutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
-        OutboundEnvelope<TestEventOne> envelope2 = new(
+        TestOutboundEnvelope<TestEventOne> envelope2 = new(
             new TestEventOne { Content = "no" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -57,7 +56,7 @@ public class GenericOutboundMessageFilterTests
     [Fact]
     public void ShouldProduce_ShouldReturnFalse_WhenMessageTypeMismatch()
     {
-        OutboundEnvelope<TestEventOne> testEnvelope = new(
+        TestOutboundEnvelope<TestEventOne> testEnvelope = new(
             new TestEventOne { Content = "yes" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),

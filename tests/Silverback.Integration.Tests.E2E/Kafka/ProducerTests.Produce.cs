@@ -11,7 +11,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Tests.Integration.E2E.Util;
 using Xunit;

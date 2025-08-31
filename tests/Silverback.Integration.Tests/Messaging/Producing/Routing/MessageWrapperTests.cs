@@ -48,6 +48,7 @@ public partial class MessageWrapperTests
         producer.EndpointConfiguration.Strategy.Build(
             Arg.Any<ISilverbackContext>(),
             Arg.Any<ProducerEndpointConfiguration>()).Returns(produceStrategyImplementation);
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         return (producer, produceStrategyImplementation);
     }
 }

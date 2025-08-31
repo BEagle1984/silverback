@@ -18,14 +18,12 @@ internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,
         IProducer producer,
-        ISilverbackContext? context = null,
-        IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+        ISilverbackContext? context = null)
         : base(null, headers)
     {
         EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Producer = Check.NotNull(producer, nameof(producer));
         Context = context;
-        BrokerMessageIdentifier = brokerMessageIdentifier;
         Message = message;
 
         if (message is byte[] rawMessage)

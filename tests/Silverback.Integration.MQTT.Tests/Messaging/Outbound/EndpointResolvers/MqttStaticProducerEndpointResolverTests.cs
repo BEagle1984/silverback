@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Outbound.EndpointResolvers
 
 public class MqttStaticProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
         new TestEventOne(),
         null,
         new MqttProducerEndpointConfiguration(),

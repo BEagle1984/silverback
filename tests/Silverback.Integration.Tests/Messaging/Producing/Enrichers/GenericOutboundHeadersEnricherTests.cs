@@ -17,7 +17,7 @@ public class GenericOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddHeaderViaValueProvider()
     {
-        OutboundEnvelope<TestEventOne> envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "content" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -36,12 +36,12 @@ public class GenericOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddHeaderToMatchingMessageType()
     {
-        OutboundEnvelope<TestEventOne> envelopeEventOne = new(
+        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
-        OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
+        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -59,17 +59,17 @@ public class GenericOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddHeaderToMatchingBaseMessageType()
     {
-        OutboundEnvelope<TestEventOne> envelopeEventOne = new(
+        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
-        OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
+        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
-        OutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
+        TestOutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
             new BinaryMessage(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),

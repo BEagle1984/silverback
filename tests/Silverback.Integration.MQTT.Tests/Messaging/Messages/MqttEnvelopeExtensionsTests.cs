@@ -48,7 +48,7 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void SetMqttResponseTopic_ShouldSetHeader()
     {
-        OutboundEnvelope envelope = new(
+        MqttOutboundEnvelope<TestEventOne, byte[]> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -108,7 +108,7 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void SetMqttCorrelationData_ShouldSetHeader()
     {
-        OutboundEnvelope envelope = new(
+        MqttOutboundEnvelope<TestEventOne, byte[]> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -123,7 +123,7 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void SetMqttCorrelationData_ShouldSetHeaderFromString()
     {
-        OutboundEnvelope envelope = new(
+        MqttOutboundEnvelope<TestEventOne, byte[]> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -138,7 +138,7 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttDestinationTopic_ShouldReturnDestinationTopic()
     {
-        OutboundEnvelope envelope = new(
+        MqttOutboundEnvelope<TestEventOne, byte[]> envelope = new(
             new TestEventOne(),
             [new MessageHeader(MqttMessageHeaders.DestinationTopic, "topic/1")],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -153,7 +153,7 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void SetMqttDestinationTopic_ShouldSetHeader()
     {
-        OutboundEnvelope envelope = new(
+        MqttOutboundEnvelope<TestEventOne, byte[]> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),

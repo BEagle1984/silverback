@@ -23,7 +23,7 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<byte[]> envelope = new(
             rawMessage,
             null,
             new TestProducerEndpointConfiguration("test")
@@ -48,7 +48,7 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(8);
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<byte[]> envelope = new(
             rawMessage,
             null,
             new TestProducerEndpointConfiguration("test")
@@ -72,7 +72,7 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
-        OutboundEnvelope envelope = new(
+        TestOutboundEnvelope<byte[]> envelope = new(
             rawMessage,
             null,
             new TestProducerEndpointConfiguration("test"),
@@ -89,7 +89,7 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
-        OutboundEnvelope sourceEnvelope = new(
+        TestOutboundEnvelope<byte[]> sourceEnvelope = new(
             rawMessage,
             new MessageHeaderCollection
             {
@@ -143,7 +143,7 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
-        OutboundEnvelope sourceEnvelope = new(
+        TestOutboundEnvelope<byte[]> sourceEnvelope = new(
             rawMessage,
             new MessageHeaderCollection
             {

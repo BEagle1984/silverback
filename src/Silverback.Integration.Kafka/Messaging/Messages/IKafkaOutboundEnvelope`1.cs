@@ -3,31 +3,8 @@
 
 namespace Silverback.Messaging.Messages;
 
-// /// <inheritdoc cref="IKafkaOutboundEnvelope" />
-// /// <typeparam name="TKey">
-// ///     The type of the message key.
-// /// </typeparam>
-// public interface IKafkaOutboundEnvelope<TKey> : IKafkaOutboundEnvelope
-// {
-//     /// <summary>
-//     ///     Gets the message key.
-//     /// </summary>
-//     new TKey? Key { get; }
-//
-//     /// <summary>
-//     ///     Sets the message key.
-//     /// </summary>
-//     /// <param name="key">
-//     ///     The message key.
-//     /// </param>
-//     /// <returns>
-//     ///     The <see cref="IKafkaOutboundEnvelope{TKey}" /> so that additional calls can be chained.
-//     /// </returns>
-//     IKafkaOutboundEnvelope<TKey> SetKey(TKey? key);
-// }
-
 /// <inheritdoc cref="IKafkaOutboundEnvelope" />
 /// <typeparam name="TMessage">
 ///     The type of the wrapped message.
 /// </typeparam>
-public interface IKafkaOutboundEnvelope<out TMessage> : IOutboundEnvelope<TMessage>;
+public interface IKafkaOutboundEnvelope<out TMessage> : IKafkaOutboundEnvelope, IOutboundEnvelope<TMessage>;

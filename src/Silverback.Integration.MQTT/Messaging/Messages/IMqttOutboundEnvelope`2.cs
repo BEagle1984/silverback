@@ -10,4 +10,21 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TCorrelationData">
 ///     The type of the correlation data.
 /// </typeparam>
-public interface IMqttOutboundEnvelope<out TMessage, TCorrelationData> : IMqttOutboundEnvelope<TCorrelationData>, IOutboundEnvelope<TMessage>;
+public interface IMqttOutboundEnvelope<out TMessage, TCorrelationData> : IMqttOutboundEnvelope<TMessage>
+{
+    /// <summary>
+    ///     Gets the correlation data.
+    /// </summary>
+    new TCorrelationData? CorrelationData { get; }
+
+    /// <summary>
+    ///     Sets the correlation data.
+    /// </summary>
+    /// <param name="correlationData">
+    ///     The correlation data.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IMqttOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    IMqttOutboundEnvelope SetCorrelationData(TCorrelationData? correlationData);
+}

@@ -31,7 +31,7 @@ internal class KafkaOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null) =>
-        new KafkaOutboundEnvelope<TKey>(
+        new KafkaOutboundEnvelope<object, TKey>(
             null,
             headers,
             endpointConfiguration,

@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt;
 
 public partial class MqttProducerEndpointConfigurationBuilderTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
         new TestEventOne(),
         null,
         new MqttProducerEndpointConfiguration(),

@@ -4,12 +4,13 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Messages;
+namespace Silverback.Tests.Types;
 
-internal class MqttOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
+internal class TestOutboundEnvelopeFactory : OutboundEnvelopeFactory
 {
-    public MqttOutboundEnvelopeFactory(IProducer producer)
+    public TestOutboundEnvelopeFactory(IProducer producer)
         : base(producer)
     {
     }
@@ -20,21 +21,11 @@ internal class MqttOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null)
         where TMessage : class =>
-        new MqttOutboundEnvelope<TMessage, TKey>(
-            message,
-            headers,
-            endpointConfiguration,
-            Producer,
-            context);
+        new TestOutboundEnvelope<TMessage>(message, headers, endpointConfiguration, Producer);
 
     protected override IOutboundEnvelope CreateForNullMessage(
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null) =>
-        new MqttOutboundEnvelope<object, TKey>(
-            null,
-            headers,
-            endpointConfiguration,
-            Producer,
-            context);
+        new TestOutboundEnvelope<object>(null, headers, endpointConfiguration, Producer);
 }

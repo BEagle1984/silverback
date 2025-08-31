@@ -49,7 +49,7 @@ public class KafkaActivityEnricherTests
     {
         KafkaActivityEnricher enricher = new();
 
-        KafkaOutboundEnvelope<SingleKeyMemberMessage> envelope = new(
+        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
             new SingleKeyMemberMessage(),
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "MyKey")],
             new KafkaProducerEndpointConfiguration(),

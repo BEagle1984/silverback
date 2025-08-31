@@ -17,7 +17,7 @@ public class StaticOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddStaticHeader()
     {
-        OutboundEnvelope<TestEventOne> envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -34,7 +34,7 @@ public class StaticOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldReplaceHeaderWithStaticValue()
     {
-        OutboundEnvelope<TestEventOne> envelope = new(
+        TestOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             new MessageHeaderCollection
             {

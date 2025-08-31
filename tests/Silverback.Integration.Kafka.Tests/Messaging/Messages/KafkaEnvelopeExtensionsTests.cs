@@ -34,7 +34,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForOutboundEnvelope()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -64,7 +64,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaKey_ShouldSetMessageKeyHeader()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -125,7 +125,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaDestinationTopic_ShouldReturnDestinationTopic()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1")],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -140,7 +140,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaDestinationPartition_ShouldReturnDestinationPartition()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42)],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -155,7 +155,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaDestinationTopic_ShouldSetHeader()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -170,7 +170,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaDestinationTopic_ShouldSetTopicAndPartitionHeaders()
     {
-        OutboundEnvelope envelope = new(
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
             [],
             TestProducerEndpointConfiguration.GetDefault(),

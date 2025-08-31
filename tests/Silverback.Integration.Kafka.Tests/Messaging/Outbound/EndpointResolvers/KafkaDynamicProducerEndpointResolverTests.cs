@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolver
 
 public class KafkaDynamicProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new OutboundEnvelope<TestEventOne>(
+    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
         null,
         new KafkaProducerEndpointConfiguration(),
@@ -261,9 +261,8 @@ public class KafkaDynamicProducerEndpointResolverTests
     [InlineData("topic", -1)]
     public void GetSerializedEndpoint_ShouldSerializeDestinationTopic(string topic, int partition)
     {
-        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
-            (IOutboundEnvelope<TestEventOne> _) =>
-                new TopicPartition(topic, partition));
+        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) =>
+            new TopicPartition(topic, partition));
 
         string result = endpointResolver.GetSerializedEndpoint(_envelope);
 
@@ -276,7 +275,7 @@ public class KafkaDynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldDeserializeEndpoint(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
-        IOutboundEnvelope envelope = new OutboundEnvelope(
+        IOutboundEnvelope envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
             null,
             [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, $"{topic}|{partition}")],
             new KafkaProducerEndpointConfiguration(),

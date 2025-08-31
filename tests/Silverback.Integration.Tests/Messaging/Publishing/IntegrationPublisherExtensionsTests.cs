@@ -37,6 +37,7 @@ public partial class IntegrationPublisherExtensionsTests
         producer.EndpointConfiguration.Strategy.Build(
             Arg.Any<ISilverbackContext>(),
             Arg.Any<ProducerEndpointConfiguration>()).Returns(produceStrategyImplementation);
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         _producers.Add(producer);
         return (producer, produceStrategyImplementation);
     }

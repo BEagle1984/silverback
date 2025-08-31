@@ -22,7 +22,7 @@ public class SerializerProducerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldSetEnvelopeRawMessage()
     {
-        IOutboundEnvelope<TestEventOne> envelope = new OutboundEnvelope<TestEventOne>(
+        IOutboundEnvelope<TestEventOne> envelope = new TestOutboundEnvelope<TestEventOne>(
             new TestEventOne { Content = "test" },
             null,
             TestProducerEndpointConfiguration.GetDefault(),
@@ -50,7 +50,7 @@ public class SerializerProducerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldReplaceTombstoneEnvelope()
     {
-        IOutboundEnvelope<ITombstone<TestEventOne>> envelope = new OutboundEnvelope<ITombstone<TestEventOne>>(
+        IOutboundEnvelope<ITombstone<TestEventOne>> envelope = new TestOutboundEnvelope<ITombstone<TestEventOne>>(
             new Tombstone<TestEventOne>("heidi"),
             null,
             TestProducerEndpointConfiguration.GetDefault(),

@@ -24,7 +24,7 @@ public interface IKafkaOutboundEnvelope<out TMessage, TKey> : IKafkaOutboundEnve
     ///     The message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="IKafkaOutboundEnvelope{TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="IKafkaOutboundEnvelope{TMessage,TKey}" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaOutboundEnvelope<TKey> SetKey(TKey? key);
+    IKafkaOutboundEnvelope<TMessage, TKey> SetKey(TKey? key);
 }

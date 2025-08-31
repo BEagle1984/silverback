@@ -48,7 +48,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
     [Fact]
     public async Task HandleAsync_ShouldLeaveKafkaKeyNull_WhenNoKeyMemberAttribute()
     {
-        OutboundEnvelope<NoKeyMembersMessage> envelope = new(
+        KafkaOutboundEnvelope<NoKeyMembersMessage, string> envelope = new(
             new NoKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
@@ -76,7 +76,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
     [Fact]
     public async Task HandleAsync_ShouldSetKafkaKeyHeaderFromSingleKeyMemberAttribute()
     {
-        OutboundEnvelope<SingleKeyMemberMessage> envelope = new(
+        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
             new SingleKeyMemberMessage
             {
                 Id = Guid.NewGuid(),
@@ -104,7 +104,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
     [Fact]
     public async Task HandleAsync_ShouldSetKafkaKeyHeaderFromMultipleKeyMemberAttributes()
     {
-        OutboundEnvelope<MultipleKeyMembersMessage> envelope = new(
+        KafkaOutboundEnvelope<MultipleKeyMembersMessage, string> envelope = new(
             new MultipleKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
@@ -132,7 +132,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
     [Fact]
     public async Task HandleAsync_ShouldNotOverwriteExistingKafkaKeyHeader()
     {
-        OutboundEnvelope<SingleKeyMemberMessage> envelope = new(
+        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
             new SingleKeyMemberMessage
             {
                 Id = Guid.NewGuid(),
@@ -163,7 +163,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
     [Fact]
     public async Task HandleAsync_ShouldDoNothing_WhenNotKafkaProducer()
     {
-        OutboundEnvelope<NoKeyMembersMessage> envelope = new(
+        KafkaOutboundEnvelope<NoKeyMembersMessage, string> envelope = new(
             new NoKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
