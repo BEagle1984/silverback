@@ -26,15 +26,4 @@ internal class KafkaOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
             endpointConfiguration,
             Producer,
             context);
-
-    protected override IOutboundEnvelope CreateForNullMessage(
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null) =>
-        new KafkaOutboundEnvelope<object, TKey>(
-            null,
-            headers,
-            endpointConfiguration,
-            Producer,
-            context);
 }

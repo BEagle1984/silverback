@@ -13,10 +13,18 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Creates the <see cref="IInboundEnvelope{TMessage}" /> instances to be used for testing.
 /// </summary>
+/// <typeparam name="TBuilder">
+///     The type of the actual builder.
+/// </typeparam>
+/// <typeparam name="TEnvelope">
+///     The type of the envelope being built.
+/// </typeparam>
 /// <typeparam name="TMessage">
 ///     The type of the wrapped message.
 /// </typeparam>
-public class InboundEnvelopeBuilder<TMessage>
+public abstract class InboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
+    where TBuilder : InboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
+    where TEnvelope : IInboundEnvelope<TMessage>
     where TMessage : class
 {
     private Stream? _rawMessage;
@@ -32,18 +40,26 @@ public class InboundEnvelopeBuilder<TMessage>
     private IBrokerMessageIdentifier? _identifier;
 
     /// <summary>
+    ///     Gets this instance.
+    /// </summary>
+    /// <remarks>
+    ///     This is necessary to work around casting in the base classes.
+    /// </remarks>
+    protected abstract TBuilder This { get; }
+
+    /// <summary>
     ///     Sets the raw message to be wrapped by the envelope.
     /// </summary>
     /// <param name="rawMessage">
     ///     The raw message to be wrapped.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithRawMessage(Stream? rawMessage)
+    public TBuilder WithRawMessage(Stream? rawMessage)
     {
         _rawMessage = rawMessage;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -53,12 +69,12 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The message to be wrapped.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithMessage(TMessage? message)
+    public TBuilder WithMessage(TMessage? message)
     {
         _message = message;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -68,12 +84,12 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The headers to be added.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
+    public TBuilder WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
     {
         _headers = new MessageHeaderCollection(headers);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -86,13 +102,13 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The value of the header.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddHeader(string name, object? value)
+    public TBuilder AddHeader(string name, object? value)
     {
         _headers ??= [];
         _headers.Add(name, value);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -105,13 +121,13 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The value of the header.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddHeader(string name, string? value)
+    public TBuilder AddHeader(string name, string? value)
     {
         _headers ??= [];
         _headers.Add(name, value);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -121,13 +137,13 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The header to be added.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddHeader(MessageHeader header)
+    public TBuilder AddHeader(MessageHeader header)
     {
         _headers ??= [];
         _headers.Add(header);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -140,13 +156,13 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The value of the header.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddOrReplaceHeader(string name, object? value)
+    public TBuilder AddOrReplaceHeader(string name, object? value)
     {
         _headers ??= [];
         _headers.AddOrReplace(name, value);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -159,13 +175,13 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The value of the header.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> AddOrReplaceHeader(string name, string? value)
+    public TBuilder AddOrReplaceHeader(string name, string? value)
     {
         _headers ??= [];
         _headers.AddOrReplace(name, value);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -175,12 +191,12 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The endpoint.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithEndpoint(ConsumerEndpoint? endpoint)
+    public TBuilder WithEndpoint(ConsumerEndpoint? endpoint)
     {
         _endpoint = endpoint;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -190,12 +206,12 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The consumer.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithConsumer(IConsumer? consumer)
+    public TBuilder WithConsumer(IConsumer? consumer)
     {
         _consumer = consumer;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -205,12 +221,12 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The identifier.
     /// </param>
     /// <returns>
-    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public InboundEnvelopeBuilder<TMessage> WithIdentifier(IBrokerMessageIdentifier identifier)
+    public TBuilder WithIdentifier(IBrokerMessageIdentifier identifier)
     {
         _identifier = identifier;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -220,13 +236,45 @@ public class InboundEnvelopeBuilder<TMessage>
     ///     The <see cref="IInboundEnvelope{TMessage}" /> instance.
     /// </returns>
     public IInboundEnvelope<TMessage> Build() =>
-        new InboundEnvelope<TMessage>(
+        BuildCore(
             _message,
             _rawMessage,
             _headers,
             _endpoint ?? new MockConsumerEndpoint(),
             _consumer ?? new MockConsumer(),
             _identifier ?? new MockBrokerMessageIdentifier());
+
+    /// <summary>
+    ///     Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    /// </summary>
+    /// <param name="message">
+    ///     The message to be wrapped.
+    /// </param>
+    /// <param name="rawMessage">
+    ///     The raw message to be wrapped.
+    /// </param>
+    /// <param name="headers">
+    ///     The headers to be added.
+    /// </param>
+    /// <param name="endpoint">
+    ///     The endpoint.
+    /// </param>
+    /// <param name="consumer">
+    ///     The consumer.
+    /// </param>
+    /// <param name="identifier">
+    ///     The <see cref="IBrokerMessageIdentifier" />.
+    /// </param>
+    /// <returns>
+    ///     The envelope instance.
+    /// </returns>
+    protected abstract TEnvelope BuildCore(
+        TMessage? message,
+        Stream? rawMessage,
+        MessageHeaderCollection? headers,
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier identifier);
 
     internal record MockConsumerEndpoint() : ConsumerEndpoint("mock", new MockConsumerEndpointConfiguration());
 
@@ -241,6 +289,8 @@ public class InboundEnvelopeBuilder<TMessage>
         public IBrokerClient Client => throw new NotSupportedException();
 
         public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = [new MockConsumerEndpointConfiguration()];
+
+        public IInboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
 
         public IConsumerStatusInfo StatusInfo => throw new NotSupportedException();
 

@@ -31,7 +31,8 @@ public static class ConsumerPipelineContextHelper
         ISequence? sequence = null)
     {
         ConsumerPipelineContext context = new(
-            envelope ?? new InboundEnvelope(
+            envelope ?? new TestInboundEnvelope<object>(
+                null,
                 Stream.Null,
                 [],
                 endpoint ?? TestConsumerEndpoint.GetDefault(),
@@ -52,11 +53,10 @@ public static class ConsumerPipelineContextHelper
     }
 
     private static IServiceProvider GetServiceProvider() =>
-        ServiceProviderHelper.GetScopedServiceProvider(
-            services =>
-                services
-                    .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker());
+        ServiceProviderHelper.GetScopedServiceProvider(services =>
+            services
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker());
 }

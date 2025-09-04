@@ -9,16 +9,10 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IInboundEnvelope{TMessage}" />
-internal sealed record InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
+internal abstract record InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
     where TMessage : class
 {
-    public InboundEnvelope(IInboundEnvelope envelope, TMessage? message)
-        : base(envelope, message)
-    {
-        Message = message;
-    }
-
-    public InboundEnvelope(
+    protected InboundEnvelope(
         TMessage? message,
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -26,6 +20,12 @@ internal sealed record InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnve
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
         : base(message, rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
+    {
+        Message = message;
+    }
+
+    protected InboundEnvelope(TMessage? message, IInboundEnvelope clonedEnvelope)
+        : base(message, clonedEnvelope)
     {
         Message = message;
     }

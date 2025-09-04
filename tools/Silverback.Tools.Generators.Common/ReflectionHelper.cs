@@ -26,11 +26,8 @@ public static class ReflectionHelper
             .ToArray();
     }
 
-    public static MethodInfo[] GetMethods(Type type)
-    {
-        BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly;
-        return [.. type.GetMethods(bindingFlags)];
-    }
+    public static MethodInfo[] GetMethods(Type type) =>
+        [.. type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)];
 
     public static string GetTypeString(Type propertyType)
     {

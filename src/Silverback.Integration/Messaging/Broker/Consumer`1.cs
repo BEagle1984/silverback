@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -97,6 +98,9 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <inheritdoc cref="IConsumer.EndpointsConfiguration" />
     public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; }
 
+    /// <inheritdoc cref="IConsumer.EnvelopeFactory" />
+    public abstract IInboundEnvelopeFactory EnvelopeFactory { get; }
+
     /// <inheritdoc cref="IConsumer.StatusInfo" />
     public IConsumerStatusInfo StatusInfo => _statusInfo;
 
@@ -137,19 +141,18 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
         await StopAsync(false).ConfigureAwait(false);
 
-        Task.Run(
-                async () =>
+        Task.Run(async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                        await Client.ReconnectAsync().ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        _isReconnecting = false;
-                    }
-                })
+                    await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                    await Client.ReconnectAsync().ConfigureAwait(false);
+                }
+                finally
+                {
+                    _isReconnecting = false;
+                }
+            })
             .FireAndForget();
     }
 
@@ -389,7 +392,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         IBrokerMessageIdentifier brokerMessageIdentifier,
         ISequenceStore sequenceStore)
     {
-        InboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
+        MemoryStream? messageStream = message == null ? null : new MemoryStream(message);
+        IInboundEnvelope envelope = EnvelopeFactory.Create(null, messageStream, headers, endpoint, brokerMessageIdentifier);
         ConsumerPipelineContext context = new(envelope, this, sequenceStore, _behaviors, ServiceProvider);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
@@ -398,7 +402,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     }
 
     /// <summary>
-    ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Connected" />.
+    ///     Called when fully connected to transition the consumer to <see cref="ConsumerStatus.Connected" />.
     /// </summary>
     protected void SetConnectedStatus() => _statusInfo.SetConnected();
 

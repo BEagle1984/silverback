@@ -13,7 +13,7 @@ internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
 {
     private ProducerEndpoint? _endpoint;
 
-    public OutboundEnvelope(
+    protected OutboundEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpointConfiguration endpointConfiguration,

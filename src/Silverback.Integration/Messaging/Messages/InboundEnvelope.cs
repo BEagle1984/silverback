@@ -9,57 +9,10 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IInboundEnvelope" />
-internal record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
+internal abstract record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
 {
-    public InboundEnvelope(IInboundEnvelope envelope)
-        : this(
-            envelope.RawMessage,
-            envelope.Headers,
-            envelope.Endpoint,
-            envelope.Consumer,
-            envelope.BrokerMessageIdentifier)
-    {
-    }
-
-    public InboundEnvelope(IInboundEnvelope envelope, object? message)
-        : this(
-            message,
-            envelope.RawMessage,
-            envelope.Headers,
-            envelope.Endpoint,
-            envelope.Consumer,
-            envelope.BrokerMessageIdentifier)
-    {
-    }
-
-    public InboundEnvelope(
+    protected InboundEnvelope(
         object? message,
-        Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IConsumer consumer,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
-        : this(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
-    {
-        Message = message;
-    }
-
-    public InboundEnvelope(
-        byte[]? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IConsumer consumer,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
-        : this(
-            rawMessage != null ? new MemoryStream(rawMessage) : null,
-            headers,
-            endpoint,
-            consumer,
-            brokerMessageIdentifier)
-    {
-    }
-
-    public InboundEnvelope(
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
@@ -67,9 +20,19 @@ internal record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
         IBrokerMessageIdentifier brokerMessageIdentifier)
         : base(rawMessage, headers)
     {
+        Message = message;
         Endpoint = Check.NotNull(endpoint, nameof(endpoint));
         BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
         Consumer = Check.NotNull(consumer, nameof(consumer));
+    }
+
+    protected InboundEnvelope(object? message, IInboundEnvelope clonedEnvelope)
+        : base(clonedEnvelope)
+    {
+        Message = message;
+        Endpoint = clonedEnvelope.Endpoint;
+        BrokerMessageIdentifier = clonedEnvelope.BrokerMessageIdentifier;
+        Consumer = clonedEnvelope.Consumer;
     }
 
     public ConsumerEndpoint Endpoint { get; }

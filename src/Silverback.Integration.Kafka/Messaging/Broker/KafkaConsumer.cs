@@ -91,9 +91,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Client = Check.NotNull(client, nameof(client));
         Configuration = Check.NotNull(configuration, nameof(configuration));
-
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
+
+        EnvelopeFactory = new KafkaInboundEnvelopeFactory<string>(this);
 
         if (!Configuration.ProcessPartitionsIndependently)
             _offsets = new OffsetsTracker();
@@ -115,6 +116,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     /// <inheritdoc cref="Consumer{TIdentifier}.EndpointsConfiguration" />
     public new IReadOnlyCollection<KafkaConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.Endpoints;
+
+    /// <inheritdoc cref="IConsumer.EnvelopeFactory" />
+    public override IInboundEnvelopeFactory EnvelopeFactory { get; }
 
     /// <inheritdoc cref="IKafkaConsumer.Pause" />
     public void Pause(IEnumerable<TopicPartition> partitions) => Client.Pause(partitions);

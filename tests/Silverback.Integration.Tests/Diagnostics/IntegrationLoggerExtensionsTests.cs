@@ -859,6 +859,8 @@ public class IntegrationLoggerExtensionsTests
 
         public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = [];
 
+        public IInboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
+
         public IConsumerStatusInfo StatusInfo { get; } = new ConsumerStatusInfo();
 
         public ValueTask TriggerReconnectAsync() => throw new NotSupportedException();

@@ -7,7 +7,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Creates the <see cref="IOutboundEnvelope" /> and <see cref="IOutboundEnvelope{TMessage}" />.
+///     Creates the <see cref="IOutboundEnvelope{TMessage}" />.
 /// </summary>
 public interface IOutboundEnvelopeFactory
 {

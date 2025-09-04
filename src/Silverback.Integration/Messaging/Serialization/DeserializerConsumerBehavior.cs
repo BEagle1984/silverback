@@ -36,13 +36,14 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
         if (envelope.Message != null)
             return envelope;
 
-        (object? deserializedObject, Type deserializedType) = await envelope.Endpoint.Configuration.Deserializer.DeserializeAsync(
+        DeserializedMessage deserializedMessage = await envelope.Endpoint.Configuration.Deserializer.DeserializeAsync(
             envelope.RawMessage,
             envelope.Headers,
             envelope.Endpoint).ConfigureAwait(false);
 
-        envelope.Headers.AddOrReplace(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
+        // TODO: Is this needed?
+        // envelope.Headers.AddOrReplace(DefaultMessageHeaders.MessageType, deserializedMessage.MessageType.AssemblyQualifiedName);
 
-        return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
+        return context.Consumer.EnvelopeFactory.CloneReplacingMessage(deserializedMessage.Message, deserializedMessage.MessageType, envelope);
     }
 }

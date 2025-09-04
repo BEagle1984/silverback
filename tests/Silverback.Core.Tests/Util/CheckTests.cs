@@ -14,6 +14,8 @@ namespace Silverback.Tests.Core.Util;
 [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test code")]
 public class CheckTests
 {
+    private interface IObject;
+
     [Fact]
     public void NotNull_ShouldReturnObject_WhenObjectIsNotNull()
     {
@@ -218,4 +220,100 @@ public class CheckTests
 
         act.ShouldThrow<ArgumentOutOfRangeException>();
     }
+
+    [Fact]
+    public void IsOfType_ShouldReturnCastedType_WhenIsSameType()
+    {
+        object input = new ChildObject();
+
+        ChildObject result = Check.IsOfType<ChildObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsOfType_ShouldReturnCastedType_WhenIsChildClass()
+    {
+        object input = new ChildObject();
+
+        ParentObject result = Check.IsOfType<ParentObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsOfType_ShouldReturnCastedType_WhenImplementsInterface()
+    {
+        object input = new ChildObject();
+
+        IObject result = Check.IsOfType<IObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsOfType_ShouldThrow_WhenIsIncompatibleType()
+    {
+        Action act = () => Check.IsOfType<ChildObject>(new ParentObject(), "param");
+
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void IsOfType_ShouldThrow_WhenIsNull()
+    {
+        Action act = () => Check.IsOfType<ChildObject>(null, "param");
+
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void IsNullOrOfType_ShouldReturnCastedType_WhenIsSameType()
+    {
+        object input = new ChildObject();
+
+        ChildObject? result = Check.IsNullOrOfType<ChildObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsNullOrOfType_ShouldReturnCastedType_WhenIsChildClass()
+    {
+        object input = new ChildObject();
+
+        ParentObject? result = Check.IsNullOrOfType<ParentObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsNullOrOfType_ShouldReturnCastedType_WhenImplementsInterface()
+    {
+        object input = new ChildObject();
+
+        IObject? result = Check.IsNullOrOfType<IObject>(input, "param");
+
+        result.ShouldBeSameAs(input);
+    }
+
+    [Fact]
+    public void IsNullOrOfType_ShouldThrow_WhenIsIncompatibleType()
+    {
+        Action act = () => Check.IsNullOrOfType<ChildObject>(new ParentObject(), "param");
+
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void IsNullOrOfType_ShouldReturnNull_WhenIsNull()
+    {
+        ChildObject? result = Check.IsNullOrOfType<ChildObject>(null, "param");
+
+        result.ShouldBeNull();
+    }
+
+    private class ParentObject : IObject;
+
+    private class ChildObject : ParentObject;
 }

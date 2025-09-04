@@ -22,10 +22,4 @@ internal class TestOutboundEnvelopeFactory : OutboundEnvelopeFactory
         ISilverbackContext? context = null)
         where TMessage : class =>
         new TestOutboundEnvelope<TMessage>(message, headers, endpointConfiguration, Producer);
-
-    protected override IOutboundEnvelope CreateForNullMessage(
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null) =>
-        new TestOutboundEnvelope<object>(null, headers, endpointConfiguration, Producer);
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages;
 
@@ -22,6 +23,11 @@ public interface IKafkaOutboundEnvelope : IOutboundEnvelope
     byte[]? RawKey { get; }
 
     /// <summary>
+    ///     Gets the message offset. The offset is set only after the message has been successfully produced.
+    /// </summary>
+    KafkaOffset? Offset { get; }
+
+    /// <summary>
     ///     Gets the destination topic for the message. Used when dynamic routing is enabled.
     /// </summary>
     string? DynamicDestinationTopic { get; }
@@ -30,6 +36,17 @@ public interface IKafkaOutboundEnvelope : IOutboundEnvelope
     ///     Gets the destination partition for the message. Used when dynamic routing is enabled.
     /// </summary>
     int? DynamicDestinationPartition { get; }
+
+    /// <summary>
+    ///     Sets the message key.
+    /// </summary>
+    /// <param name="rawKey">
+    ///     The serialized message key.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IKafkaOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    IKafkaOutboundEnvelope SetRawKey(byte[]? rawKey);
 
     /// <summary>
     ///     Sets the destination topic and partition for the message. Dynamic routing must be enabled.
@@ -43,7 +60,7 @@ public interface IKafkaOutboundEnvelope : IOutboundEnvelope
     /// <returns>
     ///     The <see cref="IKafkaOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaOutboundEnvelope SetDestinationTopic(string topic, int? partition = null);
+    IKafkaOutboundEnvelope SetDestinationTopic(string? topic, int? partition = null);
 
     /// <summary>
     ///     Sets the destination partition for the message. Dynamic routing must be enabled.
@@ -54,5 +71,5 @@ public interface IKafkaOutboundEnvelope : IOutboundEnvelope
     /// <returns>
     ///     The <see cref="IKafkaOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaOutboundEnvelope SetDestinationPartition(int partition);
+    IKafkaOutboundEnvelope SetDestinationPartition(int? partition);
 }

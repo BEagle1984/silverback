@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
 internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessage>, IKafkaOutboundEnvelope<TMessage, TKey>
     where TMessage : class
 {
+    private KafkaOffset? _offset;
+
     public KafkaOutboundEnvelope(
         TMessage? message,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -20,22 +21,19 @@ internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessag
         ISilverbackContext? context = null)
         : base(message, headers, endpointConfiguration, producer, context)
     {
-        Message = message;
     }
 
-    public new TMessage? Message { get; }
-
-    public override Type MessageType => Message?.GetType() ?? typeof(TMessage);
+    public KafkaOffset? Offset => _offset ??= (KafkaOffset?)BrokerMessageIdentifier;
 
     public TKey? Key { get; private set; }
 
-    object? IKafkaOutboundEnvelope.Key => Key;
-
-    public byte[]? RawKey { get; internal set; }
+    public byte[]? RawKey { get; private set; }
 
     public string? DynamicDestinationTopic { get; private set; }
 
     public int? DynamicDestinationPartition { get; private set; }
+
+    object? IKafkaOutboundEnvelope.Key => Key;
 
     public IKafkaOutboundEnvelope<TMessage, TKey> SetKey(TKey? key)
     {
@@ -43,14 +41,20 @@ internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessag
         return this;
     }
 
-    public IKafkaOutboundEnvelope SetDestinationTopic(string topic, int? partition = null)
+    public IKafkaOutboundEnvelope SetRawKey(byte[]? rawKey)
     {
-        DynamicDestinationTopic = Check.NotNullOrEmpty(topic, nameof(topic));
+        RawKey = rawKey;
+        return this;
+    }
+
+    public IKafkaOutboundEnvelope SetDestinationTopic(string? topic, int? partition = null)
+    {
+        DynamicDestinationTopic = topic;
         DynamicDestinationPartition = partition;
         return this;
     }
 
-    public IKafkaOutboundEnvelope SetDestinationPartition(int partition)
+    public IKafkaOutboundEnvelope SetDestinationPartition(int? partition)
     {
         DynamicDestinationPartition = partition;
         return this;

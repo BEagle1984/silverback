@@ -34,6 +34,11 @@ public interface IConsumer
     IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; }
 
     /// <summary>
+    ///     Gets the <see cref="IInboundEnvelopeFactory" /> used to create the envelopes wrapping the consumed messages.
+    /// </summary>
+    IInboundEnvelopeFactory EnvelopeFactory { get; }
+
+    /// <summary>
     ///     Gets the <see cref="IConsumerStatusInfo" /> containing the status details and basic statistics of this consumer.
     /// </summary>
     IConsumerStatusInfo StatusInfo { get; }
@@ -42,7 +47,7 @@ public interface IConsumer
     ///     Stops the consumer and starts an asynchronous <see cref="Task" /> to disconnect and reconnect it.
     /// </summary>
     /// <remarks>
-    ///     This is used to recover when the consumer is stuck in state where it's not able to rollback or commit anymore.
+    ///     This is used to recover when the consumer is stuck in a state where it's not able to rollback or commit anymore.
     /// </remarks>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as

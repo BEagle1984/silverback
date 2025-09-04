@@ -74,6 +74,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _logger = Check.NotNull(logger, nameof(logger));
 
+        EnvelopeFactory = new MqttInboundEnvelopeFactory<string>(this);
         _channelsManager = new ConsumerChannelsManager(this, logger);
         _endpointsCache = new MqttConsumerEndpointsCache(client.Configuration);
 
@@ -91,6 +92,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     /// <inheritdoc cref="Consumer{TIdentifier}.EndpointsConfiguration" />
     public new IReadOnlyCollection<MqttConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.ConsumerEndpoints;
+
+    /// <inheritdoc cref="IConsumer.EnvelopeFactory" />
+    public override IInboundEnvelopeFactory EnvelopeFactory { get; }
 
     internal async Task HandleMessageAsync(ConsumedApplicationMessage message, ISequenceStore sequenceStore)
     {

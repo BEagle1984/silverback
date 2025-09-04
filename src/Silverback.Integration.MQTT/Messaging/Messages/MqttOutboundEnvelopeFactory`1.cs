@@ -7,7 +7,7 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
-internal class MqttOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
+internal class MqttOutboundEnvelopeFactory<TCorrelationData> : OutboundEnvelopeFactory
 {
     public MqttOutboundEnvelopeFactory(IProducer producer)
         : base(producer)
@@ -20,19 +20,8 @@ internal class MqttOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null)
         where TMessage : class =>
-        new MqttOutboundEnvelope<TMessage, TKey>(
+        new MqttOutboundEnvelope<TMessage, TCorrelationData>(
             message,
-            headers,
-            endpointConfiguration,
-            Producer,
-            context);
-
-    protected override IOutboundEnvelope CreateForNullMessage(
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null) =>
-        new MqttOutboundEnvelope<object, TKey>(
-            null,
             headers,
             endpointConfiguration,
             Producer,

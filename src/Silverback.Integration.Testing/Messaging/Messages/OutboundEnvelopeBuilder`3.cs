@@ -14,10 +14,18 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Creates the <see cref="IOutboundEnvelope{TMessage}" /> instances to be used for testing.
 /// </summary>
+/// <typeparam name="TBuilder">
+///     The type of the actual builder.
+/// </typeparam>
+/// <typeparam name="TEnvelope">
+///     The type of the envelope being built.
+/// </typeparam>
 /// <typeparam name="TMessage">
 ///     The type of the wrapped message.
 /// </typeparam>
-public class OutboundEnvelopeBuilder<TMessage>
+public abstract class OutboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
+    where TBuilder : OutboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
+    where TEnvelope : IOutboundEnvelope<TMessage>
     where TMessage : class
 {
     private TMessage? _message;
@@ -29,18 +37,26 @@ public class OutboundEnvelopeBuilder<TMessage>
     private IProducer? _producer;
 
     /// <summary>
+    ///     Gets this instance.
+    /// </summary>
+    /// <remarks>
+    ///     This is necessary to work around casting in the base classes.
+    /// </remarks>
+    protected abstract TBuilder This { get; }
+
+    /// <summary>
     ///     Sets the message to be wrapped by the envelope.
     /// </summary>
     /// <param name="message">
     ///     The message to be wrapped.
     /// </param>
     /// <returns>
-    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> WithMessage(TMessage? message)
+    public TBuilder WithMessage(TMessage? message)
     {
         _message = message;
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -50,12 +66,12 @@ public class OutboundEnvelopeBuilder<TMessage>
     ///     The headers to be added.
     /// </param>
     /// <returns>
-    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
+    public TBuilder WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
     {
         _headers = new MessageHeaderCollection(headers);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -68,13 +84,13 @@ public class OutboundEnvelopeBuilder<TMessage>
     ///     The value of the header.
     /// </param>
     /// <returns>
-    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> AddHeader(string name, string? value)
+    public TBuilder AddHeader(string name, string? value)
     {
         _headers ??= [];
         _headers.Add(name, value);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -84,13 +100,13 @@ public class OutboundEnvelopeBuilder<TMessage>
     ///     The header to be added.
     /// </param>
     /// <returns>
-    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> AddHeader(MessageHeader header)
+    public TBuilder AddHeader(MessageHeader header)
     {
         _headers ??= [];
         _headers.Add(header);
-        return this;
+        return This;
     }
 
     /// <summary>
@@ -100,41 +116,65 @@ public class OutboundEnvelopeBuilder<TMessage>
     ///     The endpoint configuration.
     /// </param>
     /// <returns>
-    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> WithEndpointConfiguration(ProducerEndpointConfiguration? endpointConfiguration)
+    public TBuilder WithEndpointConfiguration(ProducerEndpointConfiguration? endpointConfiguration)
     {
         _endpointConfiguration = endpointConfiguration;
-        return this;
+        return This;
     }
 
     /// <summary>
-    ///   Sets the producer to be used to produce the message.
+    ///     Sets the producer to be used to produce the message.
     /// </summary>
     /// <param name="producer">
-    ///  The producer.
+    ///     The producer.
     /// </param>
     /// <returns>
-    ///  The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The builder so that additional calls can be chained.
     /// </returns>
-    public OutboundEnvelopeBuilder<TMessage> WithProducer(IProducer? producer)
+    public TBuilder WithProducer(IProducer? producer)
     {
         _producer = producer;
-        return this;
+        return This;
     }
 
     /// <summary>
-    ///   Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    ///     Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
     /// </summary>
     /// <returns>
-    ///  The <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    ///     The envelope instance.
     /// </returns>
-    public IOutboundEnvelope<TMessage> Build() =>
-        new TestOutboundEnvelope<TMessage>(
+    public TEnvelope Build() =>
+        BuildCore(
             _message,
             _headers,
             _endpointConfiguration ?? new MockProducerEndpointConfiguration(),
             _producer ?? new MockProducer());
+
+    /// <summary>
+    ///     Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    /// </summary>
+    /// <param name="message">
+    ///     The message to be wrapped.
+    /// </param>
+    /// <param name="headers">
+    ///     The headers to be added.
+    /// </param>
+    /// <param name="endpointConfiguration">
+    ///     The endpoint configuration.
+    /// </param>
+    /// <param name="producer">
+    ///     The producer.
+    /// </param>
+    /// <returns>
+    ///     The envelope instance.
+    /// </returns>
+    protected abstract TEnvelope BuildCore(
+        TMessage? message,
+        MessageHeaderCollection? headers,
+        ProducerEndpointConfiguration endpointConfiguration,
+        IProducer producer);
 
     internal record MockProducerEndpointConfiguration : ProducerEndpointConfiguration;
 

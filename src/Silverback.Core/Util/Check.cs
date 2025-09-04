@@ -158,6 +158,12 @@ internal static class Check
     public static void ThrowObjectDisposedIf(bool condition, object instance) =>
         ObjectDisposedException.ThrowIf(condition, instance);
 
+    public static T IsOfType<T>(object? instance, string parameterName) =>
+        instance is T casted ? casted : throw new ArgumentException($"The instance must be of type {typeof(T).FullName}.", parameterName);
+
+    public static T? IsNullOrOfType<T>(object? instance, string parameterName) =>
+        instance == null ? default : IsOfType<T>(instance, parameterName);
+
     [AttributeUsage(AttributeTargets.Parameter)]
     private sealed class ValidatedNotNullAttribute : Attribute;
 }

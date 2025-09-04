@@ -26,13 +26,15 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        context.Envelope = await HandleAsync(context.Envelope).ConfigureAwait(false);
+        context.Envelope = await HandleAsync(context).ConfigureAwait(false);
 
         await next(context, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async ValueTask<IInboundEnvelope> HandleAsync(IInboundEnvelope envelope)
+    private static async ValueTask<IInboundEnvelope> HandleAsync(ConsumerPipelineContext context)
     {
+        IInboundEnvelope envelope = context.Envelope;
+
         if (envelope.Endpoint.Configuration.Deserializer is IBinaryMessageDeserializer)
             return envelope;
 
@@ -40,10 +42,12 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
         if (messageType == null || !typeof(IBinaryMessage).IsAssignableFrom(messageType))
             return envelope;
 
-        (object? deserializedObject, Type deserializedType) =
-            await DefaultDeserializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
+        DeserializedMessage deserializedMessage = await DefaultDeserializers.Binary.DeserializeAsync(
+            envelope.RawMessage,
+            envelope.Headers,
+            envelope.Endpoint).ConfigureAwait(false);
 
         // Create typed envelope for easier specific subscription
-        return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
+        return context.Consumer.EnvelopeFactory.CloneReplacingMessage(deserializedMessage.Message, deserializedMessage.MessageType, envelope);
     }
 }

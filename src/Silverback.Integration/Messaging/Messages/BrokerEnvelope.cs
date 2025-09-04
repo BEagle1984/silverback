@@ -16,7 +16,14 @@ internal abstract record BrokerEnvelope : IBrokerEnvelope
         Headers = new MessageHeaderCollection(headers);
     }
 
-    public virtual Type MessageType => Message?.GetType() ?? typeof(object);
+    protected BrokerEnvelope(IInboundEnvelope clonedEnvelope)
+    {
+        Message = clonedEnvelope.Message;
+        RawMessage = clonedEnvelope.RawMessage;
+        Headers = clonedEnvelope.Headers;
+    }
+
+    public abstract Type MessageType { get; }
 
     public bool IsTombstone => Message is null or ITombstone;
 

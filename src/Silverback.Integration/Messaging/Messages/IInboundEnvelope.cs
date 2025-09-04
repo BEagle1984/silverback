@@ -7,7 +7,7 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Wraps the consumed message.
+///     Wraps the message consumed from the message broker.
 /// </summary>
 public interface IInboundEnvelope : IBrokerEnvelope
 {

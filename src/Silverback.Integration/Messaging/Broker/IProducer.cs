@@ -32,7 +32,7 @@ public interface IProducer
     ProducerEndpointConfiguration EndpointConfiguration { get; }
 
     /// <summary>
-    ///     Gets the <see cref="IOutboundEnvelopeFactory" /> used to create the envelopes for this producer.
+    ///     Gets the <see cref="IOutboundEnvelopeFactory" /> used to create the envelopes wrapping the messages to be produced.
     /// </summary>
     IOutboundEnvelopeFactory EnvelopeFactory { get; }
 

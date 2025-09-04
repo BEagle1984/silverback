@@ -22,12 +22,39 @@ public interface IMqttOutboundEnvelope : IOutboundEnvelope
     byte[]? RawCorrelationData { get; }
 
     /// <summary>
+    ///     Gets the response topic.
+    /// </summary>
+    string? ResponseTopic { get; }
+
+    /// <summary>
     ///     Gets the destination topic for the message. Used when dynamic routing is enabled.
     /// </summary>
     string? DynamicDestinationTopic { get; }
 
     /// <summary>
-    ///     Sets the destination topic and partition for the message. Dynamic routing must be enabled.
+    ///     Sets the serialized correlation data.
+    /// </summary>
+    /// <param name="rawCorrelationData">
+    ///     The serialized correlation data.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IMqttOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    IMqttOutboundEnvelope SetRawCorrelationData(byte[]? rawCorrelationData);
+
+    /// <summary>
+    ///     Sets the response topic.
+    /// </summary>
+    /// <param name="topic">
+    ///     The response topic.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IMqttOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    IMqttOutboundEnvelope SetResponseTopic(string? topic);
+
+    /// <summary>
+    ///     Sets the destination topic for the message. Dynamic routing must be enabled.
     /// </summary>
     /// <param name="topic">
     ///     The destination topic.
@@ -35,5 +62,5 @@ public interface IMqttOutboundEnvelope : IOutboundEnvelope
     /// <returns>
     ///     The <see cref="IMqttOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IMqttOutboundEnvelope SetDestinationTopic(string topic);
+    IMqttOutboundEnvelope SetDestinationTopic(string? topic);
 }

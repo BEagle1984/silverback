@@ -37,11 +37,8 @@ internal abstract class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
     {
         Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
 
-        if (message == null)
-            return CreateForNullMessage(headers, endpointConfiguration, context);
-
         MethodInfo genericMethod = _createMethodsCache.GetOrAdd(
-            message.GetType(),
+            message?.GetType() ?? typeof(object),
             static (type, createEnvelopeMethod) => createEnvelopeMethod.MakeGenericMethod(type),
             _createMethod);
 
@@ -54,9 +51,4 @@ internal abstract class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
         ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null)
         where TMessage : class;
-
-    protected abstract IOutboundEnvelope CreateForNullMessage(
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null);
 }

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
@@ -20,20 +19,17 @@ internal record MqttOutboundEnvelope<TMessage, TCorrelationData> : OutboundEnvel
         ISilverbackContext? context = null)
         : base(message, headers, endpointConfiguration, producer, context)
     {
-        Message = message;
     }
-
-    public new TMessage? Message { get; }
-
-    public override Type MessageType => Message?.GetType() ?? typeof(TMessage);
 
     public TCorrelationData? CorrelationData { get; private set; }
 
-    object? IMqttOutboundEnvelope.CorrelationData => CorrelationData;
+    public byte[]? RawCorrelationData { get; private set; }
 
-    public byte[]? RawCorrelationData { get; internal set; }
+    public string? ResponseTopic { get; private set; }
 
     public string? DynamicDestinationTopic { get; private set; }
+
+    object? IMqttOutboundEnvelope.CorrelationData => CorrelationData;
 
     public IMqttOutboundEnvelope SetCorrelationData(TCorrelationData? correlationData)
     {
@@ -41,9 +37,21 @@ internal record MqttOutboundEnvelope<TMessage, TCorrelationData> : OutboundEnvel
         return this;
     }
 
-    public IMqttOutboundEnvelope SetDestinationTopic(string topic)
+    public IMqttOutboundEnvelope SetRawCorrelationData(byte[]? rawCorrelationData)
     {
-        DynamicDestinationTopic = Check.NotNullOrEmpty(topic, nameof(topic));
+        RawCorrelationData = rawCorrelationData;
+        return this;
+    }
+
+    public IMqttOutboundEnvelope SetResponseTopic(string? topic)
+    {
+        ResponseTopic = topic;
+        return this;
+    }
+
+    public IMqttOutboundEnvelope SetDestinationTopic(string? topic)
+    {
+        DynamicDestinationTopic = topic;
         return this;
     }
 }
