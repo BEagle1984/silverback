@@ -19,17 +19,14 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = [];
 
-    private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
-
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
     public IClientSession GetClientSession(string clientId) =>
         _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
     public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null) =>
-        (IReadOnlyList<MqttApplicationMessage>?)_messagesByTopic.FirstOrDefault(
-            messagesByTopicPair => messagesByTopicPair
-                .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ?? [];
+        (IReadOnlyList<MqttApplicationMessage>?)_messagesByTopic.FirstOrDefault(messagesByTopicPair => messagesByTopicPair
+            .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ?? [];
 
     public void Connect(MockedMqttClient client)
     {
@@ -44,7 +41,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
             if (!TryGetClientSession(client, out ClientSession? session))
             {
-                session = new ClientSession(client, _sharedSubscriptionsManager);
+                session = new ClientSession(client);
                 _sessions.Add(GetClientSessionKey(client), session);
             }
 
@@ -94,14 +91,31 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     }
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
-    public ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions)
+    public async ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
             throw new InvalidOperationException("The client is not connected.");
 
         StoreMessage(message, clientOptions);
 
-        return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions));
+        List<string> pushedSharedSubscriptionGroups = [];
+
+        foreach (ClientSession session in _sessions.Values)
+        {
+            foreach (Subscription subscription in session.GetMatchingSubscriptions(message, clientOptions))
+            {
+                if (subscription.SharedSubscriptionGroup != null)
+                {
+                    if (pushedSharedSubscriptionGroups.Contains(subscription.SharedSubscriptionGroup))
+                        continue;
+
+                    pushedSharedSubscriptionGroups.Add(subscription.SharedSubscriptionGroup);
+                }
+
+                await session.PushAsync(message).ConfigureAwait(false);
+                break;
+            }
+        }
     }
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
@@ -109,12 +123,11 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_sessions.Values.All(
-                session => (topicNames.Count > 0
-                               ? topicNames.All(topicName => session.GetPendingMessagesCount(topicName) == 0)
-                               : session.GetPendingMessagesCount() == 0) ||
-                           !session.Client.IsConnected ||
-                           !session.IsConnected))
+            if (_sessions.Values.All(session => (topicNames.Count > 0
+                                                    ? topicNames.All(topicName => session.GetPendingMessagesCount(topicName) == 0)
+                                                    : session.GetPendingMessagesCount() == 0) ||
+                                                !session.Client.IsConnected ||
+                                                !session.IsConnected))
             {
                 return;
             }

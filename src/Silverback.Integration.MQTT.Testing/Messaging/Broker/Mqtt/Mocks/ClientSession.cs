@@ -16,8 +16,6 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
 internal sealed class ClientSession : IDisposable, IClientSession
 {
-    private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
-
     private readonly Channel<MqttApplicationMessage> _channel = Channel.CreateUnbounded<MqttApplicationMessage>();
 
     private readonly List<Subscription> _subscriptions = [];
@@ -28,10 +26,9 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private CancellationTokenSource _readCancellationTokenSource = new();
 
-    public ClientSession(MockedMqttClient client, SharedSubscriptionsManager sharedSubscriptionsManager)
+    public ClientSession(MockedMqttClient client)
     {
         Client = Check.NotNull(client, nameof(client));
-        _sharedSubscriptionsManager = Check.NotNull(sharedSubscriptionsManager, nameof(sharedSubscriptionsManager));
     }
 
     public MockedMqttClient Client { get; }
@@ -75,7 +72,6 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
                 Subscription subscription = new(Client.Options, topic);
                 _subscriptions.Add(subscription);
-                _sharedSubscriptionsManager.Add(subscription);
             }
         }
     }
@@ -87,23 +83,26 @@ internal sealed class ClientSession : IDisposable, IClientSession
             foreach (Subscription subscription in _subscriptions.Where(subscription => topics.Contains(subscription.Topic)).ToArray())
             {
                 _subscriptions.Remove(subscription);
-                _sharedSubscriptionsManager.Remove(subscription);
             }
         }
     }
 
-    public async ValueTask PushAsync(MqttApplicationMessage message, MqttClientOptions clientOptions)
+    public IEnumerable<Subscription> GetMatchingSubscriptions(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         lock (_subscriptions)
         {
-            if (_subscriptions.TrueForAll(
-                subscription => !subscription.IsMatch(message, clientOptions) ||
-                                !_sharedSubscriptionsManager.IsActive(subscription)))
+            foreach (Subscription subscription in _subscriptions)
             {
-                return;
+                if (subscription.IsMatch(message, clientOptions))
+                {
+                    yield return subscription;
+                }
             }
         }
+    }
 
+    public async ValueTask PushAsync(MqttApplicationMessage message)
+    {
         await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
 
         Interlocked.Increment(ref _pendingMessagesCount);
