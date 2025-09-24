@@ -84,6 +84,71 @@ public partial class BatchProcessingTests
     }
 
     [Fact]
+    public async Task Batch_ShouldCompletePendingBatchAfterTimeout_WhenTimeoutLongerThanDefaultInterval()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(2000)))))
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 15; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
+
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(1);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(10);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.Count.ShouldBe(2);
+        receivedBatches[0].Count.ShouldBe(10);
+        receivedBatches[1].Count.ShouldBe(5);
+        completedBatches.ShouldBe(2);
+
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
+    }
+
+    [Fact]
     public async Task Batch_ShouldNotOverlapNextSequence_WhenTimeoutElapses()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];

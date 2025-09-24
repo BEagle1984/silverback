@@ -454,7 +454,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             return true;
         }
 
-        ResetTimeout();
         return false;
     }
 
