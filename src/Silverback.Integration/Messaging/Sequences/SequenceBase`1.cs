@@ -95,7 +95,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _enforceTimeout = enforceTimeout;
 
         _timeout = timeout ?? Context.Envelope.Endpoint.Configuration.Sequence.Timeout;
-        InitTimeoutTimer();
+        if (_enforceTimeout)
+            InitTimeoutTimer();
 
         _identifiersTracker = trackIdentifiers
             ? context.ServiceProvider.GetRequiredService<IBrokerMessageIdentifiersTrackerFactory>()
@@ -272,8 +273,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (!IsPending || IsCompleting)
                 return AddToSequenceResult.Failed;
 
-            if (await EnforceTimeoutAsync().ConfigureAwait(false))
-                return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
+            if (_enforceTimeout)
+            {
+                if (await EnforceTimeoutAsync().ConfigureAwait(false))
+                    return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
+                else
+                    ResetTimeout();
+            }
 
             if (sequence != null && sequence != this)
             {
@@ -437,24 +443,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()
     {
-        if (!_enforceTimeout)
+        if (DateTime.UtcNow <= _timeoutExpiration)
             return false;
 
-        if (DateTime.UtcNow > _timeoutExpiration)
+        try
         {
-            try
-            {
-                await OnTimeoutElapsedAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogSequenceTimeoutError(this, ex);
-            }
-
-            return true;
+            await OnTimeoutElapsedAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogSequenceTimeoutError(this, ex);
         }
 
-        return false;
+        return true;
     }
 
     private void ResetTimeout()
@@ -467,9 +468,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private void InitTimeoutTimer()
     {
-        if (!_enforceTimeout)
-            return;
-
         ResetTimeout();
 
         Task.Run(async () =>
