@@ -43,7 +43,7 @@ internal class MqttConsumerEndpointsCache
                                             throw new InvalidOperationException($"No configuration found for the specified topic '{topic}'.");
 
         endpoint = new MqttConsumerEndpoint(topic, subscription.EndpointConfiguration);
-        _endpoints.TryAdd(topic, endpoint);
+
         return endpoint;
     }
 

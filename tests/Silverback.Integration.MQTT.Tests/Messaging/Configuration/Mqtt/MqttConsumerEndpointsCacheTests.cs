@@ -70,10 +70,8 @@ public class MqttConsumerEndpointsCacheTests
         endpoint.Configuration.ShouldBeSameAs(endpointConfiguration2);
     }
 
-    [Theory]
-    [InlineData("topicB")]
-    [InlineData("topic2/test/sub")]
-    public void GetEndpoint_ShouldReturnCachedEndpointInstance(string topic)
+    [Fact]
+    public void GetEndpoint_ShouldReturnCachedEndpointInstance()
     {
         MqttConsumerEndpointConfiguration endpointConfiguration1 = new()
         {
@@ -93,10 +91,37 @@ public class MqttConsumerEndpointsCacheTests
                 ])
             });
 
-        MqttConsumerEndpoint endpoint1 = cache.GetEndpoint(topic);
-        MqttConsumerEndpoint endpoint2 = cache.GetEndpoint(topic);
+        MqttConsumerEndpoint endpoint1 = cache.GetEndpoint("topicB");
+        MqttConsumerEndpoint endpoint2 = cache.GetEndpoint("topicB");
 
         endpoint2.ShouldBeSameAs(endpoint1);
+    }
+
+    [Fact]
+    public void GetEndpoint_ShouldNotCacheWildcardEndpointInstance()
+    {
+        MqttConsumerEndpointConfiguration endpointConfiguration1 = new()
+        {
+            Topics = new ValueReadOnlyCollection<string>(["topicA", "topicB"])
+        };
+        MqttConsumerEndpointConfiguration endpointConfiguration2 = new()
+        {
+            Topics = new ValueReadOnlyCollection<string>(["topic1/+", "topic2/+/sub", "topic3/#"])
+        };
+        MqttConsumerEndpointsCache cache = new(
+            new MqttClientConfiguration
+            {
+                ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
+                [
+                    endpointConfiguration1,
+                    endpointConfiguration2
+                ])
+            });
+
+        MqttConsumerEndpoint endpoint1 = cache.GetEndpoint("topic2/test/sub");
+        MqttConsumerEndpoint endpoint2 = cache.GetEndpoint("topic2/test/sub");
+
+        endpoint2.ShouldNotBeSameAs(endpoint1);
     }
 
     [Fact]
