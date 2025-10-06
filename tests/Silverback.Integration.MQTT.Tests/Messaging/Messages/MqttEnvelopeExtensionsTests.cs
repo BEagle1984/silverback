@@ -18,7 +18,8 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttResponseTopic_ShouldReturnResponseTopic()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(MqttMessageHeaders.ResponseTopic, "topic/1")],
             TestConsumerEndpoint.GetDefault(),
@@ -33,7 +34,8 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttResponseTopic_ShouldReturnNull_WhenHeaderNotSet()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -63,7 +65,8 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttCorrelationData_ShouldReturnCorrelationDataAsByteArray()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(MqttMessageHeaders.CorrelationData, "AQIDBA==")],
             TestConsumerEndpoint.GetDefault(),
@@ -78,7 +81,8 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttCorrelationDataAsString_ShouldReturnCorrelationData()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(MqttMessageHeaders.CorrelationData, "e2NvcnJlbGF0aW9uLWRhdGF9")],
             TestConsumerEndpoint.GetDefault(),
@@ -93,7 +97,8 @@ public class MqttEnvelopeExtensionsTests
     [Fact]
     public void GetMqttCorrelationDataAsString_ShouldReturnNull_WhenHeaderNotSet()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),

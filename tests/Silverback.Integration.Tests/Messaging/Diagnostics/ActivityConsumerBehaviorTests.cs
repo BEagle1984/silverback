@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -27,8 +28,9 @@ public class ActivityConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldStartNewActivityAndSetParentIdFromHeader()
     {
-        InboundEnvelope rawEnvelope = new(
-            new byte[5],
+        TestInboundEnvelope<object> envelope = new(
+            null,
+            Stream.Null,
             new MessageHeaderCollection
             {
                 {
@@ -44,7 +46,7 @@ public class ActivityConsumerBehaviorTests
         await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
             .HandleAsync(
                 new ConsumerPipelineContext(
-                    rawEnvelope,
+                    envelope,
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     [],
@@ -67,8 +69,9 @@ public class ActivityConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldStartNewActivity_WhenNoHeaderIsSet()
     {
-        InboundEnvelope rawEnvelope = new(
-            new byte[5],
+        TestInboundEnvelope<object> envelope = new(
+            null,
+            Stream.Null,
             new MessageHeaderCollection
             {
                 {
@@ -84,7 +87,7 @@ public class ActivityConsumerBehaviorTests
         await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
             .HandleAsync(
                 new ConsumerPipelineContext(
-                    rawEnvelope,
+                    envelope,
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     [],

@@ -45,9 +45,9 @@ public class MoveMessageErrorPolicyTests
     public void CanHandle_ShouldReturnTrue_WhenMessageIsNotInSequence()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -71,9 +71,9 @@ public class MoveMessageErrorPolicyTests
                 Size = 10
             }
         };
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             new TestConsumerEndpoint("test", endpointConfiguration),
             Substitute.For<IConsumer>(),
@@ -93,9 +93,9 @@ public class MoveMessageErrorPolicyTests
     public void CanHandle_ShouldReturnFalse_WhenMessageIsInRawSequence()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -119,9 +119,9 @@ public class MoveMessageErrorPolicyTests
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -144,7 +144,7 @@ public class MoveMessageErrorPolicyTests
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
         TestEventOne message = new() { Content = "Test" };
-        InboundEnvelope inboundEnvelope = new(
+        TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             message,
             new MemoryStream(BytesUtil.GetRandomBytes()),
             null,
@@ -169,8 +169,9 @@ public class MoveMessageErrorPolicyTests
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
         byte[] rawContent = BytesUtil.GetRandomBytes();
-        InboundEnvelope inboundEnvelope = new(
-            new MemoryStream(rawContent),
+        TestInboundEnvelope<object> inboundEnvelope = new(
+            null,
+            rawContent.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -181,9 +182,8 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.RawMessage.ReReadAll()!.SequenceEqual(rawContent)));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.RawMessage.ReReadAll()!.SequenceEqual(rawContent)));
     }
 
     [Fact]
@@ -200,9 +200,9 @@ public class MoveMessageErrorPolicyTests
             { "key1", "value1" },
             { "key2", "value2" }
         };
-        InboundEnvelope inboundEnvelope = new(
+        TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             new TestEventOne(),
-            new MemoryStream(BytesUtil.GetRandomBytes()),
+            BytesUtil.GetRandomStream(),
             headers,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -213,10 +213,9 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.Headers.GetValue("key1", true) == "value1" &&
-                    outboundEnvelope.Headers.GetValue("key2", true) == "value2"));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.Headers.GetValue("key1", true) == "value1" &&
+                outboundEnvelope.Headers.GetValue("key2", true) == "value2"));
     }
 
     [Fact]
@@ -235,9 +234,9 @@ public class MoveMessageErrorPolicyTests
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
-        InboundEnvelope inboundEnvelope = new(
+        TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             new TestEventOne(),
-            new MemoryStream(BytesUtil.GetRandomBytes()),
+            BytesUtil.GetRandomStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -248,9 +247,8 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.Headers.GetValue("error", true) == "InvalidOperationException"));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.Headers.GetValue("error", true) == "InvalidOperationException"));
     }
 
     [Fact]
@@ -261,9 +259,9 @@ public class MoveMessageErrorPolicyTests
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -284,9 +282,9 @@ public class MoveMessageErrorPolicyTests
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),

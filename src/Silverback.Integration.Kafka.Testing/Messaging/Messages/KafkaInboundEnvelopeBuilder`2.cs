@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Silverback.Messaging.Broker;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
@@ -101,7 +102,7 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     /// <returns>
     ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithKafkaTimestamp(DateTime timestamp)
+    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithTimestamp(DateTime timestamp)
     {
         _timestamp = timestamp;
         return this;
@@ -114,15 +115,17 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
         MessageHeaderCollection? headers,
         ConsumerEndpoint endpoint,
         IConsumer consumer,
-        IBrokerMessageIdentifier identifier)
+        IBrokerMessageIdentifier? identifier)
     {
+        Check.NotNull(endpoint, nameof(endpoint));
+
         KafkaInboundEnvelope<TMessage, TKey> envelope = new(
             message,
             rawMessage,
             headers,
             endpoint,
             consumer,
-            identifier);
+            identifier ?? new KafkaOffset(endpoint.RawName, 0, 0));
 
         if (_key != null)
             envelope.SetKey(_key);

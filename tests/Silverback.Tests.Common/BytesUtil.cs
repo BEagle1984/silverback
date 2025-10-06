@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Silverback.Tests;
@@ -20,4 +21,8 @@ public static class BytesUtil
 
         return bytes;
     }
+
+    public static Stream ToStream(this ReadOnlySpan<byte> buffer) => ToStream(buffer.ToArray());
+
+    public static Stream ToStream(this byte[] buffer) => new MemoryStream(buffer);
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -175,27 +176,6 @@ public class SerializationHelperTests
         Type type = SerializationHelper.GetTypeFromHeaders(headers, typeof(ChildClass));
 
         type.ShouldBe(typeof(ChildClass));
-    }
-
-    [Fact]
-    public void CreateTypedInboundEnvelope_ShouldReturnEnvelope()
-    {
-        TestConsumerEndpoint endpoint = TestConsumerEndpoint.GetDefault();
-        InboundEnvelope rawEnvelope = new(
-            [],
-            [new MessageHeader("one", "1"), new MessageHeader("two", "2")],
-            endpoint,
-            Substitute.For<IConsumer>(),
-            new TestOffset());
-        TestEventOne message = new();
-
-        IInboundEnvelope envelope = SerializationHelper.CreateTypedInboundEnvelope(rawEnvelope, message, typeof(TestEventOne));
-
-        InboundEnvelope<TestEventOne> eventOneEnvelope = envelope.ShouldBeOfType<InboundEnvelope<TestEventOne>>();
-        eventOneEnvelope.Message.ShouldBe(message);
-        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
-        envelope.Endpoint.ShouldBe(endpoint);
     }
 
     private class BaseClass;

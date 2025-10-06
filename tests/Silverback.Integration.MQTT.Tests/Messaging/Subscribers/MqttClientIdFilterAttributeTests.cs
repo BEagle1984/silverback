@@ -37,7 +37,8 @@ public class MqttClientIdFilterAttributeTests
         clientWrapper.Configuration.Returns(new MqttClientConfiguration());
         IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
         serviceProvider.GetService(typeof(ISequenceStore)).Returns(Substitute.For<ISequenceStore>());
-        InboundEnvelope inboundEnvelope = new(
+        MqttInboundEnvelope<object, object> inboundEnvelope = new(
+            null,
             new MemoryStream(),
             [],
             new MqttConsumerEndpoint(
@@ -71,7 +72,8 @@ public class MqttClientIdFilterAttributeTests
     [Fact]
     public void MustProcess_ShouldReturnFalse_WhenConsumerIsNotMqttConsumer()
     {
-        InboundEnvelope envelope = new(
+        MqttInboundEnvelope<object, object> envelope = new(
+            null,
             new MemoryStream(),
             [],
             new MqttConsumerEndpoint(

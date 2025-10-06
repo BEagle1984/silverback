@@ -176,7 +176,7 @@ public class ValidatorConsumerBehaviorTests
             MessageValidationMode = MessageValidationMode.None
         }.GetDefaultEndpoint();
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             message,
             null,
             null,
@@ -210,7 +210,7 @@ public class ValidatorConsumerBehaviorTests
             MessageValidationMode = validationMode
         }.GetDefaultEndpoint();
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             message,
             null,
             null,
@@ -241,7 +241,7 @@ public class ValidatorConsumerBehaviorTests
             MessageValidationMode = MessageValidationMode.LogWarning
         }.GetDefaultEndpoint();
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             message,
             null,
             null,
@@ -274,7 +274,8 @@ public class ValidatorConsumerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.ThrowException
         }.GetDefaultEndpoint();
-        InboundEnvelope envelope = new(
+
+        TestInboundEnvelope<object> envelope = new(
             message,
             null,
             null,

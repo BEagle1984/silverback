@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Broker;
@@ -109,14 +110,13 @@ public class TombstoneMessageArgumentResolverTests
     public void GetValue_ShouldReturnTombstone_WhenParameterTypeIsTombstone()
     {
         TombstoneMessageArgumentResolver resolver = new();
-        IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new InboundEnvelope(
-                (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new TestEventOne());
+        IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
+            null,
+            Stream.Null,
+            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         object value = resolver.GetValue(envelope, typeof(Tombstone));
 
@@ -128,14 +128,13 @@ public class TombstoneMessageArgumentResolverTests
     public void GetValue_ShouldReturnTombstone_WhenParameterTypeIsTombstoneInterface()
     {
         TombstoneMessageArgumentResolver resolver = new();
-        IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new InboundEnvelope(
-                (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new TestEventOne());
+        IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
+            null,
+            Stream.Null,
+            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         object value = resolver.GetValue(envelope, typeof(ITombstone));
 
@@ -147,14 +146,13 @@ public class TombstoneMessageArgumentResolverTests
     public void GetValue_ShouldReturnTypedTombstone_WhenParameterTypeIsTypedTombstone()
     {
         TombstoneMessageArgumentResolver resolver = new();
-        IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new InboundEnvelope(
-                (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new TestEventOne());
+        IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
+            null,
+            Stream.Null,
+            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         object value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
 
@@ -166,14 +164,13 @@ public class TombstoneMessageArgumentResolverTests
     public void GetValue_ShouldReturnTypedTombstone_WhenParameterTypeIsTypedTombstoneInterface()
     {
         TombstoneMessageArgumentResolver resolver = new();
-        IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
-            new InboundEnvelope(
-                (byte[]?)null,
-                [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new TestEventOne());
+        IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
+            null,
+            Stream.Null,
+            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         object value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
 

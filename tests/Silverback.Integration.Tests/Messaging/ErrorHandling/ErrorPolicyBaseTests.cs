@@ -63,7 +63,7 @@ public class ErrorPolicyBaseTests
         new()
         {
             {
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
@@ -74,7 +74,7 @@ public class ErrorPolicyBaseTests
                 true
             },
             {
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6")],
@@ -85,7 +85,7 @@ public class ErrorPolicyBaseTests
                 false
             },
             {
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
@@ -109,7 +109,7 @@ public class ErrorPolicyBaseTests
 
         bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
@@ -133,7 +133,7 @@ public class ErrorPolicyBaseTests
 
         bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
@@ -158,7 +158,7 @@ public class ErrorPolicyBaseTests
 
         bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
                     null,
                     Stream.Null,
                     [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
@@ -195,7 +195,8 @@ public class ErrorPolicyBaseTests
     [InlineData(7, false)]
     public void CanHandle_ShouldEvaluateMaxFailedAttempts(int failedAttempts, bool expectedResult)
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             Stream.Null,
             [
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
@@ -230,7 +231,8 @@ public class ErrorPolicyBaseTests
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(serviceProvider);
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
             TestConsumerEndpoint.GetDefault(),
@@ -257,7 +259,8 @@ public class ErrorPolicyBaseTests
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(serviceProvider);
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             Stream.Null,
             [
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")

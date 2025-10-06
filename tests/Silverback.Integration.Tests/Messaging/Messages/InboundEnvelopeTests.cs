@@ -17,8 +17,9 @@ public class InboundEnvelopeTests
     [Fact]
     public void Constructor_ShouldNotThrow_WhenMessageIsNull()
     {
-        InboundEnvelope envelope = new(
-            (Stream?)null,
+        TestInboundEnvelope<object> envelope = new(
+            null,
+            null,
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -30,7 +31,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void MessageType_ShouldReturnType_WhenMessageIsNotNull()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             null,
             null,
@@ -44,7 +45,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void MessageType_ShouldReturnObject_WhenMessageIsNull()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             null,
             null,
             null,
@@ -58,7 +59,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void MessageType_ShouldReturnGenericArgumentType_WhenMessageNullAndGenericArgumentProvided()
     {
-        InboundEnvelope<TestEventOne> envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             null,
             null,
             null,
@@ -72,7 +73,8 @@ public class InboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -85,7 +87,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsTombstone()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             new Tombstone("42"),
             null,
             null,
@@ -99,7 +101,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnFalse_WhenMessageIsNotNull()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
             new TestEventOne(),
             null,
             null,
@@ -113,7 +115,8 @@ public class InboundEnvelopeTests
     [Fact]
     public void CloneReplacingRawMessage_ShouldClone()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             new MemoryStream(),
             null,
             TestConsumerEndpoint.GetDefault(),

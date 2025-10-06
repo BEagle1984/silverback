@@ -16,6 +16,7 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -32,8 +33,9 @@ public class ConsumerNameFilterAttributeTests
         IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
         confluentConsumerWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
         confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
-        InboundEnvelope envelope = new(
-            new MemoryStream(),
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            new TestEventOne(),
+            Stream.Null,
             [],
             new KafkaConsumerEndpoint(
                 "my-topic",

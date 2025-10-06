@@ -3,7 +3,10 @@
 
 using System.IO;
 using Shouldly;
+using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -14,7 +17,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void WithRawMessage_ShouldSetRawMessage()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         Stream rawMessage = new MemoryStream();
 
         builder.WithRawMessage(rawMessage);
@@ -26,17 +29,17 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void Build_ShouldCreateTypedEnvelope()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.ShouldBeOfType<InboundEnvelope<TestEventOne>>();
+        envelope.ShouldBeOfType<TestInboundEnvelope<TestEventOne>>();
     }
 
     [Fact]
     public void WithMessage_ShouldSetMessage()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         TestEventOne message = new();
 
         builder.WithMessage(message);
@@ -48,7 +51,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void WithHeaders_ShouldSetHeaders()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         MessageHeader[] headers = [new("one", "1"), new("two", "2")];
 
         builder.WithHeaders(headers);
@@ -60,7 +63,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddHeader_ShouldAddHeader()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         builder.AddHeader("one", "1");
 
@@ -71,7 +74,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddHeader_ShouldAddHeaderWithObjectValue()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         builder.AddHeader("one", 1);
 
@@ -82,7 +85,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddOrReplaceHeader_ShouldAddHeader()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         builder.AddHeader("one", "1");
 
         builder.AddOrReplaceHeader("two", "2");
@@ -95,7 +98,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddOrReplaceHeader_ShouldAddHeaderWithObjectValue()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         builder.AddHeader("one", "1");
 
         builder.AddOrReplaceHeader("two", 2);
@@ -108,7 +111,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddOrReplaceHeader_ShouldReplaceHeader()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         builder.AddHeader("one", "1");
 
         builder.AddOrReplaceHeader("one", "2");
@@ -121,7 +124,7 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void AddHeader_ShouldAddHeaderObject()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
         MessageHeader header = new("one", "1");
 
         builder.AddHeader(header);
@@ -133,8 +136,8 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void WithEndpoint_ShouldSetEndpoint()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
-        InboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpoint endpoint = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpoint endpoint = new();
 
         builder.WithEndpoint(endpoint);
 
@@ -145,8 +148,8 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void WithConsumer_ShouldSetConsumer()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
-        InboundEnvelopeBuilder<TestEventOne>.MockConsumer consumer = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne>.MockConsumer consumer = new();
 
         builder.WithConsumer(consumer);
 
@@ -157,8 +160,8 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void WithIdentifier_ShouldSetIdentifier()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
-        InboundEnvelopeBuilder<TestEventOne>.MockBrokerMessageIdentifier identifier = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestBrokerMessageIdentifier identifier = new();
 
         builder.WithIdentifier(identifier);
 
@@ -169,31 +172,45 @@ public class InboundEnvelopeBuilderTests
     [Fact]
     public void Build_ShouldSetMockEndpoint_WhenEndpointNotSpecified()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.Endpoint.ShouldBeOfType<InboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpoint>();
-        envelope.Endpoint.Configuration.ShouldBeOfType<InboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpointConfiguration>();
+        envelope.Endpoint.ShouldBeOfType<TestInboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpoint>();
+        envelope.Endpoint.Configuration.ShouldBeOfType<TestInboundEnvelopeBuilder<TestEventOne>.MockConsumerEndpointConfiguration>();
     }
 
     [Fact]
     public void Build_ShouldSetMockConsumer_WhenConsumerNotSpecified()
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        TestInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
 
-        envelope.Consumer.ShouldBeOfType<InboundEnvelopeBuilder<TestEventOne>.MockConsumer>();
+        envelope.Consumer.ShouldBeOfType<TestInboundEnvelopeBuilder<TestEventOne>.MockConsumer>();
     }
 
-    [Fact]
-    public void Build_ShouldSetMockIdentifier_WhenIdentifierNotSpecified()
+    private sealed class TestInboundEnvelopeBuilder<TMessage> : InboundEnvelopeBuilder<TestInboundEnvelopeBuilder<TMessage>, TestInboundEnvelope<TMessage>, TMessage>
+        where TMessage : class
     {
-        InboundEnvelopeBuilder<TestEventOne> builder = new();
+        protected override TestInboundEnvelopeBuilder<TMessage> This => this;
 
-        IInboundEnvelope<TestEventOne> envelope = builder.Build();
+        protected override TestInboundEnvelope<TMessage> BuildCore(
+            TMessage? message,
+            Stream? rawMessage,
+            MessageHeaderCollection? headers,
+            ConsumerEndpoint endpoint,
+            IConsumer consumer,
+            IBrokerMessageIdentifier? identifier) =>
+            new(message, rawMessage, headers, endpoint, consumer, identifier ?? new TestBrokerMessageIdentifier());
+    }
 
-        envelope.BrokerMessageIdentifier.ShouldBeOfType<InboundEnvelopeBuilder<TestEventOne>.MockBrokerMessageIdentifier>();
+    private sealed class TestBrokerMessageIdentifier : IBrokerMessageIdentifier
+    {
+        public bool Equals(IBrokerMessageIdentifier? other) => this == other;
+
+        public string ToLogString() => "mock";
+
+        public string ToVerboseLogString() => "mock";
     }
 }

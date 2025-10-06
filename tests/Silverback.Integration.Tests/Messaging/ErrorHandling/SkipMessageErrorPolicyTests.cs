@@ -39,9 +39,9 @@ public class SkipMessageErrorPolicyTests
     public void CanHandle_ShouldReturnTrue()
     {
         IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -58,9 +58,9 @@ public class SkipMessageErrorPolicyTests
     public async Task HandleErrorAsync_ShouldReturnTrue()
     {
         IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -77,9 +77,9 @@ public class SkipMessageErrorPolicyTests
     public async Task HandleError_ShouldCommitOffsetButAbortTransaction()
     {
         IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            "hey oh!"u8.ToStream(),
             null,
             new TestConsumerEndpointConfiguration("source-endpoint").GetDefaultEndpoint(),
             Substitute.For<IConsumer>(),

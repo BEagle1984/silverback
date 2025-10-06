@@ -60,7 +60,8 @@ public class ErrorPolicyChainTests
 
         bool result = chain.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
+                    null,
                     rawMessage,
                     headers,
                     TestConsumerEndpoint.GetDefault(),
@@ -95,7 +96,8 @@ public class ErrorPolicyChainTests
 
         await chain.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
+                    null,
                     rawMessage,
                     headers,
                     TestConsumerEndpoint.GetDefault(),
@@ -131,7 +133,8 @@ public class ErrorPolicyChainTests
 
         await chain.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
+                    null,
                     rawMessage,
                     headers,
                     TestConsumerEndpoint.GetDefault(),
@@ -166,7 +169,8 @@ public class ErrorPolicyChainTests
 
         await chain.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(
-                new InboundEnvelope(
+                new TestInboundEnvelope<object>(
+                    null,
                     rawMessage,
                     headers,
                     TestConsumerEndpoint.GetDefault(),

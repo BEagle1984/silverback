@@ -12,7 +12,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Consuming.Transaction;
-using Silverback.Messaging.Messages;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -39,9 +38,9 @@ public class StopConsumerErrorPolicyTests
     public void CanHandle_ShouldReturnTrue()
     {
         IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -58,9 +57,9 @@ public class StopConsumerErrorPolicyTests
     public async Task HandleErrorAsync_ShouldReturnFalse()
     {
         IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -79,9 +78,9 @@ public class StopConsumerErrorPolicyTests
         /* The consumer will be stopped and the transaction aborted by the consumer/behavior */
 
         IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            "hey oh!"u8.ToStream(),
             null,
             new TestConsumerEndpointConfiguration("source-endpoint").GetDefaultEndpoint(),
             Substitute.For<IConsumer>(),

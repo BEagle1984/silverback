@@ -207,8 +207,9 @@ public class ActivitySourcesTests
         Activity.Current.ShouldBeNull();
     }
 
-    private static IInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>
-        new InboundEnvelope(
+    private static TestInboundEnvelope<object> CreateInboundEnvelope(MessageHeaderCollection headers) =>
+        new(
+            null,
             Stream.Null,
             headers,
             new TestConsumerEndpointConfiguration("Endpoint").GetDefaultEndpoint(),

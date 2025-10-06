@@ -19,7 +19,8 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForInboundEnvelope()
     {
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestConsumerEndpoint.GetDefault(),
@@ -34,7 +35,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForOutboundEnvelope()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<object, string> envelope = new(
             new TestEventOne(),
             [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestProducerEndpointConfiguration.GetDefault(),
@@ -49,7 +50,8 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnNull_WhenMessageKeyHeaderIsNotSet()
     {
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -79,7 +81,8 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaTimestamp_ShouldReturnTimestampHeaderValue()
     {
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+            null,
             Stream.Null,
             [new MessageHeader(KafkaMessageHeaders.Timestamp, "2025-08-20T13:35:02.9050000Z")],
             TestConsumerEndpoint.GetDefault(),
@@ -94,7 +97,8 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaTimestamp_ShouldReturnNull_WhenTimestampHeaderIsNotSet()
     {
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -110,7 +114,8 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaOffset_ShouldReturnBrokerMessageIdentifier()
     {
         KafkaOffset offset = new(new TopicPartition("test", 1), 42);
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),

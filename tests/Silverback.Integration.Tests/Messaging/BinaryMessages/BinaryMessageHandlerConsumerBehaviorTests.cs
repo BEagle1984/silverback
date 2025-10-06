@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -22,12 +23,13 @@ public class BinaryMessageHandlerConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldReplaceEnvelopeWithBinaryMessage()
     {
-        byte[] rawContent = BytesUtil.GetRandomBytes();
+        Stream rawContent = BytesUtil.GetRandomStream();
         MessageHeader[] headers =
         [
             new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         ];
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             rawContent,
             headers,
             TestConsumerEndpoint.GetDefault(),
@@ -52,14 +54,15 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         result.ShouldNotBeNull();
         IInboundEnvelope<BinaryMessage> binaryMessageEnvelope = result.ShouldBeAssignableTo<IInboundEnvelope<BinaryMessage>>();
         binaryMessageEnvelope.Message.ShouldNotBeNull();
-        binaryMessageEnvelope.Message.Content.ReadAll().ShouldBe(rawContent);
+        binaryMessageEnvelope.Message.Content.ReadAll().ShouldBe(rawContent.ReadAll());
     }
 
     [Fact]
     public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenNotBinaryMessage()
     {
-        byte[] rawContent = BytesUtil.GetRandomBytes();
-        InboundEnvelope envelope = new(
+        Stream rawContent = BytesUtil.GetRandomStream();
+        TestInboundEnvelope<object> envelope = new(
+            null,
             rawContent,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -87,7 +90,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldNotReplaceEnvelope_WhenEndpointHasBinaryMessageSerializer()
     {
-        byte[] rawContent = BytesUtil.GetRandomBytes();
+        Stream rawContent = BytesUtil.GetRandomStream();
         MessageHeader[] headers =
         [
             new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
@@ -97,7 +100,8 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             Deserializer = new BinaryMessageDeserializer<BinaryMessage>()
         };
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             rawContent,
             headers,
             endpointConfiguration.GetDefaultEndpoint(),

@@ -49,7 +49,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessing_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -68,7 +69,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingError_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -87,7 +89,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingFatalError_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -202,7 +205,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageAddedToSequence_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -473,7 +477,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRetryProcessing_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -492,7 +497,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageMoved_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -512,7 +518,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogMessageSkipped_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -531,7 +538,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogCannotMoveSequence_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -550,7 +558,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRollbackToRetryFailed_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -569,7 +578,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogRollbackToSkipFailed_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -678,7 +688,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogInvalidMessageConsumed_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -783,7 +794,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingTrace_ShouldLog()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),
@@ -802,7 +814,8 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProcessingTrace_ShouldLog_WhenExceptionSpecified()
     {
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
+            null,
             Stream.Null,
             null,
             TestConsumerEndpoint.GetDefault(),

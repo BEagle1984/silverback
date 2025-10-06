@@ -56,7 +56,8 @@ public class RetryErrorPolicyTests
             new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             rawMessage,
             headers,
             TestConsumerEndpoint.GetDefault(),
@@ -85,7 +86,8 @@ public class RetryErrorPolicyTests
             new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<object> envelope = new(
+            null,
             rawMessage,
             headers,
             TestConsumerEndpoint.GetDefault(),
@@ -108,9 +110,9 @@ public class RetryErrorPolicyTests
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            Stream.Null,
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
@@ -131,9 +133,9 @@ public class RetryErrorPolicyTests
             MaxFailedAttempts = 3
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
-        InboundEnvelope envelope = new(
+        TestInboundEnvelope<string> envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            "hey oh!"u8.ToStream(),
             null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),

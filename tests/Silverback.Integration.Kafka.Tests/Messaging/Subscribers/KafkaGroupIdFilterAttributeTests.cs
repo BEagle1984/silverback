@@ -33,7 +33,8 @@ public class KafkaGroupIdFilterAttributeTests
         IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
         confluentConsumerWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
         confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<object, string> envelope = new(
+            null,
             new MemoryStream(),
             [],
             new KafkaConsumerEndpoint(
@@ -80,7 +81,8 @@ public class KafkaGroupIdFilterAttributeTests
     [Fact]
     public void MustProcess_ShouldReturnFalse_WhenConsumerIsNotKafkaConsumer()
     {
-        InboundEnvelope envelope = new(
+        KafkaInboundEnvelope<object, string> envelope = new(
+            null,
             new MemoryStream(),
             [],
             new KafkaConsumerEndpoint(

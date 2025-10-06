@@ -235,14 +235,14 @@ public abstract class InboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
     /// <returns>
     ///     The <see cref="IInboundEnvelope{TMessage}" /> instance.
     /// </returns>
-    public IInboundEnvelope<TMessage> Build() =>
+    public TEnvelope Build() =>
         BuildCore(
             _message,
             _rawMessage,
             _headers,
             _endpoint ?? new MockConsumerEndpoint(),
             _consumer ?? new MockConsumer(),
-            _identifier ?? new MockBrokerMessageIdentifier());
+            _identifier);
 
     /// <summary>
     ///     Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
@@ -274,7 +274,7 @@ public abstract class InboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
         MessageHeaderCollection? headers,
         ConsumerEndpoint endpoint,
         IConsumer consumer,
-        IBrokerMessageIdentifier identifier);
+        IBrokerMessageIdentifier? identifier);
 
     internal record MockConsumerEndpoint() : ConsumerEndpoint("mock", new MockConsumerEndpointConfiguration());
 
@@ -309,14 +309,5 @@ public abstract class InboundEnvelopeBuilder<TBuilder, TEnvelope, TMessage>
         public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
 
         public int IncrementFailedAttempts(IInboundEnvelope envelope) => throw new NotSupportedException();
-    }
-
-    internal class MockBrokerMessageIdentifier : IBrokerMessageIdentifier
-    {
-        public bool Equals(IBrokerMessageIdentifier? other) => this == other;
-
-        public string ToLogString() => "mock";
-
-        public string ToVerboseLogString() => "mock";
     }
 }

@@ -26,15 +26,17 @@ public class ChunkStreamTests
         Task copyTask = chunkStream.CopyToAsync(output);
 
         await streamProvider.PushAsync(
-            new InboundEnvelope(
-                "Silver"u8.ToArray(),
+            new TestInboundEnvelope<string>(
+                "Silver",
+                "Silver"u8.ToStream(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
-            new InboundEnvelope(
-                "back"u8.ToArray(),
+            new TestInboundEnvelope<string>(
+                "back",
+                "back"u8.ToStream(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
@@ -57,15 +59,17 @@ public class ChunkStreamTests
         Task copyTask = Task.Run(() => chunkStream.CopyTo(output));
 
         await streamProvider.PushAsync(
-            new InboundEnvelope(
-                "Silver"u8.ToArray(),
+            new TestInboundEnvelope<string>(
+                "Silver",
+                "Silver"u8.ToStream(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
-            new InboundEnvelope(
-                "back"u8.ToArray(),
+            new TestInboundEnvelope<string>(
+                "back",
+                "back"u8.ToStream(),
                 null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
