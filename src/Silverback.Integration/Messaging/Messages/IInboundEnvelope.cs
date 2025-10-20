@@ -26,6 +26,8 @@ public interface IInboundEnvelope : IBrokerEnvelope
     /// </summary>
     IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
 
+    IInboundEnvelope SetRawMessage(Stream? rawMessage);
+
     /// <summary>
     ///     Clones the envelope and replaces the raw message with the specified one.
     /// </summary>
@@ -36,4 +38,18 @@ public interface IInboundEnvelope : IBrokerEnvelope
     ///     The new envelope.
     /// </returns>
     IInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
+}
+
+internal interface IInternalInboundEnvelope : IInboundEnvelope
+{
+    /// <summary>
+    ///    Gets the message key, if available (e.g. Kafka message key).
+    /// </summary>
+    /// <returns>
+    ///     The message key.
+    /// </returns>
+    /// <remarks>
+    ///     This method exists only to support the legacy <see cref="Tombstone" />.
+    /// </remarks>
+    string? GetKey();
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -42,18 +43,13 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(Tombstone message) => tombstone = message;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(
-            (byte[]?)null,
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.MessageKey, "42" }
-            });
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone>();
-        tombstone!.MessageKey.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -77,18 +73,16 @@ public class NullMessageHandlingTests : KafkaTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
-            (byte[]?)null,
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName },
-                { KafkaMessageHeaders.MessageKey, "42" }
-            });
+            Stream.Null,
+            envelope => envelope
+                .AddHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
+                .SetKafkaKey(43));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageKey.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -111,18 +105,13 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(Tombstone<TestEventOne> message) => tombstone = message;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(
-            (byte[]?)null,
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.MessageKey, "42" }
-            });
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         tombstone.ShouldBeOfType<Tombstone<TestEventOne>>();
-        tombstone!.MessageKey.ShouldBe("42");
+        tombstone.MessageKey.ShouldBe("42");
     }
 
     [Fact]
@@ -150,12 +139,7 @@ public class NullMessageHandlingTests : KafkaTests
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(
-            (byte[]?)null,
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.MessageKey, "42" }
-            });
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -184,12 +168,7 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(IInboundEnvelope<TestEventOne> envelope) => consumedEnvelope = envelope;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(
-            (byte[]?)null,
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.MessageKey, "42" }
-            });
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

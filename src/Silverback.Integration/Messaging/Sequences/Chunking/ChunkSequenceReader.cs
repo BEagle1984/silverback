@@ -42,10 +42,10 @@ public class ChunkSequenceReader : SequenceReaderBase
     {
         Check.NotNull(context, nameof(context));
 
-        string messageKey = context.Envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId) ??
+        string chunkMessageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId) ??
                             throw new InvalidOperationException("Message id header not found.");
 
-        return ValueTask.FromResult($"chunk-{messageKey}");
+        return ValueTask.FromResult($"chunk-{chunkMessageId}");
     }
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />

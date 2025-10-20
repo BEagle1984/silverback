@@ -61,7 +61,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -78,7 +77,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -122,7 +120,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -172,7 +169,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -218,7 +214,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -273,7 +268,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -328,7 +322,6 @@ public class OutboxWorkerTests
             .When(
                 producer => producer.RawProduce(
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
                     Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
                     Arg.Any<Action<Exception, OutboxMessage>>(),
                     Arg.Any<OutboxMessage>()))
@@ -366,7 +359,6 @@ public class OutboxWorkerTests
     private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
             Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
             Arg.Any<Action<Exception, OutboxMessage>>(),
             Arg.Any<OutboxMessage>());

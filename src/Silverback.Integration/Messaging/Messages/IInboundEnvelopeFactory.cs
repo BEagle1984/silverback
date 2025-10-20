@@ -16,14 +16,8 @@ public interface IInboundEnvelopeFactory
     /// <summary>
     ///     Creates the <see cref="IInboundEnvelope" />.
     /// </summary>
-    /// <param name="message">
-    ///     The message to be wrapped.
-    /// </param>
     /// <param name="rawMessage">
     ///     The serialized message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
     /// </param>
     /// <param name="endpoint">
     ///     The endpoint from which the message was consumed.
@@ -34,12 +28,7 @@ public interface IInboundEnvelopeFactory
     /// <returns>
     ///     The <see cref="IInboundEnvelope" /> instance.
     /// </returns>
-    IInboundEnvelope Create(
-        object? message,
-        Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IBrokerMessageIdentifier brokerMessageIdentifier);
+    IInboundEnvelope Create(Stream? rawMessage, ConsumerEndpoint endpoint, IBrokerMessageIdentifier brokerMessageIdentifier);
 
     /// <summary>
     ///     Creates the <see cref="IInboundEnvelope{TMessage}" />.
@@ -47,14 +36,8 @@ public interface IInboundEnvelopeFactory
     /// <typeparam name="TMessage">
     ///     The type of the wrapped message.
     /// </typeparam>
-    /// <param name="message">
-    ///     The message to be wrapped.
-    /// </param>
     /// <param name="rawMessage">
     ///     The serialized message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
     /// </param>
     /// <param name="endpoint">
     ///     The endpoint from which the message was consumed.
@@ -65,12 +48,7 @@ public interface IInboundEnvelopeFactory
     /// <returns>
     ///     The <see cref="IInboundEnvelope{TMessage}" /> instance.
     /// </returns>
-    IInboundEnvelope<TMessage> Create<TMessage>(
-        TMessage? message,
-        Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
+    IInboundEnvelope<TMessage> Create<TMessage>(Stream? rawMessage, ConsumerEndpoint endpoint, IBrokerMessageIdentifier brokerMessageIdentifier)
         where TMessage : class;
 
     /// <summary>

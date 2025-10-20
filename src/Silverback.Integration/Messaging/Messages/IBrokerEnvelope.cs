@@ -25,8 +25,7 @@ public interface IBrokerEnvelope : IEnvelope
     bool IsTombstone { get; }
 
     /// <summary>
-    ///     Gets or sets the serialized message body.
+    ///     Gets the serialized message body.
     /// </summary>
-    // TODO: Remove public setter
-    Stream? RawMessage { get; set; }
+    Stream? RawMessage { get; }
 }

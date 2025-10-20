@@ -91,7 +91,7 @@ public partial class MessageWrapperTests
             _publisher,
             [producer1, producer2],
             envelope => envelope
-                .SetKafkaKey($"{++count}")
+                .AddHeader("x-id", $"{++count}")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             cancellationToken);
 
@@ -100,15 +100,15 @@ public partial class MessageWrapperTests
         capturedEnvelopes1.Length.ShouldBe(3);
         capturedEnvelopes1[0].Message.ShouldBeEquivalentTo(message1);
         capturedEnvelopes1[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes1[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes1[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes1[1].Message.ShouldBeEquivalentTo(message2);
         capturedEnvelopes1[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes1[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes1[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes1[2].Message.ShouldBeNull();
         capturedEnvelopes1[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes1[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes1[2].Headers["x-topic"].ShouldBe("one");
 
         await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
@@ -116,15 +116,15 @@ public partial class MessageWrapperTests
         capturedEnvelopes2.Length.ShouldBe(3);
         capturedEnvelopes2[0].Message.ShouldBeEquivalentTo(message1);
         capturedEnvelopes2[0].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[0].GetKafkaKey().ShouldBe("4");
+        capturedEnvelopes2[0].Headers["x-id"].ShouldBe("4");
         capturedEnvelopes2[0].Headers["x-topic"].ShouldBe("two");
         capturedEnvelopes2[1].Message.ShouldBeEquivalentTo(message2);
         capturedEnvelopes2[1].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[1].GetKafkaKey().ShouldBe("5");
+        capturedEnvelopes2[1].Headers["x-id"].ShouldBe("5");
         capturedEnvelopes2[1].Headers["x-topic"].ShouldBe("two");
         capturedEnvelopes2[2].Message.ShouldBeNull();
         capturedEnvelopes2[2].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[2].GetKafkaKey().ShouldBe("6");
+        capturedEnvelopes2[2].Headers["x-id"].ShouldBe("6");
         capturedEnvelopes2[2].Headers["x-topic"].ShouldBe("two");
     }
 
@@ -155,7 +155,7 @@ public partial class MessageWrapperTests
             _publisher,
             [producer1, producer2],
             static (envelope, counter) => envelope
-                .SetKafkaKey($"{counter.Increment()}")
+                .AddHeader("x-id", $"{counter.Increment()}")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             new Counter(),
             cancellationToken);
@@ -165,15 +165,15 @@ public partial class MessageWrapperTests
         capturedEnvelopes1.Length.ShouldBe(3);
         capturedEnvelopes1[0].Message.ShouldBeEquivalentTo(message1);
         capturedEnvelopes1[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes1[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes1[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes1[1].Message.ShouldBeEquivalentTo(message2);
         capturedEnvelopes1[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes1[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes1[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes1[2].Message.ShouldBeNull();
         capturedEnvelopes1[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes1[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes1[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes1[2].Headers["x-topic"].ShouldBe("one");
 
         await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
@@ -181,15 +181,15 @@ public partial class MessageWrapperTests
         capturedEnvelopes2.Length.ShouldBe(3);
         capturedEnvelopes2[0].Message.ShouldBeEquivalentTo(message1);
         capturedEnvelopes2[0].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[0].GetKafkaKey().ShouldBe("4");
+        capturedEnvelopes2[0].Headers["x-id"].ShouldBe("4");
         capturedEnvelopes2[0].Headers["x-topic"].ShouldBe("two");
         capturedEnvelopes2[1].Message.ShouldBeEquivalentTo(message2);
         capturedEnvelopes2[1].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[1].GetKafkaKey().ShouldBe("5");
+        capturedEnvelopes2[1].Headers["x-id"].ShouldBe("5");
         capturedEnvelopes2[1].Headers["x-topic"].ShouldBe("two");
         capturedEnvelopes2[2].Message.ShouldBeNull();
         capturedEnvelopes2[2].EndpointConfiguration.RawName.ShouldBe("two");
-        capturedEnvelopes2[2].GetKafkaKey().ShouldBe("6");
+        capturedEnvelopes2[2].Headers["x-id"].ShouldBe("6");
         capturedEnvelopes2[2].Headers["x-topic"].ShouldBe("two");
     }
 

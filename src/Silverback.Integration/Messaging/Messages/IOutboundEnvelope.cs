@@ -37,6 +37,21 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ISilverbackContext? Context { get; }
 
     /// <summary>
+    ///     Gets the resolved endpoint. This is used only when the endpoint is resolved dynamically.
+    /// </summary>
+    string? ResolvedEndpoint { get; }
+
+    /// <summary>
+    ///     Gets the destination endpoint for the specific message.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint.
+    /// </returns>
+    ProducerEndpoint GetEndpoint();
+
+    IOutboundEnvelope SetRawMessage(Stream? rawMessage);
+
+    /// <summary>
     ///     Adds a new header.
     /// </summary>
     /// <param name="name">
@@ -48,7 +63,7 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     /// <returns>
     ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IOutboundEnvelope AddHeader(string name, object value);
+    IOutboundEnvelope AddHeader(string name, object? value);
 
     /// <summary>
     ///     Adds a new header or replaces the header with the same name.
@@ -77,14 +92,6 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
     IOutboundEnvelope AddHeaderIfNotExists(string name, object? newValue);
-
-    /// <summary>
-    ///     Gets the destination endpoint for the specific message.
-    /// </summary>
-    /// <returns>
-    ///     The endpoint.
-    /// </returns>
-    ProducerEndpoint GetEndpoint();
 
     /// <summary>
     ///     Clones the envelope and replaces the raw message with the specified one.

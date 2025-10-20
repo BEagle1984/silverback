@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking;
 
 /// <summary>
-///     Creates the chunks sequence according to the <see cref="ChunkSettings" />.
+///     Creates the chunk sequence according to the <see cref="ChunkSettings" />.
 /// </summary>
 public class ChunkSequenceWriter : ISequenceWriter
 {
@@ -52,7 +52,7 @@ public class ChunkSequenceWriter : ISequenceWriter
         if (!envelope.RawMessage.CanSeek)
             return true;
 
-        return envelope.RawMessage != null && envelope.RawMessage.Length > chunkSettings.Size;
+        return envelope.RawMessage.Length > chunkSettings.Size;
     }
 
     /// <inheritdoc cref="ISequenceWriter.ProcessMessageAsync" />
@@ -63,11 +63,8 @@ public class ChunkSequenceWriter : ISequenceWriter
         if (envelope.RawMessage == null)
             throw new InvalidOperationException("RawMessage is null");
 
-        // Ensure that chunk message id and message key (as kafka key) are set to ensure that the chunks can be correlated and will land on
-        // the same Kafka partition
         string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId) ?? Guid.NewGuid().ToString("N");
         envelope.AddHeaderIfNotExists(DefaultMessageHeaders.ChunkMessageId, messageId);
-        envelope.AddHeaderIfNotExists(DefaultMessageHeaders.MessageKey, messageId);
 
         ChunkSettings? settings = envelope.EndpointConfiguration.Chunk;
         int chunkSize = settings?.Size ?? int.MaxValue;

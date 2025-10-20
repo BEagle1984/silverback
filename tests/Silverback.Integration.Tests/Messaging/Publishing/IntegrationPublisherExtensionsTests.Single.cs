@@ -93,7 +93,7 @@ public partial class IntegrationPublisherExtensionsTests
         await _publisher.WrapAndPublishAsync(
             message,
             static envelope => envelope
-                .SetKafkaKey("key")
+                .AddHeader("x-id", "key")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             cancellationToken: cancellationToken);
 
@@ -101,14 +101,14 @@ public partial class IntegrationPublisherExtensionsTests
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.EndpointConfiguration.RawName == "one" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.EndpointConfiguration.RawName == "two" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             cancellationToken);
     }
@@ -122,21 +122,21 @@ public partial class IntegrationPublisherExtensionsTests
         await _publisher.WrapAndPublishAsync<TestEventOne>(
             null,
             static envelope => envelope
-                .SetKafkaKey("key")
+                .AddHeader("x-id", "key")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName));
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.EndpointConfiguration.RawName == "one" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.EndpointConfiguration.RawName == "two" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             CancellationToken.None);
     }
@@ -152,7 +152,7 @@ public partial class IntegrationPublisherExtensionsTests
         await _publisher.WrapAndPublishAsync(
             message,
             static (envelope, key) => envelope
-                .SetKafkaKey(key)
+                .AddHeader("x-id", key)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             "key",
             cancellationToken: cancellationToken);
@@ -161,14 +161,14 @@ public partial class IntegrationPublisherExtensionsTests
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.EndpointConfiguration.RawName == "one" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.EndpointConfiguration.RawName == "two" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             cancellationToken);
     }
@@ -182,7 +182,7 @@ public partial class IntegrationPublisherExtensionsTests
         await _publisher.WrapAndPublishAsync(
             (TestEventOne?)null,
             static (envelope, key) => envelope
-                .SetKafkaKey(key)
+                .AddHeader("x-id", key)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             "key");
 
@@ -190,14 +190,14 @@ public partial class IntegrationPublisherExtensionsTests
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.EndpointConfiguration.RawName == "one" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "one"),
             CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.EndpointConfiguration.RawName == "two" &&
-                    envelope.GetKafkaKey() == "key" &&
+                    envelope.Headers["x-id"] == "key" &&
                     envelope.Headers["x-topic"] == "two"),
             CancellationToken.None);
     }

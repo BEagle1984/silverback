@@ -21,6 +21,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
+// TODO: Test with multiple partitions
 public partial class ChunkingTests
 {
     [Fact]
@@ -179,13 +180,13 @@ public partial class ChunkingTests
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 0, typeof(TestEventOne)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 1, false, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 1, false, typeof(TestEventOne)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 2, true, typeof(TestEventOne)));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -226,13 +227,13 @@ public partial class ChunkingTests
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
             await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+                envelope => envelope.SetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -273,35 +274,35 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("2", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage1.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+            envelope => envelope.SetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

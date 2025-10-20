@@ -50,19 +50,13 @@ public class RetryErrorPolicyTests
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
-        MemoryStream rawMessage = new();
-        MessageHeader[] headers =
-        [
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        ];
-
         TestInboundEnvelope<object> envelope = new(
             null,
-            rawMessage,
-            headers,
+            Stream.Null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
+        envelope.Headers.Add(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture));
 
         bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -80,19 +74,13 @@ public class RetryErrorPolicyTests
     {
         IErrorPolicyImplementation policy = new RetryErrorPolicy().Build(_serviceProvider);
 
-        MemoryStream rawMessage = new();
-        MessageHeader[] headers =
-        [
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        ];
-
         TestInboundEnvelope<object> envelope = new(
             null,
-            rawMessage,
-            headers,
+            Stream.Null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
+        envelope.Headers.Add(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture));
 
         bool canHandle = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -113,7 +101,6 @@ public class RetryErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -136,7 +123,6 @@ public class RetryErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
 
@@ -17,14 +16,12 @@ internal class KafkaInboundEnvelopeFactory<TKey> : InboundEnvelopeFactory
     public override IInboundEnvelope<TMessage> Create<TMessage>(
         TMessage? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier)
         where TMessage : class =>
         new KafkaInboundEnvelope<TMessage, TKey>(
             message,
             rawMessage,
-            headers,
             endpoint,
             Consumer,
             brokerMessageIdentifier);

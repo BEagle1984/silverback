@@ -36,7 +36,6 @@ public class ConsumerNameFilterAttributeTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Stream.Null,
-            [],
             new KafkaConsumerEndpoint(
                 "my-topic",
                 1,

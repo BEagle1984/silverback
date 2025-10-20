@@ -2,12 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -15,7 +12,6 @@ using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
@@ -52,7 +48,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -72,7 +67,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -92,7 +86,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -121,13 +114,10 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProduced_ShouldLogEnvelope()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            new TestProducerEndpointConfiguration("test1"),
-            Substitute.For<IProducer>(),
-            null,
-            new TestOffset("a", "42"));
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test1"));
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, producer);
+        envelope.SetBrokerMessageIdentifier(new TestOffset("a", "42"));
 
         _silverbackLogger.LogProduced(envelope);
 
@@ -155,11 +145,9 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogProduceError_ShouldLogEnvelope()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            new TestProducerEndpointConfiguration("test1"),
-            Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test1"));
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, producer);
 
         _silverbackLogger.LogProduceError(envelope, new InvalidDataException());
 
@@ -187,11 +175,9 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogOutboundMessageFiltered_ShouldLog()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            new TestProducerEndpointConfiguration("test1"),
-            Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test1"));
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, producer);
 
         _silverbackLogger.LogOutboundMessageFiltered(envelope);
 
@@ -208,7 +194,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -480,7 +465,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -500,7 +484,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -521,7 +504,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -541,7 +523,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -561,7 +542,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -581,7 +561,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -598,11 +577,9 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogStoringIntoOutbox_ShouldLog()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            new TestProducerEndpointConfiguration("test1"),
-            Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test1"));
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, producer);
 
         _silverbackLogger.LogStoringIntoOutbox(envelope);
 
@@ -670,11 +647,9 @@ public class IntegrationLoggerExtensionsTests
     [Fact]
     public void LogInvalidMessageProduced_ShouldLog()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            new TestProducerEndpointConfiguration("test1"),
-            Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test1"));
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, producer);
 
         _silverbackLogger.LogInvalidMessageProduced(envelope, "[error messages]");
 
@@ -691,7 +666,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -797,7 +771,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -817,7 +790,6 @@ public class IntegrationLoggerExtensionsTests
         TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
@@ -833,106 +805,5 @@ public class IntegrationLoggerExtensionsTests
             typeof(InvalidComObjectException),
             "Message A 42 True | EndpointName: test, BrokerMessageId: 42",
             1999);
-    }
-
-    private class TestClient : IBrokerClient
-    {
-        public string Name => "client1-name";
-
-        public string DisplayName => "client1";
-
-        public AsyncEvent<BrokerClient> Initializing { get; } = new();
-
-        public AsyncEvent<BrokerClient> Initialized { get; } = new();
-
-        public AsyncEvent<BrokerClient> Disconnecting { get; } = new();
-
-        public AsyncEvent<BrokerClient> Disconnected { get; } = new();
-
-        public ClientStatus Status => ClientStatus.Initializing;
-
-        public void Dispose() => throw new NotSupportedException();
-
-        public ValueTask DisposeAsync() => throw new NotSupportedException();
-
-        public ValueTask ConnectAsync() => throw new NotSupportedException();
-
-        public ValueTask DisconnectAsync() => throw new NotSupportedException();
-
-        public ValueTask ReconnectAsync() => throw new NotSupportedException();
-    }
-
-    private class TestConsumer : IConsumer
-    {
-        public string Name => "consumer1-name";
-
-        public string DisplayName => "consumer1";
-
-        public IBrokerClient Client { get; } = new TestClient();
-
-        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = [];
-
-        public IInboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
-
-        public IConsumerStatusInfo StatusInfo { get; } = new ConsumerStatusInfo();
-
-        public ValueTask TriggerReconnectAsync() => throw new NotSupportedException();
-
-        public ValueTask StartAsync() => throw new NotSupportedException();
-
-        public ValueTask StopAsync(bool waitUntilStopped = true) => throw new NotSupportedException();
-
-        public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
-
-        public ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
-
-        public ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
-
-        public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
-
-        public int IncrementFailedAttempts(IInboundEnvelope envelope) => throw new NotSupportedException();
-    }
-
-    private class TestProducer : IProducer
-    {
-        public string Name => "producer1-name";
-
-        public string DisplayName => "producer1";
-
-        public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
-
-        public IOutboundEnvelopeFactory EnvelopeFactory => throw new NotSupportedException();
-
-        public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
-        public IBrokerMessageIdentifier Produce(IOutboundEnvelope envelope) => throw new NotSupportedException();
-
-        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void Produce<TState>(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
-
-        public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void Produce<TState>(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
-
-        public IBrokerMessageIdentifier RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
-        public IBrokerMessageIdentifier RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
-        public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void RawProduce<TState>(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
-
-        public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public void RawProduce<TState>(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) => throw new NotSupportedException();
-
-        public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-
-        public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-
-        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-
-        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 }

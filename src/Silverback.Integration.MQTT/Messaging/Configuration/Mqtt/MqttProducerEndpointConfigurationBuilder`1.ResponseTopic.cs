@@ -23,7 +23,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic(string? responseTopic) =>
-        AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessage>(responseTopic));
+        AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessage>(responseTopic));
 
     /// <summary>
     ///     Sets the specified response topic to all produced messages of the specified child type.
@@ -39,7 +39,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerEndpointConfigurationBuilder<TMessage> SetResponseTopic<TMessageChildType>(string responseTopic)
         where TMessageChildType : TMessage =>
-        AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessageChildType>(responseTopic));
+        AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessageChildType>(responseTopic));
 
     /// <summary>
     ///     Sets the response topic to all produced messages, using a provider function to determine the response topic for each message.
@@ -54,7 +54,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
 
-        return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessage>(responseTopicProvider));
+        return AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessage>(responseTopicProvider));
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
 
-        return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessageChildType>(responseTopicProvider));
+        return AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessageChildType>(responseTopicProvider));
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
 
-        return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessage>(responseTopicProvider));
+        return AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessage>(responseTopicProvider));
     }
 
     /// <summary>
@@ -112,6 +112,6 @@ public partial class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
 
-        return AddMessageEnricher(new ResponseTopicOutboundHeadersEnricher<TMessageChildType>(responseTopicProvider));
+        return AddMessageEnricher(new ResponseTopicOutboundMessageEnricher<TMessageChildType>(responseTopicProvider));
     }
 }

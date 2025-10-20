@@ -29,7 +29,7 @@ public class ActivityProducerBehaviorTests
         Activity activity = new("test");
         activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
         activity.Start();
-        TestOutboundEnvelope<object> envelope = new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<object> envelope = new((object?)null, new TestProducer());
 
         await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
             new ProducerPipelineContext(
@@ -41,17 +41,16 @@ public class ActivityProducerBehaviorTests
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(
-            header =>
-                header.Name == DefaultMessageHeaders.TraceId &&
-                header.Value != null &&
-                header.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c", StringComparison.Ordinal));
+        envelope.Headers.ShouldContain(header =>
+            header.Name == DefaultMessageHeaders.TraceId &&
+            header.Value != null &&
+            header.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c", StringComparison.Ordinal));
     }
 
     [Fact]
     public async Task HandleAsync_ShouldNotAddTraceIdHeader_WhenNoActivity()
     {
-        TestOutboundEnvelope<object> envelope = new(null, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<object> envelope = new((object?)null, new TestProducer());
 
         await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
             new ProducerPipelineContext(

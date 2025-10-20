@@ -34,7 +34,5 @@ public sealed record TestProducerEndpointConfiguration : ProducerEndpointConfigu
         (TestProducerEndpoint)EndpointResolver.GetEndpoint(
             new TestOutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
-                null,
-                this,
-                Substitute.For<IProducer>()));
+                new TestProducer()));
 }

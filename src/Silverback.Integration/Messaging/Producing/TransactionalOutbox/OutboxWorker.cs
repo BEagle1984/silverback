@@ -128,10 +128,14 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
             producer.RawProduce(
                 outboxMessage.Content,
-                outboxMessage.Headers,
                 OnProduceSuccess,
                 OnProduceError,
-                outboxMessage);
+                outboxMessage,
+                envelope =>
+                {
+                    if (outboxMessage.Headers != null)
+                        envelope.Headers.AddRange(outboxMessage.Headers);
+                });
         }
         catch (Exception ex)
         {

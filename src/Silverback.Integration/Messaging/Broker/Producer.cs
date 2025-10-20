@@ -80,11 +80,14 @@ public abstract class Producer : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.EnvelopeFactory" />
     public abstract IOutboundEnvelopeFactory EnvelopeFactory { get; }
 
-    /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
-    public IBrokerMessageIdentifier? Produce(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers = null) =>
-        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration));
+    /// <inheritdoc cref="IProducer.Produce{TMessage}(TMessage,Action{IOutboundEnvelope{TMessage}})" />
+    public IBrokerMessageIdentifier? Produce<TMessage>(TMessage? message, Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        IOutboundEnvelope<TMessage> envelope = EnvelopeFactory.Create(message);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return Produce((IOutboundEnvelope)envelope);
+    }
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
@@ -120,22 +123,32 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    public void Produce(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
+    /// <inheritdoc cref="IProducer.Produce{TMessage}(TMessage,Action{IBrokerMessageIdentifier},Action{Exception},Action{IOutboundEnvelope{TMessage}})" />
+    public void Produce<TMessage>(
+        TMessage? message,
         Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration), onSuccess, onError);
+        Action<Exception> onError,
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        IOutboundEnvelope<TMessage> envelope = EnvelopeFactory.Create(message);
+        envelopeConfigurationAction?.Invoke(envelope);
+        Produce((IOutboundEnvelope)envelope, onSuccess, onError);
+    }
 
-    /// <inheritdoc cref="IProducer.Produce{TState}(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
-    public void Produce<TState>(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
+    /// <inheritdoc cref="IProducer.Produce{TMessage,TState}(TMessage,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState,Action{IOutboundEnvelope{TMessage}})" />
+    public void Produce<TMessage, TState>(
+        TMessage? message,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
-        TState state) =>
-        Produce(EnvelopeFactory.Create(message, headers, EndpointConfiguration), onSuccess, onError, state);
+        TState state,
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        IOutboundEnvelope<TMessage> envelope = EnvelopeFactory.Create(message);
+        envelopeConfigurationAction?.Invoke(envelope);
+        Produce((IOutboundEnvelope)envelope, onSuccess, onError, state);
+    }
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
@@ -201,12 +214,27 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public IBrokerMessageIdentifier? RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
+    /// <inheritdoc cref="IProducer.RawProduce(byte[],Action{IOutboundEnvelope})" />
+    public IBrokerMessageIdentifier? RawProduce(byte[]? messageContent, Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return RawProduce(envelope);
+    }
+
+    /// <inheritdoc cref="IProducer.RawProduce(Stream?,Action{IOutboundEnvelope})" />
+    public IBrokerMessageIdentifier? RawProduce(Stream? messageStream, Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return RawProduce(envelope);
+    }
+
+    /// <inheritdoc cref="IProducer.RawProduce(IOutboundEnvelope)" />
+    public IBrokerMessageIdentifier? RawProduce(IOutboundEnvelope envelope)
     {
         try
         {
-            IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
@@ -220,65 +248,117 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public IBrokerMessageIdentifier? RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
+    /// <inheritdoc cref="IProducer.RawProduce(byte[],Action{IBrokerMessageIdentifier},Action{Exception},Action{IOutboundEnvelope})" />
+    public void RawProduce(
+        byte[]? messageContent,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
     {
-        try
-        {
-            IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration);
-            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
-
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent);
+        envelopeConfigurationAction?.Invoke(envelope);
+        RawProduce(envelope, onSuccess, onError);
     }
 
-    /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    public void RawProduce(
-        byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        RawProduce(EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration), onSuccess, onError);
-
-    /// <inheritdoc cref="IProducer.RawProduce{TState}(byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
-    public void RawProduce<TState>(
-        byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?, TState> onSuccess,
-        Action<Exception, TState> onError,
-        TState state) =>
-        RawProduce(EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration), onSuccess, onError, state);
-
-    /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="IProducer.RawProduce(Stream?,Action{IBrokerMessageIdentifier},Action{Exception},Action{IOutboundEnvelope})" />
     public void RawProduce(
         Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        RawProduce(EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration), onSuccess, onError);
+        Action<Exception> onError,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream);
+        envelopeConfigurationAction?.Invoke(envelope);
+        RawProduce(envelope, onSuccess, onError);
+    }
 
-    /// <inheritdoc cref="IProducer.RawProduce{TState}(Stream?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(byte[],Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState,Action{IOutboundEnvelope})" />
     public void RawProduce<TState>(
-        Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers,
+        byte[]? messageContent,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
-        TState state) =>
-        RawProduce(EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration), onSuccess, onError, state);
+        TState state,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent);
+        envelopeConfigurationAction?.Invoke(envelope);
+        RawProduce(envelope, onSuccess, onError, state);
+    }
 
-    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(Stream?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState,Action{IOutboundEnvelope})" />
+    public void RawProduce<TState>(
+        Stream? messageStream,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream);
+        envelopeConfigurationAction?.Invoke(envelope);
+        RawProduce(envelope, onSuccess, onError, state);
+    }
+
+    /// <inheritdoc cref="IProducer.RawProduce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    public void RawProduce(
+        IOutboundEnvelope envelope,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(onSuccess, nameof(onSuccess));
+        Check.NotNull(onError, nameof(onError));
+
+        ProduceCore(
+            envelope,
+            static (identifier, state) =>
+            {
+                state.Logger.LogProduced(state.EndpointConfiguration, identifier);
+                state.OnSuccess.Invoke(identifier);
+            },
+            static (exception, state) =>
+            {
+                state.Logger.LogProduceError(state.EndpointConfiguration, exception);
+                state.OnError.Invoke(exception);
+            },
+            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, Logger: _logger));
+    }
+
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    public void RawProduce<TState>(
+        IOutboundEnvelope envelope,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+        Check.NotNull(onSuccess, nameof(onSuccess));
+        Check.NotNull(onError, nameof(onError));
+
+        ProduceCore(
+            envelope,
+            static (identifier, innerState) =>
+            {
+                innerState.Logger.LogProduced(innerState.EndpointConfiguration, identifier);
+                innerState.OnSuccess.Invoke(identifier, innerState.State);
+            },
+            static (exception, innerState) =>
+            {
+                innerState.Logger.LogProduceError(innerState.EndpointConfiguration, exception);
+                innerState.OnError.Invoke(exception, innerState.State);
+            },
+            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, envelope.Headers, State: state, Logger: _logger));
+    }
+
+    /// <inheritdoc cref="IProducer.ProduceAsync(object?,Action{IOutboundEnvelope},CancellationToken)" />
     public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
-        IReadOnlyCollection<MessageHeader>? headers = null,
-        CancellationToken cancellationToken = default) =>
-        ProduceAsync(EnvelopeFactory.Create(message, headers, EndpointConfiguration), cancellationToken);
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(message);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return ProduceAsync(envelope, cancellationToken);
+    }
 
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
@@ -312,40 +392,34 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
-    public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],Action{IOutboundEnvelope},CancellationToken)" />
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers = null,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                EnvelopeFactory.Create(messageContent, headers, EndpointConfiguration),
-                cancellationToken).ConfigureAwait(false);
-
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
-
-            return brokerMessageIdentifier;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogProduceError(EndpointConfiguration, ex);
-            throw;
-        }
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageContent);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return RawProduceAsync(envelope, cancellationToken);
     }
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
-    public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,Action{IOutboundEnvelope},CancellationToken)" />
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null,
+        Action<IOutboundEnvelope>? envelopeConfigurationAction = null,
         CancellationToken cancellationToken = default)
+    {
+        IOutboundEnvelope envelope = EnvelopeFactory.Create(messageStream);
+        envelopeConfigurationAction?.Invoke(envelope);
+        return RawProduceAsync(envelope, cancellationToken);
+    }
+
+    /// <inheritdoc cref="IProducer.RawProduceAsync(IOutboundEnvelope,CancellationToken)" />
+    public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                EnvelopeFactory.Create(messageStream, headers, EndpointConfiguration),
-                cancellationToken).ConfigureAwait(false);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
 
             _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
 
@@ -449,41 +523,4 @@ public abstract class Producer : IProducer, IDisposable
             },
             cancellationToken);
     }
-
-    private void RawProduce(
-        IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceCore(
-            envelope,
-            static (identifier, state) =>
-            {
-                state.Logger.LogProduced(state.EndpointConfiguration, identifier);
-                state.OnSuccess.Invoke(identifier);
-            },
-            static (exception, state) =>
-            {
-                state.Logger.LogProduceError(state.EndpointConfiguration, exception);
-                state.OnError.Invoke(exception);
-            },
-            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, Logger: _logger));
-
-    private void RawProduce<TState>(
-        IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?, TState> onSuccess,
-        Action<Exception, TState> onError,
-        TState state) =>
-        ProduceCore(
-            envelope,
-            static (identifier, innerState) =>
-            {
-                innerState.Logger.LogProduced(innerState.EndpointConfiguration, identifier);
-                innerState.OnSuccess.Invoke(identifier, innerState.State);
-            },
-            static (exception, innerState) =>
-            {
-                innerState.Logger.LogProduceError(innerState.EndpointConfiguration, exception);
-                innerState.OnError.Invoke(exception, innerState.State);
-            },
-            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, envelope.Headers, State: state, Logger: _logger));
 }

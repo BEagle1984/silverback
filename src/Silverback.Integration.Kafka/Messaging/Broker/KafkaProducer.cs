@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -100,7 +99,7 @@ public sealed class KafkaProducer : Producer
 
         Message<byte[]?, byte[]?> kafkaMessage = new()
         {
-            Key = GetKafkaKey(envelope),
+            Key = envelope.AsKafkaEnvelope().RawKey,
             Value = envelope.RawMessage.ReadAll()
         };
 
@@ -142,7 +141,7 @@ public sealed class KafkaProducer : Producer
 
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {
-                Key = GetKafkaKey(envelope),
+                Key = envelope.AsKafkaEnvelope().RawKey,
                 Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
             };
 
@@ -165,11 +164,6 @@ public sealed class KafkaProducer : Producer
             throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
         }
     }
-
-    private static byte[]? GetKafkaKey(IOutboundEnvelope envelope) =>
-        envelope.Headers.TryGetValue(KafkaMessageHeaders.MessageKey, out string? kafkaKey) && kafkaKey != null
-            ? Encoding.UTF8.GetBytes(kafkaKey)
-            : null;
 
     private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)
     {

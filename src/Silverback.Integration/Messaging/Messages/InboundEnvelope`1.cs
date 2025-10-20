@@ -15,11 +15,10 @@ internal abstract record InboundEnvelope<TMessage> : InboundEnvelope, IInboundEn
     protected InboundEnvelope(
         TMessage? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
+         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(message, rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
+        : base(message, rawMessage, endpoint, consumer, brokerMessageIdentifier)
     {
         Message = message;
     }

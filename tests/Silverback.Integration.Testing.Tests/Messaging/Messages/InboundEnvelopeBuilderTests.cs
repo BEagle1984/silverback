@@ -201,8 +201,15 @@ public class InboundEnvelopeBuilderTests
             MessageHeaderCollection? headers,
             ConsumerEndpoint endpoint,
             IConsumer consumer,
-            IBrokerMessageIdentifier? identifier) =>
-            new(message, rawMessage, headers, endpoint, consumer, identifier ?? new TestBrokerMessageIdentifier());
+            IBrokerMessageIdentifier? identifier)
+        {
+            TestInboundEnvelope<TMessage> envelope = new(message, rawMessage, endpoint, consumer, identifier ?? new TestBrokerMessageIdentifier());
+
+            if (headers != null)
+                envelope.Headers.AddRange(headers);
+
+            return envelope;
+        }
     }
 
     private sealed class TestBrokerMessageIdentifier : IBrokerMessageIdentifier

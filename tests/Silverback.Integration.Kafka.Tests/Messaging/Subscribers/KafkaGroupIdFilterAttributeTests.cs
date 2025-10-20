@@ -36,7 +36,6 @@ public class KafkaGroupIdFilterAttributeTests
         KafkaInboundEnvelope<object, string> envelope = new(
             null,
             new MemoryStream(),
-            [],
             new KafkaConsumerEndpoint(
                 "my-topic",
                 1,
@@ -84,7 +83,6 @@ public class KafkaGroupIdFilterAttributeTests
         KafkaInboundEnvelope<object, string> envelope = new(
             null,
             new MemoryStream(),
-            [],
             new KafkaConsumerEndpoint(
                 "my-topic",
                 1,

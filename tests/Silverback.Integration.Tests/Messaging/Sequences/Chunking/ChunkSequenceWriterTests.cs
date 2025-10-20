@@ -23,17 +23,16 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
-        TestOutboundEnvelope<byte[]> envelope = new(
-            rawMessage,
-            null,
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
             new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 3
                 }
-            },
-            Substitute.For<IProducer>());
+            });
+        TestOutboundEnvelope<byte[]> envelope = new(rawMessage, producer);
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
@@ -48,9 +47,8 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(8);
-        TestOutboundEnvelope<byte[]> envelope = new(
-            rawMessage,
-            null,
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
             new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
@@ -58,8 +56,8 @@ public class ChunkSequenceWriterTests
                     Size = 10,
                     AlwaysAddHeaders = alwaysAddHeaders
                 }
-            },
-            Substitute.For<IProducer>());
+            });
+        TestOutboundEnvelope<byte[]> envelope = new(rawMessage, producer);
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
@@ -72,11 +70,9 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
-        TestOutboundEnvelope<byte[]> envelope = new(
-            rawMessage,
-            null,
-            new TestProducerEndpointConfiguration("test"),
-            Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
+        TestOutboundEnvelope<byte[]> envelope = new(rawMessage, producer);
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
@@ -89,22 +85,18 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
-        TestOutboundEnvelope<byte[]> sourceEnvelope = new(
-            rawMessage,
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
-                { "some-custom-header", "abc" }
-            },
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
             new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 3
                 }
-            },
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
+            });
+        TestOutboundEnvelope<byte[]> sourceEnvelope = new(rawMessage, producer);
+        sourceEnvelope.AddHeader(DefaultMessageHeaders.ChunkMessageId, "123");
+        sourceEnvelope.AddHeader("some-custom-header", "abc");
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
@@ -114,25 +106,21 @@ public class ChunkSequenceWriterTests
         sourceEnvelope.Headers.ForEach(sourceHeader => envelopes.ForEach(envelope => envelope.Headers.ShouldContain(sourceHeader)));
         envelopes[0].RawMessage.ReadAll().ShouldBe(rawMessage[..3]);
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, "123"));
-        envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, "123"));
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[0].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[1].RawMessage.ReadAll().ShouldBe(rawMessage[3..6]);
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, "123"));
-        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, "123"));
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[1].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[2].RawMessage.ReadAll().ShouldBe(rawMessage[6..9]);
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, "123"));
-        envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, "123"));
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[2].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[3].RawMessage.ReadAll().ShouldBe(rawMessage[9..10]);
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, "123"));
-        envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, "123"));
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[3].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
@@ -143,21 +131,17 @@ public class ChunkSequenceWriterTests
     {
         ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
-        TestOutboundEnvelope<byte[]> sourceEnvelope = new(
-            rawMessage,
-            new MessageHeaderCollection
-            {
-                { "some-custom-header", "abc" }
-            },
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
             new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 3
                 }
-            },
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
+            });
+        TestOutboundEnvelope<byte[]> sourceEnvelope = new(rawMessage, producer);
+        sourceEnvelope.AddHeader("some-custom-header", "abc");
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
@@ -171,25 +155,21 @@ public class ChunkSequenceWriterTests
 
         envelopes[0].RawMessage.ReadAll().ShouldBe(rawMessage[..3]);
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId));
-        envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, chunkMessageId));
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
         envelopes[0].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[0].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[1].RawMessage.ReadAll().ShouldBe(rawMessage[3..6]);
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId));
-        envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, chunkMessageId));
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
         envelopes[1].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[1].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[2].RawMessage.ReadAll().ShouldBe(rawMessage[6..9]);
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId));
-        envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, chunkMessageId));
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
         envelopes[2].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[2].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));
         envelopes[3].RawMessage.ReadAll().ShouldBe(rawMessage[9..10]);
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId));
-        envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.MessageKey, chunkMessageId));
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
         envelopes[3].Headers.ShouldContain(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
         envelopes[3].Headers.ShouldContain(new MessageHeader("some-custom-header", "abc"));

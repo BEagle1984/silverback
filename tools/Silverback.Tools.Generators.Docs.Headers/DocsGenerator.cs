@@ -16,7 +16,7 @@ internal static class DocsGenerator
 
         foreach (FieldInfo fieldInfo in headersType.GetFields(BindingFlags.Public | BindingFlags.Static))
         {
-            if (fieldInfo.GetValue(null) is not string key || key.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix))
+            if (fieldInfo.GetValue(null) is not string key)
                 continue;
 
             string apiReferenceLink =

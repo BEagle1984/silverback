@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization;
@@ -22,12 +23,15 @@ public class SerializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        context.Envelope.RawMessage ??=
-            await context.Envelope.EndpointConfiguration.Serializer.SerializeAsync(
-                    context.Envelope.Message,
-                    context.Envelope.Headers,
-                    context.Envelope.GetEndpoint())
-                .ConfigureAwait(false);
+        if (context.Envelope.RawMessage == null && context.Envelope.Message is not ITombstone)
+        {
+            context.Envelope.SetRawMessage(
+                await context.Envelope.EndpointConfiguration.Serializer.SerializeAsync(
+                        context.Envelope.Message,
+                        context.Envelope.Headers,
+                        context.Envelope.GetEndpoint())
+                    .ConfigureAwait(false));
+        }
 
         await next(context, cancellationToken).ConfigureAwait(false);
     }

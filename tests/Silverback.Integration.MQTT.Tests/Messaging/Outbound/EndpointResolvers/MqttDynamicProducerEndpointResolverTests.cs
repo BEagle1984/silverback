@@ -18,8 +18,6 @@ public class MqttDynamicProducerEndpointResolverTests
 {
     private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
         new TestEventOne(),
-        null,
-        new MqttProducerEndpointConfiguration(),
         Substitute.For<IProducer>());
 
     [Fact]
@@ -147,10 +145,9 @@ public class MqttDynamicProducerEndpointResolverTests
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
         IOutboundEnvelope envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
-            null,
-            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, "serialized")],
-            new MqttProducerEndpointConfiguration(),
+            (TestEventOne?)null,
             Substitute.For<IProducer>());
+        ((IInternalOutboundEnvelope)envelope).SetResolvedEndpoint("serialized");
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
 

@@ -12,24 +12,18 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
+// TODO: Test this and inheritors
 internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
 {
-    private readonly MethodInfo _createMethod;
-
     private readonly MethodInfo _cloneReplacingEnvelopeMethod;
 
-    private readonly ConcurrentDictionary<Type, MethodInfo> _createMethodsCache = new();
-
-    private readonly ConcurrentDictionary<Type, MethodInfo> _cloneReplacingEnvelopeMethodCache = new();
+    private readonly ConcurrentDictionary<Type, MethodInfo> _cloneReplacingMessageMethodCache = new();
 
     protected InboundEnvelopeFactory(IConsumer consumer)
     {
         Consumer = Check.NotNull(consumer, nameof(consumer));
 
         MethodInfo[] methods = GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-        _createMethod =
-            methods.FirstOrDefault(methodInfo => methodInfo is { Name: nameof(Create), IsGenericMethod: true }) ??
-            throw new InvalidOperationException($"{nameof(Create)} method not found.");
         _cloneReplacingEnvelopeMethod =
             methods.FirstOrDefault(methodInfo => methodInfo is { Name: nameof(CloneReplacingMessage), IsGenericMethod: true }) ??
             throw new InvalidOperationException($"{nameof(CloneReplacingMessage)} method not found.");
@@ -37,28 +31,19 @@ internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
 
     protected IConsumer Consumer { get; }
 
-    public IInboundEnvelope Create(
-        object? message,
-        Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ConsumerEndpoint endpoint,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
+    public IInboundEnvelope Create(Stream? rawMessage, ConsumerEndpoint endpoint, IBrokerMessageIdentifier brokerMessageIdentifier)
     {
         Check.NotNull(endpoint, nameof(endpoint));
         Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        MethodInfo genericMethod = _createMethodsCache.GetOrAdd(
-            message?.GetType() ?? typeof(object),
-            static (type, method) => method.MakeGenericMethod(type),
-            _createMethod);
-
-        return (IInboundEnvelope)genericMethod.Invoke(this, [message, rawMessage, headers, endpoint, brokerMessageIdentifier])!;
+        return Create<object>(null, rawMessage, endpoint, brokerMessageIdentifier);
     }
+
+    public IInboundEnvelope<TMessage> Create<TMessage>(Stream? rawMessage, ConsumerEndpoint endpoint, IBrokerMessageIdentifier brokerMessageIdentifier) where TMessage : class => throw new NotImplementedException();
 
     public abstract IInboundEnvelope<TMessage> Create<TMessage>(
         TMessage? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier)
         where TMessage : class;
@@ -67,7 +52,7 @@ internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
     {
         Check.NotNull(envelope, nameof(envelope));
 
-        MethodInfo genericMethod = _cloneReplacingEnvelopeMethodCache.GetOrAdd(
+        MethodInfo genericMethod = _cloneReplacingMessageMethodCache.GetOrAdd(
             messageType,
             static (type, method) => method.MakeGenericMethod(type),
             _cloneReplacingEnvelopeMethod);

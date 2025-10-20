@@ -35,15 +35,42 @@ public partial class ProducerTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
+        await producer.RawProduceAsync([0x01, 0x01, 0x01, 0x01, 0x01]);
+        await producer.RawProduceAsync([0x02, 0x02, 0x02, 0x02, 0x02]);
+        await producer.RawProduceAsync([0x03, 0x03, 0x03, 0x03, 0x03]);
+
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Count.ShouldBe(3);
+        messages[0].Value.ShouldBe([0x01, 0x01, 0x01, 0x01, 0x01]);
+        messages[1].Value.ShouldBe([0x02, 0x02, 0x02, 0x02, 0x02]);
+        messages[2].Value.ShouldBe([0x03, 0x03, 0x03, 0x03, 0x03]);
+    }
+
+    [Fact]
+    public async Task RawProduceAsync_ShouldProduceByteArrayConfiguringEnvelope()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
         await producer.RawProduceAsync(
             [0x01, 0x01, 0x01, 0x01, 0x01],
-            new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 1").AddHeader("two", "2"));
         await producer.RawProduceAsync(
             [0x02, 0x02, 0x02, 0x02, 0x02],
-            new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 2").AddHeader("two", "2"));
         await producer.RawProduceAsync(
             [0x03, 0x03, 0x03, 0x03, 0x03],
-            new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 3").AddHeader("two", "2"));
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);
@@ -71,15 +98,42 @@ public partial class ProducerTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
+        await producer.RawProduceAsync(new MemoryStream([0x01, 0x01, 0x01, 0x01, 0x01]));
+        await producer.RawProduceAsync(new MemoryStream([0x02, 0x02, 0x02, 0x02, 0x02]));
+        await producer.RawProduceAsync(new MemoryStream([0x03, 0x03, 0x03, 0x03, 0x03]));
+
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Count.ShouldBe(3);
+        messages[0].Value.ShouldBe([0x01, 0x01, 0x01, 0x01, 0x01]);
+        messages[1].Value.ShouldBe([0x02, 0x02, 0x02, 0x02, 0x02]);
+        messages[2].Value.ShouldBe([0x03, 0x03, 0x03, 0x03, 0x03]);
+    }
+
+    [Fact]
+    public async Task RawProduceAsync_ShouldProduceStreamConfiguringEnvelope()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
         await producer.RawProduceAsync(
             new MemoryStream([0x01, 0x01, 0x01, 0x01, 0x01]),
-            new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 1").AddHeader("two", "2"));
         await producer.RawProduceAsync(
             new MemoryStream([0x02, 0x02, 0x02, 0x02, 0x02]),
-            new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 2").AddHeader("two", "2"));
         await producer.RawProduceAsync(
             new MemoryStream([0x03, 0x03, 0x03, 0x03, 0x03]),
-            new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } });
+            envelope => envelope.AddHeader("x-custom", "test 3").AddHeader("two", "2"));
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);
@@ -92,7 +146,43 @@ public partial class ProducerTests
     }
 
     [Fact]
-    public async Task RawProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
+    public async Task RawProduceAsync_ShouldProduceEnvelope()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.RawProduceAsync(
+            producer.EnvelopeFactory.Create(new MemoryStream([0x01, 0x01, 0x01, 0x01, 0x01]))
+                .AddHeader("x-custom", "test 1").AddHeader("two", "2"));
+        await producer.RawProduceAsync(
+            producer.EnvelopeFactory.Create(new MemoryStream([0x02, 0x02, 0x02, 0x02, 0x02]))
+                .AddHeader("x-custom", "test 2").AddHeader("two", "2"));
+        await producer.RawProduceAsync(
+            producer.EnvelopeFactory.Create(new MemoryStream([0x03, 0x03, 0x03, 0x03, 0x03]))
+                .AddHeader("x-custom", "test 3").AddHeader("two", "2"));
+
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Count.ShouldBe(3);
+        messages[0].Value.ShouldBe([0x01, 0x01, 0x01, 0x01, 0x01]);
+        messages[0].Headers.ShouldContain(header => header.Key == "x-custom" && header.GetValueAsString() == "test 1");
+        messages[1].Value.ShouldBe([0x02, 0x02, 0x02, 0x02, 0x02]);
+        messages[1].Headers.ShouldContain(header => header.Key == "x-custom" && header.GetValueAsString() == "test 2");
+        messages[2].Value.ShouldBe([0x03, 0x03, 0x03, 0x03, 0x03]);
+        messages[2].Headers.ShouldContain(header => header.Key == "x-custom" && header.GetValueAsString() == "test 3");
+    }
+
+    [Fact]
+    public async Task RawProduceAsync_ShouldSetKafkaKeyFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -109,18 +199,18 @@ public partial class ProducerTests
 
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "1001" } });
+            envelope => envelope.SetKafkaKey("1001"));
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "2002" } });
+            envelope => envelope.SetKafkaKey("1002"));
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "3003" } });
+            envelope => envelope.SetKafkaKey("1003"));
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);
-        messages[0].Key.ShouldBe(Encoding.UTF8.GetBytes("1001"));
-        messages[1].Key.ShouldBe(Encoding.UTF8.GetBytes("2002"));
-        messages[2].Key.ShouldBe(Encoding.UTF8.GetBytes("3003"));
+        messages[0].Key.ShouldBe("1001"u8.ToArray());
+        messages[1].Key.ShouldBe("2002"u8.ToArray());
+        messages[2].Key.ShouldBe("3003"u8.ToArray());
     }
 }

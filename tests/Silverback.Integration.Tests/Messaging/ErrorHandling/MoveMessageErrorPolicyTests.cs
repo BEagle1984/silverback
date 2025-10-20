@@ -48,7 +48,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -74,7 +73,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             new TestConsumerEndpoint("test", endpointConfiguration),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -96,7 +94,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -122,7 +119,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -139,6 +135,7 @@ public class MoveMessageErrorPolicyTests
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
@@ -147,7 +144,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             message,
             new MemoryStream(BytesUtil.GetRandomBytes()),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -164,6 +160,7 @@ public class MoveMessageErrorPolicyTests
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
@@ -172,7 +169,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<object> inboundEnvelope = new(
             null,
             rawContent.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -191,22 +187,19 @@ public class MoveMessageErrorPolicyTests
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
-        MessageHeaderCollection headers = new()
-        {
-            { "key1", "value1" },
-            { "key2", "value2" }
-        };
         TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             new TestEventOne(),
             BytesUtil.GetRandomStream(),
-            headers,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
+        inboundEnvelope.Headers.Add("key1", "value1");
+        inboundEnvelope.Headers.Add("key2", "value2");
 
         await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
@@ -223,6 +216,7 @@ public class MoveMessageErrorPolicyTests
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        producer.EnvelopeFactory.Returns(new TestOutboundEnvelopeFactory(producer));
         ((ProducerCollection)_serviceProvider.GetRequiredService<IProducerCollection>()).Add(producer);
 
         MoveMessageErrorPolicy policy = new("topic2")
@@ -237,7 +231,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<TestEventOne> inboundEnvelope = new(
             new TestEventOne(),
             BytesUtil.GetRandomStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -262,7 +255,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -285,7 +277,6 @@ public class MoveMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());

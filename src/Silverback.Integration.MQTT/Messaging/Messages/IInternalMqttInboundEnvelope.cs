@@ -6,7 +6,7 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Declares the internal methods of the <see cref="MqttInboundEnvelope{TMessage,TCorrelationData}" /> not meant for public use.
 /// </summary>
-internal interface IInternalMqttInboundEnvelope
+internal interface IInternalMqttInboundEnvelope : IMqttInboundEnvelope
 {
     /// <summary>
     ///     Sets the correlation data.

@@ -8,6 +8,7 @@ using Confluent.Kafka;
 using NSubstitute;
 using Shouldly;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration.Kafka;
@@ -25,23 +26,25 @@ public class KafkaActivityEnricherTests
     {
         KafkaActivityEnricher enricher = new();
 
-        KafkaOffset offset = new(new TopicPartitionOffset("topic", 3, 42));
-        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(identifier: offset);
-        context.Envelope.Headers[KafkaMessageHeaders.MessageKey] = "MessageKey";
+        KafkaInboundEnvelope<object, string> envelope = new(
+            null,
+            null,
+            new KafkaConsumerEndpoint("topic", 1, new KafkaConsumerEndpointConfiguration()),
+            Substitute.For<IConsumer>(),
+            new KafkaOffset(new TopicPartitionOffset("topic", 3, 42)));
+        envelope.SetKey("MessageKey");
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope);
 
         Activity activity = new("Test Activity");
 
         enricher.EnrichInboundActivity(activity, context);
 
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
-                            keyValuePair.Value == "MessageKey");
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
-                            keyValuePair.Value == "topic[3]");
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
-                            keyValuePair.Value == "topic[3]@42");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
+                                                    keyValuePair.Value == "MessageKey");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
+                                                    keyValuePair.Value == "topic[3]");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
+                                                    keyValuePair.Value == "topic[3]@42");
     }
 
     [Fact]
@@ -51,9 +54,8 @@ public class KafkaActivityEnricherTests
 
         KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
             new SingleKeyMemberMessage(),
-            [new MessageHeader(KafkaMessageHeaders.MessageKey, "MyKey")],
-            new KafkaProducerEndpointConfiguration(),
             Substitute.For<IProducer>());
+        envelope.SetKey("MyKey");
 
         ProducerPipelineContext context = new(
             envelope,

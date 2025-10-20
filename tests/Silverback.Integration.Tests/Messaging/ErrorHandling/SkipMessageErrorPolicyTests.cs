@@ -42,7 +42,6 @@ public class SkipMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -61,7 +60,6 @@ public class SkipMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -80,7 +78,6 @@ public class SkipMessageErrorPolicyTests
         TestInboundEnvelope<string> envelope = new(
             "hey oh!",
             "hey oh!"u8.ToStream(),
-            null,
             new TestConsumerEndpointConfiguration("source-endpoint").GetDefaultEndpoint(),
             Substitute.For<IConsumer>(),
             new TestOffset());

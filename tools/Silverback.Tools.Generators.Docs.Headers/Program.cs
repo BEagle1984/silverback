@@ -13,6 +13,3 @@ Console.WriteLine("### Kafka");
 Console.WriteLine();
 DocsGenerator.GenerateDocsTable(typeof(KafkaMessageHeaders));
 Console.WriteLine();
-Console.WriteLine("### MQTT");
-Console.WriteLine();
-DocsGenerator.GenerateDocsTable(typeof(MqttMessageHeaders));

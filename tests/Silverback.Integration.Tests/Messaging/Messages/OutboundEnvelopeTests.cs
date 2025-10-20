@@ -18,7 +18,7 @@ public class OutboundEnvelopeTests
     public void Constructor_ShouldSetRawMessageFromByteArray()
     {
         byte[] message = [1, 2, 3];
-        TestOutboundEnvelope<byte[]> outboundEnvelope = new(message, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<byte[]> outboundEnvelope = new(message, Substitute.For<IProducer>());
 
         outboundEnvelope.Message.ShouldBeSameAs(message);
         ((MemoryStream)outboundEnvelope.RawMessage!).ToArray().ShouldBe(message);
@@ -28,7 +28,7 @@ public class OutboundEnvelopeTests
     public void Constructor_ShouldSetRawMessageFromStream()
     {
         MemoryStream stream = new([1, 2, 3]);
-        TestOutboundEnvelope<Stream> outboundEnvelope = new(stream, null, TestProducerEndpointConfiguration.GetDefault(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<Stream> outboundEnvelope = new(stream, Substitute.For<IProducer>());
 
         outboundEnvelope.Message.ShouldBeSameAs(stream);
         outboundEnvelope.RawMessage.ShouldBeSameAs(stream);
@@ -37,11 +37,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void MessageType_ShouldReturnType_WhenMessageIsNotNull()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
 
         envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
@@ -49,11 +45,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void MessageType_ShouldReturnType_WhenMessageIsNull()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.MessageType.ShouldBe(typeof(TestEventOne));
     }
@@ -61,14 +53,11 @@ public class OutboundEnvelopeTests
     [Fact]
     public void CloneReplacingRawMessage_ShouldClone()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne { Content = "old" },
-            [new MessageHeader("x-header-1", "one"), new MessageHeader("x-header-2", "two")],
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>())
-        {
-            RawMessage = new MemoryStream()
-        };
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne { Content = "old" }, Substitute.For<IProducer>());
+        envelope.AddHeader("x-header-1", "one");
+        envelope.AddHeader("x-header-2", "two");
+
+        envelope.SetRawMessage(new MemoryStream());
 
         IOutboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
 
@@ -86,14 +75,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>())
-        {
-            RawMessage = null
-        };
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.IsTombstone.ShouldBeTrue();
     }
@@ -103,12 +85,7 @@ public class OutboundEnvelopeTests
     {
         TestOutboundEnvelope<Tombstone<TestEventOne>> envelope = new(
             new Tombstone<TestEventOne>("key"),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>())
-        {
-            RawMessage = new MemoryStream()
-        };
+            Substitute.For<IProducer>());
 
         envelope.IsTombstone.ShouldBeTrue();
     }
@@ -116,14 +93,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnFalse_WhenMessageIsNotNull()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>())
-        {
-            RawMessage = new MemoryStream()
-        };
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
 
         envelope.IsTombstone.ShouldBeFalse();
     }
@@ -131,11 +101,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void AddHeader_ShouldAddHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.AddHeader("one", "1").AddHeader("two", "2");
 
@@ -146,11 +112,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void AddOrReplaceHeader_ShouldAddHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("two", "2");
 
@@ -161,11 +123,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void AddOrReplaceHeader_ShouldReplaceHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.AddOrReplaceHeader("one", "1").AddOrReplaceHeader("one", "2");
 
@@ -176,11 +134,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void AddHeaderIfNotExists_ShouldAddHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("two", "2");
 
@@ -191,11 +145,7 @@ public class OutboundEnvelopeTests
     [Fact]
     public void AddHeaderIfNotExists_ShouldNotReplaceHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            null,
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, Substitute.For<IProducer>());
 
         envelope.AddHeaderIfNotExists("one", "1").AddHeaderIfNotExists("one", "2");
 

@@ -18,13 +18,9 @@ public class GenericOutboundMessageFilterTests
     {
         TestOutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
         TestOutboundEnvelope<TestEventOne> envelope2 = new(
             new TestEventOne { Content = "no" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(testEventOne => testEventOne?.Content == "yes");
@@ -38,13 +34,9 @@ public class GenericOutboundMessageFilterTests
     {
         TestOutboundEnvelope<TestEventOne> envelope1 = new(
             new TestEventOne { Content = "yes" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
         TestOutboundEnvelope<TestEventOne> envelope2 = new(
             new TestEventOne { Content = "no" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundMessageFilter<TestEventOne> filter = new(envelope => envelope.Message?.Content == "yes");
@@ -58,8 +50,6 @@ public class GenericOutboundMessageFilterTests
     {
         TestOutboundEnvelope<TestEventOne> testEnvelope = new(
             new TestEventOne { Content = "yes" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundMessageFilter<TestEventTwo> filter = new(envelope => envelope.Message?.Content == "yes");

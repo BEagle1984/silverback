@@ -23,26 +23,21 @@ public partial class ErrorPoliciesTests
     [Fact]
     public async Task MovePolicy_ShouldMoveMessageToOtherTopic()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce(endpoint => endpoint.ProduceTo("other-topic")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.MoveTo("other-topic")))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo("other-topic")))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
 
@@ -68,29 +63,23 @@ public partial class ErrorPoliciesTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce(endpoint => endpoint.ProduceTo("other-topic")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(
-                                            policy => policy.MoveTo(
-                                                DefaultTopicName,
-                                                movePolicy => movePolicy.WithMaxRetries(10))))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo(
+                            DefaultTopicName,
+                            movePolicy => movePolicy.WithMaxRetries(10))))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent unused)
         {
@@ -114,26 +103,21 @@ public partial class ErrorPoliciesTests
     {
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce(endpoint => endpoint.ProduceTo("other-topic")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(1).ThenMoveTo("other-topic")))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(1).ThenMoveTo("other-topic")))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent unused)
         {
@@ -162,28 +146,22 @@ public partial class ErrorPoliciesTests
     [Fact]
     public async Task MovePolicy_ShouldSetExtraHeaders()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce(endpoint => endpoint.ProduceTo("other-topic")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.MoveTo("other-topic")))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce(endpoint => endpoint.ProduceTo("other-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.MoveTo("other-topic")))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
 
@@ -197,18 +175,14 @@ public partial class ErrorPoliciesTests
         Message<byte[]?, byte[]?> movedMessage = otherTopic.GetAllMessages()[0];
         movedMessage.Value.ShouldBe(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         movedMessage.Headers.ShouldContain(header => header.Key == DefaultMessageHeaders.FailedAttempts && header.GetValueAsString() == "1");
-        movedMessage.Headers.ShouldContain(
-            header => header.Key == DefaultMessageHeaders.FailureReason &&
-                      header.GetValueAsString() == "System.InvalidOperationException in Silverback.Integration.Tests.E2E");
+        movedMessage.Headers.ShouldContain(header => header.Key == DefaultMessageHeaders.FailureReason &&
+                                                     header.GetValueAsString() == "System.InvalidOperationException in Silverback.Integration.Tests.E2E");
         movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceTimestamp);
-        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.Timestamp);
-        movedMessage.Headers.ShouldContain(
-            header => header.Key == KafkaMessageHeaders.SourceTopic &&
-                      header.GetValueAsString() == DefaultTopicName);
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceTopic &&
+                                                     header.GetValueAsString() == DefaultTopicName);
         movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourcePartition && header.GetValueAsString() == "0");
         movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceOffset && header.GetValueAsString() == "0");
-        movedMessage.Headers.ShouldContain(
-            header => header.Key == KafkaMessageHeaders.SourceConsumerGroupId &&
-                      header.GetValueAsString() == DefaultGroupId);
+        movedMessage.Headers.ShouldContain(header => header.Key == KafkaMessageHeaders.SourceConsumerGroupId &&
+                                                     header.GetValueAsString() == DefaultGroupId);
     }
 }

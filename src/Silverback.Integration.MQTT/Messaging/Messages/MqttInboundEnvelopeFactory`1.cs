@@ -17,14 +17,12 @@ internal class MqttInboundEnvelopeFactory<TCorrelationData> : InboundEnvelopeFac
     public override IInboundEnvelope<TMessage> Create<TMessage>(
         TMessage? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier)
         where TMessage : class =>
         new MqttInboundEnvelope<TMessage, TCorrelationData>(
             message,
             rawMessage,
-            headers,
             endpoint,
             Consumer,
             brokerMessageIdentifier);

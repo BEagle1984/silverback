@@ -14,11 +14,10 @@ internal record MqttInboundEnvelope<TMessage, TCorrelationData> : InboundEnvelop
     public MqttInboundEnvelope(
         TMessage? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(message, rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
+        : base(message, rawMessage, endpoint, consumer, brokerMessageIdentifier)
     {
     }
 
@@ -40,9 +39,11 @@ internal record MqttInboundEnvelope<TMessage, TCorrelationData> : InboundEnvelop
 
     public string? ResponseTopic { get; private set; }
 
-    public IMqttInboundEnvelope SetCorrelationData(object correlationData)
+    public override string GetKey() => throw new System.NotSupportedException("MQTT doesn't have keys.");
+
+    public IMqttInboundEnvelope SetCorrelationData(object? correlationData)
     {
-        CorrelationData = Check.IsOfType<TCorrelationData>(correlationData, nameof(correlationData));
+        CorrelationData = Check.IsNullOrOfType<TCorrelationData>(correlationData, nameof(correlationData));
         return this;
     }
 

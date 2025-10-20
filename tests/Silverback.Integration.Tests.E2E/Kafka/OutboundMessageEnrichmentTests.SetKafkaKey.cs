@@ -96,8 +96,8 @@ public partial class OutboundMessageEnrichmentTests
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey<TestEventOne>(message => message?.ContentEventOne)
-                                    .SetKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
+                                    .SetKafkaKey<TestEventOne, string>(message => message?.ContentEventOne)
+                                    .SetKafkaKey<TestEventTwo, string>(envelope => envelope.Message?.ContentEventTwo)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -128,7 +128,7 @@ public partial class OutboundMessageEnrichmentTests
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey((TestEventOne? _) => null)))));
+                                    .SetKafkaKey<string>((IIntegrationEvent? _) => null)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });

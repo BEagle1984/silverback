@@ -84,6 +84,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
                      "Content BYTEA," +
                      "Headers TEXT," +
                      "EndpointName TEXT NOT NULL," +
+                     "ResolvedEndpoint TEXT," +
                      "Created TIMESTAMP WITH TIME ZONE NOT NULL);";
 
         return dataAccess.ExecuteNonQueryAsync(sql, null, timeout);

@@ -10,17 +10,22 @@ namespace Silverback.Messaging.Messages;
 
 internal abstract record BrokerEnvelope : IBrokerEnvelope
 {
-    protected BrokerEnvelope(Stream? rawMessage, IReadOnlyCollection<MessageHeader>? headers)
+    protected BrokerEnvelope()
     {
-        RawMessage = rawMessage;
-        Headers = new MessageHeaderCollection(headers);
+        Headers = [];
     }
 
-    protected BrokerEnvelope(IInboundEnvelope clonedEnvelope)
+    protected BrokerEnvelope(Stream? rawMessage)
+    {
+        RawMessage = rawMessage;
+        Headers = [];
+    }
+
+    protected BrokerEnvelope(IBrokerEnvelope clonedEnvelope)
     {
         Message = clonedEnvelope.Message;
         RawMessage = clonedEnvelope.RawMessage;
-        Headers = clonedEnvelope.Headers;
+        Headers = new MessageHeaderCollection(clonedEnvelope.Headers);
     }
 
     public abstract Type MessageType { get; }
@@ -29,7 +34,7 @@ internal abstract record BrokerEnvelope : IBrokerEnvelope
 
     public MessageHeaderCollection Headers { get; protected init; }
 
-    public Stream? RawMessage { get; set; }
+    public Stream? RawMessage { get; protected set; }
 
     public object? Message { get; protected init; }
 

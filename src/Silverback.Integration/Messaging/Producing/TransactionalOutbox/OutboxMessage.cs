@@ -25,14 +25,19 @@ public class OutboxMessage
     /// <param name="endpointName">
     ///     The endpoint name.
     /// </param>
+    /// <param name="resolvedEndpoint">
+    ///    The resolved endpoint. This is used only when the endpoint is resolved dynamically.
+    ///  </param>
     public OutboxMessage(
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
-        string endpointName)
+        string endpointName,
+        string? resolvedEndpoint = null)
     {
         Content = content;
         Headers = headers?.AsReadOnlyCollection();
         EndpointName = endpointName;
+        ResolvedEndpoint = resolvedEndpoint;
     }
 
     /// <summary>
@@ -50,4 +55,9 @@ public class OutboxMessage
     ///     Gets the destination endpoint name.
     /// </summary>
     public string EndpointName { get; }
+
+    /// <summary>
+    ///     Gets the resolved endpoint. This is used only when the endpoint is resolved dynamically.
+    /// </summary>
+    public string? ResolvedEndpoint { get; }
 }

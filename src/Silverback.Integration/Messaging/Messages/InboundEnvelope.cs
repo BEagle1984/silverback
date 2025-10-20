@@ -9,16 +9,15 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IInboundEnvelope" />
-internal abstract record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
+internal abstract record InboundEnvelope : BrokerEnvelope, IInternalInboundEnvelope
 {
     protected InboundEnvelope(
         object? message,
         Stream? rawMessage,
-        IReadOnlyCollection<MessageHeader>? headers,
         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(rawMessage, headers)
+        : base(rawMessage)
     {
         Message = message;
         Endpoint = Check.NotNull(endpoint, nameof(endpoint));
@@ -41,9 +40,17 @@ internal abstract record InboundEnvelope : BrokerEnvelope, IInboundEnvelope
 
     public IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
 
+    public abstract string? GetKey();
+
+    public IInboundEnvelope SetRawMessage(Stream? rawMessage)
+    {
+        RawMessage = rawMessage;
+        return this;
+    }
+
     public IInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,
-        Headers = new MessageHeaderCollection(Headers)
+        Headers = new MessageHeaderCollection(Headers) // Clone headers collection too to avoid side effects
     };
 }

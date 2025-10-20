@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
@@ -22,6 +21,8 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     private TKey? _key;
 
     private byte[]? _rawKey;
+
+    private KafkaOffset? _offset;
 
     private string? _dynamicDestinationTopic;
 
@@ -59,6 +60,21 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithRawKey(byte[]? rawKey)
     {
         _rawKey = rawKey;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the offset.
+    /// </summary>
+    /// <param name="offset">
+    ///     The offset.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithOffset(KafkaOffset? offset)
+    {
+        _offset = offset;
         return this;
     }
 
@@ -108,24 +124,18 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     }
 
     /// <inheritdoc cref="OutboundEnvelopeBuilder{TBuilder,TEnvelope,TMessage}.BuildCore" />
-    protected override IKafkaOutboundEnvelope<TMessage, TKey> BuildCore(
-        TMessage? message,
-        MessageHeaderCollection? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        IProducer producer)
+    protected override IKafkaOutboundEnvelope<TMessage, TKey> BuildCore(TMessage? message, IProducer producer)
     {
-        KafkaOutboundEnvelope<TMessage, TKey> envelope = new(
-            message,
-            headers,
-            endpointConfiguration,
-            producer,
-            _context);
+        KafkaOutboundEnvelope<TMessage, TKey> envelope = new(message, producer, _context);
 
         if (_key != null)
             envelope.SetKey(_key);
 
         if (_rawKey != null)
             envelope.SetRawKey(_rawKey);
+
+        if (_offset != null)
+            envelope.SetOffset(_offset);
 
         if (_dynamicDestinationTopic != null)
             envelope.SetDestinationTopic(_dynamicDestinationTopic);

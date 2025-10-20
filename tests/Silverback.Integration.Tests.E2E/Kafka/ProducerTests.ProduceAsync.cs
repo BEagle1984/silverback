@@ -46,11 +46,11 @@ public partial class ProducerTests
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}"
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
-    public async Task ProduceAsync_ShouldProduceMessageWithHeaders()
+    public async Task ProduceAsync_ShouldProduceMessageConfiguringEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -69,7 +69,7 @@ public partial class ProducerTests
         {
             await producer.ProduceAsync(
                 new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
-                new MessageHeaderCollection { { "x-custom", $"test {i}" }, { "two", "2" } });
+                envelope => envelope.AddHeader("x-custom", $"test {i}").AddHeader("two", "2"));
         }
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
@@ -101,10 +101,8 @@ public partial class ProducerTests
         for (int i = 1; i <= 3; i++)
         {
             await producer.ProduceAsync(
-                producer.EnvelopeFactory.Create(
-                    new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
-                    new MessageHeaderCollection { { "x-custom", $"test {i}" }, { "two", "2" } },
-                    producer.EndpointConfiguration));
+                producer.EnvelopeFactory.Create(new TestEventOne { ContentEventOne = $"Hello E2E {i}!" })
+                    .AddHeader("x-custom", $"test {i}").AddHeader("two", "2"));
         }
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
@@ -140,9 +138,51 @@ public partial class ProducerTests
         {
             producer.Produce(
                 new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
-                new MessageHeaderCollection { { "x-custom", $"test {i}" } },
                 _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
+        }
+
+        produced.ShouldBeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.ShouldBe(3);
+        errors.ShouldBe(0);
+
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Count.ShouldBe(3);
+        messages[0].GetContentAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E 1!\"}");
+        messages[1].GetContentAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E 2!\"}");
+        messages[2].GetContentAsString().ShouldBe("{\"ContentEventOne\":\"Hello E2E 3!\"}");
+    }
+
+    [Fact]
+    public async Task ProduceAsync_ShouldProduceMessageUsingCallbacksConfiguringEnvelope()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            int iLocal = i;
+            producer.Produce(
+                new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
+                _ => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref errors),
+                envelope => envelope.AddHeader("x-custom", $"test {iLocal}"));
         }
 
         produced.ShouldBeLessThan(3);
@@ -163,7 +203,7 @@ public partial class ProducerTests
     }
 
     [Fact]
-    public async Task ProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
+    public async Task ProduceAsync_ShouldSetKafkaKeyFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -178,15 +218,9 @@ public partial class ProducerTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "1001" } });
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "2002" } });
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "3003" } });
+        await producer.ProduceAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("1001"));
+        await producer.ProduceAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("2002"));
+        await producer.ProduceAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("3003"));
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);

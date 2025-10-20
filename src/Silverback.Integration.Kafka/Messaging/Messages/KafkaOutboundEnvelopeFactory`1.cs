@@ -14,16 +14,13 @@ internal class KafkaOutboundEnvelopeFactory<TKey> : OutboundEnvelopeFactory
     {
     }
 
-    public override IOutboundEnvelope<TMessage> Create<TMessage>(
-        TMessage? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
+    public override IOutboundEnvelope<TMessage> Create<TMessage>(TMessage? message, ISilverbackContext? context = null)
+        where TMessage : class =>
+        new KafkaOutboundEnvelope<TMessage, TKey>(message, Producer, context);
+
+    public override IOutboundEnvelope<TMessage> CreateFromInboundEnvelope<TMessage>(
+        IInboundEnvelope<TMessage> envelope,
         ISilverbackContext? context = null)
         where TMessage : class =>
-        new KafkaOutboundEnvelope<TMessage, TKey>(
-            message,
-            headers,
-            endpointConfiguration,
-            Producer,
-            context);
+        new KafkaOutboundEnvelope<TMessage, TKey>(envelope, Producer, context);
 }

@@ -97,7 +97,7 @@ public partial class IntegrationPublisherExtensionsTests
             sources,
             static source => source == null ? null : new TestEventOne { Content = $"{source}" },
             (envelope, source) => envelope
-                .SetKafkaKey($"{++count}")
+                .AddHeader("x-id", $"{++count}")
                 .AddHeader("x-source", source ?? -1)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             cancellationToken);
@@ -107,17 +107,17 @@ public partial class IntegrationPublisherExtensionsTests
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
         capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
         capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[2].Message.ShouldBeNull();
         capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
         capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
@@ -140,7 +140,7 @@ public partial class IntegrationPublisherExtensionsTests
             sources,
             static source => source == null ? null : new TestEventOne { Content = $"{source}" },
             (envelope, source) => envelope
-                .SetKafkaKey($"{++count}")
+                .AddHeader("x-id", $"{++count}")
                 .AddHeader("x-source", source ?? -1)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             cancellationToken);
@@ -150,17 +150,17 @@ public partial class IntegrationPublisherExtensionsTests
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1" });
         capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2" });
         capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[2].Message.ShouldBeNull();
         capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
         capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
@@ -186,7 +186,7 @@ public partial class IntegrationPublisherExtensionsTests
                 return source == null ? null : new TestEventOne { Content = $"{source}-{counter.Value}" };
             },
             static (envelope, source, counter) => envelope
-                .SetKafkaKey($"{counter.Value}")
+                .AddHeader("x-id", $"{counter.Value}")
                 .AddHeader("x-source", source ?? -1)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             new Counter(),
@@ -197,17 +197,17 @@ public partial class IntegrationPublisherExtensionsTests
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-1" });
         capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-2" });
         capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[2].Message.ShouldBeNull();
         capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
         capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }
@@ -233,7 +233,7 @@ public partial class IntegrationPublisherExtensionsTests
                 return source == null ? null : new TestEventOne { Content = $"{source}-{counter.Value}" };
             },
             static (envelope, source, counter) => envelope
-                .SetKafkaKey($"{counter.Value}")
+                .AddHeader("x-id", $"{counter.Value}")
                 .AddHeader("x-source", source ?? -1)
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
             new Counter(),
@@ -244,17 +244,17 @@ public partial class IntegrationPublisherExtensionsTests
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "1-1" });
         capturedEnvelopes[0].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[0].GetKafkaKey().ShouldBe("1");
+        capturedEnvelopes[0].Headers["x-id"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-source"].ShouldBe("1");
         capturedEnvelopes[0].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[1].Message.ShouldBeEquivalentTo(new TestEventOne { Content = "2-2" });
         capturedEnvelopes[1].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[1].GetKafkaKey().ShouldBe("2");
+        capturedEnvelopes[1].Headers["x-id"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-source"].ShouldBe("2");
         capturedEnvelopes[1].Headers["x-topic"].ShouldBe("one");
         capturedEnvelopes[2].Message.ShouldBeNull();
         capturedEnvelopes[2].EndpointConfiguration.RawName.ShouldBe("one");
-        capturedEnvelopes[2].GetKafkaKey().ShouldBe("3");
+        capturedEnvelopes[2].Headers["x-id"].ShouldBe("3");
         capturedEnvelopes[2].Headers["x-source"].ShouldBe("-1");
         capturedEnvelopes[2].Headers["x-topic"].ShouldBe("one");
     }

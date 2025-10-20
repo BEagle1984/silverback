@@ -16,17 +16,17 @@ internal static class KafkaHeadersMappingExtensions
     public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
     {
         Confluent.Kafka.Headers kafkaHeaders = [];
-        headers
-            .Where(
-                header => !header.Name.StartsWith(DefaultMessageHeaders.InternalHeadersPrefix, StringComparison.Ordinal))
-            .ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
+        headers.ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
         return kafkaHeaders;
     }
 
     public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers? kafkaHeaders)
     {
-        List<MessageHeader> headers = new(kafkaHeaders?.Count ?? 0);
-        kafkaHeaders?.ForEach(kafkaHeader => headers.Add(new MessageHeader(kafkaHeader.Key, Decode(kafkaHeader.GetValueBytes()))));
+        if (kafkaHeaders == null || kafkaHeaders.Count == 0)
+            return [];
+
+        List<MessageHeader> headers = new(kafkaHeaders.Count);
+        kafkaHeaders.ForEach(kafkaHeader => headers.Add(new MessageHeader(kafkaHeader.Key, Decode(kafkaHeader.GetValueBytes()))));
 
         return headers;
     }

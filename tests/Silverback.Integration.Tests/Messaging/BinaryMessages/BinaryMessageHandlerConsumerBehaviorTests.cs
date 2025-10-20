@@ -33,14 +33,14 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             rawContent,
             headers,
             TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
+            new TestConsumer(),
             new TestOffset());
 
         IInboundEnvelope? result = null;
         await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
-                Substitute.For<IConsumer>(),
+                new TestConsumer(),
                 Substitute.For<ISequenceStore>(),
                 [],
                 Substitute.For<IServiceProvider>()),

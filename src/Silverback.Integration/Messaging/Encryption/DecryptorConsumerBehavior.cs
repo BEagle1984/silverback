@@ -51,6 +51,6 @@ public class DecryptorConsumerBehavior : IConsumerBehavior
         if (envelope.Endpoint.Configuration.Encryption is SymmetricDecryptionSettings { KeyProvider: not null })
             keyIdentifier = envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId);
 
-        envelope.RawMessage = _streamFactory.GetDecryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption, keyIdentifier);
+        envelope.SetRawMessage(_streamFactory.GetDecryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption, keyIdentifier));
     }
 }

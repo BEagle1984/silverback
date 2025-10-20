@@ -18,15 +18,13 @@ public class OutboundEnvelopeFactoryTests
     {
         TestProducerEndpointConfiguration endpointConfiguration = TestProducerEndpointConfiguration.GetDefault();
         TestEventOne message = new();
-        MessageHeader[] headers = [new("one", "1"), new("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(endpointConfiguration);
 
-        IOutboundEnvelope envelope = new TestOutboundEnvelopeFactory(producer).Create(message, headers, endpointConfiguration);
+        IOutboundEnvelope envelope = new TestOutboundEnvelopeFactory(producer).Create(message);
 
         envelope.ShouldBeOfType<TestOutboundEnvelope<TestEventOne>>();
         envelope.Message.ShouldBe(message);
-        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
         envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
         envelope.Producer.ShouldBe(producer);
     }
@@ -35,15 +33,13 @@ public class OutboundEnvelopeFactoryTests
     public void Create_ShouldCreateEnvelope_WhenMessageIsNull()
     {
         TestProducerEndpointConfiguration endpointConfiguration = TestProducerEndpointConfiguration.GetDefault();
-        MessageHeader[] headers = [new("one", "1"), new("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(endpointConfiguration);
 
-        IOutboundEnvelope envelope = new TestOutboundEnvelopeFactory(producer).Create(null, headers, endpointConfiguration);
+        IOutboundEnvelope envelope = new TestOutboundEnvelopeFactory(producer).Create(null);
 
         envelope.ShouldBeOfType<TestOutboundEnvelope<object>>();
         envelope.Message.ShouldBeNull();
-        envelope.Headers.ShouldContain(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.ShouldContain(header => header.Name == "two" && header.Value == "2");
         envelope.EndpointConfiguration.ShouldBe(endpointConfiguration);
         envelope.Producer.ShouldBe(producer);
     }

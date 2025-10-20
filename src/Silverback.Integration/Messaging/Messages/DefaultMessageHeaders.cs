@@ -91,23 +91,4 @@ public static class DefaultMessageHeaders
     ///     the message failed to be processed.
     /// </summary>
     public const string FailureReason = "x-failure-reason";
-
-    /// <summary>
-    ///     The unified message key (can be the Kafka key or another identifier, depending on the broker).
-    /// </summary>
-    /// <remarks>
-    ///     This header is currently required for some legacy features like <see cref="Tombstone" /> mapping and chunking but may be removed
-    ///     in the future.
-    /// </remarks>
-    internal const string MessageKey = InternalHeadersPrefix + "message-key";
-
-    /// <summary>
-    ///     The header containing the serialized endpoint stored in the outbox.
-    /// </summary>
-    internal const string SerializedEndpoint = InternalHeadersPrefix + "serialized-endpoint";
-
-    /// <summary>
-    ///     The prefix used for the internal headers that are not supposed to be produced to the broker.
-    /// </summary>
-    internal const string InternalHeadersPrefix = "xx-";
 }

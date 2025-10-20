@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -170,19 +169,9 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
             new(
                 envelope.RawMessage.ReadAll(),
-                GetHeaders(envelope),
-                envelope.EndpointConfiguration.FriendlyName ?? throw new InvalidOperationException("FriendlyName not set."));
-
-        private static IEnumerable<MessageHeader> GetHeaders(IOutboundEnvelope envelope)
-        {
-            if (envelope.EndpointConfiguration.EndpointResolver is IDynamicProducerEndpointResolver dynamicEndpointProvider)
-            {
-                return envelope.Headers
-                    .Append(new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, dynamicEndpointProvider.GetSerializedEndpoint(envelope)));
-            }
-
-            return envelope.Headers;
-        }
+                envelope.Headers,
+                envelope.EndpointConfiguration.FriendlyName ?? throw new InvalidOperationException("FriendlyName not set."),
+                envelope.ResolvedEndpoint);
 
         private record struct DelegatedProducerState(IOutboxWriter OutboxWriter, ISilverbackContext Context);
     }

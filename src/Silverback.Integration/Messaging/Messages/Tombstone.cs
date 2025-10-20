@@ -22,7 +22,6 @@ public class Tombstone : ITombstone
     }
 
     /// <inheritdoc cref="ITombstone.MessageKey" />
-    [Header(DefaultMessageHeaders.MessageKey)]
     public string? MessageKey { get; }
 
     /// <inheritdoc cref="ITombstone.MessageType" />

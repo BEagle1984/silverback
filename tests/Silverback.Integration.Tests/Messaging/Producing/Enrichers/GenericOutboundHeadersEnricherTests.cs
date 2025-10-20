@@ -19,8 +19,6 @@ public class GenericOutboundHeadersEnricherTests
     {
         TestOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "content" },
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new(
@@ -36,16 +34,8 @@ public class GenericOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddHeaderToMatchingMessageType()
     {
-        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(
-            new TestEventOne(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
-            new TestEventTwo(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(new TestEventOne(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(new TestEventTwo(), Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new("x-test", "value");
 
@@ -59,21 +49,9 @@ public class GenericOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddHeaderToMatchingBaseMessageType()
     {
-        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(
-            new TestEventOne(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
-            new TestEventTwo(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-        TestOutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
-            new BinaryMessage(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventOne> envelopeEventOne = new(new TestEventOne(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<TestEventTwo> envelopeEventTwo = new(new TestEventTwo(), Substitute.For<IProducer>());
+        TestOutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(new BinaryMessage(), Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<IIntegrationEvent> enricher = new("x-test", "value");
 

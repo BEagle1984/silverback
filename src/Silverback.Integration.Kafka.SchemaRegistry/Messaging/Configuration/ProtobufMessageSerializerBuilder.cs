@@ -59,7 +59,7 @@ public class ProtobufMessageSerializerBuilder : SchemaRegistrySerializerBuilder<
         return (IMessageSerializer?)Activator.CreateInstance(
                    typeof(ProtobufMessageSerializer<>).MakeGenericType(messageType),
                    schemaRegistryClient,
-                   _protobufSerializerConfig)
-               ?? throw new InvalidOperationException("The ProtobufMessageSerializer could not be created.");
+                   _protobufSerializerConfig) ??
+               throw new InvalidOperationException("The ProtobufMessageSerializer could not be created.");
     }
 }

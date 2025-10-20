@@ -21,6 +21,8 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     : InboundEnvelopeBuilder<KafkaInboundEnvelopeBuilder<TMessage, TKey>, IKafkaInboundEnvelope<TMessage, TKey>, TMessage>
     where TMessage : class
 {
+    // TODO: Create MQTT Version of the builders!!
+
     private TKey? _key;
 
     private byte[]? _rawKey;
@@ -122,10 +124,12 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
         KafkaInboundEnvelope<TMessage, TKey> envelope = new(
             message,
             rawMessage,
-            headers,
             endpoint,
             consumer,
             identifier ?? new KafkaOffset(endpoint.RawName, 0, 0));
+
+        if (headers != null)
+            envelope.Headers.AddRange(headers);
 
         if (_key != null)
             envelope.SetKey(_key);

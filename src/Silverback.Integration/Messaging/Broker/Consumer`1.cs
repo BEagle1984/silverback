@@ -386,18 +386,11 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// </returns>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Context is disposed by the TransactionHandler")]
     protected virtual async ValueTask HandleMessageAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader> headers,
-        ConsumerEndpoint endpoint,
-        IBrokerMessageIdentifier brokerMessageIdentifier,
+        IInboundEnvelope envelope,
         ISequenceStore sequenceStore)
     {
-        MemoryStream? messageStream = message == null ? null : new MemoryStream(message);
-        IInboundEnvelope envelope = EnvelopeFactory.Create(null, messageStream, headers, endpoint, brokerMessageIdentifier);
         ConsumerPipelineContext context = new(envelope, this, sequenceStore, _behaviors, ServiceProvider);
-
-        _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
-
+        _statusInfo.RecordConsumedMessage(envelope.BrokerMessageIdentifier);
         await ExecutePipelineAsync(context, _processingCancellationTokenSource.Token).ConfigureAwait(false);
     }
 

@@ -83,13 +83,13 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, true, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 2, true, typeof(TestEventOne)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -248,13 +248,13 @@ public partial class ErrorPoliciesTests
         {
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders($"{i}", 0, 3));
+                envelope => envelope.SetChunkHeaders($"{i}", 0, 3));
             await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders($"{i}", 1, 3));
+                envelope => envelope.SetChunkHeaders($"{i}", 1, 3));
             await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders($"{i}", 2, 3));
+                envelope => envelope.SetChunkHeaders($"{i}", 2, 3));
         }
 
         await producer.RawProduceAsync(invalidRawMessage);

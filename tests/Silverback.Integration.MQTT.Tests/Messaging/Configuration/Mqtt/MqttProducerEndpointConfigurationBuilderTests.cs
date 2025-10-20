@@ -19,8 +19,6 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 {
     private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
         new TestEventOne(),
-        null,
-        new MqttProducerEndpointConfiguration(),
         Substitute.For<IProducer>());
 
     [Fact]

@@ -17,12 +17,7 @@ public class StaticOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldAddStaticHeader()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne(),
-            null,
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
         StaticOutboundHeadersEnricher enricher = new("x-test", "value");
 
         enricher.Enrich(envelope);
@@ -34,20 +29,13 @@ public class StaticOutboundHeadersEnricherTests
     [Fact]
     public void Enrich_ShouldReplaceHeaderWithStaticValue()
     {
-        TestOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne(),
-            new MessageHeaderCollection
-            {
-                { "x-test", "old-value" }
-            },
-            TestProducerEndpointConfiguration.GetDefault(),
-            Substitute.For<IProducer>());
-
-        StaticOutboundHeadersEnricher enricher = new("x-test", "value");
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
+        envelope.AddHeader("x-test", "old-value");
+        StaticOutboundHeadersEnricher enricher = new("x-test", "new-value");
 
         enricher.Enrich(envelope);
 
         envelope.Headers.Count.ShouldBe(1);
-        envelope.Headers.ShouldBe(new[] { new MessageHeader("x-test", "value") });
+        envelope.Headers.ShouldBe(new[] { new MessageHeader("x-test", "new-value") });
     }
 }

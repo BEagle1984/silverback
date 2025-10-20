@@ -29,7 +29,6 @@ public class ChunkStreamTests
             new TestInboundEnvelope<string>(
                 "Silver",
                 "Silver"u8.ToStream(),
-                null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
@@ -37,7 +36,6 @@ public class ChunkStreamTests
             new TestInboundEnvelope<string>(
                 "back",
                 "back"u8.ToStream(),
-                null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
@@ -62,7 +60,6 @@ public class ChunkStreamTests
             new TestInboundEnvelope<string>(
                 "Silver",
                 "Silver"u8.ToStream(),
-                null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));
@@ -70,7 +67,6 @@ public class ChunkStreamTests
             new TestInboundEnvelope<string>(
                 "back",
                 "back"u8.ToStream(),
-                null,
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()));

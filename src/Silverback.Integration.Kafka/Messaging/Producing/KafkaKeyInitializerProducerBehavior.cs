@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Producing;
 /// <summary>
 ///     Sets the Kafka key with the value from the properties decorated with the <see cref="KafkaKeyMemberAttribute" />.
 /// </summary>
-public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
+public class KafkaKeyInitializerProducerBehavior : IProducerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageKeyInitializer;
@@ -24,14 +24,21 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(KafkaMessageHeaders.MessageKey))
+        if (context.Envelope is IKafkaOutboundEnvelope<object, string> { Key: null } kafkaEnvelope)
         {
-            string? key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
+            if (context.Envelope is { IsTombstone: true, Message: ITombstone tombstone })
+            {
+                kafkaEnvelope.SetKey(tombstone.MessageKey);
+            }
+            else
+            {
+                string? key = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
 
-            if (key != null)
-                context.Envelope.SetKafkaKey(key);
+                if (key != null)
+                    kafkaEnvelope.SetKey(key);
+            }
         }
-
+       
         return next(context, cancellationToken);
     }
 }

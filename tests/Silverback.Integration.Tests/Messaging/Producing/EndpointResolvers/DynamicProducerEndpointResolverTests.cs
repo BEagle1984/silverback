@@ -14,17 +14,13 @@ namespace Silverback.Tests.Integration.Messaging.Producing.EndpointResolvers;
 
 public class DynamicProducerEndpointResolverTests
 {
-    private readonly TestDynamicProducerEndpointResolver<TestEventOne> _endpointResolver = new("topic");
-
     [Fact]
     public void GetEndpoint_ShouldReturnEndpoint()
     {
-        ProducerEndpoint endpoint = _endpointResolver.GetEndpoint(
-            new TestOutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                null,
-                new TestProducerEndpointConfiguration(),
-                Substitute.For<IProducer>()));
+        TestDynamicProducerEndpointResolver<TestEventOne> _endpointResolver = new("topic");
+
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
+        ProducerEndpoint endpoint = _endpointResolver.GetEndpoint(envelope);
 
         endpoint.ShouldBeOfType<TestProducerEndpoint>();
         endpoint.RawName.ShouldBe("topic");
@@ -33,12 +29,10 @@ public class DynamicProducerEndpointResolverTests
     [Fact]
     public void GetEndpoint_ShouldThrow_WhenMessageTypeMismatch()
     {
-        Action act = () => _endpointResolver.GetEndpoint(
-            new TestOutboundEnvelope<TestEventTwo>(
-                new TestEventTwo(),
-                null,
-                new TestProducerEndpointConfiguration(),
-                Substitute.For<IProducer>()));
+        TestDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic");
+        TestOutboundEnvelope<TestEventTwo> envelope = new(new TestEventTwo(), Substitute.For<IProducer>());
+
+        Action act = () => endpointResolver.GetEndpoint(envelope);
 
         Exception exception = act.ShouldThrow<InvalidOperationException>();
         exception.Message.ShouldMatch(@"The envelope must be of type Silverback.Messaging.Messages.IOutboundEnvelope`1\[\[Silverback.Tests.Types.Domain.TestEventOne.*");

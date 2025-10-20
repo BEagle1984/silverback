@@ -179,7 +179,6 @@ public class ValidatorConsumerBehaviorTests
         TestInboundEnvelope<object> envelope = new(
             message,
             null,
-            null,
             endpoint,
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -213,7 +212,6 @@ public class ValidatorConsumerBehaviorTests
         TestInboundEnvelope<object> envelope = new(
             message,
             null,
-            null,
             endpoint,
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -243,7 +241,6 @@ public class ValidatorConsumerBehaviorTests
 
         TestInboundEnvelope<object> envelope = new(
             message,
-            null,
             null,
             endpoint,
             Substitute.For<IConsumer>(),
@@ -277,7 +274,6 @@ public class ValidatorConsumerBehaviorTests
 
         TestInboundEnvelope<object> envelope = new(
             message,
-            null,
             null,
             endpoint,
             Substitute.For<IConsumer>(),

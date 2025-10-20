@@ -7,7 +7,6 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
@@ -19,8 +18,6 @@ public class KafkaStaticProducerEndpointResolverTests
 {
     private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
-        null,
-        new KafkaProducerEndpointConfiguration(),
         Substitute.For<IProducer>());
 
     [Fact]

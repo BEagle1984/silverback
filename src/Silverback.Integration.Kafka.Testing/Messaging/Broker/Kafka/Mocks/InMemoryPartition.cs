@@ -50,7 +50,9 @@ internal sealed class InMemoryPartition : IInMemoryPartition
         lock (_messages)
         {
             Offset offset = _nextOffset++;
-            SetTimestamp(message);
+
+            if (message.Timestamp == Timestamp.Default)
+                message.Timestamp = new Timestamp(DateTime.UtcNow);
 
             if (transactionalUniqueId == Guid.Empty)
             {
@@ -153,16 +155,6 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
             _transactions.Remove(transaction);
         }
-    }
-
-    private static void SetTimestamp(Message<byte[]?, byte[]?> message)
-    {
-        IHeader? timestampHeader = message.Headers?.FirstOrDefault(header => header.Key == KafkaMessageHeaders.Timestamp);
-
-        if (timestampHeader != null)
-            message.Timestamp = new Timestamp(DateTime.Parse(Encoding.UTF8.GetString(timestampHeader.GetValueBytes()), CultureInfo.InvariantCulture));
-        else if (message.Timestamp == Timestamp.Default)
-            message.Timestamp = new Timestamp(DateTime.UtcNow);
     }
 
     private sealed class StoredMessage

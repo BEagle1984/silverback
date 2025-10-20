@@ -170,13 +170,15 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.None
         };
-        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(configuration);
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, producer);
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_logger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
-                Substitute.For<IProducer>(),
+                producer,
                 [],
                 (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),
@@ -203,7 +205,9 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = validationMode
         };
-        TestOutboundEnvelope<TestValidationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(configuration);
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, producer);
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(
@@ -234,7 +238,9 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.LogWarning
         };
-        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(configuration);
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, producer);
 
         IOutboundEnvelope? result = null;
         await new ValidatorProducerBehavior(_logger).HandleAsync(
@@ -267,7 +273,9 @@ public class ValidatorProducerBehaviorTests
         {
             MessageValidationMode = MessageValidationMode.ThrowException
         };
-        TestOutboundEnvelope<TestValidationMessage> envelope = new(message, null, configuration, Substitute.For<IProducer>());
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(configuration);
+        TestOutboundEnvelope<IIntegrationMessage> envelope = new(message, producer);
 
         IOutboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorProducerBehavior(_logger).HandleAsync(

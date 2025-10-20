@@ -16,14 +16,15 @@ internal class MqttOutboundEnvelopeFactory<TCorrelationData> : OutboundEnvelopeF
 
     public override IOutboundEnvelope<TMessage> Create<TMessage>(
         TMessage? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
         ISilverbackContext? context = null)
         where TMessage : class =>
         new MqttOutboundEnvelope<TMessage, TCorrelationData>(
             message,
-            headers,
-            endpointConfiguration,
             Producer,
             context);
+
+    public override IOutboundEnvelope<TMessage> CreateFromInboundEnvelope<TMessage>(
+        IInboundEnvelope<TMessage> envelope,
+        ISilverbackContext? context = null) =>
+        new MqttOutboundEnvelope<TMessage, TCorrelationData>(envelope, Producer, context);
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -198,22 +199,21 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         TopicPartitionOffset topicPartitionOffset,
         ISequenceStore sequenceStore)
     {
-        MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
+        IInternalKafkaInboundEnvelope envelope = (IInternalKafkaInboundEnvelope)EnvelopeFactory.Create(
+            message.Value == null ? null : new MemoryStream(message.Value),
+            _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition),
+            new KafkaOffset(topicPartitionOffset));
 
-        KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
+        envelope.Headers.AddRange(message.Headers.ToSilverbackHeaders());
+        envelope.SetRawKey(message.Key);
 
-        if (message.Key != null)
-            headers.AddOrReplace(KafkaMessageHeaders.MessageKey, Encoding.UTF8.GetString(message.Key));
+        // TODO: Move to behavior
+        if (envelope.RawKey != null)
+            envelope.SetKey(Encoding.UTF8.GetString(envelope.RawKey));
 
-        headers.AddOrReplace(KafkaMessageHeaders.Timestamp, message.Timestamp.UtcDateTime.ToString("O"));
+        envelope.SetTimestamp(message.Timestamp.UtcDateTime.ToUniversalTime());
 
-        await HandleMessageAsync(
-                message.Value,
-                headers,
-                endpoint,
-                new KafkaOffset(topicPartitionOffset),
-                sequenceStore)
-            .ConfigureAwait(false);
+        await HandleMessageAsync(envelope, sequenceStore).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />

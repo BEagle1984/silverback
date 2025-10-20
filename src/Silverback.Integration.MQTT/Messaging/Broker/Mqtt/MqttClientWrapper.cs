@@ -82,9 +82,19 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         byte[]? content,
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,
+        string? responseTopic,
+        byte[]? rawCorrelationData,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        _publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
+        _publishQueueChannel.Writer.TryWrite(
+            new QueuedMessage(
+                content,
+                headers,
+                endpoint,
+                responseTopic,
+                rawCorrelationData,
+                onSuccess,
+                onError));
 
     public Task SubscribeAsync() =>
         _mqttClient.SubscribeAsync(
@@ -261,12 +271,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             QualityOfServiceLevel = queuedMessage.Endpoint.Configuration.QualityOfServiceLevel,
             Retain = queuedMessage.Endpoint.Configuration.Retain,
             MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval,
-            ResponseTopic = queuedMessage.Headers?.GetValue(MqttMessageHeaders.ResponseTopic)
+            ResponseTopic = queuedMessage.ResponseTopic,
+            CorrelationData = queuedMessage.RawCorrelationData
         };
-
-        string? correlationData = queuedMessage.Headers?.GetValue(MqttMessageHeaders.CorrelationData);
-        if (correlationData != null)
-            mqttApplicationMessage.CorrelationData = Convert.FromBase64String(correlationData);
 
         if (Configuration.AreHeadersSupported)
             mqttApplicationMessage.UserProperties = queuedMessage.Headers?.ToUserProperties();
@@ -319,6 +326,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         byte[]? Content,
         IReadOnlyCollection<MessageHeader>? Headers,
         MqttProducerEndpoint Endpoint,
+        string? ResponseTopic,
+        byte[]? RawCorrelationData,
         Action<IBrokerMessageIdentifier?> OnSuccess,
         Action<Exception> OnError);
 }

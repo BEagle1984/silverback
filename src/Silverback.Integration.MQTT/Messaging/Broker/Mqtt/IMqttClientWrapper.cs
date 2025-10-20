@@ -63,6 +63,8 @@ public interface IMqttClientWrapper : IBrokerClient
         byte[]? content,
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,
+        string? responseTopic,
+        byte[]? rawCorrelationData,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
 

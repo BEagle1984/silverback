@@ -43,23 +43,9 @@ public class InboundEnvelopeTests
     }
 
     [Fact]
-    public void MessageType_ShouldReturnObject_WhenMessageIsNull()
+    public void MessageType_ShouldReturnGenericArgumentType_WhenMessageIsNull()
     {
-        TestInboundEnvelope<object> envelope = new(
-            null,
-            null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
-
-        envelope.MessageType.ShouldBe(typeof(object));
-    }
-
-    [Fact]
-    public void MessageType_ShouldReturnGenericArgumentType_WhenMessageNullAndGenericArgumentProvided()
-    {
-        TestInboundEnvelope<object> envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             null,
             null,
@@ -73,7 +59,7 @@ public class InboundEnvelopeTests
     [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
     {
-        TestInboundEnvelope<object> envelope = new(
+        TestInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             null,

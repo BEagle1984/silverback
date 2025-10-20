@@ -46,7 +46,6 @@ public class FatalExceptionLoggerConsumerBehaviorTests
         TestInboundEnvelope<object> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -77,7 +76,6 @@ public class FatalExceptionLoggerConsumerBehaviorTests
         TestInboundEnvelope<object> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());

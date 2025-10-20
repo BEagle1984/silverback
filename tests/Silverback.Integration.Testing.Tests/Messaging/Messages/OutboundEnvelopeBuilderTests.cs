@@ -71,18 +71,6 @@ public class OutboundEnvelopeBuilderTests
     }
 
     [Fact]
-    public void WithEndpointConfiguration_ShouldSetEndpointConfiguration()
-    {
-        TestOutboundEnvelopeBuilder<TestEventOne> builder = new();
-        TestOutboundEnvelopeBuilder<TestEventOne>.MockProducerEndpointConfiguration endpointConfiguration = new();
-
-        builder.WithEndpointConfiguration(endpointConfiguration);
-
-        IOutboundEnvelope<TestEventOne> envelope = builder.Build();
-        envelope.EndpointConfiguration.ShouldBeSameAs(endpointConfiguration);
-    }
-
-    [Fact]
     public void WithProducer_ShouldSetProducer()
     {
         TestOutboundEnvelopeBuilder<TestEventOne> builder = new();
@@ -119,11 +107,6 @@ public class OutboundEnvelopeBuilderTests
     {
         protected override TestOutboundEnvelopeBuilder<TMessage> This => this;
 
-        protected override TestOutboundEnvelope<TMessage> BuildCore(
-            TMessage? message,
-            MessageHeaderCollection? headers,
-            ProducerEndpointConfiguration endpointConfiguration,
-            IProducer producer) =>
-            new(message, headers, endpointConfiguration, producer);
+        protected override TestOutboundEnvelope<TMessage> BuildCore(TMessage? message, IProducer producer) => new(message, producer);
     }
 }

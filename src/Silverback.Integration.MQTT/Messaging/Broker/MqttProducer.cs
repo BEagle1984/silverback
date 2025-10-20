@@ -87,11 +87,14 @@ public sealed class MqttProducer : Producer
         TState state)
     {
         Check.NotNull(envelope, nameof(envelope));
+        IMqttOutboundEnvelope mqttEnvelope = envelope.AsMqttEnvelope();
 
         Client.Produce(
             envelope.RawMessage.ReadAll(),
             envelope.Headers,
             (MqttProducerEndpoint)envelope.GetEndpoint(),
+            mqttEnvelope.ResponseTopic,
+            mqttEnvelope.RawCorrelationData,
             identifier => onSuccess.Invoke(identifier, state),
             exception => onError.Invoke(exception, state));
     }
@@ -102,6 +105,7 @@ public sealed class MqttProducer : Producer
         CancellationToken cancellationToken)
     {
         Check.NotNull(envelope, nameof(envelope));
+        IMqttOutboundEnvelope mqttEnvelope = envelope.AsMqttEnvelope();
 
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
         await using ConfiguredAsyncDisposable disposable =
@@ -111,6 +115,8 @@ public sealed class MqttProducer : Producer
             await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
             envelope.Headers,
             (MqttProducerEndpoint)envelope.GetEndpoint(),
+            mqttEnvelope.ResponseTopic,
+            mqttEnvelope.RawCorrelationData,
             taskCompletionSource.SetResult,
             taskCompletionSource.SetException);
 

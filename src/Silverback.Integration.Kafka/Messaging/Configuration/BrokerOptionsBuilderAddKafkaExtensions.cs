@@ -40,7 +40,8 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             return brokerOptionsBuilder;
 
         brokerOptionsBuilder.SilverbackBuilder
-            .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
+            .AddSingletonBrokerBehavior<KafkaKeyInitializerProducerBehavior>()
+            .AddSingletonBrokerBehavior<KafkaKeySerializerProducerBehavior>()
             .AddSingletonBrokerBehavior<KafkaOffsetStoreConsumerBehavior>()
             .AddSingletonBrokerClientCallback<KafkaConsumerLocalTimeoutMonitor>()
             .AddExtensibleFactory<IKafkaOffsetStoreFactory, KafkaOffsetStoreFactory>()
@@ -57,7 +58,6 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddTransient<KafkaOffsetStoreScope>(services => services.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope());
-
         AddChunkEnricher(brokerOptionsBuilder);
         AddActivityEnrichers(brokerOptionsBuilder);
         AddOffsetsTracker(brokerOptionsBuilder);

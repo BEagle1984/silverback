@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.Enrichers;
 
@@ -12,38 +13,52 @@ namespace Silverback.Messaging.Producing.Enrichers;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be enriched.
 /// </typeparam>
-public class ResponseTopicOutboundHeadersEnricher<TMessage> : GenericOutboundHeadersEnricher<TMessage>
+public class ResponseTopicOutboundMessageEnricher<TMessage> : IOutboundMessageEnricher
 {
+    private readonly Func<IOutboundEnvelope<TMessage>, string?> _responseTopicProvider;
+
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundMessageEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="responseTopic">
     ///     The response topic.
     /// </param>
-    public ResponseTopicOutboundHeadersEnricher(string? responseTopic)
-        : base(MqttMessageHeaders.ResponseTopic, responseTopic)
+    public ResponseTopicOutboundMessageEnricher(string? responseTopic)
+        : this((TMessage? _) => responseTopic)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundMessageEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="responseTopicProvider">
     ///     The response topic provider function.
     /// </param>
-    public ResponseTopicOutboundHeadersEnricher(Func<TMessage?, string?> responseTopicProvider)
-        : base(MqttMessageHeaders.ResponseTopic, responseTopicProvider)
+    public ResponseTopicOutboundMessageEnricher(Func<TMessage?, string?> responseTopicProvider)
     {
+        Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+        _responseTopicProvider = envelope => responseTopicProvider.Invoke(envelope.Message);
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundHeadersEnricher{TMessage}" /> class.
+    ///     Initializes a new instance of the <see cref="ResponseTopicOutboundMessageEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="responseTopicProvider">
     ///     The response topic provider function.
     /// </param>
-    public ResponseTopicOutboundHeadersEnricher(Func<IOutboundEnvelope<TMessage>, object?> responseTopicProvider)
-        : base(MqttMessageHeaders.ResponseTopic, responseTopicProvider)
+    public ResponseTopicOutboundMessageEnricher(Func<IOutboundEnvelope<TMessage>, string?> responseTopicProvider)
     {
+        _responseTopicProvider = Check.NotNull(responseTopicProvider, nameof(responseTopicProvider));
+    }
+
+    /// <inheritdoc cref="IOutboundMessageEnricher.Enrich" />
+    public void Enrich(IOutboundEnvelope envelope)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+
+        if (envelope is not IMqttOutboundEnvelope<TMessage> mqttEnvelope)
+            return;
+
+        mqttEnvelope.SetResponseTopic(_responseTopicProvider.Invoke(mqttEnvelope));
     }
 }

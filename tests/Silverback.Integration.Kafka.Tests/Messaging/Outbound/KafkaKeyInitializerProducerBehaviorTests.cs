@@ -17,15 +17,16 @@ using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound;
 
-public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposable
+public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
 {
     private readonly KafkaProducer _kafkaProducer;
 
-    public KafkaMessageKeyInitializerProducerBehaviorTests()
+    public KafkaKeyInitializerProducerBehaviorTests()
     {
         _kafkaProducer = new KafkaProducer(
             "producer1",
@@ -56,11 +57,9 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
                 Two = "2",
                 Three = "3"
             },
-            null,
-            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+        await new KafkaKeyInitializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 _kafkaProducer,
@@ -70,7 +69,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey).ShouldBeNull();
+        envelope.Key.ShouldBeNull();
     }
 
     [Fact]
@@ -84,11 +83,9 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
                 Two = "2",
                 Three = "3"
             },
-            null,
-            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+        await new KafkaKeyInitializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 _kafkaProducer,
@@ -98,7 +95,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "1"));
+        envelope.Key.ShouldBe("1");
     }
 
     [Fact]
@@ -112,11 +109,9 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
                 Two = "2",
                 Three = "3"
             },
-            null,
-            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
 
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+        await new KafkaKeyInitializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 _kafkaProducer,
@@ -126,7 +121,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "One=1,Two=2"));
+        envelope.Key.ShouldBe("One=1,Two=2");
     }
 
     [Fact]
@@ -140,14 +135,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
                 Two = "2",
                 Three = "3"
             },
-            new MessageHeaderCollection
-            {
-                { KafkaMessageHeaders.MessageKey, "Heidi!" }
-            },
-            new KafkaProducerEndpointConfiguration(),
             _kafkaProducer);
+        envelope.SetKey("Heidi!");
 
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+        await new KafkaKeyInitializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 _kafkaProducer,
@@ -157,13 +148,18 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "Heidi!"));
+        envelope.Key.ShouldBe("Heidi!");
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldDoNothing_WhenNotKafkaProducer()
+    public async Task HandleAsync_ShouldDoNothing_WhenNotKafkaEnvelope()
     {
-        KafkaOutboundEnvelope<NoKeyMembersMessage, string> envelope = new(
+        _kafkaProducer.EndpointConfiguration.Returns(
+            new KafkaProducerEndpointConfiguration
+            {
+                Chunk = new ChunkSettings { Size = 42 }
+            });
+        TestOutboundEnvelope<NoKeyMembersMessage> envelope = new(
             new NoKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
@@ -171,14 +167,9 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
                 Two = "2",
                 Three = "3"
             },
-            null,
-            new KafkaProducerEndpointConfiguration
-            {
-                Chunk = new ChunkSettings { Size = 42 }
-            },
             _kafkaProducer);
 
-        await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+        await new KafkaKeyInitializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -188,7 +179,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorTests : IDisposabl
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldNotContain(header => header.Name == KafkaMessageHeaders.MessageKey);
+        envelope.Headers.Count.ShouldBe(0);
     }
 
     public void Dispose() => _kafkaProducer.Dispose();

@@ -32,9 +32,9 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="headers">
     ///     The headers to be added to the collection.
     /// </param>
-    public MessageHeaderCollection(IReadOnlyCollection<MessageHeader>? headers)
+    public MessageHeaderCollection(IEnumerable<MessageHeader>? headers)
     {
-        _list = headers != null ? [.. headers] : [];
+        _list = headers != null ? [..headers] : [];
     }
 
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />

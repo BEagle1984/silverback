@@ -6,7 +6,6 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
@@ -18,8 +17,6 @@ public class KafkaDynamicProducerEndpointResolverTests
 {
     private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
-        null,
-        new KafkaProducerEndpointConfiguration(),
         Substitute.For<IProducer>());
 
     [Fact]
@@ -275,11 +272,10 @@ public class KafkaDynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldDeserializeEndpoint(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
-        IOutboundEnvelope envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
-            null,
-            [new MessageHeader(DefaultMessageHeaders.SerializedEndpoint, $"{topic}|{partition}")],
-            new KafkaProducerEndpointConfiguration(),
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+            (TestEventOne?)null,
             Substitute.For<IProducer>());
+        envelope.SetResolvedEndpoint($"{topic}|{partition}");
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
 

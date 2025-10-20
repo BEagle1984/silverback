@@ -132,9 +132,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
         {
             _producer ??= _producers.GetProducerForEndpoint(_endpointName);
 
-            IOutboundEnvelope outboundEnvelope = envelope.Message != null
-                ? _producer.EnvelopeFactory.Create(envelope.Message, envelope.Headers, _producer.EndpointConfiguration)
-                : _producer.EnvelopeFactory.Create(envelope.RawMessage, envelope.Headers, _producer.EndpointConfiguration);
+            IOutboundEnvelope outboundEnvelope = _producer.EnvelopeFactory.CreateFromInboundEnvelope(envelope);
 
             IMovePolicyMessageEnricher enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
             enricher.Enrich(envelope, outboundEnvelope, exception);

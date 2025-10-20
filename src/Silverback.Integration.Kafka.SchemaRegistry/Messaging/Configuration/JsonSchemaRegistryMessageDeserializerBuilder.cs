@@ -78,6 +78,6 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
             typeof(JsonSchemaRegistryMessageDeserializer<>).MakeGenericType(messageType),
             schemaRegistryClient,
             _jsonDeserializerConfig,
-            _jsonSchemaGeneratorSettings)
-        ?? throw new InvalidOperationException("The JsonSchemaRegistryMessageDeserializer could not be created.");
+            _jsonSchemaGeneratorSettings) ??
+        throw new InvalidOperationException("The JsonSchemaRegistryMessageDeserializer could not be created.");
 }

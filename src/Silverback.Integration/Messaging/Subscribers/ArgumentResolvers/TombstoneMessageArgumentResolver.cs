@@ -43,7 +43,7 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
         IInboundEnvelope envelope = (IInboundEnvelope)Check.NotNull(message, nameof(message));
         Check.NotNull(parameterType, nameof(parameterType));
 
-        string? messageKey = envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey);
+        string? messageKey = ((IInternalInboundEnvelope)envelope).GetKey();
 
         if (parameterType.IsGenericType)
         {

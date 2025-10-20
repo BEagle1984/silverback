@@ -23,7 +23,7 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 
     [Fact]
@@ -83,6 +83,6 @@ public partial class MqttProducerEndpointConfigurationBuilderTests
 
         MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageEnrichers.Count.ShouldBe(1);
-        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundHeadersEnricher<TestEventOne>>();
+        configuration.MessageEnrichers.Single().ShouldBeOfType<ResponseTopicOutboundMessageEnricher<TestEventOne>>();
     }
 }

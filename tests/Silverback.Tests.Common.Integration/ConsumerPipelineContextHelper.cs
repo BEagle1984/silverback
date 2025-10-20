@@ -30,15 +30,16 @@ public static class ConsumerPipelineContextHelper
         IBrokerMessageIdentifier? identifier = null,
         ISequence? sequence = null)
     {
+        consumer ??= new TestConsumer();
+
         ConsumerPipelineContext context = new(
             envelope ?? new TestInboundEnvelope<object>(
                 null,
                 Stream.Null,
-                [],
                 endpoint ?? TestConsumerEndpoint.GetDefault(),
-                consumer ?? Substitute.For<IConsumer>(),
+                consumer,
                 identifier ?? new TestOffset()),
-            consumer ?? Substitute.For<IConsumer>(),
+            consumer,
             sequenceStore ?? Substitute.For<ISequenceStore>(),
             [],
             serviceProvider ?? GetServiceProvider())

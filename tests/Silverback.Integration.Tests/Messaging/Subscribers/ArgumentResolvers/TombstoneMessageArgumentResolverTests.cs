@@ -113,10 +113,12 @@ public class TombstoneMessageArgumentResolverTests
         IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
             null,
             Stream.Null,
-            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset())
+        {
+            Key = "42"
+        };
 
         object value = resolver.GetValue(envelope, typeof(Tombstone));
 
@@ -131,10 +133,12 @@ public class TombstoneMessageArgumentResolverTests
         IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
             null,
             Stream.Null,
-            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset())
+        {
+            Key = "42"
+        };
 
         object value = resolver.GetValue(envelope, typeof(ITombstone));
 
@@ -149,10 +153,12 @@ public class TombstoneMessageArgumentResolverTests
         IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
             null,
             Stream.Null,
-            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset())
+        {
+            Key = "42"
+        };
 
         object value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
 
@@ -167,10 +173,12 @@ public class TombstoneMessageArgumentResolverTests
         IInboundEnvelope envelope = new TestInboundEnvelope<TestEventOne>(
             null,
             Stream.Null,
-            [new MessageHeader(DefaultMessageHeaders.MessageKey, "42")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset())
+        {
+            Key = "42"
+        };
 
         object value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
 

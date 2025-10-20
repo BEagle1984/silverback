@@ -54,6 +54,6 @@ public class AvroMessageSerializerBuilder : SchemaRegistrySerializerBuilder<Avro
         (IMessageSerializer?)Activator.CreateInstance(
             typeof(AvroMessageSerializer<>).MakeGenericType(messageType),
             schemaRegistryClient,
-            _avroSerializerConfig)
-        ?? throw new InvalidOperationException("The AvroMessageSerializer could not be created.");
+            _avroSerializerConfig) ??
+        throw new InvalidOperationException("The AvroMessageSerializer could not be created.");
 }

@@ -27,19 +27,16 @@ public class RequestResponseTests : MqttTests
     [Fact]
     public async Task Producer_ShouldSetResponseTopicAndCorrelationData()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
@@ -47,37 +44,30 @@ public class RequestResponseTests : MqttTests
             envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttCorrelationData([1, 2, 3, 4]));
+            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttRawCorrelationData([1, 2, 3, 4]));
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
         messages.Count.ShouldBe(2);
         messages[0].ResponseTopic.ShouldBe("response/one");
         messages[0].CorrelationData.ShouldBe("data"u8.ToArray());
-        messages[0].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
-        messages[0].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
         messages[1].ResponseTopic.ShouldBe("response/two");
         messages[1].CorrelationData.ShouldBe([1, 2, 3, 4]);
-        messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.ResponseTopic);
-        messages[1].UserProperties.ShouldNotContain(property => property.Name == MqttMessageHeaders.CorrelationData);
     }
 
     [Fact]
     public async Task Consumer_ShouldPropagateResponseTopicAndCorrelationData()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(
@@ -85,14 +75,14 @@ public class RequestResponseTests : MqttTests
             envelope => envelope.SetMqttResponseTopic("response/one").SetMqttCorrelationData("data"));
         await publisher.WrapAndPublishAsync(
             new TestEventOne(),
-            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttCorrelationData([1, 2, 3, 4]));
+            envelope => envelope.SetMqttResponseTopic("response/two").SetMqttRawCorrelationData([1, 2, 3, 4]));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes[0].GetMqttResponseTopic().ShouldBe("response/one");
-        Helper.Spy.InboundEnvelopes[0].GetMqttCorrelationData().ShouldBe("data"u8.ToArray());
+        Helper.Spy.InboundEnvelopes[0].GetMqttRawCorrelationData().ShouldBe("data"u8.ToArray());
         Helper.Spy.InboundEnvelopes[1].GetMqttResponseTopic().ShouldBe("response/two");
-        Helper.Spy.InboundEnvelopes[1].GetMqttCorrelationData().ShouldBe([1, 2, 3, 4]);
+        Helper.Spy.InboundEnvelopes[1].GetMqttRawCorrelationData().ShouldBe([1, 2, 3, 4]);
     }
 }

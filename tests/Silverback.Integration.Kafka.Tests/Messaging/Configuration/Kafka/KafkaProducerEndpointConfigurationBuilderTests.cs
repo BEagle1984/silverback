@@ -21,8 +21,6 @@ public class KafkaProducerEndpointConfigurationBuilderTests
 {
     private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
         new TestEventOne(),
-        null,
-        new KafkaProducerEndpointConfiguration(),
         Substitute.For<IProducer>());
 
     [Fact]

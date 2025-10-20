@@ -25,13 +25,14 @@ public class BinaryMessageHandlerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope is { Message: IBinaryMessage, EndpointConfiguration.Serializer: not IBinaryMessageSerializer })
+        if (context.Envelope is { Message: IBinaryMessage, EndpointConfiguration.Serializer: not IBinaryMessageSerializer, RawMessage: null })
         {
-            context.Envelope.RawMessage = await DefaultSerializers.Binary.SerializeAsync(
-                    context.Envelope.Message,
-                    context.Envelope.Headers,
-                    context.Envelope.GetEndpoint())
-                .ConfigureAwait(false);
+            context.Envelope.SetRawMessage(
+                await DefaultSerializers.Binary.SerializeAsync(
+                        context.Envelope.Message,
+                        context.Envelope.Headers,
+                        context.Envelope.GetEndpoint())
+                    .ConfigureAwait(false));
         }
 
         await next(context, cancellationToken).ConfigureAwait(false);

@@ -134,6 +134,6 @@ public class NewtonsoftJsonMessageDeserializerBuilder
             typeof(NewtonsoftJsonMessageDeserializer<>).MakeGenericType(_messageType),
             _settings,
             _encoding,
-            _typeHeaderBehavior)
-        ?? throw new InvalidOperationException("Failed to create the NewtonsoftJsonMessageDeserializer instance.");
+            _typeHeaderBehavior) ??
+        throw new InvalidOperationException("Failed to create the NewtonsoftJsonMessageDeserializer instance.");
 }

@@ -24,12 +24,16 @@ public class DbOutboxMessage : OutboxMessage
     /// <param name="endpointName">
     ///     The endpoint name.
     /// </param>
+    /// <param name="resolvedEndpoint">
+    ///     The resolved endpoint. This is used only when the endpoint is resolved dynamically.
+    /// </param>
     public DbOutboxMessage(
         long id,
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
-        string endpointName)
-        : base(content, headers, endpointName)
+        string endpointName,
+        string? resolvedEndpoint = null)
+        : base(content, headers, endpointName, resolvedEndpoint)
     {
         Id = id;
     }

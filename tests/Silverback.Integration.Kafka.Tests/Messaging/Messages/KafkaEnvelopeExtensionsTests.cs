@@ -16,16 +16,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
 
 public class KafkaEnvelopeExtensionsTests
 {
+    // TODO: Test AsKafkaInbound/Outbound
+
     [Fact]
-    public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForInboundEnvelope()
+    public void GetKafkaKey_ShouldReturnKeyAsStringForInboundEnvelope()
     {
         KafkaInboundEnvelope<TestEventOne, string> envelope = new(
             null,
             Stream.Null,
-            [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
+            new KafkaOffset("topic", 1, 1));
+
+        envelope.SetKey("test");
 
         string? key = envelope.GetKafkaKey();
 
@@ -33,14 +36,14 @@ public class KafkaEnvelopeExtensionsTests
     }
 
     [Fact]
-    public void GetKafkaKey_ShouldReturnMessageKeyHeaderValueForOutboundEnvelope()
+    public void GetKafkaKey_ShouldReturnKeyAsStringForOutboundEnvelope()
     {
         KafkaOutboundEnvelope<object, string> envelope = new(
             new TestEventOne(),
-            [new MessageHeader(KafkaMessageHeaders.MessageKey, "test")],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKey("test");
 
         string? key = envelope.GetKafkaKey();
 
@@ -48,15 +51,80 @@ public class KafkaEnvelopeExtensionsTests
     }
 
     [Fact]
-    public void GetKafkaKey_ShouldReturnNull_WhenMessageKeyHeaderIsNotSet()
+    public void GetKafkaKey_ShouldReturnKeyForInboundEnvelope()
+    {
+        KafkaInboundEnvelope<TestEventOne, int> envelope = new(
+            null,
+            Stream.Null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new KafkaOffset("topic", 1, 1));
+
+        envelope.SetKey(123);
+
+        int? key = envelope.GetKafkaKey<int>();
+
+        key.ShouldBe(123);
+    }
+
+    [Fact]
+    public void GetKafkaKey_ShouldReturnKeyForOutboundEnvelope()
+    {
+        KafkaOutboundEnvelope<object, int> envelope = new(
+            new TestEventOne(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKey(123);
+
+        int? key = envelope.GetKafkaKey<int>();
+
+        key.ShouldBe(123);
+    }
+
+    [Fact]
+    public void GetKafkaKey_ShouldThrowForInboundEnvelope_WhenTypeMismatch()
+    {
+        KafkaInboundEnvelope<TestEventOne, int> envelope = new(
+            null,
+            Stream.Null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new KafkaOffset("topic", 1, 1));
+
+        envelope.SetKey(123);
+
+        Action act = () => envelope.GetKafkaKey<string>();
+
+        ArgumentException exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaInboundEnvelope");
+    }
+
+    [Fact]
+    public void GetKafkaKey_ShouldThrowForOutboundEnvelope_WhenTypeMismatch()
+    {
+        KafkaOutboundEnvelope<object, int> envelope = new(
+            new TestEventOne(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKey(123);
+
+        Action act = () => envelope.GetKafkaKey<string>();
+
+        ArgumentException exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaOutboundEnvelope");
+    }
+
+    [Fact]
+    public void GetKafkaKey_ShouldReturnNullForInboundEnvelope_WhenKeyIsNotSet()
     {
         KafkaInboundEnvelope<TestEventOne, string> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
+            new KafkaOffset("topic", 1, 1));
 
         string? key = envelope.GetKafkaKey();
 
@@ -64,60 +132,69 @@ public class KafkaEnvelopeExtensionsTests
     }
 
     [Fact]
-    public void SetKafkaKey_ShouldSetMessageKeyHeader()
+    public void GetKafkaKey_ShouldReturnNullForOutboundEnvelope_WhenKeyIsNotSet()
+    {
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+            (TestEventOne?)null,
+            Substitute.For<IProducer>());
+
+        string? key = envelope.GetKafkaKey();
+
+        key.ShouldBeNull();
+    }
+
+    [Fact]
+    public void SetKafkaKey_ShouldSetKey()
     {
         KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
-            [],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
         envelope.SetKafkaKey("test");
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.MessageKey, "test"));
+        envelope.GetKafkaKey().ShouldBe("test");
     }
 
     [Fact]
-    public void GetKafkaTimestamp_ShouldReturnTimestampHeaderValue()
+    public void SetKafkaKey_ShouldThrow_WhenKeyTypeMismatch()
+    {
+        KafkaOutboundEnvelope<TestEventOne, int> envelope = new(
+            new TestEventOne(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        Action act = () => envelope.SetKafkaKey("test");
+
+        ArgumentException exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaOutboundEnvelope");
+    }
+
+    [Fact]
+    public void GetKafkaTimestamp_ShouldReturnTimestampValue()
     {
         KafkaInboundEnvelope<TestEventOne, string> envelope = new(
             null,
             Stream.Null,
-            [new MessageHeader(KafkaMessageHeaders.Timestamp, "2025-08-20T13:35:02.9050000Z")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
+            new KafkaOffset("topic", 1, 1));
+
+        DateTime expected = new(2025, 08, 20, 13, 35, 02, 905, DateTimeKind.Utc);
+        envelope.SetTimestamp(expected);
 
         DateTime? timestamp = envelope.GetKafkaTimestamp();
 
-        timestamp.ShouldBe(new DateTime(2025, 08, 20, 13, 35, 02, 905, DateTimeKind.Utc));
+        timestamp.ShouldBe(expected);
     }
 
     [Fact]
-    public void GetKafkaTimestamp_ShouldReturnNull_WhenTimestampHeaderIsNotSet()
-    {
-        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
-            null,
-            Stream.Null,
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "b"));
-
-        DateTime? timestamp = envelope.GetKafkaTimestamp();
-
-        timestamp.ShouldBeNull();
-    }
-
-    [Fact]
-    public void GetKafkaOffset_ShouldReturnBrokerMessageIdentifier()
+    public void GetKafkaOffset_ShouldReturnOffset()
     {
         KafkaOffset offset = new(new TopicPartition("test", 1), 42);
         KafkaInboundEnvelope<TestEventOne, string> envelope = new(
             null,
             Stream.Null,
-            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             offset);
@@ -132,10 +209,10 @@ public class KafkaEnvelopeExtensionsTests
     {
         KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
-            [new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1")],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKafkaDestinationTopic("topic/1");
 
         string? destinationTopic = envelope.GetKafkaDestinationTopic();
 
@@ -147,10 +224,10 @@ public class KafkaEnvelopeExtensionsTests
     {
         KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
-            [new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42)],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKafkaDestinationTopic("topic/1", 42);
 
         int? destinationPartition = envelope.GetKafkaDestinationPartition();
 
@@ -158,33 +235,29 @@ public class KafkaEnvelopeExtensionsTests
     }
 
     [Fact]
-    public void SetKafkaDestinationTopic_ShouldSetHeader()
+    public void SetKafkaDestinationTopic_ShouldSetTopic()
     {
         KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
-            [],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
         envelope.SetKafkaDestinationTopic("topic/1");
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
+        envelope.GetKafkaDestinationTopic().ShouldBe("topic/1");
     }
 
     [Fact]
-    public void SetKafkaDestinationTopic_ShouldSetTopicAndPartitionHeaders()
+    public void SetKafkaDestinationTopic_ShouldSetTopicAndPartition()
     {
         KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
             new TestEventOne(),
-            [],
-            TestProducerEndpointConfiguration.GetDefault(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
 
         envelope.SetKafkaDestinationTopic("topic/1", 42);
 
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationTopic, "topic/1"));
-        envelope.Headers.ShouldContain(new MessageHeader(KafkaMessageHeaders.DestinationPartition, 42));
+        envelope.GetKafkaDestinationTopic().ShouldBe("topic/1");
+        envelope.GetKafkaDestinationPartition().ShouldBe(42);
     }
 }

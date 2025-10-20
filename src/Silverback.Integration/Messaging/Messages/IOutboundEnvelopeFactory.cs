@@ -1,9 +1,6 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
-using Silverback.Messaging.Configuration;
-
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
@@ -17,11 +14,19 @@ public interface IOutboundEnvelopeFactory
     /// <param name="message">
     ///     The message to be wrapped.
     /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
+    /// <param name="context">
+    ///     The optional <see cref="ISilverbackContext" />.
     /// </param>
-    /// <param name="endpointConfiguration">
-    ///     The destination endpoint configuration.
+    /// <returns>
+    ///     The <see cref="IOutboundEnvelope" /> instance.
+    /// </returns>
+    IOutboundEnvelope Create(object? message, ISilverbackContext? context = null);
+
+    /// <summary>
+    ///     Creates the <see cref="IOutboundEnvelope" /> from the specified <see cref="IInboundEnvelope" />.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The inbound envelope to be cloned.
     /// </param>
     /// <param name="context">
     ///     The optional <see cref="ISilverbackContext" />.
@@ -29,11 +34,7 @@ public interface IOutboundEnvelopeFactory
     /// <returns>
     ///     The <see cref="IOutboundEnvelope" /> instance.
     /// </returns>
-    IOutboundEnvelope Create(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null);
+    IOutboundEnvelope CreateFromInboundEnvelope(IInboundEnvelope envelope, ISilverbackContext? context = null);
 
     /// <summary>
     ///     Creates the <see cref="IOutboundEnvelope{TMessage}" />.
@@ -44,22 +45,12 @@ public interface IOutboundEnvelopeFactory
     /// <param name="message">
     ///     The message to be wrapped.
     /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="endpointConfiguration">
-    ///     The destination endpoint configuration.
-    /// </param>
     /// <param name="context">
     ///     The optional <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     The <see cref="IOutboundEnvelope{TMessage}" /> instance.
     /// </returns>
-    IOutboundEnvelope<TMessage> Create<TMessage>(
-        TMessage? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        ISilverbackContext? context = null)
+    IOutboundEnvelope<TMessage> Create<TMessage>(TMessage? message, ISilverbackContext? context = null)
         where TMessage : class;
 }

@@ -48,14 +48,11 @@ public abstract record DynamicProducerEndpointResolver<TMessage, TEndpoint, TCon
     {
         Check.NotNull(envelope, nameof(envelope));
 
+        if (envelope.ResolvedEndpoint != null)
+            return DeserializeEndpoint(envelope.ResolvedEndpoint, configuration);
+
         if (envelope is IOutboundEnvelope<TMessage> castedEnvelope)
             return GetEndpointCore(castedEnvelope, configuration);
-
-        if (envelope.Headers.TryGetValue(DefaultMessageHeaders.SerializedEndpoint, out string? serializedEndpoint) &&
-            serializedEndpoint != null)
-        {
-            return DeserializeEndpoint(serializedEndpoint, configuration);
-        }
 
         throw new InvalidOperationException($"The envelope must be of type {typeof(IOutboundEnvelope<TMessage>).FullName}.");
     }

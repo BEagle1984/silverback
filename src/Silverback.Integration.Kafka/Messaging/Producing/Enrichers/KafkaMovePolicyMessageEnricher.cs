@@ -27,7 +27,7 @@ internal sealed class KafkaMovePolicyMessageEnricher : IMovePolicyMessageEnriche
         outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourcePartition, offset.TopicPartition.Partition.Value);
         outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourceOffset, offset.Offset);
 
-        if (inboundEnvelope.Headers.TryGetValue(KafkaMessageHeaders.Timestamp, out string? timestamp))
-            outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourceTimestamp, timestamp);
+        if (inboundEnvelope is IKafkaInboundEnvelope kafkaEnvelope)
+            outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourceTimestamp, kafkaEnvelope.Timestamp);
     }
 }

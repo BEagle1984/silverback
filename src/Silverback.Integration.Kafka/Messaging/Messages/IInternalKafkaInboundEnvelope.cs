@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Declares the internal methods of the <see cref="KafkaInboundEnvelope{TMessage,TKey}" /> not meant for public use.
 /// </summary>
-internal interface IInternalKafkaInboundEnvelope
+internal interface IInternalKafkaInboundEnvelope : IKafkaInboundEnvelope
 {
     /// <summary>
     ///     Sets the message key.
@@ -17,9 +17,9 @@ internal interface IInternalKafkaInboundEnvelope
     ///     The message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="IKafkaInboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IInternalKafkaInboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaInboundEnvelope SetKey(object? key);
+    IInternalKafkaInboundEnvelope SetKey(object? key);
 
     /// <summary>
     ///     Sets the message key.
@@ -28,9 +28,9 @@ internal interface IInternalKafkaInboundEnvelope
     ///     The serialized message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="IKafkaInboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IInternalKafkaInboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaInboundEnvelope SetRawKey(byte[]? rawKey);
+    IInternalKafkaInboundEnvelope SetRawKey(byte[]? rawKey);
 
     /// <summary>
     ///     Sets the message timestamp.
@@ -39,7 +39,7 @@ internal interface IInternalKafkaInboundEnvelope
     ///     The message timestamp.
     /// </param>
     /// <returns>
-    ///     The <see cref="IKafkaInboundEnvelope" /> so that additional calls can be chained.
+    ///     The <see cref="IInternalKafkaInboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    IKafkaInboundEnvelope SetTimestamp(DateTime timestamp);
+    IInternalKafkaInboundEnvelope SetTimestamp(DateTime timestamp);
 }

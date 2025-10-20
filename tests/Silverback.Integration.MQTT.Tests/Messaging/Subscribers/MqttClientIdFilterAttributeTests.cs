@@ -40,7 +40,6 @@ public class MqttClientIdFilterAttributeTests
         MqttInboundEnvelope<object, object> inboundEnvelope = new(
             null,
             new MemoryStream(),
-            [],
             new MqttConsumerEndpoint(
                 "my-topic",
                 new MqttConsumerEndpointConfiguration()),
@@ -75,7 +74,6 @@ public class MqttClientIdFilterAttributeTests
         MqttInboundEnvelope<object, object> envelope = new(
             null,
             new MemoryStream(),
-            [],
             new MqttConsumerEndpoint(
                 "my-topic",
                 new MqttConsumerEndpointConfiguration()),

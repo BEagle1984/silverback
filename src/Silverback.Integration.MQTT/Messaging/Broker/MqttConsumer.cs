@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,31 +103,28 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         try
         {
-            MessageHeaderCollection headers = Configuration.AreHeadersSupported
-                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
-                : [];
+            IInternalMqttInboundEnvelope envelope = (IInternalMqttInboundEnvelope)EnvelopeFactory.Create(
+                new MemoryStream(message.ApplicationMessage.Payload.ToArray()),
+                _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic),
+                new MqttMessageIdentifier(Configuration.ClientId, message.Id));
 
-            MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
+            // TODO: Was needed?
+            // headers.AddIfNotExists(DefaultMessageHeaders.MessageKey, message.Id);
 
-            headers.AddIfNotExists(DefaultMessageHeaders.MessageKey, message.Id);
+            if (Configuration.AreHeadersSupported && message.ApplicationMessage.UserProperties != null)
+                envelope.Headers.AddRange(message.ApplicationMessage.UserProperties.ToSilverbackHeaders());
 
             if (message.ApplicationMessage.ResponseTopic != null)
-                headers.AddIfNotExists(MqttMessageHeaders.ResponseTopic, message.ApplicationMessage.ResponseTopic);
+                envelope.SetResponseTopic(message.ApplicationMessage.ResponseTopic);
 
+            // TODO: Deserialize in new behavior
             if (message.ApplicationMessage.CorrelationData != null)
-                headers.AddIfNotExists(MqttMessageHeaders.CorrelationData, message.ApplicationMessage.CorrelationData.ToBase64String());
+                envelope.SetRawCorrelationData(message.ApplicationMessage.CorrelationData);
 
-            // If another message is still pending, cancel its task (might happen in case of timeout)
             if (!_inProcessingMessages.TryAdd(message.Id, message))
                 throw new InvalidOperationException("The message has been processed already.");
 
-            await HandleMessageAsync(
-                    message.ApplicationMessage.Payload.ToArray(),
-                    headers,
-                    endpoint,
-                    new MqttMessageIdentifier(Configuration.ClientId, message.Id),
-                    sequenceStore)
-                .ConfigureAwait(false);
+            await HandleMessageAsync(envelope, sequenceStore).ConfigureAwait(false);
         }
         finally
         {

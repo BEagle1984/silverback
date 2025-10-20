@@ -29,7 +29,7 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
         if (producerContext.Envelope.BrokerMessageIdentifier != null)
             SetMessageId(activity, (KafkaOffset)producerContext.Envelope.BrokerMessageIdentifier);
 
-        SetMessageKey(activity, producerContext.Envelope.Headers);
+        SetMessageKey(activity, producerContext.Envelope.AsKafkaEnvelope().Key);
     }
 
     /// <inheritdoc cref="IBrokerActivityEnricher.EnrichInboundActivity" />
@@ -39,7 +39,7 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
         Check.NotNull(consumerContext, nameof(consumerContext));
 
         SetMessageId(activity, (KafkaOffset)consumerContext.Envelope.BrokerMessageIdentifier);
-        SetMessageKey(activity, consumerContext.Envelope.Headers);
+        SetMessageKey(activity, consumerContext.Envelope.AsKafkaEnvelope().Key);
     }
 
     private static void SetMessageId(Activity activity, KafkaOffset? offset)
@@ -51,11 +51,11 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpoi
         activity.SetTag(KafkaPartition, $"{offset.TopicPartition.Topic}[{offset.TopicPartition.Partition.Value}]");
     }
 
-    private static void SetMessageKey(Activity activity, MessageHeaderCollection messageHeaderCollection)
+    private static void SetMessageKey(Activity activity, object? key)
     {
-        string? kafkaKeyHeaderValue = messageHeaderCollection.GetValue(KafkaMessageHeaders.MessageKey);
+        if (key == null)
+            return;
 
-        if (kafkaKeyHeaderValue != null)
-            activity.SetTag(KafkaMessageKey, kafkaKeyHeaderValue);
+        activity.SetTag(KafkaMessageKey, key.ToString());
     }
 }

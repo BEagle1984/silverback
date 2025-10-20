@@ -9,19 +9,12 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
+internal abstract record OutboundEnvelope : BrokerEnvelope, IInternalOutboundEnvelope
 {
     private ProducerEndpoint? _endpoint;
 
-    protected OutboundEnvelope(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpointConfiguration endpointConfiguration,
-        IProducer producer,
-        ISilverbackContext? context = null)
-        : base(null, headers)
+    protected OutboundEnvelope(object? message, IProducer producer, ISilverbackContext? context = null)
     {
-        EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Producer = Check.NotNull(producer, nameof(producer));
         Context = context;
         Message = message;
@@ -33,15 +26,33 @@ internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
             RawMessage = stream;
     }
 
-    public ProducerEndpointConfiguration EndpointConfiguration { get; }
+    protected OutboundEnvelope(IInboundEnvelope clonedEnvelope, IProducer producer, ISilverbackContext? context = null)
+        : base(clonedEnvelope)
+    {
+        Producer = Check.NotNull(producer, nameof(producer));
+        Context = context;
+        Message = clonedEnvelope.Message;
+    }
 
     public IProducer Producer { get; }
 
+    public ProducerEndpointConfiguration EndpointConfiguration => Producer.EndpointConfiguration;
+
     public ISilverbackContext? Context { get; }
+
+    public string? ResolvedEndpoint { get; private set; }
 
     public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
 
-    public IOutboundEnvelope AddHeader(string name, object value)
+    public ProducerEndpoint GetEndpoint() => _endpoint ??= EndpointConfiguration.EndpointResolver.GetEndpoint(this);
+
+    public IOutboundEnvelope SetRawMessage(Stream? rawMessage)
+    {
+        RawMessage = rawMessage;
+        return this;
+    }
+
+    public IOutboundEnvelope AddHeader(string name, object? value)
     {
         Headers.Add(name, value);
         return this;
@@ -59,11 +70,21 @@ internal abstract record OutboundEnvelope : BrokerEnvelope, IOutboundEnvelope
         return this;
     }
 
-    public ProducerEndpoint GetEndpoint() => _endpoint ??= EndpointConfiguration.EndpointResolver.GetEndpoint(this);
-
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,
         Headers = new MessageHeaderCollection(Headers)
     };
+
+    public IOutboundEnvelope SetBrokerMessageIdentifier(IBrokerMessageIdentifier? brokerMessageIdentifier)
+    {
+        BrokerMessageIdentifier = brokerMessageIdentifier;
+        return this;
+    }
+
+    public IInternalOutboundEnvelope SetResolvedEndpoint(string? resolvedEndpoint)
+    {
+        ResolvedEndpoint = resolvedEndpoint;
+        return this;
+    }
 }
