@@ -1,5 +1,5 @@
 # Conduktor: http://localhost:8080
-# EMQX dashboard: http://localhost:18083 (user: admin / pwd: public)
+# EMQX dashboard: http://localhost:18083 (user: admin / pwd: emqx)
 # MQTTX: http://localhost:8084
 # PGAdmin: http://localhost:8082 (database password: Si1v3rbacK)
 

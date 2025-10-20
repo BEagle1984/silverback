@@ -181,6 +181,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
         try
         {
+            await SubscribeAsync().ConfigureAwait(false);
             await Connected.InvokeAsync(this).ConfigureAwait(false);
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }

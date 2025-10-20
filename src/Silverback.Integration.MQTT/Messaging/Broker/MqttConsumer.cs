@@ -131,17 +131,17 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
-    protected override async ValueTask StartCoreAsync()
+    protected override ValueTask StartCoreAsync()
     {
         _channelsManager.StartReading();
-        await Client.SubscribeAsync().ConfigureAwait(false);
+        return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
     protected override ValueTask StopCoreAsync()
     {
         _channelsManager.StopReadingAsync().FireAndForget();
-        return default;
+        return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
