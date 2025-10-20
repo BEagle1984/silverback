@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     Initializes and connects the configured producers and consumers.
 /// </summary>
-internal interface IBrokerClientsConnector
+public interface IBrokerClientsConnector
 {
     /// <summary>
     ///     Calls all the IBrokerClientsInitializer and initializes the producers and consumers.
