@@ -74,6 +74,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     public AsyncEvent<BrokerClient> Connected { get; } = new();
 
+    public AsyncEvent<BrokerClient> Subscribed { get; } = new();
+
     public AsyncEvent<MqttApplicationMessageReceivedEventArgs> MessageReceived { get; } = new();
 
     public bool IsConnected => _mqttClient.IsConnected;
@@ -181,8 +183,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
         try
         {
-            await SubscribeAsync().ConfigureAwait(false);
             await Connected.InvokeAsync(this).ConfigureAwait(false);
+            await SubscribeAsync().ConfigureAwait(false);
+            await Subscribed.InvokeAsync(this).ConfigureAwait(false);
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }
         catch (Exception ex)

@@ -78,6 +78,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         _endpointsCache = new MqttConsumerEndpointsCache(client.Configuration);
 
         Client.Connected.AddHandler(OnClientConnectedAsync);
+        Client.Subscribed.AddHandler(OnClientSubscribedAsync);
         Client.Disconnected.AddHandler(OnClientDisconnectedAsync);
     }
 
@@ -184,6 +185,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         _channelsManager.Dispose();
 
         Client.Connected.RemoveHandler(OnClientConnectedAsync);
+        Client.Subscribed.RemoveHandler(OnClientSubscribedAsync);
         Client.Disconnected.RemoveHandler(OnClientDisconnectedAsync);
 
         _pendingMessagesCountdown.Dispose();
@@ -191,19 +193,20 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async ValueTask OnClientConnectedAsync(BrokerClient client)
     {
-        Client.SubscribedTopicsFilters.ForEach(topicFilter => _logger.LogConsumerSubscribed(topicFilter.Topic, this));
-
         await StartAsync().ConfigureAwait(false);
-
         SetConnectedStatus();
+    }
+
+    private ValueTask OnClientSubscribedAsync(BrokerClient client)
+    {
+        Client.SubscribedTopicsFilters.ForEach(topicFilter => _logger.LogConsumerSubscribed(topicFilter.Topic, this));
+        return ValueTask.CompletedTask;
     }
 
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
-
         _channelsManager.CompleteAll();
-
         RevertConnectedStatus();
     }
 

@@ -29,6 +29,7 @@ public class MqttClientIdFilterAttributeTests
     {
         IMqttClientWrapper clientWrapper = Substitute.For<IMqttClientWrapper>();
         clientWrapper.Connected.Returns(new AsyncEvent<BrokerClient>());
+        clientWrapper.Subscribed.Returns(new AsyncEvent<BrokerClient>());
         clientWrapper.Disconnected.Returns(new AsyncEvent<BrokerClient>());
         clientWrapper.Initializing.Returns(new AsyncEvent<BrokerClient>());
         clientWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());

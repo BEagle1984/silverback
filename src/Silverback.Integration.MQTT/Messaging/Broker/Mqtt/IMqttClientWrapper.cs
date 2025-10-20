@@ -22,6 +22,11 @@ public interface IMqttClientWrapper : IBrokerClient
     AsyncEvent<BrokerClient> Connected { get; }
 
     /// <summary>
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the topics are successfully subscribed.
+    /// </summary>
+    AsyncEvent<BrokerClient> Subscribed { get; }
+
+    /// <summary>
     ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when a message is received.
     /// </summary>
     AsyncEvent<MqttApplicationMessageReceivedEventArgs> MessageReceived { get; }
