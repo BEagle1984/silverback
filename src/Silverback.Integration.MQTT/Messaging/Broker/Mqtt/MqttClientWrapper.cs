@@ -89,18 +89,22 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         _publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
 
     public Task SubscribeAsync() =>
-        _mqttClient.SubscribeAsync(
-            new MqttClientSubscribeOptions
-            {
-                TopicFilters = [.. _subscribedTopicsFilters]
-            });
+        _subscribedTopicsFilters.Length >= 1
+            ? _mqttClient.SubscribeAsync(
+                new MqttClientSubscribeOptions
+                {
+                    TopicFilters = [.. _subscribedTopicsFilters]
+                })
+            : Task.CompletedTask;
 
     public Task UnsubscribeAsync() =>
-        _mqttClient.UnsubscribeAsync(
-            new MqttClientUnsubscribeOptions
-            {
-                TopicFilters = _subscribedTopicsFilters.Select(filter => filter.Topic).ToList()
-            });
+        _subscribedTopicsFilters.Length >= 1
+            ? _mqttClient.UnsubscribeAsync(
+                new MqttClientUnsubscribeOptions
+                {
+                    TopicFilters = _subscribedTopicsFilters.Select(filter => filter.Topic).ToList()
+                })
+            : Task.CompletedTask;
 
     protected override ValueTask ConnectCoreAsync()
     {
