@@ -83,13 +83,13 @@ public partial class ErrorPoliciesTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 0, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaRawKey("1").SetChunkHeaders("1", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(10).Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 1, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaRawKey("1").SetChunkHeaders("1", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
             rawMessage.Skip(20).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+            envelope => envelope.SetKafkaRawKey("1").SetChunkHeaders("1", 2, true, typeof(TestEventOne)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

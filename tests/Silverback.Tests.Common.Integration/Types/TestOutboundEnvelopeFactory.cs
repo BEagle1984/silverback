@@ -23,4 +23,8 @@ internal class TestOutboundEnvelopeFactory : OutboundEnvelopeFactory
         IInboundEnvelope<TMessage> envelope,
         ISilverbackContext? context = null) =>
         new TestOutboundEnvelope<TMessage>(envelope, Producer, context);
+
+    public override IOutboundEnvelope CloneReplacingMessage<TMessage>(TMessage? message, IOutboundEnvelope envelope)
+        where TMessage : class =>
+        new TestOutboundEnvelope<TMessage>(message, envelope, Producer);
 }

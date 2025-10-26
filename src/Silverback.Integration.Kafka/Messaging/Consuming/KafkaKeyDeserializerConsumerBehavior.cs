@@ -8,26 +8,26 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Producing;
+namespace Silverback.Messaging.Consuming;
 
 /// <summary>
-///     Serializes the kafka key.
+///     Deserializes the kafka key.
 /// </summary>
 // TODO: Test
-public class KafkaKeySerializerProducerBehavior : IProducerBehavior
+public class KafkaKeyDeserializerConsumerBehavior : IConsumerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
-    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
+    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
-    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
+    /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         // TODO: Support other key types via IKafkaKeySerializer
-        if (context.Envelope is IKafkaOutboundEnvelope<object, string> { Key: not null } kafkaEnvelope)
-            kafkaEnvelope.SetRawKey(Encoding.UTF8.GetBytes(kafkaEnvelope.Key));
+        if (context.Envelope is IInternalKafkaInboundEnvelope { RawKey.Length: > 0, Key: null } kafkaEnvelope)
+            kafkaEnvelope.SetKey(Encoding.UTF8.GetString(kafkaEnvelope.RawKey));
 
         return next(context, cancellationToken);
     }

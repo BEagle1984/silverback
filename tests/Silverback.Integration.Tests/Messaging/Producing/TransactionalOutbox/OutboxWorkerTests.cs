@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,37 +57,33 @@ public class OutboxWorkerTests
     public async Task ProcessOutboxAsync_ShouldProduceMessages(bool enforceMessageOrder)
     {
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
-                    Task.Run(
-                        async () =>
-                        {
-                            await Task.Delay(5);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                        }).FireAndForget());
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+                Task.Run(async () =>
+                {
+                    await Task.Delay(5);
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+                }).FireAndForget());
         _producer2
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
-                    Task.Run(
-                        async () =>
-                        {
-                            await Task.Delay(5);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                        }).FireAndForget());
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+                Task.Run(async () =>
+                {
+                    await Task.Delay(5);
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+                }).FireAndForget());
 
         await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
         await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
@@ -117,21 +112,20 @@ public class OutboxWorkerTests
 
         int tries = 0;
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
-                {
-                    if (Interlocked.Increment(ref tries) is 2 or 5)
-                        throw new InvalidOperationException("Test");
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
+                    throw new InvalidOperationException("Test");
 
-                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                });
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                    .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+            });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
@@ -166,21 +160,20 @@ public class OutboxWorkerTests
 
         int tries = 0;
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
-                {
-                    if (Interlocked.Increment(ref tries) is 2 or 5)
-                        throw new InvalidOperationException("Test");
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
+                    throw new InvalidOperationException("Test");
 
-                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                });
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                    .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+            });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
@@ -211,26 +204,25 @@ public class OutboxWorkerTests
 
         int tries = 0;
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
                 {
-                    if (Interlocked.Increment(ref tries) is 2 or 5)
-                    {
-                        callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
-                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
-                    }
-                    else
-                    {
-                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                            .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                    }
-                });
+                    callInfo.ArgAt<Action<Exception, OutboxMessage>>(2)
+                        .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(3));
+                }
+                else
+                {
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+                }
+            });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
@@ -265,26 +257,25 @@ public class OutboxWorkerTests
 
         int tries = 0;
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
                 {
-                    if (Interlocked.Increment(ref tries) is 2 or 5)
-                    {
-                        callInfo.ArgAt<Action<Exception, OutboxMessage>>(3)
-                            .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(4));
-                    }
-                    else
-                    {
-                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                            .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                    }
-                });
+                    callInfo.ArgAt<Action<Exception, OutboxMessage>>(2)
+                        .Invoke(new InvalidOperationException("Test"), callInfo.ArgAt<OutboxMessage>(3));
+                }
+                else
+                {
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+                }
+            });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
@@ -319,26 +310,24 @@ public class OutboxWorkerTests
 
         int processed = 0;
         _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<byte[]>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
-                    Arg.Any<Action<Exception, OutboxMessage>>(),
-                    Arg.Any<OutboxMessage>()))
-            .Do(
-                callInfo =>
+            .When(producer => producer.RawProduce(
+                Arg.Any<byte[]>(),
+                Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
+                Arg.Any<Action<Exception, OutboxMessage>>(),
+                Arg.Any<OutboxMessage>(),
+                Arg.Any<Action<IOutboundEnvelope>?>()))
+            .Do(callInfo =>
+            {
+                Task.Run(async () =>
                 {
-                    Task.Run(
-                        async () =>
-                        {
-                            await Task.Delay(10);
-                            callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(2)
-                                .Invoke(null, callInfo.ArgAt<OutboxMessage>(4));
-                        }).FireAndForget();
+                    await Task.Delay(10);
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?, OutboxMessage>>(1)
+                        .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
+                }).FireAndForget();
 
-                    if (Interlocked.Increment(ref processed) == 5)
-                        cancellationTokenSource.Cancel();
-                });
+                if (Interlocked.Increment(ref processed) == 5)
+                    cancellationTokenSource.Cancel();
+            });
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = enforceMessageOrder },
@@ -361,5 +350,6 @@ public class OutboxWorkerTests
             Arg.Any<byte[]>(),
             Arg.Any<Action<IBrokerMessageIdentifier?, OutboxMessage>>(),
             Arg.Any<Action<Exception, OutboxMessage>>(),
-            Arg.Any<OutboxMessage>());
+            Arg.Any<OutboxMessage>(),
+            Arg.Any<Action<IOutboundEnvelope>?>());
 }

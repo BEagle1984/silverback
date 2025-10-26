@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Text;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Util;
@@ -81,6 +82,30 @@ public static class KafkaEnvelopeExtensions
         Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope<object, TKey>().Key;
 
     /// <summary>
+    ///     Gets the raw key of the message consumed from Kafka.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <returns>
+    ///     The Kafka message key.
+    /// </returns>
+    public static byte[]? GetKafkaRawKey(this IInboundEnvelope envelope) =>
+        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().RawKey;
+
+    /// <summary>
+    ///     Gets the raw key of the message produced to Kafka.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <returns>
+    ///     The Kafka message key.
+    /// </returns>
+    public static byte[]? GetKafkaRawKey(this IOutboundEnvelope envelope) =>
+        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().RawKey;
+
+    /// <summary>
     ///     Sets the key of the message to be produced to Kafka.
     /// </summary>
     /// <param name="envelope">
@@ -94,6 +119,36 @@ public static class KafkaEnvelopeExtensions
     /// </returns>
     public static IOutboundEnvelope SetKafkaKey<TKey>(this IOutboundEnvelope envelope, TKey key) =>
         Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope<object, TKey>().SetKey(key);
+    // TODO: Improve exception message when the key type mismatch
+
+    /// <summary>
+    ///     Sets the raw key of the message to be produced to Kafka.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <param name="key">
+    ///     The Kafka message key.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    public static IOutboundEnvelope SetKafkaRawKey(this IOutboundEnvelope envelope, byte[]? key) =>
+        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().SetRawKey(key);
+    /// <summary>
+    ///     Sets the raw key of the message to be produced to Kafka from the provided UTF8 string.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <param name="key">
+    ///     The Kafka message key.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    public static IOutboundEnvelope SetKafkaRawKey(this IOutboundEnvelope envelope, string? key) =>
+        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().SetRawKey(key?.ToUtf8Bytes());
 
     /// <summary>
     ///     Gets the timestamp of the message consumed from Kafka.

@@ -16,9 +16,16 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Outbound.EndpointResolvers
 
 public class MqttDynamicProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    private readonly IProducer _producer;
+
+    public MqttDynamicProducerEndpointResolverTests()
+    {
+        _producer = Substitute.For<IProducer>();
+        _producer.EndpointConfiguration.Returns(new MqttProducerEndpointConfiguration());
+        _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(new TestEventOne(), _producer);
+    }
 
     [Fact]
     public void GetEndpoint_ShouldReturnTopicFromEnvelopeBasedTopicNameFunction()
@@ -144,9 +151,7 @@ public class MqttDynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldDeserializeEndpoint()
     {
         MqttDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
-        IOutboundEnvelope envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
-            (TestEventOne?)null,
-            Substitute.For<IProducer>());
+        IOutboundEnvelope envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>((TestEventOne?)null, _producer);
         ((IInternalOutboundEnvelope)envelope).SetResolvedEndpoint("serialized");
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);

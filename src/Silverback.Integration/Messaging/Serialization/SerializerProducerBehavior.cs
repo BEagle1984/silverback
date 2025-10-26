@@ -23,7 +23,11 @@ public class SerializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.RawMessage == null && context.Envelope.Message is not ITombstone)
+        if (context.Envelope.Message is ITombstone tombstone)
+        {
+            context.Envelope = context.Producer.EnvelopeFactory.CloneReplacingMessage(null, tombstone.MessageType, context.Envelope);
+        }
+        else if (context.Envelope.RawMessage == null)
         {
             context.Envelope.SetRawMessage(
                 await context.Envelope.EndpointConfiguration.Serializer.SerializeAsync(

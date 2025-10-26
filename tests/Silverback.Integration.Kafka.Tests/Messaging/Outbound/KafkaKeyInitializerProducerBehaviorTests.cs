@@ -154,11 +154,6 @@ public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
     [Fact]
     public async Task HandleAsync_ShouldDoNothing_WhenNotKafkaEnvelope()
     {
-        _kafkaProducer.EndpointConfiguration.Returns(
-            new KafkaProducerEndpointConfiguration
-            {
-                Chunk = new ChunkSettings { Size = 42 }
-            });
         TestOutboundEnvelope<NoKeyMembersMessage> envelope = new(
             new NoKeyMembersMessage
             {

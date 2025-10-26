@@ -6,6 +6,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
@@ -15,9 +16,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolver
 
 public class KafkaDynamicProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    private readonly IProducer _producer;
+
+    public KafkaDynamicProducerEndpointResolverTests()
+    {
+        _producer = Substitute.For<IProducer>();
+        _producer.EndpointConfiguration.Returns(new KafkaProducerEndpointConfiguration());
+        _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(new TestEventOne(), _producer);
+    }
 
     [Fact]
     public void GetEndpoint_ShouldReturnTopicAndPartitionFromEnvelopeBasedTopicNameAndPartitionFunction()
@@ -272,9 +280,7 @@ public class KafkaDynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldDeserializeEndpoint(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
-            (TestEventOne?)null,
-            Substitute.For<IProducer>());
+        KafkaOutboundEnvelope<TestEventOne, string> envelope = new((TestEventOne?)null, _producer);
         envelope.SetResolvedEndpoint($"{topic}|{partition}");
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);

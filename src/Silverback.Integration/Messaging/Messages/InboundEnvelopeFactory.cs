@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Messages;
 // TODO: Test this and inheritors
 internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
 {
-    private readonly MethodInfo _cloneReplacingEnvelopeMethod;
+    private readonly MethodInfo _cloneReplacingMessageMethod;
 
     private readonly ConcurrentDictionary<Type, MethodInfo> _cloneReplacingMessageMethodCache = new();
 
@@ -24,9 +24,8 @@ internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
         Consumer = Check.NotNull(consumer, nameof(consumer));
 
         MethodInfo[] methods = GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-        _cloneReplacingEnvelopeMethod =
-            methods.FirstOrDefault(methodInfo => methodInfo is { Name: nameof(CloneReplacingMessage), IsGenericMethod: true }) ??
-            throw new InvalidOperationException($"{nameof(CloneReplacingMessage)} method not found.");
+        _cloneReplacingMessageMethod = methods.FirstOrDefault(methodInfo => methodInfo is { Name: nameof(CloneReplacingMessage), IsGenericMethod: true }) ??
+                                       throw new InvalidOperationException($"{nameof(CloneReplacingMessage)} method not found.");
     }
 
     protected IConsumer Consumer { get; }
@@ -55,7 +54,7 @@ internal abstract class InboundEnvelopeFactory : IInboundEnvelopeFactory
         MethodInfo genericMethod = _cloneReplacingMessageMethodCache.GetOrAdd(
             messageType,
             static (type, method) => method.MakeGenericMethod(type),
-            _cloneReplacingEnvelopeMethod);
+            _cloneReplacingMessageMethod);
 
         return (IInboundEnvelope)genericMethod.Invoke(this, [message, envelope])!;
     }

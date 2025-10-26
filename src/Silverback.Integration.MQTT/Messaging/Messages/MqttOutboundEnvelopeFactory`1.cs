@@ -27,4 +27,8 @@ internal class MqttOutboundEnvelopeFactory<TCorrelationData> : OutboundEnvelopeF
         IInboundEnvelope<TMessage> envelope,
         ISilverbackContext? context = null) =>
         new MqttOutboundEnvelope<TMessage, TCorrelationData>(envelope, Producer, context);
+
+    public override IOutboundEnvelope CloneReplacingMessage<TMessage>(TMessage? message, IOutboundEnvelope envelope) 
+        where TMessage : class => 
+        new MqttOutboundEnvelope<TMessage, TCorrelationData>(message, envelope, Producer);
 }

@@ -43,7 +43,7 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(Tombstone message) => tombstone = message;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaRawKey("42"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -76,7 +76,7 @@ public class NullMessageHandlingTests : KafkaTests
             Stream.Null,
             envelope => envelope
                 .AddHeader(DefaultMessageHeaders.MessageType, typeof(TestEventOne).AssemblyQualifiedName)
-                .SetKafkaKey(43));
+                .SetKafkaRawKey("42"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -105,7 +105,7 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(Tombstone<TestEventOne> message) => tombstone = message;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaRawKey("42"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -139,7 +139,7 @@ public class NullMessageHandlingTests : KafkaTests
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaRawKey("42"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -168,13 +168,13 @@ public class NullMessageHandlingTests : KafkaTests
         void Handle(IInboundEnvelope<TestEventOne> envelope) => consumedEnvelope = envelope;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaKey(42));
+        await producer.RawProduceAsync(Stream.Null, envelope => envelope.SetKafkaRawKey("42"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
         consumedEnvelope.ShouldNotBeNull();
-        consumedEnvelope!.GetKafkaKey().ShouldBe("42");
-        consumedEnvelope!.Message.ShouldBeNull();
+        consumedEnvelope.GetKafkaKey().ShouldBe("42");
+        consumedEnvelope.Message.ShouldBeNull();
     }
 }

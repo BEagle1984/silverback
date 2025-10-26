@@ -17,10 +17,12 @@ public class DynamicProducerEndpointResolverTests
     [Fact]
     public void GetEndpoint_ShouldReturnEndpoint()
     {
-        TestDynamicProducerEndpointResolver<TestEventOne> _endpointResolver = new("topic");
+        TestDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new("topic");
 
-        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), Substitute.For<IProducer>());
-        ProducerEndpoint endpoint = _endpointResolver.GetEndpoint(envelope);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic"));
+        TestOutboundEnvelope<TestEventOne> envelope = new(new TestEventOne(), producer);
+        ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);
 
         endpoint.ShouldBeOfType<TestProducerEndpoint>();
         endpoint.RawName.ShouldBe("topic");

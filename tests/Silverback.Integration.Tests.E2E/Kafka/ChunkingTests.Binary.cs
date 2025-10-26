@@ -385,22 +385,22 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 0, 3));
+            envelope => envelope.SetKafkaRawKey("1").SetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 1, 3));
+            envelope => envelope.SetKafkaRawKey("1").SetChunkHeaders("1", 1, 3));
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("2").SetChunkHeaders("2", 0));
+            envelope => envelope.SetKafkaRawKey("2").SetChunkHeaders("2", 0));
         await producer.RawProduceAsync(
             rawMessage2.Skip(10).Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("2").SetChunkHeaders("2", 1));
+            envelope => envelope.SetKafkaRawKey("2").SetChunkHeaders("2", 1));
         await producer.RawProduceAsync(
             rawMessage3.Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("3").SetChunkHeaders("3", 0));
+            envelope => envelope.SetKafkaRawKey("3").SetChunkHeaders("3", 0));
         await producer.RawProduceAsync(
             rawMessage3.Skip(10).Take(10).ToArray(),
-            envelope => envelope.SetKafkaKey("3").SetChunkHeaders("3", 1));
+            envelope => envelope.SetKafkaRawKey("3").SetChunkHeaders("3", 1));
 
         await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
 
@@ -409,13 +409,13 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             rawMessage3.Skip(20).ToArray(),
-            envelope => envelope.SetKafkaKey("3").SetChunkHeaders("3", 2, true));
+            envelope => envelope.SetKafkaRawKey("3"u8.ToArray()).SetChunkHeaders("3", 2, true));
         await producer.RawProduceAsync(
             rawMessage2.Skip(20).ToArray(),
-            envelope => envelope.SetKafkaKey("2").SetChunkHeaders("2", 2, true));
+            envelope => envelope.SetKafkaRawKey("2"u8.ToArray()).SetChunkHeaders("2", 2, true));
         await producer.RawProduceAsync(
             rawMessage1.Skip(20).ToArray(),
-            envelope => envelope.SetKafkaKey("1").SetChunkHeaders("1", 2, 3));
+            envelope => envelope.SetKafkaRawKey("1"u8.ToArray()).SetChunkHeaders("1", 2, 3));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

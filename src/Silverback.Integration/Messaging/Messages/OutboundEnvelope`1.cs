@@ -21,6 +21,12 @@ internal abstract record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboun
         Message = clonedEnvelope.Message;
     }
 
+    protected OutboundEnvelope(TMessage? message, IOutboundEnvelope clonedEnvelope, IProducer producer)
+        : base(message, producer, clonedEnvelope.Context)
+    {
+        Message = message;
+    }
+
     public new TMessage? Message { get; }
 
     public override Type MessageType => Message?.GetType() ?? typeof(TMessage);

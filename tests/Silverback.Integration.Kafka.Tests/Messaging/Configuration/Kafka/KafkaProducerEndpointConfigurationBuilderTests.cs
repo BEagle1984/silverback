@@ -19,9 +19,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 
 public class KafkaProducerEndpointConfigurationBuilderTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    public KafkaProducerEndpointConfigurationBuilderTests()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new KafkaProducerEndpointConfiguration());
+
+        _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(new TestEventOne(), producer);
+    }
 
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()

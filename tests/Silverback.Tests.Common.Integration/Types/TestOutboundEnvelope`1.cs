@@ -14,8 +14,13 @@ internal record TestOutboundEnvelope<TMessage> : OutboundEnvelope<TMessage>
     {
     }
 
-    public TestOutboundEnvelope(IInboundEnvelope<TMessage> envelope, IProducer producer, ISilverbackContext? context = null)
-        : base(envelope, producer, context)
+    public TestOutboundEnvelope(IInboundEnvelope<TMessage> clonedEnvelope, IProducer producer, ISilverbackContext? context = null)
+        : base(clonedEnvelope, producer, context)
+    {
+    }
+
+    public TestOutboundEnvelope(TMessage? message, IOutboundEnvelope clonedEnvelope, IProducer producer)
+        : base(message, clonedEnvelope, producer)
     {
     }
 }

@@ -710,13 +710,13 @@ public partial class ProducerTests
 
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            envelope => envelope.SetKafkaKey("1001"));
+            envelope => envelope.SetKafkaRawKey("1001"u8.ToArray()));
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            envelope => envelope.SetKafkaKey("1002"));
+            envelope => envelope.SetKafkaRawKey("2002"u8.ToArray()));
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            envelope => envelope.SetKafkaKey("1003"));
+            envelope => envelope.SetKafkaRawKey("3003"u8.ToArray()));
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Count.ShouldBe(3);

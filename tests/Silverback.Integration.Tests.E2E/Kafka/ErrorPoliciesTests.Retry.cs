@@ -383,7 +383,7 @@ public partial class ErrorPoliciesTests
         for (int i = 0; i < 4; i++)
         {
             tryCounters[i] = new Counter();
-            await publisher.PublishAsync(new TestIndexedMessage(i, "Long message"));
+            await publisher.WrapAndPublishAsync(new TestIndexedMessage(i, "Long message"), envelope => envelope.SetKafkaKey($"{i}"));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -564,7 +564,7 @@ public partial class ErrorPoliciesTests
         }
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(message);
+        await publisher.WrapAndPublishAsync(message, envelope => envelope.SetKafkaKey("0"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

@@ -7,6 +7,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Tests.Types.Domain;
@@ -16,9 +17,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolver
 
 public class KafkaStaticProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    public KafkaStaticProducerEndpointResolverTests()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new KafkaProducerEndpointConfiguration());
+        _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(new TestEventOne(), producer);
+    }
 
     [Fact]
     public void GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName()

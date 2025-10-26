@@ -17,9 +17,14 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt;
 
 public partial class MqttProducerEndpointConfigurationBuilderTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    public MqttProducerEndpointConfigurationBuilderTests()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new MqttProducerEndpointConfiguration());
+        _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(new TestEventOne(), producer);
+    }
 
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()

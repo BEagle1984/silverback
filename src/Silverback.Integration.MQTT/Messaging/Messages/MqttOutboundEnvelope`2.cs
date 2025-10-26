@@ -26,6 +26,19 @@ internal record MqttOutboundEnvelope<TMessage, TCorrelationData> : OutboundEnvel
         }
     }
 
+    public MqttOutboundEnvelope(TMessage? message, IOutboundEnvelope clonedEnvelope, IProducer producer)
+        : base(message, producer, clonedEnvelope.Context)
+    {
+        if (clonedEnvelope is IMqttOutboundEnvelope mqttOutboundEnvelope)
+        {
+            RawCorrelationData = mqttOutboundEnvelope.RawCorrelationData;
+            ResponseTopic = mqttOutboundEnvelope.ResponseTopic;
+
+            if (mqttOutboundEnvelope is IMqttOutboundEnvelope<object, TCorrelationData> typedMqttOutboundEnvelope)
+                CorrelationData = typedMqttOutboundEnvelope.CorrelationData;
+        }
+    }
+
     public TCorrelationData? CorrelationData { get; private set; }
 
     public byte[]? RawCorrelationData { get; private set; }

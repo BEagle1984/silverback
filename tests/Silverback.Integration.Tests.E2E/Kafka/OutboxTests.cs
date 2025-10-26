@@ -272,6 +272,7 @@ public class OutboxTests : KafkaTests
         inboundMessages.OfType<TestEventTwo>().Count().ShouldBe(3);
     }
 
+    // TODO: Test MQTT as well
     [Fact]
     public async Task Outbox_ShouldPreserveKafkaKey()
     {

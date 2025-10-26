@@ -16,9 +16,14 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Outbound.EndpointResolvers
 
 public class MqttStaticProducerEndpointResolverTests
 {
-    private readonly IOutboundEnvelope<TestEventOne> _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(
-        new TestEventOne(),
-        Substitute.For<IProducer>());
+    private readonly IOutboundEnvelope<TestEventOne> _envelope;
+
+    public MqttStaticProducerEndpointResolverTests()
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new MqttProducerEndpointConfiguration());
+        _envelope = new MqttOutboundEnvelope<TestEventOne, byte[]>(new TestEventOne(), producer);
+    }
 
     [Fact]
     public void GetEndpoint_ShouldReturnTopicFromTopicName()

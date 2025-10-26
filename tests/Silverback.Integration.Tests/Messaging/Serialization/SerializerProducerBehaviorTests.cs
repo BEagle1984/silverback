@@ -22,15 +22,17 @@ public class SerializerProducerBehaviorTests
     [Fact]
     public async Task HandleAsync_ShouldSetEnvelopeRawMessage()
     {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
         IOutboundEnvelope<TestEventOne> envelope = new TestOutboundEnvelope<TestEventOne>(
             new TestEventOne { Content = "test" },
-            Substitute.For<IProducer>());
+            producer);
 
         IOutboundEnvelope? result = null;
         await new SerializerProducerBehavior().HandleAsync(
             new ProducerPipelineContext(
                 envelope,
-                Substitute.For<IProducer>(),
+                producer,
                 [],
                 (_, _) => ValueTask.CompletedTask,
                 Substitute.For<IServiceProvider>()),

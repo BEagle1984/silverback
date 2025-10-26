@@ -67,7 +67,7 @@ public partial class ConsumerEndpointTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         IInboundEnvelope envelope = Helper.Spy.InboundEnvelopes.Single();
-        envelope.GetKafkaTimestamp().ShouldBeLessThan(DateTime.Now);
-        envelope.GetKafkaTimestamp().ShouldBeGreaterThan(DateTime.Now.AddSeconds(-1));
+        envelope.GetKafkaTimestamp().ShouldBeLessThan(DateTime.UtcNow);
+        envelope.GetKafkaTimestamp().ShouldBeGreaterThan(DateTime.UtcNow.AddSeconds(-1));
     }
 }
