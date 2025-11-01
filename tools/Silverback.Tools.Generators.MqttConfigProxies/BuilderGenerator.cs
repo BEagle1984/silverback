@@ -74,7 +74,8 @@ public class BuilderGenerator
             or "WithoutThrowOnNonSuccessfulConnectResponse"
             or "WithProtocolType"
             or "WithTlsOptions"
-            or "WithWillMessageExpiryInterval";
+            or "WithWillMessageExpiryInterval"
+            or "WithAddressFamily";
 
     private void GenerateHeading()
     {

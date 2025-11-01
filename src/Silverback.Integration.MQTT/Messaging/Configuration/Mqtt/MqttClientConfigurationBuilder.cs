@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
@@ -29,15 +28,11 @@ public partial class MqttClientConfigurationBuilder
 
     private MqttClientConfiguration _configuration = new();
 
-    private MqttClientWebSocketProxyConfiguration? _webSocketProxyConfiguration;
-
     private MqttClientTlsConfiguration _tlsConfiguration = new();
 
     private int? _maxDegreeOfParallelism;
 
     private int? _backpressureLimit;
-
-    private AddressFamily? _addressFamily;
 
     private TimeSpan? _acknowledgmentTimeout;
 
@@ -317,7 +312,7 @@ public partial class MqttClientConfigurationBuilder
     {
         _configuration = _configuration with { CleanSession = false };
 
-        if (sessionExpiryInterval != default)
+        if (sessionExpiryInterval != TimeSpan.Zero)
             WithSessionExpiration(sessionExpiryInterval);
 
         return this;
@@ -414,21 +409,6 @@ public partial class MqttClientConfigurationBuilder
             AuthenticationMethod = method,
             AuthenticationData = data
         };
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets the address family.
-    /// </summary>
-    /// <param name="addressFamily">
-    ///     The address family.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public partial MqttClientConfigurationBuilder WithAddressFamily(AddressFamily addressFamily)
-    {
-        _addressFamily = addressFamily;
         return this;
     }
 
@@ -714,7 +694,7 @@ public partial class MqttClientConfigurationBuilder
     {
         Check.NotNull(serverUri, nameof(serverUri));
 
-        int? port = serverUri.IsDefaultPort ? null : serverUri.Port;
+        int port = serverUri.IsDefaultPort ? 0 : serverUri.Port;
         switch (serverUri.Scheme.ToUpperInvariant())
         {
             case "TCP":
@@ -744,85 +724,93 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies the TCP connection settings.
+    ///     Specifies the TCP connection settings using the host name and an optional builder to configure additional TCP options.
     /// </summary>
-    /// <param name="server">
-    ///     The server address.
+    /// <param name="host">
+    ///     The server host name or IP address.
     /// </param>
-    /// <param name="port">
-    ///     The server port. If not specified the default port 1883 or 8883 (TLS) will be used.
-    /// </param>
-    /// <param name="addressFamily">
-    ///     The address family to be used. The default is <see cref="AddressFamily.Unspecified" />.
-    /// </param>
-    /// <param name="protocolType">
-    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
-    ///     The default is <see cref="ProtocolType.Tcp" />.
+    /// <param name="tcpConfigurationBuilderAction">
+    ///     An optional action that configures the <see cref="MqttClientTcpConfigurationBuilder" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public MqttClientConfigurationBuilder ConnectViaTcp(
-        string server,
-        int? port = null,
-        AddressFamily addressFamily = AddressFamily.Unspecified,
-        ProtocolType protocolType = ProtocolType.Tcp)
-    {
-        Check.NotNull(server, nameof(server));
+        string host,
+        Action<MqttClientTcpConfigurationBuilder>? tcpConfigurationBuilderAction = null) =>
+        ConnectViaTcp(host, 0, tcpConfigurationBuilderAction);
 
-        _configuration = _configuration with
+    /// <summary>
+    ///     Specifies the TCP connection settings using the host name, port and an optional builder to configure additional TCP options.
+    /// </summary>
+    /// <param name="host">
+    ///     The server host name or IP address.
+    /// </param>
+    /// <param name="port">
+    ///     The server port.
+    /// </param>
+    /// <param name="tcpConfigurationBuilderAction">
+    ///     An optional action that configures the <see cref="MqttClientTcpConfigurationBuilder" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder ConnectViaTcp(
+        string host,
+        int port,
+        Action<MqttClientTcpConfigurationBuilder>? tcpConfigurationBuilderAction = null)
+    {
+        Check.NotNullOrEmpty(host, nameof(host));
+
+        return ConnectViaTcp(builder =>
         {
-            Channel = new MqttClientTcpConfiguration
-            {
-                RemoteEndpoint = new DnsEndPoint(server, port ?? 0, addressFamily),
-                ProtocolType = protocolType
-            }
-        };
-        return this;
+            builder.WithRemoteEndpoint(new DnsEndPoint(host, port));
+            tcpConfigurationBuilderAction?.Invoke(builder);
+        });
     }
 
     /// <summary>
-    ///     Specifies the TCP connection settings.
+    ///     Specifies the TCP connection settings using an <see cref="EndPoint" /> and an optional builder to configure additional TCP options.
     /// </summary>
-    /// <param name="remoteEndpoint">
+    /// <param name="endpoint">
     ///     The remote endpoint.
     /// </param>
-    /// <param name="protocolType">
-    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
-    ///     The default is <see cref="ProtocolType.Tcp" />.
+    /// <param name="tcpConfigurationBuilderAction">
+    ///     An optional action that configures the <see cref="MqttClientTcpConfigurationBuilder" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaTcp(EndPoint remoteEndpoint, ProtocolType protocolType = ProtocolType.Tcp)
+    public MqttClientConfigurationBuilder ConnectViaTcp(
+        EndPoint endpoint,
+        Action<MqttClientTcpConfigurationBuilder>? tcpConfigurationBuilderAction = null)
     {
-        Check.NotNull(remoteEndpoint, nameof(remoteEndpoint));
+        Check.NotNull(endpoint, nameof(endpoint));
 
-        _configuration = _configuration with
+        return ConnectViaTcp(builder =>
         {
-            Channel = new MqttClientTcpConfiguration
-            {
-                RemoteEndpoint = remoteEndpoint,
-                ProtocolType = protocolType
-            }
-        };
-        return this;
+            builder.WithRemoteEndpoint(endpoint);
+            tcpConfigurationBuilderAction?.Invoke(builder);
+        });
     }
 
     /// <summary>
-    ///     Specifies the TCP connection settings.
+    ///     Specifies the TCP connection settings using only a builder action to configure all TCP options.
     /// </summary>
-    /// <param name="configuration">
-    ///     The <see cref="MqttClientTcpConfiguration" />.
+    /// <param name="tcpConfigurationBuilderAction">
+    ///     The action that configures the <see cref="MqttClientTcpConfigurationBuilder" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaTcp(MqttClientTcpConfiguration configuration)
+    public MqttClientConfigurationBuilder ConnectViaTcp(Action<MqttClientTcpConfigurationBuilder> tcpConfigurationBuilderAction)
     {
-        Check.NotNull(configuration, nameof(configuration));
+        Check.NotNull(tcpConfigurationBuilderAction, nameof(tcpConfigurationBuilderAction));
 
-        _configuration = _configuration with { Channel = configuration };
+        MqttClientTcpConfigurationBuilder builder = new();
+        tcpConfigurationBuilderAction.Invoke(builder);
+
+        _configuration = _configuration with { Channel = builder.Build() };
         return this;
     }
 
@@ -832,128 +820,61 @@ public partial class MqttClientConfigurationBuilder
     /// <param name="uri">
     ///     The server URI.
     /// </param>
+    /// <param name="webSocketConfigurationBuilderAction">
+    ///     The action that configures the <see cref="MqttClientWebSocketConfigurationBuilder" />.
+    /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
-    public MqttClientConfigurationBuilder ConnectViaWebSocket(string uri)
+    public MqttClientConfigurationBuilder ConnectViaWebSocket(
+        string uri,
+        Action<MqttClientWebSocketConfigurationBuilder>? webSocketConfigurationBuilderAction = null)
     {
-        Check.NotNull(uri, nameof(uri));
+        Check.NotNullOrEmpty(uri, nameof(uri));
 
-        _configuration = _configuration with
+        return ConnectViaWebSocket(builder =>
         {
-            Channel = new MqttClientWebSocketConfiguration
-            {
-                Uri = uri
-            }
-        };
-        return this;
+            builder.WithUri(uri);
+            webSocketConfigurationBuilderAction?.Invoke(builder);
+        });
     }
 
     /// <summary>
     ///     Specifies the WebSocket connection settings.
     /// </summary>
-    /// <param name="configuration">
-    ///     The <see cref="MqttClientWebSocketConfiguration" />.
+    /// <param name="webSocketConfigurationBuilderAction">
+    ///     The action that configures the <see cref="MqttClientWebSocketConfigurationBuilder" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaWebSocket(MqttClientWebSocketConfiguration configuration)
+    public MqttClientConfigurationBuilder ConnectViaWebSocket(Action<MqttClientWebSocketConfigurationBuilder> webSocketConfigurationBuilderAction)
     {
-        Check.NotNull(configuration, nameof(configuration));
+        Check.NotNull(webSocketConfigurationBuilderAction, nameof(webSocketConfigurationBuilderAction));
 
-        _configuration = _configuration with { Channel = configuration };
-        return this;
-    }
+        MqttClientWebSocketConfigurationBuilder builder = new();
+        webSocketConfigurationBuilderAction.Invoke(builder);
 
-    /// <summary>
-    ///     Specifies the WebSocket proxy to be used.
-    /// </summary>
-    /// <param name="address">
-    ///     The proxy address.
-    /// </param>
-    /// <param name="username">
-    ///     The user name to be used to authenticate against the proxy.
-    /// </param>
-    /// <param name="password">
-    ///     The password to be used to authenticate against the proxy.
-    /// </param>
-    /// <param name="domain">
-    ///     The user domain.
-    /// </param>
-    /// <param name="bypassOnLocal">
-    ///     A boolean value indicating whether the proxy must be bypassed for local addresses.
-    /// </param>
-    /// <param name="bypassList">
-    ///     The bypass list.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder UseProxy(
-        string address,
-        string? username = null,
-        string? password = null,
-        string? domain = null,
-        bool bypassOnLocal = false,
-        string[]? bypassList = null)
-    {
-        Check.NotNull(address, nameof(address));
-
-        _webSocketProxyConfiguration = new MqttClientWebSocketProxyConfiguration
-        {
-            Address = address,
-            Username = username,
-            Password = password,
-            Domain = domain,
-            BypassOnLocal = bypassOnLocal,
-            BypassList = bypassList
-        };
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies the WebSocket connection settings.
-    /// </summary>
-    /// <param name="settings">
-    ///     The <see cref="MqttClientWebSocketProxyConfiguration" />.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder UseProxy(MqttClientWebSocketProxyConfiguration? settings)
-    {
-        _webSocketProxyConfiguration = settings;
+        _configuration = _configuration with { Channel = builder.Build() };
         return this;
     }
 
     /// <summary>
     ///     Specifies that TLS has to be used to encrypt the network traffic.
     /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder EnableTls()
-    {
-        _tlsConfiguration = new MqttClientTlsConfiguration { UseTls = true };
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies that TLS has to be used to encrypt the network traffic.
-    /// </summary>
-    /// <param name="configuration">
-    ///     The <see cref="MqttClientTlsConfiguration" />.
+    /// <param name="tlsConfigurationBuilderAction">
+    ///     The action that configures the <see cref="MqttClientTlsConfigurationBuilder" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder EnableTls(MqttClientTlsConfiguration configuration)
+    public MqttClientConfigurationBuilder EnableTls(Action<MqttClientTlsConfigurationBuilder>? tlsConfigurationBuilderAction = null)
     {
-        Check.NotNull(configuration, nameof(configuration));
-
-        _tlsConfiguration = configuration;
+        MqttClientTlsConfigurationBuilder builder = new();
+        builder.EnableTls();
+        tlsConfigurationBuilderAction?.Invoke(builder);
+        _tlsConfiguration = builder.Build();
         return this;
     }
 
@@ -994,10 +915,10 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Enables parallel processing and sets the maximum number of incoming message that can be processed concurrently.
+    ///     Enables parallel processing and sets the maximum number of incoming messages that can be processed concurrently.
     /// </summary>
     /// <param name="maxDegreeOfParallelism">
-    ///     The maximum number of incoming message that can be processed concurrently.
+    ///     The maximum number of incoming messages that can be processed concurrently.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -1070,19 +991,15 @@ public partial class MqttClientConfigurationBuilder
         switch (_configuration.Channel)
         {
             case MqttClientTcpConfiguration tcpChannel:
-
-                tcpChannel = tcpChannel with
-                {
-                    Tls = _tlsConfiguration,
-                    AddressFamily = _addressFamily ?? tcpChannel.AddressFamily
-                };
-
                 _configuration = _configuration with
                 {
-                    Channel = tcpChannel
+                    Channel = tcpChannel with
+                    {
+                        Tls = _tlsConfiguration
+                    }
                 };
 
-                EnsurePort(tcpChannel);
+                EnsureTcpPort();
 
                 break;
             case MqttClientWebSocketConfiguration webSocketChannel:
@@ -1090,7 +1007,6 @@ public partial class MqttClientConfigurationBuilder
                 {
                     Channel = webSocketChannel with
                     {
-                        Proxy = _webSocketProxyConfiguration,
                         Tls = _tlsConfiguration
                     }
                 };
@@ -1109,7 +1025,11 @@ public partial class MqttClientConfigurationBuilder
         return _configuration;
     }
 
-    private void EnsurePort(MqttClientTcpConfiguration tcpChannel) =>
+    private void EnsureTcpPort()
+    {
+        if (_configuration.Channel is not MqttClientTcpConfiguration tcpChannel)
+            return;
+
         _configuration = tcpChannel.RemoteEndpoint switch
         {
             DnsEndPoint { Port: 0 } dnsEndPoint =>
@@ -1130,4 +1050,5 @@ public partial class MqttClientConfigurationBuilder
                 },
             _ => _configuration
         };
+    }
 }

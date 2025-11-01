@@ -42,13 +42,10 @@ public partial class MqttTestingHelper
         (MqttClientConfiguration? clientConfiguration, MqttConsumerEndpointConfiguration? endpointConfiguration) =
             consumers
                 .OfType<MqttConsumer>()
-                .SelectMany(
-                    consumer => consumer.Configuration.ConsumerEndpoints.Select(
-                        endpoint =>
-                            (ConsumerConfiguration: consumer.Configuration, EndpointConfiguration: endpoint)))
-                .FirstOrDefault(
-                    tuple => tuple.EndpointConfiguration.RawName == endpointName ||
-                             tuple.EndpointConfiguration.FriendlyName == endpointName);
+                .SelectMany(consumer => consumer.Configuration.ConsumerEndpoints.Select(endpoint =>
+                    (ConsumerConfiguration: consumer.Configuration, EndpointConfiguration: endpoint)))
+                .FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName ||
+                                         tuple.EndpointConfiguration.FriendlyName == endpointName);
 
         if (clientConfiguration == null || endpointConfiguration == null)
             return null;
@@ -67,14 +64,14 @@ public partial class MqttTestingHelper
                 builder.ConnectViaTcp(tcpChannel.RemoteEndpoint!);
 
                 if (tcpChannel.Tls.UseTls)
-                    builder.EnableTls(tcpChannel.Tls);
+                    builder.EnableTls();
 
                 break;
             case MqttClientWebSocketConfiguration webSocketChannel:
                 builder.ConnectViaWebSocket(webSocketChannel.Uri!);
 
                 if (webSocketChannel.Tls.UseTls)
-                    builder.EnableTls(webSocketChannel.Tls);
+                    builder.EnableTls();
 
                 break;
         }

@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -115,15 +115,14 @@ public class MqttClientsConfigurationBuilderTests
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.SendLastWillMessage<TestEventOne>(
-            lastWill => lastWill
-                .SendMessage(
-                    new TestEventOne
-                    {
-                        Content = "I died!"
-                    })
-                .WithDelay(TimeSpan.FromSeconds(42))
-                .ProduceTo("testaments"));
+        builder.SendLastWillMessage<TestEventOne>(lastWill => lastWill
+            .SendMessage(
+                new TestEventOne
+                {
+                    Content = "I died!"
+                })
+            .WithDelay(TimeSpan.FromSeconds(42))
+            .ProduceTo("testaments"));
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
@@ -339,7 +338,7 @@ public class MqttClientsConfigurationBuilderTests
                 new MqttUserProperty("prop1", "value1"),
                 new MqttUserProperty("prop2", "value2")
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -461,6 +460,37 @@ public class MqttClientsConfigurationBuilderTests
     }
 
     [Fact]
+    public void ConnectViaTcp_ShouldSetChannelFromServer()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.ConnectViaTcp("tests-server");
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1883));
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.ConnectViaTcp("tests-server", tcp => tcp.WithProtocolType(ProtocolType.IcmpV6));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1883));
+        tcpConfiguration.ProtocolType.ShouldBe(ProtocolType.IcmpV6);
+    }
+
+    [Fact]
     public void ConnectViaTcp_ShouldSetChannelFromServerAndPort()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
@@ -476,15 +506,69 @@ public class MqttClientsConfigurationBuilderTests
     }
 
     [Fact]
-    public void ConnectViaTcp_ShouldSetChannel()
+    public void ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
         builder.ConnectViaTcp(
-            new MqttClientTcpConfiguration
-            {
-                RemoteEndpoint = new DnsEndPoint("tests-server", 1234),
-            });
+            "tests-server",
+            1234,
+            tcp => tcp
+                .WithProtocolType(ProtocolType.IcmpV6)
+                .WithAddressFamily(AddressFamily.InterNetworkV6));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1234));
+        tcpConfiguration.ProtocolType.ShouldBe(ProtocolType.IcmpV6);
+        tcpConfiguration.AddressFamily.ShouldBe(AddressFamily.InterNetworkV6);
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelFromEndPoint()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.ConnectViaTcp(new IPEndPoint(IPAddress.Parse("1.2.3.4"), 1234));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new IPEndPoint(IPAddress.Parse("1.2.3.4"), 1234));
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.ConnectViaTcp(
+            new IPEndPoint(IPAddress.Parse("1.2.3.4"), 1234),
+            tcp => tcp
+                .WithProtocolType(ProtocolType.IcmpV6)
+                .WithAddressFamily(AddressFamily.InterNetworkV6));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new IPEndPoint(IPAddress.Parse("1.2.3.4"), 1234));
+        tcpConfiguration.ProtocolType.ShouldBe(ProtocolType.IcmpV6);
+        tcpConfiguration.AddressFamily.ShouldBe(AddressFamily.InterNetworkV6);
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelFromBuilderAction()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.ConnectViaTcp(tcp => tcp.WithRemoteEndpoint(new IPEndPoint(42, 1234)));
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         MergeableActionCollection<MqttClientConfigurationBuilder> mergeableActionCollection = builder.GetConfigurationActions();
@@ -493,7 +577,7 @@ public class MqttClientsConfigurationBuilderTests
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
 
         MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
-        tcpConfiguration.RemoteEndpoint.ShouldBe(new DnsEndPoint("tests-server", 1234));
+        tcpConfiguration.RemoteEndpoint.ShouldBe(new IPEndPoint(42, 1234));
     }
 
     [Fact]
@@ -512,19 +596,11 @@ public class MqttClientsConfigurationBuilderTests
     }
 
     [Fact]
-    public void ConnectViaWebSocket_ShouldSetChannel()
+    public void ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.ConnectViaWebSocket(
-            new MqttClientWebSocketConfiguration
-            {
-                Uri = "uri",
-                RequestHeaders = new Dictionary<string, string>
-                {
-                    { "header", "value" }
-                }
-            });
+        builder.ConnectViaWebSocket("uri", webSocket => webSocket.UseProxy("proxy"));
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
@@ -532,102 +608,47 @@ public class MqttClientsConfigurationBuilderTests
 
         MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
         webSocketConfiguration.Uri.ShouldBe("uri");
-        webSocketConfiguration.RequestHeaders.ShouldBe(
-            new Dictionary<string, string>
-            {
-                { "header", "value" }
-            });
+        webSocketConfiguration.Proxy.ShouldNotBeNull();
+        webSocketConfiguration.Proxy.Address.ShouldBe("proxy");
     }
 
     [Fact]
-    public void UseProxy_ShouldSetProxyFromAddressEtc()
+    public void ConnectViaWebSocket_ShouldSetChannelFromBuilderAction()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder
-            .ConnectViaWebSocket("uri")
-            .UseProxy(
-                "address",
-                "user",
-                "pass",
-                "domain",
-                true,
-                ["local1", "local2"]);
+        builder.ConnectViaWebSocket(webSocket => webSocket.WithUri("uri"));
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
         MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
-        webSocketConfiguration.Proxy.ShouldNotBeNull();
-        webSocketConfiguration.Proxy!.Address.ShouldBe("address");
-        webSocketConfiguration.Proxy!.Username.ShouldBe("user");
-        webSocketConfiguration.Proxy!.Password.ShouldBe("pass");
-        webSocketConfiguration.Proxy!.Domain.ShouldBe("domain");
-        webSocketConfiguration.Proxy!.BypassOnLocal.ShouldBeTrue();
-        webSocketConfiguration.Proxy!.BypassList.ShouldBe(["local1", "local2"]);
+        webSocketConfiguration.Uri.ShouldBe("uri");
     }
 
     [Fact]
-    public void UseProxy_ShouldSetProxy()
-    {
-        MqttClientsConfigurationBuilder builder = GetBuilder();
-
-        builder
-            .ConnectViaWebSocket("uri")
-            .UseProxy(
-                new MqttClientWebSocketProxyConfiguration
-                {
-                    Address = "address",
-                    Username = "user",
-                    Password = "pass",
-                    Domain = "domain",
-                    BypassOnLocal = true,
-                    BypassList = ["local1", "local2"]
-                });
-
-        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
-        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
-        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
-        MqttClientWebSocketConfiguration webSocketConfiguration = configuration.Channel.ShouldBeOfType<MqttClientWebSocketConfiguration>();
-        webSocketConfiguration.Proxy.ShouldNotBeNull();
-        webSocketConfiguration.Proxy!.Address.ShouldBe("address");
-        webSocketConfiguration.Proxy!.Username.ShouldBe("user");
-        webSocketConfiguration.Proxy!.Password.ShouldBe("pass");
-        webSocketConfiguration.Proxy!.Domain.ShouldBe("domain");
-        webSocketConfiguration.Proxy!.BypassOnLocal.ShouldBeTrue();
-        webSocketConfiguration.Proxy!.BypassList.ShouldBe(["local1", "local2"]);
-    }
-
-    [Fact]
-    public void EnableTls_ShouldSetUseTls()
+    public void EnableTls_ShouldSetTlsConfiguration()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
         builder
             .ConnectViaTcp("tests-server")
-            .EnableTls();
+            .EnableTls(tls => tls
+                .WithSslProtocol(SslProtocols.Tls12)
+                .AllowUntrustedCertificates()
+                .IgnoreCertificateChainErrors()
+                .IgnoreCertificateRevocationErrors());
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
         MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
         tcpConfiguration.Tls.UseTls.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void DisableTls_ShouldSetUseTls()
-    {
-        MqttClientsConfigurationBuilder builder = GetBuilder();
-
-        builder
-            .ConnectViaTcp("tests-server")
-            .DisableTls();
-
-        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
-        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
-        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
-        MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
-        tcpConfiguration.Tls.UseTls.ShouldBeFalse();
+        tcpConfiguration.Tls.SslProtocol.ShouldBe(SslProtocols.Tls12);
+        tcpConfiguration.Tls.AllowUntrustedCertificates.ShouldBeTrue();
+        tcpConfiguration.Tls.IgnoreCertificateChainErrors.ShouldBeTrue();
+        tcpConfiguration.Tls.IgnoreCertificateRevocationErrors.ShouldBeTrue();
     }
 
     [Fact]
@@ -669,21 +690,13 @@ public class MqttClientsConfigurationBuilderTests
 
         builder
             .ConnectViaTcp("tests-server")
-            .EnableTls(
-                new MqttClientTlsConfiguration
-                {
-                    UseTls = true,
-                    SslProtocol = SslProtocols.Tls12,
-                    AllowUntrustedCertificates = true
-                });
+            .EnableTls();
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
         MqttClientTcpConfiguration tcpConfiguration = configuration.Channel.ShouldBeOfType<MqttClientTcpConfiguration>();
         tcpConfiguration.Tls.UseTls.ShouldBeTrue();
-        tcpConfiguration.Tls.SslProtocol.ShouldBe(SslProtocols.Tls12);
-        tcpConfiguration.Tls.AllowUntrustedCertificates.ShouldBeTrue();
     }
 
     [Fact]
@@ -703,26 +716,141 @@ public class MqttClientsConfigurationBuilderTests
     }
 
     [Fact]
+    public void EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.EnableParallelProcessing(42);
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.MaxDegreeOfParallelism.ShouldBe(42);
+    }
+
+    [Fact]
+    public void DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.DisableParallelProcessing();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.MaxDegreeOfParallelism.ShouldBe(1);
+    }
+
+    [Fact]
+    public void LimitBackpressure_ShouldSetBackpressureLimit()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.LimitBackpressure(42);
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.BackpressureLimit.ShouldBe(42);
+    }
+
+    [Fact]
+    public void WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.WithAcknowledgmentTimeout(TimeSpan.FromSeconds(42));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.AcknowledgmentTimeout.ShouldBe(TimeSpan.FromSeconds(42));
+    }
+
+    [Fact]
+    public void EnableTryPrivate_ShouldSetTryPrivate()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.EnableTryPrivate();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.TryPrivate.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void DisableTryPrivate_ShouldSetTryPrivate()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.DisableTryPrivate();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.TryPrivate.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void RequestCleanStart_ShouldSetCleanSession()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.RequestCleanStart();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.CleanSession.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.AllowPacketFragmentation();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.AllowPacketFragmentation.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        builder.DisablePacketFragmentation();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+        configuration.AllowPacketFragmentation.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task AddClient_ShouldAddClients()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("test", 42)
-                        .AddClient(
-                            "client1",
-                            client => client
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
-                        .AddClient(
-                            "client2",
-                            client => client
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("test", 42)
+                .AddClient(
+                    "client1",
+                    client => client
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                        .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
+                .AddClient(
+                    "client2",
+                    client => client
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
+                        .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -747,26 +875,24 @@ public class MqttClientsConfigurationBuilderTests
     [Fact]
     public async Task AddProducer_ShouldMergeProducerConfiguration_WhenNameIsTheSame()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("test", 42)
-                        .AddClient(
-                            "client1",
-                            client => client
-                                .WithClientId("client42")
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
-                        .AddClient(
-                            "client1",
-                            client => client
-                                .LimitPacketSize(42)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("test", 42)
+                .AddClient(
+                    "client1",
+                    client => client
+                        .WithClientId("client42")
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                        .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
+                .AddClient(
+                    "client1",
+                    client => client
+                        .LimitPacketSize(42)
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
+                        .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -797,10 +923,9 @@ public class MqttClientsConfigurationBuilderTests
     private static MqttClientsConfigurationBuilder GetBuilder()
     {
         MqttClientsConfigurationBuilder builder = new();
-        builder.AddClient(
-            _ =>
-            {
-            });
+        builder.AddClient(_ =>
+        {
+        });
         return builder;
     }
 
