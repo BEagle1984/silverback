@@ -30,13 +30,13 @@ services.AddSilverback()
             .WithClientId("client1")
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("messages/my")
-                .WithAtLeastOnceQoS());
+                .WithAtLeastOnceQoS())));
 ```
 ***
 
 The `AddConsumer` or `AddClient` method is used to configure the consumer. The `Consume` or `Consume<TMessage>` method is used to configure the specific endpoint settings and define how the messages have to be handled. The `ConsumeFrom` method specifies the topic to be consumed.
 
-ach `AddConsumer` call will result in a consumer being instantiated. The `Consume` or `Consume<TMessage>` method can be called multiple times to configure multiple endpoints for the same consumer, each with its own settings, and leading to optimized resource usage and sometimes overall better performance in comparison to using a dedicated consumer for each endpoint. The same applies to MQTT clients.
+Each `AddConsumer` call will result in a consumer being instantiated. The `Consume` or `Consume<TMessage>` method can be called multiple times to configure multiple endpoints for the same consumer, each with its own settings, and leading to optimized resource usage and sometimes overall better performance in comparison to using a dedicated consumer for each endpoint. The same applies to MQTT clients.
 
 > [!Note]
 > While Kafka producers and consumers are different entities, MQTT clients are used for both producing and consuming messages.
