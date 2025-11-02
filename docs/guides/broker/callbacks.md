@@ -19,7 +19,7 @@ The following callback applies to all broker implementations:
 * <xref:Silverback.Messaging.Broker.Callbacks.IBrokerClientsConfiguredCallback>\
   Invoked immediately after the broker clients have been initialized based on the specified client and endpoint configuration.
 
-### Example: Registering a IBrokerClientsConfiguredCallback
+### Example: Registering an IBrokerClientsConfiguredCallback
 
 ```csharp
 .AddSilverback()

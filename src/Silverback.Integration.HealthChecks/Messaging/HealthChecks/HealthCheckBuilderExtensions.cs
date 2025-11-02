@@ -3,15 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
 
-// ReSharper disable once CheckNamespace
-#pragma warning disable IDE0130
-namespace Microsoft.Extensions.DependencyInjection;
-#pragma warning restore IDE0130
+namespace Silverback.Messaging.HealthChecks;
 
 /// <summary>
 ///     Adds methods such as <see cref="AddConsumersCheck" /> and <see cref="AddOutboxCheck" /> to the

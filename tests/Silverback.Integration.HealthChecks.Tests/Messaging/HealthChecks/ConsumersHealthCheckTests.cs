@@ -11,6 +11,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.HealthChecks;
 using Xunit;
 
 namespace Silverback.Tests.Integration.HealthChecks.Messaging.HealthChecks;

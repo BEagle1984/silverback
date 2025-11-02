@@ -51,7 +51,7 @@ Each `AddConsumer` call will result in a consumer being instantiated. The `Consu
 
 The consumed messages are pushed to the [message bus](xref:bus) to be processed by the configured subscribers.
 
-You can subscribe to plain message or to the `IInboundEnvelope<TMessage>` to get access to additional metadata such as headers, Kafka key, offset, etc.
+You can subscribe to the plain message or to the `IInboundEnvelope<TMessage>` to get access to additional metadata such as headers, Kafka key, offset, etc.
 
 ```csharp
 public class MySubscriber
@@ -108,7 +108,7 @@ The MQTT consumer on the other hand will process the messages sequentially by de
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("messages/topic1")
                 .ConsumeFrom("messages/topic2")
-                .WithAtLeastOnceQoS());
+                .WithAtLeastOnceQoS()));
 ```
 
 ## Error Handling
@@ -146,7 +146,7 @@ services.AddSilverback()
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("messages/my")
                 .OnError(policy => policy.Retry(2).ThenSkip())
-                .WithAtLeastOnceQoS());
+                .WithAtLeastOnceQoS()));
 ```
 ***
 

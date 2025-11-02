@@ -20,8 +20,6 @@
           href: broker/producing/chunking.md
         - name: Encryption
           href: broker/producing/encryption.md
-        - name: Tombstone
-          href: broker/producing/tombstone.md
         - name: Validation
           href: broker/producing/validation.md
         - name: Outbox
@@ -34,6 +32,8 @@
           items:
             - name: Key and Partitioning
               href: broker/producing/kafka/partitioning.md
+            - name: Tombstone
+              href: broker/producing/kafka/tombstone.md
             - name: Transactions
               href: broker/producing/kafka/transactions.md
             - name: Schema Registry
@@ -52,8 +52,6 @@
           href: broker/consuming/chunking.md
         - name: Decryption
           href: broker/consuming/decryption.md
-        - name: Tombstone
-          href: broker/consuming/tombstone.md
         - name: Validation
           href: broker/consuming/validation.md
         - name: Behaviors
@@ -66,6 +64,8 @@
           items:
             - name: Subscription and Assignment
               href: broker/consuming/kafka/subscription.md
+            - name: Tombstone
+              href: broker/consuming/kafka/tombstone.md
             - name: Offset Storage
               href: broker/consuming/kafka/offset.md
             - name: Schema Registry

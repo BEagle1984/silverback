@@ -6,9 +6,21 @@ uid: producing-headers
 
 Both Kafka and MQTT 5 support custom headers (called user properties in MQTT). With Silverback there are many ways to set headers.
 
+## Using WrapAndPublish / WrapAndPublishBatch
+
+The `WrapAndPublish`, `WrapAndPublishAsync`, `WrapAndPublishBatch` and `WrapAndPublishBatchAsync` methods of the `IPublisher` can be used to wrap the messages in an envelope and add additional metadata, such as headers.
+
+```csharp
+await _publisher.WrapAndPublishAsync(
+    new MyMessage { ... },
+    envelope => envelope
+        .AddHeader("x-source", "my-app")
+        .AddHeader("x-priority", envelope.Message.Priority));
+```
+
 ## Enrichers in the Endpoint Configuration
 
-Using an enricher configured fro the endpoint you can add static headers to all produced messages.
+Using an enricher configured for the endpoint you can add static headers to all produced messages.
 
 ```csharp
 services.AddSilverback()
@@ -36,9 +48,9 @@ services.AddSilverback()
                 .AddHeader("header2", envelope => envelope.Message.Property2))));
 ```
 
-## HeaderAttribute in the Message Model
+## HeaderAttribute on the Message Model
 
-Using the <xref:Silverback.Messaging.Messages.HeaderAttribute> is straightforward: simply decorate the properties you want to publish as headers and specify an header name.
+Using the <xref:Silverback.Messaging.Messages.HeaderAttribute> is straightforward: simply decorate the properties you want to publish as headers and specify a header name.
 
 ```csharp
 using Silverback.Messaging.Messages;
@@ -70,18 +82,6 @@ namespace Sample
 
 > [!Important]
 > Only the message type will be scanned, therefore the properties decorated with the <xref:Silverback.Messaging.Messages.HeaderAttribute> must be in the root of the message object.
-
-## Using WrapAndPublish / WrapAndPublishBatch
-
-The `WrapAndPublish`, `WrapAndPublishAsync`, `WrapAndPublishBatch` and `WrapAndPublishBatchAsync` methods of the `IPublisher` can be used to wrap the messages in an envelope and add additional metadata, such as headers.
-
-```csharp
-await _publisher.WrapAndPublishAsync(
-    new MyMessage { ... },
-    envelope => envelope
-        .AddHeader("x-source", "my-app")
-        .AddHeader("x-priority", envelope.Message.Priority));
-```
 
 ## Additional Resources
 

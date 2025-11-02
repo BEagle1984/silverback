@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.HealthChecks;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Xunit;
 using Xunit.Abstractions;

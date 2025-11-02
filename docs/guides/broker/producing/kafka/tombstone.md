@@ -4,7 +4,7 @@ uid: producing-tombstone
 
 # Producing Tombstone Messages
 
-A tombstone message is a message with a `null` payload. It is used to signal that a message with a specific key should be deleted. The key is used to identify the message to be deleted.
+A tombstone message is a message with an empty payload. It is usually used in Kafka to signal that a message with a specific key should be deleted, and the message key is used to identify the specific record to be deleted.
 
 There are mainly two ways to produce tombstone messages:
 * Using `WrapAndPublish` or `WrapAndPublishBatch` methods

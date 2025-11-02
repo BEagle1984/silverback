@@ -12,6 +12,7 @@ using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.HealthChecks;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
