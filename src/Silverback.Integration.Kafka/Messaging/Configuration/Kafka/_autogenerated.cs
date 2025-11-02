@@ -68,6 +68,22 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public int? MaxInFlight { get; init; }
 
     /// <summary>
+    ///     Gets the metadata recovery strategy. If set to <see cref="Confluent.Kafka.MetadataRecoveryStrategy.None" /> the client doesn't re-bootstrap.
+    ///     If set to <see cref="Confluent.Kafka.MetadataRecoveryStrategy.Rebootstrap" /> the client repeats the bootstrap process using the configured
+    ///     <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>. Rebootstrapping is useful when a client talks to brokers so infrequently that the broker
+    ///     set may change entirely before the client refreshes metadata. Metadata recovery is triggered when all last-known brokers appear unavailable simultaneously, when the client
+    ///     cannot refresh metadata within the configured rebootstrap trigger interval, or when requested in a metadata response.
+    /// </summary>
+    public MetadataRecoveryStrategy? MetadataRecoveryStrategy { get; init; }
+
+    /// <summary>
+    ///     Gets the metadata recovery rebootstrap trigger interval (ms). When using <see cref="Confluent.Kafka.MetadataRecoveryStrategy.Rebootstrap" />,
+    ///     if the client is unable to obtain metadata from any of the known brokers for the specified interval, the client repeats the bootstrap process using the configured
+    ///     <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>. Default: <c>300000</c> (5 minutes).
+    /// </summary>
+    public int? MetadataRecoveryRebootstrapTriggerMs { get; init; }
+
+    /// <summary>
     ///     Gets the interval (in milliseconds) at which the topic and broker metadata is refreshed in order to proactively discover any new
     ///     brokers, topics, partitions or partition leader changes. Use -1 to disable the intervalled refresh (not recommended). If there are
     ///     no locally referenced topics (no topic objects created, no messages produced, no subscription or no assignment) then only the broker
@@ -266,6 +282,20 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SslCaLocation { get; init; }
 
     /// <summary>
+    ///     Gets the file or directory path to CA certificate(s) for verifying HTTPS endpoints, such as <c>sasl.oauthbearer.token.endpoint.url</c> used for OAUTHBEARER/OIDC authentication.
+    ///     Mutually exclusive with <see cref="HttpsCaPem" />. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
+    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew to provide CA certificates. On Linux install the distribution's ca-certificates package.
+    ///     If OpenSSL is statically linked or <c>https.ca.location</c> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
+    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).
+    /// </summary>
+    public string? HttpsCaLocation { get; init; }
+
+    /// <summary>
+    ///     Gets the CA certificate string (in PEM format) for verifying HTTPS endpoints. Mutually exclusive with <see cref="HttpsCaLocation" />.
+    /// </summary>
+    public string? HttpsCaPem { get; init; }
+
+    /// <summary>
     ///     Gets the CA certificate string (in PEM format) for verifying the broker's key.
     /// </summary>
     public string? SslCaPem { get; init; }
@@ -400,6 +430,76 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SaslOauthbearerTokenEndpointUrl { get; init; }
 
     /// <summary>
+    ///     Gets the OAuth grant type to use when communicating with the identity provider.
+    /// </summary>
+    public SaslOauthbearerGrantType? SaslOauthbearerGrantType { get; init; }
+
+    /// <summary>
+    ///     Gets the algorithm the client should use to sign the assertion sent to the identity provider and in the OAuth alg header in the JWT assertion.
+    /// </summary>
+    public SaslOauthbearerAssertionAlgorithm? SaslOauthbearerAssertionAlgorithm { get; init; }
+
+    /// <summary>
+    ///     Gets the path to the client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </summary>
+    public string? SaslOauthbearerAssertionPrivateKeyFile { get; init; }
+
+    /// <summary>
+    ///     Gets the private key passphrase for <c>sasl.oauthbearer.assertion.private.key.file</c> or <c>sasl.oauthbearer.assertion.private.key.pem</c>.
+    /// </summary>
+    public string? SaslOauthbearerAssertionPrivateKeyPassphrase { get; init; }
+
+    /// <summary>
+    ///     Gets the client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </summary>
+    public string? SaslOauthbearerAssertionPrivateKeyPem { get; init; }
+
+    /// <summary>
+    ///     Gets the path to the assertion file. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public string? SaslOauthbearerAssertionFile { get; init; }
+
+    /// <summary>
+    ///     Gets the JWT audience claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public string? SaslOauthbearerAssertionClaimAud { get; init; }
+
+    /// <summary>
+    ///     Gets the assertion expiration time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public int? SaslOauthbearerAssertionClaimExpSeconds { get; init; }
+
+    /// <summary>
+    ///     Gets the JWT issuer claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public string? SaslOauthbearerAssertionClaimIss { get; init; }
+
+    /// <summary>
+    ///     Gets the JWT ID claim. When set to <c>true</c>, a random UUID is generated. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public bool? SaslOauthbearerAssertionClaimJtiInclude { get; init; }
+
+    /// <summary>
+    ///     Gets the assertion not before time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public int? SaslOauthbearerAssertionClaimNbfSeconds { get; init; }
+
+    /// <summary>
+    ///     Gets the JWT subject claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public string? SaslOauthbearerAssertionClaimSub { get; init; }
+
+    /// <summary>
+    ///     Gets the path to the JWT template file. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    public string? SaslOauthbearerAssertionJwtTemplateFile { get; init; }
+
+    /// <summary>
+    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.
+    /// </summary>
+    public SaslOauthbearerMetadataAuthenticationType? SaslOauthbearerMetadataAuthenticationType { get; init; }
+
+    /// <summary>
     ///     Gets the list of plugin libraries to load (<c>;</c> separated). The library search path is platform dependent. If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically.
     /// </summary>
     public string? PluginLibraryPaths { get; init; }
@@ -457,6 +557,8 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
             MessageCopyMaxBytes = MessageCopyMaxBytes,
             ReceiveMessageMaxBytes = ReceiveMessageMaxBytes,
             MaxInFlight = MaxInFlight,
+            MetadataRecoveryStrategy = MetadataRecoveryStrategy,
+            MetadataRecoveryRebootstrapTriggerMs = MetadataRecoveryRebootstrapTriggerMs,
             TopicMetadataRefreshIntervalMs = TopicMetadataRefreshIntervalMs,
             MetadataMaxAgeMs = MetadataMaxAgeMs,
             TopicMetadataRefreshFastIntervalMs = TopicMetadataRefreshFastIntervalMs,
@@ -492,6 +594,8 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
             SslCertificateLocation = SslCertificateLocation,
             SslCertificatePem = SslCertificatePem,
             SslCaLocation = SslCaLocation,
+            HttpsCaLocation = HttpsCaLocation,
+            HttpsCaPem = HttpsCaPem,
             SslCaPem = SslCaPem,
             SslCaCertificateStores = SslCaCertificateStores,
             SslCrlLocation = SslCrlLocation,
@@ -517,6 +621,20 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
             SaslOauthbearerScope = SaslOauthbearerScope,
             SaslOauthbearerExtensions = SaslOauthbearerExtensions,
             SaslOauthbearerTokenEndpointUrl = SaslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerGrantType = SaslOauthbearerGrantType,
+            SaslOauthbearerAssertionAlgorithm = SaslOauthbearerAssertionAlgorithm,
+            SaslOauthbearerAssertionPrivateKeyFile = SaslOauthbearerAssertionPrivateKeyFile,
+            SaslOauthbearerAssertionPrivateKeyPassphrase = SaslOauthbearerAssertionPrivateKeyPassphrase,
+            SaslOauthbearerAssertionPrivateKeyPem = SaslOauthbearerAssertionPrivateKeyPem,
+            SaslOauthbearerAssertionFile = SaslOauthbearerAssertionFile,
+            SaslOauthbearerAssertionClaimAud = SaslOauthbearerAssertionClaimAud,
+            SaslOauthbearerAssertionClaimExpSeconds = SaslOauthbearerAssertionClaimExpSeconds,
+            SaslOauthbearerAssertionClaimIss = SaslOauthbearerAssertionClaimIss,
+            SaslOauthbearerAssertionClaimJtiInclude = SaslOauthbearerAssertionClaimJtiInclude,
+            SaslOauthbearerAssertionClaimNbfSeconds = SaslOauthbearerAssertionClaimNbfSeconds,
+            SaslOauthbearerAssertionClaimSub = SaslOauthbearerAssertionClaimSub,
+            SaslOauthbearerAssertionJwtTemplateFile = SaslOauthbearerAssertionJwtTemplateFile,
+            SaslOauthbearerMetadataAuthenticationType = SaslOauthbearerMetadataAuthenticationType,
             PluginLibraryPaths = PluginLibraryPaths,
             ClientRack = ClientRack,
             RetryBackoffMs = RetryBackoffMs,
@@ -541,7 +659,7 @@ public partial record KafkaConsumerConfiguration
 {
     /// <summary>
     ///     Gets a comma-separated list of fields that may be optionally set in <see cref="ConsumeResult{TKey,TValue}" /> objects returned by
-    ///     the <see cref="Consumer{TKey,TValue}.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve
+    ///     the <see cref="IConsumer{TKey,TValue}.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve
     ///     throughput and reduce memory consumption. Allowed values: <c>headers</c>, <c>timestamp</c>, <c>topic</c>, <c>all</c>, <c>none</c>.
     /// </summary>
     public string? ConsumeResultFields { get; init; }
@@ -924,6 +1042,10 @@ internal interface IKafkaClientConfigurationBuilder
 
     void WithMaxInFlight(int? maxInFlight);
 
+    void WithMetadataRecoveryStrategy(MetadataRecoveryStrategy? metadataRecoveryStrategy);
+
+    void WithMetadataRecoveryRebootstrapTriggerMs(int? metadataRecoveryRebootstrapTriggerMs);
+
     void WithTopicMetadataRefreshIntervalMs(int? topicMetadataRefreshIntervalMs);
 
     void WithMetadataMaxAgeMs(int? metadataMaxAgeMs);
@@ -994,6 +1116,10 @@ internal interface IKafkaClientConfigurationBuilder
 
     void WithSslCaLocation(string? sslCaLocation);
 
+    void WithHttpsCaLocation(string? httpsCaLocation);
+
+    void WithHttpsCaPem(string? httpsCaPem);
+
     void WithSslCaPem(string? sslCaPem);
 
     void WithSslCaCertificateStores(string? sslCaCertificateStores);
@@ -1043,6 +1169,34 @@ internal interface IKafkaClientConfigurationBuilder
     void WithSaslOauthbearerExtensions(string? saslOauthbearerExtensions);
 
     void WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl);
+
+    void WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType);
+
+    void WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm);
+
+    void WithSaslOauthbearerAssertionPrivateKeyFile(string? saslOauthbearerAssertionPrivateKeyFile);
+
+    void WithSaslOauthbearerAssertionPrivateKeyPassphrase(string? saslOauthbearerAssertionPrivateKeyPassphrase);
+
+    void WithSaslOauthbearerAssertionPrivateKeyPem(string? saslOauthbearerAssertionPrivateKeyPem);
+
+    void WithSaslOauthbearerAssertionFile(string? saslOauthbearerAssertionFile);
+
+    void WithSaslOauthbearerAssertionClaimAud(string? saslOauthbearerAssertionClaimAud);
+
+    void WithSaslOauthbearerAssertionClaimExpSeconds(int? saslOauthbearerAssertionClaimExpSeconds);
+
+    void WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss);
+
+    void WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude);
+
+    void WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds);
+
+    void WithSaslOauthbearerAssertionClaimSub(string? saslOauthbearerAssertionClaimSub);
+
+    void WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile);
+
+    void WithSaslOauthbearerMetadataAuthenticationType(SaslOauthbearerMetadataAuthenticationType? saslOauthbearerMetadataAuthenticationType);
 
     void WithPluginLibraryPaths(string? pluginLibraryPaths);
 
@@ -1112,6 +1266,18 @@ public partial class KafkaClientsConfigurationBuilder
     public partial KafkaClientsConfigurationBuilder WithMaxInFlight(int? maxInFlight)
     {
         _sharedConfigurationActions.Add(builder => builder.WithMaxInFlight(maxInFlight));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithMetadataRecoveryStrategy(MetadataRecoveryStrategy? metadataRecoveryStrategy)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithMetadataRecoveryStrategy(metadataRecoveryStrategy));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithMetadataRecoveryRebootstrapTriggerMs(int? metadataRecoveryRebootstrapTriggerMs)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithMetadataRecoveryRebootstrapTriggerMs(metadataRecoveryRebootstrapTriggerMs));
         return this;
     }
 
@@ -1295,6 +1461,18 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    public partial KafkaClientsConfigurationBuilder WithHttpsCaLocation(string? httpsCaLocation)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithHttpsCaLocation(httpsCaLocation));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithHttpsCaPem(string? httpsCaPem)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithHttpsCaPem(httpsCaPem));
+        return this;
+    }
+
     public partial KafkaClientsConfigurationBuilder WithSslCaPem(string? sslCaPem)
     {
         _sharedConfigurationActions.Add(builder => builder.WithSslCaPem(sslCaPem));
@@ -1433,6 +1611,90 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerGrantType(saslOauthbearerGrantType));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionAlgorithm(saslOauthbearerAssertionAlgorithm));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyFile(string? saslOauthbearerAssertionPrivateKeyFile)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionPrivateKeyFile(saslOauthbearerAssertionPrivateKeyFile));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyPassphrase(string? saslOauthbearerAssertionPrivateKeyPassphrase)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionPrivateKeyPassphrase(saslOauthbearerAssertionPrivateKeyPassphrase));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyPem(string? saslOauthbearerAssertionPrivateKeyPem)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionPrivateKeyPem(saslOauthbearerAssertionPrivateKeyPem));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionFile(string? saslOauthbearerAssertionFile)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionFile(saslOauthbearerAssertionFile));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimAud(string? saslOauthbearerAssertionClaimAud)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimAud(saslOauthbearerAssertionClaimAud));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimExpSeconds(int? saslOauthbearerAssertionClaimExpSeconds)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimExpSeconds(saslOauthbearerAssertionClaimExpSeconds));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimIss(saslOauthbearerAssertionClaimIss));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimJtiInclude(saslOauthbearerAssertionClaimJtiInclude));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimNbfSeconds(saslOauthbearerAssertionClaimNbfSeconds));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimSub(string? saslOauthbearerAssertionClaimSub)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionClaimSub(saslOauthbearerAssertionClaimSub));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerAssertionJwtTemplateFile(saslOauthbearerAssertionJwtTemplateFile));
+        return this;
+    }
+
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerMetadataAuthenticationType(SaslOauthbearerMetadataAuthenticationType? saslOauthbearerMetadataAuthenticationType)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerMetadataAuthenticationType(saslOauthbearerMetadataAuthenticationType));
+        return this;
+    }
+
     public partial KafkaClientsConfigurationBuilder WithPluginLibraryPaths(string? pluginLibraryPaths)
     {
         _sharedConfigurationActions.Add(builder => builder.WithPluginLibraryPaths(pluginLibraryPaths));
@@ -1543,6 +1805,10 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
 
     private int? _maxInFlight;
 
+    private MetadataRecoveryStrategy? _metadataRecoveryStrategy;
+
+    private int? _metadataRecoveryRebootstrapTriggerMs;
+
     private int? _topicMetadataRefreshIntervalMs;
 
     private int? _metadataMaxAgeMs;
@@ -1613,6 +1879,10 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
 
     private string? _sslCaLocation;
 
+    private string? _httpsCaLocation;
+
+    private string? _httpsCaPem;
+
     private string? _sslCaPem;
 
     private string? _sslCaCertificateStores;
@@ -1662,6 +1932,34 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     private string? _saslOauthbearerExtensions;
 
     private string? _saslOauthbearerTokenEndpointUrl;
+
+    private SaslOauthbearerGrantType? _saslOauthbearerGrantType;
+
+    private SaslOauthbearerAssertionAlgorithm? _saslOauthbearerAssertionAlgorithm;
+
+    private string? _saslOauthbearerAssertionPrivateKeyFile;
+
+    private string? _saslOauthbearerAssertionPrivateKeyPassphrase;
+
+    private string? _saslOauthbearerAssertionPrivateKeyPem;
+
+    private string? _saslOauthbearerAssertionFile;
+
+    private string? _saslOauthbearerAssertionClaimAud;
+
+    private int? _saslOauthbearerAssertionClaimExpSeconds;
+
+    private string? _saslOauthbearerAssertionClaimIss;
+
+    private bool? _saslOauthbearerAssertionClaimJtiInclude;
+
+    private int? _saslOauthbearerAssertionClaimNbfSeconds;
+
+    private string? _saslOauthbearerAssertionClaimSub;
+
+    private string? _saslOauthbearerAssertionJwtTemplateFile;
+
+    private SaslOauthbearerMetadataAuthenticationType? _saslOauthbearerMetadataAuthenticationType;
 
     private string? _pluginLibraryPaths;
 
@@ -1722,6 +2020,18 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     public partial TBuilder WithMaxInFlight(int? maxInFlight)
     {
         _maxInFlight = maxInFlight;
+        return This;
+    }
+
+    public partial TBuilder WithMetadataRecoveryStrategy(MetadataRecoveryStrategy? metadataRecoveryStrategy)
+    {
+        _metadataRecoveryStrategy = metadataRecoveryStrategy;
+        return This;
+    }
+
+    public partial TBuilder WithMetadataRecoveryRebootstrapTriggerMs(int? metadataRecoveryRebootstrapTriggerMs)
+    {
+        _metadataRecoveryRebootstrapTriggerMs = metadataRecoveryRebootstrapTriggerMs;
         return This;
     }
 
@@ -1905,6 +2215,18 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
         return This;
     }
 
+    public partial TBuilder WithHttpsCaLocation(string? httpsCaLocation)
+    {
+        _httpsCaLocation = httpsCaLocation;
+        return This;
+    }
+
+    public partial TBuilder WithHttpsCaPem(string? httpsCaPem)
+    {
+        _httpsCaPem = httpsCaPem;
+        return This;
+    }
+
     public partial TBuilder WithSslCaPem(string? sslCaPem)
     {
         _sslCaPem = sslCaPem;
@@ -2043,6 +2365,90 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
         return This;
     }
 
+    public partial TBuilder WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType)
+    {
+        _saslOauthbearerGrantType = saslOauthbearerGrantType;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm)
+    {
+        _saslOauthbearerAssertionAlgorithm = saslOauthbearerAssertionAlgorithm;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionPrivateKeyFile(string? saslOauthbearerAssertionPrivateKeyFile)
+    {
+        _saslOauthbearerAssertionPrivateKeyFile = saslOauthbearerAssertionPrivateKeyFile;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionPrivateKeyPassphrase(string? saslOauthbearerAssertionPrivateKeyPassphrase)
+    {
+        _saslOauthbearerAssertionPrivateKeyPassphrase = saslOauthbearerAssertionPrivateKeyPassphrase;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionPrivateKeyPem(string? saslOauthbearerAssertionPrivateKeyPem)
+    {
+        _saslOauthbearerAssertionPrivateKeyPem = saslOauthbearerAssertionPrivateKeyPem;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionFile(string? saslOauthbearerAssertionFile)
+    {
+        _saslOauthbearerAssertionFile = saslOauthbearerAssertionFile;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimAud(string? saslOauthbearerAssertionClaimAud)
+    {
+        _saslOauthbearerAssertionClaimAud = saslOauthbearerAssertionClaimAud;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimExpSeconds(int? saslOauthbearerAssertionClaimExpSeconds)
+    {
+        _saslOauthbearerAssertionClaimExpSeconds = saslOauthbearerAssertionClaimExpSeconds;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss)
+    {
+        _saslOauthbearerAssertionClaimIss = saslOauthbearerAssertionClaimIss;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude)
+    {
+        _saslOauthbearerAssertionClaimJtiInclude = saslOauthbearerAssertionClaimJtiInclude;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds)
+    {
+        _saslOauthbearerAssertionClaimNbfSeconds = saslOauthbearerAssertionClaimNbfSeconds;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionClaimSub(string? saslOauthbearerAssertionClaimSub)
+    {
+        _saslOauthbearerAssertionClaimSub = saslOauthbearerAssertionClaimSub;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile)
+    {
+        _saslOauthbearerAssertionJwtTemplateFile = saslOauthbearerAssertionJwtTemplateFile;
+        return This;
+    }
+
+    public partial TBuilder WithSaslOauthbearerMetadataAuthenticationType(SaslOauthbearerMetadataAuthenticationType? saslOauthbearerMetadataAuthenticationType)
+    {
+        _saslOauthbearerMetadataAuthenticationType = saslOauthbearerMetadataAuthenticationType;
+        return This;
+    }
+
     public partial TBuilder WithPluginLibraryPaths(string? pluginLibraryPaths)
     {
         _pluginLibraryPaths = pluginLibraryPaths;
@@ -2145,6 +2551,8 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
             MessageCopyMaxBytes = _messageCopyMaxBytes,
             ReceiveMessageMaxBytes = _receiveMessageMaxBytes,
             MaxInFlight = _maxInFlight,
+            MetadataRecoveryStrategy = _metadataRecoveryStrategy,
+            MetadataRecoveryRebootstrapTriggerMs = _metadataRecoveryRebootstrapTriggerMs,
             TopicMetadataRefreshIntervalMs = _topicMetadataRefreshIntervalMs,
             MetadataMaxAgeMs = _metadataMaxAgeMs,
             TopicMetadataRefreshFastIntervalMs = _topicMetadataRefreshFastIntervalMs,
@@ -2180,6 +2588,8 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
             SslCertificateLocation = _sslCertificateLocation,
             SslCertificatePem = _sslCertificatePem,
             SslCaLocation = _sslCaLocation,
+            HttpsCaLocation = _httpsCaLocation,
+            HttpsCaPem = _httpsCaPem,
             SslCaPem = _sslCaPem,
             SslCaCertificateStores = _sslCaCertificateStores,
             SslCrlLocation = _sslCrlLocation,
@@ -2205,6 +2615,20 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
             SaslOauthbearerScope = _saslOauthbearerScope,
             SaslOauthbearerExtensions = _saslOauthbearerExtensions,
             SaslOauthbearerTokenEndpointUrl = _saslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerGrantType = _saslOauthbearerGrantType,
+            SaslOauthbearerAssertionAlgorithm = _saslOauthbearerAssertionAlgorithm,
+            SaslOauthbearerAssertionPrivateKeyFile = _saslOauthbearerAssertionPrivateKeyFile,
+            SaslOauthbearerAssertionPrivateKeyPassphrase = _saslOauthbearerAssertionPrivateKeyPassphrase,
+            SaslOauthbearerAssertionPrivateKeyPem = _saslOauthbearerAssertionPrivateKeyPem,
+            SaslOauthbearerAssertionFile = _saslOauthbearerAssertionFile,
+            SaslOauthbearerAssertionClaimAud = _saslOauthbearerAssertionClaimAud,
+            SaslOauthbearerAssertionClaimExpSeconds = _saslOauthbearerAssertionClaimExpSeconds,
+            SaslOauthbearerAssertionClaimIss = _saslOauthbearerAssertionClaimIss,
+            SaslOauthbearerAssertionClaimJtiInclude = _saslOauthbearerAssertionClaimJtiInclude,
+            SaslOauthbearerAssertionClaimNbfSeconds = _saslOauthbearerAssertionClaimNbfSeconds,
+            SaslOauthbearerAssertionClaimSub = _saslOauthbearerAssertionClaimSub,
+            SaslOauthbearerAssertionJwtTemplateFile = _saslOauthbearerAssertionJwtTemplateFile,
+            SaslOauthbearerMetadataAuthenticationType = _saslOauthbearerMetadataAuthenticationType,
             PluginLibraryPaths = _pluginLibraryPaths,
             ClientRack = _clientRack,
             RetryBackoffMs = _retryBackoffMs,
@@ -2239,6 +2663,10 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     void IKafkaClientConfigurationBuilder.WithReceiveMessageMaxBytes(int? receiveMessageMaxBytes) => WithReceiveMessageMaxBytes(receiveMessageMaxBytes);
 
     void IKafkaClientConfigurationBuilder.WithMaxInFlight(int? maxInFlight) => WithMaxInFlight(maxInFlight);
+
+    void IKafkaClientConfigurationBuilder.WithMetadataRecoveryStrategy(MetadataRecoveryStrategy? metadataRecoveryStrategy) => WithMetadataRecoveryStrategy(metadataRecoveryStrategy);
+
+    void IKafkaClientConfigurationBuilder.WithMetadataRecoveryRebootstrapTriggerMs(int? metadataRecoveryRebootstrapTriggerMs) => WithMetadataRecoveryRebootstrapTriggerMs(metadataRecoveryRebootstrapTriggerMs);
 
     void IKafkaClientConfigurationBuilder.WithTopicMetadataRefreshIntervalMs(int? topicMetadataRefreshIntervalMs) => WithTopicMetadataRefreshIntervalMs(topicMetadataRefreshIntervalMs);
 
@@ -2310,6 +2738,10 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
 
     void IKafkaClientConfigurationBuilder.WithSslCaLocation(string? sslCaLocation) => WithSslCaLocation(sslCaLocation);
 
+    void IKafkaClientConfigurationBuilder.WithHttpsCaLocation(string? httpsCaLocation) => WithHttpsCaLocation(httpsCaLocation);
+
+    void IKafkaClientConfigurationBuilder.WithHttpsCaPem(string? httpsCaPem) => WithHttpsCaPem(httpsCaPem);
+
     void IKafkaClientConfigurationBuilder.WithSslCaPem(string? sslCaPem) => WithSslCaPem(sslCaPem);
 
     void IKafkaClientConfigurationBuilder.WithSslCaCertificateStores(string? sslCaCertificateStores) => WithSslCaCertificateStores(sslCaCertificateStores);
@@ -2359,6 +2791,34 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerExtensions(string? saslOauthbearerExtensions) => WithSaslOauthbearerExtensions(saslOauthbearerExtensions);
 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl) => WithSaslOauthbearerTokenEndpointUrl(saslOauthbearerTokenEndpointUrl);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType) => WithSaslOauthbearerGrantType(saslOauthbearerGrantType);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm) => WithSaslOauthbearerAssertionAlgorithm(saslOauthbearerAssertionAlgorithm);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionPrivateKeyFile(string? saslOauthbearerAssertionPrivateKeyFile) => WithSaslOauthbearerAssertionPrivateKeyFile(saslOauthbearerAssertionPrivateKeyFile);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionPrivateKeyPassphrase(string? saslOauthbearerAssertionPrivateKeyPassphrase) => WithSaslOauthbearerAssertionPrivateKeyPassphrase(saslOauthbearerAssertionPrivateKeyPassphrase);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionPrivateKeyPem(string? saslOauthbearerAssertionPrivateKeyPem) => WithSaslOauthbearerAssertionPrivateKeyPem(saslOauthbearerAssertionPrivateKeyPem);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionFile(string? saslOauthbearerAssertionFile) => WithSaslOauthbearerAssertionFile(saslOauthbearerAssertionFile);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimAud(string? saslOauthbearerAssertionClaimAud) => WithSaslOauthbearerAssertionClaimAud(saslOauthbearerAssertionClaimAud);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimExpSeconds(int? saslOauthbearerAssertionClaimExpSeconds) => WithSaslOauthbearerAssertionClaimExpSeconds(saslOauthbearerAssertionClaimExpSeconds);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss) => WithSaslOauthbearerAssertionClaimIss(saslOauthbearerAssertionClaimIss);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude) => WithSaslOauthbearerAssertionClaimJtiInclude(saslOauthbearerAssertionClaimJtiInclude);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds) => WithSaslOauthbearerAssertionClaimNbfSeconds(saslOauthbearerAssertionClaimNbfSeconds);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionClaimSub(string? saslOauthbearerAssertionClaimSub) => WithSaslOauthbearerAssertionClaimSub(saslOauthbearerAssertionClaimSub);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile) => WithSaslOauthbearerAssertionJwtTemplateFile(saslOauthbearerAssertionJwtTemplateFile);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerMetadataAuthenticationType(SaslOauthbearerMetadataAuthenticationType? saslOauthbearerMetadataAuthenticationType) => WithSaslOauthbearerMetadataAuthenticationType(saslOauthbearerMetadataAuthenticationType);
 
     void IKafkaClientConfigurationBuilder.WithPluginLibraryPaths(string? pluginLibraryPaths) => WithPluginLibraryPaths(pluginLibraryPaths);
 

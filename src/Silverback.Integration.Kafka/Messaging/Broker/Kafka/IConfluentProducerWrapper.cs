@@ -11,7 +11,7 @@ using Silverback.Messaging.Configuration.Kafka;
 namespace Silverback.Messaging.Broker.Kafka;
 
 /// <summary>
-///     Wraps the underlying <see cref="Producer{TKey,TValue}" /> and handles the connection lifecycle.
+///     Wraps the underlying <see cref="IProducer{TKey,TValue}" /> and handles the connection lifecycle.
 /// </summary>
 public interface IConfluentProducerWrapper : IBrokerClient
 {

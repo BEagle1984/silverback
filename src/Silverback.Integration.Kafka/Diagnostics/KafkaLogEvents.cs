@@ -158,7 +158,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported
-    ///     by the <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     by the <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     Fatal errors are reported with a different event id.
@@ -170,7 +170,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
-    ///     the <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     Non-fatal errors are reported with a different event id.
@@ -267,7 +267,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -279,7 +279,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -291,7 +291,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -303,7 +303,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -315,7 +315,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -327,7 +327,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -339,7 +339,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -351,7 +351,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -363,7 +363,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -375,7 +375,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.Consumer{TKey,TValue}" />.
+    ///     the underlying <see cref="Confluent.Kafka.IConsumer{TKey,TValue}" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -387,7 +387,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported
-    ///     by the <see cref="Confluent.Kafka.AdminClient" />.
+    ///     by the <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     Fatal errors are reported with a different event id.
@@ -399,7 +399,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
-    ///     the <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     Non-fatal errors are reported with a different event id.
@@ -411,7 +411,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the underlying <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -423,7 +423,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the underlying <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -435,7 +435,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the underlying <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -447,7 +447,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the underlying <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.
@@ -459,7 +459,7 @@ public static class KafkaLogEvents
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
-    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    ///     the underlying <see cref="Confluent.Kafka.IAdminClient" />.
     /// </summary>
     /// <remarks>
     ///     A different event id is used per each log level.

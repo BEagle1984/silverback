@@ -28,19 +28,34 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     public int MaxCachedSchemas => 42;
 
-    public void ClearCaches() => throw new NotSupportedException();
+    public async Task<int> RegisterSchemaAsync(string subject, Schema schema, bool normalize = false)
+    {
+        RegisteredSchema registeredSchema = await RegisterSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize).ConfigureAwait(false);
+        return registeredSchema.Id;
+    }
 
-    public Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false) =>
-        RegisterSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize);
-
-    public Task<int> RegisterSchemaAsync(string subject, Schema schema, bool normalize = false) =>
+    public Task<RegisteredSchema> RegisterSchemaWithResponseAsync(string subject, Schema schema, bool normalize = false) =>
         RegisterSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize);
 
-    public Task<int> GetSchemaIdAsync(string subject, string avroSchema, bool normalize = false) =>
-        GetSchemaIdAsync(subject, avroSchema, SchemaType.Avro, normalize);
+    public async Task<int> GetSchemaIdAsync(string subject, string avroSchema, bool normalize = false)
+    {
+        RegisteredSchema registeredSchema = await GetSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize).ConfigureAwait(false);
+        return registeredSchema.Id;
+    }
 
-    public Task<int> GetSchemaIdAsync(string subject, Schema schema, bool normalize = false) =>
-        GetSchemaIdAsync(subject, schema.SchemaString, schema.SchemaType, normalize);
+    public void ClearCaches() => throw new NotSupportedException();
+
+    public async Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false)
+    {
+        RegisteredSchema schema = await RegisterSchemaAsync(subject, avroSchema, SchemaType.Avro, normalize).ConfigureAwait(false);
+        return schema.Id;
+    }
+
+    public async Task<int> GetSchemaIdAsync(string subject, Schema schema, bool normalize = false)
+    {
+        RegisteredSchema registeredSchema = await GetSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize).ConfigureAwait(false);
+        return registeredSchema.Id;
+    }
 
     public Task<Schema> GetSchemaAsync(int id, string? format = null) => throw new NotSupportedException();
 
@@ -54,7 +69,10 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         return Task.FromResult(registeredSchema.Schema);
     }
 
-    public Task<RegisteredSchema> LookupSchemaAsync(string subject, Schema schema, bool ignoreDeletedSchemas, bool normalize = false) => throw new NotSupportedException();
+    public Task<Schema> GetSchemaByGuidAsync(string guid, string? format = null) => throw new NotSupportedException();
+
+    public Task<RegisteredSchema> LookupSchemaAsync(string subject, Schema schema, bool ignoreDeletedSchemas, bool normalize = false) =>
+        GetSchemaAsync(subject, schema.SchemaString, schema.SchemaType, normalize);
 
     [SuppressMessage("ReSharper", "MethodOverloadWithOptionalParameter", Justification = "Same as in the implemented interface")]
     public Task<RegisteredSchema> GetRegisteredSchemaAsync(string subject, int version, bool ignoreDeletedSchemas = true) => throw new NotSupportedException();
@@ -97,78 +115,72 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 
     private static int GetNextVersion(List<RegisteredSchema> registeredSchemas) => registeredSchemas.Count + 1;
 
-    private Task<int> RegisterSchemaAsync(string subject, string schemaString, SchemaType schemaType, bool normalize)
+    private Task<RegisteredSchema> RegisterSchemaAsync(string subject, string schemaString, SchemaType schemaType, bool normalize)
     {
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
         lock (_schemas)
         {
-            if (TryGetSchemaId(subject, schemaString, schemaType, normalize, out int id))
-                return Task.FromResult(id);
+            if (TryGetSchema(subject, schemaString, schemaType, normalize, out RegisteredSchema? existingSchema))
+                return Task.FromResult(existingSchema);
 
             List<RegisteredSchema> registeredSchemas = _schemas.GetOrAdd(subject, _ => []);
 
-            id = GetNextId();
+            RegisteredSchema schema = new(
+                subject,
+                GetNextVersion(registeredSchemas),
+                GetNextId(),
+                schemaString,
+                schemaType,
+                []);
 
-            registeredSchemas.Add(
-                new RegisteredSchema(
-                    subject,
-                    GetNextVersion(registeredSchemas),
-                    id,
-                    schemaString,
-                    schemaType,
-                    []));
+            registeredSchemas.Add(schema);
 
-            return Task.FromResult(id);
+            return Task.FromResult(schema);
         }
     }
 
-    private Task<int> GetSchemaIdAsync(string subject, string schemaString, SchemaType schemaType, bool normalize) =>
-        TryGetSchemaId(subject, schemaString, schemaType, normalize, out int schemaId)
-            ? Task.FromResult(schemaId)
+    private Task<RegisteredSchema> GetSchemaAsync(string subject, string schemaString, SchemaType schemaType, bool normalize) =>
+        TryGetSchema(subject, schemaString, schemaType, normalize, out RegisteredSchema? schema)
+            ? Task.FromResult(schema)
             : throw new SchemaRegistryException(
                 $"No matching schema found for subject '{subject}' and the specified schema.",
                 HttpStatusCode.NotFound,
                 42);
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Only synchronized when writing")]
-    private bool TryGetSchemaId(
+    private bool TryGetSchema(
         string subject,
         string schemaString,
         SchemaType schemaType,
         bool normalize,
-        out int schemaId)
+        [NotNullWhen(true)] out RegisteredSchema? schema)
     {
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
         if (!_schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas))
         {
-            schemaId = -1;
+            schema = null;
             return false;
         }
 
         // Note: for protobuf only the latest schema is considered at the moment, since the schema string matching is not straightforward
-        RegisteredSchema? registeredSchema = registeredSchemas.LastOrDefault(
-            schema => (schema.Schema.SchemaString == schemaString || schemaType == SchemaType.Protobuf) &&
-                      schema.Schema.SchemaType == schemaType);
+        schema = registeredSchemas.LastOrDefault(schema =>
+            (schema.Schema.SchemaString == schemaString || schemaType == SchemaType.Protobuf) &&
+            schema.Schema.SchemaType == schemaType);
 
-        if (registeredSchema == null)
-        {
-            schemaId = -1;
-            return false;
-        }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        schemaId = registeredSchema.Id;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        return true;
+        return schema != null;
     }
 
-    private RegisteredSchema? GetLatestSchema(string subject) =>
-        _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas[^1] : null;
+    private RegisteredSchema? GetLatestSchema(string subject)
+    {
+        lock (_schemas)
+        {
+            return _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas[^1] : null;
+        }
+    }
 
     private int GetNextId() => _schemas.Values.Sum(schema => schema.Count);
 }

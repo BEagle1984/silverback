@@ -92,7 +92,7 @@ public partial class KafkaClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Add a default producer configuration that will be applied to all the producers.<br/>
+    ///     Add a default producer configuration that will be applied to all the producers.<br />
     ///     This configuration action will be applied before any other producer-specific configuration action.
     /// </summary>
     /// <param name="configurationBuilderAction">
@@ -111,7 +111,7 @@ public partial class KafkaClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Add a default consumer configuration that will be applied to all the consumers.<br/>
+    ///     Add a default consumer configuration that will be applied to all the consumers.<br />
     ///     This configuration action will be applied before any other consumer-specific configuration action.
     /// </summary>
     /// <param name="configurationBuilderAction">
@@ -225,6 +225,40 @@ public partial class KafkaClientsConfigurationBuilder
     ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public partial KafkaClientsConfigurationBuilder WithMaxInFlight(int? maxInFlight);
+
+    /// <summary>
+    ///     Sets the metadata recovery strategy.
+    ///     If set to <see cref="MetadataRecoveryStrategy.None" /> the client doesn't re-bootstrap. If set to
+    ///     <see cref="MetadataRecoveryStrategy.Rebootstrap" /> the client repeats the bootstrap process using
+    ///     the configured <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>.
+    ///     Rebootstrapping is useful when a client talks to brokers so infrequently that the broker set may change
+    ///     entirely before the client refreshes metadata. Metadata recovery is triggered when all last-known brokers
+    ///     appear unavailable simultaneously, when the client cannot refresh metadata within the configured
+    ///     rebootstrap trigger interval, or when requested in a metadata response.
+    /// </summary>
+    /// <param name="metadataRecoveryStrategy">
+    ///     The metadata recovery strategy to use. See <see cref="MetadataRecoveryStrategy" /> for available values.
+    ///     Default: <see cref="MetadataRecoveryStrategy.Rebootstrap" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithMetadataRecoveryStrategy(MetadataRecoveryStrategy? metadataRecoveryStrategy);
+
+    /// <summary>
+    ///     Sets the metadata recovery rebootstrap trigger interval (ms).
+    ///     When using <see cref="MetadataRecoveryStrategy.Rebootstrap" />, if the client is unable to obtain metadata
+    ///     from any of the known brokers for the specified interval, the client repeats the bootstrap process using
+    ///     the configured <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>.
+    /// </summary>
+    /// <param name="metadataRecoveryRebootstrapTriggerMs">
+    ///     The interval, in milliseconds, after which the client will rebootstrap if metadata cannot be obtained.
+    ///     Default: <c>300000</c> (5 minutes).
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithMetadataRecoveryRebootstrapTriggerMs(int? metadataRecoveryRebootstrapTriggerMs);
 
     /// <summary>
     ///     Sets the interval (in milliseconds) at which the topic and broker metadata is refreshed in order to proactively discover any new
@@ -674,6 +708,32 @@ public partial class KafkaClientsConfigurationBuilder
     public partial KafkaClientsConfigurationBuilder WithSslCaLocation(string? sslCaLocation);
 
     /// <summary>
+    ///     Gets the file or directory path to CA certificate(s) for verifying HTTPS endpoints, such as <c>sasl.oauthbearer.token.endpoint.url</c> used for OAUTHBEARER/OIDC authentication.
+    ///     Mutually exclusive with <see cref="KafkaClientConfiguration{TClientConfig}.HttpsCaPem" />. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
+    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew to provide CA certificates. On Linux install the distribution's ca-certificates package.
+    ///     If OpenSSL is statically linked or <c>https.ca.location</c> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
+    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).
+    /// </summary>
+    /// <param name="httpsCaLocation">
+    ///     The file or directory path to CA certificate(s) for verifying HTTPS endpoints.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithHttpsCaLocation(string? httpsCaLocation);
+
+    /// <summary>
+    ///     Sets the CA certificate string (in PEM format) for verifying HTTPS endpoints. Mutually exclusive with <see cref="KafkaClientConfiguration{TClientConfig}.HttpsCaLocation" />.
+    /// </summary>
+    /// <param name="httpsCaPem">
+    ///     The CA certificate string (in PEM format) for verifying HTTPS endpoints.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithHttpsCaPem(string? httpsCaPem);
+
+    /// <summary>
     ///     Sets the CA certificate string (in PEM format) for verifying the broker's key.
     /// </summary>
     /// <param name="sslCaPem">
@@ -991,6 +1051,160 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
     public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl);
+
+    /// <summary>
+    ///     Sets the OAuth grant type to use when communicating with the identity provider.
+    /// </summary>
+    /// <param name="saslOauthbearerGrantType">
+    ///     The OAuth grant type to use when communicating with the identity provider.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType);
+
+    /// <summary>
+    ///     Sets the algorithm the client should use to sign the assertion sent to the identity provider and in the OAuth alg header in the JWT assertion.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionAlgorithm">
+    ///     The algorithm the client should use to sign the assertion sent to the identity provider and in the OAuth alg header in the JWT assertion.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm);
+
+    /// <summary>
+    ///     Sets the path to the client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionPrivateKeyFile">
+    ///     The path to the client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyFile(string? saslOauthbearerAssertionPrivateKeyFile);
+
+    /// <summary>
+    ///     Sets the private key passphrase for <c>sasl.oauthbearer.assertion.private.key.file</c> or <c>sasl.oauthbearer.assertion.private.key.pem</c>.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionPrivateKeyPassphrase">
+    ///     The private key passphrase for <c>sasl.oauthbearer.assertion.private.key.file</c> or <c>sasl.oauthbearer.assertion.private.key.pem</c>.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyPassphrase(string? saslOauthbearerAssertionPrivateKeyPassphrase);
+
+    /// <summary>
+    ///     Sets the client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionPrivateKeyPem">
+    ///     The client's private key (PEM) used for authentication when using the JWT assertion.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionPrivateKeyPem(string? saslOauthbearerAssertionPrivateKeyPem);
+
+    /// <summary>
+    ///     Sets the path to the assertion file. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionFile">
+    ///     The path to the assertion file.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionFile(string? saslOauthbearerAssertionFile);
+
+    /// <summary>
+    ///     Sets the JWT audience claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimAud">
+    ///     The JWT audience claim.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimAud(string? saslOauthbearerAssertionClaimAud);
+
+    /// <summary>
+    ///     Sets the assertion expiration time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimExpSeconds">
+    ///     The assertion expiration time in seconds.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimExpSeconds(int? saslOauthbearerAssertionClaimExpSeconds);
+
+    /// <summary>
+    ///     Sets the JWT issuer claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimIss">
+    ///     The JWT issuer claim.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimIss(string? saslOauthbearerAssertionClaimIss);
+
+    /// <summary>
+    ///     Sets the JWT ID claim. When set to <c>true</c>, a random UUID is generated. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimJtiInclude">
+    ///     The JWT ID claim.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimJtiInclude(bool? saslOauthbearerAssertionClaimJtiInclude);
+
+    /// <summary>
+    ///     Sets the assertion not before time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimNbfSeconds">
+    ///     The assertion not before time in seconds.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimNbfSeconds(int? saslOauthbearerAssertionClaimNbfSeconds);
+
+    /// <summary>
+    ///     Sets the JWT subject claim. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionClaimSub">
+    ///     The JWT subject claim.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionClaimSub(string? saslOauthbearerAssertionClaimSub);
+
+    /// <summary>
+    ///     Sets the path to the JWT template file. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc" and JWT assertion is needed.
+    /// </summary>
+    /// <param name="saslOauthbearerAssertionJwtTemplateFile">
+    ///     The path to the JWT template file.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerAssertionJwtTemplateFile(string? saslOauthbearerAssertionJwtTemplateFile);
+
+    /// <summary>
+    ///     Sets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.
+    /// </summary>
+    /// <param name="saslOauthbearerMetadataAuthenticationType">
+    ///     The type of metadata-based authentication to use for OAUTHBEARER/OIDC.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerMetadataAuthenticationType(SaslOauthbearerMetadataAuthenticationType? saslOauthbearerMetadataAuthenticationType);
 
     /// <summary>
     ///     Sets the list of plugin libraries to load (<c>;</c> separated). The library search path is platform dependent. If no filename extension

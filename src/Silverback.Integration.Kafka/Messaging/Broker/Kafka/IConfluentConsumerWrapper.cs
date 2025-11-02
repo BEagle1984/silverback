@@ -9,7 +9,7 @@ using Silverback.Messaging.Configuration.Kafka;
 namespace Silverback.Messaging.Broker.Kafka;
 
 /// <summary>
-///     Wraps the underlying <see cref="Consumer{TKey,TValue}" /> and handles the connection lifecycle.
+///     Wraps the underlying <see cref="IConsumer{TKey,TValue}" /> and handles the connection lifecycle.
 /// </summary>
 public interface IConfluentConsumerWrapper : IBrokerClient
 {

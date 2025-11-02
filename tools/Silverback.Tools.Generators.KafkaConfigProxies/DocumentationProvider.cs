@@ -86,6 +86,18 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     however it is primarily relevant to produce requests. In particular, note that other mechanisms limit the number of outstanding consumer");
                 builder.AppendLine("    ///     fetch request per broker to one.");
                 break;
+            case nameof(ClientConfig.MetadataRecoveryStrategy):
+                builder.AppendLine("    ///     Gets the metadata recovery strategy. If set to <see cref=\"Confluent.Kafka.MetadataRecoveryStrategy.None\"/> the client doesn't re-bootstrap.");
+                builder.AppendLine("    ///     If set to <see cref=\"Confluent.Kafka.MetadataRecoveryStrategy.Rebootstrap\"/> the client repeats the bootstrap process using the configured ");
+                builder.AppendLine("    ///     <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>. Rebootstrapping is useful when a client talks to brokers so infrequently that the broker ");
+                builder.AppendLine("    ///     set may change entirely before the client refreshes metadata. Metadata recovery is triggered when all last-known brokers appear unavailable simultaneously, when the client ");
+                builder.AppendLine("    ///     cannot refresh metadata within the configured rebootstrap trigger interval, or when requested in a metadata response.");
+                break;
+            case nameof(ClientConfig.MetadataRecoveryRebootstrapTriggerMs):
+                builder.AppendLine("    ///     Gets the metadata recovery rebootstrap trigger interval (ms). When using <see cref=\"Confluent.Kafka.MetadataRecoveryStrategy.Rebootstrap\"/>, ");
+                builder.AppendLine("    ///     if the client is unable to obtain metadata from any of the known brokers for the specified interval, the client repeats the bootstrap process using the configured ");
+                builder.AppendLine("    ///     <c>bootstrap.servers</c> and brokers added through <c>rd_kafka_brokers_add()</c>. Default: <c>300000</c> (5 minutes).");
+                break;
             case nameof(ClientConfig.TopicMetadataRefreshIntervalMs):
                 builder.AppendLine("    ///     Gets the interval (in milliseconds) at which the topic and broker metadata is refreshed in order to proactively discover any new");
                 builder.AppendLine("    ///     brokers, topics, partitions or partition leader changes. Use -1 to disable the intervalled refresh (not recommended). If there are");
@@ -214,6 +226,16 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     If OpenSSL is statically linked or <see cref=\"SslCaLocation\" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.");
                 builder.AppendLine("    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).");
                 break;
+            case nameof(ClientConfig.HttpsCaLocation):
+                builder.AppendLine("    ///     Gets the file or directory path to CA certificate(s) for verifying HTTPS endpoints, such as <c>sasl.oauthbearer.token.endpoint.url</c> used for OAUTHBEARER/OIDC authentication.");
+                builder.AppendLine("    ///     Mutually exclusive with <see cref=\"HttpsCaPem\"/>. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.");
+                builder.AppendLine("    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew to provide CA certificates. On Linux install the distribution's ca-certificates package.");
+                builder.AppendLine("    ///     If OpenSSL is statically linked or <c>https.ca.location</c> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.");
+                builder.AppendLine("    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).");
+                break;
+            case nameof(ClientConfig.HttpsCaPem):
+                builder.AppendLine("    ///     Gets the CA certificate string (in PEM format) for verifying HTTPS endpoints. Mutually exclusive with <see cref=\"HttpsCaLocation\"/>.");
+                break;
             case nameof(ClientConfig.SslCaPem):
                 builder.AppendLine("    ///     Gets the CA certificate string (in PEM format) for verifying the broker's key.");
                 break;
@@ -297,6 +319,48 @@ public static class DocumentationProvider
             case nameof(ClientConfig.SaslOauthbearerTokenEndpointUrl):
                 builder.AppendLine("    ///     Gets the OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve the token. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
+            case nameof(ClientConfig.SaslOauthbearerGrantType):
+                builder.AppendLine("    ///     Gets the OAuth grant type to use when communicating with the identity provider.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionAlgorithm):
+                builder.AppendLine("    ///     Gets the algorithm the client should use to sign the assertion sent to the identity provider and in the OAuth alg header in the JWT assertion.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionPrivateKeyFile):
+                builder.AppendLine("    ///     Gets the path to the client's private key (PEM) used for authentication when using the JWT assertion.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionPrivateKeyPassphrase):
+                builder.AppendLine("    ///     Gets the private key passphrase for <c>sasl.oauthbearer.assertion.private.key.file</c> or <c>sasl.oauthbearer.assertion.private.key.pem</c>.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionPrivateKeyPem):
+                builder.AppendLine("    ///     Gets the client's private key (PEM) used for authentication when using the JWT assertion.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionFile):
+                builder.AppendLine("    ///     Gets the path to the assertion file. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimAud):
+                builder.AppendLine("    ///     Gets the JWT audience claim. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimExpSeconds):
+                builder.AppendLine("    ///     Gets the assertion expiration time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimIss):
+                builder.AppendLine("    ///     Gets the JWT issuer claim. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimJtiInclude):
+                builder.AppendLine("    ///     Gets the JWT ID claim. When set to <c>true</c>, a random UUID is generated. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimNbfSeconds):
+                builder.AppendLine("    ///     Gets the assertion not before time in seconds. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionClaimSub):
+                builder.AppendLine("    ///     Gets the JWT subject claim. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerAssertionJwtTemplateFile):
+                builder.AppendLine("    ///     Gets the path to the JWT template file. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\" and JWT assertion is needed.");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerMetadataAuthenticationType):
+                builder.AppendLine("    ///     Gets the type of metadata-based authentication to use for OAUTHBEARER/OIDC <c>azure_imds</c> authenticates using the Azure IMDS endpoint. Sets a default value for <c>sasl.oauthbearer.token.endpoint.url</c> if missing. Configuration values specific of chosen authentication type can be passed through <c>sasl.oauthbearer.config</c>.");
+                break;
             case nameof(ClientConfig.PluginLibraryPaths):
                 builder.AppendLine("    ///     Gets the list of plugin libraries to load (<c>;</c> separated). The library search path is platform dependent. If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically.");
                 break;
@@ -329,7 +393,7 @@ public static class DocumentationProvider
         {
             case nameof(ConsumerConfig.ConsumeResultFields):
                 builder.AppendLine("    ///     Gets a comma-separated list of fields that may be optionally set in <see cref=\"ConsumeResult{TKey,TValue}\" /> objects returned by");
-                builder.AppendLine("    ///     the <see cref=\"Consumer{TKey,TValue}.Consume(System.TimeSpan)\" /> method. Disabling fields that you do not require will improve");
+                builder.AppendLine("    ///     the <see cref=\"IConsumer{TKey,TValue}.Consume(System.TimeSpan)\" /> method. Disabling fields that you do not require will improve");
                 builder.AppendLine("    ///     throughput and reduce memory consumption. Allowed values: <c>headers</c>, <c>timestamp</c>, <c>topic</c>, <c>all</c>, <c>none</c>.");
                 break;
             case nameof(ConsumerConfig.AutoOffsetReset):
