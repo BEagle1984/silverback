@@ -116,9 +116,9 @@ public class TombstoneMessageArgumentResolverTests
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
-            new TestEventOne());
+            null);
 
-        object value = resolver.GetValue(envelope, typeof(Tombstone));
+        object? value = resolver.GetValue(envelope, typeof(Tombstone));
 
         Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
         tombstone.MessageKey.ShouldBe("42");
@@ -135,9 +135,9 @@ public class TombstoneMessageArgumentResolverTests
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
-            new TestEventOne());
+            null);
 
-        object value = resolver.GetValue(envelope, typeof(ITombstone));
+        object? value = resolver.GetValue(envelope, typeof(ITombstone));
 
         Tombstone tombstone = value.ShouldBeOfType<Tombstone>();
         tombstone.MessageKey.ShouldBe("42");
@@ -154,9 +154,9 @@ public class TombstoneMessageArgumentResolverTests
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
-            new TestEventOne());
+            null);
 
-        object value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
+        object? value = resolver.GetValue(envelope, typeof(Tombstone<TestEventOne>));
 
         Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
         tombstone.MessageKey.ShouldBe("42");
@@ -173,9 +173,9 @@ public class TombstoneMessageArgumentResolverTests
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
-            new TestEventOne());
+            null);
 
-        object value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
+        object? value = resolver.GetValue(envelope, typeof(ITombstone<TestEventOne>));
 
         Tombstone<TestEventOne> tombstone = value.ShouldBeOfType<Tombstone<TestEventOne>>();
         tombstone.MessageKey.ShouldBe("42");

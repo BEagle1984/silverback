@@ -12,6 +12,9 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 /// </summary>
 public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
 {
+    /// <inheritdoc cref="ISingleMessageArgumentResolver.SkipInvocationIfNull" />
+    public bool SkipInvocationIfNull => true;
+
     /// <inheritdoc cref="IArgumentResolver.CanResolve" />
     public bool CanResolve(Type parameterType)
     {
@@ -38,10 +41,13 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
     }
 
     /// <inheritdoc cref="ISingleMessageArgumentResolver.GetValue" />
-    public object GetValue(object? message, Type parameterType)
+    public object? GetValue(object? message, Type parameterType)
     {
         IInboundEnvelope envelope = (IInboundEnvelope)Check.NotNull(message, nameof(message));
         Check.NotNull(parameterType, nameof(parameterType));
+
+        if (!envelope.IsTombstone)
+            return null;
 
         string? messageKey = envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey);
 

@@ -31,32 +31,38 @@ internal static class SubscribedMethodInvoker
             return MethodInvocationResult.NotInvoked;
 
         object?[] arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider, cancellationToken);
-        object? returnValue = subscribedMethod.MessageArgumentResolver switch
+        object? returnValue;
+        switch (subscribedMethod.MessageArgumentResolver)
         {
-            ISingleMessageArgumentResolver resolver =>
-                await InvokeWithSingleMessageAsync(
+            case ISingleMessageArgumentResolver singleMessageResolver:
+                returnValue = await InvokeWithSingleMessageAsync(
                     message,
                     subscribedMethod,
                     arguments,
-                    resolver,
+                    singleMessageResolver,
                     serviceProvider,
-                    executionFlow).ConfigureAwait(false),
-            IStreamEnumerableMessageArgumentResolver resolver =>
-                InvokeWithStreamEnumerableAsync(
+                    executionFlow,
+                    out bool invoked).ConfigureAwait(false);
+
+                if (!invoked)
+                    return MethodInvocationResult.NotInvoked;
+
+                if (returnValue == null)
+                    return MethodInvocationResult.Invoked;
+
+                break;
+            case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
+                returnValue = InvokeWithStreamEnumerableAsync(
                     (IMessageStreamProvider)message,
                     subscribedMethod,
                     arguments,
-                    resolver,
-                    serviceProvider),
-            _ =>
-                throw new SubscribedMethodInvocationException(
-                    $"The message argument resolver ({subscribedMethod.MessageArgumentResolver}) " +
-                    "must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " +
-                    "or IStreamEnumerableMessageArgumentResolver.")
-        };
+                    streamEnumerableResolver,
+                    serviceProvider);
 
-        if (returnValue == null)
-            return MethodInvocationResult.Invoked;
+                break;
+            default:
+                throw new SubscribedMethodInvocationException($"The message argument resolver ({subscribedMethod.MessageArgumentResolver}) " + "must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " + "or IStreamEnumerableMessageArgumentResolver.");
+        }
 
         bool returnValueWasHandled =
             await serviceProvider
@@ -96,12 +102,21 @@ internal static class SubscribedMethodInvoker
         object?[] arguments,
         ISingleMessageArgumentResolver singleResolver,
         IServiceProvider serviceProvider,
-        ExecutionFlow executionFlow)
+        ExecutionFlow executionFlow,
+        out bool invoked)
     {
         message = UnwrapIfNeeded(message, subscribedMethod);
 
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
         arguments[0] = singleResolver.GetValue(message, subscribedMethod.MessageParameter.ParameterType);
+
+        if (arguments[0] == null && singleResolver.SkipInvocationIfNull)
+        {
+            invoked = false;
+            return ValueTask.FromResult<object?>(null);
+        }
+
+        invoked = true;
         return InvokeWithActivityAsync(subscribedMethod, target, arguments, executionFlow);
     }
 
@@ -119,22 +134,21 @@ internal static class SubscribedMethodInvoker
             subscribedMethod.MessageType,
             subscribedMethod.Options.Filters);
 
-        return Task.Run(
-            async () =>
+        return Task.Run(async () =>
+        {
+            try
             {
-                try
-                {
-                    await lazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
+                await lazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
 
-                    arguments[0] = lazyStream.Value;
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
+                arguments[0] = lazyStream.Value;
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
 
-                await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
-            });
+            await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
+        });
     }
 
     private static object? UnwrapIfNeeded(object? message, SubscribedMethod subscribedMethod) =>

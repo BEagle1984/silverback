@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 public interface IMessageArgumentResolver : IArgumentResolver
 {
     /// <summary>
-    ///     Returns the actual message type in the specified parameter type (e.g. <c>TMessage</c> for a parameter
+    ///     Returns the actual message type in the specified parameter type (e.g. <c>TMessage</c>) for a parameter
     ///     declared as <c>IEnumerable&lt;TMessage&gt;</c>.
     /// </summary>
     /// <param name="parameterType">

@@ -12,6 +12,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 public interface ISingleMessageArgumentResolver : IMessageArgumentResolver
 {
     /// <summary>
+    ///     Gets a value indicating whether the subscriber invocation should be skipped if the resolved value is null.
+    /// </summary>
+    bool SkipInvocationIfNull { get; }
+
+    /// <summary>
     ///     Returns the message value in a shape that is compatible with the subscribed method.
     /// </summary>
     /// <param name="message">

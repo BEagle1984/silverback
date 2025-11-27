@@ -57,6 +57,39 @@ public class NullMessageHandlingTests : KafkaTests
     }
 
     [Fact]
+    public async Task NonNullMessage_ShouldNotConsumeTombstone()
+    {
+        Tombstone? tombstone = null;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<Tombstone>(Handle)
+            .AddIntegrationSpy());
+
+        void Handle(Tombstone message) => tombstone = message;
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(
+            new TestEventOne(),
+            new MessageHeaderCollection
+            {
+                { KafkaMessageHeaders.MessageKey, "42" }
+            });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+        tombstone.ShouldBeNull();
+    }
+
+    [Fact]
     public async Task NullMessage_ShouldConsumeTypedTombstone_WhenMessageTypeHeaderIsSet()
     {
         Tombstone? tombstone = null;

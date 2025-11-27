@@ -11,6 +11,9 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 /// </summary>
 public class SingleMessageArgumentResolver : ISingleMessageArgumentResolver
 {
+    /// <inheritdoc cref="ISingleMessageArgumentResolver.SkipInvocationIfNull" />
+    public bool SkipInvocationIfNull => false;
+
     /// <inheritdoc cref="IArgumentResolver.CanResolve" />
     public bool CanResolve(Type parameterType) => true;
 

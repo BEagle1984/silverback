@@ -29,7 +29,7 @@ public class SubscribedMethod
     ///     Initializes a new instance of the <see cref="SubscribedMethod" /> class.
     /// </summary>
     /// <param name="targetTypeFactory">
-    ///     The delegate to be used to resolve an instantiate of the type declaring the subscribed method.
+    ///     The delegate to be used to resolve an instance of the type declaring the subscribed method.
     /// </param>
     /// <param name="methodInfo">
     ///     The <see cref="MethodInfo" /> related to the subscribed method.
@@ -96,7 +96,7 @@ public class SubscribedMethod
         _additionalArgumentsResolvers ?? throw new InvalidOperationException("Not initialized.");
 
     /// <summary>
-    ///     Resolves an instantiate of the type declaring the subscribed method.
+    ///     Resolves an instance of the type declaring the subscribed method.
     /// </summary>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the type or the necessary services.
