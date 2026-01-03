@@ -1,5 +1,5 @@
 ---
-uid: schema-registry
+uid: kafka-schema-registry-serializer
 ---
 
 # Confluent Schema Registry
@@ -79,3 +79,6 @@ class SchemaRegistrationService
 ## Additional Resources
 
 * [API Reference](xref:Silverback)
+* <xref:serialization> guide
+* <xref:kafka-schema-registry-deserializer> guide
+* [Confluent Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html)
