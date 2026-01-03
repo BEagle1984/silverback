@@ -5,7 +5,7 @@
     <Company>Silverback</Company>
     <Description>Silverback is a powerful, elegant, and feature-rich message bus for .NET, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for Apache Kafka and MQTT, it offers robust features for reliability, consistency, and scalability.</Description>
     <License>MIT</License>
-    <Copyright>Copyright (c) 2025 Sergio Aquilini</Copyright>
+    <Copyright>Copyright (c) 2026 Sergio Aquilini</Copyright>
     <ProjectUrl>https://silverback-messaging.net</ProjectUrl>
     <Tags>Event Bus Mediator CQRS Kafka MQTT Microservices</Tags>
     <PackageIcon>icon.png</PackageIcon>
