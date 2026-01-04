@@ -81,5 +81,5 @@ public async Task HandleAsync(IAsyncEnumerable<IInboundEnvelope<MyMessage>> enve
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:sample-kafka-batch> sample
+- [API Reference](xref:Silverback)
+- <xref:sample-kafka-batch> sample

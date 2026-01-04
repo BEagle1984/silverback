@@ -4,17 +4,13 @@ uid: consuming-tombstone
 
 # Consuming Tombstone Messages
 
-A tombstone message is a message with an empty payload. It is usually used in Kafka to signal that a message with a specific key should be deleted, and the message key is used to identify the specific record to be deleted.
+A tombstone is a Kafka message with a `null` payload. In compacted topics it is typically used to delete a record identified by its key.
 
-Consuming them is straightforward and doesn't require any special configuration. The subscriber must be designed to subscribe and handle them, though.
+In Silverback you can handle tombstones either via the inbound envelope (`IsTombstone`) or by subscribing to `Tombstone<TMessage>`.
 
-There are mainly two ways to subscribe to tombstone messages:
-* Subscribing to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> and checking the `IsTombstone` property
-* Subscribing to a <xref:Silverback.Messaging.Messages.Tombstone`1>
+## Subscribing to `IInboundEnvelope<TMessage>`
 
-## Subscribing to IInboundEnvelope
-
-Subscribe to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> to get the message plus all metadata (headers, broker-specific data, etc.). The envelope exposes a convenient `IsTombstone` boolean property which can be checked and the extension method `GetKafkaKey()` can be used to get the key of the message.
+Use the inbound envelope when you want to handle "upsert" and "delete" in a single handler.
 
 ```csharp
 public class MySubscriber
@@ -23,21 +19,20 @@ public class MySubscriber
     {
         if (envelope.IsTombstone)
         {
-            string key = envelope.GetKafkaKey();
+            string? key = envelope.GetKafkaKey();
             await _repository.DeleteAsync(key);
+            return;
         }
-        else
-        {
-            MyEntity entity = MapToEntity(envelope.Message);
-            await _repository.InsertOrUpdateAsync(entity);
-        }
+
+        MyEntity entity = MapToEntity(envelope.Message);
+        await _repository.InsertOrUpdateAsync(entity);
     }
 }
 ```
 
-## Subscribing to Tombstone
+## Subscribing to `Tombstone<TMessage>`
 
-In this case you actually need to separately subscribe to the actual message or the <xref:Silverback.Messaging.Messages.Tombstone`1>.
+Subscribe separately to regular messages and tombstones.
 
 ```csharp
 public class MySubscriber
@@ -58,5 +53,5 @@ public class MySubscriber
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:producing-tombstone> guide
+- [API Reference](xref:Silverback)
+- <xref:producing-tombstone>

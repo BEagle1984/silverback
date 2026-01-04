@@ -4,16 +4,16 @@ uid: decryption
 
 # Decrypt Consumed Messages
 
-The end-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used [serializer](xref:serialization) or other features like [chunking](xref:producing-chunking). The consumer will automatically decrypt messages if the endpoint is configured with the appropriate decryption settings.
+End-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used <xref:serialization> or other features like <xref:producing-chunking>. The consumer automatically decrypts messages if the endpoint is configured with the appropriate decryption settings.
 
 <figure>
-	<a href="~/images/diagrams/encryption.png"><img src="~/images/diagrams/encryption.png"></a>
+	<a href="~/images/diagrams/encryption.png"><img src="~/images/diagrams/encryption.png" alt="End-to-end message encryption and decryption."></a>
     <figcaption>The messages are transparently encrypted and decrypted.</figcaption>
 </figure>
 
 ## Symmetric Decryption
 
-Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint.
+Enabling end-to-end decryption using a symmetric algorithm requires additional configuration on the endpoint.
 
 The default symmetric encryption algorithm is AES.
 
@@ -45,7 +45,7 @@ services.AddSilverback()
                 }))));
 ```
 
-The <xref:Silverback.Messaging.Encryption.SymmetricDeryptionSettings> class contains common algorithm settings (block size, initialization vector, ...). The `AlgorithmName` value is passed to [SymmetricAlgorithm.Create(string)](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create). AES is used by default.
+The <xref:Silverback.Messaging.Encryption.SymmetricDecryptionSettings> class contains common algorithm settings (block size, initialization vector, ...). The `AlgorithmName` value is passed to [SymmetricAlgorithm.Create(string)](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create). AES is used by default.
 
 ### Random Initialization Vector
 
@@ -76,5 +76,5 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:encryption> guide
+- [API Reference](xref:Silverback)
+- <xref:encryption>

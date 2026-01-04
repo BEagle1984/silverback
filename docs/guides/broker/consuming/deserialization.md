@@ -83,7 +83,7 @@ services.AddSilverback()
 ```
 
 > [!Note]
-> To learn more about the schema registry support, refer to the <xref:schema-registry> guide.
+> To learn more about the schema registry support, refer to the <xref:kafka-schema-registry-deserializer> guide.
 
 ## Raw
 
@@ -162,7 +162,7 @@ services.AddSilverback()
         .AddConsumer("consumer1", consumer => consumer
             .Consume<StringMessage<MyMessage>>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic")
-                .DeserializeStrings(deserializer => deserializer
+                .ConsumeStrings(deserializer => deserializer
                     .WithEncoding(MessageEncoding.Unicode)))));
 ```
 
@@ -186,7 +186,7 @@ services.AddSilverback()
 > The C# message models can be generated from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
 
 > [!Note]
-> To learn more about the schema registry support, refer to the <xref:schema-registry> guide.
+> To learn more about the schema registry support, refer to the <xref:kafka-schema-registry-deserializer> guide.
 
 ## Protobuf
 
@@ -205,7 +205,7 @@ services.AddSilverback()
 ```
 
 > [!Note]
-> To learn more about the schema registry support, refer to the <xref:schema-registry> guide.
+> To learn more about the schema registry support, refer to the <xref:kafka-schema-registry-deserializer> guide.
 
 ## Custom Deserializer
 
@@ -236,6 +236,6 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:samples>
-* <xref:serialization> guide
+- [API Reference](xref:Silverback)
+- <xref:samples>
+- <xref:serialization> guide

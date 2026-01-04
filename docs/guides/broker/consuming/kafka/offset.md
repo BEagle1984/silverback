@@ -19,7 +19,7 @@ If the transaction commits, both the data and the new offset are persisted. If i
 > Client-side offset storage is not a Kafka feature. It’s an application pattern.
 > Silverback deliberately **disables committing offsets to Kafka** and repositions the consumer based on the offsets stored in your chosen storage.
 
-## When to use it
+## When to Use It
 
 Use client-side offset storage when your application:
 * processes incoming messages and writes to a database
@@ -28,7 +28,7 @@ Use client-side offset storage when your application:
 
 This pairs well with the <xref:outbox> if your consuming flow produces new messages as part of the same unit of work.
 
-## How it works (high level)
+## How It Works (High Level)
 
 1. As messages are processed, Silverback tracks the offsets that are safe to mark as processed. 
 2. When offsets are stored, they are written to the configured store.
@@ -130,7 +130,7 @@ public class AppDbContext : DbContext
 > [!Note]
 > For more details about storage packages and setup, see the <xref:storage> guide.
 
-## Exactly-once semantics with transactions
+## Exactly-Once Semantics with Transactions
 
 To make offset writes **atomic** with your business changes, enlist the database transaction in the offset store.
 
@@ -201,7 +201,7 @@ public async Task OnMessageReceivedAsync(MyMessage message, KafkaOffsetStoreScop
 }
 ```
 
-## Batch processing
+## Batch Processing
 
 If batch processing is enabled, offsets are tracked for the entire batch. Storing offsets marks the whole batch as processed.
 
@@ -218,7 +218,7 @@ If batch processing is enabled, offsets are tracked for the entire batch. Storin
 > [!Note]
 > In batch mode, a failure after processing items 1..N but before storing offsets can lead to reprocessing of part (or all) of the batch after restart. Design your handler code to be idempotent.
 
-## Provisioning the required tables
+## Provisioning the Required Tables
 
 Depending on the chosen storage:
 
@@ -233,7 +233,7 @@ await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(connectionString);
 await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString);
 ```
 
-## Gotchas and best practices
+## Gotchas and Best Practices
 
 * **Always disable Kafka offset commits** when using client-side offset storage: `DisableOffsetsCommit()`.
 * Keep the same **GroupId** and topic naming; offsets are keyed by consumer group and partition.
@@ -241,7 +241,7 @@ await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString)
 * For “exactly-once w.r.t. DB”, always **enlist the same transaction** used for your business changes.
 * Consider pairing this with <xref:outbox> if you also publish messages during processing.
 
-## Additional resources
+## Additional Resources
 
 * API Reference (`docs/api/`)
 * <xref:storage> guide

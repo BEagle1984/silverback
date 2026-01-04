@@ -4,15 +4,15 @@ uid: broker
 
 # Connecting to a Message Broker
 
-To connect Silverback to a message broker, you need to reference the appropriate integration package.
+To connect Silverback to a message broker, reference the appropriate integration package.
 
 # [Kafka](#tab/kafka)
-```poweshell
+```powershell
 dotnet add package Silverback.Integration.Kafka
 ```
 # [MQTT](#tab/mqtt)
-```poweshell
-dotnet add package Silverback.Integration.Mqtt
+```powershell
+dotnet add package Silverback.Integration.MQTT
 ```
 ***
 
@@ -240,14 +240,14 @@ public class MyService
 > [!Important]
 > If your application is not using an `IHost` (`GenericHost` or `WebHost`), you must connect the clients manually as shown above.
 
-## Graceful shutdown
+## Graceful Shutdown
 
 Silverback automatically disconnects consumers and producers gracefully when the application stops. This ensures consistency and is performed regardless of the connection mode.
 
 > [!Important]
 > If your application is not using an `IHost` (`GenericHost` or `WebHost`), you must take care of the clients' graceful shutdown manually.
 
-## Consumers Management
+## Consumer Management
 
 You can monitor and control consumers programmatically.
 
@@ -306,4 +306,3 @@ public class ConsumerManagementService
 * <xref:producing>
 * <xref:consuming>
 * <xref:samples>
-

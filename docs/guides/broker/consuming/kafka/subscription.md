@@ -2,81 +2,82 @@
 uid: kafka-subscription
 ---
 
-# Kafka Subscription and Partitions Assignment
+# Kafka Subscription and Partition Assignment
 
-There are multiple ways to subscribe to Kafka topics and manage partitions assignment in Silverback. Either via the usual broker-driven subscription or manually assigning partitions.
+Silverback supports the standard Kafka consumer group subscription flow and manual (static) partition assignment.
 
-## Subscribe
+## Subscribe (Consumer Group)
 
-The consumer group will be used to manage partitions assignment automatically and distribute the load across the consumer instances.
+In consumer group mode, Kafka assigns partitions automatically and balances them across instances with the same group id.
 
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic"))));
 ```
 
 ## Static Assignment
 
-The partitions assignment can be managed manually by specifying the partitions to be consumed and optionally the offset to start from.
+You can manage partition assignment manually by specifying the partitions to consume.
 
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
-                .ConsumeFrom("my-topic", [0, 3, 5]))));
+                .ConsumeFrom("my-topic", 0, 3, 5)))));
 ```
 
 > [!Note]
-> The example above will assign partitions 0, 3 and 5 of the topic `my-topic` to the consumer. Other overloads exist to specify the offset to start from or consume partitions from different topics.
+> The example above assigns partitions 0, 3, and 5 of `my-topic` to this consumer endpoint. Other overloads let you specify starting offsets or consume fixed partitions across multiple topics.
 
 ## Static Assignment from Topic Metadata
 
-To avoid having to hardcode the partitions to be consumed, Silverback can read the topic metadata and use a custom function to determine the actual partitions to be consumed.
+If you don't want to hardcode partition numbers, you can retrieve topic metadata and select partitions programmatically.
 
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom(
                     "my-topic",
                     partitions => partitions
-                        .Where(partition => partition.Partition % 2 == 0)
-                        .Select(partition => new TopicPartitionOffset(partition, Offset.Beginning)))));
+                        .Where(p => p.Partition % 2 == 0)
+                        .Select(p => new TopicPartitionOffset(p, Offset.Beginning))))));
 ```
 
-## Partitions Processing and Concurrency
+## Partition Processing and Concurrency
 
-By default, the partitions are processed in parallel, meaning that a separate queue is created for each partition, leading to messages from different partitions being processed concurrently in different threads.
+By default, partitions are processed in parallel (one queue per partition). Messages in the same partition are always processed sequentially.
 
-The parallelism can be limited using `LimitParallelism` or completely disabled using `ProcessAllPartitionsTogether`.
+You can limit concurrency using `LimitParallelism` or disable partition-based parallelism using `ProcessAllPartitionsTogether`.
 
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
-                .ProcessAllPartitionsTogether())));
+                .ProcessAllPartitionsTogether()
+                .ConsumeFrom("my-topic"))));
 ```
 
 ## Callbacks
 
-Callbacks can be used to perform additional actions when partitions are assigned or revoked. See <xref:broker-callbacks> for more information.
+Use broker callbacks to react to partition assignment/revocation events. See <xref:broker-callbacks>.
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:broker-basics> guide
-* <xref:broker-callbacks> guide
+- [API Reference](xref:Silverback)
+- <xref:consuming>
+- <xref:broker-callbacks>

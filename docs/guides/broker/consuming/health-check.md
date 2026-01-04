@@ -2,7 +2,7 @@
 uid: consumer-health-check
 ---
 
-# Consumers Health Check
+# Consumer Health Check
 
 A health check is available to monitor the consumers and alert if they don't appear to be connected or consuming any messages.
 
@@ -15,4 +15,4 @@ A few parameters such as the grace period to wait for the consumers to be connec
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
+- [API Reference](xref:Silverback)

@@ -4,30 +4,39 @@ uid: contributing
 
 # Contributing
 
-You are encouraged to contribute to Silverback! Please check out the [how to contribute](https://github.com/BEagle1984/silverback/blob/master/CONTRIBUTING.md) guide for guidelines about how to proceed.
+Contributions are welcome. Start with the upstream contribution guidelines:
+
+- https://github.com/BEagle1984/silverback/blob/master/CONTRIBUTING.md
 
 ## Source Code
 
-The full source code is available on [GitHub](https://github.com/BEagle1984/silverback/)
+Repository:
 
-### Versioning
+- https://github.com/BEagle1984/silverback/
 
-The [Directory.Build.props](https://github.com/BEagle1984/silverback/blob/master/Directory.Build.props) file in the root of the repository contains the current version of the NuGet packages being built and referenced. The `<BaseVersion>` and `<VersionSuffix>` tags can be used to increment the current version.
+## Versioning
 
-### Commits
+`Directory.Build.props` contains the current NuGet package version. Update:
 
-Please try to follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for the commit messages. 
+- `<BaseVersion>`
+- `<VersionSuffix>`
 
-### Building (NuGet packages)
+## Commits
 
-The nuget packages can be built locally using the powershell script under `/nuget/Update.ps1`. Add the `-l` switch to clear the local nuget cache as well (especially useful when building the same version over and over).
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
-### Testing
+## Building NuGet Packages
 
-The main solution contains quite a few unit tests and additionally some [samples](xref:samples) are implemented in a separate solution.
+Packages can be built locally using `/nuget/Update.ps1`.
+
+Use `-l` to clear the local NuGet cache (useful when rebuilding the same version).
+
+## Testing
+
+The main solution contains unit tests. There are also runnable <xref:samples> in a separate solution.
 
 ## Contributors
 
-Thank you to all the present and future [contributors](https://leereilly.net/github-high-scores/?beagle1984/silverback). You are amazing!
+Thanks to all contributors [contributors](https://leereilly.net/github-high-scores/?beagle1984/silverback).
 
 <iframe src="https://leereilly.net/github-high-scores/?beagle1984/silverback" style="width: 100%;height: 1000px"></iframe>

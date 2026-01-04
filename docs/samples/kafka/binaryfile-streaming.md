@@ -2,7 +2,7 @@
 uid: sample-kafka-binaryfile
 ---
 
-# Kafka - Files Streaming
+# Kafka - File Streaming
 
 This sample demonstrates how to deal with raw binary contents and large messages, to transfer some files through Kafka.
 

@@ -62,5 +62,5 @@ Additional services can be injected into the behavior constructor, or resolved v
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:consumer-behaviors> guide
+- [API Reference](xref:Silverback)
+- <xref:consumer-behaviors>

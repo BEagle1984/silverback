@@ -48,6 +48,6 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:producing-validation> guide
-* <xref:basics> guide
+- [API Reference](xref:Silverback)
+- <xref:producing-validation>
+- <xref:consuming>

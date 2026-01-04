@@ -4,10 +4,10 @@ uid: encryption
 
 # Encrypt Produced Messages
 
-The end-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used [serializer](xref:serialization) or other features like [chunking](xref:producing-chunking).
+The end-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used <xref:serialization> or other features like <xref:producing-chunking>.
 
 <figure>
-	<a href="~/images/diagrams/encryption.png"><img src="~/images/diagrams/encryption.png"></a>
+	<a href="~/images/diagrams/encryption.png"><img src="~/images/diagrams/encryption.png" alt="End-to-end message encryption and decryption."></a>
     <figcaption>The messages are transparently encrypted and decrypted.</figcaption>
 </figure>
 
@@ -72,5 +72,5 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:decryption> guide
+- [API Reference](xref:Silverback)
+- <xref:decryption>

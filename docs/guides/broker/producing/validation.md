@@ -48,5 +48,5 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:consuming-validation> guide
+- [API Reference](xref:Silverback)
+- <xref:consuming-validation>

@@ -2,27 +2,30 @@
 uid: kafka-partitioning
 ---
 
-# Kafka Key and Partitioning
+# Kafka Keys and Partitioning
 
-The partitioning of messages in Kafka is a crucial aspect of how data is distributed across the cluster. By default, Kafka uses a round-robin approach to distribute messages across partitions, but you can control this behavior by specifying a key for your messages.
+Kafka partitions determine message ordering and parallelism. By default, Kafka distributes messages across partitions, but you can control routing via message keys or explicit partition selection.
 
 ## Key-Based Partitioning
 
-When you produce a message with a key, Kafka uses the key to determine which partition the message will be sent to. This ensures that all messages with the same key are sent to the same partition, maintaining their order.
+By default (no explicit partition), Kafka derives the partition from the message key.
 
-### Using `WrapAndPublish` or `WrapAndPublishBatch`
+- If you set a key, messages with the same key are routed to the same partition and keep their relative order.
+- If you don't set a key, a key may be generated and partitioning will be effectively random.
 
-You can set the key directly using the `WrapAndPublish`/`WrapAndPublishAsync` or `WrapAndPublishBatch`/`WrapAndPublishBatchAsync` methods and setting the key in each envelope.
+### Using `WrapAndPublishAsync` / `WrapAndPublishBatchAsync`
+
+Set the key by configuring the outbound envelope:
 
 ```csharp
-await publisher.WrapAndPublishAsync<TestEventOne>(
+await publisher.WrapAndPublishAsync(
     new MyMessage { Content = "Hello, World!" },
     envelope => envelope.SetKafkaKey("42"));
 ```
 
 ### Via Endpoint Configuration
 
-The Kafka key can be defined in the endpoint configuration using one of the several overloads of the `SetKafkaKey` method to set the key based on a property of the message or the envelope.
+Define the Kafka key in the endpoint configuration using `SetKafkaKey`.
 
 ```csharp
 services.AddSilverback()
@@ -37,7 +40,7 @@ services.AddSilverback()
 
 ## Custom Partitioning
 
-If you need more control over how messages are partitioned, you can implement a custom partitioner using the appropriate overload of the `ProduceTo` method. This allows you to define your own logic for determining the partition based on the message or envelope properties.
+If you need explicit control over partition selection, use the `ProduceTo` overload that accepts a partition selector.
 
 ```csharp
 services.AddSilverback()
@@ -46,12 +49,12 @@ services.AddSilverback()
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
-                .ProduceTo("my-topic", messae => message.Id % 3))));
+                .ProduceTo("my-topic", message => message.Id % 3))));
 ```
 
 ## Static Partitioning
 
-If you want to send all messages to a specific partition, you can use the appropriate overload of the `ProduceTo` method that accepts a static partition number.
+To send all messages to a fixed partition, set the `partition` parameter.
 
 ```csharp
 services.AddSilverback()
@@ -60,9 +63,9 @@ services.AddSilverback()
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
-                .ProduceTo("my-topic", 3))));
+                .ProduceTo("my-topic", partition: 3))));
 ```
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
+- [API Reference](xref:Silverback)

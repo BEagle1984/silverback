@@ -1,49 +1,20 @@
-# ![Silverback]("https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png)
+# ![Silverback](https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png)
 
-Silverback is a **powerful, elegant, and feature-rich message bus for .NET**, designed to simplify asynchronous messaging, event-driven architectures, and microservice communication. With seamless integration for **Apache Kafka** and **MQTT**, it offers robust features for **reliability, consistency, and scalability**.
+Silverback is a message bus and broker integration library for .NET.
+It helps you build event-driven architectures and asynchronous workflows with first-class support for **Apache Kafka** and **MQTT**.
 
-Whether you're building a **small microservice, a large-scale enterprise solution, or anything in between**, Silverback provides the tools to make messaging effortless and reliable.
+Silverback aims to be both **high-level** (consistent configuration and developer experience) and **broker-aware**.
+Kafka is a first-class citizen: features like partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions are surfaced where they matter, instead of being abstracted away.
 
-## Why Choose Silverback?
+## Why Silverback
 
-Silverback is designed for **serious workloads**, offering enterprise-grade capabilities with a rich feature set optimized for **performance, resilience, and scalability**.
+- **Kafka-first, not Kafka-only** – a consistent API across brokers, while still leveraging Kafka-specific capabilities.
+- **Reliable by design** – transactional outbox, error policies, and storage-backed features.
+- **Operational usability** – structured logging, diagnostics, and tracing.
+- **Built-in cross-cutting features** – headers, validation, encryption, chunking, batching.
+- **Testability** – in-memory broker mocks and end-to-end helpers.
 
-### Key Features
-
-🔀 **Powerful Message Bus**\
-A simple but powerful in-memory message bus enables seamless communication between components, featuring **Rx.NET** support for reactive programming.
-
-🔗 **Seamless Message Broker Integration**\
-Silverback makes it easy to integrate with Kafka and MQTT, providing a streamlined and developer-friendly API to build event-driven architectures with minimal setup and configuration.
-
-🚀 **Kafka-Optimized Messaging**\
-Unlike generic messaging libraries, Silverback is built specifically for Kafka, leveraging its unique capabilities for high-throughput, exactly-once semantics, and partitioned processing. While Silverback also supports MQTT, Kafka is a first-class citizen, and the framework is highly optimized to take full advantage of its power.
-
-📤 **Transactional Outbox**\
-Ensures message consistency by linking database transactions with messaging, preventing message loss and guaranteeing atomicity.
-
-⚠️ **Advanced Error Handling**\
-Define flexible strategies to **retry, skip, or move messages** based on custom policies, ensuring robustness in failure scenarios.
-
-📦 **Batch Processing & Chunking**\
-Enhances efficiency by processing messages in bulk or splitting large messages into smaller chunks, which are automatically reassembled on the receiving end.
-
-⚡ **Domain-Driven Design (DDD) Support**\
-Automates domain event publishing when entities are persisted, ensuring seamless integration with message brokers for event-driven workflows.
-
-✅ **Exactly-Once Processing**\
-Ensures each message is consumed and processed exactly once, preventing duplicate processing and maintaining data integrity.
-
-🔍 **Distributed Tracing**\
-Leverages **System.Diagnostics** for full visibility into message flow and distributed transaction tracking.
-
-🧪 **Testability**\
-Provides in-memory mocks for **Kafka** and **MQTT**, along with powerful helpers for efficient unit testing.
-
-✨ **And much more!**\
-Silverback is highly extensible, making it the go-to messaging framework for .NET developers who want to harness Kafka’s full potential while maintaining flexibility for other brokers.
-
-Discover more in the [project's website][docs-site].
+Documentation, guides, and samples are available here: **https://silverback-messaging.net**
 
 ## Project Status
 
@@ -79,57 +50,63 @@ Discover more in the [project's website][docs-site].
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/beagle1984/silverback)](https://github.com/BEagle1984/silverback/pulls)
 [![GitHub last commit](https://img.shields.io/github/last-commit/beagle1984/silverback)](https://github.com/BEagle1984/silverback/commits)
 
-# Setting Up Silverback
+## Getting Started
 
-Silverback is designed as a modular framework, allowing you to include only the components you need. This guide walks you through selecting the right packages and configuring the basics to get started.
+Silverback is modular – reference only what you need.
 
-## Adding the Required Packages
+### Packages
 
-### Core Packages
+Core:
 
-- **[Silverback.Core](https://www.nuget.org/packages/Silverback.Core/)** – The essential package, including the message bus and fundamental messaging components.
-- **[Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model/)** – Enhances CQRS and event-driven architectures with improved semantics.
+- **[Silverback.Core](https://www.nuget.org/packages/Silverback.Core/)** – message bus and core messaging components.
+- **[Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model/)** – message semantics for event-driven/CQRS scenarios.
 
-### Message Broker Integration
+Broker integration:
 
-If you need to integrate with a message broker, choose the appropriate package:
+- **[Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka/)** – Kafka support.
+- **[Silverback.Integration.Mqtt](https://www.nuget.org/packages/Silverback.Integration.Mqtt/)** – MQTT support.
 
-- **[Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka/)** – Adds Kafka support (implicitly includes Silverback.Core).
-- **[Silverback.Integration.Mqtt](https://www.nuget.org/packages/Silverback.Integration.Mqtt/)** – Adds MQTT support (implicitly includes Silverback.Core).
+Optional features:
 
-### Additional Features
+- **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Rx.NET integration.
+- **[Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/)** – Newtonsoft.Json serialization.
+- **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Confluent Schema Registry integration.
 
-- **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Enables Rx.NET integration, allowing observables from the message bus stream.
-- **[Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/)** – Supports serialization using Newtonsoft.Json instead of System.Text.Json.
-- **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.
+Storage (for outbox, client-side offsets, distributed locks):
 
-### Storage Options
+- **[Silverback.Storage.PostgreSql](https://www.nuget.org/packages/Silverback.Storage.PostgreSql/)**
+- **[Silverback.Storage.Sqlite](https://www.nuget.org/packages/Silverback.Storage.Sqlite/)**
+- **[Silverback.Storage.EntityFramework](https://www.nuget.org/packages/Silverback.Storage.EntityFramework/)**
+- **[Silverback.Storage.Memory](https://www.nuget.org/packages/Silverback.Storage.Memory/)**
 
-Certain Silverback features rely on a storage mechanism. Choose the appropriate package based on your needs:
+Testing:
 
-- **[Silverback.Storage.PostgreSql](https://www.nuget.org/packages/Silverback.Storage.PostgreSql/)** – Optimized for PostgreSQL, leveraging advisory locks.
-- **[Silverback.Storage.Sqlite](https://www.nuget.org/packages/Silverback.Storage.Sqlite/)** – A lightweight option, ideal for testing.
-- **[Silverback.Storage.EntityFramework](https://www.nuget.org/packages/Silverback.Storage.EntityFramework/)** – Works with Entity Framework, supporting all EF-compatible relational databases.
-- **[Silverback.Storage.Memory](https://www.nuget.org/packages/Silverback.Storage.Memory/)** – An in-memory storage option, useful for testing.
+- **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)**
+- **[Silverback.Integration.Mqtt.Testing](https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/)**
 
-### Testing Support
+### Quick Example (Kafka)
 
-For unit testing message-driven applications, you can use in-memory broker mocks:
-
-- **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)** – Provides an in-memory Kafka mock, simulating partitioning, offsets management, and other broker behaviors.
-- **[Silverback.Integration.Mqtt.Testing](https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/)** – Provides an in-memory MQTT mock to test MQTT-related logic.
+```csharp
+services.AddSilverback()
+    .WithConnectionToMessageBroker(options => options.AddKafka())
+    .AddKafkaClients(clients => clients
+        .WithBootstrapServers("PLAINTEXT://localhost:9092")
+        .AddProducer(producer => producer
+            .Produce<MyMessage>(endpoint => endpoint.ProduceTo("my-topic")))
+        .AddConsumer(consumer => consumer
+            .Consume<MyMessage>(endpoint => endpoint.ConsumeFrom("my-topic"))));
+```
 
 ## Usage
 
-Have a look at the [project's website][docs-site] for usage details, API documentation and samples.
+See the docs site for guides, API reference, and runnable examples:
+
+- https://silverback-messaging.net
 
 ## Contributing
 
-You are encouraged to contribute to Silverback! Please check out the [how to contribute](CONTRIBUTING.md) guide for guidelines about how to
-proceed.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
-
-[docs-site]: https://silverback-messaging.net
+MIT License. See [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE).

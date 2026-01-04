@@ -1,47 +1,47 @@
-# How to contribute
+# Contributing
 
-Please read these guidelines before contributing to Silverback:
+These guidelines explain how to report issues and contribute changes to Silverback.
 
-* [Issues and Bugs](#issue)
-* [Feature Requests](#feature)
-* [Submitting a Pull Request](#pullrequest)
-* [Contributor License Agreement](#cla)
+- [Found an Issue?](#found-an-issue)
+- [Feature Requests](#feature-requests)
+- [Submitting a Pull Request](#submitting-a-pull-request)
+- [Contributor License Agreement](#contributor-license-agreement)
 
-## <a name="issue"></a> Found an Issue?
+## Found an Issue?
 
-If you find a bug in the source code or a mistake in the documentation, you can help by submitting an issue to
-the [GitHub repository][github]. Or, even better, you can submit a [pull request](#pullrequest) with a fix.
+If you find a bug in the source code or a documentation problem:
 
-When submitting an issue please include the following information:
+- Open an issue in the GitHub repository: https://github.com/BEagle1984/silverback
+- Or (preferred) submit a pull request with a fix.
 
-* A description of the issue
-* The exception message and stacktrace if an error was thrown
-* If possible, please include code that reproduces the issue. [DropBox][dropbox] or GitHub's [Gist][gist] can be used to share large code
-  samples, or you could [submit a pull request](#pullrequest) with the issue reproduced in a new unit test.
+When reporting an issue, include:
 
-The more information you include about the issue, the more likely it is to be fixed!
+- A clear description of the problem.
+- The exception message and stack trace (if applicable).
+- A minimal repro sample (use a public Gist or a PR if the repro needs multiple files).
 
-## <a name="feature"></a> Want a Feature?
+## Feature Requests
 
-You can request a new feature by submitting an issue to the [GitHub repository][github]. Before requesting a feature consider the following:
+Before requesting a feature, consider:
 
-* Silverback has many extensibility points, it is very likely that you can implement your feature without having to modify Silverback
-* Stability is important and large breaking changes are unlikely to be accepted
+- Silverback has many extensibility points; you may be able to implement the feature without modifying the library.
+- Stability matters; large breaking changes are unlikely to be accepted.
 
-## <a name="pullrequest"></a> Submitting a Pull Request
+## Submitting a Pull Request
 
-When submitting a pull request to the [GitHub repository][github] make sure to do the following:
+Before opening a PR:
 
-* Check that new and updated code follows Silverback's existing code formatting and naming standard
-* Run all unit tests to ensure no existing functionality has been affected
-* Write new unit tests to test your changes: all features and fixed bugs must have tests to verify they work
-* Run a code cleanup on the files you touched if using R# or Rider
+- Follow the existing formatting and naming conventions.
+- Make sure tests pass.
+- Add or update tests for bug fixes and new features.
+- If you use Rider/ReSharper, run code cleanup on the files you touched.
 
-Read [GitHub help][pullrequesthelp] for more details about creating pull requests.
+More information:
 
-Detailed step-by-step instructions to build and test Silverback can be found in the [project's website][build-docs].
+- GitHub help: https://help.github.com/articles/using-pull-requests
+- Documentation: https://silverback-messaging.net
 
-## <a name="cla"></a> Contributor License Agreement
+## Contributor License Agreement
 
 By contributing your code to Silverback you grant Sergio Aquilini a non-exclusive, irrevocable, worldwide, royalty-free, sublicenseable,
 transferable license under all of Your relevant intellectual property rights (including copyright, patent, and any other rights), to use,
@@ -60,14 +60,3 @@ by entering into an agreement or otherwise, in any way that conflicts with the t
 Sergio Aquilini acknowledges that, except as explicitly described in this Agreement, any Contribution which you provide is on an "AS IS"
 BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDITIONS
 OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-
-
-[github]: https://github.com/BEagle1984/silverback
-
-[dropbox]: https://www.dropbox.com
-
-[gist]: https://gist.github.com
-
-[pullrequesthelp]: https://help.github.com/articles/using-pull-requests
-
-[build-docs]: https://beagle1984.github.io/silverback/docs/source/contributing

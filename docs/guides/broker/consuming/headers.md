@@ -4,27 +4,27 @@ uid: consuming-headers
 
 # Reading Headers
 
-Both Kafka and MQTT 5 support custom headers (called user properties in MQTT). With Silverback there are basic two ways to access headers, see below.
+Kafka and MQTT 5 support custom headers (called *user properties* in MQTT). In Silverback you can access them either via the inbound envelope or by mapping them to model properties.
 
-## Subscribing to IInboundEnvelope
+## Subscribe to `IInboundEnvelope<TMessage>`
 
-Subscribe to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> to get the message plus all metadata (headers, broker-specific data, etc.). The envelope exposes a `Headers` collection that contains the headers published with the message.
+Subscribe to <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> to access the message and its metadata (headers, broker-specific data, etc.). The envelope exposes a `Headers` collection.
 
 ```csharp
 public class MySubscriber
 {
-    public Task HandleAsync(IInboundEnvelope<MyMessage> envelope)
+    public async Task HandleAsync(IInboundEnvelope<MyMessage> envelope)
     {
         int priority = envelope.Headers.GetValue<int>("x-priority");
-        
-        ...
+
+        // ...
     }
 }
 ```
 
-## HeaderAttribute on the Message Model
+## Use `HeaderAttribute` on the message model
 
-Using the <xref:Silverback.Messaging.Messages.HeaderAttribute> is straightforward: simply decorate the properties you want to be mapped to a header, and Silverback will take care of filling the model with the values from the respective headers.
+Decorate message properties with <xref:Silverback.Messaging.Messages.HeaderAttribute> to map header values into the model.
 
 ```csharp
 using Silverback.Messaging.Messages;
@@ -41,10 +41,10 @@ public class OrderCreatedEvent
 ```
 
 > [!Important]
-> Only the message type will be scanned, therefore the properties decorated with the <xref:Silverback.Messaging.Messages.HeaderAttribute> must be in the root of the message object.
+> Only the message type is scanned. Properties decorated with <xref:Silverback.Messaging.Messages.HeaderAttribute> must be declared on the root message object (not nested types).
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:consuming-headers> guide
-* <xref:default-headers>
+- [API Reference](xref:Silverback)
+- <xref:default-headers>
+- <xref:producing-headers>

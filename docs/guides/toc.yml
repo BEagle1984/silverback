@@ -2,7 +2,7 @@
   href: setup.md
 - name: Using the Message Bus
   href: bus.md
-- name: Message Broker
+- name: Message Broker Integration
   items:
     - name: Connecting
       href: broker/connecting.md
@@ -30,9 +30,9 @@
           href: broker/producing/tracing.md
         - name: Kafka
           items:
-            - name: Key and Partitioning
+            - name: Keys and Partitioning
               href: broker/producing/kafka/partitioning.md
-            - name: Tombstone
+            - name: Tombstone Messages
               href: broker/producing/kafka/tombstone.md
             - name: Transactions
               href: broker/producing/kafka/transactions.md
@@ -58,13 +58,13 @@
           href: broker/consuming/behaviors.md
         - name: Tracing
           href: broker/consuming/tracing.md
-        - name: Health Check
+        - name: Consumer Health Check
           href: broker/consuming/health-check.md
         - name: Kafka
           items:
             - name: Subscription and Assignment
               href: broker/consuming/kafka/subscription.md
-            - name: Tombstone
+            - name: Tombstone Messages
               href: broker/consuming/kafka/tombstone.md
             - name: Offset Storage
               href: broker/consuming/kafka/offset.md
@@ -84,12 +84,11 @@
   items:
     - name: Seamless Message Conversion
       href: practical/conversion.md
-    - name: Consuming Same Message from Multiple Topics
+    - name: Consuming the Same Message from Multiple Topics
       href: practical/same-message.md
     - name: Multiple Consumers for the Same Topic
       href: practical/multiple-consumers.md
     - name: MQTT 5 Request-Response
       href: practical/mqtt-request-response.md
-    - name: Background Services with Distributed Lock
+    - name: Background Services with a Distributed Lock
       href: practical/background-services.md
-

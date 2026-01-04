@@ -7,7 +7,7 @@ uid: outbox
 The [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) purpose is to reliably update the database and publish the messages in the same atomic transaction. This is achieved storing the outbound messages into a temporary outbox table, whose changes are committed together with the other changes to the rest of the data.
 
 <figure>
-	<a href="~/images/diagrams/outbound-outboxtable.png"><img src="~/images/diagrams/outbound-outboxtable.png"></a>
+	<a href="~/images/diagrams/outbound-outboxtable.png"><img src="~/images/diagrams/outbound-outboxtable.png" alt="Transactional outbox: messages are stored in an outbox table and produced by a worker."></a>
     <figcaption>Messages 1, 2 and 3 are stored in the outbox table and produced by a separate thread or process.</figcaption>
 </figure>
 
@@ -153,5 +153,5 @@ A health check is available to monitor the outbox and alert if messages are taki
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:storage> guide
+- [API Reference](xref:Silverback)
+- <xref:storage> guide

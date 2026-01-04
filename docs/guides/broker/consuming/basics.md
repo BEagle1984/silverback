@@ -4,11 +4,13 @@ uid: consuming
 
 # Consuming Messages
 
-The integration with message brokers is based on the concept of producers and consumers. Producers are responsible for sending messages to the broker, while consumers receive and process them. This guide focuses on the consuming side.
+A consumer reads messages from the broker and dispatches them to your subscribers via the Silverback message bus.
 
-## Consumer Configuration
+This guide covers the basics: configuring consumers, handling messages, parallelism, and error handling.
 
-Silverback provides a fluent API to configure the consumer settings. The following example demonstrates how to set up a basic Kafka and MQTT cosumer.
+## Configure a Consumer
+
+A *consumer* (Kafka) or *client* (MQTT) can consume one or more *endpoints*. Each endpoint defines the message type and the broker address to consume from (topic for Kafka, topic filter for MQTT).
 
 # [Kafka](#tab/kafka)
 ```csharp
@@ -16,7 +18,7 @@ services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic"))));
 ```
@@ -34,24 +36,23 @@ services.AddSilverback()
 ```
 ***
 
-The `AddConsumer` or `AddClient` method is used to configure the consumer. The `Consume` or `Consume<TMessage>` method is used to configure the specific endpoint settings and define how the messages have to be handled. The `ConsumeFrom` method specifies the topic to be consumed.
-
-Each `AddConsumer` call will result in a consumer being instantiated. The `Consume` or `Consume<TMessage>` method can be called multiple times to configure multiple endpoints for the same consumer, each with its own settings, and leading to optimized resource usage and sometimes overall better performance in comparison to using a dedicated consumer for each endpoint. The same applies to MQTT clients.
-
-> [!Note]
-> While Kafka producers and consumers are different entities, MQTT clients are used for both producing and consuming messages.
-
 > [!Tip]
-> Assigning a name to the consumer or client and its endpoints is optional but can be useful for logging and debugging purposes, as well as for direct access to the consumer or client instance for advanced scenarios. Furthermore, it allows you to ensure that each client and endpoint is only configured once, even if you duplicate the declaration (for example if needed in multiple feature slices).
+> **Configuration Notes**
+> 
+> - `AddConsumer` (Kafka) / `AddClient` (MQTT) creates a broker connection with its own settings.
+> - Call `Consume<TMessage>` multiple times to add multiple endpoints to the same consumer/client. This usually reduces resource usage compared to creating one consumer per endpoint.
+> - In Kafka, producers and consumers are separate entities. In MQTT, the same client can both produce and consume.
+> - Naming consumers/clients and endpoints is optional but recommended for logging and diagnostics. It can also prevent double-registration if the same configuration block runs more than once.
+> - For broker-specific options, see the upstream client docs: [confluent-kafka-dotnet](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTnet](https://github.com/chkr1011/MQTTnet/wiki).
 
-> [!Tip]
-> For a more in-depth documentation about the configuration of the underlying libraries refer to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html) and [MQTTNet documentation]([MQTTNet documentation](https://github.com/chkr1011/MQTTnet/wiki) respectively.
+## Handle Messages
 
-## Handling Messages
+Consumed messages are published to the <xref:bus> and handled by your subscribers.
 
-The consumed messages are pushed to the [message bus](xref:bus) to be processed by the configured subscribers.
+You can subscribe to:
 
-You can subscribe to the plain message or to the `IInboundEnvelope<TMessage>` to get access to additional metadata such as headers, Kafka key, offset, etc.
+- The deserialized message (`MyMessage`).
+- The envelope (`IInboundEnvelope<TMessage>`) to access metadata (headers, broker identifier, etc.).
 
 ```csharp
 public class MySubscriber
@@ -60,69 +61,80 @@ public class MySubscriber
     {
         Console.WriteLine($"Received message: {message.Content}");
     }
-    
+
     public async Task HandleAsync(IInboundEnvelope<MyMessage> envelope)
     {
         Console.WriteLine($"Received message: {envelope.Message.Content}");
-        Console.WriteLine($"Kafka Key: {envelope.GetKafkaKey()}");
+
+        // Kafka-only metadata example.
+        Console.WriteLine($"Kafka key: {envelope.GetKafkaKey()}");
     }
 }
 ```
 
-Messages can of course be processed synchronously or asynchronously (returning a `Task` or a `ValueTask`). The consumer will automatically handle the message acknowledgment or offset storage and consider the message as successfully processed once the subscriber method returns without throwing an exception.
+Subscriber methods can be synchronous or asynchronous (`Task`/`ValueTask`). A message is considered successfully processed when all matching subscribers complete without throwing.
 
-The same message can be processed by multiple subscribers but this can lead to some issues if the subscribers are not idempotent and is generally not recommended. Silverback won't track the single subscribers and consider the processing failed if any of them throws an exception.
+> [!Warning]
+> The same message can be handled by multiple subscribers. If you do that, make sure handlers are idempotent: if any subscriber fails, the message is considered failed and the configured error policy is applied.
 
-Messages can also be processed in [batch](xref:batch-processing) to avoid micro-transaction overhead and improve performance.
+For higher throughput, consider <xref:batch-processing>.
 
 ## Parallelism
 
-The Kafka and MQTT consumers work fundamentally differently and have therefore a substantially different approach to parallelism.
+Kafka and MQTT have different parallelism models:
 
-By default, the Kafka consumer creates a separate queue for each partition of every topic being consumed, allowing messages to be processed in parallel. The number of partitions primarily determines the degree of parallelism, as messages within the same partition must be processed sequentially (this is a fundamental aspect of the Kafka protocol). However, you can limit the number of parallel tasks if needed.
+- **Kafka**: parallelism is enabled by default. Messages from different partitions can be processed concurrently; messages within the same partition are always processed sequentially.
+- **MQTT**: processing is sequential by default; you can enable parallel processing.
+
+### Kafka
+
+Limit the maximum degree of parallelism:
 
 ```csharp
-.AddConsumer("consumer1", producer => producer
+.AddConsumer("consumer1", consumer => consumer
     .Consume<MyMessage>("endpoint1", endpoint => endpoint
         .LimitParallelism(3)
         .ConsumeFrom("my-topic-1")
         .ConsumeFrom("my-topic-2")))
 ```
 
-In some cases you might want to process all messages from the same consumer in a single stream, disabling parallelism. This can be achieved using the `ProcessAllPartitionsTogether` configuration method.
+Process all partitions in a single stream (disables partition-based parallelism):
 
 ```csharp
-.AddConsumer("consumer1", producer => producer
+.AddConsumer("consumer1", consumer => consumer
     .Consume<MyMessage>("endpoint1", endpoint => endpoint
         .ProcessAllPartitionsTogether()
         .ConsumeFrom("my-topic-1")
         .ConsumeFrom("my-topic-2")))
 ```
 
-The MQTT consumer on the other hand will process the messages sequentially by default, but parallel processing can be enabled with the `EnableParallelProcessing` method, specifying the desired degree of parallelism.
+### MQTT
+
+Enable parallel processing and set the maximum degree of parallelism:
 
 ```csharp
-        .AddClient("my-client", client => client
-            .WithClientId("client1")
-            .EnableParallelProcessing(10)
-            .Consume<MyMessage>("endpoint1", endpoint => endpoint
-                .ConsumeFrom("messages/topic1")
-                .ConsumeFrom("messages/topic2")
-                .WithAtLeastOnceQoS()));
+.AddClient("my-client", client => client
+    .WithClientId("client1")
+    .EnableParallelProcessing(10)
+    .Consume<MyMessage>("endpoint1", endpoint => endpoint
+        .ConsumeFrom("messages/topic1")
+        .ConsumeFrom("messages/topic2")
+        .WithAtLeastOnceQoS()));
 ```
 
 ## Error Handling
 
-By default, Silverback will stop the consumer if an exception is thrown by the subscriber processing the consumed message. This behavior can be customized by defining a customized error policy.
+If a subscriber throws, Silverback applies the endpoint error policy. The default policy stops the consumer.
 
-The built-in policies are:
-* <xref:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy> (default)
-* <xref:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy>
-* <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy>
-* <xref:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy>
-* <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain>
+Built-in policies:
 
-The policies can be combined to create a chain of error handling strategies.
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy> (default)
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy>
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy>
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy>
+- <xref:Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain>
+
+Policies can be chained:
 
 # [Kafka](#tab/kafka)
 ```csharp
@@ -130,7 +142,7 @@ services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-        .AddConsumer("consumer1", producer => producer
+        .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic")
                 .OnError(policy => policy.Retry(2).ThenSkip()))));
@@ -146,19 +158,19 @@ services.AddSilverback()
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("messages/my")
                 .OnError(policy => policy.Retry(2).ThenSkip())
-                .WithAtLeastOnceQoS()));
+                .WithAtLeastOnceQoS())));
 ```
 ***
 
 > [!Important]
-> If the processing still fails after the last policy is applied the exception will be returned to the consumer, causing it to stop.
+> If processing still fails after the last policy in the chain, the exception is returned to the consumer and the consumer stops.
 
 > [!Important]
-> The <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy> will prevent the message broker to be polled for the duration of the configured delay, which could lead to a timeout. With Kafka you should for example set the `max.poll.interval.ms` settings to a higher value.
+> <xref:Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example `max.poll.interval.ms`) are configured accordingly.
 
-### Apply Rules
+### Apply rules
 
-Use [ApplyTo](xref:Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder`1#Silverback_Messaging_Configuration_ErrorPolicyBaseBuilder_1_ApplyTo_System_Type_) and [Exclude](xref:Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder`1#Silverback_Messaging_Configuration_ErrorPolicyBaseBuilder_1_Exclude_System_Type_) methods to fine-tune which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder`1#Silverback_Messaging_Configuration_ErrorPolicyBaseBuilder_1_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Boolean__) to specify a custom apply rule.
+Use `ApplyTo`, `Exclude`, and `ApplyWhen` to control which exceptions are handled and when.
 
 ```csharp
 .OnError(policy => policy
@@ -170,24 +182,21 @@ Use [ApplyTo](xref:Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder`1#S
     .ThenSkip());
 ```
 
-### Publishing Events
+### Publish events
 
-Messages can be published when a policy is applied, in order to execute custom code.
+You can publish a message when a policy is applied (for logging, alerts, etc.).
 
 ```csharp
 .OnError(policy => policy
     .Retry(3, TimeSpan.FromSeconds(1))
     .ThenSkip(skipPolicy => skipPolicy
-        .Publish(msg => new ProcessingFailedEvent(msg))))
-}
+        .Publish(msg => new ProcessingFailedEvent(msg))));
 ```
-
-These messages can be handled by a subscriber to log the error, send an alert, etc.
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:bus> guide
-* <xref:consuming> guide
-* <xref:samples>
-* Other guides in this section for in-depth information about the consumer capabilities
+- [API Reference](xref:Silverback)
+- <xref:bus>
+- <xref:batch-processing>
+- <xref:samples>
+- Other guides in this section for broker-specific and advanced scenarios

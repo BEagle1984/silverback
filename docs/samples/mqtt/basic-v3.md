@@ -2,7 +2,7 @@
 uid: sample-mqtt-basic-v3
 ---
 
-# MQTT - Basic (v3)
+# MQTT - Basic (MQTT v3)
 
 This sample implements the simple possible producer and consumer, but using MQTT protocol version 3.
 

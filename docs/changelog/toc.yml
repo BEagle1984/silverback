@@ -1,12 +1,12 @@
-- name: v5.x.x
+- name: v5.x
   href: 500.md
-- name: v4.x.x
+- name: v4.x
   href: 400.md
-- name: v3.x.x
+- name: v3.x
   href: 300.md
-- name: v2.x.x
+- name: v2.x
   href: 200.md
-- name: v1.x.x
+- name: v1.x
   href: 100.md
-- name: v0.x.x
+- name: v0.x
   href: 000.md

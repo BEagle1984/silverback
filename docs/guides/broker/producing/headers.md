@@ -85,6 +85,6 @@ namespace Sample
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:consuming-headers> guide
-* <xref:default-headers>
+- [API Reference](xref:Silverback)
+- <xref:consuming-headers>
+- <xref:default-headers>

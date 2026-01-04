@@ -18,7 +18,7 @@ This guide explains the purpose of the storage layer, what implementations exist
 > Storage is intentionally modular.
 > You reference and configure *only* the storage packages you need.
 
-## What packages exist
+## What Packages Exist
 
 At the moment, Silverback ships the following storage-related packages:
 
@@ -78,7 +78,7 @@ Package: `Silverback.Storage.Relational`
 
 This package contains shared building blocks for relational stores (e.g., the base implementation of table-based locks). Most applications don't need to reference it directly.
 
-## How to initialize / provision the storage
+## How to Initialize / Provision the Storage
 
 Some storage features require database tables.
 
@@ -140,7 +140,7 @@ public DbSet<SilverbackStoredOffset> KafkaOffsets { get; set; } = null!;
 
 Then create the tables using EF migrations.
 
-## How to use storage features (high level)
+## How to Use Storage Features (High Level)
 
 Storage is usually not used directly.
 Instead you:
@@ -179,7 +179,7 @@ See the dedicated guide:
 
 * <xref:kafka-offset>
 
-## Distributed locking
+## Distributed Locking
 
 Some features (most notably the outbox worker) must ensure that only **one** instance is active across a cluster.
 Silverback achieves this by acquiring a lock before running and by monitoring lock ownership.
@@ -266,7 +266,7 @@ Implementation: `InMemoryLock`.
 * Not distributed: it only protects code paths within the same process.
 * `LockLostToken` is `CancellationToken.None`.
 
-## Putting it together: which storage should I pick?
+## Putting It Together: Which Storage Should I Pick?
 
 A practical rule of thumb:
 
@@ -277,6 +277,6 @@ A practical rule of thumb:
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:outbox> guide
-* <xref:kafka-offset> guide
+- [API Reference](xref:Silverback)
+- <xref:outbox>
+- <xref:kafka-offset>

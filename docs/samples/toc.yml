@@ -6,7 +6,7 @@
       href: kafka/basic.md
     - name: Batch Processing
       href: kafka/batch.md
-    - name: Files Streaming
+    - name: File Streaming
       href: kafka/binaryfile-streaming.md
     - name: Avro
       href: kafka/avro.md
@@ -14,7 +14,7 @@
   items:
     - name: Basic
       href: mqtt/basic.md
-    - name: Basic (protocol v3)
+    - name: Basic (MQTT v3)
       href: mqtt/basic-v3.md
-    - name: Files Streaming
+    - name: File Streaming
       href: mqtt/binaryfile-streaming.md

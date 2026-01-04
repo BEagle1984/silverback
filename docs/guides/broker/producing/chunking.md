@@ -7,7 +7,7 @@ uid: producing-chunking
 When dealing with large messages, it might be necessary to split them into smaller parts to avoid issues with the broker or the consumer. This process is called **chunking** and is especially useful when using Kafka, as it has a maximum message size limit.
 
 <figure>
-	<a href="~/images/diagrams/chunk-basic.png"><img src="~/images/diagrams/chunk-basic.png"></a>
+	<a href="~/images/diagrams/chunk-basic.png"><img src="~/images/diagrams/chunk-basic.png" alt="Chunking diagram: a large message is split into smaller chunks."></a>
     <figcaption>The messages are being split into small chunks.</figcaption>
 </figure>
 
@@ -31,6 +31,6 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:consuming-chunking> guide
-* <xref:default-headers> guide
+- [API Reference](xref:Silverback)
+- <xref:consuming-chunking>
+- <xref:default-headers>

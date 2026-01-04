@@ -4,14 +4,16 @@ uid: kafka-transactions
 
 # Kafka Transactions
 
-Silverback supports Kafka transactions, allowing you to produce messages atomically across multiple topics or partitions. This is particularly useful when you need to ensure that a set of messages is either fully processed or not processed at all, maintaining data integrity.
+Kafka transactions let you produce messages atomically: either all messages in the transaction are published, or none are.
+
+This is useful for multi-topic writes and consume-transform-produce scenarios.
 
 > [!Important]
-> A Kafka transaction cannot span multiple producers. Therefore, you must configure all messages that needs to be produced in the same transaction to be sent by the same producer.
+> A Kafka transaction cannot span multiple producers. Configure all messages that must be part of the same transaction to be sent by the same producer.
 
 ## Enabling Transactions
 
-To enable transactions in Silverback, you need to configure the producer to use transactions. 
+Enable transactions on the producer by setting a `transactional.id` (via `EnableTransactions`).
 
 ```csharp
 services.AddSilverback()
@@ -21,32 +23,36 @@ services.AddSilverback()
         .AddProducer("producer1", producer => producer
             .EnableTransactions("transactional-id")
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
-                    .ProduceTo("my-topic"))
+                .ProduceTo("my-topic"))
             .Produce<AnotherMessage>("endpoint2", endpoint => endpoint
-                    .ProduceTo("my-other-topic")))));
+                .ProduceTo("my-other-topic")))));
 ```
 
 ## Using Transactions
 
-To use transactions, you can wrap your message production in a transaction scope. This ensures that all messages produced within the scope are part of the same transaction.
+Initialize a transaction, publish messages, then commit.
 
 ```csharp
-using (IKafkaTransaction transaction = publisher.InitKafkaTransaction())
-{
-    await publisher.PublishEventAsync(new MyMessage());
-    await publisher.PublishEventAsync(new MyMessage());
-    await publisher.PublishEventAsync(new AnotherMessage());
+using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
-    transaction.Commit();
-}
+await publisher.PublishEventAsync(new MyMessage());
+await publisher.PublishEventAsync(new MyMessage());
+await publisher.PublishEventAsync(new AnotherMessage());
+
+transaction.Commit();
 ```
 
-## Committing Consumed Offsets in the Transaction
+> [!Note]
+> If you don’t commit the transaction, it will be aborted when the transaction is disposed.
 
-In a typical consume-transform-produce scenario, you might want to commit the consumed offsets as part of the transaction. Silverback allows you to do this simply configuring the consumer with `SendOffsetsToTransaction`.
+## Committing Consumed Offsets in a Transaction
+
+In consume-transform-produce scenarios you may want Kafka offsets to be committed only when the transaction is committed.
+
+Enable it on the consumer with `SendOffsetsToTransaction`.
 
 > [!Important]
-> Once `SendOffsetsToTransaction` is enabled, the offsets will be committed only when the transaction is committed. If no transaction is initialized, the offsets will not be committed.
+> When `SendOffsetsToTransaction` is enabled, offsets are committed as part of the active Kafka transaction. If no transaction is active, offsets are not committed.
 
 ```csharp
 services.AddSilverback()
@@ -65,4 +71,4 @@ services.AddSilverback()
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
+- [API Reference](xref:Silverback)

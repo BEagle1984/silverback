@@ -18,7 +18,7 @@ Silverback is designed as a modular framework, allowing you to include only the 
 If you need to integrate with a message broker, choose the appropriate package:
 
 - **[Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka/)** – Adds Kafka support (implicitly includes Silverback.Core).
-- **[Silverback.Integration.Mqtt](https://www.nuget.org/packages/Silverback.Integration.Mqtt/)** – Adds MQTT support (implicitly includes Silverback.Core).
+- **[Silverback.Integration.MQTT](https://www.nuget.org/packages/Silverback.Integration.MQTT/)** – Adds MQTT support (implicitly includes Silverback.Core).
 
 ### Additional Features
 
@@ -40,7 +40,7 @@ Certain Silverback features rely on a storage mechanism. Choose the appropriate 
 For unit testing message-driven applications, you can use in-memory broker mocks:
 
 - **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)** – Provides an in-memory Kafka mock, simulating partitioning, offsets management, and other broker behaviors.
-- **[Silverback.Integration.Mqtt.Testing](https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/)** – Provides an in-memory MQTT mock to test MQTT-related logic.
+- **[Silverback.Integration.MQTT.Testing](https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing/)** – Provides an in-memory MQTT mock to test MQTT-related logic.
 
 ## Registering and Configuring Silverback
 
@@ -68,4 +68,3 @@ services.AddSilverback()
 ## Next Steps
 
 With these steps, Silverback is now set up and ready to use! You can explore more advanced topics such as message processing, broker integration, and custom configurations in the following guides.
-

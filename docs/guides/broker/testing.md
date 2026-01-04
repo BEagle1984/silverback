@@ -22,7 +22,7 @@ Choose the package matching the broker you’re using:
   - Shared testing infrastructure (e.g. <xref:Silverback.Testing.IIntegrationSpy> and <xref:Silverback.Testing.ITestingHelper>).
   - This package is referenced by the broker-specific testing packages.
 
-## Two ways to use the mocked broker
+## Two Ways to Use the Mocked Broker
 
 There are two supported approaches and they solve different problems:
 
@@ -37,7 +37,7 @@ There are two supported approaches and they solve different problems:
 > You don’t need both. `AddMockedKafka` and `AddMockedMqtt` already register the broker and replace the transport.
 > `UseMockedKafka` / `UseMockedMqtt` are for *overriding* an existing setup.
 
-## Approach 1: test-only configuration (recommended when building the DI container)
+## Approach 1: Test-Only Configuration (Recommended When Building the DI Container)
 
 ### Kafka (AddMockedKafka)
 
@@ -73,7 +73,7 @@ services
                     .Consume(endpoint => endpoint.ConsumeFrom("test/topic"))));
 ```
 
-## Approach 2: override an existing configuration (WebApplicationFactory / test host)
+## Approach 2: Override an Existing Configuration (WebApplicationFactory / Test Host)
 
 If your application always configures the real broker (e.g. `AddKafka()` / `AddMqtt()` in `Program.cs`),
 then in tests you can keep that configuration and only swap the connectivity implementation.
@@ -104,15 +104,15 @@ builder.ConfigureTestServices(services =>
 > `UseMockedKafka` / `UseMockedMqtt` replace the underlying broker connectivity (Confluent.Kafka / MQTTnet) with an in-memory implementation.
 > They don’t add producers/consumers/endpoints for you; those still come from your normal app configuration.
 
-## Testing helpers
+## Testing Helpers
 
 The broker-specific testing helper (<xref:Silverback.Testing.IKafkaTestingHelper> or <xref:Silverback.Testing.IMqttTestingHelper>) also implements the base <xref:Silverback.Testing.ITestingHelper> interface.
 
 The most commonly used helpers are:
 
-- <xref:Silverback.Testing.ITestingHelper.WaitUntilConnectedAsync> – wait until consumers are connected and ready.
-- <xref:Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync> – wait until routed messages have been processed and committed (**mocked brokers only**).
-- <xref:Silverback.Testing.ITestingHelper.WaitUntilOutboxIsEmptyAsync> – wait until the outbox has been drained (if you’re using the outbox).
+- <xref:Silverback.Testing.ITestingHelper.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})> – wait until consumers are connected and ready.
+- <xref:Silverback.Testing.ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.String[])> – wait until routed messages have been processed and committed (**mocked brokers only**).
+- <xref:Silverback.Testing.ITestingHelper.WaitUntilOutboxIsEmptyAsync(System.Nullable{System.TimeSpan})> – wait until the outbox has been drained (if you’re using the outbox).
 
 ### Example: publish and wait
 
@@ -148,12 +148,12 @@ Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
 > Don’t assert immediately after producing/publishing. Always wait for the broker pipeline to finish.
 > With mocked brokers you typically want `WaitUntilAllMessagesAreConsumedAsync()`.
 
-## Inspecting messages with the Integration Spy
+## Inspecting Messages with the Integration Spy
 
 When you need to assert what was produced/consumed (including headers, raw payload, endpoint name, etc.), enable the integration spy:
 
-- <xref:Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.AddIntegrationSpy> (default: monitors inbound via a broker behavior)
-- <xref:Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.AddIntegrationSpyAndSubscriber> (monitors inbound via a generic subscriber)
+- <xref:Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.AddIntegrationSpy(Silverback.Configuration.SilverbackBuilder,System.Boolean)> (default: monitors inbound via a broker behavior)
+- <xref:Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.AddIntegrationSpyAndSubscriber(Silverback.Configuration.SilverbackBuilder)> (monitors inbound via a generic subscriber)
 
 ```csharp
 services
@@ -169,11 +169,11 @@ Helper.Spy.OutboundEnvelopes.ShouldNotBeEmpty();
 Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 ```
 
-## Kafka specifics
+## Kafka Specifics
 
 ### Access in-memory topics
 
-When using the mocked Kafka broker you can inspect the internal topics via <xref:Silverback.Testing.IKafkaTestingHelper.GetTopic>.
+When using the mocked Kafka broker you can inspect the internal topics via <xref:Silverback.Testing.IKafkaTestingHelper.GetTopic(System.String,System.String)>.
 
 ```csharp
 var topic = Helper.GetTopic("test-topic");
@@ -206,11 +206,11 @@ var producer = Helper.GetProducer(
 await producer.ProduceAsync(new SomeMessage());
 ```
 
-## MQTT specifics
+## MQTT Specifics
 
 ### Inspect client sessions
 
-With the mocked MQTT broker you can inspect client sessions via <xref:Silverback.Testing.IMqttTestingHelper.GetClientSession>.
+With the mocked MQTT broker you can inspect client sessions via <xref:Silverback.Testing.IMqttTestingHelper.GetClientSession(System.String)>.
 
 ```csharp
 var session = Helper.GetClientSession("client-id");
@@ -219,7 +219,7 @@ var session = Helper.GetClientSession("client-id");
 
 ### Read published messages
 
-To quickly retrieve the raw MQTT messages published to a topic, use <xref:Silverback.Testing.IMqttTestingHelper.GetMessages>.
+To quickly retrieve the raw MQTT messages published to a topic, use <xref:Silverback.Testing.IMqttTestingHelper.GetMessages(System.String)>.
 
 ```csharp
 var messages = Helper.GetMessages("test/topic");
@@ -237,6 +237,4 @@ var producer = Helper.GetProducer(
 await producer.ProduceAsync(new SomeMessage());
 ```
 
-## Additional resources
-
-* API Reference (`docs/api/`)
+## Additional Resources

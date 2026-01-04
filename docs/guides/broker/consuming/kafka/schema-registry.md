@@ -2,17 +2,24 @@
 uid: kafka-schema-registry-deserializer
 ---
 
-# Kafka Schema Registry and Deserializers
+# Kafka Schema Registry
 
-The Confluent Schema Registry is a service that provides a centralized repository for managing schemas used in Kafka messages. It allows producers and consumers to validate and evolve schemas without breaking compatibility.
+Use Confluent Schema Registry to validate and evolve message schemas for Kafka topics. Silverback integrates via `Silverback.Integration.Kafka.SchemaRegistry` and supports Avro, JSON Schema, and Protobuf.
 
-Silverback supports the Confluent Schema Registry, enabling you to use Avro, JSON, or Protobuf schemas for your Kafka messages. This integration ensures that your messages conform to the defined schemas, providing a robust way to manage message formats.
+## Prerequisites
 
-## Configuring the Schema Registry
+- A running Confluent Schema Registry instance.
+- The `Silverback.Integration.Kafka.SchemaRegistry` package referenced by your application.
 
-### Consumer Configuration
+## Configure Consumer Endpoints
 
-To configure a consumer to use the Confluent Schema Registry, you can use the `DeserializeAvro`, `DeserializeJsonUsingSchemaRegistry`, or `DeserializeProtobuf` methods in the endpoint configuration and specify at least the URL of the Schema Registry.
+Configure Schema Registry per consumer endpoint using one of:
+
+- `DeserializeAvro`
+- `DeserializeJsonUsingSchemaRegistry`
+- `DeserializeProtobuf`
+
+Example (JSON Schema):
 
 ```csharp
 services.AddSilverback()
@@ -22,30 +29,20 @@ services.AddSilverback()
         .AddConsumer("consumer1", consumer => consumer
             .Consume<MyMessage>("endpoint1", endpoint => endpoint
                 .ConsumeFrom("my-topic")
-                .DeserializeJsonUsingSchemaRegistry(
-                    json => json
-                        .ConnectToSchemaRegistry("http://localhost:4242")
-                        .Configure(
-                            config =>
-                            {
-                                config.AutoRegisterSchemas = false;
-                            })))));
+                .DeserializeJsonUsingSchemaRegistry(deserializer => deserializer
+                    .ConnectToSchemaRegistry("http://localhost:4242")
+                    .Configure(config =>
+                    {
+                        config.AutoRegisterSchemas = false;
+                    })))));
 ```
 
-### Producer Configuration
-
-To configure a producer to use the Confluent Schema Registry, you need to use `SerializeAsAvro`, `SerializeAsJsonUsingSchemaRegistry`, or `SerializeAsProtobuf` methods in the endpoint configuration.
-
 > [!Note]
-> Refer to the <xref:schema-registry> guide for the full producer configuration and the schema registration examples.
+> Producer setup is documented in <xref:kafka-schema-registry-serializer>.
 
-## Deserializers
+## Supported Deserializers
 
-The schema registry integration is provided by the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package and uses the Confluent deserializers under the hood.
-
-### JSON
-
-To deserialize JSON messages using the schema registry, use `DeserializeJsonUsingSchemaRegistry`.
+### JSON Schema
 
 ```csharp
 services.AddSilverback()
@@ -61,8 +58,6 @@ services.AddSilverback()
 
 ### Avro
 
-To deserialize Avro formatted messages you can use the Avro deserializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.
-
 ```csharp
 services.AddSilverback()
     .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -75,12 +70,10 @@ services.AddSilverback()
                     .ConnectToSchemaRegistry("http://localhost:4242")))));
 ```
 
-> [!Note]
-> The C# message models can be generated from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
+> [!Tip]
+> You can generate C# models from an Avro schema using [AvroGen](https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/).
 
 ### Protobuf
-
-To deserialize Protobuf messages you can use the Protobuf deserializer found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.
 
 ```csharp
 services.AddSilverback()
@@ -96,11 +89,11 @@ services.AddSilverback()
 
 ## Schema Registration
 
-In most scenarios consumers will only read schemas already registered by the producers.
+In most setups, schemas are registered by producers and consumers only read existing schemas.
 
-When using the Schema Registry, you can register schemas manually or let Silverback handle schema registration automatically. If you choose to register schemas manually (setting `AutoRegisterSchemas` to `false`), you must ensure that the schemas are registered in the Schema Registry before producing messages.
+If you disable automatic schema registration (`AutoRegisterSchemas = false`), ensure schemas are registered before producing messages.
 
-You can use the `IConfluentSchemaRegistryClientFactory` to get an instance of the `IConfluentSchemaRegistryClient` and register schemas programmatically.
+You can register schemas programmatically using <xref:Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory>:
 
 ```csharp
 class SchemaRegistrationService
@@ -115,7 +108,7 @@ class SchemaRegistrationService
     public async Task RegisterSchemasAsync(string formattedSchema, string topicName)
     {
         ISchemaRegistryClient client = _factory.GetClient(registry => registry
-                .WithUrl("http://localhost:4242"));
+            .WithUrl("http://localhost:4242"));
 
         await client.RegisterSchemaAsync(
             topicName + "-value",
@@ -126,6 +119,7 @@ class SchemaRegistrationService
 
 ## Additional Resources
 
-* [API Reference](xref:Silverback)
-* <xref:deserialization> guide
-* <xref:kafka-schema-registry-serializer> guide
+- [API Reference](xref:Silverback)
+- <xref:deserialization>
+- <xref:kafka-schema-registry-serializer>
+- [Confluent Schema Registry](https://docs.confluent.io/platform/current/schema-registry/index.html)
