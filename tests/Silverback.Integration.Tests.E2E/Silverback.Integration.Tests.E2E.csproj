@@ -13,17 +13,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ductus.FluentDocker" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />

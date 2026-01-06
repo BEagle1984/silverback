@@ -12,6 +12,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
@@ -25,15 +26,14 @@ public partial class PublisherTests
     {
         TestingCollection<TestCommandOne> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber<PublishSingleMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle3)
-                .AddDelegateSubscriber<TestCommandOne>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber<PublishSingleMessageSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static TestCommandOne Handle1(TestEventOne message) => new();
         static Task<TestCommandOne> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne());
@@ -53,15 +53,14 @@ public partial class PublisherTests
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle3)
-                .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, IMessage>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, IMessage>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, IMessage>(Handle3)
+            .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
 
         static IMessage Handle1(TestEventOne message) => new TestCommandOne();
         static Task<IMessage> Handle2(TestEventOne message) => Task.FromResult((IMessage)new TestCommandOne());
@@ -80,15 +79,14 @@ public partial class PublisherTests
     {
         TestingCollection<TestCommandOne> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddTransientSubscriber<PublishEnumerableSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
-                .AddDelegateSubscriber<TestCommandOne>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientSubscriber<PublishEnumerableSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => [new(), new()];
         static Task<TestCommandOne[]> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() });
@@ -108,15 +106,14 @@ public partial class PublisherTests
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<PublishEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, IEnumerable<ICommand>>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle3)
-                .AddDelegateSubscriber<ICommand>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<PublishEnumerableOfInterfaceSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, IEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle3)
+            .AddDelegateSubscriber<ICommand>(Handle4));
 
         static IEnumerable<ICommand> Handle1(TestEventOne message) => [new TestCommandOne(), new TestCommandTwo()];
         static Task<ICommand[]> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
@@ -136,15 +133,14 @@ public partial class PublisherTests
     {
         TestingCollection<TestCommandOne> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<PublishAsyncEnumerableSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
-                .AddDelegateSubscriber<TestCommandOne>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<PublishAsyncEnumerableSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
+            .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static async IAsyncEnumerable<TestCommandOne> Handle1(TestEventOne message)
         {
@@ -171,15 +167,14 @@ public partial class PublisherTests
     {
         TestingCollection<ICommand> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddTransientSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
-                .AddDelegateSubscriber<ICommand>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
+            .AddDelegateSubscriber<ICommand>(Handle4));
 
         static IAsyncEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable();
         static Task<IAsyncEnumerable<ICommand>> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable());
@@ -199,15 +194,14 @@ public partial class PublisherTests
     {
         TestingCollection<UnhandledMessage> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
-                .AddDelegateSubscriber<UnhandledMessage>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
+            .AddDelegateSubscriber<UnhandledMessage>(Handle4));
 
         static UnhandledMessage Handle1(TestEventOne message) => new();
         static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
@@ -227,16 +221,15 @@ public partial class PublisherTests
     {
         TestingCollection<UnhandledMessage> republishedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .HandleMessagesOfType<UnhandledMessage>()
-                .AddTransientSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
-                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
-                .AddDelegateSubscriber<UnhandledMessage>(Handle4));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .HandleMessagesOfType<UnhandledMessage>()
+            .AddTransientSubscriber<PublishUnhandledMessageSubscriber>()
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
+            .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
+            .AddDelegateSubscriber<UnhandledMessage>(Handle4));
 
         static UnhandledMessage Handle1(TestEventOne message) => new();
         static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
@@ -254,11 +247,10 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnValueReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<QueryHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<QueryHandler>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -272,11 +264,10 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEnumerableReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<QueryHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<QueryHandler>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -294,33 +285,34 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnAsyncEnumerableReturnedBySubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<QueryHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<QueryHandler>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        IReadOnlyCollection<IEnumerable<string>> syncResults = publisher.Publish<IEnumerable<string>>(new TestQueryThree());
-        IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryThree());
+        IReadOnlyCollection<IAsyncEnumerable<string>> syncResults = publisher.Publish<IAsyncEnumerable<string>>(new TestQueryThree());
+        IReadOnlyCollection<IAsyncEnumerable<string>> asyncResults = await publisher.PublishAsync<IAsyncEnumerable<string>>(new TestQueryThree());
 
-        syncResults.ShouldBe(
+        string[][] materializedSyncResults = (await syncResults.SelectAsync(results => results.ToArrayAsync())).ToArray();
+        string[][] materializedAsyncResults = (await asyncResults.SelectAsync(results => results.ToArrayAsync())).ToArray();
+
+        materializedSyncResults.ShouldBe(
         [
             ["result-2-sync-1", "result-2-sync-2"],
             ["result-2-async-1", "result-2-async-2"]
         ]);
-        asyncResults.ShouldBe(syncResults);
+        materializedAsyncResults.ShouldBe(materializedSyncResults);
     }
 
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSubscriberReturnsNull()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<NullQueryHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<NullQueryHandler>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -334,11 +326,10 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnCollectionOfEmptyEnumerable_WhenSubscriberReturnsEmptyEnumerable()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<EmptyQueryHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<EmptyQueryHandler>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -352,13 +343,12 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnValueReturnedByDelegateSubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber<TestQueryOne, string>(Handle2)
-                .AddDelegateSubscriber<TestQueryOne, string>(Handle3));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle3));
 
         static string Handle1(TestQueryOne message) => "result-sync";
         static Task<string> Handle2(TestQueryOne message) => Task.FromResult("result-task");
@@ -376,13 +366,12 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnMultipleValuesReturnedByDelegateSubscriber()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
-                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle2)
-                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle3));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
+            .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle2)
+            .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle3));
 
         static string[] Handle1(TestQueryTwo message) => ["result1-sync", "result2-sync"];
         static Task<string[]> Handle2(TestQueryTwo message) => Task.FromResult(new[] { "result1-task", "result2-task" });
@@ -405,13 +394,12 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenDelegateSubscriberReturnsNull()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber<TestQueryOne, string?>(Handle2)
-                .AddDelegateSubscriber<TestQueryOne, string?>(Handle3));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, string?>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, string?>(Handle3));
 
         static string Handle1(TestQueryOne message) => null!;
         static Task<string?> Handle2(TestQueryOne message) => Task.FromResult<string?>(null);
@@ -429,13 +417,12 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnCollectionOfEmptyEnumerable_WhenDelegateSubscriberReturnsEmptyEnumerable()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle1)
-                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle2)
-                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle3));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle1)
+            .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle2)
+            .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle3));
 
         static IEnumerable<string> Handle1(TestQueryTwo message) => [];
         static Task<IEnumerable<string>> Handle2(TestQueryTwo message) => Task.FromResult(Enumerable.Empty<string>());
@@ -453,17 +440,16 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSyncOrAsyncOrDelegateSubscriberReturnsValueOfWrongType()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services =>
-            {
-                services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                    .AddDelegateSubscriber<TestQueryOne, int>(Handle1)
-                    .AddDelegateSubscriber<TestQueryOne, int>(Handle2)
-                    .AddDelegateSubscriber<TestQueryOne, int>(Handle3);
-            });
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services =>
+        {
+            services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddSingletonSubscriber<WrongTypeQueryHandler>()
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle1)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle2)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle3);
+        });
 
         static int Handle1(TestQueryOne message) => 42;
         static Task<int> Handle2(TestQueryOne message) => Task.FromResult(42);
@@ -481,17 +467,16 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableOfWrongType()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle1)
-                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle2)
-                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle3)
-                .AddDelegateSubscriber<TestQueryOne, int>(Handle4)
-                .AddDelegateSubscriber<TestQueryOne, int>(Handle5)
-                .AddDelegateSubscriber<TestQueryOne, int>(Handle6));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<WrongTypeQueryHandler>()
+            .AddDelegateSubscriber<TestQueryOne, int[]>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, int[]>(Handle2)
+            .AddDelegateSubscriber<TestQueryOne, int[]>(Handle3)
+            .AddDelegateSubscriber<TestQueryOne, int>(Handle4)
+            .AddDelegateSubscriber<TestQueryOne, int>(Handle5)
+            .AddDelegateSubscriber<TestQueryOne, int>(Handle6));
 
         static int[] Handle1(TestQueryOne message) => [42];
         static Task<int[]> Handle2(TestQueryOne message) => Task.FromResult(new[] { 42 });
@@ -512,14 +497,13 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldDiscardWrongTypeResults_WhenSyncOrAsyncOrDelegateSubscriberReturnsValueOfMixedTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<QueryHandler>()
-                .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber<TestQueryOne, int>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<QueryHandler>()
+            .AddSingletonSubscriber<WrongTypeQueryHandler>()
+            .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+            .AddDelegateSubscriber<TestQueryOne, int>(Handle2));
 
         static string Handle1(TestQueryOne message) => "result-delegate";
         static int Handle2(TestQueryOne message) => 42;
@@ -536,14 +520,13 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsyncShouldDiscardWrongTypeResults_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableOfMixedTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<QueryHandler>()
-                .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
-                .AddDelegateSubscriber<TestQueryTwo, int[]>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<QueryHandler>()
+            .AddSingletonSubscriber<WrongTypeQueryHandler>()
+            .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
+            .AddDelegateSubscriber<TestQueryTwo, int[]>(Handle2));
 
         static string[] Handle1(TestQueryTwo message) => ["result-delegate-1", "result-delegate-2"];
         static int[] Handle2(TestQueryTwo message) => [42, 42];
