@@ -95,7 +95,7 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     /// <returns>
     ///     The new envelope.
     /// </returns>
-    public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
+    IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
 
     /// <summary>
     ///     Clones the envelope and replaces the contained message with the specified one.
@@ -112,6 +112,6 @@ public interface IOutboundEnvelope : IBrokerEnvelope
     /// <returns>
     ///     The new envelope.
     /// </returns>
-    public IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)
+    IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)
         where TNewMessage : class;
 }

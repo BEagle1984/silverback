@@ -38,7 +38,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
                         if (_isDisposed)
                             return;
 
-                        await foreach (TMessage message in messageStreamEnumerable)
+                        await foreach (TMessage message in messageStreamEnumerable.ConfigureAwait(false))
                         {
                             _subject.OnNext(message);
                         }

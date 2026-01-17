@@ -15,7 +15,7 @@ public interface IPublisher
     /// <summary>
     ///     Gets the <see cref="ISilverbackContext" /> in the current scope.
     /// </summary>
-    public ISilverbackContext Context { get; }
+    ISilverbackContext Context { get; }
 
     /// <summary>
     ///     Publishes the specified message to its subscribers via the message bus and the method will not complete until all subscribers have

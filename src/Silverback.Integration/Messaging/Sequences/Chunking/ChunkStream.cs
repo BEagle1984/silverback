@@ -132,11 +132,8 @@ public sealed class ChunkStream : Stream
     /// <inheritdoc cref="Stream.Dispose(bool)" />
     protected override void Dispose(bool disposing)
     {
-        if (_asyncEnumerator != null)
-        {
-            _asyncEnumerator.DisposeAsync().SafeWait();
-            _asyncEnumerator = null;
-        }
+        _asyncEnumerator?.DisposeAsync().SafeWait();
+        _asyncEnumerator = null;
 
         _syncEnumerator?.Dispose();
         _syncEnumerator = null;

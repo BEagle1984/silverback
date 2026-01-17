@@ -23,12 +23,6 @@ public class MainViewModel : ViewModelBase
 {
     private readonly Dictionary<string, TopicViewModel> _topicsDictionary;
 
-    private ContainerInstanceViewModel? _selectedContainerInstance;
-
-    private bool _isProducing;
-
-    private double _produceSpeedMultiplier;
-
     public MainViewModel(IPublisher publisher, LogsViewModel logsViewModel, TraceViewModel traceViewModel)
     {
         Logs = logsViewModel;
@@ -80,10 +74,10 @@ public class MainViewModel : ViewModelBase
 
     public bool IsProducing
     {
-        get => _isProducing;
+        get;
         set
         {
-            SetProperty(ref _isProducing, value, nameof(IsProducing));
+            SetProperty(ref field, value, nameof(IsProducing));
 
             if (value && ProduceSpeedMultiplier == 0)
                 ProduceSpeedMultiplier = 1;
@@ -94,10 +88,10 @@ public class MainViewModel : ViewModelBase
 
     public double ProduceSpeedMultiplier
     {
-        get => _produceSpeedMultiplier;
+        get;
         set
         {
-            SetProperty(ref _produceSpeedMultiplier, value, nameof(ProduceSpeedMultiplier));
+            SetProperty(ref field, value, nameof(ProduceSpeedMultiplier));
 
             if (value > 0 && !IsProducing)
                 IsProducing = true;
@@ -110,8 +104,8 @@ public class MainViewModel : ViewModelBase
 
     public ContainerInstanceViewModel? SelectedContainerInstance
     {
-        get => _selectedContainerInstance;
-        set => SetProperty(ref _selectedContainerInstance, value, nameof(SelectedContainerInstance));
+        get;
+        set => SetProperty(ref field, value, nameof(SelectedContainerInstance));
     }
 
     public AutoScalingViewModel AutoScaling { get; } = new();

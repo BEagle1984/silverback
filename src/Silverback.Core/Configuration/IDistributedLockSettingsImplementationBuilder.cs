@@ -16,5 +16,5 @@ public interface IDistributedLockSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="DistributedLockSettings" />.
     /// </returns>
-    public DistributedLockSettings Build();
+    DistributedLockSettings Build();
 }

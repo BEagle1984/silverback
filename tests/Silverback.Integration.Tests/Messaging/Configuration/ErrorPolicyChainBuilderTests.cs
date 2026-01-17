@@ -22,7 +22,7 @@ public class ErrorPolicyChainBuilderTests
         ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
         chain.Policies.Count.ShouldBe(2);
         chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
-        chain.Policies[1].ShouldBeEquivalentTo(new StopConsumerErrorPolicy());
+        chain.Policies[1].ShouldBeOfType<StopConsumerErrorPolicy>();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class ErrorPolicyChainBuilderTests
         ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
         chain.Policies.Count.ShouldBe(2);
         chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
-        chain.Policies[1].ShouldBeEquivalentTo(new SkipMessageErrorPolicy());
+        chain.Policies[1].ShouldBeOfType<SkipMessageErrorPolicy>();
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class ErrorPolicyChainBuilderTests
         ErrorPolicyChain chain = policy.ShouldBeOfType<ErrorPolicyChain>();
         chain.Policies.Count.ShouldBe(2);
         chain.Policies[0].ShouldBeOfType<SkipMessageErrorPolicy>();
-        chain.Policies[1].ShouldBeEquivalentTo(new RetryErrorPolicy());
+        chain.Policies[1].ShouldBeOfType<RetryErrorPolicy>();
     }
 
     [Fact]

@@ -90,7 +90,7 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
         DateTime threshold = DateTime.UtcNow - LostMessagesThreshold;
 
         List<RoutableTestBenchMessage> lostMessages =
-            _pendingMessages.Where(pair => pair.Value.CreatedAt <= threshold).Select(pair => pair.Value).ToList();
+            [.. _pendingMessages.Where(pair => pair.Value.CreatedAt <= threshold).Select(pair => pair.Value)];
 
         foreach (RoutableTestBenchMessage message in lostMessages)
         {

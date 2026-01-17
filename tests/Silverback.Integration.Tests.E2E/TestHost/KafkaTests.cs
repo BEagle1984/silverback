@@ -17,20 +17,14 @@ public abstract class KafkaTests : E2ETests
 
     protected const string DefaultGroupId = "e2e-consumer-group-1";
 
-    private IInMemoryTopic? _defaultTopic;
-
-    private IMockedConsumerGroup? _defaultConsumerGroup;
-
-    private IKafkaTestingHelper? _testingHelper;
-
     protected KafkaTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }
 
-    protected IKafkaTestingHelper Helper => _testingHelper ??= Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
+    protected IKafkaTestingHelper Helper => field ??= Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
-    protected IInMemoryTopic DefaultTopic => _defaultTopic ??= Helper.GetTopic(DefaultTopicName);
+    protected IInMemoryTopic DefaultTopic => field ??= Helper.GetTopic(DefaultTopicName);
 
-    protected IMockedConsumerGroup DefaultConsumerGroup => _defaultConsumerGroup ??= Helper.GetConsumerGroup(DefaultGroupId);
+    protected IMockedConsumerGroup DefaultConsumerGroup => field ??= Helper.GetConsumerGroup(DefaultGroupId);
 }

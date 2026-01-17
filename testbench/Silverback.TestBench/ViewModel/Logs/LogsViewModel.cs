@@ -15,14 +15,6 @@ public class LogsViewModel : ViewModelBase
 {
     private readonly ConcurrentBag<LogEntry> _entries = [];
 
-    private LogLevelFilter _levelFilter = LogLevelFilter.Any;
-
-    private string _containerFilter = "Any";
-
-    private string? _textFilter;
-
-    private LogEntry? _selectedEntry;
-
     public static IEnumerable<LogLevelFilter> LevelFilterValues { get; } = Enum.GetValues<LogLevelFilter>();
 
     public ObservableCollection<string> ContainerFilterValues { get; } = ["Any", "Producer"];
@@ -39,36 +31,36 @@ public class LogsViewModel : ViewModelBase
 
     public LogEntry? SelectedEntry
     {
-        get => _selectedEntry;
-        set => SetProperty(ref _selectedEntry, value, nameof(SelectedEntry));
+        get;
+        set => SetProperty(ref field, value, nameof(SelectedEntry));
     }
 
     public LogLevelFilter LevelFilter
     {
-        get => _levelFilter;
+        get;
         set
         {
-            SetProperty(ref _levelFilter, value, nameof(LevelFilter));
+            SetProperty(ref field, value, nameof(LevelFilter));
             NotifyPropertyChanged(nameof(Entries));
         }
-    }
+    } = LogLevelFilter.Any;
 
     public string ContainerFilter
     {
-        get => _containerFilter;
+        get;
         set
         {
-            SetProperty(ref _containerFilter, value, nameof(ContainerFilter));
+            SetProperty(ref field, value, nameof(ContainerFilter));
             NotifyPropertyChanged(nameof(Entries));
         }
-    }
+    } = "Any";
 
     public string? TextFilter
     {
-        get => _textFilter;
+        get;
         set
         {
-            SetProperty(ref _textFilter, value, nameof(TextFilter));
+            SetProperty(ref field, value, nameof(TextFilter));
             NotifyPropertyChanged(nameof(Entries));
         }
     }

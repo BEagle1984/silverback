@@ -15,9 +15,7 @@ namespace Silverback.Messaging.Producing.Routing;
 
 internal class MessageWrapper : IMessageWrapper
 {
-    private static MessageWrapper? _instance;
-
-    public static MessageWrapper Instance => _instance ??= new MessageWrapper();
+    public static MessageWrapper Instance => field ??= new MessageWrapper();
 
     public async Task WrapAndProduceAsync<TMessage>(
         TMessage? message,
@@ -179,7 +177,7 @@ internal class MessageWrapper : IMessageWrapper
         where TMessage : class
     {
         IReadOnlyCollection<(TSource Source, TMessage? Message)> pairs =
-            sources.Select(source => (source, mapperFunction.Invoke(source))).ToArray();
+            [.. sources.Select(source => (source, mapperFunction.Invoke(source)))];
 
         foreach (IProducer producer in producers)
         {
@@ -232,7 +230,7 @@ internal class MessageWrapper : IMessageWrapper
         where TMessage : class
     {
         IReadOnlyCollection<(TSource Source, TMessage? Message)> pairs =
-            sources.Select(source => (source, mapperFunction.Invoke(source, argument))).ToArray();
+            [.. sources.Select(source => (source, mapperFunction.Invoke(source, argument)))];
 
         foreach (IProducer producer in producers)
         {

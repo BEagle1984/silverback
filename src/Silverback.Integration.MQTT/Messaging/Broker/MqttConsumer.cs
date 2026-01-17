@@ -99,8 +99,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         try
         {
-            MessageHeaderCollection headers = Configuration.AreHeadersSupported
-                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
+            MessageHeaderCollection headers = Configuration.AreHeadersSupported && message.ApplicationMessage.UserProperties != null
+                ? [.. message.ApplicationMessage.UserProperties.ToSilverbackHeaders()]
                 : [];
 
             MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);

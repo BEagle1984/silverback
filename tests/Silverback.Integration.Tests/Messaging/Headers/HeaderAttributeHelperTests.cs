@@ -43,7 +43,7 @@ public class HeaderAttributeHelperTests
     {
         TestEventWithHeaders message = new();
 
-        List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
+        List<MessageHeader> result = [.. HeaderAttributeHelper.GetHeaders(message)];
 
         result.Select(header => header.Name).ShouldNotContain("x-string");
         result.Select(header => header.Name).ShouldNotContain("x-int");
@@ -54,7 +54,7 @@ public class HeaderAttributeHelperTests
     {
         TestEventWithHeaders message = new();
 
-        List<MessageHeader> result = HeaderAttributeHelper.GetHeaders(message).ToList();
+        List<MessageHeader> result = [.. HeaderAttributeHelper.GetHeaders(message)];
 
         result.ShouldContain(new MessageHeader("x-string-default", null));
         result.ShouldContain(new MessageHeader("x-int-default", "0"));

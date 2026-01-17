@@ -62,13 +62,13 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, contentType: message1.ContentType));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(10).Take(10).ToArray(),
+            [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, contentType: message1.ContentType));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(20).ToArray(),
+            [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -76,13 +76,13 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -140,13 +140,13 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, contentType: message1.ContentType));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(10).Take(10).ToArray(),
+            [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, contentType: message1.ContentType));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(20).ToArray(),
+            [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -154,13 +154,13 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -226,13 +226,13 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(1);
 
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, contentType: message2.ContentType));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, contentType: message2.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

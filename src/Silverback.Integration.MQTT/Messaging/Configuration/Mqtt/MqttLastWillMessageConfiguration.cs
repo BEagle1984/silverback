@@ -93,7 +93,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
         options.WillResponseTopic = ResponseTopic;
         options.WillRetain = Retain;
         options.WillTopic = Topic;
-        options.WillUserProperties = UserProperties.Select(property => property.ToMqttNetType()).ToList();
+        options.WillUserProperties = [.. UserProperties.Select(property => property.ToMqttNetType())];
         options.WillDelayInterval = Delay;
     }
 }

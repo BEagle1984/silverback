@@ -19,18 +19,14 @@ public abstract class MqttTests : E2ETests
 
     protected const string DefaultClientId = "e2e-client";
 
-    private IMqttTestingHelper? _testingHelper;
-
-    private IClientSession? _defaultClientSession;
-
     protected MqttTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }
 
-    protected IMqttTestingHelper Helper => _testingHelper ??= Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
+    protected IMqttTestingHelper Helper => field ??= Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
 
-    protected IClientSession DefaultClientSession => _defaultClientSession ??= Helper.GetClientSession(DefaultClientId);
+    protected IClientSession DefaultClientSession => field ??= Helper.GetClientSession(DefaultClientId);
 
     protected IReadOnlyList<MqttApplicationMessage> GetDefaultTopicMessages() => Helper.GetMessages(DefaultTopicName);
 }

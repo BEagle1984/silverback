@@ -16,7 +16,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private readonly ISilverbackLogger<ConsumerTransactionManager> _logger;
 
-    private readonly object _syncLock = new();
+    private readonly System.Threading.Lock _syncLock = new();
 
     private Task? _commitTask;
 

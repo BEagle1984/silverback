@@ -478,7 +478,7 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IMessage> provider = new();
 
         ILazyMessageStreamEnumerable<IEvent> stream1 = provider.CreateLazyStream<IEvent>();
-        ILazyMessageStreamEnumerable<object> stream2 = provider.CreateLazyStream(typeof(IEvent));
+        ILazyMessageStreamEnumerable<object> stream2 = provider.CreateLazyStream<IEvent>();
 
         stream2.ShouldBeOfType(stream1.GetType());
     }
@@ -499,7 +499,7 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IMessage> provider = new();
 
         IMessageStreamEnumerable<IEvent> stream1 = provider.CreateStream<IEvent>();
-        IMessageStreamEnumerable<object> stream2 = provider.CreateStream(typeof(IEvent));
+        IMessageStreamEnumerable<object> stream2 = provider.CreateStream<IEvent>();
 
         stream2.ShouldBeOfType(stream1.GetType());
     }

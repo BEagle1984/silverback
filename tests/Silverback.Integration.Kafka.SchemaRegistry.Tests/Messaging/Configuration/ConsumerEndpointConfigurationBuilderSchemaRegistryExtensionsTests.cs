@@ -69,7 +69,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
             .DeserializeAvro(
                 deserializer => deserializer
                     .ConnectToSchemaRegistry("test-url")
-                    .UseModel(typeof(TestEventOne)))
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
@@ -122,7 +122,7 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
             .DeserializeJsonUsingSchemaRegistry(
                 deserializer => deserializer
                     .ConnectToSchemaRegistry("test-url")
-                    .UseModel(typeof(TestEventOne)))
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();

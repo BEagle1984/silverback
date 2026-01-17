@@ -47,7 +47,7 @@ public partial class PublisherTests
             _listener = new ActivityListener
             {
                 ShouldListenTo = _ => true,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded,
                 ActivityStarted = _activities.Add
             };
             ActivitySource.AddActivityListener(_listener);

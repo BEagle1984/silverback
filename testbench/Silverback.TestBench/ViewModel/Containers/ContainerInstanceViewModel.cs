@@ -18,12 +18,6 @@ public class ContainerInstanceViewModel : ViewModelBase
 {
     private readonly ILogger<ContainerInstanceViewModel> _logger;
 
-    private DateTime? _started;
-
-    private DateTime? _stopped;
-
-    private ContainerStatus _status = ContainerStatus.Starting;
-
     public ContainerInstanceViewModel(
         IContainerService containerService,
         MessagesTracker messagesTracker,
@@ -58,21 +52,21 @@ public class ContainerInstanceViewModel : ViewModelBase
 
     public DateTime? Started
     {
-        get => _started;
-        private set => SetProperty(ref _started, value, nameof(Started));
+        get;
+        private set => SetProperty(ref field, value, nameof(Started));
     }
 
     public DateTime? Stopped
     {
-        get => _stopped;
-        private set => SetProperty(ref _stopped, value, nameof(Stopped));
+        get;
+        private set => SetProperty(ref field, value, nameof(Stopped));
     }
 
     public ContainerStatus Status
     {
-        get => _status;
-        private set => SetProperty(ref _status, value, nameof(Status));
-    }
+        get;
+        private set => SetProperty(ref field, value, nameof(Status));
+    } = ContainerStatus.Starting;
 
     public void SetStarted(DateTime started)
     {

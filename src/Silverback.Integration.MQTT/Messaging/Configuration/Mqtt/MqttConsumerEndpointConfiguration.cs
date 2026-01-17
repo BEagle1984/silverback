@@ -12,22 +12,20 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public sealed record MqttConsumerEndpointConfiguration : ConsumerEndpointConfiguration
 {
-    private readonly IValueReadOnlyCollection<string> _topics = ValueReadOnlyCollection.Empty<string>();
-
     /// <summary>
     ///     Gets the name of the topics or the topic filter strings.
     /// </summary>
     public IValueReadOnlyCollection<string> Topics
     {
-        get => _topics;
+        get;
         init
         {
-            _topics = value;
+            field = value;
 
             if (value != null)
                 RawName = string.Join(",", value);
         }
-    }
+    } = ValueReadOnlyCollection.Empty<string>();
 
     /// <summary>
     ///     Gets the quality of service level (at most once, at least once or exactly once).

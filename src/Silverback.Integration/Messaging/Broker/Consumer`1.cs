@@ -34,7 +34,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private readonly SemaphoreSlim _startStopSemaphore = new(1);
 
-    private readonly object _reconnectLock = new();
+    private readonly System.Threading.Lock _reconnectLock = new();
 
     private CancellationTokenSource _processingCancellationTokenSource = new();
 
@@ -254,7 +254,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         try
         {
-            await CommitCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList()).ConfigureAwait(false);
+            await CommitCoreAsync([.. brokerMessageIdentifiers.Cast<TIdentifier>()]).ConfigureAwait(false);
 
             if (_failedAttemptsDictionary.IsEmpty)
                 return;
@@ -286,7 +286,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         {
             Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-            return RollbackCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList());
+            return RollbackCoreAsync([.. brokerMessageIdentifiers.Cast<TIdentifier>()]);
         }
         catch (Exception ex)
         {

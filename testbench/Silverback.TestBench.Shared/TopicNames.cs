@@ -10,9 +10,7 @@ namespace Silverback.TestBench;
 public static class TopicNames
 {
     public static readonly string[] All =
-        typeof(Kafka).GetFields().Select(field => (string)field.GetValue(null)!)
-            .Union(typeof(Mqtt).GetFields().Select(field => (string)field.GetValue(null)!))
-            .ToArray();
+        [.. typeof(Kafka).GetFields().Select(field => (string)field.GetValue(null)!).Union(typeof(Mqtt).GetFields().Select(field => (string)field.GetValue(null)!))];
 
     public static class Kafka
     {

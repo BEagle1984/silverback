@@ -31,7 +31,7 @@ public sealed class ContainersOrchestrator : IDisposable
 
     private readonly ILoggerFactory _loggerFactory;
 
-    private readonly object _syncRoot = new();
+    private readonly System.Threading.Lock _syncRoot = new();
 
     private bool _disposed;
 
@@ -147,12 +147,11 @@ public sealed class ContainersOrchestrator : IDisposable
         container.Stop();
 
     private ContainerInstanceViewModel[] GetExistingContainers(string imageName, string imageTag) =>
-        _mainViewModel.ContainerInstances
+        [.. _mainViewModel.ContainerInstances
             .Reverse()
             .Where(
                 container => container.ContainerService.Image.Name == imageName && container.ContainerService.Image.Tag == imageTag &&
-                             container.Status == ContainerStatus.Running)
-            .ToArray();
+                             container.Status == ContainerStatus.Running)];
 
     private void IncrementInstances(DockerImage dockerImage, int count, ContainerInstanceViewModel[] existingContainers)
     {

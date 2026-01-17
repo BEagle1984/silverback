@@ -54,6 +54,8 @@ dotnet_diagnostic.CA1031.severity = none
 dotnet_diagnostic.CA1062.severity = none
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = none
 # CA1716: Identifiers should not match keywords
@@ -62,6 +64,8 @@ dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CA1848.severity = none
 # CA1852: Seal internal types
 dotnet_diagnostic.CA1852.severity = none
+# CA1873: Avoid potentially expensive logging
+dotnet_diagnostic.CA1873.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
 # CA2234: Pass system uri objects instead of strings

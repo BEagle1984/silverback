@@ -22,8 +22,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
 
         foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
         {
-            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = partitionAssignments
-                .Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key)).ToList();
+            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = [.. partitionAssignments.Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key))];
 
             AssignTopicPartitions(
                 [.. topicPartitions],
@@ -39,19 +38,18 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
 
     private static void AssignTopicPartitions(
         IReadOnlyCollection<TopicPartition> topicPartitions,
-        IReadOnlyList<PartitionAssignment> partitionAssignments,
+        List<SubscriptionPartitionAssignment> partitionAssignments,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions)
     {
-        List<TopicPartition> unassignedPartitions = topicPartitions
+        List<TopicPartition> unassignedPartitions = [.. topicPartitions
             .Where(
                 topicPartition =>
-                    partitionAssignments.All(assignment => !assignment.Partitions.Contains(topicPartition)))
-            .ToList();
+                    partitionAssignments.All(assignment => !assignment.Partitions.Contains(topicPartition)))];
 
         int partitionsPerConsumer = topicPartitions.Count / partitionAssignments.Count;
 
-        foreach (PartitionAssignment assignment in partitionAssignments)
+        foreach (SubscriptionPartitionAssignment assignment in partitionAssignments)
         {
             while (assignment.Partitions.Count < partitionsPerConsumer)
             {
@@ -117,7 +115,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
 
     private static void AssignRemainingPartitions(
         IEnumerable<TopicPartition> topicPartitions,
-        IReadOnlyList<PartitionAssignment> partitionAssignments,
+        List<SubscriptionPartitionAssignment> partitionAssignments,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions)
     {
         int index = -1;

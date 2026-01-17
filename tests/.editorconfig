@@ -15,6 +15,8 @@ dotnet_diagnostic.CA1062.severity = none
 dotnet_diagnostic.CA1303.severity = none
 # CA1506: Avoid excessive class coupling
 dotnet_diagnostic.CA1506.severity = none
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none
 # CA1707: Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity = none
 # CA1806: Do not ignore method results
@@ -33,6 +35,8 @@ dotnet_diagnostic.CA1861.severity = none
 dotnet_diagnostic.CA2000.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
+# CA2025: Do not pass 'IDisposable' instances into unawaited tasks
+dotnet_diagnostic.CA2025.severity = none
 # CA2213: Disposable fields should be disposed
 dotnet_diagnostic.CA2213.severity = none
 # CA2234: Pass System.Uri objects instead of strings

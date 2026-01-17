@@ -15,5 +15,5 @@ public static class MqttApplicationMessageExtensions
         Encoding.UTF8.GetString(message.Payload.ToArray());
 
     public static IReadOnlyCollection<string?> GetContentAsString(this IEnumerable<MqttApplicationMessage> messages) =>
-        messages.Select(GetContentAsString).ToList();
+        [.. messages.Select(GetContentAsString)];
 }

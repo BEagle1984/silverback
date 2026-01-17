@@ -266,7 +266,7 @@ public class OutboxTests : KafkaTests
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(6);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(6);
-        List<object?> inboundMessages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).ToList();
+        List<object?> inboundMessages = [.. Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message)];
 
         inboundMessages.OfType<TestEventOne>().Count().ShouldBe(3);
         inboundMessages.OfType<TestEventTwo>().Count().ShouldBe(3);

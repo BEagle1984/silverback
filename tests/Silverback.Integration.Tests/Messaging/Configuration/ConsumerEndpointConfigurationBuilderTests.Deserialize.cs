@@ -130,7 +130,7 @@ public partial class ConsumerEndpointConfigurationBuilderTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
-            .DeserializeJson(deserializer => deserializer.UseModel(typeof(TestEventOne)))
+            .DeserializeJson(deserializer => deserializer.UseModel<TestEventOne>())
             .Build();
 
         endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();

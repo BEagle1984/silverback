@@ -16,7 +16,7 @@ public partial class SilverbackBuilderTests
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .HandleMessagesOfType(typeof(UnhandledMessage));
+            .HandleMessagesOfType<UnhandledMessage>();
 
         builder.BusOptions.MessageTypes.ShouldBe(
         [

@@ -11,7 +11,7 @@ namespace Silverback.Tests.Performance;
 [MemoryDiagnoser]
 public class LockBenchmark
 {
-    private readonly object _syncLock = new();
+    private readonly System.Threading.Lock _syncLock = new();
 
     private SpinLock _spinLock;
 

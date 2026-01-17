@@ -37,5 +37,5 @@ public interface IRawInboundEnvelope : IRawBrokerEnvelope
     /// <returns>
     ///     The new envelope.
     /// </returns>
-    public IRawInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
+    IRawInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage);
 }

@@ -176,8 +176,8 @@ public abstract class ErrorPolicyBaseBuilder<TBuilder>
 
         return policy with
         {
-            IncludedExceptions = _includedExceptions.ToArray(),
-            ExcludedExceptions = _excludedExceptions.ToArray(),
+            IncludedExceptions = [.. _includedExceptions],
+            ExcludedExceptions = [.. _excludedExceptions],
             ApplyRule = _applyRule,
             MessageToPublishFactory = _messageToPublishFactory
         };

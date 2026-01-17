@@ -32,7 +32,7 @@ public partial class IntegrationPublisherExtensionsTests
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArray()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(messages);
@@ -86,7 +86,7 @@ public partial class IntegrationPublisherExtensionsTests
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArray()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         int count = 0;
 
@@ -162,7 +162,7 @@ public partial class IntegrationPublisherExtensionsTests
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArray()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(

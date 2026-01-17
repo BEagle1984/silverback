@@ -93,9 +93,7 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
         {
             partitionsAssignedHandler(consumer, partitions);
 
-            return partitions
-                .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))
-                .ToList();
+            return [.. partitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))];
         };
 
         return this;

@@ -73,7 +73,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        List<Task> processingTasks = PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken).ToList();
+        List<Task> processingTasks = [.. PushToCompatibleStreams(message, onPullAction, onPullActionArgument, cancellationToken)];
 
         if (processingTasks.Count > 0)
             await Task.WhenAll(processingTasks).ConfigureAwait(false);

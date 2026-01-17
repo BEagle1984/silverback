@@ -49,7 +49,7 @@ public class RebalanceTests : KafkaTests
             .AddSingletonBrokerClientCallback(partitionCallbacksHandler)
             .AddIntegrationSpyAndSubscriber());
 
-        KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
+        KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         await consumers[0].Client.ConnectAsync();
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -114,7 +114,7 @@ public class RebalanceTests : KafkaTests
             .AddSingletonBrokerClientCallback(partitionCallbacksHandler)
             .AddIntegrationSpyAndSubscriber());
 
-        KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
+        KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         await consumers[0].Client.ConnectAsync();
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

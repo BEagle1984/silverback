@@ -13,5 +13,5 @@ public interface IMockedMqttOptions
     /// <summary>
     ///     Gets or sets the delay to be applied before establishing a connection.
     /// </summary>
-    public TimeSpan ConnectionDelay { get; set; }
+    TimeSpan ConnectionDelay { get; set; }
 }

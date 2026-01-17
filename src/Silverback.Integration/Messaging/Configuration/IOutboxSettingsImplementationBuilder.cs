@@ -16,5 +16,5 @@ public interface IOutboxSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="OutboxSettings" />.
     /// </returns>
-    public OutboxSettings Build();
+    OutboxSettings Build();
 }

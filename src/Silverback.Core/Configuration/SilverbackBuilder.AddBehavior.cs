@@ -60,7 +60,7 @@ public partial class SilverbackBuilder
     {
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        Services.AddTransient(typeof(IBehavior), implementationFactory);
+        Services.AddTransient(implementationFactory);
 
         return this;
     }
@@ -112,7 +112,7 @@ public partial class SilverbackBuilder
     {
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        Services.AddScoped(typeof(IBehavior), implementationFactory);
+        Services.AddScoped(implementationFactory);
 
         return this;
     }
@@ -164,7 +164,7 @@ public partial class SilverbackBuilder
     {
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        Services.AddSingleton(typeof(IBehavior), implementationFactory);
+        Services.AddSingleton(implementationFactory);
 
         return this;
     }
@@ -183,7 +183,7 @@ public partial class SilverbackBuilder
     {
         Check.NotNull(implementationInstance, nameof(implementationInstance));
 
-        Services.AddSingleton(typeof(IBehavior), implementationInstance);
+        Services.AddSingleton(implementationInstance);
 
         return this;
     }

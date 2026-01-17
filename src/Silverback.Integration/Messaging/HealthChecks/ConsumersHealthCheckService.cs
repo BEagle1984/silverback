@@ -45,9 +45,7 @@ public class ConsumersHealthCheckService : IConsumersHealthCheckService
             return Task.FromResult((IReadOnlyCollection<IConsumer>)[]);
 
         IReadOnlyCollection<IConsumer> disconnectedConsumers =
-            _consumerCollection
-                .Where(consumer => IsDisconnected(consumer, minStatus, gracePeriod))
-                .ToList();
+            [.. _consumerCollection.Where(consumer => IsDisconnected(consumer, minStatus, gracePeriod))];
 
         return Task.FromResult(disconnectedConsumers);
     }

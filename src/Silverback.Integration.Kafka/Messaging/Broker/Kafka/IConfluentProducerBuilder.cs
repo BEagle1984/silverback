@@ -43,7 +43,7 @@ public interface IConfluentProducerBuilder
     /// <returns>
     ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler);
+    IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler);
 
     /// <summary>
     ///     Builds the <see cref="IProducer{TKey,TValue}" /> instance.

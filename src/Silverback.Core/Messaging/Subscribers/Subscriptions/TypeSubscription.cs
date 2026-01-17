@@ -34,9 +34,7 @@ internal sealed class TypeSubscription : ISubscription
     public TypeSubscriptionOptions Options { get; }
 
     public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
-        GetMethods(SubscriberType)
-            .Select(methodInfo => GetSubscribedMethod(SubscriberType, methodInfo).EnsureInitialized(serviceProvider))
-            .ToArray();
+        [.. GetMethods(SubscriberType).Select(methodInfo => GetSubscribedMethod(SubscriberType, methodInfo).EnsureInitialized(serviceProvider))];
 
     private SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
     {
@@ -44,9 +42,9 @@ internal sealed class TypeSubscription : ISubscription
 
         TypeSubscriptionOptions methodOptions = new()
         {
-            Filters = Options.Filters
+            Filters = [.. Options.Filters
                 .Union(methodInfo.GetCustomAttributes<MessageFilterAttribute>(false))
-                .Distinct().ToList(),
+                .Distinct()],
             IsExclusive = subscribeAttribute?.Exclusive ?? Options.IsExclusive,
             AutoSubscribeAllPublicMethods = Options.AutoSubscribeAllPublicMethods
         };

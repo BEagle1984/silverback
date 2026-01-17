@@ -98,20 +98,17 @@ internal sealed class SubscribedMethodsCache
         (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
         .GetOrAdd(
             message.GetType(),
-            static (_, args) => args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
+            static (_, args) => [.. args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
                 .Where(
                     subscribedMethod => AreCompatible(args.Message, subscribedMethod) &&
-                                        subscribedMethod.Options.IsExclusive == args.Exclusive)
-                .ToList(),
+                                        subscribedMethod.Options.IsExclusive == args.Exclusive)],
             (ServiceProvider: serviceProvider, Message: message, Exclusive: exclusive, Instance: this));
 
     private IReadOnlyCollection<SubscribedMethod> GetAllSubscribedMethods(IServiceProvider serviceProvider) =>
         _subscribedMethods ??= LoadSubscribedMethods(serviceProvider);
 
     private List<SubscribedMethod> LoadSubscribedMethods(IServiceProvider serviceProvider) =>
-        _options.Subscriptions
-            .SelectMany(subscription => subscription.GetSubscribedMethods(serviceProvider))
-            .ToList();
+        [.. _options.Subscriptions.SelectMany(subscription => subscription.GetSubscribedMethods(serviceProvider))];
 
     private bool HasAnyMessageStreamSubscriber(IServiceProvider serviceProvider) =>
         _hasAnyMessageStreamSubscriber ??=

@@ -69,7 +69,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddTransient(typeof(IBrokerBehavior), implementationFactory);
+        builder.Services.AddTransient(implementationFactory);
 
         return builder;
     }
@@ -130,7 +130,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddSingleton(typeof(IBrokerBehavior), implementationFactory);
+        builder.Services.AddSingleton(implementationFactory);
 
         return builder;
     }
@@ -152,7 +152,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddSingleton(typeof(IBrokerBehavior), implementationInstance);
+        builder.Services.AddSingleton(implementationInstance);
 
         return builder;
     }

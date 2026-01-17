@@ -30,9 +30,7 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         _consumer = Check.NotNull(consumer, nameof(consumer));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        _channels = Enumerable.Range(0, consumer.Configuration.MaxDegreeOfParallelism)
-            .Select(index => new ConsumerChannel(consumer.Configuration.MaxDegreeOfParallelism, index, logger))
-            .ToArray();
+        _channels = [.. Enumerable.Range(0, consumer.Configuration.MaxDegreeOfParallelism).Select(index => new ConsumerChannel(consumer.Configuration.MaxDegreeOfParallelism, index, logger))];
 
         consumer.Client.MessageReceived.AddHandler(OnMessageReceivedAsync);
     }

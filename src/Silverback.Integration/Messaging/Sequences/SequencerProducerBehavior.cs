@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
@@ -32,7 +31,7 @@ public class SequencerProducerBehavior : IProducerBehavior
     /// </param>
     public SequencerProducerBehavior(IEnumerable<ISequenceWriter> sequenceWriters)
     {
-        _sequenceWriters = sequenceWriters.ToList();
+        _sequenceWriters = [.. sequenceWriters];
     }
 
     /// <inheritdoc cref="ISorted.SortIndex" />

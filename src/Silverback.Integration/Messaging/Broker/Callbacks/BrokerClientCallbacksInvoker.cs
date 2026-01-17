@@ -190,9 +190,9 @@ internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvok
 
     private IEnumerable<TCallback> GetCallbacks<TCallback>(IServiceProvider scopedServiceProvider)
     {
-        List<IBrokerClientCallback> callbacks = scopedServiceProvider.GetServices<IBrokerClientCallback>().ToList();
+        List<IBrokerClientCallback> callbacks = [.. scopedServiceProvider.GetServices<IBrokerClientCallback>()];
 
-        _callbackTypes ??= callbacks.Select(callback => callback.GetType()).ToList();
+        _callbackTypes ??= [.. callbacks.Select(callback => callback.GetType())];
 
         return callbacks.OfType<TCallback>().SortBySortIndex();
     }

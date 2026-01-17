@@ -18,7 +18,7 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
-        builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
+        builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         SkipMessageErrorPolicy policy = (SkipMessageErrorPolicy)builder.Build();
         policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
@@ -50,7 +50,7 @@ public class SkipMessageErrorPolicyBuilderTests
     {
         SkipMessageErrorPolicyBuilder builder = new();
 
-        builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
+        builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         SkipMessageErrorPolicy policy = (SkipMessageErrorPolicy)builder.Build();
         policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);

@@ -22,9 +22,7 @@ internal static class HeaderAttributeHelper
 
         Type type = message.GetType();
 
-        List<DecoratedProperty> properties = GetDecoratedProperties(type)
-            .Where(property => property.PropertyInfo.CanRead)
-            .ToList();
+        List<DecoratedProperty> properties = [.. GetDecoratedProperties(type).Where(property => property.PropertyInfo.CanRead)];
 
         if (properties.Count == 0)
             yield break;
@@ -48,9 +46,7 @@ internal static class HeaderAttributeHelper
 
         Type type = message.GetType();
 
-        List<DecoratedProperty> properties = GetDecoratedProperties(type)
-            .Where(property => property.PropertyInfo.CanWrite)
-            .ToList();
+        List<DecoratedProperty> properties = [.. GetDecoratedProperties(type).Where(property => property.PropertyInfo.CanWrite)];
 
         if (properties.Count == 0)
             return;
@@ -67,10 +63,9 @@ internal static class HeaderAttributeHelper
         PropertiesCache.GetOrAdd(
             type,
             static key =>
-                key.GetProperties()
+                [.. key.GetProperties()
                     .Select(propertyInfo => new DecoratedProperty(propertyInfo, propertyInfo.GetCustomAttribute<HeaderAttribute>(true)!))
-                    .Where(decoratedProperty => decoratedProperty.Attribute != null)
-                    .ToList());
+                    .Where(decoratedProperty => decoratedProperty.Attribute != null)]);
 
     private sealed class DecoratedProperty
     {

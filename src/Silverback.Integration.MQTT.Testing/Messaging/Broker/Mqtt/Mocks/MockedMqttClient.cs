@@ -109,12 +109,12 @@ public sealed class MockedMqttClient : IMqttClient
         Check.NotNull(options, nameof(options));
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
-        _broker.Subscribe(this, options.TopicFilters.Select(filter => filter.Topic).ToList());
+        _broker.Subscribe(this, [.. options.TopicFilters.Select(filter => filter.Topic)]);
 
         return Task.FromResult(
             new MqttClientSubscribeResult(
                 0,
-                options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, MqttClientSubscribeResultCode.GrantedQoS0)).ToList(),
+                [.. options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, MqttClientSubscribeResultCode.GrantedQoS0))],
                 string.Empty,
                 []));
     }

@@ -13,7 +13,7 @@ public class EnumerableDisposeAllExtensionsTests
 {
     private interface IMustDispose
     {
-        public bool IsDisposed { get; }
+        bool IsDisposed { get; }
     }
 
     [Fact]

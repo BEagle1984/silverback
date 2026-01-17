@@ -79,10 +79,9 @@ public partial class BrokerClientCallbacksTests
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-        List<IBrokerClientCallback> callbacks = Host.ServiceProvider
+        List<IBrokerClientCallback> callbacks = [.. Host.ServiceProvider
             .GetServices<IBrokerClientCallback>()
-            .Where(service => service is BrokerClientsConnectedCallback)
-            .ToList();
+            .Where(service => service is BrokerClientsConnectedCallback)];
         callbacks.Count.ShouldBe(2);
         callbacks.Cast<BrokerClientsConnectedCallback>().ShouldAllBe(callback => callback.CallCount == 1);
     }

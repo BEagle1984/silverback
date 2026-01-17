@@ -97,8 +97,8 @@ public partial class ConsumerEndpointTests : MqttTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
-        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
+        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
@@ -136,8 +136,8 @@ public partial class ConsumerEndpointTests : MqttTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
-        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
+        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
@@ -173,14 +173,14 @@ public partial class ConsumerEndpointTests : MqttTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        MqttConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().ToArray();
+        MqttConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>()];
         consumers.Length.ShouldBe(2);
 
-        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         inboundEnvelopes.Length.ShouldBe(10);
 
-        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
-        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
+        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0])];
+        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1])];
 
         consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
         consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
@@ -224,36 +224,36 @@ public partial class ConsumerEndpointTests : MqttTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        MqttConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>().ToArray();
+        MqttConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<MqttConsumer>()];
         consumers.Length.ShouldBe(4);
 
-        IInboundEnvelope<TestEventOne>[] envelopesOne = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] envelopesOne = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         envelopesOne.Length.ShouldBe(15);
 
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient1 = envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1").ToArray();
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient2 = envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2").ToArray();
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient3 = envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3").ToArray();
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient4 = envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4").ToArray();
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient1 = [.. envelopesOne.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient2 = [.. envelopesOne.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient3 = [.. envelopesOne.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient4 = [.. envelopesOne.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")];
 
         envelopesOneClient1.Union(envelopesOneClient2).Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesOneClient3.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesOneClient4.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
 
-        IInboundEnvelope<TestEventTwo>[] envelopesTwo = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
+        IInboundEnvelope<TestEventTwo>[] envelopesTwo = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
         envelopesTwo.Length.ShouldBe(15);
 
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient1 = envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1").ToArray();
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient2 = envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2").ToArray();
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient3 = envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3").ToArray();
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient4 = envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4").ToArray();
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient1 = [.. envelopesTwo.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient2 = [.. envelopesTwo.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient3 = [.. envelopesTwo.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient4 = [.. envelopesTwo.Where(envelope => envelope
+            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")];
 
         envelopesTwoClient1.Union(envelopesTwoClient2).Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesTwoClient3.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);

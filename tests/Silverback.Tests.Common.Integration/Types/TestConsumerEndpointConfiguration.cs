@@ -10,8 +10,6 @@ namespace Silverback.Tests.Types;
 
 public sealed record TestConsumerEndpointConfiguration : ConsumerEndpointConfiguration
 {
-    private readonly IValueReadOnlyCollection<string> _topicNames = ValueReadOnlyCollection.Empty<string>();
-
     public TestConsumerEndpointConfiguration(params string[] topicNames)
     {
         TopicNames = topicNames.AsValueReadOnlyCollection();
@@ -19,15 +17,15 @@ public sealed record TestConsumerEndpointConfiguration : ConsumerEndpointConfigu
 
     public IValueReadOnlyCollection<string> TopicNames
     {
-        get => _topicNames;
+        get;
         init
         {
-            _topicNames = value;
+            field = value;
 
             if (value != null)
                 RawName = string.Join(",", value);
         }
-    }
+    } = ValueReadOnlyCollection.Empty<string>();
 
     public string GroupId { get; init; } = "default-group";
 

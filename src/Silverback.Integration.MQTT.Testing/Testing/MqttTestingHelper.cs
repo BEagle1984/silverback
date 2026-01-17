@@ -70,7 +70,7 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
             return Task.CompletedTask;
 
         return _inMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(
-            endpointNames.Select(GetEndpointRawName).ToArray(),
+            [.. endpointNames.Select(GetEndpointRawName)],
             cancellationToken);
     }
 }

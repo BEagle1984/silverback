@@ -106,7 +106,7 @@ public class EntityFrameworkOutboxReader : IOutboxReader
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        long[] identifiers = outboxMessages.Cast<DbOutboxMessage>().Select(message => message.Id).ToArray();
+        long[] identifiers = [.. outboxMessages.Cast<DbOutboxMessage>().Select(message => message.Id)];
 
         await dbContext.Set<SilverbackOutboxMessage>()
             .Where(message => identifiers.Contains(message.Id))

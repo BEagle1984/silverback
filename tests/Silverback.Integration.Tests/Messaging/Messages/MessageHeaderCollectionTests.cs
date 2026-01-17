@@ -669,7 +669,7 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        int? result = (int?)collection.GetValue("two", typeof(int));
+        int? result = collection.GetValue<int>("two");
 
         result.ShouldBe(2);
     }
@@ -699,7 +699,7 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        int? result = (int?)collection.GetValue("four", typeof(int));
+        int? result = collection.GetValue<int>("four");
 
         result.ShouldBeNull();
     }
@@ -714,7 +714,7 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault("two", typeof(int)).ShouldBe(2);
+        collection.GetValueOrDefault<int>("two").ShouldBe(2);
     }
 
     [Fact]
@@ -727,7 +727,7 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault("four", typeof(int)).ShouldBe(0);
+        collection.GetValueOrDefault<int>("four").ShouldBe(0);
     }
 
     [Fact]
@@ -755,9 +755,9 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        object? result = collection.GetValueOrDefault("two", typeof(int));
+        object result = collection.GetValueOrDefault<int>("two");
 
-        result.ShouldBeOfType(typeof(int));
+        result.ShouldBeOfType<int>();
         result.ShouldBe(2);
     }
 
@@ -786,9 +786,9 @@ public class MessageHeaderCollectionTests
             { "three", "3" }
         };
 
-        object? result = collection.GetValueOrDefault("four", typeof(int));
+        object result = collection.GetValueOrDefault<int>("four");
 
-        result.ShouldBeOfType(typeof(int));
+        result.ShouldBeOfType<int>();
         result.ShouldBe(0);
     }
 }

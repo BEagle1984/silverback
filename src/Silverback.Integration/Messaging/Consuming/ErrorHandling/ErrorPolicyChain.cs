@@ -38,7 +38,7 @@ public class ErrorPolicyChain : IErrorPolicy
     /// </param>
     public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies)
     {
-        Policies = Check.NotNull(policies, nameof(policies)).ToList();
+        Policies = [.. Check.NotNull(policies, nameof(policies))];
         Check.HasNoNulls(Policies, nameof(policies));
     }
 
@@ -80,7 +80,7 @@ public class ErrorPolicyChain : IErrorPolicy
 
         public ErrorPolicyChainImplementation(IEnumerable<ErrorPolicyImplementation> policies, ISilverbackLogger<ErrorPolicyChain> logger)
         {
-            _policies = Check.NotNull(policies, nameof(policies)).ToList();
+            _policies = [.. Check.NotNull(policies, nameof(policies))];
             Check.HasNoNulls(_policies, nameof(policies));
 
             _logger = Check.NotNull(logger, nameof(logger));

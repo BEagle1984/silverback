@@ -16,10 +16,6 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// </summary>
 public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfiguration
 {
-    private readonly IValueReadOnlyCollection<TopicPartitionOffset> _topicPartitions = ValueReadOnlyCollection.Empty<TopicPartitionOffset>();
-
-    private readonly Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>? _partitionOffsetsProvider;
-
     /// <summary>
     ///     <para>
     ///         Gets the topics and partitions to be consumed.
@@ -41,10 +37,10 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
     /// </summary>
     public IValueReadOnlyCollection<TopicPartitionOffset> TopicPartitions
     {
-        get => _topicPartitions;
+        get;
         init
         {
-            _topicPartitions = value;
+            field = value;
 
             if (value == null)
                 return;
@@ -52,7 +48,7 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
             IsStaticAssignment = GetIsStaticAssignment();
             RawName = string.Join(",", value.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition.ToDisplayString()));
         }
-    }
+    } = ValueReadOnlyCollection.Empty<TopicPartitionOffset>();
 
     /// <summary>
     ///     Gets a function that receives all available <see cref="TopicPartition" /> for the topic(s) and returns the collection of
@@ -60,10 +56,10 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
     /// </summary>
     public Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>? PartitionOffsetsProvider
     {
-        get => _partitionOffsetsProvider;
+        get;
         init
         {
-            _partitionOffsetsProvider = value;
+            field = value;
             IsStaticAssignment = GetIsStaticAssignment();
         }
     }
@@ -102,8 +98,8 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
     {
         foreach (IGrouping<string, TopicPartitionOffset> groupedPartitions in TopicPartitions.GroupBy(topicPartition => topicPartition.Topic))
         {
-            List<Partition> partitions = groupedPartitions.Select(topicPartition => topicPartition.Partition).ToList();
-            List<TopicPartition> topicPartitionsWithoutOffset = groupedPartitions.Select(offset => offset.TopicPartition).ToList();
+            List<Partition> partitions = [.. groupedPartitions.Select(topicPartition => topicPartition.Partition)];
+            List<TopicPartition> topicPartitionsWithoutOffset = [.. groupedPartitions.Select(offset => offset.TopicPartition)];
 
             if (topicPartitionsWithoutOffset.Count != topicPartitionsWithoutOffset.Distinct().Count())
             {

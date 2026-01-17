@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost;
 public class Startup
 {
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Called by IHost")]
-    public void ConfigureServices(IServiceCollection services) => services.AddHealthChecks();
+    public void ConfigureServices(IServiceCollection services) => services.AddRouting().AddHealthChecks();
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Called by IHost")]
     public void Configure(IApplicationBuilder app) => app.UseRouting().UseEndpoints(

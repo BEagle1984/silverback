@@ -14,7 +14,7 @@ public static class ConfluentMessageExtensions
         message.Value == null ? null : Encoding.UTF8.GetString(message.Value);
 
     public static IReadOnlyCollection<string?> GetContentAsString(this IEnumerable<Message<byte[]?, byte[]?>> messages) =>
-        messages.Select(GetContentAsString).ToList();
+        [.. messages.Select(GetContentAsString)];
 
     public static string GetValueAsString(this IHeader header) =>
         Encoding.UTF8.GetString(header.GetValueBytes());

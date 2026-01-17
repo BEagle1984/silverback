@@ -13,6 +13,6 @@ public class SampleMessageSubscriber
         _logger = logger;
     }
 
-    public void OnMessageReceived(IInboundEnvelope<SampleMessage> message) =>
-        _logger.LogInformation("Received {MessageNumber}", message.Message.Number);
+    public void OnMessageReceived(IInboundEnvelope<SampleMessage> envelope) =>
+        _logger.LogInformation("Received {MessageNumber}", envelope.Message?.Number);
 }

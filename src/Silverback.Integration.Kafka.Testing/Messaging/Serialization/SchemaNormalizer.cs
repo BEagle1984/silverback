@@ -28,7 +28,7 @@ internal static class SchemaNormalizer
 
     private static void SortProperties(JObject jObject)
     {
-        List<JProperty> properties = jObject.Properties().ToList();
+        List<JProperty> properties = [.. jObject.Properties()];
         foreach (JProperty property in properties)
         {
             if (property.Value is JObject value)

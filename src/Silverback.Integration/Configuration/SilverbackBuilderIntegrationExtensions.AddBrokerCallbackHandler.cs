@@ -72,7 +72,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddTransient(typeof(IBrokerClientCallback), implementationFactory);
+        builder.Services.AddTransient(implementationFactory);
         return builder;
     }
 
@@ -135,7 +135,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddScoped(typeof(IBrokerClientCallback), implementationFactory);
+        builder.Services.AddScoped(implementationFactory);
         return builder;
     }
 
@@ -198,7 +198,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddSingleton(typeof(IBrokerClientCallback), implementationFactory);
+        builder.Services.AddSingleton(implementationFactory);
         return builder;
     }
 
@@ -222,7 +222,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationInstance, nameof(implementationInstance));
 
-        builder.Services.AddSingleton(typeof(IBrokerClientCallback), implementationInstance);
+        builder.Services.AddSingleton(implementationInstance);
         return builder;
     }
 }

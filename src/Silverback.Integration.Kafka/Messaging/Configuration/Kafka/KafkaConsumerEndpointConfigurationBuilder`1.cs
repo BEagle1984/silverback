@@ -66,7 +66,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     {
         Check.HasNoEmpties(topics, nameof(topics));
 
-        _topicPartitionOffsets = topics.Select(topic => new TopicPartitionOffset(topic, Partition.Any, Offset.Unset)).ToArray();
+        _topicPartitionOffsets = [.. topics.Select(topic => new TopicPartitionOffset(topic, Partition.Any, Offset.Unset))];
         _partitionOffsetsProvider = null;
 
         return this;
@@ -89,7 +89,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
         Check.NotNullOrEmpty(topic, nameof(topic));
         Check.NotEmpty(partitions, nameof(partitions));
 
-        _topicPartitionOffsets = partitions.Select(partition => new TopicPartitionOffset(topic, partition, Offset.Unset)).ToArray();
+        _topicPartitionOffsets = [.. partitions.Select(partition => new TopicPartitionOffset(topic, partition, Offset.Unset))];
         _partitionOffsetsProvider = null;
 
         return this;
@@ -108,7 +108,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     {
         Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
 
-        _topicPartitionOffsets = topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)).ToArray();
+        _topicPartitionOffsets = [.. topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))];
         _partitionOffsetsProvider = null;
 
         return this;
@@ -228,7 +228,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
         IEnumerable<string> topics,
         Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>> partitionOffsetsProvider)
     {
-        _topicPartitionOffsets = topics.Select(topic => new TopicPartitionOffset(topic, Partition.Any, Offset.Unset)).ToArray();
+        _topicPartitionOffsets = [.. topics.Select(topic => new TopicPartitionOffset(topic, Partition.Any, Offset.Unset))];
         _partitionOffsetsProvider = partitionOffsetsProvider;
 
         return this;

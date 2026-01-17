@@ -20,7 +20,7 @@ public class ServiceCollectionExtensionsTests
         ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
-        bool result = services.ContainsAny(typeof(IService));
+        bool result = services.ContainsAny<IService>();
 
         result.ShouldBeTrue();
     }
@@ -42,7 +42,7 @@ public class ServiceCollectionExtensionsTests
         ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
-        bool result = services.ContainsAny(typeof(IOtherService));
+        bool result = services.ContainsAny<IOtherService>();
 
         result.ShouldBeFalse();
     }
@@ -64,7 +64,7 @@ public class ServiceCollectionExtensionsTests
         ServiceCollection services = [];
         services.AddSingleton<IService>(new Service());
 
-        object? result = services.GetSingletonServiceInstance(typeof(IService));
+        object? result = services.GetSingletonServiceInstance<IService>();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<Service>();
@@ -88,7 +88,7 @@ public class ServiceCollectionExtensionsTests
         ServiceCollection services = [];
         services.AddTransient<IService, Service>();
 
-        object? result = services.GetSingletonServiceInstance(typeof(IService));
+        object? result = services.GetSingletonServiceInstance<IService>();
 
         result.ShouldBeNull();
     }
@@ -110,7 +110,7 @@ public class ServiceCollectionExtensionsTests
         ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
-        object? result = services.GetSingletonServiceInstance(typeof(IService));
+        object? result = services.GetSingletonServiceInstance<IService>();
 
         result.ShouldBeNull();
     }
@@ -131,7 +131,7 @@ public class ServiceCollectionExtensionsTests
     {
         ServiceCollection services = [];
 
-        object? result = services.GetSingletonServiceInstance(typeof(IService));
+        object? result = services.GetSingletonServiceInstance<IService>();
 
         result.ShouldBeNull();
     }

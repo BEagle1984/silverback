@@ -36,9 +36,6 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private IAdminClient? _adminClient;
 
-    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
-    private KafkaConsumer? _consumer;
-
     public ConfluentConsumerWrapper(
         string name,
         IConfluentConsumerBuilder consumerBuilder,
@@ -67,10 +64,11 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     public IReadOnlyList<TopicPartition> Assignment => (IReadOnlyList<TopicPartition>?)_confluentConsumer?.Assignment ?? [];
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     public KafkaConsumer Consumer
     {
-        get => _consumer ?? throw new InvalidOperationException("The consumer is not initialized yet.");
-        set => _consumer = Check.NotNull(value, nameof(value));
+        get => field ?? throw new InvalidOperationException("The consumer is not initialized yet.");
+        set => field = Check.NotNull(value, nameof(value));
     }
 
     public IConsumerGroupMetadata GetConsumerGroupMetadata()
@@ -123,7 +121,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
             List<TopicPartitionOffset>? offsets = _confluentConsumer.Commit();
 
             CommittedOffsets committedOffsets = new(
-                offsets.Select(offset => new TopicPartitionOffsetError(offset, new Error(ErrorCode.NoError))).ToList(),
+                [.. offsets.Select(offset => new TopicPartitionOffsetError(offset, new Error(ErrorCode.NoError)))],
                 new Error(ErrorCode.NoError));
 
             _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
@@ -221,7 +219,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         {
             foreach (KafkaConsumerEndpointConfiguration endpointConfiguration in Configuration.Endpoints)
             {
-                await foreach (TopicPartitionOffset topicPartitionOffset in GetAssignmentAsync(endpointConfiguration))
+                await foreach (TopicPartitionOffset topicPartitionOffset in GetAssignmentAsync(endpointConfiguration).ConfigureAwait(false))
                 {
                     assignment.Add(topicPartitionOffset);
                 }
@@ -268,11 +266,10 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         _adminClient ??= _adminClientFactory.GetClient(_confluentConfiguration);
 
         List<TopicPartition> availablePartitions =
-            _adminClient
+            [.. _adminClient
                 .GetMetadata(topicPartitionOffset.Topic, Configuration.GetMetadataTimeout)
                 .Topics[0].Partitions
-                .Select(metadata => new TopicPartition(topicPartitionOffset.Topic, metadata.PartitionId))
-                .ToList();
+                .Select(metadata => new TopicPartition(topicPartitionOffset.Topic, metadata.PartitionId))];
 
         return await partitionOffsetsProvider.Invoke(availablePartitions).ConfigureAwait(false);
     }

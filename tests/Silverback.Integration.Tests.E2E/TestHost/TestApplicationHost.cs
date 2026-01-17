@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -53,6 +54,7 @@ public sealed class TestApplicationHost : IDisposable
         return this;
     }
 
+    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Test code")]
     public async ValueTask RunAsync([CallerMemberName] string? testMethodName = null, bool waitUntilBrokerClientsConnected = true)
     {
         if (_applicationFactory != null)
@@ -97,6 +99,7 @@ public sealed class TestApplicationHost : IDisposable
         logger?.LogInformation("Starting end-to-end test {TestMethod}", _testMethodName);
     }
 
+    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Test code")]
     public void Dispose()
     {
         ILogger<TestApplicationHost>? logger = ServiceProvider.GetService<ILogger<TestApplicationHost>>();

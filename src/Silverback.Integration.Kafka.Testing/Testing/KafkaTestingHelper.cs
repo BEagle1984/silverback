@@ -70,21 +70,20 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         if (_topics == null)
             throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
 
-        List<IInMemoryTopic> topics = _topics.Where(
+        List<IInMemoryTopic> topics = [.. _topics.Where(
                 topic =>
                     topic.Name == name &&
                     (bootstrapServers == null || string.Equals(
                         bootstrapServers,
                         topic.BootstrapServers,
-                        StringComparison.OrdinalIgnoreCase)))
-            .ToList();
+                        StringComparison.OrdinalIgnoreCase)))];
 
         switch (topics.Count)
         {
             case > 1:
                 throw new InvalidOperationException($"More than one topic '{name}' found. Try specifying the bootstrap servers.");
             case 0 when bootstrapServers == null:
-                string[] distinctBootstrapServers = _topics.Select(topic => topic.BootstrapServers).Distinct().ToArray();
+                string[] distinctBootstrapServers = [.. _topics.Select(topic => topic.BootstrapServers).Distinct()];
 
                 if (distinctBootstrapServers.Length == 1)
                     return GetTopic(name, distinctBootstrapServers[0]);
@@ -108,7 +107,7 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         return Task.WhenAll(
             _groups.Select(
                 group => group.WaitUntilAllMessagesAreConsumedAsync(
-                        endpointNames.Select(GetEndpointRawName).ToArray(),
+                        [.. endpointNames.Select(GetEndpointRawName)],
                         cancellationToken)
                     .AsTask()));
     }

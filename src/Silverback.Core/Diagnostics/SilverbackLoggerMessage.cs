@@ -2,10 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace Silverback.Diagnostics;
 
+[SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "The template is defined in the LogEvent and it is static")]
 internal static class SilverbackLoggerMessage
 {
     public static Action<ILogger, Exception?> Define(LogEvent logEvent) =>

@@ -25,6 +25,7 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
         _logLevelDictionary = logLevelDictionary;
     }
 
+    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Not trivial")]
     public void Log<TState>(
         LogLevel logLevel,
         EventId eventId,

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers;

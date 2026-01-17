@@ -44,9 +44,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
             })
         {
             _confluentProducer.SendOffsetsToTransaction(
-                consumerPipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>()
-                    .Select(offset => new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1)) // Commit next offset (+1)
-                    .ToArray(),
+                [.. consumerPipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>().Select(offset => new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1))],
                 kafkaConsumer.Client.GetConsumerGroupMetadata());
         }
 

@@ -26,8 +26,6 @@ internal class Publisher : IPublisher
 
     private readonly bool _isInServiceScope;
 
-    private ISilverbackContext? _context;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="Publisher" /> class.
     /// </summary>
@@ -60,7 +58,7 @@ internal class Publisher : IPublisher
     }
 
     /// <inheritdoc cref="IPublisher.Context" />
-    public ISilverbackContext Context => _context ??= _isInServiceScope
+    public ISilverbackContext Context => field ??= _isInServiceScope
         ? _serviceProvider.GetRequiredService<ISilverbackContext>() // use the scoped context only if the publisher is used in a service scope
         : new SilverbackContext(_serviceProvider); // otherwise create a transient one, but some stuff might not work as expected
 
@@ -70,7 +68,7 @@ internal class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
-        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait()).ToList();
+        [.. CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait())];
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, CancellationToken)" />
     public Task PublishAsync(object message, CancellationToken cancellationToken = default) =>
@@ -89,7 +87,7 @@ internal class Publisher : IPublisher
         object message,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false)).ToList();
+        [.. CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false))];
 
     private ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,
@@ -139,7 +137,7 @@ internal class Publisher : IPublisher
         if (!handled && throwIfUnhandled)
             throw new UnhandledMessageException(message);
 
-        return resultsCollection.Select(invocationResult => invocationResult.ReturnValue).ToList();
+        return [.. resultsCollection.Select(invocationResult => invocationResult.ReturnValue)];
     }
 
     private IEnumerable<TResult> CastResults<TResult>(IReadOnlyCollection<object?> results)
@@ -157,9 +155,7 @@ internal class Publisher : IPublisher
         object message,
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken) =>
-        (await InvokeExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))
-        .Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))
-        .ToList();
+        [.. (await InvokeExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false)).Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))];
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
@@ -174,10 +170,9 @@ internal class Publisher : IPublisher
         if (methods.Count == 1)
             return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
 
-        return (await methods
+        return [.. await methods
                 .SelectAsync(InvokeAsync)
-                .ConfigureAwait(false))
-            .ToList();
+                .ConfigureAwait(false)];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
             SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
@@ -196,10 +191,9 @@ internal class Publisher : IPublisher
         if (methods.Count == 1)
             return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
 
-        return (await methods
+        return [.. await methods
                 .ParallelSelectAsync(InvokeAsync)
-                .ConfigureAwait(false))
-            .ToList();
+                .ConfigureAwait(false)];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
             SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);

@@ -20,7 +20,7 @@ public interface IKafkaTestingHelper : ITestingHelper
     /// <returns>
     ///     The collection of <see cref="IMockedConsumerGroup" />.
     /// </returns>
-    public IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups { get; }
+    IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups { get; }
 
     /// <summary>
     ///     Returns the <see cref="IMockedConsumerGroup" /> representing the consumer group with the specified id.

@@ -568,6 +568,7 @@ internal static class IntegrationLoggerExtensions
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Optimized via IsEnabled")]
     public static void LogTrace(this ISilverbackLogger logger, string message, Func<object[]>? argumentsProvider = null)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.Tracing))
@@ -583,6 +584,7 @@ internal static class IntegrationLoggerExtensions
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging", Justification = "Optimized via IsEnabled")]
     public static void LogTrace(
         this ISilverbackLogger logger,
         Exception? exception,

@@ -86,7 +86,7 @@ public class DomainEventsPublisher
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     private async ValueTask PublishDomainEventsAsync(ExecutionFlow executionFlow)
     {
-        IReadOnlyCollection<object> events = GetDomainEvents();
+        List<object> events = GetDomainEvents();
 
         // Keep publishing events fired inside the event handlers
         while (events.Count != 0)
@@ -101,7 +101,7 @@ public class DomainEventsPublisher
     }
 
     private List<object> GetDomainEvents() =>
-        _entitiesProvider.Invoke().SelectMany(
+        [.. _entitiesProvider.Invoke().SelectMany(
             entity =>
             {
                 List<object>? selected = _eventsSelector(entity)?.ToList();
@@ -110,5 +110,5 @@ public class DomainEventsPublisher
                 _clearEventsAction(entity);
 
                 return selected ?? Enumerable.Empty<object>();
-            }).ToList();
+            })];
 }

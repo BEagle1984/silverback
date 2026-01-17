@@ -21,10 +21,10 @@ public interface IKafkaTransaction : IDisposable
     /// <summary>
     ///     Commits the transaction.
     /// </summary>
-    public void Commit();
+    void Commit();
 
     /// <summary>
     ///     Aborts the transaction.
     /// </summary>
-    public void Abort();
+    void Abort();
 }

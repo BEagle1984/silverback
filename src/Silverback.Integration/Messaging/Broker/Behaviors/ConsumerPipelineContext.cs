@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,16 +19,15 @@ namespace Silverback.Messaging.Broker.Behaviors;
 /// </summary>
 public sealed class ConsumerPipelineContext : IDisposable
 {
-    private readonly object _disposeLock = new();
+    private readonly System.Threading.Lock _disposeLock = new();
 
     private IServiceScope? _serviceScope;
-
-    private IConsumerTransactionManager? _transactionManager;
 
     private IRawInboundEnvelope _envelope;
 
     private bool _isDisposed;
 
+    [SuppressMessage("Style", "IDE0032:Use auto property", Justification = "Backing field must be set to null in reset")]
     private ISilverbackContext? _silverbackContext;
 
     /// <summary>
@@ -104,26 +104,25 @@ public sealed class ConsumerPipelineContext : IDisposable
     {
         get
         {
-            if (_transactionManager == null)
+            if (field == null)
                 throw new InvalidOperationException("The transaction manager is not initialized.");
 
-            return _transactionManager;
+            return field;
         }
 
         internal set
         {
-            if (_transactionManager != null)
+            if (field != null)
                 throw new InvalidOperationException("The transaction manager is already initialized.");
 
-            _transactionManager = value;
+            field = value;
         }
     }
 
     /// <summary>
     ///     Gets the <see cref="ISilverbackContext" />.
     /// </summary>
-    public ISilverbackContext SilverbackContext =>
-        _silverbackContext ??= ServiceProvider.GetRequiredService<ISilverbackContext>();
+    public ISilverbackContext SilverbackContext => _silverbackContext ??= ServiceProvider.GetRequiredService<ISilverbackContext>();
 
     /// <summary>
     ///     Gets or sets the envelopes containing the messages being processed.

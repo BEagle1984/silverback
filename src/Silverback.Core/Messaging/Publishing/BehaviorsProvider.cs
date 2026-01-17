@@ -32,5 +32,5 @@ public class BehaviorsProvider : IBehaviorsProvider
 
     // Reverse the behaviors order since they will be put in a Stack<T>
     private IReadOnlyCollection<IBehavior> GetBehaviors() =>
-        _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().Reverse().ToList();
+        _behaviors ??= [.. _serviceProvider.GetServices<IBehavior>().SortBySortIndex().Reverse()];
 }

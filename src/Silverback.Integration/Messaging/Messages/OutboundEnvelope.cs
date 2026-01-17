@@ -73,7 +73,7 @@ internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,
-        Headers = new MessageHeaderCollection(Headers)
+        Headers = [.. Headers]
     };
 
     public IOutboundEnvelope<TNewMessage> CloneReplacingMessage<TNewMessage>(TNewMessage newMessage)

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -9,10 +10,11 @@ namespace Silverback.Messaging.Messages;
 
 internal abstract record RawBrokerEnvelope : IRawBrokerEnvelope
 {
+    [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Collection initializer doesn't work with nullable argument")]
     protected RawBrokerEnvelope(Stream? rawMessage, IReadOnlyCollection<MessageHeader>? headers)
     {
         RawMessage = rawMessage;
-        Headers = new MessageHeaderCollection(headers);
+        Headers = headers == null ? [] : [.. headers];
     }
 
     public MessageHeaderCollection Headers { get; init; }

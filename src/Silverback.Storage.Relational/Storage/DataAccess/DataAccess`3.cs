@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         using DbCommandWrapper wrapper = GetCommand(sql, parameters, timeout);
         using DbDataReader reader = wrapper.Command.ExecuteReader();
 
-        return Map(reader, projection).ToList();
+        return [.. Map(reader, projection)];
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in the returned enumerable")]

@@ -456,7 +456,7 @@ public partial class DomainEventsTests
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
-            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
             .InitDbContext<TestDbContext>()
             .AddSilverback()
             .AddDelegateSubscriber<ValueChangedDomainEvent, IEnumerable<IMessage>>(HandleDomainEvent)

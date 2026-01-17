@@ -164,7 +164,7 @@ public class ValidatorProducerBehaviorTests
 
     [Theory]
     [MemberData(nameof(HandleAsync_ShouldNotLog_WhenModeNone_TestData))]
-    public async Task HandleAsync_ShouldNotLog_WhenModeNone(IIntegrationMessage message)
+    public async Task HandleAsync_ShouldNotLog_WhenModeNone(TestValidationMessage message)
     {
         TestProducerEndpointConfiguration configuration = new("topic1")
         {
@@ -228,7 +228,7 @@ public class ValidatorProducerBehaviorTests
 
     [Theory]
     [MemberData(nameof(HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData))]
-    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(IIntegrationMessage message, string expectedValidationMessage)
+    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(TestValidationMessage message, string expectedValidationMessage)
     {
         TestProducerEndpointConfiguration configuration = new("topic1")
         {

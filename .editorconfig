@@ -39,8 +39,12 @@ dotnet_diagnostic.SA1309.severity = none
 dotnet_diagnostic.SA1408.severity = none
 # SA1413: The last statement in a multi-line C# initializer or list is missing a trailing comma
 dotnet_diagnostic.SA1413.severity = none
+# SA1500:Braces for multi-line statements should not share line - causes false positives with .net 10 implicit fields syntax
+dotnet_diagnostic.SA1500.severity = none
 # SA1503: The opening and closing curly brackets for a C# statement have been omitted
 dotnet_diagnostic.SA1503.severity = none
+# SA1513:Closing brace should be followed by blank line - causes false positives with .net 10 implicit fields syntax
+dotnet_diagnostic.SA1513.severity = none
 
 # Microsoft.CodeAnalysis.NetAnalyzers
 # CA1716: Identifiers should not match keywords

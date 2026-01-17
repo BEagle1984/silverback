@@ -115,12 +115,10 @@ internal static class KafkaEventsBinder
                 IEnumerable<TopicPartitionOffset>? result = callback.OnPartitionsAssigned(topicPartitions, consumerWrapper.Consumer);
 
                 if (result != null)
-                    topicPartitionOffsets = result.ToList();
+                    topicPartitionOffsets = [.. result];
             });
 
-        topicPartitionOffsets ??= topicPartitions
-            .Select(partition => new TopicPartitionOffset(partition, Offset.Unset))
-            .ToList();
+        topicPartitionOffsets ??= [.. topicPartitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset))];
 
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {

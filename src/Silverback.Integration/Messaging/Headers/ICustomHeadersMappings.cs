@@ -24,7 +24,7 @@ public interface ICustomHeadersMappings
     /// <param name="customHeaderName">
     ///     The custom header name to be used instead of the default.
     /// </param>
-    public void Add(string defaultHeaderName, string customHeaderName);
+    void Add(string defaultHeaderName, string customHeaderName);
 
     /// <summary>
     ///     Applies the configured mappings to the specified collection of <see cref="MessageHeader" />.
@@ -32,7 +32,7 @@ public interface ICustomHeadersMappings
     /// <param name="headers">
     ///     The collection of <see cref="MessageHeader" /> to be mapped.
     /// </param>
-    public void Apply(MessageHeaderCollection headers);
+    void Apply(MessageHeaderCollection headers);
 
     /// <summary>
     ///     Reverts the headers in the specified collection of <see cref="MessageHeader" /> to the default header names.
@@ -40,5 +40,5 @@ public interface ICustomHeadersMappings
     /// <param name="headers">
     ///     The collection of <see cref="MessageHeader" /> to be mapped.
     /// </param>
-    public void Revert(MessageHeaderCollection headers);
+    void Revert(MessageHeaderCollection headers);
 }

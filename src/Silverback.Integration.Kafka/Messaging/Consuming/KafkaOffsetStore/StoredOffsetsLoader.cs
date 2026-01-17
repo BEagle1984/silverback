@@ -34,7 +34,7 @@ internal class StoredOffsetsLoader
     public IReadOnlyCollection<TopicPartitionOffset> ApplyStoredOffsets(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets) =>
         _configuration.ClientSideOffsetStore == null
             ? topicPartitionOffsets
-            : topicPartitionOffsets.Select(ApplyStoredOffset).ToList();
+            : [.. topicPartitionOffsets.Select(ApplyStoredOffset)];
 
     public TopicPartitionOffset ApplyStoredOffset(TopicPartitionOffset topicPartitionOffset)
     {

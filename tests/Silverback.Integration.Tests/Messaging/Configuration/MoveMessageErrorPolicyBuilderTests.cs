@@ -18,7 +18,7 @@ public class MoveMessageErrorPolicyBuilderTests
     {
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
-        builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
+        builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
@@ -50,7 +50,7 @@ public class MoveMessageErrorPolicyBuilderTests
     {
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
-        builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
+        builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);

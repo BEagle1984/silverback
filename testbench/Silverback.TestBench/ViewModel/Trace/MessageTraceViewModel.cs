@@ -15,8 +15,6 @@ public class MessageTraceViewModel : ViewModelBase
 
     private MessageTraceStatus _status;
 
-    private MessageTraceEntry? _selectedEntry;
-
     public MessageTraceViewModel(string messageId, TopicViewModel topic, MessageTraceStatus status)
     {
         MessageId = messageId;
@@ -43,8 +41,8 @@ public class MessageTraceViewModel : ViewModelBase
 
     public MessageTraceEntry? SelectedEntry
     {
-        get => _selectedEntry;
-        set => SetProperty(ref _selectedEntry, value, nameof(SelectedEntry));
+        get;
+        set => SetProperty(ref field, value, nameof(SelectedEntry));
     }
 
     public void AddEntry(MessageTraceEntry entry)

@@ -435,7 +435,7 @@ public class MqttClientsConfigurationBuilderTests
 
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
-        builder.UseEnhancedAuthenticationHandler(typeof(TestEnhancedAuthenticationHandler));
+        builder.UseEnhancedAuthenticationHandler<TestEnhancedAuthenticationHandler>();
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint(serviceProvider);
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));

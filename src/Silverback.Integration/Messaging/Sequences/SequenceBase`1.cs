@@ -34,7 +34,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly CancellationTokenSource _abortCancellationTokenSource = new();
 
-    private readonly object _abortLockObject = new();
+    private readonly System.Threading.Lock _abortLockObject = new();
 
     private readonly ISilverbackLogger<SequenceBase<TEnvelope>> _logger;
 

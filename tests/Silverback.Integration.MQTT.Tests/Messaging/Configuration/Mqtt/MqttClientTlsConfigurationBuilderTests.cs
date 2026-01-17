@@ -190,24 +190,26 @@ public class MqttClientTlsConfigurationBuilderTests
     public void WithCertificateValidationHandler_ShouldSetHandler()
     {
         MqttClientTlsConfigurationBuilder builder = new();
-        Func<MqttClientCertificateValidationEventArgs, bool> handler = _ => true;
+        static bool Handler(MqttClientCertificateValidationEventArgs args) => true;
 
-        builder.WithCertificateValidationHandler(handler);
+        builder.WithCertificateValidationHandler(Handler);
 
         MqttClientTlsConfiguration configuration = builder.Build();
-        configuration.CertificateValidationHandler.ShouldBeSameAs(handler);
+        configuration.CertificateValidationHandler.ShouldBeSameAs((Func<MqttClientCertificateValidationEventArgs, bool>)Handler);
     }
 
     [Fact]
     public void WithCertificateSelectionHandler_ShouldSetHandler()
     {
         MqttClientTlsConfigurationBuilder builder = new();
-        Func<MqttClientCertificateSelectionEventArgs, X509Certificate> handler = _ => new X509Certificate2(new byte[42]);
+#pragma warning disable SYSLIB0057 // Type or member is obsolete
+        static X509Certificate Handler(MqttClientCertificateSelectionEventArgs args) => new X509Certificate2(new byte[42]);
+#pragma warning restore SYSLIB0057 // Type or member is obsolete
 
-        builder.WithCertificateSelectionHandler(handler);
+        builder.WithCertificateSelectionHandler(Handler);
 
         MqttClientTlsConfiguration configuration = builder.Build();
-        configuration.CertificateSelectionHandler.ShouldBeSameAs(handler);
+        configuration.CertificateSelectionHandler.ShouldBeSameAs((Func<MqttClientCertificateSelectionEventArgs, X509Certificate>)Handler);
     }
 
     [Fact]

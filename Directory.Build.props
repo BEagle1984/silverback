@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup Label="Package information">
-    <BaseVersionSuffix>-beta.20</BaseVersionSuffix>
+    <BaseVersionSuffix>-beta.21</BaseVersionSuffix>
     <BaseVersion>5.0.0$(BaseVersionSuffix)</BaseVersion>
     <DatabasePackagesRevision>1</DatabasePackagesRevision>
     <DatabasePackagesVersionSuffix>$(BaseVersionSuffix)</DatabasePackagesVersionSuffix>
     <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
   <PropertyGroup Label="Build">
-    <DefaultTargetFrameworks>net8.0</DefaultTargetFrameworks>
-    <CurrentLatestFramework>net8.0</CurrentLatestFramework>
+    <DefaultTargetFrameworks>net10.0</DefaultTargetFrameworks>
+    <CurrentLatestFramework>net10.0</CurrentLatestFramework>
     <TestsTargetFrameworks>$(CurrentLatestFramework)</TestsTargetFrameworks>
     <SamplesTargetFramework>$(CurrentLatestFramework)</SamplesTargetFramework>
     <ToolsTargetFramework>$(CurrentLatestFramework)</ToolsTargetFramework>

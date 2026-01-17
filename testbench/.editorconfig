@@ -38,8 +38,12 @@ dotnet_diagnostic.SA1309.severity = none
 dotnet_diagnostic.SA1408.severity = none
 # SA1413: The last statement in a multi-line C# initializer or list is missing a trailing comma
 dotnet_diagnostic.SA1413.severity = none
+# SA1500:Braces for multi-line statements should not share line - causes false positives with .net 10 implicit fields syntax
+dotnet_diagnostic.SA1500.severity = none
 # SA1503: The opening and closing curly brackets for a C# statement have been omitted
 dotnet_diagnostic.SA1503.severity = none
+# SA1513:Closing brace should be followed by blank line - causes false positives with .net 10 implicit fields syntax
+dotnet_diagnostic.SA1513.severity = none
 # SA1600: A C# code element is missing a documentation header
 dotnet_diagnostic.SA1600.severity = none
 # SA1601: A C# partial element is missing a documentation header.
@@ -52,12 +56,16 @@ dotnet_diagnostic.SA1602.severity = none
 dotnet_diagnostic.CA1062.severity = none
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none
 # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.CA1716.severity = none
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none
 # CA1852: Seal internal types
 dotnet_diagnostic.CA1852.severity = none
+# CA1873: Avoid potentially expensive logging
+dotnet_diagnostic.CA1873.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
 # CA5394: Do not use insecure randomness

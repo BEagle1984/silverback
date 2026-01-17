@@ -54,7 +54,7 @@ public class OutboundEnvelopeBuilder<TMessage>
     /// </returns>
     public OutboundEnvelopeBuilder<TMessage> WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
     {
-        _headers = new MessageHeaderCollection(headers);
+        _headers = headers == null ? [] : [.. headers];
         return this;
     }
 

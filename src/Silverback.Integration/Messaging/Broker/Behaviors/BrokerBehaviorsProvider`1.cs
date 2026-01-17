@@ -30,9 +30,8 @@ public class BrokerBehaviorsProvider<TBehavior> : IBrokerBehaviorsProvider<TBeha
 
     /// <inheritdoc cref="IBrokerBehaviorsProvider{TBehavior}.GetBehaviorsList" />
     public IReadOnlyList<TBehavior> GetBehaviorsList() =>
-        _behaviors ??= _serviceProvider
+        _behaviors ??= [.. _serviceProvider
             .GetServices<IBrokerBehavior>()
             .OfType<TBehavior>()
-            .SortBySortIndex()
-            .ToList();
+            .SortBySortIndex()];
 }

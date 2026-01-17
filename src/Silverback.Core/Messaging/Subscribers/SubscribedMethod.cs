@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
@@ -18,10 +17,6 @@ namespace Silverback.Messaging.Subscribers;
 public class SubscribedMethod
 {
     private readonly Func<IServiceProvider, object> _targetTypeFactory;
-
-    private Type? _messageType;
-
-    private IMessageArgumentResolver? _messageArgumentResolver;
 
     private IAdditionalArgumentResolver[]? _additionalArgumentsResolvers;
 
@@ -79,21 +74,29 @@ public class SubscribedMethod
     public SubscriptionOptions Options { get; }
 
     /// <summary>
-    ///     Gets the type of the message (or envelope) being subscribed.
-    /// </summary>
-    public Type MessageType => _messageType ?? throw new InvalidOperationException("Not initialized.");
-
-    /// <summary>
-    ///     Gets the <see cref="IMessageArgumentResolver" /> to be used to invoke the method.
-    /// </summary>
-    public IMessageArgumentResolver MessageArgumentResolver =>
-        _messageArgumentResolver ?? throw new InvalidOperationException("Not initialized.");
-
-    /// <summary>
     ///     Gets the list of <see cref="IAdditionalArgumentResolver" /> to be used to invoke the method.
     /// </summary>
     public IReadOnlyList<IAdditionalArgumentResolver> AdditionalArgumentsResolvers =>
         _additionalArgumentsResolvers ?? throw new InvalidOperationException("Not initialized.");
+
+    /// <summary>
+    ///     Gets the type of the message (or envelope) being subscribed.
+    /// </summary>
+    public Type MessageType
+    {
+        get => field ?? throw new InvalidOperationException("Not initialized.");
+        private set;
+    }
+
+    /// <summary>
+    ///     Gets the <see cref="IMessageArgumentResolver" /> to be used to invoke the method.
+    /// </summary>
+    public IMessageArgumentResolver MessageArgumentResolver
+    {
+        get =>
+            field ?? throw new InvalidOperationException("Not initialized.");
+        private set;
+    }
 
     /// <summary>
     ///     Resolves an instance of the type declaring the subscribed method.
@@ -110,9 +113,9 @@ public class SubscribedMethod
     {
         ArgumentsResolversRepository argumentsResolver = serviceProvider.GetRequiredService<ArgumentsResolversRepository>();
 
-        (_messageArgumentResolver, _messageType) = argumentsResolver.GetMessageArgumentResolver(this);
+        (MessageArgumentResolver, MessageType) = argumentsResolver.GetMessageArgumentResolver(this);
 
-        _additionalArgumentsResolvers = argumentsResolver.GetAdditionalArgumentsResolvers(this).ToArray();
+        _additionalArgumentsResolvers = [.. argumentsResolver.GetAdditionalArgumentsResolvers(this)];
 
         return this;
     }

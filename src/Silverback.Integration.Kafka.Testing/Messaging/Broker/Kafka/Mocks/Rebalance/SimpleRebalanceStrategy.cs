@@ -29,8 +29,8 @@ internal class SimpleRebalanceStrategy : IRebalanceStrategy
 
         foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
         {
-            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = partitionAssignments
-                .Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key)).ToList();
+            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic =
+                [.. partitionAssignments.Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key))];
 
             AssignTopicPartitions(topicPartitions, partitionAssignmentsForTopic);
         }
@@ -47,7 +47,7 @@ internal class SimpleRebalanceStrategy : IRebalanceStrategy
 
     private static void AssignTopicPartitions(
         IEnumerable<TopicPartition> topicPartitions,
-        IReadOnlyList<PartitionAssignment> partitionAssignments)
+        List<SubscriptionPartitionAssignment> partitionAssignments)
     {
         int index = -1;
 

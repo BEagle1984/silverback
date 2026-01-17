@@ -28,7 +28,7 @@ public partial class MessageWrapperTests
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()),
+                    capturedEnvelopes1 = [.. envelopes]),
             Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(
@@ -76,7 +76,7 @@ public partial class MessageWrapperTests
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()),
+                    capturedEnvelopes1 = [.. envelopes]),
             Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(
@@ -147,7 +147,7 @@ public partial class MessageWrapperTests
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()),
+                    capturedEnvelopes1 = [.. envelopes]),
             Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(

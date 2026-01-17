@@ -71,7 +71,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         try
         {
             int index = 0;
-            await foreach (OutboxMessage outboxMessage in outboxMessages)
+            await foreach (OutboxMessage outboxMessage in outboxMessages.ConfigureAwait(false))
             {
                 _logger.LogProcessingOutboxStoredMessage(++index);
 

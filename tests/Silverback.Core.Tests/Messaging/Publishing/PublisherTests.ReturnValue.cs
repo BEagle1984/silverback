@@ -295,8 +295,8 @@ public partial class PublisherTests
         IReadOnlyCollection<IAsyncEnumerable<string>> syncResults = publisher.Publish<IAsyncEnumerable<string>>(new TestQueryThree());
         IReadOnlyCollection<IAsyncEnumerable<string>> asyncResults = await publisher.PublishAsync<IAsyncEnumerable<string>>(new TestQueryThree());
 
-        string[][] materializedSyncResults = (await syncResults.SelectAsync(results => results.ToArrayAsync())).ToArray();
-        string[][] materializedAsyncResults = (await asyncResults.SelectAsync(results => results.ToArrayAsync())).ToArray();
+        string[][] materializedSyncResults = [.. await syncResults.SelectAsync(results => results.ToArrayAsync())];
+        string[][] materializedAsyncResults = [.. await asyncResults.SelectAsync(results => results.ToArrayAsync())];
 
         materializedSyncResults.ShouldBe(
         [

@@ -27,7 +27,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private readonly CancellationTokenSource _abortCancellationTokenSource = new();
 
-    private readonly object _completeLock = new();
+    private readonly System.Threading.Lock _completeLock = new();
 
     private TMessage? _current;
 

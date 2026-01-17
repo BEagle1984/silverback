@@ -178,13 +178,13 @@ public partial class ChunkingTests
             byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
             await producer.RawProduceAsync(
-                rawMessage.Take(10).ToArray(),
+                [.. rawMessage.Take(10)],
                 HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
             await producer.RawProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
+                [.. rawMessage.Skip(10).Take(10)],
                 HeadersHelper.GetChunkHeaders("1", 1, false, typeof(TestEventOne)));
             await producer.RawProduceAsync(
-                rawMessage.Skip(20).ToArray(),
+                [.. rawMessage.Skip(20)],
                 HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
         }
 
@@ -225,13 +225,13 @@ public partial class ChunkingTests
             byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
             await producer.RawProduceAsync(
-                rawMessage.Take(10).ToArray(),
+                [.. rawMessage.Take(10)],
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
             await producer.RawProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
+                [.. rawMessage.Skip(10).Take(10)],
                 HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
             await producer.RawProduceAsync(
-                rawMessage.Skip(20).ToArray(),
+                [.. rawMessage.Skip(20)],
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
         }
 
@@ -272,35 +272,35 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(10).Take(10).ToArray(),
+            [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(20).ToArray(),
+            [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

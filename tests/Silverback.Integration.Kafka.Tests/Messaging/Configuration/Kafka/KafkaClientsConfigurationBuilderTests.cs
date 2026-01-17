@@ -213,7 +213,7 @@ public class KafkaClientsConfigurationBuilderTests
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        KafkaConsumer[] consumers = serviceProvider.GetRequiredService<ConsumerCollection>().Cast<KafkaConsumer>().ToArray();
+        KafkaConsumer[] consumers = [.. serviceProvider.GetRequiredService<ConsumerCollection>().Cast<KafkaConsumer>()];
         consumers.Length.ShouldBe(1);
         consumers[0].Configuration.Endpoints.Count.ShouldBe(2);
         consumers[0].Configuration.Endpoints.First().TopicPartitions.Count.ShouldBe(1);

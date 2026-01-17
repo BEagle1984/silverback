@@ -60,19 +60,19 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.Take(10).ToArray(),
+            [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(10).Take(10).ToArray(),
+            [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3));
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("6", 0));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("6", 1));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("6", 2, true));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -128,7 +128,7 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage.Take(10).ToArray(),
+            [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0));
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 1);
@@ -137,7 +137,7 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(0);
 
         await producer.RawProduceAsync(
-            rawMessage.Skip(10).Take(10).ToArray(),
+            [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1));
 
         await AsyncTestingUtil.WaitAsync(() => aborted && DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2);
@@ -145,13 +145,13 @@ public partial class ChunkingTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(2);
 
         await producer.RawProduceAsync(
-            rawMessage.Take(10).ToArray(),
+            [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0));
         await producer.RawProduceAsync(
-            rawMessage.Skip(10).Take(10).ToArray(),
+            [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("2", 1));
         await producer.RawProduceAsync(
-            rawMessage.Skip(20).ToArray(),
+            [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -192,19 +192,19 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.Skip(10).Take(10).ToArray(),
+            [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
-            rawMessage1.Skip(20).ToArray(),
+            [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
-            rawMessage2.Take(10).ToArray(),
+            [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(10).Take(10).ToArray(),
+            [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("2", 1, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
-            rawMessage2.Skip(20).ToArray(),
+            [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(BinaryMessage)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -254,10 +254,10 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage.Take(10).ToArray(),
+            [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
-            rawMessage.Skip(10).Take(10).ToArray(),
+            [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3));
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 2);
@@ -313,10 +313,10 @@ public partial class ChunkingTests
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage.Take(5).ToArray(),
+            [.. rawMessage.Take(5)],
             HeadersHelper.GetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
-            rawMessage.Skip(5).Take(5).ToArray(),
+            [.. rawMessage.Skip(5).Take(5)],
             HeadersHelper.GetChunkHeaders("1", 1, 3));
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.RawInboundEnvelopes.Count >= 2);
@@ -327,7 +327,7 @@ public partial class ChunkingTests
         aborted.ShouldBe(1);
 
         await producer.RawProduceAsync(
-            rawMessage.Skip(10).ToArray(),
+            [.. rawMessage.Skip(10)],
             HeadersHelper.GetChunkHeaders("1", 2, 3));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

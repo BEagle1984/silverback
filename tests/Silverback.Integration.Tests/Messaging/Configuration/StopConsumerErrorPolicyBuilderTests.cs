@@ -18,7 +18,7 @@ public class StopConsumerErrorPolicyBuilderTests
     {
         StopConsumerErrorPolicyBuilder builder = new();
 
-        builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
+        builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         StopConsumerErrorPolicy policy = (StopConsumerErrorPolicy)builder.Build();
         policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
@@ -50,7 +50,7 @@ public class StopConsumerErrorPolicyBuilderTests
     {
         StopConsumerErrorPolicyBuilder builder = new();
 
-        builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
+        builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         StopConsumerErrorPolicy policy = (StopConsumerErrorPolicy)builder.Build();
         policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);

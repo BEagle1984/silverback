@@ -18,7 +18,7 @@ namespace Silverback;
 /// </typeparam>
 public class AsyncEvent<TArg>
 {
-    private readonly object _lockObject = new();
+    private readonly System.Threading.Lock _lockObject = new();
 
     private List<Func<TArg, ValueTask>>? _handlers;
 

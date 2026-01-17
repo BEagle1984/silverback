@@ -38,7 +38,7 @@ public class StringMessageDeserializerBuilderTests
     {
         StringMessageDeserializerBuilder builder = new();
 
-        IMessageDeserializer deserializer = builder.UseDiscriminator(typeof(TestEventOne)).Build();
+        IMessageDeserializer deserializer = builder.UseDiscriminator<TestEventOne>().Build();
 
         deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventOne>>>();
     }

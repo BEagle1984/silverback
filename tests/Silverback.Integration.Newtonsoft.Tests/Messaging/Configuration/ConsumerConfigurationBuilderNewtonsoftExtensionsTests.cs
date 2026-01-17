@@ -52,7 +52,7 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration configuration = builder
-            .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel(typeof(TestEventOne)))
+            .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel<TestEventOne>())
             .Build();
 
         configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();

@@ -133,7 +133,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         MqttClientOptions options = MapCore();
         options.ClientId = ClientId;
         options.ProtocolVersion = ProtocolVersion;
-        options.UserProperties = UserProperties.Select(property => property.ToMqttNetType()).ToList();
+        options.UserProperties = [.. UserProperties.Select(property => property.ToMqttNetType())];
         options.ChannelOptions = Channel?.ToMqttNetType();
         WillMessage?.MapToMqttNetType(options);
 
@@ -165,7 +165,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
     private void CheckDuplicateConsumerTopics()
     {
-        List<string> topics = ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Distinct()).ToList();
+        List<string> topics = [.. ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Distinct())];
 
         if (topics.Count != topics.Distinct().Count())
             throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");

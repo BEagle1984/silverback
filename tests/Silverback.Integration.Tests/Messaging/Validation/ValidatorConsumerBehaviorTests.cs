@@ -169,7 +169,7 @@ public class ValidatorConsumerBehaviorTests
 
     [Theory]
     [MemberData(nameof(HandleAsync_ShouldNotLog_WhenModeNone_TestData))]
-    public async Task HandleAsync_ShouldNotLog_WhenModeNone(IIntegrationMessage message)
+    public async Task HandleAsync_ShouldNotLog_WhenModeNone(TestValidationMessage message)
     {
         TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
@@ -234,7 +234,7 @@ public class ValidatorConsumerBehaviorTests
 
     [Theory]
     [MemberData(nameof(HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData))]
-    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(IIntegrationMessage message, string expectedValidationMessage)
+    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(TestValidationMessage message, string expectedValidationMessage)
     {
         TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {

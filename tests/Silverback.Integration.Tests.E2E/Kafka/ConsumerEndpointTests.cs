@@ -112,8 +112,8 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
-        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
+        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
@@ -154,8 +154,8 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(10);
 
-        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
-        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] eventOneEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
+        IInboundEnvelope<TestEventTwo>[] eventTwoEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
@@ -207,17 +207,17 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
+        KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         consumers.Length.ShouldBe(2);
         consumers[0].Client.Assignment.Count.ShouldBe(2);
         consumers[1].Client.Assignment.Count.ShouldBe(2);
 
-        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         inboundEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
             ignoreOrder: true);
-        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
-        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
+        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0])];
+        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1])];
 
         consumer1Envelopes.Length.ShouldBe(4);
         consumer2Envelopes.Length.ShouldBe(4);
@@ -255,15 +255,15 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        KafkaConsumer[] consumers = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().ToArray();
+        KafkaConsumer[] consumers = [.. Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>()];
         consumers.Length.ShouldBe(2);
         consumers[0].Client.Assignment.Count.ShouldBe(4);
         consumers[1].Client.Assignment.Count.ShouldBe(4);
 
-        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
+        IInboundEnvelope<TestEventOne>[] inboundEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         inboundEnvelopes.Length.ShouldBe(16);
-        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
-        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
+        IInboundEnvelope<TestEventOne>[] consumer1Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0])];
+        IInboundEnvelope<TestEventOne>[] consumer2Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1])];
 
         consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],

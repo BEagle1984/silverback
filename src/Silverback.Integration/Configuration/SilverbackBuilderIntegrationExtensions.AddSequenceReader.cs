@@ -72,7 +72,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddTransient(typeof(ISequenceReader), implementationFactory);
+        builder.Services.AddTransient(implementationFactory);
 
         return builder;
     }
@@ -135,7 +135,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddSingleton(typeof(ISequenceReader), implementationFactory);
+        builder.Services.AddSingleton(implementationFactory);
 
         return builder;
     }
@@ -157,7 +157,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Services.AddSingleton(typeof(ISequenceReader), implementationInstance);
+        builder.Services.AddSingleton(implementationInstance);
 
         return builder;
     }

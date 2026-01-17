@@ -58,12 +58,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        _subscribedTopicsFilters = Configuration.ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Select(topic =>
+        _subscribedTopicsFilters = [.. Configuration.ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Select(topic =>
                 new MqttTopicFilterBuilder()
                     .WithTopic(topic)
                     .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
-                    .Build()))
-            .ToArray();
+                    .Build()))];
 
         _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
     }
@@ -102,7 +101,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             ? _mqttClient.UnsubscribeAsync(
                 new MqttClientUnsubscribeOptions
                 {
-                    TopicFilters = _subscribedTopicsFilters.Select(filter => filter.Topic).ToList()
+                    TopicFilters = [.. _subscribedTopicsFilters.Select(filter => filter.Topic)]
                 })
             : Task.CompletedTask;
 

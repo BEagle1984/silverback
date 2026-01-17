@@ -21,14 +21,6 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 {
     internal const string UnsetGroupId = "not-set";
 
-    private readonly bool _commitOffsets = true;
-
-    private readonly bool _sendOffsetsToTransaction;
-
-    private readonly bool _processPartitionsIndependently = true;
-
-    private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints = ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
-
     /// <summary>
     ///     Gets the client group id. All clients sharing the same group id belong to the same group. The default is <c>null</c>
     ///     (which will internally be replaced with <c>"not-set"</c> since the underlying library requires a value).
@@ -40,10 +32,10 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// </summary>
     public bool CommitOffsets
     {
-        get => _commitOffsets;
+        get;
         init
         {
-            _commitOffsets = value;
+            field = value;
 
             if (!value)
             {
@@ -51,7 +43,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
                 CommitOffsetEach = null;
             }
         }
-    }
+    } = true;
 
     /// <summary>
     ///     Gets the settings for the <see cref="IKafkaOffsetStore" /> to be used to store the offsets. The stored offsets will be used during
@@ -78,10 +70,10 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// </summary>
     public bool SendOffsetsToTransaction
     {
-        get => _sendOffsetsToTransaction;
+        get;
         init
         {
-            _sendOffsetsToTransaction = value;
+            field = value;
 
             if (value)
                 CommitOffsets = false;
@@ -105,15 +97,15 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// </remarks>
     public bool ProcessPartitionsIndependently
     {
-        get => _processPartitionsIndependently;
+        get;
         init
         {
-            _processPartitionsIndependently = value;
+            field = value;
 
             if (!value)
                 MaxDegreeOfParallelism = 1;
         }
-    }
+    } = true;
 
     /// <summary>
     ///     Gets the maximum number of incoming message that can be processed concurrently. Up to a
@@ -151,13 +143,13 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// </summary>
     public IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> Endpoints
     {
-        get => _endpoints;
+        get;
         init
         {
-            _endpoints = value;
-            IsStaticAssignment = _endpoints is { Count: >= 1 } && _endpoints.First().IsStaticAssignment;
+            field = value;
+            IsStaticAssignment = field is { Count: >= 1 } && field.First().IsStaticAssignment;
         }
-    }
+    } = ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
 
     /// <summary>
     ///     Gets a value indicating whether the consumer is configured with a static partition assignment.
@@ -181,7 +173,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (MaxDegreeOfParallelism < 1)
             throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater or equal to 1.");
 
-        if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
+        if (MaxDegreeOfParallelism > 1 && !ProcessPartitionsIndependently)
             throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.");
 
         if (BackpressureLimit < 1)
@@ -223,7 +215,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         static IEnumerable<string> GetDistinctTopicNames(KafkaConsumerEndpointConfiguration endpoint) =>
             endpoint.TopicPartitions.Select(topicPartition => topicPartition.Topic).Distinct();
 
-        List<string> topics = Endpoints.SelectMany(GetDistinctTopicNames).ToList();
+        List<string> topics = [.. Endpoints.SelectMany(GetDistinctTopicNames)];
 
         if (topics.Count != topics.Distinct().Count())
             throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");

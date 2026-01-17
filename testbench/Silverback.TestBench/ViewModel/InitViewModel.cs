@@ -28,18 +28,6 @@ public class InitViewModel : ViewModelBase
 
     private readonly App _silverbackTestBenchApp;
 
-    private bool _rebuildDockerImages;
-
-    private bool _recreateAllTopics = true;
-
-    private bool _clearLogs;
-
-    private bool _isInitializing;
-
-    private double _progress;
-
-    private string? _progressMessage;
-
     public InitViewModel(
         FileSystemHelper fileSystemHelper,
         DockerImagesBuilder dockerImagesBuilder,
@@ -64,38 +52,38 @@ public class InitViewModel : ViewModelBase
 
     public bool RebuildDockerImages
     {
-        get => _rebuildDockerImages;
-        set => SetProperty(ref _rebuildDockerImages, value, nameof(RebuildDockerImages));
+        get;
+        set => SetProperty(ref field, value, nameof(RebuildDockerImages));
     }
 
     public bool RecreateAllTopics
     {
-        get => _recreateAllTopics;
-        set => SetProperty(ref _recreateAllTopics, value, nameof(RecreateAllTopics));
-    }
+        get;
+        set => SetProperty(ref field, value, nameof(RecreateAllTopics));
+    } = true;
 
     public bool ClearLogs
     {
-        get => _clearLogs;
-        set => SetProperty(ref _clearLogs, value, nameof(ClearLogs));
+        get;
+        set => SetProperty(ref field, value, nameof(ClearLogs));
     }
 
     public bool IsInitializing
     {
-        get => _isInitializing;
-        set => SetProperty(ref _isInitializing, value, nameof(IsInitializing));
+        get;
+        set => SetProperty(ref field, value, nameof(IsInitializing));
     }
 
     public double Progress
     {
-        get => _progress;
-        set => SetProperty(ref _progress, value, nameof(Progress));
+        get;
+        set => SetProperty(ref field, value, nameof(Progress));
     }
 
     public string? ProgressMessage
     {
-        get => _progressMessage;
-        set => SetProperty(ref _progressMessage, value, nameof(ProgressMessage));
+        get;
+        set => SetProperty(ref field, value, nameof(ProgressMessage));
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Catching all is intended")]

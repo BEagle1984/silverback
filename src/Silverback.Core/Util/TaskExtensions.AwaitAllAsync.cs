@@ -11,7 +11,7 @@ namespace Silverback.Util;
 
 internal static partial class TaskExtensions
 {
-    public static ValueTask AwaitAllAsync(this IEnumerable<ValueTask> tasks) => AwaitAllAsync(tasks.ToList());
+    public static ValueTask AwaitAllAsync(this IEnumerable<ValueTask> tasks) => AwaitAllAsync([.. tasks]);
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Rethrown")]
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive because in a loop")]

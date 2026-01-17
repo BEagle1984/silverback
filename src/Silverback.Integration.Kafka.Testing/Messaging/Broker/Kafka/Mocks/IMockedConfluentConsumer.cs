@@ -13,7 +13,7 @@ public interface IMockedConfluentConsumer : IConsumer<byte[]?, byte[]?>
     /// <summary>
     ///     Gets the <see cref="ConsumerConfig" />.
     /// </summary>
-    public ConsumerConfig Config { get; }
+    ConsumerConfig Config { get; }
 
     /// <summary>
     ///     Gets a value indicating whether the partitions have been assigned to the consumer, either manually or via

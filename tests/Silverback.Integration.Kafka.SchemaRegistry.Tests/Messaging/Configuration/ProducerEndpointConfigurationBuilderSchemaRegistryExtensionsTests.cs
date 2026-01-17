@@ -69,7 +69,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
             .SerializeAsAvro(
                 serializer => serializer
                     .ConnectToSchemaRegistry("test-url")
-                    .UseModel(typeof(TestEventOne)))
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
@@ -122,7 +122,7 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
             .SerializeAsJsonUsingSchemaRegistry(
                 serializer => serializer
                     .ConnectToSchemaRegistry("test-url")
-                    .UseModel(typeof(TestEventOne)))
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();

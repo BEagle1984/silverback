@@ -110,11 +110,10 @@ internal static class MessageValidator
         if (type.IsPrimitive || type.IsArray && type.HasElementType && type.GetElementType()!.IsPrimitive)
             return [];
 
-        return type
+        return [.. type
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanRead && propertyInfo.GetIndexParameters().Length == 0)
-            .Where(propertyInfo => NestedTypeMustBeValidated(propertyInfo.PropertyType))
-            .ToList();
+            .Where(propertyInfo => NestedTypeMustBeValidated(propertyInfo.PropertyType))];
     }
 
     private static bool NestedTypeMustBeValidated(Type type)

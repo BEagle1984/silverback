@@ -21,7 +21,7 @@ internal sealed class ReturnValueHandlerService
     {
         // Revert the handlers order, to give priority to the ones added after the
         // default ones.
-        _returnValueHandlers = returnValueHandlers.Reverse().ToList();
+        _returnValueHandlers = [.. returnValueHandlers.Reverse()];
     }
 
     [SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Method executes sync or async")]

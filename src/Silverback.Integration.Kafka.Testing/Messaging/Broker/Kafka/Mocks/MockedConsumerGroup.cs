@@ -198,7 +198,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             EnsurePartitionAssignmentsDictionaryIsInitialized();
             IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
             List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
-                _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>().ToList();
+                [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
             RebalanceResult result = GetAssignmentStrategy() switch
             {
                 PartitionAssignmentStrategy.CooperativeSticky =>
@@ -301,11 +301,10 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
     }
 
     private List<TopicPartition> GetPartitionsToAssign() =>
-        _subscriptions.Select(subscription => subscription.Topic).Distinct()
+        [.. _subscriptions.Select(subscription => subscription.Topic).Distinct()
             .Select(topicName => _topicCollection.Get(topicName, BootstrapServers))
             .SelectMany(topic =>
-                topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
-            .ToList();
+                topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))];
 
     private void InvokePartitionsRevokedCallbacks(RebalanceResult result)
     {

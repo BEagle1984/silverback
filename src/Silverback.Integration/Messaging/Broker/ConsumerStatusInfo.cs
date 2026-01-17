@@ -13,7 +13,7 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     private readonly LinkedList<IConsumerStatusChange> _history = [];
 
-    private readonly object _syncLock = new();
+    private readonly System.Threading.Lock _syncLock = new();
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Reads are not synchronized")]
     public IReadOnlyCollection<IConsumerStatusChange> History => _history;

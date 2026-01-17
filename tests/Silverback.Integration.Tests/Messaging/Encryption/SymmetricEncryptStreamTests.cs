@@ -376,5 +376,5 @@ public class SymmetricEncryptStreamTests
     }
 
     private static byte[] GenerateKey(int size, int seed = 1) =>
-        Enumerable.Range(seed, seed + (size / 8) - 1).Select(n => (byte)n).ToArray();
+        [.. Enumerable.Range(seed, seed + (size / 8) - 1).Select(n => (byte)n)];
 }

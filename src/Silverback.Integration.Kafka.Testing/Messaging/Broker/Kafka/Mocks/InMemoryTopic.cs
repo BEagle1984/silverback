@@ -33,7 +33,7 @@ internal sealed class InMemoryTopic : IInMemoryTopic
     public int MessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
 
     public IReadOnlyList<Message<byte[]?, byte[]?>> GetAllMessages() =>
-        _partitions.SelectMany(partition => partition.GetAllMessages()).ToList();
+        [.. _partitions.SelectMany(partition => partition.GetAllMessages())];
 
     public Offset Push(int partition, Message<byte[]?, byte[]?> message, Guid transactionalUniqueId) =>
         _partitions[partition].Add(message, transactionalUniqueId);

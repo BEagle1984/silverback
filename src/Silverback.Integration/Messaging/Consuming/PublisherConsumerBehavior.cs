@@ -121,6 +121,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is synchronous")]
+    [SuppressMessage("Reliability", "CA2025:Do not pass \'IDisposable\' instances into unawaited tasks", Justification = "The task is awaited via Task.WhenAll")]
     private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         _logger.LogProcessingTrace(
@@ -154,9 +155,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                     }
 
                     using CancellationTokenSource cancellationTokenSource = new();
-                    List<Task> tasks = processingTasks
-                        .Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
-                        .ToList();
+                    List<Task> tasks = [.. processingTasks.Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))];
 
                     // Even though we use the CancelOnExceptionAsync trick, it's not guaranteed that once one of the subscribers
                     // completes, the next ones will not throw.

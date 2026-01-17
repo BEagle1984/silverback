@@ -72,7 +72,7 @@ public class InboundEnvelopeBuilder<TMessage>
     /// </returns>
     public InboundEnvelopeBuilder<TMessage> WithHeaders(IReadOnlyCollection<MessageHeader>? headers)
     {
-        _headers = new MessageHeaderCollection(headers);
+        _headers = headers == null ? [] : [.. headers];
         return this;
     }
 

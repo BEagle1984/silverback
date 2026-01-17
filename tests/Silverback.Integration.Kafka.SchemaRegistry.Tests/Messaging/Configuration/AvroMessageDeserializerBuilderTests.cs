@@ -28,7 +28,7 @@ public class AvroMessageDeserializerBuilderTests
     [Fact]
     public void UseModel_ShouldSetSerializerType_WhenPassingType()
     {
-        IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
+        IMessageDeserializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
         serializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
     }

@@ -26,5 +26,5 @@ internal static class ServiceCollectionExtensions
         services.GetAll(typeof(TService));
 
     public static IReadOnlyList<ServiceDescriptor> GetAll(this IServiceCollection services, Type serviceType) =>
-        services.Where(descriptor => descriptor.ServiceType == serviceType).ToList();
+        [.. services.Where(descriptor => descriptor.ServiceType == serviceType)];
 }

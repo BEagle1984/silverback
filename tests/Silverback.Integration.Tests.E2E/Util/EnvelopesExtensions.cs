@@ -14,5 +14,5 @@ public static class EnvelopesExtensions
         envelope.RawMessage == null ? null : Encoding.UTF8.GetString(envelope.RawMessage.ReReadAll());
 
     public static IReadOnlyCollection<string?> GetRawMessageAsString(this IEnumerable<IRawInboundEnvelope> envelopes) =>
-        envelopes.Select(GetRawMessageAsString).ToList();
+        [.. envelopes.Select(GetRawMessageAsString)];
 }

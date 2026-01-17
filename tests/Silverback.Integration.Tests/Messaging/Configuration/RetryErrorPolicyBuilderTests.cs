@@ -18,7 +18,7 @@ public class RetryErrorPolicyBuilderTests
     {
         RetryErrorPolicyBuilder builder = new();
 
-        builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
+        builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.IncludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);
@@ -50,7 +50,7 @@ public class RetryErrorPolicyBuilderTests
     {
         RetryErrorPolicyBuilder builder = new();
 
-        builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
+        builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
         RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
         policy.ExcludedExceptions.ShouldBe([typeof(TimeoutException), typeof(OutOfMemoryException)]);

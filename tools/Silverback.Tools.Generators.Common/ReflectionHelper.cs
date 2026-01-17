@@ -21,9 +21,7 @@ public static class ReflectionHelper
         if (!includeInherited)
             bindingFlags |= BindingFlags.DeclaredOnly;
 
-        return type.GetProperties(bindingFlags)
-            .Where(property => !property.GetCustomAttributes().OfType<ObsoleteAttribute>().Any())
-            .ToArray();
+        return [.. type.GetProperties(bindingFlags).Where(property => !property.GetCustomAttributes().OfType<ObsoleteAttribute>().Any())];
     }
 
     public static MethodInfo[] GetMethods(Type type)

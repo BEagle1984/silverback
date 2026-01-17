@@ -87,13 +87,13 @@ public partial class ErrorPoliciesTests
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
-            invalidRawMessage.Take(10).ToArray(),
+            [.. invalidRawMessage.Take(10)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            invalidRawMessage.Skip(10).Take(10).ToArray(),
+            [.. invalidRawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            invalidRawMessage.Skip(20).ToArray(),
+            [.. invalidRawMessage.Skip(20)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, true, typeof(TestEventOne)));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -101,13 +101,13 @@ public partial class ErrorPoliciesTests
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(3);
 
         await producer.RawProduceAsync(
-            rawMessage.Take(10).ToArray(),
+            [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("2", 0, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage.Skip(10).Take(10).ToArray(),
+            [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("2", 1, typeof(TestEventOne)));
         await producer.RawProduceAsync(
-            rawMessage.Skip(20).ToArray(),
+            [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeadersWithKafkaKey("2", 2, true, typeof(TestEventOne)));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

@@ -13,11 +13,9 @@ namespace Silverback.Benchmarks.Latest;
 
 public abstract class Benchmark
 {
-    private IPublisher? _publisher;
-
     private IHost? _host;
 
-    protected IPublisher Publisher => _publisher ?? throw new InvalidOperationException("The publisher is not initialized yet.");
+    protected IPublisher Publisher { get => field ?? throw new InvalidOperationException("The publisher is not initialized yet."); private set; }
 
     protected IHost Host => _host ?? throw new InvalidOperationException("Not yet initialized.");
 
@@ -36,7 +34,7 @@ public abstract class Benchmark
 
         Host.Start();
 
-        _publisher = Host.Services.GetRequiredService<IPublisher>();
+        Publisher = Host.Services.GetRequiredService<IPublisher>();
     }
 
     [GlobalCleanup]

@@ -2,21 +2,23 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Silverback.Util;
 
 internal static class EnumerableAsCollectionExtensions
 {
-    public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable) =>
-        enumerable as IReadOnlyCollection<T> ?? enumerable.ToList();
+    extension<T>(IEnumerable<T> enumerable)
+    {
+        public IReadOnlyCollection<T> AsReadOnlyCollection() =>
+            enumerable as IReadOnlyCollection<T> ?? [.. enumerable];
 
-    public static IReadOnlyList<T> AsReadOnlyList<T>(this IEnumerable<T> enumerable) =>
-        enumerable as IReadOnlyList<T> ?? enumerable.ToList();
+        public IReadOnlyList<T> AsReadOnlyList() =>
+            enumerable as IReadOnlyList<T> ?? [.. enumerable];
 
-    public static List<T> AsList<T>(this IEnumerable<T> enumerable) =>
-        enumerable as List<T> ?? enumerable.ToList();
+        public List<T> AsList() =>
+            enumerable as List<T> ?? [.. enumerable];
 
-    public static T[] AsArray<T>(this IEnumerable<T> enumerable) =>
-        enumerable as T[] ?? enumerable.ToArray();
+        public T[] AsArray() =>
+            enumerable as T[] ?? [.. enumerable];
+    }
 }

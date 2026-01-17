@@ -9,16 +9,6 @@ namespace Silverback.TestBench.ViewModel.Containers;
 
 public class AutoScalingViewModel : ViewModelBase
 {
-    private bool _isEnabled;
-
-    private TimeSpan _interval = TimeSpan.FromSeconds(30);
-
-    private double _chance = 1;
-
-    private int _minInstances = 2;
-
-    private int _maxInstances = 5;
-
     public AutoScalingViewModel()
     {
         ToggleEnabledCommand = new RelayCommand(() => IsEnabled = !IsEnabled);
@@ -28,31 +18,31 @@ public class AutoScalingViewModel : ViewModelBase
 
     public bool IsEnabled
     {
-        get => _isEnabled;
-        set => SetProperty(ref _isEnabled, value, nameof(IsEnabled));
+        get;
+        set => SetProperty(ref field, value, nameof(IsEnabled));
     }
 
     public TimeSpan Interval
     {
-        get => _interval;
-        set => SetProperty(ref _interval, value, nameof(Interval));
-    }
+        get;
+        set => SetProperty(ref field, value, nameof(Interval));
+    } = TimeSpan.FromSeconds(30);
 
     public double Chance
     {
-        get => _chance;
-        set => SetProperty(ref _chance, value, nameof(Chance));
-    }
+        get;
+        set => SetProperty(ref field, value, nameof(Chance));
+    } = 1;
 
     public int MinInstances
     {
-        get => _minInstances;
-        set => SetProperty(ref _minInstances, value, nameof(MinInstances));
-    }
+        get;
+        set => SetProperty(ref field, value, nameof(MinInstances));
+    } = 2;
 
     public int MaxInstances
     {
-        get => _maxInstances;
-        set => SetProperty(ref _maxInstances, value, nameof(MaxInstances));
-    }
+        get;
+        set => SetProperty(ref field, value, nameof(MaxInstances));
+    } = 5;
 }

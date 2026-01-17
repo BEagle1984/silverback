@@ -63,7 +63,7 @@ public class InMemoryOutbox
     {
         lock (_storedOutboxMessages)
         {
-            return _storedOutboxMessages.Take(count).Select(storedOutboxMessage => storedOutboxMessage.OutboxMessage).ToArray();
+            return [.. _storedOutboxMessages.Take(count).Select(storedOutboxMessage => storedOutboxMessage.OutboxMessage)];
         }
     }
 

@@ -16,5 +16,5 @@ public interface IKafkaOffsetStoreSettingsImplementationBuilder
     /// <returns>
     ///     The <see cref="KafkaOffsetStoreSettings" />.
     /// </returns>
-    public KafkaOffsetStoreSettings Build();
+    KafkaOffsetStoreSettings Build();
 }

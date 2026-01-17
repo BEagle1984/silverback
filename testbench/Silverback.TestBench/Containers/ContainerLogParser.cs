@@ -122,9 +122,10 @@ public sealed partial class ContainerLogParser : IDisposable
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            while (!reader.EndOfStream && !stoppingToken.IsCancellationRequested)
+            string? line;
+            while ((line = await reader.ReadLineAsync(stoppingToken)) != null)
             {
-                ParseLogLine(await reader.ReadLineAsync(stoppingToken));
+                ParseLogLine(line);
             }
 
             await Task.Delay(500, stoppingToken);

@@ -23,7 +23,7 @@ internal interface IRebalanceStrategy
     /// <returns>
     ///     A <see cref="RebalanceResult" /> containing the partitions that have been assigned and revoked.
     /// </returns>
-    public RebalanceResult Rebalance(
+    RebalanceResult Rebalance(
         IReadOnlyList<TopicPartition> partitionsToAssign,
         IReadOnlyList<SubscriptionPartitionAssignment> partitionAssignments);
 }

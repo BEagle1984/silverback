@@ -11,7 +11,7 @@ internal static class AsyncEnumerableForEachExtensions
 {
     public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Action<T> action)
     {
-        await foreach (T element in source)
+        await foreach (T element in source.ConfigureAwait(false))
         {
             action(element);
         }
@@ -19,7 +19,7 @@ internal static class AsyncEnumerableForEachExtensions
 
     public static async ValueTask ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action)
     {
-        await foreach (T element in source)
+        await foreach (T element in source.ConfigureAwait(false))
         {
             await action(element).ConfigureAwait(false);
         }
@@ -27,7 +27,7 @@ internal static class AsyncEnumerableForEachExtensions
 
     public static async ValueTask ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, ValueTask> action)
     {
-        await foreach (T element in source)
+        await foreach (T element in source.ConfigureAwait(false))
         {
             await action(element).ConfigureAwait(false);
         }

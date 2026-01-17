@@ -15,9 +15,6 @@ public abstract partial class TestingHelper : ITestingHelper
     private readonly ILogger _logger;
 
     private readonly IServiceProvider _serviceProvider;
-
-    private readonly IIntegrationSpy? _integrationSpy;
-
     private readonly IConsumerCollection? _consumers;
 
     private readonly IProducerCollection? _producers;
@@ -38,13 +35,13 @@ public abstract partial class TestingHelper : ITestingHelper
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = logger;
 
-        _integrationSpy = serviceProvider.GetService<IIntegrationSpy>();
+        Spy = serviceProvider.GetService<IIntegrationSpy>();
         _consumers = serviceProvider.GetService<IConsumerCollection>();
         _producers = serviceProvider.GetService<IProducerCollection>();
     }
 
     /// <inheritdoc cref="ITestingHelper.Spy" />
-    public IIntegrationSpy Spy => _integrationSpy ?? throw new InvalidOperationException(
+    public IIntegrationSpy Spy => field ?? throw new InvalidOperationException(
         "The IIntegrationSpy couldn't be resolved. " +
         "Register it calling AddIntegrationSpy or AddIntegrationSpyAndSubscriber.");
 

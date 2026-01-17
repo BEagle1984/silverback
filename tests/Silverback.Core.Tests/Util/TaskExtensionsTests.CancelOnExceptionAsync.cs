@@ -20,10 +20,10 @@ public partial class TaskExtensionsTests
     {
         bool success = false;
 
-        using CancellationTokenSource cts = new();
+        using CancellationTokenSource cancellationTokenSource = new();
 
-        Task task1 = SuccessTask(cts.Token);
-        Task task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
+        Task task1 = SuccessTask(cancellationTokenSource.Token);
+        Task task2 = FailingTask(cancellationTokenSource.Token).CancelOnExceptionAsync(cancellationTokenSource);
 
         Func<Task> act = () => Task.WhenAll(task1, task2);
 

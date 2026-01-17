@@ -28,7 +28,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private readonly ISilverbackLogger<KafkaConsumer> _logger;
 
-    private readonly object _messagesSinceCommitLock = new();
+    private readonly System.Threading.Lock _messagesSinceCommitLock = new();
 
     private readonly ConsumerChannelsManager _channelsManager;
 
@@ -194,7 +194,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         TopicPartitionOffset topicPartitionOffset,
         ISequenceStore sequenceStore)
     {
-        MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
+        MessageHeaderCollection headers = [.. message.Headers.ToSilverbackHeaders()];
 
         KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 

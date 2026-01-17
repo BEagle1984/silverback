@@ -68,22 +68,22 @@ public interface IConfluentProducerWrapper : IBrokerClient
     ///         configured.
     ///     </para>
     /// </summary>
-    public void InitTransactions();
+    void InitTransactions();
 
     /// <summary>
     ///     Begins a new transaction.
     /// </summary>
-    public void BeginTransaction();
+    void BeginTransaction();
 
     /// <summary>
     ///     Commits the pending transaction.
     /// </summary>
-    public void CommitTransaction();
+    void CommitTransaction();
 
     /// <summary>
     ///     Aborts the pending transaction.
     /// </summary>
-    public void AbortTransaction();
+    void AbortTransaction();
 
     /// <summary>
     ///     Sends the consumed offsets to the transaction.

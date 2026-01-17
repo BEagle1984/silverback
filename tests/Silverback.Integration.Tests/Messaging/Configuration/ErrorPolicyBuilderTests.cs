@@ -19,7 +19,7 @@ public class ErrorPolicyBuilderTests
         builder.Stop();
 
         IErrorPolicy policy = builder.Build();
-        policy.ShouldBeEquivalentTo(new StopConsumerErrorPolicy());
+        policy.ShouldBeOfType<StopConsumerErrorPolicy>();
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ErrorPolicyBuilderTests
         builder.Skip();
 
         IErrorPolicy policy = builder.Build();
-        policy.ShouldBeEquivalentTo(new SkipMessageErrorPolicy());
+        policy.ShouldBeOfType<SkipMessageErrorPolicy>();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class ErrorPolicyBuilderTests
         builder.Retry();
 
         IErrorPolicy policy = builder.Build();
-        policy.ShouldBeEquivalentTo(new RetryErrorPolicy());
+        policy.ShouldBeOfType<RetryErrorPolicy>();
     }
 
     [Fact]

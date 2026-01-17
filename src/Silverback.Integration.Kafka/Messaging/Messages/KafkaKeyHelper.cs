@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -45,10 +44,9 @@ internal static class KafkaKeyHelper
         }
 
         Type messageType = message.GetType();
-        propertyInfos = messageType
+        propertyInfos = [.. messageType
             .GetProperties()
-            .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
-            .ToArray();
+            .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))];
 
         // Must not fail if there is already an entry for this type
         _ = TypeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
@@ -56,12 +54,10 @@ internal static class KafkaKeyHelper
         return propertyInfos;
     }
 
-    private static StringBuilder BuildMessageKey(
-        object? message,
-        IReadOnlyList<PropertyInfo> propertyInfos)
+    private static StringBuilder BuildMessageKey(object? message, PropertyInfo[] propertyInfos)
     {
         StringBuilder stringBuilder = new();
-        for (int i = 0; i < propertyInfos.Count; i++)
+        for (int i = 0; i < propertyInfos.Length; i++)
         {
             string name = propertyInfos[i].Name;
             string? value = propertyInfos[i].GetValue(message, null)?.ToString();

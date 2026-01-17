@@ -28,7 +28,7 @@ public class ProtobufMessageSerializerBuilderTests
     [Fact]
     public void UseModel_ShouldSetSerializerType_WhenPassingType()
     {
-        IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(ProtobufMessage)).Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel<ProtobufMessage>().Build();
 
         serializer.ShouldBeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
     }

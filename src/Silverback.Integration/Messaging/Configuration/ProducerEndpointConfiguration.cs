@@ -19,23 +19,21 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public abstract record ProducerEndpointConfiguration : EndpointConfiguration
 {
-    private readonly IProducerEndpointResolver _endpointResolver = NullProducerEndpointResolver.Instance;
-
     /// <summary>
     ///     Gets the <see cref="IProducerEndpointResolver" /> to be used to resolve the destination endpoint (e.g. the target topic and
     ///     partition) for the message being produced.
     /// </summary>
     public IProducerEndpointResolver EndpointResolver
     {
-        get => _endpointResolver;
+        get;
         init
         {
-            _endpointResolver = value;
+            field = value;
 
-            if (_endpointResolver != null)
-                RawName = _endpointResolver.RawName;
+            if (field != null)
+                RawName = field.RawName;
         }
-    }
+    } = NullProducerEndpointResolver.Instance;
 
     /// <summary>
     ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize the messages being produced.

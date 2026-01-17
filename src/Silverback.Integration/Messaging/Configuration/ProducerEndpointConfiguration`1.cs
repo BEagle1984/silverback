@@ -9,12 +9,10 @@ namespace Silverback.Messaging.Configuration;
 public abstract record ProducerEndpointConfiguration<TEndpoint> : ProducerEndpointConfiguration
     where TEndpoint : ProducerEndpoint
 {
-    private readonly IProducerEndpointResolver<TEndpoint> _endpoint = NullProducerEndpointResolver<TEndpoint>.Instance;
-
     /// <inheritdoc cref="ProducerEndpointConfiguration.EndpointResolver" />
     public new IProducerEndpointResolver<TEndpoint> EndpointResolver
     {
-        get => _endpoint;
-        init => base.EndpointResolver = _endpoint = value;
-    }
+        get;
+        init => base.EndpointResolver = field = value;
+    } = NullProducerEndpointResolver<TEndpoint>.Instance;
 }

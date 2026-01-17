@@ -399,7 +399,7 @@ public static class RawProduceComparison
 
     private static Message<byte[], byte[]> CreateMessage(int size)
     {
-        byte[] rawMessage = Enumerable.Range(1, size).Select(i => (byte)i).ToArray();
+        byte[] rawMessage = [.. Enumerable.Range(1, size).Select(i => (byte)i)];
         return new Message<byte[], byte[]>
         {
             Value = rawMessage

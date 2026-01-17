@@ -110,7 +110,7 @@ public interface IConfluentConsumerBuilder
     /// <returns>
     ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler);
+    IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler);
 
     /// <summary>
     ///     Builds the <see cref="IConsumer{TKey,TValue}" /> instance.

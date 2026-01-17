@@ -27,7 +27,7 @@ public class JsonSchemaRegistryMessageSerializerBuilderTests
     [Fact]
     public void UseModel_ShouldSetSerializerType_WhenPassingType()
     {
-        IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
         serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }

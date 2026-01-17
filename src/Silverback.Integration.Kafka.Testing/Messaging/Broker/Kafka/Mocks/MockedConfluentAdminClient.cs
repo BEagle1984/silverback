@@ -38,15 +38,14 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
             : _options.DefaultPartitionsCount;
 
         List<PartitionMetadata> partitionsMetadata =
-            Enumerable.Range(0, partitionsCount)
+            [.. Enumerable.Range(0, partitionsCount)
                 .Select(
                     i => new PartitionMetadata(
                         i,
                         0,
                         [0],
                         [0],
-                        null))
-                .ToList();
+                        null))];
 
         return new Metadata(
             [new BrokerMetadata(0, "test", 42)],

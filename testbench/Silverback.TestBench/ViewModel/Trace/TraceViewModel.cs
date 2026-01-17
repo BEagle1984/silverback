@@ -15,17 +15,9 @@ public class TraceViewModel : ViewModelBase
 {
     private readonly ConcurrentDictionary<string, MessageTraceViewModel> _traces = new();
 
-    private MessageTraceStatusFilter _statusFilter = MessageTraceStatusFilter.Pending;
-
-    private string? _topicFilter;
-
-    private string? _messageIdFilter;
-
-    private MessageTraceViewModel? _selectedTrace;
-
     public static IEnumerable<MessageTraceStatusFilter> StatusFilterValues { get; } = Enum.GetValues<MessageTraceStatusFilter>();
 
-    public static IEnumerable<string> TopicFilterValues { get; } = new[] { string.Empty }.Union(TopicNames.All).ToArray();
+    public static IEnumerable<string> TopicFilterValues { get; } = [.. new[] { string.Empty }.Union(TopicNames.All)];
 
     public IEnumerable<MessageTraceViewModel> AllTraces => _traces.Values;
 
@@ -41,36 +33,36 @@ public class TraceViewModel : ViewModelBase
 
     public MessageTraceViewModel? SelectedTrace
     {
-        get => _selectedTrace;
-        set => SetProperty(ref _selectedTrace, value, nameof(SelectedTrace));
+        get;
+        set => SetProperty(ref field, value, nameof(SelectedTrace));
     }
 
     public MessageTraceStatusFilter StatusFilter
     {
-        get => _statusFilter;
+        get;
         set
         {
-            SetProperty(ref _statusFilter, value, nameof(StatusFilter));
+            SetProperty(ref field, value, nameof(StatusFilter));
             NotifyPropertyChanged(nameof(Traces));
         }
-    }
+    } = MessageTraceStatusFilter.Pending;
 
     public string? TopicFilter
     {
-        get => _topicFilter;
+        get;
         set
         {
-            SetProperty(ref _topicFilter, value, nameof(TopicFilter));
+            SetProperty(ref field, value, nameof(TopicFilter));
             NotifyPropertyChanged(nameof(Traces));
         }
     }
 
     public string? MessageIdFilter
     {
-        get => _messageIdFilter;
+        get;
         set
         {
-            SetProperty(ref _messageIdFilter, value, nameof(MessageIdFilter));
+            SetProperty(ref field, value, nameof(MessageIdFilter));
             NotifyPropertyChanged(nameof(Traces));
         }
     }

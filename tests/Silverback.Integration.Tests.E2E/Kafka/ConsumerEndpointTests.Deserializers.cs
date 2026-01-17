@@ -50,7 +50,7 @@ public partial class ConsumerEndpointTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        StringMessage[] messages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<StringMessage>().ToArray();
+        StringMessage[] messages = [.. Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<StringMessage>()];
         messages.Length.ShouldBe(3);
         messages.ShouldBe(
             [
@@ -85,7 +85,7 @@ public partial class ConsumerEndpointTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        StringMessage[] messages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<StringMessage>().ToArray();
+        StringMessage[] messages = [.. Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<StringMessage>()];
         messages.Length.ShouldBe(2);
         messages.ShouldBe(
             [
@@ -128,7 +128,7 @@ public partial class ConsumerEndpointTests
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        RawMessage[] messages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<RawMessage>().ToArray();
+        RawMessage[] messages = [.. Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).OfType<RawMessage>()];
         messages.Length.ShouldBe(3);
         messages.Select(message => message.GetType()).ShouldBe(
             [

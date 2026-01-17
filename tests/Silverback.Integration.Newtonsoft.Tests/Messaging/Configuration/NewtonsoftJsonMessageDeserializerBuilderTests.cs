@@ -38,7 +38,7 @@ public class NewtonsoftJsonMessageDeserializerBuilderTests
     {
         NewtonsoftJsonMessageDeserializerBuilder builder = new();
 
-        IMessageDeserializer deserializer = builder.UseModel(typeof(TestEventOne)).Build();
+        IMessageDeserializer deserializer = builder.UseModel<TestEventOne>().Build();
 
         deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
     }

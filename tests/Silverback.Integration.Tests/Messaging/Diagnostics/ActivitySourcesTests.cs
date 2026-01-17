@@ -227,7 +227,7 @@ public class ActivitySourcesTests
             {
                 ShouldListenTo = _ => true,
                 ActivityStarted = _activities.Add,
-                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+                Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded
             };
             ActivitySource.AddActivityListener(_listener);
         }

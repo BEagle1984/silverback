@@ -48,6 +48,6 @@ internal record RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
     public IRawInboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,
-        Headers = new MessageHeaderCollection(Headers)
+        Headers = [.. Headers]
     };
 }

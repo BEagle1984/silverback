@@ -77,17 +77,24 @@ public partial class DomainEventsTests : KafkaTests
 
     private class ValueChangedDomainEvent : DomainEvent<TestDomainEntity>;
 
-    private sealed class AsyncCommandHandler(TestDbContext dbContext)
+    private sealed class AsyncCommandHandler
     {
+        private readonly TestDbContext _dbContext;
+
+        public AsyncCommandHandler(TestDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
         public async Task HandleCommand(TestCommandOne command)
         {
-            TestDomainEntity entity = dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
+            TestDomainEntity entity = _dbContext.TestDomainEntities.Add(new TestDomainEntity()).Entity;
             entity.SetValue(99);
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

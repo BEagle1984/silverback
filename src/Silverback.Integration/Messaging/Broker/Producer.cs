@@ -467,7 +467,7 @@ public abstract class Producer : IProducer, IDisposable
             (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, Logger: _logger));
 
     private void RawProduce<TState>(
-        IOutboundEnvelope envelope,
+        OutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?, TState> onSuccess,
         Action<Exception, TState> onError,
         TState state) =>

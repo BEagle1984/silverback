@@ -24,7 +24,7 @@ internal static class ActivityBaggageSerializer
             return [];
 
         string[] baggageItemsAsStrings = baggage.Split(BaggageItemSeparator);
-        return Deserialize(baggageItemsAsStrings).ToList();
+        return [.. Deserialize(baggageItemsAsStrings)];
     }
 
     private static IEnumerable<KeyValuePair<string, string>> Deserialize(string[] baggageItemsAsStrings)

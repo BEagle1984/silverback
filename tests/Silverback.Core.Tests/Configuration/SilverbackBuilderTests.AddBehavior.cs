@@ -22,7 +22,7 @@ public partial class SilverbackBuilderTests
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
-        builder.AddTransientBehavior(typeof(TestBehavior));
+        builder.AddTransientBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
         descriptors.Count.ShouldBe(1);
@@ -62,7 +62,7 @@ public partial class SilverbackBuilderTests
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
-        builder.AddScopedBehavior(typeof(TestBehavior));
+        builder.AddScopedBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
         descriptors.Count.ShouldBe(1);
@@ -102,7 +102,7 @@ public partial class SilverbackBuilderTests
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
-        builder.AddSingletonBehavior(typeof(TestBehavior));
+        builder.AddSingletonBehavior<TestBehavior>();
 
         IReadOnlyList<ServiceDescriptor> descriptors = builder.Services.GetAll<IBehavior>();
         descriptors.Count.ShouldBe(1);

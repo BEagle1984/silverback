@@ -70,7 +70,7 @@ public class KafkaOffsetStoreScopeTests
 
         public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null)
         {
-            _offsets[groupId] = offsets.ToArray();
+            _offsets[groupId] = [.. offsets];
             return Task.CompletedTask;
         }
     }

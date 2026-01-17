@@ -18,7 +18,7 @@ namespace Silverback.Benchmarks.Latest.Producer;
 [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Test code")]
 public class KafkaProducerBenchmark : Benchmark
 {
-    private readonly IIntegrationEvent[] _events = Enumerable.Range(1, 1000).Select(index => (IIntegrationEvent)new SampleEvent($"Test {index}")).ToArray();
+    private readonly IIntegrationEvent[] _events = [.. Enumerable.Range(1, 1000).Select(index => (IIntegrationEvent)new SampleEvent($"Test {index}"))];
 
     [Benchmark(Description = "PublishAsync inside foreach", Baseline = true)]
     public async Task PublishAsync()

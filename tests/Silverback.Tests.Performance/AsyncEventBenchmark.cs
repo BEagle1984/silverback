@@ -36,7 +36,7 @@ public class AsyncEventBenchmark
     public void Remove()
     {
         AsyncEvent<object> asyncEvent = new();
-        Func<object, ValueTask>[] handlers = Enumerable.Range(0, Count).Select(_ => new Func<object, ValueTask>(_ => default)).ToArray();
+        Func<object, ValueTask>[] handlers = [.. Enumerable.Range(0, Count).Select(_ => new Func<object, ValueTask>(_ => default))];
 
         foreach (Func<object, ValueTask> handler in handlers)
         {
@@ -54,7 +54,7 @@ public class AsyncEventBenchmark
     public async Task Invoke()
     {
         AsyncEvent<object> asyncEvent = new();
-        Func<object, ValueTask>[] handlers = Enumerable.Range(0, Count).Select(_ => new Func<object, ValueTask>(_ => default)).ToArray();
+        Func<object, ValueTask>[] handlers = [.. Enumerable.Range(0, Count).Select(_ => new Func<object, ValueTask>(_ => default))];
 
         foreach (Func<object, ValueTask> handler in handlers)
         {

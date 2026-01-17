@@ -21,7 +21,7 @@ public interface IBrokerActivityEnricher
     /// <param name="producerContext">
     ///     The <see cref="ProducerPipelineContext" />.
     /// </param>
-    public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext);
+    void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext);
 
     /// <summary>
     ///     Enriches Activities created by the <see cref="ActivityConsumerBehavior" />.
@@ -32,5 +32,5 @@ public interface IBrokerActivityEnricher
     /// <param name="consumerContext">
     ///     The <see cref="ConsumerPipelineContext" />.
     /// </param>
-    public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext);
+    void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext);
 }

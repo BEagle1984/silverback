@@ -12,8 +12,8 @@ steps:
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
-      version: '8.0.x'
-    displayName: 'Install SDK 8.0.x'
+      version: '10.0.x'
+    displayName: 'Install SDK 10.0.x'
   # Build nuget packages
   - pwsh: |
       cd nuget

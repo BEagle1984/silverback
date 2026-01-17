@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Confluent.Kafka;
 using NSubstitute;
 using Silverback.Diagnostics;
@@ -67,12 +68,12 @@ public class KafkaTransactionTests
         transaction.Commit();
 
         confluentProducer.Received(1).SendOffsetsToTransaction(
-            Arg.Is<TopicPartitionOffset[]>(
+            Arg.Is<IReadOnlyList<TopicPartitionOffset>>(
                 offsets =>
-                    offsets.Length == 1 &&
+                    offsets.Count == 1 &&
                     offsets[0].Topic == "test" &&
                     offsets[0].Partition.Value == 1 &&
-                    offsets[0].Offset == 43),
+                    offsets[0].Offset.Value == 43),
             Arg.Any<IConsumerGroupMetadata>());
     }
 
@@ -115,15 +116,15 @@ public class KafkaTransactionTests
         transaction.Commit();
 
         confluentProducer.Received(1).SendOffsetsToTransaction(
-            Arg.Is<TopicPartitionOffset[]>(
+            Arg.Is<IReadOnlyCollection<TopicPartitionOffset>>(
                 offsets =>
-                    offsets.Length == 2 &&
-                    offsets[0].Topic == "test" &&
-                    offsets[0].Partition.Value == 2 &&
-                    offsets[0].Offset == 5 &&
-                    offsets[1].Topic == "test" &&
-                    offsets[1].Partition.Value == 4 &&
-                    offsets[1].Offset == 3),
+                    offsets.Count == 2 &&
+                    offsets.ElementAt(0).Topic == "test" &&
+                    offsets.ElementAt(0).Partition.Value == 2 &&
+                    offsets.ElementAt(0).Offset == 5 &&
+                    offsets.ElementAt(1).Topic == "test" &&
+                    offsets.ElementAt(1).Partition.Value == 4 &&
+                    offsets.ElementAt(1).Offset == 3),
             Arg.Any<IConsumerGroupMetadata>());
     }
 
