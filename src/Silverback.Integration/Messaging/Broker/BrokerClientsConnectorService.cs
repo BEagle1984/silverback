@@ -46,7 +46,6 @@ internal sealed class BrokerClientsConnectorService : IHostedService
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-    /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
     private void OnApplicationStarted()
     {
         if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.AfterStartup)
