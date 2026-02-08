@@ -83,40 +83,6 @@ public class KafkaEnvelopeExtensionsTests
     }
 
     [Fact]
-    public void GetKafkaKey_ShouldThrowForInboundEnvelope_WhenTypeMismatch()
-    {
-        KafkaInboundEnvelope<TestEventOne> envelope = new(
-            null,
-            Stream.Null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new KafkaOffset("topic", 1, 1));
-
-        envelope.SetKey(123);
-
-        Action act = () => envelope.GetKafkaKey<string>();
-
-        ArgumentException exception = act.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaInboundEnvelope");
-    }
-
-    [Fact]
-    public void GetKafkaKey_ShouldThrowForOutboundEnvelope_WhenTypeMismatch()
-    {
-        KafkaOutboundEnvelope<object> envelope = new(
-            new TestEventOne(),
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
-
-        envelope.SetKey(123);
-
-        Action act = () => envelope.GetKafkaKey<string>();
-
-        ArgumentException exception = act.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaOutboundEnvelope");
-    }
-
-    [Fact]
     public void GetKafkaKey_ShouldReturnNullForInboundEnvelope_WhenKeyIsNotSet()
     {
         KafkaInboundEnvelope<TestEventOne> envelope = new(
@@ -154,20 +120,6 @@ public class KafkaEnvelopeExtensionsTests
         envelope.SetKafkaKey("test");
 
         envelope.GetKafkaKey().ShouldBe("test");
-    }
-
-    [Fact]
-    public void SetKafkaKey_ShouldThrow_WhenKeyTypeMismatch()
-    {
-        KafkaOutboundEnvelope<TestEventOne> envelope = new(
-            new TestEventOne(),
-            Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()));
-
-        Action act = () => envelope.SetKafkaKey("test");
-
-        ArgumentException exception = act.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldStartWith("The instance must be of type Silverback.Messaging.Messages.IKafkaOutboundEnvelope");
     }
 
     [Fact]

@@ -15,9 +15,9 @@ public class InMemoryOutboxTests
     [Fact]
     public void Add_ShouldAddItemToOutbox()
     {
-        OutboxMessage outboxMessage1 = new(null, null, "1");
-        OutboxMessage outboxMessage2 = new(null, null, "2");
-        OutboxMessage outboxMessage3 = new(null, null, "3");
+        OutboxMessage outboxMessage1 = new(null, null, null, "1");
+        OutboxMessage outboxMessage2 = new(null, null, null, "2");
+        OutboxMessage outboxMessage3 = new(null, null, null, "3");
         InMemoryOutbox outbox = new();
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
@@ -29,9 +29,9 @@ public class InMemoryOutboxTests
     [Fact]
     public void Remove_ShouldRemoveItemsFromOutbox()
     {
-        OutboxMessage outboxMessage1 = new(null, null, "1");
-        OutboxMessage outboxMessage2 = new(null, null, "2");
-        OutboxMessage outboxMessage3 = new(null, null, "3");
+        OutboxMessage outboxMessage1 = new(null, null, null, "1");
+        OutboxMessage outboxMessage2 = new(null, null, null, "2");
+        OutboxMessage outboxMessage3 = new(null, null, null, "3");
         InMemoryOutbox outbox = new();
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
@@ -45,9 +45,9 @@ public class InMemoryOutboxTests
     [Fact]
     public void Get_ShouldReturnMessagesBatchInChronologicalOrder()
     {
-        OutboxMessage outboxMessage1 = new(null, null, "1");
-        OutboxMessage outboxMessage2 = new(null, null, "2");
-        OutboxMessage outboxMessage3 = new(null, null, "3");
+        OutboxMessage outboxMessage1 = new(null, null, null, "1");
+        OutboxMessage outboxMessage2 = new(null, null, null, "2");
+        OutboxMessage outboxMessage3 = new(null, null, null, "3");
         InMemoryOutbox outbox = new();
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
@@ -67,9 +67,9 @@ public class InMemoryOutboxTests
     [Fact]
     public void Get_ShouldReturnTheSameItemsIfNotRemoved()
     {
-        OutboxMessage outboxMessage1 = new(null, null, "1");
-        OutboxMessage outboxMessage2 = new(null, null, "2");
-        OutboxMessage outboxMessage3 = new(null, null, "3");
+        OutboxMessage outboxMessage1 = new(null, null, null, "1");
+        OutboxMessage outboxMessage2 = new(null, null, null, "2");
+        OutboxMessage outboxMessage3 = new(null, null, null, "3");
         InMemoryOutbox outbox = new();
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
@@ -84,9 +84,9 @@ public class InMemoryOutboxTests
     [Fact]
     public void ItemsCount_ShouldReturnItemsCount()
     {
-        OutboxMessage outboxMessage1 = new(null, null, "1");
-        OutboxMessage outboxMessage2 = new(null, null, "2");
-        OutboxMessage outboxMessage3 = new(null, null, "3");
+        OutboxMessage outboxMessage1 = new(null, null, null, "1");
+        OutboxMessage outboxMessage2 = new(null, null, null, "2");
+        OutboxMessage outboxMessage3 = new(null, null, null, "3");
         InMemoryOutbox outbox = new();
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
@@ -111,11 +111,11 @@ public class InMemoryOutboxTests
     public async Task GetMaxAge_ShouldReturnOldestItemAge()
     {
         InMemoryOutbox outbox = new();
-        outbox.Add(new OutboxMessage(null, null, "1"));
+        outbox.Add(new OutboxMessage(null, null, null, "1"));
 
         await Task.Delay(100);
 
-        outbox.Add(new OutboxMessage(null, null, "2"));
+        outbox.Add(new OutboxMessage(null, null, null, "2"));
 
         outbox.GetMaxAge().ShouldBeGreaterThan(TimeSpan.FromMilliseconds(90));
     }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -26,8 +27,11 @@ public class KafkaKeySerializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context is { Envelope: IKafkaOutboundEnvelope { Key: not null } kafkaEnvelope, Producer: KafkaProducer kafkaProducer })
-            kafkaEnvelope.SetRawKey(kafkaProducer.EndpointConfiguration.KeySerializer.Serialize(kafkaEnvelope.Key));
+        if (context.Envelope is IKafkaOutboundEnvelope { Key: not null } kafkaEnvelope &&
+            context.Producer.EndpointConfiguration is KafkaProducerEndpointConfiguration kafkaEndpointConfiguration)
+        {
+            kafkaEnvelope.SetRawKey(kafkaEndpointConfiguration.KeySerializer.Serialize(kafkaEnvelope.Key));
+        }
 
         return next(context, cancellationToken);
     }

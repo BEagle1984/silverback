@@ -85,6 +85,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
                      "Id INTEGER NOT NULL," +
                      "Content BLOB," +
                      "Headers TEXT," +
+                     "Extra BLOB," +
                      "EndpointName TEXT NOT NULL," +
                      "ResolvedEndpoint TEXT," +
                      "Created INTEGER NOT NULL," +

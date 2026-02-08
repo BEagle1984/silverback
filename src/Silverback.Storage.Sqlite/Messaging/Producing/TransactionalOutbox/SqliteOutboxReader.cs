@@ -47,6 +47,7 @@ public class SqliteOutboxReader : IOutboxReader
                        "Id," +
                        "Content," +
                        "Headers," +
+                       "Extra," +
                        "EndpointName, " +
                        "ResolvedEndpoint " +
                        $"FROM {settings.TableName} " +
@@ -110,13 +111,15 @@ public class SqliteOutboxReader : IOutboxReader
         long id = reader.GetFieldValue<long>(0);
         byte[]? content = reader.GetNullableFieldValue<byte[]>(1);
         string? headers = reader.GetNullableFieldValue<string>(2);
-        string endpointName = reader.GetFieldValue<string>(3);
-        string? resolvedEndpoint = reader.GetNullableFieldValue<string>(4);
+        byte[]? extra = reader.GetNullableFieldValue<byte[]>(3);
+        string endpointName = reader.GetFieldValue<string>(4);
+        string? resolvedEndpoint = reader.GetNullableFieldValue<string>(5);
 
         return new DbOutboxMessage(
             id,
             content,
             headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(headers),
+            extra,
             endpointName,
             resolvedEndpoint);
     }

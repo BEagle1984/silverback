@@ -38,11 +38,13 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         _insertSql = $"INSERT INTO \"{settings.TableName}\" (" +
                      "Content," +
                      "Headers," +
+                     "Extra," +
                      "EndpointName," +
                      "Created" +
                      ") VALUES (" +
                      "@Content," +
                      "@Headers," +
+                     "@Extra," +
                      "@EndpointName," +
                      "@Created)";
     }
@@ -57,11 +59,15 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea)
                 {
-                    Value = outboxMessage.Content
+                    Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content
                 },
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text)
                 {
                     Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
+                },
+                new NpgsqlParameter("@Extra", NpgsqlDbType.Bytea)
+                {
+                    Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra
                 },
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text)
                 {
@@ -91,6 +97,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
+                new NpgsqlParameter("@Extra", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
                 new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
@@ -99,9 +106,10 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.EndpointName;
+                parameters[2].Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra;
+                parameters[3].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,
@@ -122,6 +130,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
+                new NpgsqlParameter("@Extra", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
                 new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
@@ -130,9 +139,10 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.EndpointName;
+                parameters[2].Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra;
+                parameters[3].Value = outboxMessage.EndpointName;
             },
             _settings.DbCommandTimeout,
             context,

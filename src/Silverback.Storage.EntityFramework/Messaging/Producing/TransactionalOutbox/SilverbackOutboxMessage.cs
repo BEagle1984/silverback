@@ -14,41 +14,46 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 public class SilverbackOutboxMessage
 {
     /// <summary>
-    ///     Gets or sets the message Id.
+    ///     Gets the message Id.
     /// </summary>
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id { get; set; }
+    public long Id { get; init; }
 
     /// <summary>
-    ///     Gets or sets the message raw binary content.
+    ///     Gets the message raw binary content.
     /// </summary>
-    [Required]
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Entity Framework requirement")]
-    public byte[]? Content { get; set; }
+    public byte[]? Content { get; init; }
 
     /// <summary>
-    ///     Gets or sets the message headers.
+    ///     Gets the message headers.
     /// </summary>
     [MaxLength(1000)]
-    public string? Headers { get; set; }
+    public string? Headers { get; init; }
 
     /// <summary>
-    ///     Gets or sets the endpoint name.
+    ///     Gets the optional extra data (broker-specific).
+    /// </summary>
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Entity Framework requirement")]
+    public byte[]? Extra { get; init; }
+
+    /// <summary>
+    ///     Gets the endpoint name.
     /// </summary>
     [Required]
     [MaxLength(500)]
-    public string EndpointName { get; set; } = string.Empty;
+    public string EndpointName { get; init; } = string.Empty;
 
     /// <summary>
-    ///     Gets or sets the serialized dynamic endpoint.
+    ///     Gets the serialized dynamic endpoint.
     /// </summary>
     [MaxLength(1000)]
-    public string? DynamicEndpoint { get; set; }
+    public string? DynamicEndpoint { get; init; }
 
     /// <summary>
-    ///     Gets or sets the creation timestamp.
+    ///     Gets the creation timestamp.
     /// </summary>
     [Required]
-    public DateTime Created { get; set; }
+    public DateTime Created { get; init; }
 }

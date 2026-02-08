@@ -58,6 +58,7 @@ public class EntityFrameworkOutboxReader : IOutboxReader
                         message.Id,
                         message.Content,
                         message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
+                        message.Extra,
                         message.EndpointName));
 
             return new DbContextAsyncEnumerable<OutboxMessage>(asyncEnumerable, dbContext, scope);

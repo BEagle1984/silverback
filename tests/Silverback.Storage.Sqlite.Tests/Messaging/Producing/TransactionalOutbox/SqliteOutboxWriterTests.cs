@@ -51,9 +51,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, "test");
-        OutboxMessage outboxMessage2 = new([0x02], null, "test");
-        OutboxMessage outboxMessage3 = new([0x03], null, "test");
+        OutboxMessage outboxMessage1 = new([0x01], null, null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, null, "test");
         await outboxWriter.AddAsync(outboxMessage1);
         await outboxWriter.AddAsync(outboxMessage2);
         await outboxWriter.AddAsync(outboxMessage3);
@@ -89,9 +89,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, "test");
-        OutboxMessage outboxMessage2 = new([0x02], null, "test");
-        OutboxMessage outboxMessage3 = new([0x03], null, "test");
+        OutboxMessage outboxMessage1 = new([0x01], null, null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, null, "test");
         await outboxWriter.AddAsync([outboxMessage1, outboxMessage2, outboxMessage3]);
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
@@ -125,9 +125,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        OutboxMessage outboxMessage1 = new([0x01], null, "test");
-        OutboxMessage outboxMessage2 = new([0x02], null, "test");
-        OutboxMessage outboxMessage3 = new([0x03], null, "test");
+        OutboxMessage outboxMessage1 = new([0x01], null, null, "test");
+        OutboxMessage outboxMessage2 = new([0x02], null, null, "test");
+        OutboxMessage outboxMessage3 = new([0x03], null, null, "test");
         await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 }.ToAsyncEnumerable());
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
@@ -161,9 +161,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, null, "test"));
 
         SqliteConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
@@ -175,7 +175,7 @@ public sealed class SqliteOutboxWriterTests : IDisposable
             await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction);
 
             // Add and rollback
-            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, null, "test"), context);
             await transaction.RollbackAsync();
         }
 
@@ -183,7 +183,7 @@ public sealed class SqliteOutboxWriterTests : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage([0x99], null, "test"),
+            new OutboxMessage([0x99], null, null, "test"),
             context);
 
         (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
@@ -193,9 +193,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         {
             await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction);
 
-            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
-            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
-            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, "test"), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, null, "test"), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, null, "test"), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, null, "test"), context);
             await transaction.CommitAsync();
         }
 
@@ -217,9 +217,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, null, "test"));
 
         SqliteConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
@@ -233,8 +233,8 @@ public sealed class SqliteOutboxWriterTests : IDisposable
             // Add and rollback
             await outboxWriter.AddAsync(
                 [
-                    new OutboxMessage([0x99], null, "test"),
-                    new OutboxMessage([0x99], null, "test"),
+                    new OutboxMessage([0x99], null, null, "test"),
+                    new OutboxMessage([0x99], null, null, "test"),
                 ],
                 context);
             await transaction.RollbackAsync();
@@ -244,7 +244,7 @@ public sealed class SqliteOutboxWriterTests : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage([0x99], null, "test"),
+            new OutboxMessage([0x99], null, null, "test"),
             context);
 
         (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
@@ -256,9 +256,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
 
             await outboxWriter.AddAsync(
                 [
-                    new OutboxMessage([0x99], null, "test"),
-                    new OutboxMessage([0x99], null, "test"),
-                    new OutboxMessage([0x99], null, "test")
+                    new OutboxMessage([0x99], null, null, "test"),
+                    new OutboxMessage([0x99], null, null, "test"),
+                    new OutboxMessage([0x99], null, null, "test")
                 ],
                 context);
             await transaction.CommitAsync();
@@ -282,9 +282,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, "test"));
-        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, null, "test"));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, null, "test"));
 
         SqliteConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
@@ -299,8 +299,8 @@ public sealed class SqliteOutboxWriterTests : IDisposable
             await outboxWriter.AddAsync(
                 new OutboxMessage[]
                 {
-                    new([0x99], null, "test"),
-                    new([0x99], null, "test"),
+                    new([0x99], null, null, "test"),
+                    new([0x99], null, null, "test"),
                 }.ToAsyncEnumerable(),
                 context);
             await transaction.RollbackAsync();
@@ -310,7 +310,7 @@ public sealed class SqliteOutboxWriterTests : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage([0x99], null, "test"),
+            new OutboxMessage([0x99], null, null, "test"),
             context);
 
         (await (await _outboxReader.GetAsync(10)).ToListAsync()).Count.ShouldBe(4);
@@ -323,9 +323,9 @@ public sealed class SqliteOutboxWriterTests : IDisposable
             await outboxWriter.AddAsync(
                 new OutboxMessage[]
                 {
-                    new([0x99], null, "test"),
-                    new([0x99], null, "test"),
-                    new([0x99], null, "test")
+                    new([0x99], null, null, "test"),
+                    new([0x99], null, null, "test"),
+                    new([0x99], null, null, "test")
                 }.ToAsyncEnumerable(),
                 context);
             await transaction.CommitAsync();

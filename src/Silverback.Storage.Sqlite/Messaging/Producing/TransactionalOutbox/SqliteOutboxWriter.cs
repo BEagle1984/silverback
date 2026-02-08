@@ -37,12 +37,16 @@ public class SqliteOutboxWriter : IOutboxWriter
         _insertSql = $"INSERT INTO {settings.TableName} (" +
                      "Content," +
                      "Headers," +
+                     "Extra," +
                      "EndpointName," +
+                     "ResolvedEndpoint," +
                      "Created" +
                      ") VALUES (" +
                      "@Content," +
                      "@Headers," +
+                     "@Extra," +
                      "@EndpointName," +
+                     "@ResolvedEndpoint," +
                      "@Created)";
     }
 
@@ -56,15 +60,23 @@ public class SqliteOutboxWriter : IOutboxWriter
             [
                 new SqliteParameter("@Content", SqliteType.Blob)
                 {
-                    Value = outboxMessage.Content
+                    Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content
                 },
                 new SqliteParameter("@Headers", SqliteType.Text)
                 {
                     Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
                 },
+                new SqliteParameter("@Extra", SqliteType.Blob)
+                {
+                    Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra
+                },
                 new SqliteParameter("@EndpointName", SqliteType.Text)
                 {
                     Value = outboxMessage.EndpointName
+                },
+                new SqliteParameter("@ResolvedEndpoint", SqliteType.Text)
+                {
+                    Value = outboxMessage.ResolvedEndpoint == null ? DBNull.Value : outboxMessage.ResolvedEndpoint
                 },
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
@@ -90,7 +102,9 @@ public class SqliteOutboxWriter : IOutboxWriter
             [
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
+                new SqliteParameter("@Extra", SqliteType.Blob),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
+                new SqliteParameter("@ResolvedEndpoint", SqliteType.Text),
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
                     Value = DateTime.UtcNow
@@ -98,9 +112,11 @@ public class SqliteOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.EndpointName;
+                parameters[2].Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra;
+                parameters[3].Value = outboxMessage.EndpointName;
+                parameters[4].Value = outboxMessage.ResolvedEndpoint == null ? DBNull.Value : outboxMessage.ResolvedEndpoint;
             },
             _settings.DbCommandTimeout,
             context,
@@ -121,7 +137,9 @@ public class SqliteOutboxWriter : IOutboxWriter
             [
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
+                new SqliteParameter("@Extra", SqliteType.Blob),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
+                new SqliteParameter("@ResolvedEndpoint", SqliteType.Text),
                 new SqliteParameter("@Created", SqliteType.Integer)
                 {
                     Value = DateTime.UtcNow
@@ -129,9 +147,11 @@ public class SqliteOutboxWriter : IOutboxWriter
             ],
             (outboxMessage, parameters) =>
             {
-                parameters[0].Value = outboxMessage.Content;
+                parameters[0].Value = outboxMessage.Content == null ? DBNull.Value : outboxMessage.Content;
                 parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
-                parameters[2].Value = outboxMessage.EndpointName;
+                parameters[2].Value = outboxMessage.Extra == null ? DBNull.Value : outboxMessage.Extra;
+                parameters[3].Value = outboxMessage.EndpointName;
+                parameters[4].Value = outboxMessage.ResolvedEndpoint == null ? DBNull.Value : outboxMessage.ResolvedEndpoint;
             },
             _settings.DbCommandTimeout,
             context,

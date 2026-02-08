@@ -22,20 +22,25 @@ public class OutboxMessage
     /// <param name="headers">
     ///     The message headers.
     /// </param>
+    /// <param name="extra">
+    ///     The optional extra data (broker-specific).
+    /// </param>
     /// <param name="endpointName">
     ///     The endpoint name.
     /// </param>
     /// <param name="resolvedEndpoint">
-    ///    The resolved endpoint. This is used only when the endpoint is resolved dynamically.
-    ///  </param>
+    ///     The resolved endpoint. This is used only when the endpoint is resolved dynamically.
+    /// </param>
     public OutboxMessage(
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
+        byte[]? extra,
         string endpointName,
         string? resolvedEndpoint = null)
     {
         Content = content;
         Headers = headers?.AsReadOnlyCollection();
+        Extra = extra;
         EndpointName = endpointName;
         ResolvedEndpoint = resolvedEndpoint;
     }
@@ -50,6 +55,12 @@ public class OutboxMessage
     ///     Gets the message headers.
     /// </summary>
     public IReadOnlyCollection<MessageHeader>? Headers { get; }
+
+    /// <summary>
+    ///     Gets the extra data.
+    /// </summary>
+    [SuppressMessage("", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
+    public byte[]? Extra { get; }
 
     /// <summary>
     ///     Gets the destination endpoint name.

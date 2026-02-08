@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -23,6 +24,8 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
     private IOutboxWriter? _outboxWriter;
+
+    private IOutboxMessageEnhancers? _messageEnhancers;
 
     private ISilverbackLogger<OutboxProduceStrategy>? _logger;
 
@@ -52,11 +55,18 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     public IProduceStrategyImplementation Build(ISilverbackContext context, ProducerEndpointConfiguration endpointConfiguration)
     {
         Check.NotNull(context, nameof(context));
+        Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
 
         _outboxWriter ??= context.ServiceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, context.ServiceProvider);
+        _messageEnhancers ??= context.ServiceProvider.GetRequiredService<IOutboxMessageEnhancers>();
         _logger ??= context.ServiceProvider.GetRequiredService<ISilverbackLogger<OutboxProduceStrategy>>();
 
-        return new OutboxProduceStrategyImplementation(_outboxWriter, endpointConfiguration, context, _logger);
+        return new OutboxProduceStrategyImplementation(
+            _outboxWriter,
+            endpointConfiguration,
+            _messageEnhancers.GetEnhancer(endpointConfiguration),
+            context,
+            _logger);
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
@@ -77,20 +87,26 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         private readonly ProducerEndpointConfiguration _configuration;
 
+        private readonly IOutboxMessageEnhancer? _messageEnhancer;
+
         private readonly ISilverbackLogger<OutboxProduceStrategy> _logger;
 
         private readonly ISilverbackContext _context;
 
         private DelegatedProducer<DelegatedProducerState>? _producer;
 
+        private DelegatedProducer<BatchDelegatedProducerState>? _batchProducer;
+
         public OutboxProduceStrategyImplementation(
             IOutboxWriter outboxWriter,
             ProducerEndpointConfiguration configuration,
+            IOutboxMessageEnhancer? messageEnhancer,
             ISilverbackContext context,
             ISilverbackLogger<OutboxProduceStrategy> logger)
         {
             _outboxWriter = outboxWriter;
             _configuration = configuration;
+            _messageEnhancer = messageEnhancer;
             _context = context;
             _logger = logger;
         }
@@ -99,11 +115,11 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             _producer ??= new DelegatedProducer<DelegatedProducerState>(
                 static (finalEnvelope, state, finalCancellationToken) => state.OutboxWriter.AddAsync(
-                    MapToOutboxMessage(finalEnvelope),
+                    MapToOutboxMessage(finalEnvelope, state.MessageEnhancer),
                     state.Context,
                     finalCancellationToken),
                 _configuration,
-                new DelegatedProducerState(_outboxWriter, _context),
+                new DelegatedProducerState(_outboxWriter, _messageEnhancer, _context),
                 _context.ServiceProvider);
 
             await _producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
@@ -113,11 +129,13 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
         public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
         {
-            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
-            using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
+            using MessageStreamEnumerable<OutboxMessage> stream = new();
+            _batchProducer ??= new DelegatedProducer<BatchDelegatedProducerState>(
+                static (finalEnvelope, state, finalCancellationToken) => state.Stream.PushAsync(
+                    MapToOutboxMessage(finalEnvelope, state.MessageEnhancer),
+                    cancellationToken: finalCancellationToken),
                 _configuration,
-                stream,
+                new BatchDelegatedProducerState(stream, _messageEnhancer),
                 _context.ServiceProvider);
 
             Task.Run(
@@ -127,24 +145,26 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
+                        await _batchProducer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
                     }
 
                     await stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                 },
                 cancellationToken).FireAndForget();
 
-            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context, cancellationToken).ConfigureAwait(false);
+            await _outboxWriter.AddAsync(stream.AsEnumerable(), _context, cancellationToken).ConfigureAwait(false);
         }
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
         public async Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
         {
-            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
-            using DelegatedProducer<MessageStreamEnumerable<IOutboundEnvelope>> producer = new(
-                static (finalEnvelope, stream, finalCancellationToken) => stream.PushAsync(finalEnvelope, cancellationToken: finalCancellationToken),
+            using MessageStreamEnumerable<OutboxMessage> stream = new();
+            _batchProducer ??= new DelegatedProducer<BatchDelegatedProducerState>(
+                static (finalEnvelope, state, finalCancellationToken) => state.Stream.PushAsync(
+                    MapToOutboxMessage(finalEnvelope, state.MessageEnhancer),
+                    cancellationToken: finalCancellationToken),
                 _configuration,
-                stream,
+                new BatchDelegatedProducerState(stream, _messageEnhancer),
                 _context.ServiceProvider);
 
             Task.Run(
@@ -154,25 +174,38 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        await producer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
+                        await _batchProducer.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
                     }
 
                     await stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                 },
                 cancellationToken).FireAndForget();
 
-            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context, cancellationToken).ConfigureAwait(false);
+            await _outboxWriter.AddAsync(stream.AsEnumerable(), _context, cancellationToken).ConfigureAwait(false);
         }
 
-        public void Dispose() => _producer?.Dispose();
+        public void Dispose()
+        {
+            _producer?.Dispose();
+            _batchProducer?.Dispose();
+        }
 
-        private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
-            new(
+        private static OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope, IOutboxMessageEnhancer? messageEnhancer)
+        {
+            string? resolvedEndpoint = envelope.EndpointConfiguration.EndpointResolver is IDynamicProducerEndpointResolver dynamicEndpointResolver
+                ? dynamicEndpointResolver.GetSerializedEndpoint(envelope)
+                : null;
+
+            return new OutboxMessage(
                 envelope.RawMessage.ReadAll(),
                 envelope.Headers,
+                messageEnhancer?.GetExtra(envelope),
                 envelope.EndpointConfiguration.FriendlyName ?? throw new InvalidOperationException("FriendlyName not set."),
-                envelope.ResolvedEndpoint);
+                resolvedEndpoint);
+        }
 
-        private record struct DelegatedProducerState(IOutboxWriter OutboxWriter, ISilverbackContext Context);
+        private record struct DelegatedProducerState(IOutboxWriter OutboxWriter, IOutboxMessageEnhancer? MessageEnhancer, ISilverbackContext Context);
+
+        private record struct BatchDelegatedProducerState(MessageStreamEnumerable<OutboxMessage> Stream, IOutboxMessageEnhancer? MessageEnhancer);
     }
 }

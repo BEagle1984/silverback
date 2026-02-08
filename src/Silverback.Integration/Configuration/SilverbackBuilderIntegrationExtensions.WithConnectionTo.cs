@@ -88,7 +88,8 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddExtensibleFactory<IOutboxReaderFactory, OutboxReaderFactory>()
             .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
             .Services
-            .AddSingleton<IMessageWrapper>(_ => MessageWrapper.Instance);
+            .AddSingleton<IMessageWrapper>(_ => MessageWrapper.Instance)
+            .AddSingleton<IOutboxMessageEnhancers, OutboxMessageEnhancers>();
 
     private static void AddEnrichers(SilverbackBuilder builder) =>
         builder

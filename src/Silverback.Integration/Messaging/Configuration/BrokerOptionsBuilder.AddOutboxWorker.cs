@@ -57,6 +57,7 @@ public sealed partial class BrokerOptionsBuilder
                         settings,
                         serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox, serviceProvider),
                         serviceProvider.GetRequiredService<IProducerCollection>(),
+                        serviceProvider.GetRequiredService<IOutboxMessageEnhancers>(),
                         serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorker>>());
 
                     IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();

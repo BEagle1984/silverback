@@ -31,9 +31,10 @@ public class DbOutboxMessage : OutboxMessage
         long id,
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
+        byte[]? extra,
         string endpointName,
         string? resolvedEndpoint = null)
-        : base(content, headers, endpointName, resolvedEndpoint)
+        : base(content, headers, extra, endpointName, resolvedEndpoint)
     {
         Id = id;
     }

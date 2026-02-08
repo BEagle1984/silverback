@@ -83,6 +83,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
                      "Id SERIAL PRIMARY KEY," +
                      "Content BYTEA," +
                      "Headers TEXT," +
+                     "Extra BYTEA," +
                      "EndpointName TEXT NOT NULL," +
                      "ResolvedEndpoint TEXT," +
                      "Created TIMESTAMP WITH TIME ZONE NOT NULL);";

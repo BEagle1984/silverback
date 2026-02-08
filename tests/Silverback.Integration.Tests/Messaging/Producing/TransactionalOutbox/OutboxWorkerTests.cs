@@ -29,6 +29,8 @@ public class OutboxWorkerTests
 
     private readonly IProducer _producer2 = Substitute.For<IProducer>();
 
+    private readonly IOutboxMessageEnhancers _messageEnhancers = Substitute.For<IOutboxMessageEnhancers>();
+
     private readonly ISilverbackLogger<OutboxWorker> _logger = Substitute.For<ISilverbackLogger<OutboxWorker>>();
 
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
@@ -85,14 +87,15 @@ public class OutboxWorkerTests
                         .Invoke(null, callInfo.ArgAt<OutboxMessage>(3));
                 }).FireAndForget());
 
-        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, "two"));
-        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, null, "two"));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, null, "one"));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = enforceMessageOrder },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -107,7 +110,7 @@ public class OutboxWorkerTests
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
         }
 
         int tries = 0;
@@ -131,6 +134,7 @@ public class OutboxWorkerTests
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -155,7 +159,7 @@ public class OutboxWorkerTests
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
         }
 
         int tries = 0;
@@ -179,6 +183,7 @@ public class OutboxWorkerTests
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -199,7 +204,7 @@ public class OutboxWorkerTests
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
         }
 
         int tries = 0;
@@ -228,6 +233,7 @@ public class OutboxWorkerTests
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -252,7 +258,7 @@ public class OutboxWorkerTests
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
         }
 
         int tries = 0;
@@ -281,6 +287,7 @@ public class OutboxWorkerTests
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         bool result = await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -305,7 +312,7 @@ public class OutboxWorkerTests
 
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, "one"));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, null, "one"));
         }
 
         int processed = 0;
@@ -333,6 +340,7 @@ public class OutboxWorkerTests
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = enforceMessageOrder },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
+            _messageEnhancers,
             _logger);
 
         Func<Task> act = () => outboxWorker.ProcessOutboxAsync(cancellationTokenSource.Token);

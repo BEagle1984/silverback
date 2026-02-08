@@ -622,7 +622,7 @@ public class IntegrationLoggerExtensionsTests
     public void LogErrorProducingOutboxStoredMessage_ShouldLog()
     {
         _silverbackLogger.LogErrorProducingOutboxStoredMessage(
-            new OutboxMessage(null, null, "test"),
+            new OutboxMessage(null, null, null, "test"),
             new ArithmeticException());
 
         _loggerSubstitute.Received(

@@ -14,6 +14,7 @@ using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Util;
 
@@ -59,7 +60,8 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddSingleton<IKafkaTransactionalProducerCollection, KafkaTransactionalProducerCollection>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>()
-            .AddTransient<KafkaOffsetStoreScope>(services => services.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope());
+            .AddTransient<KafkaOffsetStoreScope>(services => services.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope())
+            .AddSingleton<IOutboxMessageEnhancer, KafkaOutboxMessageEnhancer>();
         AddChunkEnricher(brokerOptionsBuilder);
         AddActivityEnrichers(brokerOptionsBuilder);
         AddOffsetsTracker(brokerOptionsBuilder);

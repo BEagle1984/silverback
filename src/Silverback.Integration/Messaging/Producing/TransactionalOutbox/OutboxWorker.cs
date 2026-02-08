@@ -3,11 +3,14 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -20,6 +23,8 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     private readonly IOutboxReader _outboxReader;
 
     private readonly IProducerCollection _producers;
+
+    private readonly IOutboxMessageEnhancers _messageEnhancers;
 
     private readonly ISilverbackLogger<OutboxWorker> _logger;
 
@@ -41,6 +46,9 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
     /// <param name="producers">
     ///     The <see cref="IProducerCollection" />.
     /// </param>
+    /// <param name="messageEnhancers">
+    ///     The collection of <see cref="IOutboxMessageEnhancer" />.
+    /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger{TCategoryName}" />.
     /// </param>
@@ -48,11 +56,13 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
         OutboxWorkerSettings settings,
         IOutboxReader outboxReader,
         IProducerCollection producers,
+        IOutboxMessageEnhancers messageEnhancers,
         ISilverbackLogger<OutboxWorker> logger)
     {
         _settings = Check.NotNull(settings, nameof(settings));
         _outboxReader = Check.NotNull(outboxReader, nameof(outboxReader));
         _producers = Check.NotNull(producers, nameof(producers));
+        _messageEnhancers = Check.NotNull(messageEnhancers, nameof(messageEnhancers));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -79,7 +89,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
                 stoppingToken.ThrowIfCancellationRequested();
 
-                // Break on failure if message order has to be preserved
+                // Break on failure if the message order has to be preserved
                 if (_failed && _settings.EnforceMessageOrder)
                     throw new OutboxProcessingException("Failed to produce message, aborting the outbox processing.");
             }
@@ -135,6 +145,11 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
                 {
                     if (outboxMessage.Headers != null)
                         envelope.Headers.AddRange(outboxMessage.Headers);
+
+                    if (outboxMessage.ResolvedEndpoint != null && envelope is IInternalOutboundEnvelope internalEnvelope)
+                        internalEnvelope.SetResolvedEndpoint(outboxMessage.ResolvedEndpoint);
+
+                    _messageEnhancers.GetEnhancer(producer.EndpointConfiguration)?.Enhance(envelope, outboxMessage);
                 });
         }
         catch (Exception ex)
@@ -144,7 +159,7 @@ public sealed class OutboxWorker : IOutboxWorker, IDisposable
 
             _logger.LogErrorProducingOutboxStoredMessage(outboxMessage, ex);
 
-            // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
+            // Rethrow if the message order has to be preserved, otherwise go ahead with the next message in the queue
             if (_settings.EnforceMessageOrder)
                 throw;
         }
