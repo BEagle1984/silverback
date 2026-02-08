@@ -52,6 +52,17 @@ public class KafkaProducerEndpointConfigurationTests
         act.ShouldThrow<BrokerConfigurationException>();
     }
 
+    [Fact]
+    public void Validate_ShouldThrow_WhenKeySerializerIsNull()
+    {
+        KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { KeySerializer = null! };
+
+        Action act = configuration.Validate;
+
+        BrokerConfigurationException exception = act.ShouldThrow<BrokerConfigurationException>();
+        exception.Message.ShouldBe("A key serializer is required.");
+    }
+
     private static KafkaProducerEndpointConfiguration GetValidConfiguration() => new()
     {
         EndpointResolver = new KafkaStaticProducerEndpointResolver("topic1")

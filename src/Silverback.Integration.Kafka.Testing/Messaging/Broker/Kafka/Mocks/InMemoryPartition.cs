@@ -3,11 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using Confluent.Kafka;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
@@ -39,7 +36,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     public InMemoryTopic Topic { get; }
 
-    public Offset FirstOffset { get; private set; } = new(0);
+    public Offset FirstOffset { get; } = new(0);
 
     public Offset LastOffset { get; private set; } = Offset.Unset;
 
