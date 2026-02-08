@@ -10,4 +10,6 @@ internal static class DefaultSerializers
     public static IMessageSerializer Json { get; } = new JsonMessageSerializer();
 
     public static IMessageSerializer Binary { get; } = new BinaryMessageSerializer();
+
+    public static ISimpleSerializer SimpleString { get; } = new StringSerializer();
 }

@@ -5,7 +5,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages;
 
-internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessage>, IKafkaOutboundEnvelope<TMessage, TKey>, IInternalKafkaOutboundEnvelope
+internal record KafkaOutboundEnvelope<TMessage> : OutboundEnvelope<TMessage>, IKafkaOutboundEnvelope<TMessage>, IInternalKafkaOutboundEnvelope
     where TMessage : class
 {
     private KafkaOffset? _offset;
@@ -23,10 +23,8 @@ internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessag
     {
         if (clonedEnvelope is IKafkaInboundEnvelope kafkaEnvelope)
         {
+            Key = kafkaEnvelope.Key;
             RawKey = kafkaEnvelope.RawKey;
-
-            if (kafkaEnvelope is IKafkaInboundEnvelope<object, TKey> typedKafkaEnvelope)
-                Key = typedKafkaEnvelope.Key;
         }
     }
 
@@ -35,16 +33,14 @@ internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessag
     {
         if (clonedEnvelope is IKafkaOutboundEnvelope kafkaEnvelope)
         {
+            Key = kafkaEnvelope.Key;
             RawKey = kafkaEnvelope.RawKey;
-
-            if (kafkaEnvelope is IKafkaOutboundEnvelope<object, TKey> typedKafkaEnvelope)
-                Key = typedKafkaEnvelope.Key;
         }
     }
 
     public KafkaOffset? Offset => _offset ??= (KafkaOffset?)BrokerMessageIdentifier;
 
-    public TKey? Key { get; private set; }
+    public object? Key { get; private set; }
 
     public byte[]? RawKey { get; private set; }
 
@@ -54,7 +50,7 @@ internal record KafkaOutboundEnvelope<TMessage, TKey> : OutboundEnvelope<TMessag
 
     object? IKafkaOutboundEnvelope.Key => Key;
 
-    public IKafkaOutboundEnvelope<TMessage, TKey> SetKey(TKey? key)
+    public IKafkaOutboundEnvelope SetKey(object? key)
     {
         Key = key;
         return this;

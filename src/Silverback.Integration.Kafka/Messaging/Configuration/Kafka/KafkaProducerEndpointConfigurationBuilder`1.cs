@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -23,6 +24,10 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
 {
     private IProducerEndpointResolver<KafkaProducerEndpoint>? _endpointResolver;
 
+    // private Type? _keyType;
+
+    private ISimpleSerializer? _keySerializer;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> class.
     /// </summary>
@@ -30,7 +35,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="IServiceProvider" />.
     /// </param>
     /// <param name="friendlyName">
-    ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
+    ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health check
     /// </param>
     public KafkaProducerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName = null)
         : base(serviceProvider, friendlyName)
@@ -321,8 +326,25 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
 
         return this;
     }
-    
-    // TODO: overloads with string key as default? -> in case fix tests/Silverback.Integration.Tests.E2E/Kafka/OutboundMessageEnrichmentTests.SetKafkaKey.cs
+
+    // public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey<TKey>(ISimpleSerializer? serializer = null)
+    // {
+    //     _keyType = typeof(TKey);
+    //     _keySerializer = serializer;
+    //
+    //     return this;
+    // }
+
+    // TODO: Test
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> UseKafkaKeySerializer<TSerializer>()
+        where TSerializer : ISimpleSerializer, new() => UseKafkaKeySerializer(new TSerializer());
+
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> UseKafkaKeySerializer(ISimpleSerializer? serializer = null)
+    {
+        _keySerializer = serializer;
+
+        return this;
+    }
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -333,36 +355,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TKey>(Func<TMessage?, TKey?> keyProvider) =>
-        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessage, TKey>(keyProvider));
-
-    /// <summary>
-    ///     Uses the specified value provider function to set the kafka key for each message being produced.
-    /// </summary>
-    /// <typeparam name="TMessageChildType">
-    ///     The type of the messages to be enriched with this kafka key.
-    /// </typeparam>
-    /// <param name="keyProvider">
-    ///     The key provider function.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType, TKey>(Func<TMessageChildType?, TKey?> keyProvider)
-        where TMessageChildType : TMessage =>
-        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessageChildType, TKey>(keyProvider));
-
-    /// <summary>
-    ///     Uses the specified value provider function to set the kafka key for each message being produced.
-    /// </summary>
-    /// <param name="keyProvider">
-    ///     The key provider function.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TKey>(Func<IOutboundEnvelope<TMessage>, TKey?> keyProvider) =>
-        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessage, TKey>(keyProvider));
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<TMessage?, object?> keyProvider) =>
+        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessage>(keyProvider));
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -376,14 +370,52 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType, TKey>(Func<IOutboundEnvelope<TMessageChildType>, TKey?> keyProvider)
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<TMessageChildType?, object?> keyProvider)
         where TMessageChildType : TMessage =>
-        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessageChildType, TKey>(keyProvider));
+        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessageChildType>(keyProvider));
+
+    /// <summary>
+    ///     Uses the specified value provider function to set the kafka key for each message being produced.
+    /// </summary>
+    /// <param name="keyProvider">
+    ///     The key provider function.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> keyProvider) =>
+        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessage>(keyProvider));
+
+    /// <summary>
+    ///     Uses the specified value provider function to set the kafka key for each message being produced.
+    /// </summary>
+    /// <typeparam name="TMessageChildType">
+    ///     The type of the messages to be enriched with this kafka key.
+    /// </typeparam>
+    /// <param name="keyProvider">
+    ///     The key provider function.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> keyProvider)
+        where TMessageChildType : TMessage =>
+        AddMessageEnricher(new KafkaKeyOutboundMessageEnricher<TMessageChildType>(keyProvider));
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
-    protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>
-        new()
+    protected override KafkaProducerEndpointConfiguration CreateConfiguration()
+    {
+        KafkaProducerEndpointConfiguration configuration = new()
         {
             EndpointResolver = _endpointResolver ?? NullProducerEndpointResolver<KafkaProducerEndpoint>.Instance
         };
+
+        configuration = configuration with
+        {
+            // KeyType = _keyType ?? configuration.KeyType,
+            KeySerializer = _keySerializer ?? configuration.KeySerializer
+        };
+
+        return configuration;
+    }
 }

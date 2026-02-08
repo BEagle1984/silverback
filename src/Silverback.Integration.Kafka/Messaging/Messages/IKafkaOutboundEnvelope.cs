@@ -40,6 +40,17 @@ public interface IKafkaOutboundEnvelope : IOutboundEnvelope
     /// <summary>
     ///     Sets the message key.
     /// </summary>
+    /// <param name="key">
+    ///     The message key.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IKafkaOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    IKafkaOutboundEnvelope SetKey(object? key);
+
+    /// <summary>
+    ///     Sets the message key.
+    /// </summary>
     /// <param name="rawKey">
     ///     The serialized message key.
     /// </param>

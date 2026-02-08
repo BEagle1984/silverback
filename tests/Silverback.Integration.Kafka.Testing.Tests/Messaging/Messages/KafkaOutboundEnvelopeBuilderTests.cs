@@ -14,7 +14,7 @@ public class KafkaOutboundEnvelopeBuilderTests
     [Fact]
     public void WithKey_ShouldSetKafkaKey()
     {
-        KafkaOutboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaOutboundEnvelopeBuilder<TestEventOne> builder = new();
         const string key = "key";
 
         builder.WithKey(key);
@@ -26,7 +26,7 @@ public class KafkaOutboundEnvelopeBuilderTests
     [Fact]
     public void WithRawKey_ShouldSetRawKafkaKey()
     {
-        KafkaOutboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaOutboundEnvelopeBuilder<TestEventOne> builder = new();
         byte[] rawKey = [1, 2, 3];
 
         builder.WithRawKey(rawKey);
@@ -38,7 +38,7 @@ public class KafkaOutboundEnvelopeBuilderTests
     [Fact]
     public void WithDestinationTopic_ShouldSetDynamicDestinationTopic()
     {
-        KafkaOutboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaOutboundEnvelopeBuilder<TestEventOne> builder = new();
         const string topic = "topic";
 
         builder.WithDestinationTopic(topic);
@@ -50,7 +50,7 @@ public class KafkaOutboundEnvelopeBuilderTests
     [Fact]
     public void WithDestinationPartition_ShouldSetDynamicDestinationPartition()
     {
-        KafkaOutboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaOutboundEnvelopeBuilder<TestEventOne> builder = new();
         const int partition = 3;
 
         builder.WithDestinationPartition(partition);
@@ -62,7 +62,7 @@ public class KafkaOutboundEnvelopeBuilderTests
     [Fact]
     public void WithContext_ShouldSetContext()
     {
-        KafkaOutboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaOutboundEnvelopeBuilder<TestEventOne> builder = new();
         ISilverbackContext context = Substitute.For<ISilverbackContext>();
 
         builder.WithContext(context);

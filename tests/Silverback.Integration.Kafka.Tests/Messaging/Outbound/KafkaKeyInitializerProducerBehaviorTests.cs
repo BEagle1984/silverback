@@ -49,7 +49,7 @@ public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
     [Fact]
     public async Task HandleAsync_ShouldLeaveKafkaKeyNull_WhenNoKeyMemberAttribute()
     {
-        KafkaOutboundEnvelope<NoKeyMembersMessage, string> envelope = new(
+        KafkaOutboundEnvelope<NoKeyMembersMessage> envelope = new(
             new NoKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
@@ -75,7 +75,7 @@ public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
     [Fact]
     public async Task HandleAsync_ShouldSetKafkaKeyHeaderFromSingleKeyMemberAttribute()
     {
-        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
+        KafkaOutboundEnvelope<SingleKeyMemberMessage> envelope = new(
             new SingleKeyMemberMessage
             {
                 Id = Guid.NewGuid(),
@@ -101,7 +101,7 @@ public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
     [Fact]
     public async Task HandleAsync_ShouldSetKafkaKeyHeaderFromMultipleKeyMemberAttributes()
     {
-        KafkaOutboundEnvelope<MultipleKeyMembersMessage, string> envelope = new(
+        KafkaOutboundEnvelope<MultipleKeyMembersMessage> envelope = new(
             new MultipleKeyMembersMessage
             {
                 Id = Guid.NewGuid(),
@@ -127,7 +127,7 @@ public sealed class KafkaKeyInitializerProducerBehaviorTests : IDisposable
     [Fact]
     public async Task HandleAsync_ShouldNotOverwriteExistingKafkaKeyHeader()
     {
-        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
+        KafkaOutboundEnvelope<SingleKeyMemberMessage> envelope = new(
             new SingleKeyMemberMessage
             {
                 Id = Guid.NewGuid(),

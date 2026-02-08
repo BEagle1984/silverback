@@ -1,17 +1,22 @@
 ﻿// Copyright (c) 2025 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Tests.Integration.E2E.Util;
@@ -33,15 +38,13 @@ public partial class ProducerEndpointTests : KafkaTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
@@ -53,27 +56,20 @@ public partial class ProducerEndpointTests : KafkaTests
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenMultipleProducersForDifferentMessagesAreConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
-                                        serializer => serializer
-                                            .Configure(
-                                                options =>
-                                                {
-                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                                                }))))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(producer => producer
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(serializer => serializer
+                        .Configure(options =>
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        }))))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -108,25 +104,19 @@ public partial class ProducerEndpointTests : KafkaTests
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenSingleProducerHandlesMultipleTypes()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
-                                        serializer => serializer
-                                            .Configure(
-                                                options =>
-                                                {
-                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                                                }))))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(serializer => serializer
+                        .Configure(options =>
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        }))))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -161,21 +151,17 @@ public partial class ProducerEndpointTests : KafkaTests
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenBroadcastingToMultipleTopics()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -216,21 +202,17 @@ public partial class ProducerEndpointTests : KafkaTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceCustomHeaders()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)
-                                        .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
-                                        .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
-                                        .AddHeader("x-static", 42)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)
+                        .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
+                        .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
+                        .AddHeader("x-static", 42)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -255,15 +237,13 @@ public partial class ProducerEndpointTests : KafkaTests
     [Fact]
     public async Task ProducerEndpoint_ShouldNotSetupRouteButStillWork_WhenMessageTypeIsNotSpecified()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(producer => producer.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
@@ -275,5 +255,124 @@ public partial class ProducerEndpointTests : KafkaTests
         await producer.ProduceAsync(new TestEventOne());
 
         DefaultTopic.MessagesCount.ShouldBe(1);
+    }
+
+    [Fact]
+    // TODO: Test consumer side as well
+    // TODO: Maybe test different serializers (if not tested in unit tests)
+    public async Task ProducerEndpoint_ShouldProduceStringKafkaKey()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("my-key"));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
+        message.Key.ShouldBe("my-key"u8.ToArray());
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceIntKafkaKey()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey(12345));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
+        message.Key.ShouldBe("12345"u8.ToArray());
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceGuidKafkaKey()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        Guid key = Guid.NewGuid();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey(key));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
+        message.Key.ShouldBe(Encoding.UTF8.GetBytes(key.ToString()));
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceKafkaKeyUsingCustomSerializer()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName).UseKafkaKeySerializer<CustomKeySerializer>()))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey(new CustomKey("one", "two")));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
+        message.Key.ShouldBe("one-two"u8.ToArray());
+    }
+
+    [Fact]
+    public async Task ProducerEndpoint_ShouldProduceRawKafkaKey()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaRawKey("my-key"u8.ToArray()));
+
+        DefaultTopic.MessagesCount.ShouldBe(1);
+        Message<byte[]?, byte[]?> message = DefaultTopic.GetAllMessages().Single();
+        message.Key.ShouldBe("my-key"u8.ToArray());
+    }
+
+    private record CustomKey(string One, string Two);
+
+    private class CustomKeySerializer : ISimpleSerializer
+    {
+        public byte[]? Serialize(object? value)
+        {
+            if (value is not CustomKey customKey)
+                return null;
+
+            return Encoding.UTF8.GetBytes($"{customKey.One}-{customKey.Two}");
+        }
     }
 }

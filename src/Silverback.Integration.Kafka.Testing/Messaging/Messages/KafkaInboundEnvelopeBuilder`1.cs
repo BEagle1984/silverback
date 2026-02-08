@@ -9,28 +9,23 @@ using Silverback.Util;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Creates the <see cref="IKafkaInboundEnvelope{TMessage,TKey}" /> instances to be used for testing.
+///     Creates the <see cref="IKafkaInboundEnvelope{TMessage}" /> instances to be used for testing.
 /// </summary>
 /// <typeparam name="TMessage">
 ///     The type of the wrapped message.
 /// </typeparam>
-/// <typeparam name="TKey">
-///     The type of the message key.
-/// </typeparam>
-public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
-    : InboundEnvelopeBuilder<KafkaInboundEnvelopeBuilder<TMessage, TKey>, IKafkaInboundEnvelope<TMessage, TKey>, TMessage>
+public class KafkaInboundEnvelopeBuilder<TMessage>
+    : InboundEnvelopeBuilder<KafkaInboundEnvelopeBuilder<TMessage>, IKafkaInboundEnvelope<TMessage>, TMessage>
     where TMessage : class
 {
-    // TODO: Create MQTT Version of the builders!!
-
-    private TKey? _key;
+    private object? _key;
 
     private byte[]? _rawKey;
 
     private DateTime? _timestamp;
 
     /// <inheritdoc cref="InboundEnvelopeBuilder{TBuilder,TEnvelope,TMessage}.This" />
-    protected override KafkaInboundEnvelopeBuilder<TMessage, TKey> This => this;
+    protected override KafkaInboundEnvelopeBuilder<TMessage> This => this;
 
     /// <summary>
     ///     Sets the offset of the message.
@@ -48,9 +43,9 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     ///     The offset.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithOffset(string topic, int partition, long offset) =>
+    public KafkaInboundEnvelopeBuilder<TMessage> WithOffset(string topic, int partition, long offset) =>
         WithOffset(new KafkaOffset(topic, partition, offset));
 
     /// <summary>
@@ -60,9 +55,9 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     ///     The offset.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithOffset(KafkaOffset offset) =>
+    public KafkaInboundEnvelopeBuilder<TMessage> WithOffset(KafkaOffset offset) =>
         WithIdentifier(offset);
 
     /// <summary>
@@ -72,9 +67,9 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     ///     The message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithKey(TKey? key)
+    public KafkaInboundEnvelopeBuilder<TMessage> WithKey(object? key)
     {
         _key = key;
         return this;
@@ -87,9 +82,9 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     ///     The serialized message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithRawKey(byte[]? rawKey)
+    public KafkaInboundEnvelopeBuilder<TMessage> WithRawKey(byte[]? rawKey)
     {
         _rawKey = rawKey;
         return this;
@@ -102,16 +97,16 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     ///     The message timestamp.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaInboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaInboundEnvelopeBuilder<TMessage, TKey> WithTimestamp(DateTime timestamp)
+    public KafkaInboundEnvelopeBuilder<TMessage> WithTimestamp(DateTime timestamp)
     {
         _timestamp = timestamp;
         return this;
     }
 
     /// <inheritdoc cref="InboundEnvelopeBuilder{TBuilder,TEnvelope,TMessage}.BuildCore" />
-    protected override IKafkaInboundEnvelope<TMessage, TKey> BuildCore(
+    protected override IKafkaInboundEnvelope<TMessage> BuildCore(
         TMessage? message,
         Stream? rawMessage,
         MessageHeaderCollection? headers,
@@ -121,7 +116,7 @@ public class KafkaInboundEnvelopeBuilder<TMessage, TKey>
     {
         Check.NotNull(endpoint, nameof(endpoint));
 
-        KafkaInboundEnvelope<TMessage, TKey> envelope = new(
+        KafkaInboundEnvelope<TMessage> envelope = new(
             message,
             rawMessage,
             endpoint,

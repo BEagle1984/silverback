@@ -11,6 +11,8 @@ namespace Silverback.Messaging.Messages;
 // TODO: Ensure all is tested
 public static class MqttEnvelopeExtensions
 {
+    // TODO: Improve error messages when types mismatch
+
     public static IMqttInboundEnvelope AsMqttEnvelope(this IInboundEnvelope envelope) =>
         Check.IsOfType<IMqttInboundEnvelope>(envelope, nameof(envelope));
 
@@ -115,7 +117,7 @@ public static class MqttEnvelopeExtensions
     /// </returns>
     public static TCorrelationData? GetMqttCorrelationData<TCorrelationData>(this IOutboundEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).AsMqttEnvelope<object, TCorrelationData>().CorrelationData;
-    
+
     // TODO: Check summaries (Kafka version too)
     /// <summary>
     ///     Gets the correlation data as UTF-8 string.

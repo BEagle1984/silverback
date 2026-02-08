@@ -21,7 +21,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnKeyAsStringForInboundEnvelope()
     {
-        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -38,7 +38,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnKeyAsStringForOutboundEnvelope()
     {
-        KafkaOutboundEnvelope<object, string> envelope = new(
+        KafkaOutboundEnvelope<object> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -53,7 +53,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnKeyForInboundEnvelope()
     {
-        KafkaInboundEnvelope<TestEventOne, int> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -70,7 +70,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnKeyForOutboundEnvelope()
     {
-        KafkaOutboundEnvelope<object, int> envelope = new(
+        KafkaOutboundEnvelope<object> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -85,7 +85,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldThrowForInboundEnvelope_WhenTypeMismatch()
     {
-        KafkaInboundEnvelope<TestEventOne, int> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -103,7 +103,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldThrowForOutboundEnvelope_WhenTypeMismatch()
     {
-        KafkaOutboundEnvelope<object, int> envelope = new(
+        KafkaOutboundEnvelope<object> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -119,7 +119,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnNullForInboundEnvelope_WhenKeyIsNotSet()
     {
-        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -134,7 +134,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaKey_ShouldReturnNullForOutboundEnvelope_WhenKeyIsNotSet()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             (TestEventOne?)null,
             Substitute.For<IProducer>());
 
@@ -146,7 +146,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaKey_ShouldSetKey()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -159,7 +159,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaKey_ShouldThrow_WhenKeyTypeMismatch()
     {
-        KafkaOutboundEnvelope<TestEventOne, int> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -173,7 +173,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaTimestamp_ShouldReturnTimestampValue()
     {
-        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -192,7 +192,7 @@ public class KafkaEnvelopeExtensionsTests
     public void GetKafkaOffset_ShouldReturnOffset()
     {
         KafkaOffset offset = new(new TopicPartition("test", 1), 42);
-        KafkaInboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaInboundEnvelope<TestEventOne> envelope = new(
             null,
             Stream.Null,
             TestConsumerEndpoint.GetDefault(),
@@ -207,7 +207,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaDestinationTopic_ShouldReturnDestinationTopic()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -222,7 +222,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void GetKafkaDestinationPartition_ShouldReturnDestinationPartition()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -237,7 +237,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaDestinationTopic_ShouldSetTopic()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));
@@ -250,7 +250,7 @@ public class KafkaEnvelopeExtensionsTests
     [Fact]
     public void SetKafkaDestinationTopic_ShouldSetTopicAndPartition()
     {
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new(
+        KafkaOutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             Substitute.For<IProducer>(),
             new SilverbackContext(Substitute.For<IServiceProvider>()));

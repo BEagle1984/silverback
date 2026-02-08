@@ -6,19 +6,16 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Creates the <see cref="IKafkaOutboundEnvelope{TMessage,TKey}" /> instances to be used for testing.
+///     Creates the <see cref="IKafkaOutboundEnvelope{TMessage}" /> instances to be used for testing.
 /// </summary>
 /// <typeparam name="TMessage">
 ///     The type of the wrapped message.
 /// </typeparam>
-/// <typeparam name="TKey">
-///     The type of the message key.
-/// </typeparam>
-public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
-    : OutboundEnvelopeBuilder<KafkaOutboundEnvelopeBuilder<TMessage, TKey>, IKafkaOutboundEnvelope<TMessage, TKey>, TMessage>
+public class KafkaOutboundEnvelopeBuilder<TMessage>
+    : OutboundEnvelopeBuilder<KafkaOutboundEnvelopeBuilder<TMessage>, IKafkaOutboundEnvelope<TMessage>, TMessage>
     where TMessage : class
 {
-    private TKey? _key;
+    private object? _key;
 
     private byte[]? _rawKey;
 
@@ -31,7 +28,7 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     private ISilverbackContext? _context;
 
     /// <inheritdoc cref="OutboundEnvelopeBuilder{TBuilder,TEnvelope,TMessage}.This" />
-    protected override KafkaOutboundEnvelopeBuilder<TMessage, TKey> This => this;
+    protected override KafkaOutboundEnvelopeBuilder<TMessage> This => this;
 
     /// <summary>
     ///     Sets the message key.
@@ -40,9 +37,9 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithKey(TKey? key)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithKey(object? key)
     {
         _key = key;
         return this;
@@ -55,9 +52,9 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The serialized message key.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithRawKey(byte[]? rawKey)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithRawKey(byte[]? rawKey)
     {
         _rawKey = rawKey;
         return this;
@@ -70,9 +67,9 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The offset.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithOffset(KafkaOffset? offset)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithOffset(KafkaOffset? offset)
     {
         _offset = offset;
         return this;
@@ -85,9 +82,9 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The dynamic destination topic.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithDestinationTopic(string? topic)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithDestinationTopic(string? topic)
     {
         _dynamicDestinationTopic = topic;
         return this;
@@ -100,9 +97,9 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The dynamic destination partition.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithDestinationPartition(int? partition)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithDestinationPartition(int? partition)
     {
         _dynamicDestinationPartition = partition;
         return this;
@@ -115,18 +112,18 @@ public class KafkaOutboundEnvelopeBuilder<TMessage, TKey>
     ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage,TKey}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaOutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaOutboundEnvelopeBuilder<TMessage, TKey> WithContext(ISilverbackContext? context)
+    public KafkaOutboundEnvelopeBuilder<TMessage> WithContext(ISilverbackContext? context)
     {
         _context = context;
         return this;
     }
 
     /// <inheritdoc cref="OutboundEnvelopeBuilder{TBuilder,TEnvelope,TMessage}.BuildCore" />
-    protected override IKafkaOutboundEnvelope<TMessage, TKey> BuildCore(TMessage? message, IProducer producer)
+    protected override IKafkaOutboundEnvelope<TMessage> BuildCore(TMessage? message, IProducer producer)
     {
-        KafkaOutboundEnvelope<TMessage, TKey> envelope = new(message, producer, _context);
+        KafkaOutboundEnvelope<TMessage> envelope = new(message, producer, _context);
 
         if (_key != null)
             envelope.SetKey(_key);

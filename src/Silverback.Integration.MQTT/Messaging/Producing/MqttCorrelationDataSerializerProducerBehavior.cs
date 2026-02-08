@@ -4,7 +4,6 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -12,10 +11,10 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing;
 
 /// <summary>
-///     Serializes the kafka key.
+///     Serializes the MQTT correlation data.
 /// </summary>
 // TODO: Test
-public class KafkaKeySerializerProducerBehavior : IProducerBehavior
+public class MqttCorrelationDataSerializerProducerBehavior : IProducerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
@@ -26,8 +25,9 @@ public class KafkaKeySerializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context is { Envelope: IKafkaOutboundEnvelope { Key: not null } kafkaEnvelope, Producer: KafkaProducer kafkaProducer })
-            kafkaEnvelope.SetRawKey(kafkaProducer.EndpointConfiguration.KeySerializer.Serialize(kafkaEnvelope.Key));
+        // TODO: Support other data types via IKafkaKeySerializer
+        if (context.Envelope is IMqttOutboundEnvelope<object, byte[]> { CorrelationData: not null } mqttEnvelope)
+            mqttEnvelope.SetMqttRawCorrelationData(mqttEnvelope.CorrelationData);
 
         return next(context, cancellationToken);
     }

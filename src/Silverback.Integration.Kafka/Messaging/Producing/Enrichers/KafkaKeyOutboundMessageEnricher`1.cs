@@ -13,28 +13,28 @@ namespace Silverback.Messaging.Producing.Enrichers;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be enriched.
 /// </typeparam>
-public class KafkaKeyOutboundMessageEnricher<TMessage, TKey> : IOutboundMessageEnricher
+public class KafkaKeyOutboundMessageEnricher<TMessage> : IOutboundMessageEnricher
 {
-    private readonly Func<IOutboundEnvelope<TMessage>, TKey?> _keyProvider;
+    private readonly Func<IOutboundEnvelope<TMessage>, object?> _keyProvider;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundMessageEnricher{TMessage,TKey}" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundMessageEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="keyProvider">
     ///     The key provider function.
     /// </param>
-    public KafkaKeyOutboundMessageEnricher(Func<TMessage?, TKey?> keyProvider)
+    public KafkaKeyOutboundMessageEnricher(Func<TMessage?, object?> keyProvider)
     {
         _keyProvider = envelope => keyProvider.Invoke(envelope.Message);
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundMessageEnricher{TMessage,TKey}" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaKeyOutboundMessageEnricher{TMessage}" /> class.
     /// </summary>
     /// <param name="valueProvider">
     ///     The header value provider function.
     /// </param>
-    public KafkaKeyOutboundMessageEnricher(Func<IOutboundEnvelope<TMessage>, TKey?> valueProvider)
+    public KafkaKeyOutboundMessageEnricher(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
     {
         _keyProvider = valueProvider;
     }
@@ -44,7 +44,7 @@ public class KafkaKeyOutboundMessageEnricher<TMessage, TKey> : IOutboundMessageE
     {
         Check.NotNull(envelope, nameof(envelope));
 
-        if (envelope is not IKafkaOutboundEnvelope<TMessage, TKey> kafkaEnvelope)
+        if (envelope is not IKafkaOutboundEnvelope<TMessage> kafkaEnvelope)
             return;
 
         kafkaEnvelope.SetKey(_keyProvider.Invoke(kafkaEnvelope));

@@ -24,7 +24,7 @@ public class KafkaKeyInitializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope is IKafkaOutboundEnvelope<object, string> { Key: null } kafkaEnvelope)
+        if (context.Envelope is IKafkaOutboundEnvelope { Key: null } kafkaEnvelope)
         {
             if (context.Envelope is { IsTombstone: true, Message: ITombstone tombstone })
             {
@@ -38,7 +38,7 @@ public class KafkaKeyInitializerProducerBehavior : IProducerBehavior
                     kafkaEnvelope.SetKey(key);
             }
         }
-       
+
         return next(context, cancellationToken);
     }
 }

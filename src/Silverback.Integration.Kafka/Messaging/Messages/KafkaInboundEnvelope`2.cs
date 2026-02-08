@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal record KafkaInboundEnvelope<TMessage, TKey> : InboundEnvelope<TMessage>, IKafkaInboundEnvelope<TMessage, TKey>, IInternalKafkaInboundEnvelope
+internal record KafkaInboundEnvelope<TMessage> : InboundEnvelope<TMessage>, IKafkaInboundEnvelope<TMessage>, IInternalKafkaInboundEnvelope
     where TMessage : class
 {
     public KafkaInboundEnvelope(
@@ -28,14 +28,14 @@ internal record KafkaInboundEnvelope<TMessage, TKey> : InboundEnvelope<TMessage>
         IKafkaInboundEnvelope clonedKafkaEnvelope = Check.IsOfType<IKafkaInboundEnvelope>(clonedEnvelope, nameof(clonedEnvelope));
 
         Offset = clonedKafkaEnvelope.Offset;
-        Key = Check.IsNullOrOfType<TKey>(clonedKafkaEnvelope.Key, nameof(clonedKafkaEnvelope.Key));
+        Key = clonedKafkaEnvelope.Key;
         RawKey = clonedKafkaEnvelope.RawKey;
         Timestamp = clonedKafkaEnvelope.Timestamp;
     }
 
     public KafkaOffset Offset { get; }
 
-    public TKey? Key { get; private set; }
+    public object? Key { get; private set; }
 
     public byte[]? RawKey { get; private set; }
 
@@ -47,7 +47,7 @@ internal record KafkaInboundEnvelope<TMessage, TKey> : InboundEnvelope<TMessage>
 
     public IInternalKafkaInboundEnvelope SetKey(object? key)
     {
-        Key = Check.IsNullOrOfType<TKey>(key, nameof(key));
+        Key = key;
         return this;
     }
 

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Text;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
@@ -18,20 +19,10 @@ public static class KafkaEnvelopeExtensions
     public static IKafkaInboundEnvelope AsKafkaEnvelope(this IInboundEnvelope envelope) =>
         Check.IsOfType<IKafkaInboundEnvelope>(envelope, nameof(envelope));
 
-    public static IKafkaInboundEnvelope<TMessage> AsKafkaEnvelope<TMessage>(this IInboundEnvelope envelope) =>
-        Check.IsOfType<IKafkaInboundEnvelope<TMessage>>(envelope, nameof(envelope));
-
-    public static IKafkaInboundEnvelope<TMessage, TKey> AsKafkaEnvelope<TMessage, TKey>(this IInboundEnvelope envelope) =>
-        Check.IsOfType<IKafkaInboundEnvelope<TMessage, TKey>>(envelope, nameof(envelope));
 
     public static IKafkaOutboundEnvelope AsKafkaEnvelope(this IOutboundEnvelope envelope) =>
         Check.IsOfType<IKafkaOutboundEnvelope>(envelope, nameof(envelope));
 
-    public static IKafkaOutboundEnvelope<TMessage> AsKafkaEnvelope<TMessage>(this IOutboundEnvelope envelope) =>
-        Check.IsOfType<IKafkaOutboundEnvelope<TMessage>>(envelope, nameof(envelope));
-
-    public static IKafkaOutboundEnvelope<TMessage, TKey> AsKafkaEnvelope<TMessage, TKey>(this IOutboundEnvelope envelope) =>
-        Check.IsOfType<IKafkaOutboundEnvelope<TMessage, TKey>>(envelope, nameof(envelope));
 
     /// <summary>
     ///     Gets the key of the message consumed from Kafka.
@@ -67,7 +58,7 @@ public static class KafkaEnvelopeExtensions
     ///     The Kafka message key.
     /// </returns>
     public static TKey? GetKafkaKey<TKey>(this IInboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope<object, TKey>().Key;
+        (TKey?)Convert.ChangeType(Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().Key, typeof(TKey), CultureInfo.InvariantCulture);
 
     /// <summary>
     ///     Gets the key of the message produced to Kafka.
@@ -79,7 +70,7 @@ public static class KafkaEnvelopeExtensions
     ///     The Kafka message key.
     /// </returns>
     public static TKey? GetKafkaKey<TKey>(this IOutboundEnvelope envelope) =>
-        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope<object, TKey>().Key;
+        (TKey?)Convert.ChangeType(Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().Key, typeof(TKey), CultureInfo.InvariantCulture);
 
     /// <summary>
     ///     Gets the raw key of the message consumed from Kafka.
@@ -118,7 +109,7 @@ public static class KafkaEnvelopeExtensions
     ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
     public static IOutboundEnvelope SetKafkaKey<TKey>(this IOutboundEnvelope envelope, TKey key) =>
-        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope<object, TKey>().SetKey(key);
+        Check.NotNull(envelope, nameof(envelope)).AsKafkaEnvelope().SetKey(key);
     // TODO: Improve exception message when the key type mismatch
 
     /// <summary>

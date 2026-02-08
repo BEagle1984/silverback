@@ -3,8 +3,10 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Diagnostics.Logger;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Producing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -31,6 +33,7 @@ public static class BrokerOptionsBuilderAddMqttExtensions
             return brokerOptionsBuilder;
 
         brokerOptionsBuilder.SilverbackBuilder
+            .AddSingletonBrokerBehavior<MqttCorrelationDataSerializerProducerBehavior>()
             .Services
             .AddScoped<MqttClientsConfigurationActions>()
             .AddTransient<IMqttNetClientFactory, MqttNetClientFactory>()

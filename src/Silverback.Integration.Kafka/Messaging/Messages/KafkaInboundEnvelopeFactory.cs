@@ -6,7 +6,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages;
 
-internal class KafkaInboundEnvelopeFactory<TKey> : InboundEnvelopeFactory
+internal class KafkaInboundEnvelopeFactory : InboundEnvelopeFactory
 {
     public KafkaInboundEnvelopeFactory(IConsumer consumer)
         : base(consumer)
@@ -19,7 +19,7 @@ internal class KafkaInboundEnvelopeFactory<TKey> : InboundEnvelopeFactory
         ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier)
         where TMessage : class =>
-        new KafkaInboundEnvelope<TMessage, TKey>(
+        new KafkaInboundEnvelope<TMessage>(
             message,
             rawMessage,
             endpoint,
@@ -28,5 +28,5 @@ internal class KafkaInboundEnvelopeFactory<TKey> : InboundEnvelopeFactory
 
     public override IInboundEnvelope CloneReplacingMessage<TMessage>(TMessage? message, IInboundEnvelope envelope)
         where TMessage : class =>
-        new KafkaInboundEnvelope<TMessage, TKey>(message, envelope);
+        new KafkaInboundEnvelope<TMessage>(message, envelope);
 }

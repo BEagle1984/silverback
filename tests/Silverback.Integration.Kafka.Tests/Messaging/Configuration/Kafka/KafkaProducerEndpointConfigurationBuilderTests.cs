@@ -26,7 +26,7 @@ public class KafkaProducerEndpointConfigurationBuilderTests
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new KafkaProducerEndpointConfiguration());
 
-        _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(new TestEventOne(), producer);
+        _envelope = new KafkaOutboundEnvelope<TestEventOne>(new TestEventOne(), producer);
     }
 
     [Fact]

@@ -15,7 +15,7 @@ public class KafkaInboundEnvelopeBuilderTests
     [Fact]
     public void WithOffset_ShouldSetIdentifierAndOffset()
     {
-        KafkaInboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaInboundEnvelopeBuilder<TestEventOne> builder = new();
         KafkaOffset offset = new("topic", 0, 42);
 
         builder.WithOffset(offset);
@@ -28,7 +28,7 @@ public class KafkaInboundEnvelopeBuilderTests
     [Fact]
     public void WithOffset_ShouldBuildKafkaOffsetAndSetIdentifierAndOffset()
     {
-        KafkaInboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaInboundEnvelopeBuilder<TestEventOne> builder = new();
 
         builder.WithOffset("topic", 0, 42);
 
@@ -40,7 +40,7 @@ public class KafkaInboundEnvelopeBuilderTests
     [Fact]
     public void WithKey_ShouldSetKafkaKey()
     {
-        KafkaInboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaInboundEnvelopeBuilder<TestEventOne> builder = new();
         const string key = "key";
 
         builder.WithKey(key);
@@ -52,7 +52,7 @@ public class KafkaInboundEnvelopeBuilderTests
     [Fact]
     public void WithRawKey_ShouldSetRawKafkaKey()
     {
-        KafkaInboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaInboundEnvelopeBuilder<TestEventOne> builder = new();
         byte[] rawKey = [1, 2, 3];
 
         builder.WithRawKey(rawKey);
@@ -64,7 +64,7 @@ public class KafkaInboundEnvelopeBuilderTests
     [Fact]
     public void WithTimestamp_ShouldSetTimestamp()
     {
-        KafkaInboundEnvelopeBuilder<TestEventOne, string> builder = new();
+        KafkaInboundEnvelopeBuilder<TestEventOne> builder = new();
         DateTime timestamp = new(1984, 6, 23, 2, 42, 42, DateTimeKind.Utc);
 
         builder.WithTimestamp(timestamp);

@@ -61,8 +61,8 @@ public sealed class KafkaProducer : Producer
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        EnvelopeFactory = new KafkaOutboundEnvelopeFactory<string>(this);
         EndpointConfiguration = Configuration.Endpoints.Single();
+        EnvelopeFactory = new KafkaOutboundEnvelopeFactory(this);
     }
 
     /// <inheritdoc cref="Producer.Client" />

@@ -26,7 +26,7 @@ public class KafkaActivityEnricherTests
     {
         KafkaActivityEnricher enricher = new();
 
-        KafkaInboundEnvelope<object, string> envelope = new(
+        KafkaInboundEnvelope<object> envelope = new(
             null,
             null,
             new KafkaConsumerEndpoint("topic", 1, new KafkaConsumerEndpointConfiguration()),
@@ -52,9 +52,7 @@ public class KafkaActivityEnricherTests
     {
         KafkaActivityEnricher enricher = new();
 
-        KafkaOutboundEnvelope<SingleKeyMemberMessage, string> envelope = new(
-            new SingleKeyMemberMessage(),
-            Substitute.For<IProducer>());
+        KafkaOutboundEnvelope<SingleKeyMemberMessage> envelope = new(new SingleKeyMemberMessage(), Substitute.For<IProducer>());
         envelope.SetKey("MyKey");
 
         ProducerPipelineContext context = new(

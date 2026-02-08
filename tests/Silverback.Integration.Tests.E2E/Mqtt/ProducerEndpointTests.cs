@@ -246,6 +246,29 @@ public partial class ProducerEndpointTests : MqttTests
     [Fact]
     // TODO: Test consumer side as well
     // TODO: Maybe test different serializers (if not tested in unit tests)
+    public async Task ProducerEndpoint_ShouldProduceByteArrayCorrelationData()
+    {
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetMqttCorrelationData("data"u8.ToArray()));
+
+        MqttApplicationMessage message = GetDefaultTopicMessages().Single();
+        message.CorrelationData.ShouldBe("data"u8.ToArray());
+    }
+
+    [Fact]
+    // TODO: Test consumer side as well
+    // TODO: Maybe test different serializers (if not tested in unit tests)
     public async Task ProducerEndpoint_ShouldProduceCorrelationData()
     {
         await Host.ConfigureServicesAndRunAsync(services => services

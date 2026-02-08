@@ -95,7 +95,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        EnvelopeFactory = new KafkaInboundEnvelopeFactory<string>(this);
+        EnvelopeFactory = new KafkaInboundEnvelopeFactory(this);
 
         if (!Configuration.ProcessPartitionsIndependently)
             _offsets = new OffsetsTracker();

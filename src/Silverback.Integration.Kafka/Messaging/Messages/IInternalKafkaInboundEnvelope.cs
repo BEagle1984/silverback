@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Declares the internal methods of the <see cref="KafkaInboundEnvelope{TMessage,TKey}" /> not meant for public use.
+///     Declares the internal methods of the <see cref="KafkaInboundEnvelope{TMessage}" /> not meant for public use.
 /// </summary>
 internal interface IInternalKafkaInboundEnvelope : IKafkaInboundEnvelope
 {

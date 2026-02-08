@@ -24,7 +24,7 @@ public class KafkaDynamicProducerEndpointResolverTests
     {
         _producer = Substitute.For<IProducer>();
         _producer.EndpointConfiguration.Returns(new KafkaProducerEndpointConfiguration());
-        _envelope = new KafkaOutboundEnvelope<TestEventOne, string>(new TestEventOne(), _producer);
+        _envelope = new KafkaOutboundEnvelope<TestEventOne>(new TestEventOne(), _producer);
     }
 
     [Fact]
@@ -280,7 +280,7 @@ public class KafkaDynamicProducerEndpointResolverTests
     public void GetEndpoint_ShouldDeserializeEndpoint(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) => "topic");
-        KafkaOutboundEnvelope<TestEventOne, string> envelope = new((TestEventOne?)null, _producer);
+        KafkaOutboundEnvelope<TestEventOne> envelope = new((TestEventOne?)null, _producer);
         envelope.SetResolvedEndpoint($"{topic}|{partition}");
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(envelope);

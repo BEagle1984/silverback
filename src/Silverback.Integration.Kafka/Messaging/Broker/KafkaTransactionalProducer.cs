@@ -40,7 +40,7 @@ public sealed class KafkaTransactionalProducer : IProducer
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _transactionalProducers = Check.NotNull(transactionalProducers, nameof(transactionalProducers));
 
-        EnvelopeFactory = new KafkaOutboundEnvelopeFactory<string>(this);
+        EnvelopeFactory = new KafkaOutboundEnvelopeFactory(this);
         EndpointConfiguration = configuration.Endpoints.Single();
     }
 

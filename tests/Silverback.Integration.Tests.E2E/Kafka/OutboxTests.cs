@@ -35,39 +35,33 @@ public class OutboxTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddSqliteOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    "my-endpoint-1",
-                                    endpoint => endpoint
-                                        .ProduceTo("topic1")
-                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
-                                .Produce<TestEventTwo>(
-                                    "my-endpoint-2",
-                                    endpoint => endpoint
-                                        .ProduceTo("topic2")
-                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddSqliteOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-endpoint-1",
+                        endpoint => endpoint
+                            .ProduceTo("topic1")
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
+                    .Produce<TestEventTwo>(
+                        "my-endpoint-2",
+                        endpoint => endpoint
+                            .ProduceTo("topic2")
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
@@ -88,41 +82,34 @@ public class OutboxTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddSqliteOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    "my-dynamic-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => "topic1",
-                                                "2" => "topic2",
-                                                "3" => "topic3",
-                                                _ => throw new InvalidOperationException()
-                                            })
-                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddSqliteOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-dynamic-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(message => message?.ContentEventOne switch
+                            {
+                                "1" => "topic1",
+                                "2" => "topic2",
+                                "3" => "topic3",
+                                _ => throw new InvalidOperationException()
+                            })
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
@@ -143,39 +130,33 @@ public class OutboxTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddSqliteOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    "my-topic",
-                                    endpoint => endpoint
-                                        .ProduceTo((TestEventOne? _) => "topic1")
-                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
-                                .Produce<TestEventOne>(
-                                    "other-topic",
-                                    endpoint => endpoint
-                                        .ProduceTo((IOutboundEnvelope<TestEventOne> _) => "topic2")
-                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddSqliteOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-topic",
+                        endpoint => endpoint
+                            .ProduceTo((TestEventOne? _) => "topic1")
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
+                    .Produce<TestEventOne>(
+                        "other-topic",
+                        endpoint => endpoint
+                            .ProduceTo((IOutboundEnvelope<TestEventOne> _) => "topic2")
+                            .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -197,62 +178,52 @@ public class OutboxTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(
-                    async storageInitializer =>
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(async storageInitializer =>
+            {
+                await storageInitializer.CreateSqliteOutboxAsync(
+                    new SqliteOutboxSettings(database.ConnectionString)
                     {
-                        await storageInitializer.CreateSqliteOutboxAsync(
-                            new SqliteOutboxSettings(database.ConnectionString)
-                            {
-                                TableName = "outbox1"
-                            });
-                        await storageInitializer.CreateSqliteOutboxAsync(
-                            new SqliteOutboxSettings(database.ConnectionString)
-                            {
-                                TableName = "outbox2"
-                            });
-                    })
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddSqliteOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox1"))
-                                .WithInterval(TimeSpan.FromMilliseconds(50)))
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox2"))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    "my-endpoint-1",
-                                    endpoint => endpoint
-                                        .ProduceTo("topic1")
-                                        .StoreToOutbox(
-                                            outbox => outbox
-                                                .UseSqlite(database.ConnectionString)
-                                                .UseTable("outbox1")))
-                                .Produce<TestEventTwo>(
-                                    "my-endpoint-2",
-                                    endpoint => endpoint
-                                        .ProduceTo("topic2")
-                                        .StoreToOutbox(
-                                            outbox => outbox
-                                                .UseSqlite(database.ConnectionString)
-                                                .UseTable("outbox2"))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
-                .AddIntegrationSpyAndSubscriber());
+                        TableName = "outbox1"
+                    });
+                await storageInitializer.CreateSqliteOutboxAsync(
+                    new SqliteOutboxSettings(database.ConnectionString)
+                    {
+                        TableName = "outbox2"
+                    });
+            })
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddSqliteOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox1"))
+                    .WithInterval(TimeSpan.FromMilliseconds(50)))
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).UseTable("outbox2"))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(
+                        "my-endpoint-1",
+                        endpoint => endpoint
+                            .ProduceTo("topic1")
+                            .StoreToOutbox(outbox => outbox
+                                .UseSqlite(database.ConnectionString)
+                                .UseTable("outbox1")))
+                    .Produce<TestEventTwo>(
+                        "my-endpoint-2",
+                        endpoint => endpoint
+                            .ProduceTo("topic2")
+                            .StoreToOutbox(outbox => outbox
+                                .UseSqlite(database.ConnectionString)
+                                .UseTable("outbox2"))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -276,29 +247,24 @@ public class OutboxTests : KafkaTests
     [Fact]
     public async Task Outbox_ShouldPreserveKafkaKey()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddInMemoryOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseMemory())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseMemory()))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddInMemoryOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseMemory())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseMemory()))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
