@@ -15,7 +15,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Integration.Kafka</PackageId>
     <Product>Silverback.Integration.Kafka</Product>
   </PropertyGroup>

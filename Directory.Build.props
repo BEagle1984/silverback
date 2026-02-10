@@ -25,6 +25,7 @@
     -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1573,1591,1712</NoWarn>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Label="Code">
     <RootNamespace>Silverback</RootNamespace>

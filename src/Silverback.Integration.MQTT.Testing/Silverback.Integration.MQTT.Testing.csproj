@@ -16,7 +16,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Integration.MQTT.Testing</PackageId>
     <Product>Silverback.Integration.MQTT.Testing</Product>
   </PropertyGroup>

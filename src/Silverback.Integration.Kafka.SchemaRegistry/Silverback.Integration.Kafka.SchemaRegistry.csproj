@@ -15,7 +15,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Integration.Kafka.SchemaRegistry</PackageId>
     <Product>Silverback.Integration.Kafka.SchemaRegistry</Product>
   </PropertyGroup>

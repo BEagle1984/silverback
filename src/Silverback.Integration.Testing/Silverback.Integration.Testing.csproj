@@ -16,7 +16,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Integration.Testing</PackageId>
     <Product>Silverback.Integration.Testing</Product>
   </PropertyGroup>

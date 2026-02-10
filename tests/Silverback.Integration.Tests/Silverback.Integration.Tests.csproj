@@ -5,7 +5,6 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RootNamespace>Silverback.Tests.Integration</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild">

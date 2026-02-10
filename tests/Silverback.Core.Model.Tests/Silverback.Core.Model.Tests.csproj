@@ -5,7 +5,6 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RootNamespace>Silverback.Tests.Core.Model</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />

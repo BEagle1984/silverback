@@ -2,7 +2,6 @@
   <PropertyGroup>
     <RootNamespace>Silverback.Tests.Performance</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>

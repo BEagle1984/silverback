@@ -15,7 +15,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Storage.Relational</PackageId>
     <Product>Silverback.Storage.Relational</Product>
   </PropertyGroup>

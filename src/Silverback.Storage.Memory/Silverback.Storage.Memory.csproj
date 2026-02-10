@@ -16,7 +16,6 @@
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Storage.Memory</PackageId>
     <Product>Silverback.Storage.Memory</Product>
   </PropertyGroup>

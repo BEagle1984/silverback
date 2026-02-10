@@ -5,7 +5,6 @@
     <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
     <RootNamespace>Silverback.Tools.Generators.Docs.Headers</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
