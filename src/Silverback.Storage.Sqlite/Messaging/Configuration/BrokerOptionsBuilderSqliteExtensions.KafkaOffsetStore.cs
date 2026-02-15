@@ -3,8 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Storage;
@@ -71,12 +69,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         if (settings is SqliteKafkaOffsetStoreSettings sqliteSettings)
             return sqliteSettings;
 
-        string settingsHash = BitConverter.ToString(MD5.HashData(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
-
-        sqliteSettings = new SqliteKafkaOffsetStoreSettings(connectionString)
-        {
-            TableName = settingsHash,
-        };
+        sqliteSettings = new SqliteKafkaOffsetStoreSettings(connectionString);
 
         if (settings is IDatabaseConnectionSettings databaseSettings)
         {

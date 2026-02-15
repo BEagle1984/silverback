@@ -2,9 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -78,18 +75,12 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         return builder;
     }
 
-    [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Not security relevant")]
     private static SqliteOutboxSettings MapSqliteSettings(OutboxSettings settings, string connectionString)
     {
         if (settings is SqliteOutboxSettings sqliteSettings)
             return sqliteSettings;
 
-        string settingsHash = BitConverter.ToString(MD5.HashData(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
-
-        sqliteSettings = new SqliteOutboxSettings(connectionString)
-        {
-            TableName = settingsHash,
-        };
+        sqliteSettings = new SqliteOutboxSettings(connectionString);
 
         if (settings is IDatabaseConnectionSettings databaseSettings)
         {

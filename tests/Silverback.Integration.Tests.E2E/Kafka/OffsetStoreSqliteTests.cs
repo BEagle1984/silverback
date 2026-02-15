@@ -274,4 +274,57 @@ public class OffsetStoreSqliteTests : KafkaTests
         await AsyncTestingUtil.WaitAsync(() => received >= 8);
         received.ShouldBe(8);
     }
+
+    [Fact]
+    public async Task OffsetStore_ShouldOverrideAndStoreSubscribedTopicsOffsets()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        int received = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
+                .AddPostgreSqlKafkaOffsetStore()
+                .UseSqliteKafkaOffsetStore(database.ConnectionString))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql("irrelevant"))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
+            .AddIntegrationSpy());
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 0; i < 5; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => received >= 5);
+
+        received.ShouldBe(5);
+        Helper.ConsumerGroups.Count.ShouldBe(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.ShouldBeEmpty();
+
+        await consumer.Client.DisconnectAsync();
+
+        // If offsets are properly stored, those will be used to reposition while reconnecting
+        await consumer.Client.ConnectAsync();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => received >= 8);
+        received.ShouldBe(8);
+    }
 }
