@@ -4,6 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
@@ -23,17 +24,17 @@ builder.Services
     .WithConnectionToMessageBroker(options => options.AddKafka().AddMqtt())
     .AddBrokerClientsConfigurator<BrokerClientsConfigurator>()
     .AddSingletonSubscriber<Subscriber>()
-    .WithLogLevels(
-        levels => levels
-            .SetLogLevel(
-                IntegrationLogEvents.ProcessingConsumedMessageError.EventId,
-                (ex, level) => ex is SimulatedFailureException ? LogLevel.Information : level)
-            .SetLogLevel(
-                IntegrationLogEvents.SequenceProcessingError.EventId,
-                (ex, level) => ex is SimulatedFailureException ? LogLevel.Information : level));
+    .WithLogLevels(levels => levels
+        .SetLogLevel(
+            IntegrationLogEvents.ProcessingConsumedMessageError.EventId,
+            (ex, level) => ex is SimulatedFailureException ? LogLevel.Information : level)
+        .SetLogLevel(
+            IntegrationLogEvents.SequenceProcessingError.EventId,
+            (ex, level) => ex is SimulatedFailureException ? LogLevel.Information : level));
 
 WebApplication app = builder.Build();
 
 app.MapControllers();
+app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopped.Register(() => app.Logger.LogInformation("Application stopped!"));
 
 app.Run();

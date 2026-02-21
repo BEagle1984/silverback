@@ -34,25 +34,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
 
         void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -104,25 +99,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>>>(HandleBatch));
 
         void HandleBatch(IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>> batch)
         {
@@ -174,25 +164,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
 
         async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -244,25 +229,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleBatch));
 
         void HandleBatch(IEnumerable<TestEventOne> batch)
         {
@@ -314,25 +294,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -384,26 +359,21 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .AsObservable()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IObservable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .AsObservable()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IObservable<TestEventOne>>(HandleBatch));
 
         void HandleBatch(IObservable<TestEventOne> batch)
         {
@@ -452,25 +422,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleBatch));
 
         Task HandleBatch(IEnumerable<TestEventOne> batch)
         {
@@ -526,26 +491,21 @@ public partial class BatchProcessingTests : KafkaTests
         int receivedBatches1 = 0;
         int receivedBatches2 = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(3))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventTwo>>(HandleEventTwoEnumerable));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventTwo>>(HandleEventTwoEnumerable));
 
         void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -576,25 +536,20 @@ public partial class BatchProcessingTests : KafkaTests
         int exitedSubscribers = 0;
         bool areOverlapping = false;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(3, TimeSpan.FromMilliseconds(300)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3, TimeSpan.FromMilliseconds(300)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -638,25 +593,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(1))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(1))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> eventsStream)
         {
@@ -692,25 +642,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(100)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(100)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> eventsStream)
         {
@@ -747,25 +692,20 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
 
         void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -802,26 +742,21 @@ public partial class BatchProcessingTests : KafkaTests
         TestingCollection<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(2)
-                                        .IgnoreUnhandledMessages())))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .IgnoreUnhandledMessages())))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
 
         void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
@@ -862,25 +797,20 @@ public partial class BatchProcessingTests : KafkaTests
         List<string> batchEndTraceIds = [];
         List<string> sequenceIds = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(5))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(5))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {

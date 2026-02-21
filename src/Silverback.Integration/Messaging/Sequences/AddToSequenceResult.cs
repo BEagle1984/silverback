@@ -20,7 +20,11 @@ namespace Silverback.Messaging.Sequences;
 /// <param name="AbortTask">
 ///    The <see cref="Task" /> representing the abort operation.
 /// </param>
-public readonly record struct AddToSequenceResult(bool IsSuccess, int PushedStreamsCount = -1, bool IsAborted = false, Task? AbortTask = null)
+public readonly record struct AddToSequenceResult(
+    bool IsSuccess,
+    int PushedStreamsCount = -1,
+    bool IsAborted = false,
+    Task? AbortTask = null)
 {
     /// <summary>
     ///     Gets a static instance representing a failed call to <see cref="ISequence.AddAsync" />.
@@ -28,7 +32,7 @@ public readonly record struct AddToSequenceResult(bool IsSuccess, int PushedStre
     public static AddToSequenceResult Failed { get; } = new(false);
 
     /// <summary>
-    ///     Returns a new instance representing an aborted call to <see cref="ISequence.AddAsync" />. (The sequence was probably aborted.)
+    ///     Returns a new instance representing a failed call to <see cref="ISequence.AddAsync" /> for the specific case of an aborted sequence.
     /// </summary>
     /// <param name="abortTask">
     ///     The <see cref="Task" /> representing the abort operation.

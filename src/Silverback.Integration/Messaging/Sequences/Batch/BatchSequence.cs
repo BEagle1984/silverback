@@ -37,7 +37,7 @@ public class BatchSequence : Sequence
     }
 
     /// <summary>
-    ///     Called when the timout is elapsed. In this special case the sequence is completed instead of aborted.
+    ///     Called when the timeout is elapsed. In this special case the sequence is completed instead of aborted.
     /// </summary>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.

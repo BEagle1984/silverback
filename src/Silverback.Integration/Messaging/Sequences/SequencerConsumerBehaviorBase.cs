@@ -121,31 +121,30 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         if (sequence.ParentSequence != null)
             return;
 
-        Task.Run(
-                async () =>
+        Task.Run(async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        await processingTask.ConfigureAwait(false);
+                    await processingTask.ConfigureAwait(false);
 
-                        // Abort only parent sequences and don't consider the enumeration as aborted if the
-                        // sequence is actually complete
-                        if (sequence.ParentSequence != null || sequence.IsComplete)
-                            return;
+                    // Abort only parent sequences and don't consider the enumeration as aborted if the
+                    // sequence is actually complete
+                    if (sequence.ParentSequence != null || sequence.IsComplete)
+                        return;
 
-                        // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
-                        // The reason behind this call here may be counterintuitive but with
-                        // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
-                    }
-                    catch (Exception exception)
-                    {
-                        if (!sequence.IsPending || sequence.ParentSequence != null)
-                            return;
+                    // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
+                    // The reason behind this call here may be counterintuitive but with
+                    // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
+                    await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                }
+                catch (Exception exception)
+                {
+                    if (!sequence.IsPending || sequence.ParentSequence != null)
+                        return;
 
-                        await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
-                    }
-                })
+                    await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                }
+            })
             .FireAndForget();
     }
 
@@ -160,8 +159,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ISequence? sequence;
         AddToSequenceResult addToSequenceResult;
 
-        // Loop to handle edge cases where the sequence gets completed (e.g. because of timeout) between the calls to
-        // GetSequenceAsync and AddAsync
+        // Loop to handle edge cases where the sequence gets completed (e.g., because of timeout) between the calls to GetSequenceAsync and AddAsync
         do
         {
             sequence = await GetSequenceAsync(context, sequenceReader).ConfigureAwait(false);
@@ -192,7 +190,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
         if (addToSequenceResult.IsAborted)
         {
-            // Ensure that the sequence is really aborted before returning,otherwise the TransactionHandlerConsumerBehavior could
+            // Ensure that the sequence is really aborted before returning, otherwise the TransactionHandlerConsumerBehavior could
             // continue before the abort and miss the exception
             if (addToSequenceResult.AbortTask != null)
                 await addToSequenceResult.AbortTask.ConfigureAwait(false);
