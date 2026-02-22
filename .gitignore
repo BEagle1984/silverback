@@ -2,11 +2,9 @@
 # Created by https://www.gitignore.io/api/jekyll,visualstudio
 # Edit at https://www.gitignore.io/?templates=jekyll,visualstudio
 
-### Jekyll ###
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
+### Docs (docfx) ###
+docs/_site/
+docs/build/
 
 ### VisualStudio ###
 ## Ignore Visual Studio temporary files, build results, and

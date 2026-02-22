@@ -4,9 +4,13 @@
       "src": [
         {
           "files": [
-            "**.csproj"
+            "build/Silverback.*.dll"
           ],
-          "src": "../src"
+          "exclude": [
+            "**.Tests.*.dll",
+            "**.Tests.dll",
+            "**.Tools.*.dll"
+          ]
         }
       ],
       "dest": "api",

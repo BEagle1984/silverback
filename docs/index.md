@@ -31,7 +31,7 @@ title: "Home"
 > The v4 documentation is still browsable here: [silverback-messaging.net/v4](/v4)
 
 > [!Important]
-> v5 is in beta and the documentation is still being updated. Some sections may be incomplete or not fully aligned with the latest API.
+> The documentation update for v5 is still in progress. Some sections may be missing or incomplete. Please notify us if you find any mistake or inconsistency.
 
 Silverback is a message bus and broker integration library for .NET.
 It is designed to simplify event-driven architectures and asynchronous messaging, with first-class support for **Apache Kafka** and **MQTT**.
@@ -57,6 +57,15 @@ Kafka is a first-class citizen: features like partition-based parallelism, keys/
 - **Batch processing** and **chunking** for throughput and large payloads.
 - **Distributed tracing** via `System.Diagnostics`.
 - **Testing support** with in-memory brokers and helper APIs.
+
+## Supported .NET Versions
+
+Starting with v5, Silverback targets the **latest .NET LTS** (Long-Term Support) version only.
+
+The library is built and tested against the current LTS release.
+It can run on newer compatible .NET versions (including STS releases), but older frameworks are no longer targeted or supported.
+
+This policy reduces maintenance overhead and keeps Silverback aligned with the .NET platform lifecycle.
 
 ## Getting Started
 

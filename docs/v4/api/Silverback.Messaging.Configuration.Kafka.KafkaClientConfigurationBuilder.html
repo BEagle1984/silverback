@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class KafkaClientConfigurationBuilder
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class KafkaClientConfigurationBuilder
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder" class="text-break">Class KafkaClientConfigurationBuilder
+</h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfiguration.html">KafkaProducerConfiguration</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html">KafkaClientConfigurationBuilder</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html">KafkaClientConfiguration</a>, <span class="xref">ClientConfig</span>, <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.html">KafkaClientConfigurationBuilder</a>&gt;</div>
+    <div class="level2"><span class="xref">KafkaClientConfigurationBuilder</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_Config">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.Config</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_This">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.This</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslMechanism_System_Nullable_Confluent_Kafka_SaslMechanism__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslMechanism(SaslMechanism?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithAcks_System_Nullable_Confluent_Kafka_Acks__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithAcks(Acks?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBootstrapServers_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithBootstrapServers(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMessageMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithMessageMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMessageCopyMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithMessageCopyMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReceiveMessageMaxBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithReceiveMessageMaxBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMaxInFlight_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithMaxInFlight(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataRefreshIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithTopicMetadataRefreshIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithMetadataMaxAgeMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithMetadataMaxAgeMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataRefreshFastIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithTopicMetadataRefreshFastIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSparseTopicMetadataRefresh">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableSparseTopicMetadataRefresh()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSparseTopicMetadataRefresh">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableSparseTopicMetadataRefresh()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicMetadataPropagationMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithTopicMetadataPropagationMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithTopicBlacklist_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithTopicBlacklist(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithDebug_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithDebug(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSocketTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketSendBufferBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSocketSendBufferBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketReceiveBufferBytes_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSocketReceiveBufferBytes(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSocketKeepalive">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableSocketKeepalive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSocketKeepalive">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableSocketKeepalive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSocketNagle">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableSocketNagle()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSocketNagle">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableSocketNagle()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketMaxFails_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSocketMaxFails(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerAddressTtl_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithBrokerAddressTtl(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerAddressFamily_System_Nullable_Confluent_Kafka_BrokerAddressFamily__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithBrokerAddressFamily(BrokerAddressFamily?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSocketConnectionSetupTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSocketConnectionSetupTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithConnectionsMaxIdleMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithConnectionsMaxIdleMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReconnectBackoffMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithReconnectBackoffMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithReconnectBackoffMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithReconnectBackoffMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithStatisticsIntervalMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithStatisticsIntervalMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableApiVersionRequest">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableApiVersionRequest()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableApiVersionRequest">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableApiVersionRequest()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithApiVersionRequestTimeoutMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithApiVersionRequestTimeoutMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithApiVersionFallbackMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithApiVersionFallbackMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithBrokerVersionFallback_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithBrokerVersionFallback(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_AllowAutoCreateTopics">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.AllowAutoCreateTopics()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisallowAutoCreateTopics">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisallowAutoCreateTopics()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSecurityProtocol_System_Nullable_Confluent_Kafka_SecurityProtocol__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSecurityProtocol(SecurityProtocol?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCipherSuites_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCipherSuites(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCurvesList_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCurvesList(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslSigalgsList_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslSigalgsList(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslKeyLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyPassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslKeyPassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeyPem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslKeyPem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCertificateLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCertificateLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCertificatePem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCertificatePem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCaLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaPem_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCaPem(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCaCertificateStores_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCaCertificateStores(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslCrlLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslCrlLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeystoreLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslKeystoreLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslKeystorePassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslKeystorePassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslProviders_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslProviders(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEngineLocation_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslEngineLocation(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEngineId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslEngineId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSslCertificateVerification">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableSslCertificateVerification()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSslCertificateVerification">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableSslCertificateVerification()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSslEndpointIdentificationAlgorithm_System_Nullable_Confluent_Kafka_SslEndpointIdentificationAlgorithm__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSslEndpointIdentificationAlgorithm(SslEndpointIdentificationAlgorithm?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosServiceName_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslKerberosServiceName(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosPrincipal_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslKerberosPrincipal(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosKinitCmd_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslKerberosKinitCmd(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosKeytab_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslKerberosKeytab(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslKerberosMinTimeBeforeRelogin_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslKerberosMinTimeBeforeRelogin(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslUsername_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslUsername(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslPassword_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslPassword(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerConfig_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerConfig(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableSaslOauthbearerUnsecureJwt">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableSaslOauthbearerUnsecureJwt()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableSaslOauthbearerUnsecureJwt">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableSaslOauthbearerUnsecureJwt()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerMethod_System_Nullable_Confluent_Kafka_SaslOauthbearerMethod__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerMethod(SaslOauthbearerMethod?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerClientId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerClientId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerClientSecret_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerClientSecret(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerScope_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerScope(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerExtensions_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerExtensions(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithSaslOauthbearerTokenEndpointUrl_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithSaslOauthbearerTokenEndpointUrl(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithPluginLibraryPaths_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithPluginLibraryPaths(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientRack_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithClientRack(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithCancellationDelayMaxMs_System_Int32_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithCancellationDelayMaxMs(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientId_System_String_">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithClientId(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithRetryBackoffMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithRetryBackoffMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithRetryBackoffMaxMs_System_Nullable_System_Int32__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithRetryBackoffMaxMs(int?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_WithClientDnsLookup_System_Nullable_Confluent_Kafka_ClientDnsLookup__">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.WithClientDnsLookup(ClientDnsLookup?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_EnableMetricsPush">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.EnableMetricsPush()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_DisableMetricsPush">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.DisableMetricsPush()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_BuildCore">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.BuildCore()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class KafkaClientConfigurationBuilder : KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;</code></pre>
+  </div>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_This.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.This%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfigurationBuilder.cs/#L15">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_This_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.This*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_This" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.This">This</h4>
+  <div class="markdown level1 summary"><p>Gets this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override KafkaClientConfigurationBuilder This { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.html">KafkaClientConfigurationBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder-3.html#Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_3_This">KafkaClientConfigurationBuilder&lt;KafkaClientConfiguration, ClientConfig, KafkaClientConfigurationBuilder&gt;.This</a></div>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_This_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This is necessary to work around casting in the base classes.</p>
+</div>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.Build%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfigurationBuilder.cs/#L23">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_Build_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder_Build" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html">KafkaClientConfiguration</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaClientConfiguration Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html">KafkaClientConfiguration</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfiguration.html">KafkaClientConfiguration</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfigurationBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfigurationBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfigurationBuilder.cs/#L11" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

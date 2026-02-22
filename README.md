@@ -1,4 +1,4 @@
-# ![Silverback](https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png)
+# Silverback
 
 Silverback is a message bus and broker integration library for .NET.
 It helps you build event-driven architectures and asynchronous workflows with first-class support for **Apache Kafka** and **MQTT**.
@@ -20,8 +20,8 @@ Documentation, guides, and samples are available here: **https://silverback-mess
 
 ### Continuous Build
 
-[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=release%2F5.0.0)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=release%2F5.0.0)
-[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/release%2F5.0.0)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=release%2F5.0.0)
+[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
+[![Tests Status (release/5.0.0)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
 
 ### Sonar Build
 
@@ -83,6 +83,10 @@ Testing:
 
 - **[Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/)**
 - **[Silverback.Integration.Mqtt.Testing](https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/)**
+
+### Supported .NET Versions
+
+Starting with v5, Silverback targets the latest .NET LTS version only.
 
 ### Quick Example (Kafka)
 

@@ -9,6 +9,8 @@ Here is the list of the default headers that may be sent.
 
 The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> and <xref:Silverback.Messaging.Messages.KafkaMessageHeaders> contain all default header names constants.
 
+### Default
+
 Header | Name
 :-- | :--
 [MessageType](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType) | `x-message-type`
@@ -24,7 +26,7 @@ Header | Name
 [EncryptionKeyId](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId) | `x-encryption-key-id`
 [FailureReason](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_FailureReason) | `x-failure-reason`
 
-## Kafka Specific Headers
+### Kafka
 
 Header | Name
 :-- | :--
@@ -35,6 +37,11 @@ Header | Name
 [SourceOffset](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceOffset) | `x-source-offset`
 [SourceTimestamp](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_SourceTimestamp) | `x-source-timestamp`
 [FirstChunkOffset](xref:Silverback.Messaging.Messages.KafkaMessageHeaders#Silverback_Messaging_Messages_KafkaMessageHeaders_FirstChunkOffset) | `x-chunk-first-offset`
+
+### MQTT
+
+Header | Name
+:-- | :--
 
 ## Customizing Default Header Names
 

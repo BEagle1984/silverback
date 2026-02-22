@@ -31,16 +31,17 @@ services
     .AddSilverback()
     .WithConnectionToMessageBroker(options => options
         .AddKafka()
-        .AddPostgreSqlOutbox()
+        .AddEntityFrameworkOutbox()
         .AddOutboxWorker(worker => worker
             .ProcessOutbox(outbox => outbox
-                .UsePostgreSql(connectionString)))))
+                .UseEntityFramework<AppDbContext>()))))
     .AddKafkaClients(clients => clients
         .WithBootstrapServers("PLAINTEXT://localhost:9092")
         .AddProducer("producer1", producer => producer
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
                 .ProduceTo("my-topic")
-                .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString)))));
+                .StoreToOutbox(outbox => outbox
+                    .UseEntityFramework<AppDbContext>()))));
 ```
 # [PostgreSQL](#tab/postgres)
 ```csharp
@@ -57,7 +58,8 @@ services
         .AddProducer("producer1", producer => producer
             .Produce<MyMessage>("endpoint1", endpoint => endpoint
                 .ProduceTo("my-topic")
-                .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString)))));
+                .StoreToOutbox(outbox => outbox
+                    .UsePostgreSql(connectionString)))));
 ```
 # [Sqlite](#tab/sqlite)
 ```csharp
