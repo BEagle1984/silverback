@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Sequences;
 ///     A value indicating whether the sequence was aborted.
 /// </param>
 /// <param name="AbortTask">
-///    The <see cref="Task" /> representing the abort operation.
+///     The <see cref="Task" /> representing the abort operation.
 /// </param>
 public readonly record struct AddToSequenceResult(
     bool IsSuccess,
@@ -32,7 +32,8 @@ public readonly record struct AddToSequenceResult(
     public static AddToSequenceResult Failed { get; } = new(false);
 
     /// <summary>
-    ///     Returns a new instance representing a failed call to <see cref="ISequence.AddAsync" /> for the specific case of an aborted sequence.
+    ///     Returns a new instance representing a failed call to <see cref="ISequence.AddAsync" /> for the specific case of an aborted
+    ///     sequence.
     /// </summary>
     /// <param name="abortTask">
     ///     The <see cref="Task" /> representing the abort operation.
@@ -41,6 +42,21 @@ public readonly record struct AddToSequenceResult(
     ///     The <see cref="AddToSequenceResult" />.
     /// </returns>
     public static AddToSequenceResult Aborted(Task? abortTask) => new(true, IsAborted: true, AbortTask: abortTask);
+
+    /// <summary>
+    ///     Returns a new instance representing a failed call to <see cref="ISequence.AddAsync" /> for the specific case of an aborted
+    ///     sequence or a failed operation, depending on the specified <paramref name="isAborted" /> parameter.
+    /// </summary>
+    /// <param name="isAborted">
+    ///     Indicates whether the sequence was aborted.
+    /// </param>
+    /// <param name="abortTask">
+    ///     The <see cref="Task" /> representing the abort operation.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="AddToSequenceResult" />.
+    /// </returns>
+    public static AddToSequenceResult AbortedOrFailed(bool isAborted, Task? abortTask) => isAborted ? Aborted(abortTask) : Failed;
 
     /// <summary>
     ///     Returns a new instance representing a successful call to <see cref="ISequence.AddAsync" />.

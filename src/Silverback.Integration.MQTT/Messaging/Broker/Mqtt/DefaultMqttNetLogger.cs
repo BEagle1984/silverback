@@ -19,13 +19,13 @@ internal class DefaultMqttNetLogger : IMqttNetLogger
     public bool IsEnabled => true;
 
     public void Publish(
-        MqttNetLogLevel logLevel,
+        MqttNetLogLevel level,
         string? source,
         string message,
         object[]? parameters,
         Exception? exception)
     {
-        switch (logLevel)
+        switch (level)
         {
             case MqttNetLogLevel.Verbose:
                 _logger.LogMqttClientVerbose(source, message, parameters, exception);

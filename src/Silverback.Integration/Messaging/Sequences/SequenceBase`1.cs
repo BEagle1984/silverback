@@ -276,7 +276,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (_enforceTimeout)
             {
                 if (await EnforceTimeoutAsync().ConfigureAwait(false))
-                    return IsAborted ? AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task) : AddToSequenceResult.Failed;
+                    return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
                 else
                     ResetTimeout();
             }
@@ -328,7 +328,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 "Error occurred adding message to {sequenceType} '{sequenceId}'.",
                 () => [GetType().Name, SequenceId]);
 
-            return IsAborted ? AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task) : AddToSequenceResult.Failed;
+            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
         }
         catch (Exception ex)
         {
