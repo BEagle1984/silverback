@@ -4,7 +4,7 @@ title: "Home"
 ---
 
 <div role="main" class="hide-when-search">
-    <div style="background-color: #000;">
+    <div style="background-color: #000; margin-bottom: 20px">
         <div class="container body-container">
             <div class="hero" style="background-image: url('images/splash.jpg');">
                 <div class="wrapper">
@@ -26,12 +26,6 @@ title: "Home"
     </div>
 </div>
 <div class="container body-container body-content">
-
-> [!Tip]
-> The v4 documentation is still browsable here: [silverback-messaging.net/v4](/v4)
-
-> [!Important]
-> The documentation update for v5 is still in progress. Some sections may be missing or incomplete. Please notify us if you find any mistake or inconsistency.
 
 Silverback is a message bus and broker integration library for .NET.
 It is designed to simplify event-driven architectures and asynchronous messaging, with first-class support for **Apache Kafka** and **MQTT**.
@@ -78,6 +72,12 @@ This policy reduces maintenance overhead and keeps Silverback aligned with the .
 - [Issues](https://github.com/BEagle1984/silverback/issues) – report bugs or suggest improvements.
 - [Discussions](https://github.com/BEagle1984/silverback/discussions) – ask questions and share ideas.
 - <xref:contributing> – how to contribute.
+
+> [!Important]
+> The documentation update for v5 is still in progress. Some sections may be missing or incomplete. Please notify us if you find any mistake or inconsistency.
+
+> [!Tip]
+> The v4 documentation is still browsable here: [silverback-messaging.net/v4/](/v4/)
 
 </div>
 <div style="height: 100px"></div>
