@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Benchmarks.V451.Producer;
+namespace Silverback.Benchmarks.V462.Producer;
 
 [SimpleJob]
 [MemoryDiagnoser]
@@ -35,7 +35,7 @@ public class KafkaProducerBenchmark : Benchmark
                 .Configure(
                     config =>
                     {
-                        config.BootstrapServers = "PLAINTEXT://localhost:9092";
+                        config.BootstrapServers = "PLAINTEXT://localhost:29092";
                     })
                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo($"benchmark-{Guid.NewGuid():N}")));
 

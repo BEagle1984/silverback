@@ -12,8 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Silverback.Core" />
-    <PackageReference Include="Silverback.Core.Model" />
-    <PackageReference Include="Silverback.Integration.Kafka" />
+    <PackageReference Include="Silverback.Core" VersionOverride="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Core.Model" VersionOverride="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka" VersionOverride="$(BaseVersion)" />
   </ItemGroup>
 </Project>

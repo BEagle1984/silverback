@@ -5,11 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Benchmarks.V451.Common;
+using Silverback.Benchmarks.V462.Common;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Benchmarks.V451.Mediator;
+namespace Silverback.Benchmarks.V462.Mediator;
 
 [SimpleJob]
 [MemoryDiagnoser]

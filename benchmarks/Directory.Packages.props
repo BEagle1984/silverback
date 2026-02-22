@@ -11,9 +11,6 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.3" />
-    <PackageVersion Include="Silverback.Core" Version="$(BaseVersion)" />
-    <PackageVersion Include="Silverback.Core.Model" Version="$(BaseVersion)" />
-    <PackageVersion Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Benchmarks.V451.Common;
+namespace Silverback.Benchmarks.V462.Common;
 
 public class LoggingSyncSubscriber<TMessage>
 {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Benchmarks.V451;
+namespace Silverback.Benchmarks.V462;
 
 public abstract class Benchmark
 {

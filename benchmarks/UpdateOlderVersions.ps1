@@ -1,4 +1,4 @@
-$versions = @("4.5.1")
+$versions = @("4.6.2")
 $rootFolder = Get-Location
 $sourceFolder = Join-Path -Path $rootFolder -ChildPath "LatestVersionBenchmarks"
 $sourceCsprojName = "LatestVersionBenchmarks.csproj"

@@ -38,7 +38,7 @@ public class KafkaProducerBenchmark : Benchmark
             clients => clients
                 .AddProducer(
                     producer => producer
-                        .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                        .WithBootstrapServers("PLAINTEXT://localhost:29092")
                         .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo($"benchmark-{Guid.NewGuid():N}"))));
 
     private record SampleEvent(string Text) : IIntegrationEvent;

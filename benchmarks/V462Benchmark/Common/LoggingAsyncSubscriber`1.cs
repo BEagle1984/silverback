@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Benchmarks.V451.Common;
+namespace Silverback.Benchmarks.V462.Common;
 
 public class LoggingAsyncSubscriber<TMessage>
 {
