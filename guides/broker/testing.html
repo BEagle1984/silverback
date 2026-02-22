@@ -86,7 +86,199 @@
             <article class="content wrap" id="_content" data-uid="testing">
 <h1 id="testing">Testing</h1>
 
-<pre><code></code></pre>
+<p>Testing event-driven applications can be tricky because producing and consuming messages is asynchronous and typically involves external infrastructure (Kafka, MQTT, ...).</p>
+<p>Silverback ships dedicated <strong>testing packages</strong> that replace the broker connectivity with <strong>in-memory mocked brokers</strong> and exposes a set of <strong>helpers</strong> to make end-to-end testing deterministic.</p>
+<h2 id="packages">Packages</h2>
+<p>Choose the package matching the broker you’re using:</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a>
+<ul>
+<li>Mocked in-memory Kafka broker (topics, consumer groups, commits, ...).</li>
+<li>Registers <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>.</li>
+</ul>
+</li>
+<li><a href="https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing">Silverback.Integration.MQTT.Testing</a>
+<ul>
+<li>Mocked in-memory MQTT broker.</li>
+<li>Registers <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a>.</li>
+</ul>
+</li>
+<li><a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a>
+<ul>
+<li>Shared testing infrastructure (e.g. <a class="xref" href="../../api/Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> and <a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html">ITestingHelper</a>).</li>
+<li>This package is referenced by the broker-specific testing packages.</li>
+</ul>
+</li>
+</ul>
+<h2 id="two-ways-to-use-the-mocked-broker">Two Ways to Use the Mocked Broker</h2>
+<p>There are two supported approaches and they solve different problems:</p>
+<ol>
+<li><p><strong>Test-only configuration</strong>: your test registers the broker using <code>AddMockedKafka</code> / <code>AddMockedMqtt</code>.
+This is the simplest approach when your test builds the <code>ServiceCollection</code> (or you fully control the test host setup).</p>
+</li>
+<li><p><strong>Override an existing configuration</strong>: your application configures a real broker in <code>Startup</code> / <code>Program</code>,
+and your test host overrides that by calling <code>UseMockedKafka</code> / <code>UseMockedMqtt</code> in <code>ConfigureTestServices</code> (or equivalent).
+This is ideal when the app’s configuration is shared between production and tests, and you just want to swap the transport.</p>
+</li>
+</ol>
+<div class="TIP">
+<h5>Tip</h5>
+<p>You don’t need both. <code>AddMockedKafka</code> and <code>AddMockedMqtt</code> already register the broker and replace the transport.
+<code>UseMockedKafka</code> / <code>UseMockedMqtt</code> are for <em>overriding</em> an existing setup.</p>
+</div>
+<h2 id="approach-1-test-only-configuration-recommended-when-building-the-di-container">Approach 1: Test-Only Configuration (Recommended When Building the DI Container)</h2>
+<h3 id="kafka-addmockedkafka">Kafka (AddMockedKafka)</h3>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMockedKafka())
+    .AddKafkaClients(
+        clients =&gt; clients
+            .WithBootstrapServers(&quot;PLAINTEXT://tests&quot;)
+            .AddProducer(
+                producer =&gt; producer
+                    .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test-topic&quot;)))
+            .AddConsumer(
+                consumer =&gt; consumer
+                    .WithGroupId(&quot;test-consumer&quot;)
+                    .Consume(endpoint =&gt; endpoint.ConsumeFrom(&quot;test-topic&quot;))));
+</code></pre>
+<h3 id="mqtt-addmockedmqtt">MQTT (AddMockedMqtt)</h3>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMockedMqtt())
+    .AddMqttClients(
+        clients =&gt; clients
+            .AddProducer(
+                producer =&gt; producer
+                    .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test/topic&quot;)))
+            .AddConsumer(
+                consumer =&gt; consumer
+                    .Consume(endpoint =&gt; endpoint.ConsumeFrom(&quot;test/topic&quot;))));
+</code></pre>
+<h2 id="approach-2-override-an-existing-configuration-webapplicationfactory--test-host">Approach 2: Override an Existing Configuration (WebApplicationFactory / Test Host)</h2>
+<p>If your application always configures the real broker (e.g. <code>AddKafka()</code> / <code>AddMqtt()</code> in <code>Program.cs</code>),
+then in tests you can keep that configuration and only swap the connectivity implementation.</p>
+<h3 id="kafka-usemockedkafka">Kafka (UseMockedKafka)</h3>
+<pre><code class="lang-csharp">builder.ConfigureTestServices(services =&gt;
+{
+    services
+        .ConfigureSilverback()
+        .UseMockedKafka();
+});
+</code></pre>
+<h3 id="mqtt-usemockedmqtt">MQTT (UseMockedMqtt)</h3>
+<pre><code class="lang-csharp">builder.ConfigureTestServices(services =&gt;
+{
+    services
+        .ConfigureSilverback()
+        .UseMockedMqtt();
+});
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>UseMockedKafka</code> / <code>UseMockedMqtt</code> replace the underlying broker connectivity (Confluent.Kafka / MQTTnet) with an in-memory implementation.
+They don’t add producers/consumers/endpoints for you; those still come from your normal app configuration.</p>
+</div>
+<h2 id="testing-helpers">Testing Helpers</h2>
+<p>The broker-specific testing helper (<a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a> or <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a>) also implements the base <a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html">ITestingHelper</a> interface.</p>
+<p>The most commonly used helpers are:</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__">WaitUntilConnectedAsync(TimeSpan?)</a> – wait until consumers are connected and ready.</li>
+<li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_String___">WaitUntilAllMessagesAreConsumedAsync(params string[])</a> – wait until routed messages have been processed and committed (<strong>mocked brokers only</strong>).</li>
+<li><a class="xref" href="../../api/Silverback.Testing.ITestingHelper.html#Silverback_Testing_ITestingHelper_WaitUntilOutboxIsEmptyAsync_System_Nullable_System_TimeSpan__">WaitUntilOutboxIsEmptyAsync(TimeSpan?)</a> – wait until the outbox has been drained (if you’re using the outbox).</li>
+</ul>
+<h3 id="example-publish-and-wait">Example: publish and wait</h3>
+<p>This pattern is used extensively in our end-to-end tests (see <code>tests/Silverback.Integration.Tests.E2E</code>).</p>
+<pre><code class="lang-csharp">await Host.ConfigureServicesAndRunAsync(
+    services =&gt; services
+        .AddLogging()
+        .AddSilverback()
+        .WithConnectionToMessageBroker(options =&gt; options.AddMockedKafka())
+        .AddKafkaClients(
+            clients =&gt; clients
+                .WithBootstrapServers(&quot;PLAINTEXT://e2e&quot;)
+                .AddProducer(
+                    producer =&gt; producer
+                        .Produce&lt;SomeMessage&gt;(endpoint =&gt; endpoint.ProduceTo(&quot;test-topic&quot;)))
+                .AddConsumer(
+                    consumer =&gt; consumer
+                        .WithGroupId(&quot;test-group&quot;)
+                        .Consume(endpoint =&gt; endpoint.ConsumeFrom(&quot;test-topic&quot;))))
+        .AddIntegrationSpyAndSubscriber());
+
+var publisher = Host.ServiceProvider.GetRequiredService&lt;IPublisher&gt;();
+await publisher.PublishAsync(new SomeMessage());
+
+await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Don’t assert immediately after producing/publishing. Always wait for the broker pipeline to finish.
+With mocked brokers you typically want <code>WaitUntilAllMessagesAreConsumedAsync()</code>.</p>
+</div>
+<h2 id="inspecting-messages-with-the-integration-spy">Inspecting Messages with the Integration Spy</h2>
+<p>When you need to assert what was produced/consumed (including headers, raw payload, endpoint name, etc.), enable the integration spy:</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.html#Silverback_Configuration_SilverbackBuilderIntegrationTestingExtensions_AddIntegrationSpy_Silverback_Configuration_SilverbackBuilder_System_Boolean_">AddIntegrationSpy(SilverbackBuilder, bool)</a> (default: monitors inbound via a broker behavior)</li>
+<li><a class="xref" href="../../api/Silverback.Configuration.SilverbackBuilderIntegrationTestingExtensions.html#Silverback_Configuration_SilverbackBuilderIntegrationTestingExtensions_AddIntegrationSpyAndSubscriber_Silverback_Configuration_SilverbackBuilder_">AddIntegrationSpyAndSubscriber(SilverbackBuilder)</a> (monitors inbound via a generic subscriber)</li>
+</ul>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMockedKafka())
+    // ...clients/endpoints...
+    .AddIntegrationSpyAndSubscriber();
+
+// later in the test...
+await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+Helper.Spy.OutboundEnvelopes.ShouldNotBeEmpty();
+Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
+</code></pre>
+<h2 id="kafka-specifics">Kafka Specifics</h2>
+<h3 id="access-in-memory-topics">Access in-memory topics</h3>
+<p>When using the mocked Kafka broker you can inspect the internal topics via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetTopic_System_String_System_String_">GetTopic(string, string?)</a>.</p>
+<pre><code class="lang-csharp">var topic = Helper.GetTopic(&quot;test-topic&quot;);
+
+// For example: inspect partitions/messages (API depends on the topic implementation)
+// topic.Partitions...
+</code></pre>
+<p>If your test configures multiple Kafka clusters, use the overload that also takes the <code>bootstrapServers</code>.</p>
+<h3 id="inspect-consumer-groups">Inspect consumer groups</h3>
+<p>The mocked broker tracks consumer groups and offsets. You can access them via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_ConsumerGroups">ConsumerGroups</a> or retrieve a specific group via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetConsumerGroup_System_String_">GetConsumerGroup(string)</a>.</p>
+<pre><code class="lang-csharp">var group = Helper.GetConsumerGroup(&quot;test-group&quot;);
+// group.Consumers / group.CommittedOffsets ...
+</code></pre>
+<h3 id="create-an-ad-hoc-producer">Create an ad-hoc producer</h3>
+<p>Sometimes you want to produce to Kafka without going through the application’s publisher (e.g. to simulate an external producer).</p>
+<pre><code class="lang-csharp">var producer = Helper.GetProducer(
+    config =&gt; config
+        .WithBootstrapServers(&quot;PLAINTEXT://tests&quot;)
+        .ProduceTo(&quot;test-topic&quot;));
+
+await producer.ProduceAsync(new SomeMessage());
+</code></pre>
+<h2 id="mqtt-specifics">MQTT Specifics</h2>
+<h3 id="inspect-client-sessions">Inspect client sessions</h3>
+<p>With the mocked MQTT broker you can inspect client sessions via <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html#Silverback_Testing_IMqttTestingHelper_GetClientSession_System_String_">GetClientSession(string)</a>.</p>
+<pre><code class="lang-csharp">var session = Helper.GetClientSession(&quot;client-id&quot;);
+// inspect subscriptions, pending messages, ...
+</code></pre>
+<h3 id="read-published-messages">Read published messages</h3>
+<p>To quickly retrieve the raw MQTT messages published to a topic, use <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html#Silverback_Testing_IMqttTestingHelper_GetMessages_System_String_">GetMessages(string)</a>.</p>
+<pre><code class="lang-csharp">var messages = Helper.GetMessages(&quot;test/topic&quot;);
+messages.Count.ShouldBeGreaterThan(0);
+</code></pre>
+<h3 id="create-an-ad-hoc-mqtt-producer">Create an ad-hoc MQTT producer</h3>
+<pre><code class="lang-csharp">var producer = Helper.GetProducer(
+    config =&gt; config
+        .WithClientId(&quot;external-producer&quot;)
+        .ProduceTo(&quot;test/topic&quot;));
+
+await producer.ProduceAsync(new SomeMessage());
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
 </article>
           </div>
 
@@ -117,7 +309,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

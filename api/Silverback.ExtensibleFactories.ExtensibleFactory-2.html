@@ -105,25 +105,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.ExtensibleFactories.html">ExtensibleFactories</a></h6>
@@ -155,19 +155,37 @@
   </table>
   <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+        </li></ul>
+</div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_ExtensibleFactories_ExtensibleFactory_2__ctor_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.#ctor*"></a>
+  <h4 id="Silverback_ExtensibleFactories_ExtensibleFactory_2__ctor" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.#ctor">ExtensibleFactory()</h4>
+  <div class="markdown level1 summary"><p>The base class for factories used to allow extension in additional packages, for example adding other storage types.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected ExtensibleFactory()</code></pre>
+  </div>
+  <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2__ctor_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Two versions are available:</p>
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_ExtensibleFactories_ExtensibleFactory_2_AddFactory__1_System_Func___0_System_IServiceProvider__0__.md&amp;value=---%0Auid%3A%20Silverback.ExtensibleFactories.ExtensibleFactory%602.AddFactory%60%601(System.Func%7B%60%600%2CSystem.IServiceProvider%2C%600%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory`2.cs/#L53">View source</a>
-  </span>
+
+
   <a id="Silverback_ExtensibleFactories_ExtensibleFactory_2_AddFactory_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.AddFactory*"></a>
   <h4 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_AddFactory__1_System_Func___0_System_IServiceProvider__0__" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.AddFactory``1(System.Func{``0,System.IServiceProvider,`0})">AddFactory&lt;TSettings&gt;(Func&lt;TSettings, IServiceProvider, TService&gt;)</h4>
   <div class="markdown level1 summary"><p>Registers the factory for the specified settings type.</p>
@@ -213,17 +231,14 @@
   </table>
   <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_AddFactory__1_System_Func___0_System_IServiceProvider__0___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_ExtensibleFactories_ExtensibleFactory_2_GetService__1___0_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.ExtensibleFactories.ExtensibleFactory%602.GetService%60%601(%60%600%2CSystem.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory`2.cs/#L96">View source</a>
-  </span>
+
+
   <a id="Silverback_ExtensibleFactories_ExtensibleFactory_2_GetService_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.GetService*"></a>
   <h4 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_GetService__1___0_System_IServiceProvider_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.GetService``1(``0,System.IServiceProvider)">GetService&lt;TSettings&gt;(TSettings, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns an object of type <code class="typeparamref">TService</code> according to the specified settings.</p>
@@ -291,17 +306,14 @@
   </table>
   <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_GetService__1___0_System_IServiceProvider__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_ExtensibleFactories_ExtensibleFactory_2_HasFactory__1.md&amp;value=---%0Auid%3A%20Silverback.ExtensibleFactories.ExtensibleFactory%602.HasFactory%60%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory`2.cs/#L71">View source</a>
-  </span>
+
+
   <a id="Silverback_ExtensibleFactories_ExtensibleFactory_2_HasFactory_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.HasFactory*"></a>
   <h4 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_HasFactory__1" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.HasFactory``1">HasFactory&lt;TSettings&gt;()</h4>
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether a factory for the specified settings type is registered.</p>
@@ -345,17 +357,14 @@
   </table>
   <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_HasFactory__1_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_ExtensibleFactories_ExtensibleFactory_2_OverrideFactories_System_Func__1_System_IServiceProvider__0__.md&amp;value=---%0Auid%3A%20Silverback.ExtensibleFactories.ExtensibleFactory%602.OverrideFactories(System.Func%7B%601%2CSystem.IServiceProvider%2C%600%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory`2.cs/#L79">View source</a>
-  </span>
+
+
   <a id="Silverback_ExtensibleFactories_ExtensibleFactory_2_OverrideFactories_" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.OverrideFactories*"></a>
   <h4 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_OverrideFactories_System_Func__1_System_IServiceProvider__0__" data-uid="Silverback.ExtensibleFactories.ExtensibleFactory`2.OverrideFactories(System.Func{`1,System.IServiceProvider,`0})">OverrideFactories(Func&lt;TSettingsBase, IServiceProvider, TService&gt;)</h4>
   <div class="markdown level1 summary"><p>Overrides all registered factories with the specified factory.</p>
@@ -385,8 +394,10 @@
   </table>
   <h5 id="Silverback_ExtensibleFactories_ExtensibleFactory_2_OverrideFactories_System_Func__1_System_IServiceProvider__0___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Two versions are available:</p>
-<ul><li><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
-        </li><li><a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
+<ul><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory&lt;TService, TDiscriminatorBase&gt;</a>, using just a type as discriminator
+        </li><li>
+            <a class="xref" href="Silverback.ExtensibleFactories.ExtensibleFactory-2.html">ExtensibleFactory&lt;TService, TSettingsBase&gt;</a>, using a settings record as discriminator
         </li></ul>
 </div>
 </article>
@@ -396,12 +407,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_ExtensibleFactories_ExtensibleFactory_2.md&amp;value=---%0Auid%3A%20Silverback.ExtensibleFactories.ExtensibleFactory%602%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/ExtensibleFactories/ExtensibleFactory`2.cs/#L34" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -422,7 +427,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

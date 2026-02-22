@@ -86,7 +86,216 @@
             <article class="content wrap" id="_content" data-uid="kafka-offset">
 <h1 id="kafka-offset-storage">Kafka Offset Storage</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Silverback can store Kafka consumer offsets <strong>outside of Kafka</strong>, using its storage layer (in-memory or a database). This is sometimes referred to as <em>client-side offset storage</em>.</p>
+<p>This feature is primarily meant to enable <strong>exactly-once processing</strong> <em>with respect to your own database</em>, by persisting:</p>
+<ul>
+<li>your business changes (e.g., inserts/updates), and</li>
+<li>the “I have processed up to offset X” marker</li>
+</ul>
+<p>in the <strong>same database transaction</strong>.</p>
+<p>If the transaction commits, both the data and the new offset are persisted. If it rolls back, neither is persisted and the messages will be re-consumed.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Client-side offset storage is not a Kafka feature. It’s an application pattern.
+Silverback deliberately <strong>disables committing offsets to Kafka</strong> and repositions the consumer based on the offsets stored in your chosen storage.</p>
+</div>
+<h2 id="when-to-use-it">When to Use It</h2>
+<p>Use client-side offset storage when your application:</p>
+<ul>
+<li>processes incoming messages and writes to a database</li>
+<li>needs deterministic recovery after crashes/restarts</li>
+<li>wants to avoid the classic “processed but offset not committed” / “offset committed but processing rolled back” failure modes</li>
+</ul>
+<p>This pairs well with the <a class="xref" href="../../producing/outbox.html">Transactional Outbox</a> if your consuming flow produces new messages as part of the same unit of work.</p>
+<h2 id="how-it-works-high-level">How It Works (High Level)</h2>
+<ol>
+<li>As messages are processed, Silverback tracks the offsets that are safe to mark as processed.</li>
+<li>When offsets are stored, they are written to the configured store.</li>
+<li>When the consumer reconnects (or partitions are assigned), Silverback loads the stored offsets and repositions the consumer accordingly.</li>
+</ol>
+<h2 id="configuration">Configuration</h2>
+<p>The configuration has two parts:</p>
+<ol>
+<li>Register the offset store implementation (storage package)</li>
+<li>Enable client-side offset storage on the consumer</li>
+</ol>
+<p>All examples below intentionally call <code>.DisableOffsetsCommit()</code> so that Kafka broker offsets aren’t used.</p>
+<h3 id="in-memory-offset-store">In-memory offset store</h3>
+<p>Use this for development/testing only (offsets are lost on process restart).</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddInMemoryKafkaOffsetStore())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .DisableOffsetsCommit()
+            .StoreOffsetsClientSide(offsetStore =&gt; offsetStore.UseMemory())
+            .Consume(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h3 id="sqlite-offset-store">SQLite offset store</h3>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddSqliteKafkaOffsetStore())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .DisableOffsetsCommit()
+            .StoreOffsetsClientSide(offsetStore =&gt; offsetStore.UseSqlite(connectionString))
+            .Consume(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h3 id="postgresql-offset-store">PostgreSQL offset store</h3>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddPostgreSqlKafkaOffsetStore())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .DisableOffsetsCommit()
+            .StoreOffsetsClientSide(offsetStore =&gt; offsetStore.UsePostgreSql(connectionString))
+            .Consume(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h3 id="entity-framework-offset-store">Entity Framework offset store</h3>
+<p>When using Entity Framework, offsets are stored using a <code>DbContext</code>.</p>
+<pre><code class="lang-csharp">services
+    .AddDbContextFactory&lt;AppDbContext&gt;(options =&gt; options.UseNpgsql(connectionString))
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddEntityFrameworkKafkaOffsetStore())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(consumer =&gt; consumer
+            .WithGroupId(&quot;my-group&quot;)
+            .DisableOffsetsCommit()
+            .StoreOffsetsClientSide(offsetStore =&gt; offsetStore.UseEntityFramework&lt;AppDbContext&gt;())
+            .Consume(endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+
+public class AppDbContext : DbContext
+{
+    // ...your entities...
+
+    public DbSet&lt;SilverbackStoredOffset&gt; KafkaOffsets { get; set; } = null!;
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>For more details about storage packages and setup, see the <a class="xref" href="../../../storage.html">Storage Integration</a> guide.</p>
+</div>
+<h2 id="exactly-once-semantics-with-transactions">Exactly-Once Semantics with Transactions</h2>
+<p>To make offset writes <strong>atomic</strong> with your business changes, enlist the database transaction in the offset store.</p>
+<p>Silverback exposes a <code>KafkaOffsetStoreScope</code> that you can inject into your subscriber. You then:</p>
+<ol>
+<li>Start a transaction for your business work</li>
+<li>Enlist that transaction in the scope</li>
+<li>Perform your business work</li>
+<li>Store offsets</li>
+<li>Commit</li>
+</ol>
+<p>If the transaction rolls back, offsets won’t be stored and the messages will be re-consumed.</p>
+<h3 id="a-minimal-example">A minimal example</h3>
+<pre><code class="lang-csharp">public class MySubscriber
+{
+    private readonly DbConnection _connection;
+
+    public MySubscriber(DbConnection connection) =&gt; _connection = connection;
+
+    public async Task OnMessageReceivedAsync(MyMessage message, KafkaOffsetStoreScope offsetStoreScope)
+    {
+        await _connection.OpenAsync();
+
+        await using (DbTransaction tx = await _connection.BeginTransactionAsync())
+        {
+            // Make offset persistence part of the same transaction
+            offsetStoreScope.EnlistTransaction(tx);
+
+            // 1) Your business changes
+            await SaveBusinessChangesAsync(message, tx);
+
+            // 2) Mark offsets as processed (persist them)
+            await offsetStoreScope.StoreOffsetsAsync();
+
+            await tx.CommitAsync();
+        }
+    }
+
+    private static Task SaveBusinessChangesAsync(MyMessage message, DbTransaction tx)
+    {
+        // ...insert/update your database rows here...
+        return Task.CompletedTask;
+    }
+}
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Calling <code>StoreOffsetsAsync()</code> without enlisting a transaction still stores offsets, but you lose the atomic “exactly-once w.r.t. DB” guarantee.</p>
+</div>
+<h3 id="entity-framework-transaction-example">Entity Framework transaction example</h3>
+<pre><code class="lang-csharp">public async Task OnMessageReceivedAsync(MyMessage message, KafkaOffsetStoreScope offsetStoreScope, AppDbContext db)
+{
+    await using var tx = await db.Database.BeginTransactionAsync();
+
+    offsetStoreScope.EnlistTransaction(tx.GetDbTransaction());
+
+    // ...db.Add / db.Update ...
+    await db.SaveChangesAsync();
+
+    await offsetStoreScope.StoreOffsetsAsync();
+
+    await tx.CommitAsync();
+}
+</code></pre>
+<h2 id="batch-processing">Batch Processing</h2>
+<p>If batch processing is enabled, offsets are tracked for the entire batch. Storing offsets marks the whole batch as processed.</p>
+<pre><code class="lang-csharp">.AddConsumer(consumer =&gt; consumer
+    .WithGroupId(&quot;my-group&quot;)
+    .DisableOffsetsCommit()
+    .StoreOffsetsClientSide(offsetStore =&gt; offsetStore.UsePostgreSql(connectionString))
+    .Consume(endpoint =&gt; endpoint
+        .ConsumeFrom(&quot;my-topic&quot;)
+        .EnableBatchProcessing(100)))
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>In batch mode, a failure after processing items 1..N but before storing offsets can lead to reprocessing of part (or all) of the batch after restart. Design your handler code to be idempotent.</p>
+</div>
+<h2 id="provisioning-the-required-tables">Provisioning the Required Tables</h2>
+<p>Depending on the chosen storage:</p>
+<ul>
+<li><strong>Entity Framework</strong>: create the table via migrations (because it’s part of your <code>DbContext</code>).</li>
+<li><strong>Relational storage packages (SQLite/PostgreSQL, etc.)</strong>: you can create the table using <code>SilverbackStorageInitializer</code>.</li>
+</ul>
+<p>Examples:</p>
+<pre><code class="lang-csharp">await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(connectionString);
+// or
+await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString);
+</code></pre>
+<h2 id="gotchas-and-best-practices">Gotchas and Best Practices</h2>
+<ul>
+<li><strong>Always disable Kafka offset commits</strong> when using client-side offset storage: <code>DisableOffsetsCommit()</code>.</li>
+<li>Keep the same <strong>GroupId</strong> and topic naming; offsets are keyed by consumer group and partition.</li>
+<li>Use <strong>a durable store</strong> (SQLite/PostgreSQL/EF) in production.</li>
+<li>For “exactly-once w.r.t. DB”, always <strong>enlist the same transaction</strong> used for your business changes.</li>
+<li>Consider pairing this with <a class="xref" href="../../producing/outbox.html">Transactional Outbox</a> if you also publish messages during processing.</li>
+</ul>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li>API Reference (<code>docs/api/</code>)</li>
+<li><a class="xref" href="../../../storage.html">Storage Integration</a> guide</li>
+<li><a class="xref" href="../../producing/outbox.html">Transactional Outbox</a> guide</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +326,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

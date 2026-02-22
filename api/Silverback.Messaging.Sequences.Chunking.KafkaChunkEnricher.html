@@ -105,25 +105,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Sequences.html">Sequences</a>.<a class="xref" href="Silverback.Messaging.Sequences.Chunking.html">Chunking</a></h6>
@@ -132,15 +132,23 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class KafkaChunkEnricher : IChunkEnricher</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher__ctor_" data-uid="Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher__ctor" data-uid="Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.#ctor">KafkaChunkEnricher()</h4>
+  <div class="markdown level1 summary"><p>Enriches the produced chunks adding some additional Kafka-specific headers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaChunkEnricher()</code></pre>
+  </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher_GetFirstChunkMessageHeader_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.GetFirstChunkMessageHeader(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Sequences/Chunking/KafkaChunkEnricher.cs/#L16">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher_GetFirstChunkMessageHeader_" data-uid="Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.GetFirstChunkMessageHeader*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher_GetFirstChunkMessageHeader_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.GetFirstChunkMessageHeader(Silverback.Messaging.Messages.IOutboundEnvelope)">GetFirstChunkMessageHeader(IOutboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Gets an optional header to be appended to each chunk, pointing to the first message in the sequence.</p>
@@ -195,12 +203,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_KafkaChunkEnricher.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Sequences/Chunking/KafkaChunkEnricher.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -221,7 +223,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

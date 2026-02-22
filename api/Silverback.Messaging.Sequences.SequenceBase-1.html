@@ -90,8 +90,7 @@
 
   <h1 id="Silverback_Messaging_Sequences_SequenceBase_1" data-uid="Silverback.Messaging.Sequences.SequenceBase`1" class="text-break">Class SequenceBase&lt;TEnvelope&gt;
 </h1>
-  <div class="markdown level0 summary"><p>Represents a set of logically related messages, like the chunks belonging to the same message or the
-messages in a dataset.</p>
+  <div class="markdown level0 summary"><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -109,25 +108,25 @@ messages in a dataset.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Sequences.html">Sequences</a></h6>
@@ -153,13 +152,8 @@ messages in a dataset.</p>
   </table>
   <h3 id="constructors">Constructors
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Boolean_System_Nullable_System_TimeSpan__Silverback_Messaging_Messages_IMessageStreamProvider_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.%23ctor(System.String%2CSilverback.Messaging.Broker.Behaviors.ConsumerPipelineContext%2CSystem.Boolean%2CSystem.Nullable%7BSystem.TimeSpan%7D%2CSilverback.Messaging.Messages.IMessageStreamProvider%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L80">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1__ctor_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.#ctor*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Boolean_System_Nullable_System_TimeSpan__Silverback_Messaging_Messages_IMessageStreamProvider_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.#ctor(System.String,Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,System.Boolean,System.Nullable{System.TimeSpan},Silverback.Messaging.Messages.IMessageStreamProvider,System.Boolean)">SequenceBase(string, ConsumerPipelineContext, bool, TimeSpan?, IMessageStreamProvider?, bool)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase&lt;TEnvelope&gt;</a> class.</p>
@@ -189,7 +183,7 @@ messages in a dataset.</p>
         <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
         <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>, assuming that it will be the one from which the
-sequence gets published to the internal bus.</p>
+sequence gets published via the message bus.</p>
 </td>
       </tr>
       <tr>
@@ -214,7 +208,7 @@ used.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">trackIdentifiers</span></td>
-        <td><p>Specifies whether the message identifiers have to be collected, in order to be used for the commit
+        <td><p>Specifies whether the message identifiers have to be collected to be used for the commit
 later on.</p>
 </td>
       </tr>
@@ -222,13 +216,8 @@ later on.</p>
   </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AbortException.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AbortException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L142">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AbortException_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortException*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AbortException" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortException">AbortException</h4>
   <div class="markdown level1 summary"><p>Gets the exception that caused the abort, if any.</p>
@@ -257,13 +246,8 @@ later on.</p>
   <div class="markdown level1 remarks"><p>This property is filled only when <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silverback_Messaging_Sequences_ISequence_AbortReason">AbortReason</a> is
 <a class="xref" href="Silverback.Messaging.Sequences.SequenceAbortReason.html#Silverback_Messaging_Sequences_SequenceAbortReason_Error">Error</a>.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AbortReason.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AbortReason%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L160">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AbortReason_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortReason*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AbortReason" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortReason">AbortReason</h4>
   <div class="markdown level1 summary"><p>Gets the reason of the abort.</p>
@@ -288,44 +272,8 @@ later on.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Activity.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Activity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L136">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Sequences_SequenceBase_1_Activity_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Activity*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Activity" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Activity">Activity</h4>
-  <div class="markdown level1 summary"><p>Gets the Activity created for this sequence.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public Activity? Activity { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.diagnostics.activity">Activity</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Context.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Context%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L121">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Context_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Context*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Context" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Context">Context</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> related to the processing of this sequence
@@ -351,13 +299,8 @@ later on.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsAborted.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsAborted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L111">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsAborted_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsAborted*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsAborted" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsAborted">IsAborted</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the sequence processing has been aborted and no further message will
@@ -383,18 +326,12 @@ be pushed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsBeingConsumed.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsBeingConsumed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L114">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsBeingConsumed_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsBeingConsumed*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsBeingConsumed" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsBeingConsumed">IsBeingConsumed</h4>
-  <div class="markdown level1 summary"><p>Gets a value indicating whether the sequence is being consumed. This value is set to <code>true</code> as
-soon as <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silverback_Messaging_Sequences_ISequence_CreateStream__1_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Subscribers_IMessageFilter__">CreateStream&lt;TMessage&gt;(IReadOnlyCollection&lt;IMessageFilter&gt;?)</a> is called and the output
-<a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is created.</p>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the sequence is being consumed. This value is set to <code>true</code> as soon as
+<a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silverback_Messaging_Sequences_ISequence_CreateStream__1_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Subscribers_IMessageFilter__">CreateStream&lt;TMessage&gt;(IReadOnlyCollection&lt;IMessageFilter&gt;?)</a> is called and the output <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is created.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -416,13 +353,8 @@ soon as <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silv
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsComplete.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsComplete%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L157">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsComplete_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsComplete*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsComplete" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsComplete">IsComplete</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether all messages belonging to the sequence have been pushed and processed.</p>
@@ -447,13 +379,8 @@ soon as <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silv
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsCompleting.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsCompleting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L154">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsCompleting_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsCompleting*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsCompleting" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsCompleting">IsCompleting</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether all messages belonging to the sequence have been pushed and the last
@@ -479,13 +406,8 @@ message is currently being processed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsNew.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsNew%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L151">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsNew_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsNew*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsNew" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsNew">IsNew</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the first message in the sequence was consumed and this instance was
@@ -511,13 +433,8 @@ just created.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsPending.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsPending%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L108">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsPending_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsPending*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsPending" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsPending">IsPending</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the sequence is incomplete and awaiting for new messages to be pushed.</p>
@@ -542,13 +459,8 @@ just created.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Length.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Length%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L145">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Length_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Length*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Length" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Length">Length</h4>
   <div class="markdown level1 summary"><p>Gets the length of the sequence so far.</p>
@@ -573,17 +485,12 @@ just created.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_ParentSequence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.ParentSequence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L139">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_ParentSequence_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ParentSequence*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_ParentSequence" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ParentSequence">ParentSequence</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> that contain this sequence (e.g. the
-<a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> whose aggregated message is added to a <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> that contain this sequence (e.g. the <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> whose aggregated message is
+added to a <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -605,17 +512,11 @@ just created.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_ProcessingCompletedTask.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.ProcessingCompletedTask%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L127">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_ProcessingCompletedTask_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ProcessingCompletedTask*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_ProcessingCompletedTask" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ProcessingCompletedTask">ProcessingCompletedTask</h4>
-  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that will complete when the processing is completed (including
-commit/rollback of the transaction).</p>
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that will complete when the processing is completed (including commit/rollback of the transaction).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -637,13 +538,8 @@ commit/rollback of the transaction).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_SequenceId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.SequenceId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L105">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_SequenceId_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.SequenceId*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_SequenceId" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.SequenceId">SequenceId</h4>
   <div class="markdown level1 summary"><p>Gets the identifier that is used to match the consumed messages with their belonging sequence.</p>
@@ -668,17 +564,12 @@ commit/rollback of the transaction).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_SequencerBehaviorsTask.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.SequencerBehaviorsTask%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L124">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_SequencerBehaviorsTask_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.SequencerBehaviorsTask*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_SequencerBehaviorsTask" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.SequencerBehaviorsTask">SequencerBehaviorsTask</h4>
-  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that completes when the sequence went through both behaviors. This is
-necessary to synchronize completion when mixing Chunking with another sequence.</p>
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that completes when the sequence went through both behaviors. This is necessary to synchronize
+completion when mixing Chunking with another sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -700,17 +591,12 @@ necessary to synchronize completion when mixing Chunking with another sequence.<
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Sequences.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Sequences%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L117">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Sequences_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Sequences*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Sequences" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Sequences">Sequences</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> that were added to this sequence (e.g. the
-<a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> whose aggregated message is added to a <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> that were added to this sequence (e.g. the <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> whose aggregated
+message is added to a <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -732,45 +618,8 @@ necessary to synchronize completion when mixing Chunking with another sequence.<
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_ShouldCreateNewActivity.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.ShouldCreateNewActivity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L130">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Sequences_SequenceBase_1_ShouldCreateNewActivity_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ShouldCreateNewActivity*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_ShouldCreateNewActivity" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.ShouldCreateNewActivity">ShouldCreateNewActivity</h4>
-  <div class="markdown level1 summary"><p>Gets a value indicating whether this sequence should create a new activity. This should be true if the
-sequence contains independent messages.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public bool ShouldCreateNewActivity { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_StreamProvider.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.StreamProvider%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L133">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_StreamProvider_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.StreamProvider*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_StreamProvider" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.StreamProvider">StreamProvider</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a> that will be pushed with the messages belonging to the
@@ -796,13 +645,8 @@ sequence.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_TotalLength.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.TotalLength%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L148">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_TotalLength_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.TotalLength*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_TotalLength" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.TotalLength">TotalLength</h4>
   <div class="markdown level1 summary"><p>Gets the declared total length of the sequence, if known.</p>
@@ -829,22 +673,16 @@ sequence.</p>
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AbortAsync(Silverback.Messaging.Sequences.SequenceAbortReason%2CSystem.Exception)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L215">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Exception_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortAsync(Silverback.Messaging.Sequences.SequenceAbortReason,System.Exception)">AbortAsync(SequenceAbortReason, Exception?)</h4>
-  <div class="markdown level1 summary"><p>Aborts the sequence processing. Used for example to signal that an exception occurred or the
-enumeration returned prematurely.</p>
+  <div class="markdown level1 summary"><p>Aborts the sequence processing. Used, for example, to signal that an exception occurred or the enumeration returned prematurely.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)</code></pre>
+    <pre><code class="lang- hljs">public ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -865,7 +703,7 @@ enumeration returned prematurely.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception">Exception</a></td>
         <td><span class="parametername">exception</span></td>
-        <td><p>The exception that caused the abort, if an exception was thrown.</p>
+        <td><p>The exception that caused the abort if an exception was thrown.</p>
 </td>
       </tr>
     </tbody>
@@ -880,19 +718,14 @@ enumeration returned prematurely.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AddAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSilverback.Messaging.Sequences.ISequence%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L201">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddAsync(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.Sequences.ISequence,System.Boolean)">AddAsync(IRawInboundEnvelope, ISequence?, bool)</h4>
   <div class="markdown level1 summary"><p>Adds the message to the sequence.</p>
@@ -900,7 +733,7 @@ enumeration returned prematurely.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public Task&lt;AddToSequenceResult&gt; AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true)</code></pre>
+    <pre><code class="lang- hljs">public ValueTask&lt;AddToSequenceResult&gt; AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -943,21 +776,15 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains
-a flag indicating whether the operation was successful and the number of streams that have been
-actually pushed.</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
+the operation was successful and the number of streams that have been actually pushed.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync__0_Silverback_Messaging_Sequences_ISequence_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AddCoreAsync(%600%2CSilverback.Messaging.Sequences.ISequence%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L269">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync__0_Silverback_Messaging_Sequences_ISequence_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddCoreAsync(`0,Silverback.Messaging.Sequences.ISequence,System.Boolean)">AddCoreAsync(TEnvelope, ISequence?, bool)</h4>
   <div class="markdown level1 summary"><p>Adds the message to the sequence.</p>
@@ -965,7 +792,7 @@ actually pushed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected virtual Task&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">protected virtual ValueTask&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1008,21 +835,15 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains
-a flag indicating whether the operation was successful and the number of streams that have been
-actually pushed.</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
+the operation was successful and the number of streams that have been actually pushed.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.CompleteAsync(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L377">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CompleteAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CompleteAsync(System.Threading.CancellationToken)">CompleteAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Marks the sequence as complete, meaning no more messages will be pushed.</p>
@@ -1030,7 +851,7 @@ actually pushed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected virtual Task CompleteAsync(CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang- hljs">protected virtual ValueTask CompleteAsync(CancellationToken cancellationToken = default)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1060,19 +881,14 @@ actually pushed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
         <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_CreateStream__1_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Subscribers_IMessageFilter__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.CreateStream%60%601(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Subscribers.IMessageFilter%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L197">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_CreateStream_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CreateStream*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_CreateStream__1_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Subscribers_IMessageFilter__" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CreateStream``1(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Subscribers.IMessageFilter})">CreateStream&lt;TMessage&gt;(IReadOnlyCollection&lt;IMessageFilter&gt;?)</h4>
   <div class="markdown level1 summary"><p>Creates a <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> that will be pushed with the messages
@@ -1133,33 +949,22 @@ belonging to the sequence.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Dispose.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L245">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+  <div class="markdown level1 summary"><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">public void Dispose()</code></pre>
   </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L407">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose(System.Boolean)">Dispose(bool)</h4>
-  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-resources.</p>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1179,27 +984,21 @@ resources.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><span class="parametername">disposing</span></td>
-        <td><p>A value indicating whether the method has been called by the <code>Dispose</code> method and not from the
-finalizer.</p>
+        <td><p>A value indicating whether the method has been called by the <code>Dispose</code> method and not from the finalizer.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_GetBrokerMessageIdentifiers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.GetBrokerMessageIdentifiers%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L231">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Sequences_SequenceBase_1_GetBrokerMessageIdentifiers_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetBrokerMessageIdentifiers*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_GetBrokerMessageIdentifiers" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetBrokerMessageIdentifiers">GetBrokerMessageIdentifiers()</h4>
-  <div class="markdown level1 summary"><p>Gets the identifiers of the messages belonging to the sequence.</p>
+
+
+  <a id="Silverback_Messaging_Sequences_SequenceBase_1_GetCommitIdentifiers_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetCommitIdentifiers*"></a>
+  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_GetCommitIdentifiers" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetCommitIdentifiers">GetCommitIdentifiers()</h4>
+  <div class="markdown level1 summary"><p>Gets the identifiers to be used to commit after successful processing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IReadOnlyList&lt;IBrokerMessageIdentifier&gt; GetBrokerMessageIdentifiers()</code></pre>
+    <pre><code class="lang- hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetCommitIdentifiers()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1211,19 +1010,41 @@ finalizer.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
-        <td><p>The list of identifiers.</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><p>The identifiers to be used to commit.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage__0_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsLastMessage(%600)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L366">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Sequences_SequenceBase_1_GetRollbackIdentifiers_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetRollbackIdentifiers*"></a>
+  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_GetRollbackIdentifiers" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.GetRollbackIdentifiers">GetRollbackIdentifiers()</h4>
+  <div class="markdown level1 summary"><p>Gets the identifiers to be used to roll back in case of error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetRollbackIdentifiers()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><p>The identifiers to be used to rollback.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsLastMessage*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage__0_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsLastMessage(`0)">IsLastMessage(TEnvelope)</h4>
   <div class="markdown level1 summary"><p>Implements the logic to recognize the last message in the sequence without relying on the TotalCount
@@ -1268,13 +1089,8 @@ property.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.OnTimeoutElapsedAsync%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L478">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.OnTimeoutElapsedAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.OnTimeoutElapsedAsync">OnTimeoutElapsedAsync()</h4>
   <div class="markdown level1 summary"><p>Called when the timout is elapsed. If not overridden in a derived class, the default implementation
@@ -1283,7 +1099,7 @@ aborts the sequence.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected virtual Task OnTimeoutElapsedAsync()</code></pre>
+    <pre><code class="lang- hljs">protected virtual ValueTask OnTimeoutElapsedAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1295,7 +1111,7 @@ aborts the sequence.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></td>
         <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
 </td>
       </tr>
@@ -1315,12 +1131,6 @@ aborts the sequence.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L23" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -1341,7 +1151,7 @@ aborts the sequence.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -126,7 +126,7 @@
 <h2 id="103"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.3">1.0.3</a></h2>
 <h3 id="whats-new-3">What's New</h3>
 <ul>
-<li>Deprecate <em>PartitioningKeyMemberAttribute</em> in favor of <a class="xref" href="../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>, since the message key isn't used just for partitioning (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)</li>
+<li>Deprecate <em>PartitioningKeyMemberAttribute</em> in favor of <a class="xref" href="../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>, since the message key isn't used just for partitioning (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Keys and Partitioning</a>)</li>
 </ul>
 <h3 id="fixes-2">Fixes</h3>
 <ul>
@@ -170,11 +170,11 @@
 </ul>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p><code>WithConnectionTo&lt;KafkaBroker&gt;</code> has to be replaced with <code>WithConnectionToKafka</code> in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)</p>
+<p><code>WithConnectionTo&lt;KafkaBroker&gt;</code> has to be replaced with <code>WithConnectionToKafka</code> in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Keys and Partitioning</a>)</p>
 </div>
 <ul>
 <li><a href="https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore">Silverback.Integration.EntityFrameworkCore</a> and <a href="https://www.nuget.org/packages/Silverback.EventSourcing.EntityFrameworkCore">Silverback.EventSourcing.EntityFrameworkCore</a> have been deprecated (<a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> contains all the necessary logic to use EF as store)</li>
-<li><em>KeyMemberAttribute</em> has been renamed to <em>PartitioningKeyMemberAttribute</em> (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)</li>
+<li><em>KeyMemberAttribute</em> has been renamed to <em>PartitioningKeyMemberAttribute</em> (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Keys and Partitioning</a>)</li>
 </ul>
 </article>
           </div>
@@ -206,7 +206,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

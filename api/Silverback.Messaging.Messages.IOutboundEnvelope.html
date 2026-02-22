@@ -96,22 +96,7 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_AutoUnwrap">IEnvelope.AutoUnwrap</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_Message">IEnvelope.Message</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_Endpoint">IRawOutboundEnvelope.Endpoint</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_BrokerMessageIdentifier">IRawOutboundEnvelope.BrokerMessageIdentifier</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointName">IRawOutboundEnvelope.ActualEndpointName</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointDisplayName">IRawOutboundEnvelope.ActualEndpointDisplayName</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IBrokerEnvelope.html#Silverback_Messaging_Messages_IBrokerEnvelope_IsTombstone">IBrokerEnvelope.IsTombstone</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_Headers">IRawBrokerEnvelope.Headers</a>
@@ -119,13 +104,420 @@
     <div>
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_RawMessage">IRawBrokerEnvelope.RawMessage</a>
     </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_Message">IEnvelope.Message</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_MessageType">IEnvelope.MessageType</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Messages.html">Messages</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Messages_IOutboundEnvelope_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IOutboundEnvelope : IBrokerEnvelope, IEnvelope, IRawOutboundEnvelope, IRawBrokerEnvelope</code></pre>
+    <pre><code class="lang- hljs">public interface IOutboundEnvelope : IBrokerEnvelope, IRawBrokerEnvelope, IEnvelope</code></pre>
   </div>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_BrokerMessageIdentifier_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.BrokerMessageIdentifier*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_BrokerMessageIdentifier" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.BrokerMessageIdentifier">BrokerMessageIdentifier</h4>
+  <div class="markdown level1 summary"><p>Gets the message identifier on the message broker (the Kafka offset or similar).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Messages_IOutboundEnvelope_BrokerMessageIdentifier_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The identifier value will be set only after the message has been successfully published to the message
+broker.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_Context_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.Context*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_Context" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.Context">Context</h4>
+  <div class="markdown level1 summary"><p>Gets the current <a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">ISilverbackContext? Context { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_EndpointConfiguration_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.EndpointConfiguration*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_EndpointConfiguration" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.EndpointConfiguration">EndpointConfiguration</h4>
+  <div class="markdown level1 summary"><p>Gets the destination endpoint configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">ProducerEndpointConfiguration EndpointConfiguration { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_Producer_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.Producer*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_Producer" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.Producer">Producer</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> that will be or was used to produce this message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IProducer Producer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_AddHeader_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddHeader*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_AddHeader_System_String_System_Object_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddHeader(System.String,System.Object)">AddHeader(string, object)</h4>
+  <div class="markdown level1 summary"><p>Adds a new header.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IOutboundEnvelope AddHeader(string name, object value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The header name.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The header value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_AddHeaderIfNotExists_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddHeaderIfNotExists*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_AddHeaderIfNotExists_System_String_System_Object_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddHeaderIfNotExists(System.String,System.Object)">AddHeaderIfNotExists(string, object?)</h4>
+  <div class="markdown level1 summary"><p>Adds a new header if no header with the same name is already set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IOutboundEnvelope AddHeaderIfNotExists(string name, object? newValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The header name.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">newValue</span></td>
+        <td><p>The new header value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_AddOrReplaceHeader_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddOrReplaceHeader*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_AddOrReplaceHeader_System_String_System_Object_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.AddOrReplaceHeader(System.String,System.Object)">AddOrReplaceHeader(string, object?)</h4>
+  <div class="markdown level1 summary"><p>Adds a new header or replaces the header with the same name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IOutboundEnvelope AddOrReplaceHeader(string name, object? newValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The header name.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">newValue</span></td>
+        <td><p>The new header value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingMessage_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.CloneReplacingMessage*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingMessage__1___0_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.CloneReplacingMessage``1(``0)">CloneReplacingMessage&lt;TNewMessage&gt;(TNewMessage)</h4>
+  <div class="markdown level1 summary"><p>Clones the envelope and replaces the contained message with the specified one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IOutboundEnvelope&lt;TNewMessage&gt; CloneReplacingMessage&lt;TNewMessage&gt;(TNewMessage newMessage) where TNewMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TNewMessage</span></td>
+        <td><span class="parametername">newMessage</span></td>
+        <td><p>The new message to be set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TNewMessage&gt;</td>
+        <td><p>The new envelope.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TNewMessage</span></td>
+        <td><p>The type of the new message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingMessage__1___0__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The raw message will be cleared.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingRawMessage_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.CloneReplacingRawMessage*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingRawMessage_System_IO_Stream_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.CloneReplacingRawMessage(System.IO.Stream)">CloneReplacingRawMessage(Stream?)</h4>
+  <div class="markdown level1 summary"><p>Clones the envelope and replaces the raw message with the specified one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></td>
+        <td><span class="parametername">newRawMessage</span></td>
+        <td><p>The new raw message to be set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><p>The new envelope.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_IOutboundEnvelope_GetEndpoint_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.GetEndpoint*"></a>
+  <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_GetEndpoint" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope.GetEndpoint">GetEndpoint()</h4>
+  <div class="markdown level1 summary"><p>Gets the destination endpoint for the specific message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">ProducerEndpoint GetEndpoint()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><p>The endpoint.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
 
@@ -133,12 +525,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_IOutboundEnvelope.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.IOutboundEnvelope%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope.cs/#L7" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -159,7 +545,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

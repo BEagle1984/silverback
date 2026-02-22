@@ -101,21 +101,16 @@
   </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_Silverback_Messaging_IEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(Silverback.Messaging.IEndpoint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L20">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher*"></a>
-  <h4 id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_Silverback_Messaging_IEndpoint_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(Silverback.Messaging.IEndpoint)">GetActivityEnricher(IEndpoint)</h4>
+
+
+  <a id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetEnricher_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetEnricher*"></a>
+  <h4 id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetEnricher_Silverback_Messaging_Configuration_EndpointConfiguration_System_IServiceProvider_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetEnricher(Silverback.Messaging.Configuration.EndpointConfiguration,System.IServiceProvider)">GetEnricher(EndpointConfiguration, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> for the specified endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">IBrokerActivityEnricher GetActivityEnricher(IEndpoint endpoint)</code></pre>
+    <pre><code class="lang- hljs">IBrokerActivityEnricher GetEnricher(EndpointConfiguration configuration, IServiceProvider serviceProvider)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -128,9 +123,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></td>
-        <td><span class="parametername">endpoint</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfiguration.html">EndpointConfiguration</a></td>
+        <td><span class="parametername">configuration</span></td>
         <td><p>The endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> that can be used to resolve additional services.</p>
 </td>
       </tr>
     </tbody>
@@ -158,12 +159,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Diagnostics_IActivityEnricherFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Diagnostics.IActivityEnricherFactory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L9" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -184,7 +179,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

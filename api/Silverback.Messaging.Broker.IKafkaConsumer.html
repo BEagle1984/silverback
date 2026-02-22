@@ -90,20 +90,11 @@
 
   <h1 id="Silverback_Messaging_Broker_IKafkaConsumer" data-uid="Silverback.Messaging.Broker.IKafkaConsumer" class="text-break">Interface IKafkaConsumer
 </h1>
-  <div class="markdown level0 summary"><p>Consumes from one or more endpoints and pushes the received messages via the mediator.</p>
+  <div class="markdown level0 summary"><p>Consumes from one or more endpoints and pushes the received messages via the message bus.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_Name">IConsumer.Name</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_DisplayName">IConsumer.DisplayName</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StatusInfo">IConsumer.StatusInfo</a>
-    </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_TriggerReconnectAsync">IConsumer.TriggerReconnectAsync()</a>
     </div>
@@ -128,6 +119,15 @@
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_IncrementFailedAttempts_Silverback_Messaging_Messages_IRawInboundEnvelope_">IConsumer.IncrementFailedAttempts(IRawInboundEnvelope)</a>
     </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_Name">IConsumer.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_DisplayName">IConsumer.DisplayName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StatusInfo">IConsumer.StatusInfo</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
@@ -137,13 +137,8 @@
   </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_Client.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.Client%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L16">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_Client_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Client*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_Client" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Client">Client</h4>
   <div class="markdown level1 summary"><p>Gets the related <a class="xref" href="Silverback.Messaging.Broker.IBrokerClient.html">IBrokerClient</a>.</p>
@@ -168,13 +163,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_Configuration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.Configuration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L21">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_Configuration_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Configuration*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_Configuration" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Configuration">Configuration</h4>
   <div class="markdown level1 summary"><p>Gets the consumer configuration.</p>
@@ -199,13 +189,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_EndpointsConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.EndpointsConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L24">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_EndpointsConfiguration_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.EndpointsConfiguration*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_EndpointsConfiguration" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.EndpointsConfiguration">EndpointsConfiguration</h4>
   <div class="markdown level1 summary"><p>Gets the endpoints configuration.</p>
@@ -232,13 +217,8 @@
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_GetOffsetsForTimestamps_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.GetOffsetsForTimestamps(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartitionTimestamp%7D%2CSystem.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L67">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_GetOffsetsForTimestamps_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.GetOffsetsForTimestamps*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_GetOffsetsForTimestamps_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.GetOffsetsForTimestamps(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionTimestamp},System.TimeSpan)">GetOffsetsForTimestamps(IEnumerable&lt;TopicPartitionTimestamp&gt;, TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Looks up the offsets for the given partitions by timestamp. The returned offset for each partition is the earliest offset for which
@@ -293,13 +273,8 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
   <h5 id="Silverback_Messaging_Broker_IKafkaConsumer_GetOffsetsForTimestamps_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionTimestamp__System_TimeSpan__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The consumer does not need to be assigned to the requested partitions.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_Pause_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.Pause(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartition%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L32">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_Pause_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Pause*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_Pause_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Pause(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">Pause(IEnumerable&lt;TopicPartition&gt;)</h4>
   <div class="markdown level1 summary"><p>Pauses the consumption of the specified partitions.</p>
@@ -327,13 +302,8 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_Resume_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.Resume(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartition%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L40">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_Resume_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Resume*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_Resume_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Resume(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})">Resume(IEnumerable&lt;TopicPartition&gt;)</h4>
   <div class="markdown level1 summary"><p>Resumes the consumption of the specified partitions.</p>
@@ -361,13 +331,8 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer_Seek_Confluent_Kafka_TopicPartitionOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer.Seek(Confluent.Kafka.TopicPartitionOffset)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L48">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_IKafkaConsumer_Seek_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Seek*"></a>
   <h4 id="Silverback_Messaging_Broker_IKafkaConsumer_Seek_Confluent_Kafka_TopicPartitionOffset_" data-uid="Silverback.Messaging.Broker.IKafkaConsumer.Seek(Confluent.Kafka.TopicPartitionOffset)">Seek(TopicPartitionOffset)</h4>
   <div class="markdown level1 summary"><p>Seeks the specified partition to the specified offset.</p>
@@ -402,12 +367,6 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IKafkaConsumer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IKafkaConsumer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.Kafka/Messaging/Broker/IKafkaConsumer.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -428,7 +387,7 @@ partition, a value of <span class="xref">Confluent.Kafka.Offset.End</span> will 
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

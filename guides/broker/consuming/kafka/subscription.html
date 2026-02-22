@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Kafka Subscription and Partitions Assignment | Silverback </title>
+    <title>Kafka Subscription and Partition Assignment | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Kafka Subscription and Partitions Assignment | Silverback ">
+    <meta name="title" content="Kafka Subscription and Partition Assignment | Silverback ">
     <meta name="generator" content="docfx ">
   
 
@@ -84,9 +84,67 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="kafka-subscription">
-<h1 id="kafka-subscription-and-partitions-assignment">Kafka Subscription and Partitions Assignment</h1>
+<h1 id="kafka-subscription-and-partition-assignment">Kafka Subscription and Partition Assignment</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Silverback supports the standard Kafka consumer group subscription flow and manual (static) partition assignment.</p>
+<h2 id="subscribe-consumer-group">Subscribe (Consumer Group)</h2>
+<p>In consumer group mode, Kafka assigns partitions automatically and balances them across instances with the same group id.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h2 id="static-assignment">Static Assignment</h2>
+<p>You can manage partition assignment manually by specifying the partitions to consume.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;, 0, 3, 5)))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The example above assigns partitions 0, 3, and 5 of <code>my-topic</code> to this consumer endpoint. Other overloads let you specify starting offsets or consume fixed partitions across multiple topics.</p>
+</div>
+<h2 id="static-assignment-from-topic-metadata">Static Assignment from Topic Metadata</h2>
+<p>If you don't want to hardcode partition numbers, you can retrieve topic metadata and select partitions programmatically.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(
+                    &quot;my-topic&quot;,
+                    partitions =&gt; partitions
+                        .Where(p =&gt; p.Partition % 2 == 0)
+                        .Select(p =&gt; new TopicPartitionOffset(p, Offset.Beginning))))));
+</code></pre>
+<h2 id="partition-processing-and-concurrency">Partition Processing and Concurrency</h2>
+<p>By default, partitions are processed in parallel (one queue per partition). Messages in the same partition are always processed sequentially.</p>
+<p>You can limit concurrency using <code>LimitParallelism</code> or disable partition-based parallelism using <code>ProcessAllPartitionsTogether</code>.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProcessAllPartitionsTogether()
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h2 id="callbacks">Callbacks</h2>
+<p>Use broker callbacks to react to partition assignment/revocation events. See <a class="xref" href="../../callbacks.html">Broker Callbacks</a>.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="../../callbacks.html">Broker Callbacks</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +175,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

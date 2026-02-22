@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class OutboxWorkerSettingsBuilder
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class OutboxWorkerSettingsBuilder
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder">
+
+
+  <h1 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder" class="text-break">Class OutboxWorkerSettingsBuilder
+</h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">OutboxWorkerSettingsBuilder</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class OutboxWorkerSettingsBuilder</code></pre>
+  </div>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.Build%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L192">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_Build_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_Build" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Builds <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettings Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_DisableMessageOrderEnforcement.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.DisableMessageOrderEnforcement%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L135">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_DisableMessageOrderEnforcement_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.DisableMessageOrderEnforcement*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_DisableMessageOrderEnforcement" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.DisableMessageOrderEnforcement">DisableMessageOrderEnforcement()</h4>
+  <div class="markdown level1 summary"><p>Don't strictly enforce the message ordering, meaning that a failure in the produce of a message will cause it to be temporary
+skipped to try to produce the next message in the queue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder DisableMessageOrderEnforcement()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_EnforceMessageOrder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.EnforceMessageOrder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L122">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_EnforceMessageOrder_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.EnforceMessageOrder*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_EnforceMessageOrder" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.EnforceMessageOrder">EnforceMessageOrder()</h4>
+  <div class="markdown level1 summary"><p>Preserve the message ordering, meaning that a failure in the produce of a message will block the whole outbox.
+This is the default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder EnforceMessageOrder()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_ProcessOutbox_System_Func_Silverback_Messaging_Configuration_OutboxSettingsBuilder_Silverback_Messaging_Configuration_IOutboxSettingsImplementationBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.ProcessOutbox(System.Func%7BSilverback.Messaging.Configuration.OutboxSettingsBuilder%2CSilverback.Messaging.Configuration.IOutboxSettingsImplementationBuilder%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L44">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_ProcessOutbox_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.ProcessOutbox*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_ProcessOutbox_System_Func_Silverback_Messaging_Configuration_OutboxSettingsBuilder_Silverback_Messaging_Configuration_IOutboxSettingsImplementationBuilder__" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.ProcessOutbox(System.Func{Silverback.Messaging.Configuration.OutboxSettingsBuilder,Silverback.Messaging.Configuration.IOutboxSettingsImplementationBuilder})">ProcessOutbox(Func&lt;OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html">OutboxSettings</a> to be used by the outbox worker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder ProcessOutbox(Func&lt;OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder&gt; outboxSettingsBuilderFunc)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>, <a class="xref" href="Silverback.Messaging.Configuration.IOutboxSettingsImplementationBuilder.html">IOutboxSettingsImplementationBuilder</a>&gt;</td>
+        <td><span class="parametername">outboxSettingsBuilderFunc</span></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func&lt;TResult&gt;</a> that takes the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithBatchSize_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithBatchSize(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L150">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithBatchSize_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithBatchSize*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithBatchSize_System_Int32_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithBatchSize(System.Int32)">WithBatchSize(int)</h4>
+  <div class="markdown level1 summary"><p>Sets the number of messages to be retrieved from the outbox and processed at once. The default is 1000.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithBatchSize(int batchSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">batchSize</span></td>
+        <td><p>The number of messages to be processed at once.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithDistributedLock_System_Func_Silverback_Configuration_DistributedLockSettingsBuilder_Silverback_Configuration_IDistributedLockSettingsImplementationBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithDistributedLock(System.Func%7BSilverback.Configuration.DistributedLockSettingsBuilder%2CSilverback.Configuration.IDistributedLockSettingsImplementationBuilder%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L166">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithDistributedLock_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithDistributedLock*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithDistributedLock_System_Func_Silverback_Configuration_DistributedLockSettingsBuilder_Silverback_Configuration_IDistributedLockSettingsImplementationBuilder__" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithDistributedLock(System.Func{Silverback.Configuration.DistributedLockSettingsBuilder,Silverback.Configuration.IDistributedLockSettingsImplementationBuilder})">WithDistributedLock(Func&lt;DistributedLockSettingsBuilder, IDistributedLockSettingsImplementationBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Explicitly configure the settings for the optional <a class="xref" href="Silverback.Lock.IDistributedLock.html">IDistributedLock</a> to be used to ensure that only one instance
+is running at the same time. By default it will be automatically inferred from the outbox settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithDistributedLock(Func&lt;DistributedLockSettingsBuilder, IDistributedLockSettingsImplementationBuilder&gt; lockSettingsBuilderFunc)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Configuration.DistributedLockSettingsBuilder.html">DistributedLockSettingsBuilder</a>, <a class="xref" href="Silverback.Configuration.IDistributedLockSettingsImplementationBuilder.html">IDistributedLockSettingsImplementationBuilder</a>&gt;</td>
+        <td><span class="parametername">lockSettingsBuilderFunc</span></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func&lt;TResult&gt;</a> that takes the <a class="xref" href="Silverback.Configuration.DistributedLockSettingsBuilder.html">DistributedLockSettingsBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithExponentialRetryDelay_System_TimeSpan_System_Double_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithExponentialRetryDelay(System.TimeSpan%2CSystem.Double%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L106">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithExponentialRetryDelay_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithExponentialRetryDelay*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithExponentialRetryDelay_System_TimeSpan_System_Double_System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithExponentialRetryDelay(System.TimeSpan,System.Double,System.Nullable{System.TimeSpan})">WithExponentialRetryDelay(TimeSpan, double, TimeSpan?)</h4>
+  <div class="markdown level1 summary"><p>Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithExponentialRetryDelay(TimeSpan initialDelay, double delayFactor, TimeSpan? maxDelay = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">initialDelay</span></td>
+        <td><p>The initial delay before the first retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">delayFactor</span></td>
+        <td><p>The factor to be applied at each retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</td>
+        <td><span class="parametername">maxDelay</span></td>
+        <td><p>The maximum delay to be applied.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithIncrementalRetryDelay_System_TimeSpan_System_TimeSpan_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithIncrementalRetryDelay(System.TimeSpan%2CSystem.TimeSpan%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L82">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithIncrementalRetryDelay_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithIncrementalRetryDelay*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithIncrementalRetryDelay_System_TimeSpan_System_TimeSpan_System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithIncrementalRetryDelay(System.TimeSpan,System.TimeSpan,System.Nullable{System.TimeSpan})">WithIncrementalRetryDelay(TimeSpan, TimeSpan, TimeSpan?)</h4>
+  <div class="markdown level1 summary"><p>Specifies an initial delay before the first retry and an increment to be added at each subsequent retry.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithIncrementalRetryDelay(TimeSpan initialDelay, TimeSpan delayIncrement, TimeSpan? maxDelay = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">initialDelay</span></td>
+        <td><p>The initial delay before the first retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">delayIncrement</span></td>
+        <td><p>The increment to be added at each subsequent retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</td>
+        <td><span class="parametername">maxDelay</span></td>
+        <td><p>The maximum delay to be applied.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithInterval_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithInterval(System.TimeSpan)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L61">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithInterval_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithInterval*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithInterval_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithInterval(System.TimeSpan)">WithInterval(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Sets the interval between the outbox worker executions. The default is 500 milliseconds.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithInterval(TimeSpan interval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>The interval between the outbox worker executions.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithoutDistributedLock.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithoutDistributedLock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L180">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithoutDistributedLock_" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithoutDistributedLock*"></a>
+  <h4 id="Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder_WithoutDistributedLock" data-uid="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.WithoutDistributedLock">WithoutDistributedLock()</h4>
+  <div class="markdown level1 summary"><p>Explicitly disable the distributed lock.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public OutboxWorkerSettingsBuilder WithoutDistributedLock()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_OutboxWorkerSettingsBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Configuration/OutboxWorkerSettingsBuilder.cs/#L15" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

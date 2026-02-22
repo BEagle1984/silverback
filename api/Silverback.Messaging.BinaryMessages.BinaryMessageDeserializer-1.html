@@ -106,16 +106,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.BinaryMessages.html">BinaryMessages</a></h6>
@@ -140,15 +140,23 @@
       </tr>
     </tbody>
   </table>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1__ctor_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.#ctor*"></a>
+  <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1__ctor" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.#ctor">BinaryMessageDeserializer()</h4>
+  <div class="markdown level1 summary"><p>Wraps the consumed bytes stream into an instance of <code class="typeparamref">TModel</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public BinaryMessageDeserializer()</code></pre>
+  </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_RequireHeaders.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.RequireHeaders%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L25">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_RequireHeaders_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.RequireHeaders*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_RequireHeaders" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.RequireHeaders">RequireHeaders</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether this serializer (with the current configuration) needs the headers support to work properly.</p>
@@ -175,13 +183,8 @@
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_ConsumerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.DeserializeAsync(System.IO.Stream%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.ConsumerEndpoint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L28">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_DeserializeAsync_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.DeserializeAsync*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_ConsumerEndpoint_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.DeserializeAsync(System.IO.Stream,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.ConsumerEndpoint)">DeserializeAsync(Stream?, MessageHeaderCollection, ConsumerEndpoint)</h4>
   <div class="markdown level1 summary"><p>Deserializes the byte array into a message object.</p>
@@ -238,16 +241,11 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer__0__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.Equals(Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%7B%600%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L48">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.Equals*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer__0__" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.Equals(Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer{`0})">Equals(BinaryMessageDeserializer&lt;TModel&gt;?)</h4>
-  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+  <div class="markdown level1 summary"><p>Wraps the consumed bytes stream into an instance of <code class="typeparamref">TModel</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -267,8 +265,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       <tr>
         <td><a class="xref" href="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer-1.html">BinaryMessageDeserializer</a>&lt;TModel&gt;</td>
         <td><span class="parametername">other</span></td>
-        <td><p>An object to compare with this object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -283,21 +280,15 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.Equals(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L51">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.Equals*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_Equals_System_Object_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.Equals(System.Object)">Equals(object?)</h4>
-  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+  <div class="markdown level1 summary"><p>Wraps the consumed bytes stream into an instance of <code class="typeparamref">TModel</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -317,8 +308,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
         <td><span class="parametername">obj</span></td>
-        <td><p>The object to compare with the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -333,20 +323,14 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetCompatibleSerializer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.GetCompatibleSerializer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L45">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetCompatibleSerializer_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.GetCompatibleSerializer*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetCompatibleSerializer" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.GetCompatibleSerializer">GetCompatibleSerializer()</h4>
   <div class="markdown level1 summary"><p>Gets a new <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> compatible with this deserializer.</p>
@@ -372,16 +356,11 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601.GetHashCode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L66">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetHashCode_" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1_GetHashCode" data-uid="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer`1.GetHashCode">GetHashCode()</h4>
-  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+  <div class="markdown level1 summary"><p>Wraps the consumed bytes stream into an instance of <code class="typeparamref">TModel</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -399,8 +378,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><p>A hash code for the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -420,12 +398,6 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryMessages_BinaryMessageDeserializer_1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/BinaryMessages/BinaryMessageDeserializer`1.cs/#L19" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -446,7 +418,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

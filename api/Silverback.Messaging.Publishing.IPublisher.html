@@ -90,12 +90,7 @@
 
   <h1 id="Silverback_Messaging_Publishing_IPublisher" data-uid="Silverback.Messaging.Publishing.IPublisher" class="text-break">Interface IPublisher
 </h1>
-  <div class="markdown level0 summary"><p>
-        Publishes the messages to the internal bus.
-    </p>
-<p>
-        This is the actual mediator that forwards the messages being published to their subscribers.
-    </p>
+  <div class="markdown level0 summary"><p>Publishes messages via the message bus, forwarding them to the subscribers.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Publishing.html">Publishing</a></h6>
@@ -104,61 +99,47 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public interface IPublisher</code></pre>
   </div>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Messaging_Publishing_IPublisher_Context_" data-uid="Silverback.Messaging.Publishing.IPublisher.Context*"></a>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_Context" data-uid="Silverback.Messaging.Publishing.IPublisher.Context">Context</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a> in the current scope.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">ISilverbackContext Context { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_Publish_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.Publish(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L27">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Publishing_IPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_Publish_System_Object_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish(System.Object)">Publish(object)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the method will not complete until all subscribers have processed it (unless using
-Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">void Publish(object message)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">message</span></td>
-        <td><p>The message to be published.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_Publish_System_Object_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.Publish(System.Object%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L41">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Publishing_IPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish*"></a>
   <h4 id="Silverback_Messaging_Publishing_IPublisher_Publish_System_Object_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish(System.Object,System.Boolean)">Publish(object, bool)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the method will not complete until all subscribers have processed it (unless using
-Silverback.Integration to produce and consume the message through a message broker).</p>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the method will not complete until all subscribers have
+processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">void Publish(object message, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">void Publish(object message, bool throwIfUnhandled = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -185,23 +166,17 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L92">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object)">PublishAsync(object)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all subscribers have processed it
-(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object,System.Boolean,System.Threading.CancellationToken)">PublishAsync(object, bool, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all
+subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task PublishAsync(object message)</code></pre>
+    <pre><code class="lang- hljs">Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -217,6 +192,19 @@ subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
         <td><span class="parametername">message</span></td>
         <td><p>The message to be published.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">throwIfUnhandled</span></td>
+        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
 </td>
       </tr>
     </tbody>
@@ -237,23 +225,17 @@ subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L109">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object,System.Boolean)">PublishAsync(object, bool)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all subscribers have processed it
-(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync(System.Object,System.Threading.CancellationToken)">PublishAsync(object, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all
+subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task PublishAsync(object message, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">Task PublishAsync(object message, CancellationToken cancellationToken = default)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -272,10 +254,9 @@ subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
 </td>
       </tr>
     </tbody>
@@ -296,94 +277,17 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.PublishAsync%60%601(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L128">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync``1(System.Object)">PublishAsync&lt;TResult&gt;(object)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all subscribers have processed it
-(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync``1(System.Object,System.Boolean,System.Threading.CancellationToken)">PublishAsync&lt;TResult&gt;(object, bool, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all
+subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; PublishAsync&lt;TResult&gt;(object message)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">message</span></td>
-        <td><p>The message to be published.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TResult&gt;&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a
-collection of <code class="typeparamref">TResult</code>, since multiple subscribers could handle the message and
-return a
-value.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.PublishAsync%60%601(System.Object%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L151">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync``1(System.Object,System.Boolean)">PublishAsync&lt;TResult&gt;(object, bool)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all subscribers have processed it
-(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; PublishAsync&lt;TResult&gt;(object message, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; PublishAsync&lt;TResult&gt;(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -408,6 +312,12 @@ subscribers and the <a class="xref" href="https://learn.microsoft.com/dotnet/api
 message.</p>
 </td>
       </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
@@ -422,77 +332,7 @@ message.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TResult&gt;&gt;</td>
         <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a
-collection  of <code class="typeparamref">TResult</code>, since multiple subscribers could handle the message
-and return a
-value.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.Publish%60%601(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L58">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Publishing_IPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish``1(System.Object)">Publish&lt;TResult&gt;(object)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the method will not complete until all subscribers have processed it (unless using
-Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">IReadOnlyCollection&lt;TResult&gt; Publish&lt;TResult&gt;(object message)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">message</span></td>
-        <td><p>The message to be published.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TResult&gt;</td>
-        <td><p>A collection of <code class="typeparamref">TResult</code>, since multiple subscribers could handle the message
+collection of <code class="typeparamref">TResult</code>, since multiple subscribers could handle the message
 and return a value.</p>
 </td>
       </tr>
@@ -514,23 +354,87 @@ and return a value.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher.Publish%60%601(System.Object%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L79">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Publishing_IPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish``1(System.Object,System.Boolean)">Publish&lt;TResult&gt;(object, bool)</h4>
-  <div class="markdown level1 summary"><p>Publishes the specified message to the internal bus. The message will be forwarded to its
-subscribers and the method will not complete until all subscribers have processed it (unless using
-Silverback.Integration to produce and consume the message through a message broker).</p>
+
+
+  <a id="Silverback_Messaging_Publishing_IPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync*"></a>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IPublisher.PublishAsync``1(System.Object,System.Threading.CancellationToken)">PublishAsync&lt;TResult&gt;(object, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will not complete until all
+subscribers have processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">IReadOnlyCollection&lt;TResult&gt; Publish&lt;TResult&gt;(object message, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; PublishAsync&lt;TResult&gt;(object message, CancellationToken cancellationToken = default)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be published.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TResult&gt;&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a
+collection of <code class="typeparamref">TResult</code>, since multiple subscribers could handle the message
+and return a value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TResult</span></td>
+        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Publishing_IPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish*"></a>
+  <h4 id="Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IPublisher.Publish``1(System.Object,System.Boolean)">Publish&lt;TResult&gt;(object, bool)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message to its subscribers via the message bus and the method will not complete until all subscribers have
+processed it (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IReadOnlyCollection&lt;TResult&gt; Publish&lt;TResult&gt;(object message, bool throwIfUnhandled = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -597,12 +501,6 @@ and return a value.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_IPublisher.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.IPublisher%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/IPublisher.cs/#L17" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -623,7 +521,7 @@ and return a value.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

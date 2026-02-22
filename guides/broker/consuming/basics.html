@@ -86,7 +86,197 @@
             <article class="content wrap" id="_content" data-uid="consuming">
 <h1 id="consuming-messages">Consuming Messages</h1>
 
-<p><em>...coming soon...</em></p>
+<p>A consumer reads messages from the broker and dispatches them to your subscribers via the Silverback message bus.</p>
+<p>This guide covers the basics: configuring consumers, handling messages, parallelism, and error handling.</p>
+<h2 id="configure-a-consumer">Configure a Consumer</h2>
+<p>A <em>consumer</em> (Kafka) or <em>client</em> (MQTT) can consume one or more <em>endpoints</em>. Each endpoint defines the message type and the broker address to consume from (topic for Kafka, topic filter for MQTT).</p>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_kafka" role="tab" aria-controls="tabpanel_1_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_mqtt" role="tab" aria-controls="tabpanel_1_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+</section>
+<section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(&quot;my-client&quot;, client =&gt; client
+            .WithClientId(&quot;client1&quot;)
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;messages/my&quot;)
+                .WithAtLeastOnceQoS())));
+</code></pre>
+</section>
+</div>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p><strong>Configuration Notes</strong></p>
+<ul>
+<li><code>AddConsumer</code> (Kafka) / <code>AddClient</code> (MQTT) creates a broker connection with its own settings.</li>
+<li>Call <code>Consume&lt;TMessage&gt;</code> multiple times to add multiple endpoints to the same consumer/client. This usually reduces resource usage compared to creating one consumer per endpoint.</li>
+<li>In Kafka, producers and consumers are separate entities. In MQTT, the same client can both produce and consume.</li>
+<li>Naming consumers/clients and endpoints is optional but recommended for logging and diagnostics. It can also prevent double-registration if the same configuration block runs more than once.</li>
+<li>For broker-specific options, see the upstream client docs: <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet</a> and <a href="https://github.com/chkr1011/MQTTnet/wiki">MQTTnet</a>.</li>
+</ul>
+</div>
+<h2 id="handle-messages">Handle Messages</h2>
+<p>Consumed messages are published to the <a class="xref" href="../../bus.html">Using the Message Bus</a> and handled by your subscribers.</p>
+<p>You can subscribe to:</p>
+<ul>
+<li>The deserialized message (<code>MyMessage</code>).</li>
+<li>The envelope (<code>IInboundEnvelope&lt;TMessage&gt;</code>) to access metadata (headers, broker identifier, etc.).</li>
+</ul>
+<pre><code class="lang-csharp">public class MySubscriber
+{
+    public async Task HandleAsync(MyMessage message)
+    {
+        Console.WriteLine($&quot;Received message: {message.Content}&quot;);
+    }
+
+    public async Task HandleAsync(IInboundEnvelope&lt;MyMessage&gt; envelope)
+    {
+        Console.WriteLine($&quot;Received message: {envelope.Message.Content}&quot;);
+
+        // Kafka-only metadata example.
+        Console.WriteLine($&quot;Kafka key: {envelope.GetKafkaKey()}&quot;);
+    }
+}
+</code></pre>
+<p>Subscriber methods can be synchronous or asynchronous (<code>Task</code>/<code>ValueTask</code>). A message is considered successfully processed when all matching subscribers complete without throwing.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The same message can be handled by multiple subscribers. If you do that, make sure handlers are idempotent: if any subscriber fails, the message is considered failed and the configured error policy is applied.</p>
+</div>
+<p>For higher throughput, consider <a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a>.</p>
+<h2 id="parallelism">Parallelism</h2>
+<p>Kafka and MQTT have different parallelism models:</p>
+<ul>
+<li><strong>Kafka</strong>: parallelism is enabled by default. Messages from different partitions can be processed concurrently; messages within the same partition are always processed sequentially.</li>
+<li><strong>MQTT</strong>: processing is sequential by default; you can enable parallel processing.</li>
+</ul>
+<h3 id="kafka-1">Kafka</h3>
+<p>Limit the maximum degree of parallelism:</p>
+<pre><code class="lang-csharp">.AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+        .LimitParallelism(3)
+        .ConsumeFrom(&quot;my-topic-1&quot;)
+        .ConsumeFrom(&quot;my-topic-2&quot;)))
+</code></pre>
+<p>Process all partitions in a single stream (disables partition-based parallelism):</p>
+<pre><code class="lang-csharp">.AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+        .ProcessAllPartitionsTogether()
+        .ConsumeFrom(&quot;my-topic-1&quot;)
+        .ConsumeFrom(&quot;my-topic-2&quot;)))
+</code></pre>
+<h3 id="mqtt-1">MQTT</h3>
+<p>Enable parallel processing and set the maximum degree of parallelism:</p>
+<pre><code class="lang-csharp">.AddClient(&quot;my-client&quot;, client =&gt; client
+    .WithClientId(&quot;client1&quot;)
+    .EnableParallelProcessing(10)
+    .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+        .ConsumeFrom(&quot;messages/topic1&quot;)
+        .ConsumeFrom(&quot;messages/topic2&quot;)
+        .WithAtLeastOnceQoS()));
+</code></pre>
+<h2 id="error-handling">Error Handling</h2>
+<p>If a subscriber throws, Silverback applies the endpoint error policy. The default policy stops the consumer.</p>
+<p>Built-in policies:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a> (default)</li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyChain.html">ErrorPolicyChain</a></li>
+</ul>
+<p>Policies can be chained:</p>
+<div class="tabGroup" id="tabgroup_2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_2_kafka" role="tab" aria-controls="tabpanel_2_kafka" data-tab="kafka" tabindex="0" aria-selected="true">Kafka</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_2_mqtt" role="tab" aria-controls="tabpanel_2_mqtt" data-tab="mqtt" tabindex="-1">MQTT</a>
+</li>
+</ul>
+<section id="tabpanel_2_kafka" role="tabpanel" data-tab="kafka">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .OnError(policy =&gt; policy.Retry(2).ThenSkip()))));
+</code></pre>
+</section>
+<section id="tabpanel_2_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
+    .AddMqttClients(clients =&gt; clients
+        .ConnectViaTcp(&quot;localhost&quot;)
+        .AddClient(&quot;my-client&quot;, client =&gt; client
+            .WithClientId(&quot;client1&quot;)
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;messages/my&quot;)
+                .OnError(policy =&gt; policy.Retry(2).ThenSkip())
+                .WithAtLeastOnceQoS())));
+</code></pre>
+</section>
+</div>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>If processing still fails after the last policy in the chain, the exception is returned to the consumer and the consumer stops.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><a class="xref" href="../../../api/Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> waits before retrying and may delay polling. With Kafka, ensure broker/client timeouts (for example <code>max.poll.interval.ms</code>) are configured accordingly.</p>
+</div>
+<h3 id="apply-rules">Apply rules</h3>
+<p>Use <code>ApplyTo</code>, <code>Exclude</code>, and <code>ApplyWhen</code> to control which exceptions are handled and when.</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .MoveToKafkaTopic(
+        moveEndpoint =&gt; moveEndpoint.ProduceTo(&quot;some-other-topic&quot;),
+        movePolicy =&gt; movePolicy
+            .ApplyTo&lt;MyException&gt;()
+            .ApplyWhen((msg, ex) =&gt; msg.Xy == myValue))
+    .ThenSkip());
+</code></pre>
+<h3 id="publish-events">Publish events</h3>
+<p>You can publish a message when a policy is applied (for logging, alerts, etc.).</p>
+<pre><code class="lang-csharp">.OnError(policy =&gt; policy
+    .Retry(3, TimeSpan.FromSeconds(1))
+    .ThenSkip(skipPolicy =&gt; skipPolicy
+        .Publish(msg =&gt; new ProcessingFailedEvent(msg))));
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../bus.html">Using the Message Bus</a></li>
+<li><a class="xref" href="batch-processing.html">Batch Processing Consumed Messages</a></li>
+<li><a class="xref" href="../../../samples/intro.html">Samples</a></li>
+<li>Other guides in this section for broker-specific and advanced scenarios</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +307,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

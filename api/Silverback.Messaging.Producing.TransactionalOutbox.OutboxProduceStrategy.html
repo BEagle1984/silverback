@@ -90,7 +90,7 @@
 
   <h1 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy" class="text-break">Class OutboxProduceStrategy
 </h1>
-  <div class="markdown level0 summary"><p>The messages are stored in a the transactional outbox table. The operation is therefore included in the database transaction
+  <div class="markdown level0 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
 applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
 the messages to the message broker.</p>
 </div>
@@ -109,16 +109,16 @@ the messages to the message broker.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Producing.html">Producing</a>.<a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.html">TransactionalOutbox</a></h6>
@@ -129,13 +129,8 @@ the messages to the message broker.</p>
   </div>
   <h3 id="constructors">Constructors
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy__ctor_Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.%23ctor(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L36">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy__ctor_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.#ctor*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy__ctor_Silverback_Messaging_Producing_TransactionalOutbox_OutboxSettings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.#ctor(Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings)">OutboxProduceStrategy(OutboxSettings)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> class.</p>
@@ -165,13 +160,8 @@ the messages to the message broker.</p>
   </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Settings.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Settings%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L44">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Settings_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Settings*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Settings" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Settings">Settings</h4>
   <div class="markdown level1 summary"><p>Gets the outbox settings.</p>
@@ -198,13 +188,8 @@ the messages to the message broker.</p>
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Build_Silverback_ISilverbackContext_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Build(Silverback.ISilverbackContext%2CSilverback.Messaging.Configuration.ProducerEndpointConfiguration)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L53">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Build_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Build*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Build_Silverback_ISilverbackContext_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Build(Silverback.ISilverbackContext,Silverback.Messaging.Configuration.ProducerEndpointConfiguration)">Build(ISilverbackContext, ProducerEndpointConfiguration)</h4>
   <div class="markdown level1 summary"><p>Returns the actual strategy implementation, built using the provided <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
@@ -254,16 +239,13 @@ the messages to the message broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_Silverback_Messaging_Producing_IProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(Silverback.Messaging.Producing.IProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L67">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_Silverback_Messaging_Producing_IProduceStrategy_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(Silverback.Messaging.Producing.IProduceStrategy)">Equals(IProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
+applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
+the messages to the message broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -283,8 +265,7 @@ the messages to the message broker.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Producing.IProduceStrategy.html">IProduceStrategy</a></td>
         <td><span class="parametername">other</span></td>
-        <td><p>An object to compare with this object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -299,21 +280,17 @@ the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L64">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)">Equals(OutboxProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
+applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
+the messages to the message broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -333,8 +310,7 @@ the messages to the message broker.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a></td>
         <td><span class="parametername">other</span></td>
-        <td><p>An object to compare with this object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -349,21 +325,17 @@ the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L70">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Equals_System_Object_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.Equals(System.Object)">Equals(object?)</h4>
-  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
+applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
+the messages to the message broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -383,8 +355,7 @@ the messages to the message broker.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
         <td><span class="parametername">obj</span></td>
-        <td><p>The object to compare with the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -399,23 +370,19 @@ the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.GetHashCode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L73">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_GetHashCode_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_GetHashCode" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.GetHashCode">GetHashCode()</h4>
-  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
+applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
+the messages to the message broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -433,8 +400,7 @@ the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><p>A hash code for the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -442,16 +408,11 @@ the messages to the message broker.</p>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
   <h3 id="operators">Operators
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Equality_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Equality(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy%2CSilverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L47">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Equality_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Equality*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Equality_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Equality(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy,Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)">operator ==(OutboxProduceStrategy?, OutboxProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>The messages are stored in a the transactional outbox table. The operation is therefore included in the database transaction
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
 applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
 the messages to the message broker.</p>
 </div>
@@ -497,16 +458,11 @@ the messages to the message broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Inequality_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Inequality(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy%2CSilverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L50">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Inequality_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Inequality*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_op_Inequality_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy.op_Inequality(Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy,Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy)">operator !=(OutboxProduceStrategy?, OutboxProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>The messages are stored in a the transactional outbox table. The operation is therefore included in the database transaction
+  <div class="markdown level1 summary"><p>The messages are stored in the transactional outbox table. The operation can therefore be included in the database transaction
 applying the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of asynchronously sending
 the messages to the message broker.</p>
 </div>
@@ -569,12 +525,6 @@ the messages to the message broker.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_OutboxProduceStrategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.OutboxProduceStrategy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/TransactionalOutbox/OutboxProduceStrategy.cs/#L24" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -595,7 +545,7 @@ the messages to the message broker.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

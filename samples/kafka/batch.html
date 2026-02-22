@@ -87,15 +87,14 @@
 <h1 id="kafka---batch-processing">Kafka - Batch Processing</h1>
 
 <p>In this sample the consumed messages are processed in batch.</p>
-<p>See also: <a class="xref" href="../../concepts/broker/inbound.html#batch-processing">Inbound Endpoint - Batch processing</a></p>
+<p>See also: <a class="xref" href="../../guides/broker/consuming/basics.html">Consuming Messages</a></p>
 <h2 id="common">Common</h2>
 <p>The message being exchanged is defined in a common project.</p>
-<pre><code class="lang-csharp" name="Common.Message">namespace Silverback.Samples.Kafka.Batch.Common
+<pre><code class="lang-csharp" name="Common.Message">namespace Silverback.Samples.Kafka.Batch.Common;
+
+public class SampleMessage
 {
-    public class SampleMessage
-    {
-        public int Number { get; set; }
-    }
+    public int Number { get; set; }
 }
 </code></pre>
 <p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Common">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/Batch.Common</a></em></p>
@@ -107,7 +106,7 @@
 <a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
 </li>
 <li role="presentation">
 <a href="#tabpanel_1_producer-background-service" role="tab" aria-controls="tabpanel_1_producer-background-service" data-tab="producer-background-service" tabindex="-1">Background Service</a>
@@ -115,138 +114,119 @@
 </ul>
 <section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
 <pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Batch.Producer
+namespace Silverback.Samples.Kafka.Batch.Producer;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Enable Silverback
-            services
-                .AddSilverback()
+        // Enable Silverback
+        services.AddSilverback()
 
-                // Use Apache Kafka as message broker
-                .WithConnectionToMessageBroker(
-                    options =&gt; options
-                        .AddKafka())
+            // Use Apache Kafka as message broker
+            .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
 
-                // Delegate the inbound/outbound endpoints configuration to a separate
-                // class.
-                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;();
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;();
 
-            // Add the hosted service that produces the random sample messages
-            services.AddHostedService&lt;ProducerBackgroundService&gt;();
-        }
+        // Add the hosted service that produces the random sample messages
+        services.AddHostedService&lt;ProducerBackgroundService&gt;();
+    }
 
-        public void Configure()
-        {
-        }
+    public void Configure()
+    {
     }
 }
 </code></pre></section>
 <section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using Silverback.Messaging.Configuration;
+<pre><code class="lang-csharp" name="Producer.BrokerClientsConfigurator">using Silverback.Messaging.Configuration;
 using Silverback.Samples.Kafka.Batch.Common;
 
-namespace Silverback.Samples.Kafka.Batch.Producer
+namespace Silverback.Samples.Kafka.Batch.Producer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
-    public class EndpointsConfigurator : IEndpointsConfigurator
+    public void Configure(BrokerClientsConfigurationBuilder builder)
     {
-        public void Configure(IEndpointsConfigurationBuilder builder)
-        {
-            builder
-                .AddKafkaEndpoints(
-                    endpoints =&gt; endpoints
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
 
-                        // Configure the properties needed by all consumers/producers
-                        .Configure(
-                            config =&gt;
-                            {
-                                // The bootstrap server address is needed to connect
-                                config.BootstrapServers =
-                                    &quot;PLAINTEXT://localhost:9092&quot;;
-                            })
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
 
-                        // Produce the SampleMessage to the samples-batch topic
-                        .AddOutbound&lt;SampleMessage&gt;(
-                            endpoint =&gt; endpoint
-                                .ProduceTo(&quot;samples-batch&quot;)));
-        }
+                    // Add a producer
+                    .AddProducer(
+                        producer =&gt; producer
+
+                            // Produce the SampleMessage to the samples-batch topic
+                            .Produce&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ProduceTo(&quot;samples-batch&quot;))));
     }
 }
 </code></pre></section>
 <section id="tabpanel_1_producer-background-service" role="tabpanel" data-tab="producer-background-service" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.BackgroundService">using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Kafka.Batch.Common;
 
-namespace Silverback.Samples.Kafka.Batch.Producer
+namespace Silverback.Samples.Kafka.Batch.Producer;
+
+public class ProducerBackgroundService : BackgroundService
 {
-    public class ProducerBackgroundService : BackgroundService
+    private readonly IPublisher _publisher;
+
+    private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+
+    public ProducerBackgroundService(
+        IPublisher publisher,
+        ILogger&lt;ProducerBackgroundService&gt; logger)
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _publisher = publisher;
+        _logger = logger;
+    }
 
-        private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        int number = 0;
 
-        public ProducerBackgroundService(
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger&lt;ProducerBackgroundService&gt; logger)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
+            await ProduceMessagesAsync(++number + 100);
+
+            await Task.Delay(50, stoppingToken);
         }
+    }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    private async Task ProduceMessagesAsync(int number)
+    {
+        try
         {
-            // Create a service scope and resolve the IPublisher
-            // (the IPublisher cannot be resolved from the root scope and cannot
-            // therefore be directly injected into the BackgroundService)
-            using var scope = _serviceScopeFactory.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService&lt;IPublisher&gt;();
-            var broker = scope.ServiceProvider.GetRequiredService&lt;IBroker&gt;();
-
-            int number = 0;
-
-            while (!stoppingToken.IsCancellationRequested)
+            List&lt;SampleMessage&gt; messages = [];
+            for (int i = 0; i &lt; 100; i++)
             {
-                // Check whether the connection has been established, since the
-                // BackgroundService will start immediately, before the application
-                // is completely bootstrapped
-                if (!broker.IsConnected)
-                {
-                    await Task.Delay(100, stoppingToken);
-                    continue;
-                }
-
-                await ProduceMessageAsync(publisher, ++number);
-
-                await Task.Delay(50, stoppingToken);
+                messages.Add(new SampleMessage { Number = number + i });
             }
+
+            await _publisher.WrapAndPublishBatchAsync(
+                messages,
+                envelope =&gt; envelope.SetKafkaKey($&quot;N{envelope.Message?.Number}&quot;));
+
+            _logger.LogInformation(&quot;Produced {FirstNumber}-{LastNumber}&quot;, number, number + 99);
         }
-
-        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        catch (Exception ex)
         {
-            try
-            {
-                await publisher.PublishAsync(
-                    new SampleMessage
-                    {
-                        Number = number
-                    });
-
-                _logger.LogInformation(&quot;Produced {Number}&quot;, number);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, &quot;Failed to produce {Number}&quot;, number);
-            }
+            _logger.LogError(ex, &quot;Failed to produce {FirstNumber}-{LastNumber}&quot;, number, number + 99);
         }
     }
 }
@@ -262,7 +242,7 @@ namespace Silverback.Samples.Kafka.Batch.Producer
 <a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
 </li>
 <li role="presentation">
 <a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
@@ -270,84 +250,71 @@ namespace Silverback.Samples.Kafka.Batch.Producer
 </ul>
 <section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
 <pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Batch.Consumer
+namespace Silverback.Samples.Kafka.Batch.Consumer;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Enable Silverback
-            services
-                .AddSilverback()
+        // Enable Silverback
+        services.AddSilverback()
 
-                // Use Apache Kafka as message broker
-                .WithConnectionToMessageBroker(
-                    options =&gt; options
-                        .AddKafka())
+            // Use Apache Kafka as message broker
+            .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
 
-                // Delegate the inbound/outbound endpoints configuration to a separate
-                // class.
-                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;()
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;()
 
-                // Register the subscribers
-                .AddSingletonSubscriber&lt;SampleMessageBatchSubscriber&gt;();
-        }
+            // Register the subscribers
+            .AddSingletonSubscriber&lt;SampleMessageBatchSubscriber&gt;();
+    }
 
-        public void Configure()
-        {
-        }
+    public void Configure()
+    {
     }
 }
 </code></pre></section>
 <section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Consumer.EndpointsConfigurator">using System;
-using Confluent.Kafka;
+<pre><code class="lang-csharp" name="Consumer.BrokerClientsConfigurator">using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.Batch.Common;
 
-namespace Silverback.Samples.Kafka.Batch.Consumer
+namespace Silverback.Samples.Kafka.Batch.Consumer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
-    public class EndpointsConfigurator : IEndpointsConfigurator
+    public void Configure(BrokerClientsConfigurationBuilder builder)
     {
-        public void Configure(IEndpointsConfigurationBuilder builder)
-        {
-            builder
-                .AddKafkaEndpoints(
-                    endpoints =&gt; endpoints
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
 
-                        // Configure the properties needed by all consumers/producers
-                        .Configure(
-                            config =&gt;
-                            {
-                                // The bootstrap server address is needed to connect
-                                config.BootstrapServers =
-                                    &quot;PLAINTEXT://localhost:9092&quot;;
-                            })
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
 
-                        // Consume the samples-batch topic
-                        .AddInbound(
-                            endpoint =&gt; endpoint
-                                .ConsumeFrom(&quot;samples-batch&quot;)
-                                .Configure(
-                                    config =&gt;
-                                    {
-                                        // The consumer needs at least the bootstrap
-                                        // server address and a group id to be able
-                                        // to connect
-                                        config.GroupId = &quot;sample-consumer&quot;;
+                    // Add a consumer
+                    .AddConsumer(
+                        consumer =&gt; consumer
 
-                                        // AutoOffsetReset.Earliest means that the
-                                        // consumer must start consuming from the
-                                        // beginning of the topic, if no offset was
-                                        // stored for this consumer group
-                                        config.AutoOffsetReset =
-                                            AutoOffsetReset.Earliest;
-                                    })
+                            // Set the consumer group id
+                            .WithGroupId(&quot;sample-consumer&quot;)
 
-                                // Configure processing in batches of 100 messages,
-                                // with a max wait time of 5 seconds
-                                .EnableBatchProcessing(100, TimeSpan.FromSeconds(5))));
-        }
+                            // AutoOffsetReset.Earliest means that the consumer
+                            // must start consuming from the beginning of the topic,
+                            // if no offset was stored for this consumer group
+                            .AutoResetOffsetToEarliest()
+
+                            // Consume the SampleMessage from the samples-batch topic
+                            .Consume&lt;SampleMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ConsumeFrom(&quot;samples-batch&quot;)
+
+                                    // Configure processing in batches of 100 messages,
+                                    // with a max wait time of 5 seconds
+                                    .EnableBatchProcessing(100, TimeSpan.FromSeconds(5)))));
     }
 }
 </code></pre></section>
@@ -357,34 +324,32 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Samples.Kafka.Batch.Common;
 
-namespace Silverback.Samples.Kafka.Batch.Consumer
+namespace Silverback.Samples.Kafka.Batch.Consumer;
+
+public class SampleMessageBatchSubscriber
 {
-    public class SampleMessageBatchSubscriber
+    private readonly ILogger&lt;SampleMessageBatchSubscriber&gt; _logger;
+
+    public SampleMessageBatchSubscriber(ILogger&lt;SampleMessageBatchSubscriber&gt; logger)
     {
-        private readonly ILogger&lt;SampleMessageBatchSubscriber&gt; _logger;
+        _logger = logger;
+    }
 
-        public SampleMessageBatchSubscriber(
-            ILogger&lt;SampleMessageBatchSubscriber&gt; logger)
+    public async Task OnBatchReceivedAsync(IAsyncEnumerable&lt;SampleMessage&gt; batch)
+    {
+        int sum = 0;
+        int count = 0;
+
+        await foreach (SampleMessage message in batch)
         {
-            _logger = logger;
+            sum += message.Number;
+            count++;
         }
 
-        public async Task OnBatchReceivedAsync(IAsyncEnumerable&lt;SampleMessage&gt; batch)
-        {
-            int sum = 0;
-            int count = 0;
-
-            await foreach (var message in batch)
-            {
-                sum += message.Number;
-                count++;
-            }
-
-            _logger.LogInformation(
-                &quot;Received batch of {Count} message -&gt; sum: {Sum}&quot;,
-                count,
-                sum);
-        }
+        _logger.LogInformation(
+            &quot;Received batch of {Count} message -&gt; sum: {Sum}&quot;,
+            count,
+            sum);
     }
 }
 </code></pre></section>
@@ -421,7 +386,7 @@ namespace Silverback.Samples.Kafka.Batch.Consumer
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -95,66 +95,25 @@
     <h3 id="classes">Classes
 </h3>
       <h4><a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a></h4>
-      <section><p>Represents a message broker endpoint to consume from (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
+      <section><p>The endpoint (e.g. the topic) from which the message was consumed.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.ConsumerEndpoint-1.html">ConsumerEndpoint&lt;TConfiguration&gt;</a></h4>
+      <section><p>The endpoint (e.g. the topic) from which the message was consumed.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a></h4>
-      <section><p>Represents a message broker endpoint to connect to (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a></h4>
-      <section><p>The exception that is thrown when the endpoint configuration is not valid.</p>
+      <section><p>The base class for <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> and <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a></h4>
-      <section><p>Represents a topic to consume from.</p>
+      <section><p>The Kafka topic and partition from which the message was consumed.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a></h4>
-      <section><p>Represents a topic to produce to.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a></h4>
-      <section><p>Represents a topic to consume from.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a></h4>
-      <section><p>Represents a topic to produce to.</p>
+      <section><p>The Kafka topic and partition where the message must be produced to.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></h4>
-      <section><p>Represents a message broker endpoint to produce to (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
+      <section><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitConsumerEndpoint.html">RabbitConsumerEndpoint</a></h4>
-      <section><p>Represents a queue or exchange to consume from.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitExchangeConsumerEndpoint.html">RabbitExchangeConsumerEndpoint</a></h4>
-      <section><p>Represents an exchange to consume from.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitExchangeProducerEndpoint.html">RabbitExchangeProducerEndpoint</a></h4>
-      <section><p>Represents an exchange to produce to.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitProducerEndpoint.html">RabbitProducerEndpoint</a></h4>
-      <section><p>Represents a queue or exchange to produce to.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitQueueConsumerEndpoint.html">RabbitQueueConsumerEndpoint</a></h4>
-      <section><p>Represents a queue to consume from.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.RabbitQueueProducerEndpoint.html">RabbitQueueProducerEndpoint</a></h4>
-      <section><p>Represents a queue to produce to.</p>
-</section>
-    <h3 id="interfaces">Interfaces
-</h3>
-      <h4><a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a></h4>
-      <section><p>Represents a message broker endpoint to consume from (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></h4>
-      <section><p>Represents a message broker endpoint to connect to (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></h4>
-      <section><p>Represents a message broker endpoint to produce to (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.IRawMessageTransformer.html">IRawMessageTransformer</a></h4>
-      <section><p>The base class for all services that transform the inbound or outbound raw binary.</p>
+      <h4><a class="xref" href="Silverback.Messaging.ProducerEndpoint-1.html">ProducerEndpoint&lt;TConfiguration&gt;</a></h4>
+      <section><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </section>
 </article>
           </div>
@@ -183,7 +142,7 @@ exchange).</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

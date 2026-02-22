@@ -94,52 +94,55 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.BrokerCallbackInvocationException.html">BrokerCallbackInvocationException</a></h4>
-      <section><p>The exception that wraps the exception thrown by a <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html">IBrokerCallback</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.BrokerClientCallbackInvocationException.html">BrokerClientCallbackInvocationException</a></h4>
+      <section><p>The exception that wraps the exception thrown by a <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallback.html">IBrokerClientCallback</a>.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html">IBrokerCallback</a></h4>
-      <section><p>The marker interface implemented by all interfaces declaring the broker callbacks handlers.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallback.html">IBrokerClientCallback</a></h4>
+      <section><p>The marker interface implemented by all interfaces declaring the client callbacks handlers.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html">IBrokerCallbacksInvoker</a></h4>
-      <section><p>Used to invoke the registered <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html">IBrokerCallback</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallbacksInvoker.html">IBrokerClientCallbacksInvoker</a></h4>
+      <section><p>Used to invoke the registered <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallback.html">IBrokerClientCallback</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback.html">IEndpointsConfiguredCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback.html#Silverback_Messaging_Broker_Callbacks_IEndpointsConfiguredCallback_OnEndpointsConfiguredAsync">OnEndpointsConfiguredAsync()</a> callback.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientsConfiguredCallback.html">IBrokerClientsConfiguredCallback</a></h4>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientsConfiguredCallback.html#Silverback_Messaging_Broker_Callbacks_IBrokerClientsConfiguredCallback_OnBrokerClientsConfiguredAsync">OnBrokerClientsConfiguredAsync()</a> callback.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientsConnectedCallback.html">IBrokerClientsConnectedCallback</a></h4>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientsConnectedCallback.html#Silverback_Messaging_Broker_Callbacks_IBrokerClientsConnectedCallback_OnBrokerClientsConnectedAsync">OnBrokerClientsConnectedAsync()</a> callback.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html">IKafkaConsumerErrorCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_KafkaConsumer_">OnConsumerError(Error, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_IKafkaConsumer_">OnConsumerError(Error, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html">IKafkaConsumerLogCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerLogCallback_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaConsumer_">OnConsumerLog(LogMessage, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerLogCallback_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_IKafkaConsumer_">OnConsumerLog(LogMessage, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback.html">IKafkaConsumerStatisticsCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerStatisticsCallback_OnConsumerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaConsumer_">OnConsumerStatistics(KafkaStatistics?, string, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerStatisticsCallback_OnConsumerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_IKafkaConsumer_">OnConsumerStatistics(KafkaStatistics?, string, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html">IKafkaOffsetCommittedCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_">OnOffsetsCommitted(CommittedOffsets, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_IKafkaConsumer_">OnOffsetsCommitted(CommittedOffsets, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html">IKafkaPartitionEofCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_IKafkaConsumer_">OnEndOfTopicPartitionReached(TopicPartition, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html">IKafkaPartitionsAssignedCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_KafkaConsumer_">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_IKafkaConsumer_">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.html">IKafkaPartitionsRevokedCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsRevokedCallback_OnPartitionsRevoked_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartitionOffset__Silverback_Messaging_Broker_KafkaConsumer_">OnPartitionsRevoked(IReadOnlyCollection&lt;TopicPartitionOffset&gt;, KafkaConsumer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsRevokedCallback_OnPartitionsRevoked_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartitionOffset__Silverback_Messaging_Broker_IKafkaConsumer_">OnPartitionsRevoked(IReadOnlyCollection&lt;TopicPartitionOffset&gt;, IKafkaConsumer)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html">IKafkaProducerLogCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaProducer_">OnProducerLog(LogMessage, KafkaProducer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_Kafka_IConfluentProducerWrapper_">OnProducerLog(LogMessage, IConfluentProducerWrapper)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html">IKafkaProducerStatisticsCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaProducer_">OnProducerStatistics(KafkaStatistics?, string, KafkaProducer)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_Kafka_IConfluentProducerWrapper_">OnProducerStatistics(KafkaStatistics?, string, IConfluentProducerWrapper)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientConnectedCallback.html">IMqttClientConnectedCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientConnectedCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientConnectedCallback_OnClientConnectedAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_">OnClientConnectedAsync(MqttClientConfig)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientConnectedCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientConnectedCallback_OnClientConnectedAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_">OnClientConnectedAsync(MqttClientConfiguration)</a> event handler.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html">IMqttClientDisconnectingCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_">OnClientDisconnectingAsync(MqttClientConfig)</a> event handler.</p>
+      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_">OnClientDisconnectingAsync(MqttClientConfiguration)</a> event handler.</p>
 </section>
 </article>
           </div>
@@ -168,7 +171,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

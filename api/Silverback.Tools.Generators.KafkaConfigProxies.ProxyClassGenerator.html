@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ProxyClassGenerator
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ProxyClassGenerator
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator">
+
+
+  <h1 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator" class="text-break">Class ProxyClassGenerator
+</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">ProxyClassGenerator</span></div>
+      <div class="level2"><a class="xref" href="Silverback.Tools.Generators.KafkaConfigProxies.ParentProxyClassGenerator.html">ParentProxyClassGenerator</a></div>
+      <div class="level2"><a class="xref" href="Silverback.Tools.Generators.KafkaConfigProxies.SchemaRegistryProxyClassGenerator.html">SchemaRegistryProxyClassGenerator</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tools.html">Tools</a>.<a class="xref" href="Silverback.Tools.Generators.html">Generators</a>.<a class="xref" href="Silverback.Tools.Generators.KafkaConfigProxies.html">KafkaConfigProxies</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Tools.Generators.KafkaConfigProxies.dll</h6>
+  <h5 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class ProxyClassGenerator</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator__ctor_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.#ctor*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator__ctor_System_Type_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.#ctor(System.Type)">ProxyClassGenerator(Type)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ProxyClassGenerator(Type proxiedType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td><span class="parametername">proxiedType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator__ctor_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.#ctor*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator__ctor_System_Type_System_String_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.#ctor(System.Type,System.String)">ProxyClassGenerator(Type, string)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected ProxyClassGenerator(Type proxiedType, string generatedClassName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td><span class="parametername">proxiedType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">generatedClassName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GeneratedClassName_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GeneratedClassName*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GeneratedClassName" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GeneratedClassName">GeneratedClassName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected string GeneratedClassName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_ProxiedType_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.ProxiedType*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_ProxiedType" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.ProxiedType">ProxiedType</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected Type ProxiedType { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_StringBuilder_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.StringBuilder*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_StringBuilder" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.StringBuilder">StringBuilder</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected StringBuilder StringBuilder { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_Generate_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.Generate*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_Generate" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.Generate">Generate()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string Generate()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GetClassSignature_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GetClassSignature*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GetClassSignature" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GetClassSignature">GetClassSignature()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual string GetClassSignature()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GetClassSummary_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GetClassSummary*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_GetClassSummary" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.GetClassSummary">GetClassSummary()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual string GetClassSummary()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_MapProperties_" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.MapProperties*"></a>
+  <h4 id="Silverback_Tools_Generators_KafkaConfigProxies_ProxyClassGenerator_MapProperties" data-uid="Silverback.Tools.Generators.KafkaConfigProxies.ProxyClassGenerator.MapProperties">MapProperties()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual void MapProperties()</code></pre>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2026 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

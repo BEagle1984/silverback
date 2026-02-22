@@ -98,22 +98,18 @@
       <section><p>Provides the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack&lt;T&gt;</a> of <a class="xref" href="Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> to be used in the
 <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> pipeline.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.CommandPublisher.html">CommandPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a> or <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html">CommandPublisherExtensions</a></h4>
+      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommand_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand_System_Boolean_">ExecuteCommand(IPublisher, ICommand, bool)</a> and <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommandAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand_System_Threading_CancellationToken_">ExecuteCommandAsync(IPublisher, ICommand, CancellationToken)</a> methods to the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.EventPublisher.html">EventPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html">EventPublisherExtensions</a></h4>
+      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html#Silverback_Messaging_Publishing_EventPublisherExtensions_PublishEvent_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IEvent_System_Boolean_">PublishEvent(IPublisher, IEvent, bool)</a> and <a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html#Silverback_Messaging_Publishing_EventPublisherExtensions_PublishEventAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IEvent_System_Threading_CancellationToken_">PublishEventAsync(IPublisher, IEvent, CancellationToken)</a> methods to the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.Publisher.html">Publisher</a></h4>
-      <section><p>
-        Publishes the messages to the internal bus.
-    </p>
-<p>
-        This is the actual mediator that forwards the messages being published to their subscribers.
-    </p>
+      <h4><a class="xref" href="Silverback.Messaging.Publishing.IntegrationPublisherExtensions.html">IntegrationPublisherExtensions</a></h4>
+      <section><p>Adds the <code>WrapAndPublish</code>,<code>WrapAndPublishBatch</code>, <code>WrapAndPublishAsync</code>, and <code>WrapAndPublishBatchAsync</code> methods
+to the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.QueryPublisher.html">QueryPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html">QueryPublisherExtensions</a></h4>
+      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html#Silverback_Messaging_Publishing_QueryPublisherExtensions_ExecuteQuery__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IQuery___0__System_Boolean_">ExecuteQuery&lt;TResult&gt;(IPublisher, IQuery&lt;TResult&gt;, bool)</a> and <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html#Silverback_Messaging_Publishing_QueryPublisherExtensions_ExecuteQueryAsync__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IQuery___0__System_Threading_CancellationToken_">ExecuteQueryAsync&lt;TResult&gt;(IPublisher, IQuery&lt;TResult&gt;, CancellationToken)</a> methods to the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a></h4>
       <section><p>The exception that is thrown when some published messages aren't handled by any registered
@@ -129,22 +125,8 @@ subscriber.</p>
       <section><p>Provides the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.stack-1">Stack&lt;T&gt;</a> of <a class="xref" href="Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> to be used in the
 <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> pipeline.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a> or <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.IEventPublisher.html">IEventPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a>.</p>
-</section>
       <h4><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></h4>
-      <section><p>
-        Publishes the messages to the internal bus.
-    </p>
-<p>
-        This is the actual mediator that forwards the messages being published to their subscribers.
-    </p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Publishing.IQueryPublisher.html">IQueryPublisher</a></h4>
-      <section><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>.</p>
+      <section><p>Publishes messages via the message bus, forwarding them to the subscribers.</p>
 </section>
     <h3 id="delegates">Delegates
 </h3>
@@ -178,7 +160,7 @@ subscriber.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

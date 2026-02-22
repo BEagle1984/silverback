@@ -100,25 +100,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Callbacks</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.Statistics.html">Statistics</a></h6>
@@ -127,15 +127,22 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class ExactlyOnceSemanticsStatistics</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics__ctor_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics__ctor" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.#ctor">ExactlyOnceSemanticsStatistics()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ExactlyOnceSemanticsStatistics()</code></pre>
+  </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_EpochCnt.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.EpochCnt%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L35">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_EpochCnt_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.EpochCnt*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_EpochCnt" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.EpochCnt">EpochCnt</h4>
   <div class="markdown level1 summary"></div>
@@ -143,7 +150,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;epoch_cnt&quot;)]
-public long EpochCnt { get; set; }</code></pre>
+public long EpochCnt { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -160,13 +167,8 @@ public long EpochCnt { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempState.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L14">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempState_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempState*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempState" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempState">IdempState</h4>
   <div class="markdown level1 summary"></div>
@@ -174,7 +176,7 @@ public long EpochCnt { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;idemp_state&quot;)]
-public string IdempState { get; set; }</code></pre>
+public string IdempState { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -191,13 +193,8 @@ public string IdempState { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempStateAge.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempStateAge%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L17">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempStateAge_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempStateAge*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_IdempStateAge" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.IdempStateAge">IdempStateAge</h4>
   <div class="markdown level1 summary"></div>
@@ -205,7 +202,7 @@ public string IdempState { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;idemp_stateage&quot;)]
-public long IdempStateAge { get; set; }</code></pre>
+public long IdempStateAge { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -222,13 +219,8 @@ public long IdempStateAge { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerEpoch.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerEpoch%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L32">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerEpoch_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerEpoch*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerEpoch" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerEpoch">ProducerEpoch</h4>
   <div class="markdown level1 summary"></div>
@@ -236,7 +228,7 @@ public long IdempStateAge { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;producer_epoch&quot;)]
-public long ProducerEpoch { get; set; }</code></pre>
+public long ProducerEpoch { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -253,13 +245,8 @@ public long ProducerEpoch { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L29">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerId_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerId*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_ProducerId" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.ProducerId">ProducerId</h4>
   <div class="markdown level1 summary"></div>
@@ -267,7 +254,7 @@ public long ProducerEpoch { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;producer_id&quot;)]
-public long ProducerId { get; set; }</code></pre>
+public long ProducerId { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -284,13 +271,8 @@ public long ProducerId { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnMayEnq.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnMayEnq%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L26">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnMayEnq_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnMayEnq*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnMayEnq" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnMayEnq">TxnMayEnq</h4>
   <div class="markdown level1 summary"></div>
@@ -298,7 +280,7 @@ public long ProducerId { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;txn_may_enq&quot;)]
-public bool TxnMayEnq { get; set; }</code></pre>
+public bool TxnMayEnq { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -315,13 +297,8 @@ public bool TxnMayEnq { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnState.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L20">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnState_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnState*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnState" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnState">TxnState</h4>
   <div class="markdown level1 summary"></div>
@@ -329,7 +306,7 @@ public bool TxnMayEnq { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;txn_state&quot;)]
-public string TxnState { get; set; }</code></pre>
+public string TxnState { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -346,13 +323,8 @@ public string TxnState { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnStateAge.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnStateAge%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L23">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnStateAge_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnStateAge*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics_TxnStateAge" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.TxnStateAge">TxnStateAge</h4>
   <div class="markdown level1 summary"></div>
@@ -360,7 +332,7 @@ public string TxnState { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;txn_stateage&quot;)]
-public long TxnStateAge { get; set; }</code></pre>
+public long TxnStateAge { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -384,12 +356,6 @@ public long TxnStateAge { get; set; }</code></pre>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_ExactlyOnceSemanticsStatistics.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/ExactlyOnceSemanticsStatistics.cs/#L11" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -410,7 +376,7 @@ public long TxnStateAge { get; set; }</code></pre>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

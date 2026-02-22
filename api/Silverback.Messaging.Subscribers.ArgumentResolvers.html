@@ -94,9 +94,11 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.CancellationTokenArgumentResolver.html">CancellationTokenArgumentResolver</a></h4>
+      <section><p>Provides the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> to the subscribed method.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.DefaultAdditionalArgumentResolver.html">DefaultAdditionalArgumentResolver</a></h4>
-      <section><p>Simply tries to resolve the additional parameters of the subscribed methods using the
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
+      <section><p>Resolves the additional parameters of the subscribed methods using the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ObservableStreamMessageArgumentResolver.html">ObservableStreamMessageArgumentResolver</a></h4>
       <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamObservable-1.html">IMessageStreamObservable&lt;TMessage&gt;</a> where
@@ -109,6 +111,9 @@ published.</p>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.StreamEnumerableMessageArgumentResolver.html">StreamEnumerableMessageArgumentResolver</a></h4>
       <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> where
 <code>TMessage</code> is compatible with the type of the message being published.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.TombstoneMessageArgumentResolver.html">TombstoneMessageArgumentResolver</a></h4>
+      <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.ITombstone.html">ITombstone</a> or <a class="xref" href="Silverback.Messaging.Messages.ITombstone-1.html">ITombstone&lt;TMessage&gt;</a>.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
@@ -132,11 +137,10 @@ subscribed method.</p>
 enumerable or collection).</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IStreamEnumerableMessageArgumentResolver.html">IStreamEnumerableMessageArgumentResolver</a></h4>
-      <section><p>These resolvers are used to handle the message streams such as
-<a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. The streams are basically handled as a single
-message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
-from another thread, when published via <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_">PublishAsync(object)</a>/
-<a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_">PublishAsync&lt;TResult&gt;(object)</a>. This is done to avoid blocking the original
+      <section><p>These resolvers are used to handle the message streams such as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. The streams are
+basically handled as a single message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
+from another thread, when published via <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_">PublishAsync(object, CancellationToken)</a>/
+<a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Threading_CancellationToken_">PublishAsync&lt;TResult&gt;(object, CancellationToken)</a>. This is done to avoid blocking the original
 thread waiting for the stream to complete.</p>
 </section>
 </article>
@@ -166,7 +170,7 @@ thread waiting for the stream to complete.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -109,23 +109,46 @@ enumerable or collection).</p>
   <div class="codewrapper">
     <pre><code class="lang- hljs">public interface ISingleMessageArgumentResolver : IMessageArgumentResolver, IArgumentResolver</code></pre>
   </div>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_SkipInvocationIfNull_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.SkipInvocationIfNull*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_SkipInvocationIfNull" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.SkipInvocationIfNull">SkipInvocationIfNull</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the subscriber invocation should be skipped if the resolved value is null.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">bool SkipInvocationIfNull { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_GetValue_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.GetValue(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/ISingleMessageArgumentResolver.cs/#L21">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_GetValue_System_Object_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.GetValue(System.Object)">GetValue(object)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver_GetValue_System_Object_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.GetValue(System.Object,System.Type)">GetValue(object?, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the message value in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">object GetValue(object message)</code></pre>
+    <pre><code class="lang- hljs">object? GetValue(object? message, Type parameterType)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -141,6 +164,12 @@ enumerable or collection).</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
         <td><span class="parametername">message</span></td>
         <td><p>The message being published.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td><span class="parametername">parameterType</span></td>
+        <td><p>The type of the parameter to be resolved.</p>
 </td>
       </tr>
     </tbody>
@@ -168,12 +197,6 @@ enumerable or collection).</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_ISingleMessageArgumentResolver.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/ISingleMessageArgumentResolver.cs/#L10" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -194,7 +217,7 @@ enumerable or collection).</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

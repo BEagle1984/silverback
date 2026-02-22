@@ -94,8 +94,11 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.html">ChunkEnricherFactory</a></h4>
+      <section><p>Builds an <a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a> instance for the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a></h4>
-      <section><p>Represents a sequence of chunks that belong to the same message.</p>
+      <section><p>A sequence of chunks that belong to the same message.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html">ChunkSequenceReader</a></h4>
       <section><p>Creates a <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> containing all the chunks of the original message.</p>
@@ -111,6 +114,17 @@ chunk size.</p>
       <section><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> implementation used to read the chunked messages. This stream is used by the
 <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html">ChunkSequenceReader</a> and it is asynchronously pushed with the chunks being
 consumed.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.KafkaChunkEnricher.html">KafkaChunkEnricher</a></h4>
+      <section><p>Enriches the produced chunks adding some additional Kafka-specific headers.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+</h3>
+      <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a></h4>
+      <section><p>Enriches the produced chunks adding some additional broker-specific headers.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricherFactory.html">IChunkEnricherFactory</a></h4>
+      <section><p>Builds an <a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a> instance for the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>.</p>
 </section>
 </article>
           </div>
@@ -139,7 +153,7 @@ consumed.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -90,18 +90,18 @@
 <h2 id="adding-the-required-packages">Adding the Required Packages</h2>
 <h3 id="core-packages">Core Packages</h3>
 <ul>
-<li><strong><a href="https://www.nuget.org/packages/Silverback.Core/">Silverback.Core</a></strong> – The essential package, including the mediator and fundamental messaging components.</li>
+<li><strong><a href="https://www.nuget.org/packages/Silverback.Core/">Silverback.Core</a></strong> – The essential package, including the message bus and fundamental messaging components.</li>
 <li><strong><a href="https://www.nuget.org/packages/Silverback.Core.Model/">Silverback.Core.Model</a></strong> – Enhances CQRS and event-driven architectures with improved semantics.</li>
 </ul>
 <h3 id="message-broker-integration">Message Broker Integration</h3>
 <p>If you need to integrate with a message broker, choose the appropriate package:</p>
 <ul>
 <li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.Kafka/">Silverback.Integration.Kafka</a></strong> – Adds Kafka support (implicitly includes Silverback.Core).</li>
-<li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.Mqtt/">Silverback.Integration.Mqtt</a></strong> – Adds MQTT support (implicitly includes Silverback.Core).</li>
+<li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.MQTT/">Silverback.Integration.MQTT</a></strong> – Adds MQTT support (implicitly includes Silverback.Core).</li>
 </ul>
 <h3 id="additional-features">Additional Features</h3>
 <ul>
-<li><strong><a href="https://www.nuget.org/packages/Silverback.Core.Rx/">Silverback.Core.Rx</a></strong> – Enables Rx.NET integration, allowing observables from the mediator message stream.</li>
+<li><strong><a href="https://www.nuget.org/packages/Silverback.Core.Rx/">Silverback.Core.Rx</a></strong> – Enables Rx.NET integration, allowing observables from the message bus stream.</li>
 <li><strong><a href="https://www.nuget.org/packages/Silverback.Newtonsoft/">Silverback.Newtonsoft</a></strong> – Supports serialization using Newtonsoft.Json instead of System.Text.Json.</li>
 <li><strong><a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a></strong> – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.</li>
 </ul>
@@ -117,7 +117,7 @@
 <p>For unit testing message-driven applications, you can use in-memory broker mocks:</p>
 <ul>
 <li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/">Silverback.Integration.Kafka.Testing</a></strong> – Provides an in-memory Kafka mock, simulating partitioning, offsets management, and other broker behaviors.</li>
-<li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.Mqtt.Testing/">Silverback.Integration.Mqtt.Testing</a></strong> – Provides an in-memory MQTT mock to test MQTT-related logic.</li>
+<li><strong><a href="https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing/">Silverback.Integration.MQTT.Testing</a></strong> – Provides an in-memory MQTT mock to test MQTT-related logic.</li>
 </ul>
 <h2 id="registering-and-configuring-silverback">Registering and Configuring Silverback</h2>
 <p>Once you’ve installed the necessary packages, configure Silverback within your application's Dependency Injection (DI) container.</p>
@@ -134,7 +134,7 @@
     .AddSingletonSubscriber&lt;MyMessageHandler&gt;();
 </code></pre>
 <ul>
-<li><strong><code>AddSilverback</code></strong> enables the mediator and allows chaining additional configurations via the fluent API.</li>
+<li><strong><code>AddSilverback</code></strong> enables the message bus and allows chaining additional configurations via the fluent API.</li>
 <li><strong><code>WithConnectionToMessageBroker</code></strong> configures the connection to the message brokers (both Kafka and MQTT in this case).</li>
 <li><strong><code>AddSingletonSubscriber</code></strong> registers a message handler to process incoming messages.</li>
 </ul>
@@ -170,7 +170,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

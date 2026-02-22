@@ -86,7 +86,106 @@
             <article class="content wrap" id="_content" data-uid="producer-behaviors">
 <h1 id="producer-behaviors-pipeline">Producer Behaviors Pipeline</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Each message produced by Silverback is processed by a pipeline of behaviors enabling different features and customizations. The <code>SortIndex</code> property of each behavior determines the order in which they are executed and each behavior passes the message along the pipeline to the next behavior.</p>
+<h2 id="default-behaviors">Default Behaviors</h2>
+<p>The following table lists the default behaviors that are executed when producing a message.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: right;">Index</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html">ActivityProducerBehavior</a></td>
+<td style="text-align: right;">100</td>
+<td style="text-align: left;">Starts an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> and adds the tracing information to the message headers.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Headers.HeadersWriterProducerBehavior.html">HeadersWriterProducerBehavior</a></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: left;">Maps the properties decorated with the <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> to the message headers.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Producing.Enrichers.MessageEnricherProducerBehavior.html">MessageEnricherProducerBehavior</a></td>
+<td style="text-align: right;">250</td>
+<td style="text-align: left;">Invokes all the <a class="xref" href="../../../api/Silverback.Messaging.Producing.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a> configured for to the endpoint.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Producing.KafkaMessageKeyInitializerProducerBehavior.html">KafkaMessageKeyInitializerProducerBehavior</a></td>
+<td style="text-align: right;">300</td>
+<td style="text-align: left;">Sets the Kafka key with the value from the properties decorated with the <code>KafkaKeyMemberAttribute</code> and ensures that a random key is generated when chunking is enabled and no key is set.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Producing.Filter.FilterProducerBehavior.html">FilterProducerBehavior</a></td>
+<td style="text-align: right;">400</td>
+<td style="text-align: left;">Applies the configured filters to the message being produced.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.BinaryMessages.BinaryMessageHandlerProducerBehavior.html">BinaryMessageHandlerProducerBehavior</a></td>
+<td style="text-align: right;">500</td>
+<td style="text-align: left;">Switches to the <a class="xref" href="../../../api/Silverback.Messaging.BinaryMessages.BinaryMessageSerializer.html">BinaryMessageSerializer</a> if the message being produced implements the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a> interface.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Validation.ValidatorProducerBehavior.html">ValidatorProducerBehavior</a></td>
+<td style="text-align: right;">550</td>
+<td style="text-align: left;">Validates the message being produced.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Serialization.SerializerProducerBehavior.html">SerializerProducerBehavior</a></td>
+<td style="text-align: right;">600</td>
+<td style="text-align: left;">Serializes the message being produced using the configured <a class="xref" href="../../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Encryption.EncryptorProducerBehavior.html">EncryptorProducerBehavior</a></td>
+<td style="text-align: right;">700</td>
+<td style="text-align: left;">Encrypts the message when encryption is enabled.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Sequences.SequencerProducerBehavior.html">SequencerProducerBehavior</a></td>
+<td style="text-align: right;">800</td>
+<td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../../api/Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a> (e.g. <a class="xref" href="../../../api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.html">ChunkSequenceWriter</a>) to set the proper headers and split the published message or messages set to create the sequences.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior.html">CustomHeadersMapperProducerBehavior</a></td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: left;">Applies the custom header name mappings.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom-behaviors">Custom Behaviors</h2>
+<p>It is possible to add custom behaviors to the pipeline to implement cross-cutting concerns, and add new features to Silverback.</p>
+<p>A behavior is a class implementing the <code>IProducerBehavior</code> interface. The <code>HandleAsync</code> method is called for each message being produced, allowing the behavior to modify the message or perform additional operations.</p>
+<p>The following basic example demonstrates how to set a custom message header on each outbound message.</p>
+<pre><code class="lang-csharp">public class CustomHeadersProducerBehavior : IProducerBehavior
+{
+    public int SortIndex =&gt; 1000;
+
+    public async ValueTask HandleAsync(
+        ProducerPipelineContext context,
+        ProducerBehaviorHandler next,
+        CancellationToken cancellationToken)
+    {
+        context.Envelope.Headers.Add(&quot;generated-by&quot;, &quot;silverback&quot;);
+
+        await next(context);
+    }
+}
+</code></pre>
+<p>The custom behavior must be registered at startup using the <code>AddSingletonBrokerBehavior</code>, or <code>AddTransientBrokerBehavior</code> method. The transient behavior will be resolved once per producer, while the singleton behavior will be shared.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    ...
+    .AddSingletonBrokerBehavior&lt;CustomHeadersProducerBehavior&gt;();
+</code></pre>
+<p>Additional services can be injected into the behavior constructor, or resolved via the <code>ServiceProvider</code> from the <a class="xref" href="../../../api/Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext.html">ProducerPipelineContext</a> if a scoped instance is required.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../consuming/behaviors.html">Consumer Behaviors Pipeline</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +216,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

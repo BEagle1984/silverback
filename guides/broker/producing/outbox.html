@@ -86,7 +86,152 @@
             <article class="content wrap" id="_content" data-uid="outbox">
 <h1 id="transactional-outbox">Transactional Outbox</h1>
 
-<p><em>...coming soon...</em></p>
+<p>The <a href="https://microservices.io/patterns/data/transactional-outbox.html">transactional outbox pattern</a> purpose is to reliably update the database and publish the messages in the same atomic transaction. This is achieved storing the outbound messages into a temporary outbox table, whose changes are committed together with the other changes to the rest of the data.</p>
+<figure>
+	<a href="../../../images/diagrams/outbound-outboxtable.png"><img src="../../../images/diagrams/outbound-outboxtable.png" alt="Transactional outbox: messages are stored in an outbox table and produced by a worker."></a>
+    <figcaption>Messages 1, 2 and 3 are stored in the outbox table and produced by a separate thread or process.</figcaption>
+</figure>
+<p>To implement the outbox you need to reference the storage package for the database you are using, or the one for Entity Framework if you are using it. More details can be found in the <a class="xref" href="../../storage.html">Storage Integration</a> guide.</p>
+<p>The messages can be published to the outbox using the regular <code>IPublisher</code> but they will be stored in the outbox table and produced by the outbox worker.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The current <a class="xref" href="../../../api/Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> cannot scale horizontally and starting multiple instances will cause the messages to be produced multiple times. The outbox worker relies therefore on the distributed locks to ensure that only one instance is running at a time.</p>
+</div>
+<h2 id="configuration">Configuration</h2>
+<p>A few things need to be configured to enable the outbox:</p>
+<ul>
+<li>The outbox table must be created in the database (unless using Entity Framework)</li>
+<li>The outbox worker must be configured to process the outbox table</li>
+<li>The desired endpoints must be configured to use the outbox</li>
+</ul>
+<div class="tabGroup" id="tabgroup_1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_1_ef" role="tab" aria-controls="tabpanel_1_ef" data-tab="ef" tabindex="0" aria-selected="true">Entity Framework</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_postgres" role="tab" aria-controls="tabpanel_1_postgres" data-tab="postgres" tabindex="-1">PostgreSQL</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_1_sqlite" role="tab" aria-controls="tabpanel_1_sqlite" data-tab="sqlite" tabindex="-1">Sqlite</a>
+</li>
+</ul>
+<section id="tabpanel_1_ef" role="tabpanel" data-tab="ef">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddEntityFrameworkOutbox()
+        .AddOutboxWorker(worker =&gt; worker
+            .ProcessOutbox(outbox =&gt; outbox
+                .UseEntityFramework&lt;AppDbContext&gt;()))))
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .StoreToOutbox(outbox =&gt; outbox
+                    .UseEntityFramework&lt;AppDbContext&gt;()))));
+</code></pre>
+</section>
+<section id="tabpanel_1_postgres" role="tabpanel" data-tab="postgres" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddPostgreSqlOutbox()
+        .AddOutboxWorker(worker =&gt; worker
+            .ProcessOutbox(outbox =&gt; outbox
+                .UsePostgreSql(connectionString)))))
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .StoreToOutbox(outbox =&gt; outbox
+                    .UsePostgreSql(connectionString)))));
+</code></pre>
+</section>
+<section id="tabpanel_1_sqlite" role="tabpanel" data-tab="sqlite" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options
+        .AddKafka()
+        .AddSqliteOutbox()
+        .AddOutboxWorker(worker =&gt; worker
+            .ProcessOutbox(outbox =&gt; outbox
+                .UseSqlite(connectionString)))))
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .StoreToOutbox(outbox =&gt; outbox.UseSqlite(connectionString)))));
+</code></pre>
+</section>
+</div>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The endpoints must have a name assigned to be able to store the messages in the outbox. The name is used by the outbox worker to uniquely identify the actual target endpoint.</p>
+</div>
+<h3 id="transactionality">Transactionality</h3>
+<p>You most probably want the writing to the outbox to be part of the same transaction as the other changes to the database. This is <strong>not</strong> done automatically, and you need to begin and <strong>enlist</strong> the transaction manually.</p>
+<pre><code class="lang-csharp">await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync())
+{
+    publisher.EnlistDbTransaction(transaction.GetDbTransaction());
+
+    await publisher.PublishAsync(...);
+    await publisher.PublishAsync(...);
+    await publisher.PublishAsync(...);
+
+    await transaction.CommitAsync();
+}
+</code></pre>
+<p>The example above shows how to use Entity Framework, but the same applies to any other database access library. The important part is to enlist the transaction in the publisher before publishing the messages.</p>
+<p>This step is required even if using the <a class="xref" href="../../../api/Silverback.Domain.EntityFrameworkDomainEventsPublisher-1.html">EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</a> to automatically publish the domain events when saving the changes to the database.</p>
+<h3 id="entity-framework-dbcontext">Entity Framework DbContext</h3>
+<p>When using Entity Framework, the <code>DbContext</code> must be configured to include the outbox and the locks table (if used). The tables must be provisioned via migrations or by creating them manually.</p>
+<pre><code class="lang-csharp">private class AppDbContext : DbContext
+{
+    ...
+
+    public DbSet&lt;SilverbackOutboxMessage&gt; Outbox { get; set; } = null!;
+
+    public DbSet&lt;SilverbackLock&gt; Locks { get; set; } = null!;
+}
+</code></pre>
+<h3 id="distributed-lock">Distributed Lock</h3>
+<p>The default locking mechanism from the selected storage package is automatically used (custom locks table for Entity Framework, advisory locks for PostgreSQL, in-memory for Sqlite, etc.), but you can customize this. The following example shows how to leverage PostgreSQL advisory locks with Entity Framework.</p>
+<pre><code class="lang-csharp">.AddOutboxWorker(worker =&gt; worker
+    .ProcessOutbox(outbox =&gt; outbox
+        .UsePostgreSql(connectionString)
+        .WithDistributedLock(distributedLock =&gt; distributedLock
+            .UsePostgreSqlAdvisoryLock(connectionString)))
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Both advisory locks and the custom locks table are implemented in the PostgreSQL storage package. The advisory locks are used by default, but you can switch to the custom locks table using <code>UsePostgreSqlTable</code>.</p>
+</div>
+<h3 id="provisioning-the-required-tables">Provisioning the Required Tables</h3>
+<p>The outbox table and the locks table (if used) must be created in the database. If you are using Entity Framework, you can create the tables by running the migrations. If you are using a different storage package, you can normally use the <code>SilverbackStorageInitializer</code> to create the necessary tables.</p>
+<pre><code class="lang-csharp">storageInitializer.CreateSqliteOutboxAsync(connectionString);
+</code></pre>
+<h2 id="health-check">Health Check</h2>
+<p>A health check is available to monitor the outbox and alert if messages are taking too long to be produced or the queue is growing too much.</p>
+<pre><code class="lang-csharp">.AddHealthChecks()
+.AddOutboxCheck(
+    maxAge: TimeSpan.FromSeconds(30),
+    maxQueueLength: 100)
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../storage.html">Storage Integration</a> guide</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +262,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

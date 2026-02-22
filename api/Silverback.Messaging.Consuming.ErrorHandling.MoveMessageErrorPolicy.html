@@ -108,6 +108,9 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_">ErrorPolicyBase.Build(IServiceProvider)</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ExcludedExceptions">ErrorPolicyBase.ExcludedExceptions</a>
     </div>
     <div>
@@ -123,28 +126,16 @@
       <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MessageToPublishFactory">ErrorPolicyBase.MessageToPublishFactory</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_">ErrorPolicyBase.Build(IServiceProvider)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Consuming.html">Consuming</a>.<a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.html">ErrorHandling</a></h6>
@@ -157,15 +148,44 @@
   <div class="markdown level0 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
 The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
 </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__ctor_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__ctor_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.#ctor(Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy)">MoveMessageErrorPolicy(MoveMessageErrorPolicy)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected MoveMessageErrorPolicy(MoveMessageErrorPolicy original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__ctor_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EndpointName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.EndpointName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/MoveMessageErrorPolicy.cs/#L43">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EndpointName_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.EndpointName*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EndpointName" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.EndpointName">EndpointName</h4>
   <div class="markdown level1 summary"><p>Gets the destination endpoint name. It could be either the topic/queue name or the friendly name of an endpoint that is already
@@ -195,13 +215,40 @@ configured with a producer.</p>
   <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
 The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_TransformMessageAction.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.TransformMessageAction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/MoveMessageErrorPolicy.cs/#L48">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EqualityContract_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EqualityContract" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_EqualityContract">ErrorPolicyBase.EqualityContract</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_EqualityContract_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_TransformMessageAction_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.TransformMessageAction*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_TransformMessageAction" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.TransformMessageAction">TransformMessageAction</h4>
   <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action&lt;T1, T2&gt;</a> to be used to modify the message before moving it to the destination endpoint.</p>
@@ -232,13 +279,8 @@ The number of retries can be limited using <a class="xref" href="Silverback.Mess
 </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_BuildCore_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.BuildCore(System.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/MoveMessageErrorPolicy.cs/#L51">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_BuildCore_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.BuildCore*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_BuildCore_System_IServiceProvider_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.BuildCore(System.IServiceProvider)">BuildCore(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns the actual error policy implementation, built using the provided
@@ -290,6 +332,370 @@ error.</p>
   <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
 The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
 </div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals(Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase)">Equals(ErrorPolicyBase?)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override sealed bool Equals(ErrorPolicyBase? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_">ErrorPolicyBase.Equals(ErrorPolicyBase?)</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals(Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy)">Equals(MoveMessageErrorPolicy?)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(MoveMessageErrorPolicy? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_System_Object_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_System_Object_">ErrorPolicyBase.Equals(object?)</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Equals_System_Object__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_GetHashCode_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_GetHashCode" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_GetHashCode">ErrorPolicyBase.GetHashCode()</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_GetHashCode_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_PrintMembers_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_PrintMembers_System_Text_StringBuilder_">ErrorPolicyBase.PrintMembers(StringBuilder)</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_PrintMembers_System_Text_StringBuilder__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_ToString_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.ToString*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_ToString" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ToString">ErrorPolicyBase.ToString()</a></div>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_ToString_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Equality_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Equality_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.op_Equality(Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy,Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy)">operator ==(MoveMessageErrorPolicy?, MoveMessageErrorPolicy?)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(MoveMessageErrorPolicy? left, MoveMessageErrorPolicy? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Equality_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Inequality_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Inequality_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.op_Inequality(Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy,Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy)">operator !=(MoveMessageErrorPolicy?, MoveMessageErrorPolicy?)</h4>
+  <div class="markdown level1 summary"><p>This policy moves the message that failed to be processed to the configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(MoveMessageErrorPolicy? left, MoveMessageErrorPolicy? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_op_Inequality_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy_Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This policy can be used also to move the message at the end of the current topic to retry it later on.
+The number of retries can be limited using <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts">MaxFailedAttempts</a>.</p>
+</div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>
@@ -307,12 +713,6 @@ The number of retries can be limited using <a class="xref" href="Silverback.Mess
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_MoveMessageErrorPolicy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/MoveMessageErrorPolicy.cs/#L25" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -333,7 +733,7 @@ The number of retries can be limited using <a class="xref" href="Silverback.Mess
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

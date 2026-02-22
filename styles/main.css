@@ -153,7 +153,7 @@ figcaption {
 }
 .hero .lead {
     /* max-width: 768px; */
-    max-width: 400px;
+    max-width: 450px;
 }
 .hero::after {
     clear: both;

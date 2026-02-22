@@ -86,8 +86,147 @@
             <article class="content wrap" id="_content" data-uid="domain-events">
 <h1 id="domain-driven-design-and-domain-events">Domain-Driven Design and Domain Events</h1>
 
-<p><em>...coming soon...</em></p>
-<pre><code></code></pre>
+<p>Domain events are a great way to model important business facts in a Domain-Driven Design (DDD) style.
+They let your aggregate record <em>what happened</em> (e.g. &quot;order placed&quot;, &quot;basket checked out&quot;) and then publish those events so that other parts of the application can react.</p>
+<p>Silverback provides built-in support to collect domain events from your entities and publish them through the internal message bus.
+When used together with storage and the transactional outbox, this becomes a solid foundation for reliable integration events.</p>
+<h2 id="what-silverback-considers-a-domain-event">What Silverback considers a &quot;domain event&quot;</h2>
+<p>A domain event is any message implementing <a class="xref" href="../api/Silverback.Domain.IDomainEvent.html">IDomainEvent</a>.</p>
+<p>The recommended approach is to use <a href="https://www.nuget.org/packages/Silverback.Core.Model/">Silverback.Core.Model</a> and derive your events from <a class="xref" href="../api/Silverback.Domain.DomainEvent-1.html">DomainEvent&lt;TEntity&gt;</a>.</p>
+<h2 id="storing-domain-events-in-your-entities">Storing domain events in your entities</h2>
+<p>Silverback can publish domain events that are stored inside the entities being saved.
+To make this work, your entities must implement <a class="xref" href="../api/Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a>.</p>
+<p>The easiest way is to inherit from <a class="xref" href="../api/Silverback.Domain.DomainEntity.html">DomainEntity</a>, which already implements the required interface and exposes a convenient <code>AddEvent&lt;TEvent&gt;()</code> method.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>You don't have to use <code>DomainEntity</code>. If you have your own base entity type, you can still integrate with this feature by implementing <a class="xref" href="../api/Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a>.</p>
+</div>
+<h3 id="sample-aggregate-root">Sample aggregate root</h3>
+<p>In this example, calling <code>Checkout()</code> records a domain event by adding it to the in-memory event collection.</p>
+<pre><code class="lang-csharp">using Silverback.Domain;
+
+namespace Sample;
+
+public class Basket : DomainEntity
+{
+    private Basket()
+    {
+        // Required by EF Core
+    }
+
+    public Basket(Guid userId)
+    {
+        UserId = userId;
+        Created = DateTime.UtcNow;
+    }
+
+    public int Id { get; private set; }
+
+    public Guid UserId { get; private set; }
+
+    public DateTime Created { get; private set; }
+
+    public DateTime? CheckoutDate { get; private set; }
+
+    public void Checkout()
+    {
+        CheckoutDate = DateTime.UtcNow;
+
+        // Records the domain event to be published as part of SaveChanges.
+        AddEvent&lt;BasketCheckedOutDomainEvent&gt;();
+    }
+}
+
+public sealed class BasketCheckedOutDomainEvent : DomainEvent&lt;Basket&gt;;
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>DomainEntity</code> also exposes a <code>DomainEvents</code> property. It's primarily there for inspection/testing, while publication is handled by the publisher described below.</p>
+</div>
+<h2 id="publishing-domain-events-with-entity-framework-core">Publishing domain events with Entity Framework Core</h2>
+<p>To publish domain events as part of your <code>DbContext.SaveChanges</code> call, use <a class="xref" href="../api/Silverback.Domain.EntityFrameworkDomainEventsPublisher-1.html">EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</a>.</p>
+<p>This helper is designed to:</p>
+<ul>
+<li>scan the EF Core change tracker for entities implementing <code>IMessagesSource</code></li>
+<li>publish the collected domain events via <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></li>
+<li>align the publisher storage transaction (used e.g. by the transactional outbox) with the current EF Core transaction when possible</li>
+</ul>
+<h3 id="dbcontext-integration">DbContext integration</h3>
+<p>Create an <code>EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</code> instance and delegate the <code>SaveChanges*</code> calls to it.</p>
+<pre><code class="lang-csharp">using Microsoft.EntityFrameworkCore;
+using Silverback.Domain;
+using Silverback.Messaging.Publishing;
+
+namespace Sample;
+
+public class SampleDbContext : DbContext
+{
+    private readonly EntityFrameworkDomainEventsPublisher&lt;SampleDbContext&gt;? _domainEventsPublisher;
+
+    public SampleDbContext(DbContextOptions&lt;SampleDbContext&gt; options, IPublisher publisher)
+        : base(options)
+    {
+        _domainEventsPublisher =
+            new EntityFrameworkDomainEventsPublisher&lt;SampleDbContext&gt;(
+                this,
+                base.SaveChanges,
+                base.SaveChangesAsync,
+                publisher);
+    }
+
+    public DbSet&lt;Basket&gt; Baskets =&gt; Set&lt;Basket&gt;();
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess) =&gt;
+        _domainEventsPublisher?.SaveChangesAndPublishDomainEvents(acceptAllChangesOnSuccess) ??
+        base.SaveChanges(acceptAllChangesOnSuccess);
+
+    public override Task&lt;int&gt; SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default) =&gt;
+        _domainEventsPublisher?.SaveChangesAndPublishDomainEventsAsync(acceptAllChangesOnSuccess, cancellationToken) ??
+        base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+}
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The example above wires domain event publication directly into <code>SaveChanges</code>. This makes it hard to &quot;forget&quot; publishing and keeps your service code clean.</p>
+</div>
+<h2 id="handling-published-domain-events">Handling published domain events</h2>
+<p>Domain events are published to the internal bus, so you can handle them like any other in-memory message (see <a class="xref" href="bus.html">Using the Message Bus</a>).</p>
+<p>A typical subscriber method might look like this:</p>
+<pre><code class="lang-csharp">using Silverback.Domain;
+
+namespace Sample;
+
+public class BasketDomainEventsSubscriber
+{
+    public Task OnBasketCheckedOut(BasketCheckedOutDomainEvent domainEvent)
+    {
+        // TODO: react to the event (send emails, update projections, etc.)
+        return Task.CompletedTask;
+    }
+}
+</code></pre>
+<p>Register the subscriber using <code>AddScopedSubscriber</code>, <code>AddSingletonSubscriber</code>, or <code>AddTransientSubscriber</code>.</p>
+<h2 id="domain-events-vs-integration-events">Domain events vs integration events</h2>
+<p>Domain events are usually <em>internal</em> to a bounded context.
+If you want to notify other services via Kafka/MQTT/etc., you typically convert domain events into integration events.</p>
+<p>If you're using the transactional outbox, you can do that conversion in a subscriber and publish an integration message via the same <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>If you're building an event-driven architecture, combining domain events + outbox is a common way to keep your database changes and outgoing messages consistent.</p>
+</div>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Publishing from inside the entity</strong>: the entity should only <em>record</em> events (<code>AddEvent&lt;T&gt;()</code>). Publishing is infrastructure.</li>
+<li><strong>Forgetting to hook into SaveChanges</strong>: if you don't integrate <code>EntityFrameworkDomainEventsPublisher</code>, recorded events will never be published.</li>
+<li><strong>Long-running subscribers</strong>: domain events run in-process; keep handlers quick and delegate slow work to background jobs or integration messages.</li>
+</ul>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li>Learn how to publish and subscribe using the internal bus: <a class="xref" href="bus.html">Using the Message Bus</a></li>
+<li>Learn how to connect to Kafka/MQTT and produce externally: <a class="xref" href="setup.html">Setting Up Silverback</a></li>
+</ul>
 </article>
           </div>
 
@@ -118,7 +257,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

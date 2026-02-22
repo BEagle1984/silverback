@@ -88,7 +88,7 @@
 
 <p>When dealing with large messages, it might be necessary to split them into smaller parts to avoid issues with the broker or the consumer. This process is called <strong>chunking</strong> and is especially useful when using Kafka, as it has a maximum message size limit.</p>
 <figure>
-	<a href="../../../images/diagrams/chunk-basic.png"><img src="../../../images/diagrams/chunk-basic.png"></a>
+	<a href="../../../images/diagrams/chunk-basic.png"><img src="../../../images/diagrams/chunk-basic.png" alt="Chunking diagram: a large message is split into smaller chunks."></a>
     <figcaption>The messages are being split into small chunks.</figcaption>
 </figure>
 <p>The producer automatically adds the necessary headers to the messages to allow the consumer to reassemble the chunks. The consumer will then automatically reassemble the message before pushing it to subscribers and doesn't require any additional configuration.</p>
@@ -104,12 +104,12 @@
 </code></pre>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <a class="xref" href="kafka/partitioning.html">Kafka Key and Partitioning</a>.</p>
+<p>The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <a class="xref" href="kafka/partitioning.html">Kafka Keys and Partitioning</a>.</p>
 </div>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
 <li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
-<li><a class="xref" href="../consuming/chunking.html">Consuming Chunked Messages</a> guide</li>
+<li><a class="xref" href="../consuming/chunking.html">Consuming Chunked Messages</a></li>
 <li><a class="xref" href="../default-headers.html">Default Headers</a></li>
 </ul>
 </article>
@@ -142,7 +142,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

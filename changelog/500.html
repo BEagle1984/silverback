@@ -86,9 +86,9 @@
             <article class="content wrap" id="_content" data-uid="releases-500">
 <h1 id="release-notes-v5xx">Release Notes v5.x.x</h1>
 
-<h2 id="500-beta1"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.0.0-beta.1">5.0.0-beta.1</a></h2>
-<p>Silverback 5.0.0 is the most significant update in the library’s history, built on years of user feedback and real-world experience. This release is more than just an upgrade—it’s a <strong>complete refactoring</strong> that enhances flexibility, performance, and maintainability while laying a strong foundation for future innovations.</p>
-<h3 id="-hightlights">⚡ Hightlights</h3>
+<h2 id="500"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.0.0">5.0.0</a></h2>
+<p>Silverback 5.0.0 is the most significant update in the library’s history, built on years of user feedback and real-world experience. This release is more than just an upgrade, it’s a <strong>complete refactoring</strong> that enhances flexibility, performance, and maintainability while laying a strong foundation for future innovations.</p>
+<h3 id="highlights">Highlights</h3>
 <ul>
 <li>An <strong>improved configuration API</strong> that makes it easier to set up Silverback exactly the way you want, with a more intuitive and consistent syntax. The new fluent API is designed to be more readable and straightforward and to giving you more control over the Kafka and MQTT clients that are used under the hood.</li>
 </ul>
@@ -132,7 +132,7 @@
         .WithKafkaKey(&quot;my-key&quot;));
 </code></pre>
 <ul>
-<li>The mediator (<code>IPublisher</code>) has been improved on many levels
+<li>The message bus (<code>IPublisher</code>) has been improved on many levels
 <ul>
 <li>is now registered as <strong>transient</strong> instead of scoped, allowing you to inject it into singleton services</li>
 <li><strong>IEventPublisher</strong>, <strong>ICommandPublisher</strong>, and <strong>IQueryPublisher</strong> have been replaced by extension methods on <code>IPublisher</code>, so you don't need multiple dependencies anymore</li>
@@ -163,7 +163,7 @@
 <li>Clean up code and increase tests coverage</li>
 <li>Reduce allocations and improve performance in many places (see <a class="xref" href="../peformance.html">Performance</a>)</li>
 <li>Register <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> as transient instead of scoped to allow injecting it into singleton services</li>
-<li>Add <code>CancellationToken</code> support to the mediator (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li>Add <code>CancellationToken</code> support to the message bus (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
 <li>Improve builders for error policies</li>
 <li>Support subscribers returning <code>ValueTask</code></li>
 <li>Support exponential delay in <code>RetryErrorPolicy</code></li>
@@ -176,36 +176,35 @@
 <li>Refactor transactional outbox adding support for transaction enlistment (even if not using Entity Framework) and improving performance (see <a class="xref" href="../guides/broker/producing/outbox.html">Transactional Outbox</a>)</li>
 <li>Improve outbox worker reliability</li>
 <li>Add message filtering in producer configuration (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
-<li>Improve and simplify tombstone handling (see <a class="xref" href="../guides/broker/producing/tombstone.html">Producing Tombstone Messages</a> and <a class="xref" href="../guides/broker/consuming/tombstone.html">Consuming Tombstone Messages</a>)</li>
+<li>Improve and simplify tombstone handling (see <a class="xref" href="../guides/broker/producing/kafka/tombstone.html">Producing Tombstone Messages</a> and <a class="xref" href="../guides/broker/consuming/kafka/tombstone.html">Consuming Tombstone Messages</a>)</li>
 <li>Add <code>IInboundEnvelope</code> extensions to get broker specific metadata such as <code>GetKafkaOffset()</code>, <code>GetKafkaTimestamp()</code>, <code>GetMqttResponseTopic()</code> and <code>GetMqttCorrelationData()</code></li>
 <li>Add <code>IOutboundEnvelope</code> extensions to set broker specific metadata such as <code>SetKafkaKey()</code>, <code>SetMqttResponseTopic()</code> and <code>SetMqttCorrelationData()</code></li>
 <li>Add <code>WrapAndProduce</code> and <code>WrapAndProduceAsync</code> methods to <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to allow envelope enrichment (setting headers, kafka key, etc.) and dynamic routing (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
-<li>Add <code>WrapAndProduceBatch</code> and <code>WrapAndProduceBatchAsync</code> methods to <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> with the same capabilities of <code>WrapAndProduce</code> and <code>WrapAndProduceAsync</code>, supporting streaming, mapping and efficient batching with Kafka (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
+<li>Add <code>WrapAndProduceBatch</code> and <code>WrapAndProduceBatchAsync</code> methods to <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> with the same capabilities of <code>WrapAndProduce</code> and <code>WrapAndProduceAsync</code>, supporting streaming, mapping, and efficient batching with Kafka (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
 <li>Refactor and improve <a class="xref" href="../api/Silverback.Domain.EntityFrameworkDomainEventsPublisher-1.html">EntityFrameworkDomainEventsPublisher&lt;TDbContext&gt;</a></li>
 <li>Improve <code>ITestingHelper</code> to allow waiting for specific topics to be consumed (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> and <a class="xref" href="../api/Silverback.Messaging.Messages.OutboundEnvelopeBuilder-1.html">OutboundEnvelopeBuilder&lt;TMessage&gt;</a> to testing packages to help creating test envelopes (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
 <li>Support Kafka cooperative sticky partition assignment strategy</li>
 <li>Implement transactional client-side offset storage (see <a class="xref" href="../guides/broker/consuming/kafka/offset.html">Kafka Offset Storage</a>)</li>
 <li>Support Kafka transactions (see <a class="xref" href="../guides/broker/producing/kafka/transactions.html">Kafka Transactions</a>)</li>
-<li>Add support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing</li>
+<li>Add support for Confluent schema registry (Avro, Json, and Protobuf), including mock for in-memory testing</li>
 <li>Add <code>IgnoreNoMatchingSubscribersError</code> setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message</li>
 <li>Basic support for MQTT 5 request-response</li>
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Subscribers.ConsumerNameFilterAttribute.html">ConsumerNameFilterAttribute</a> to filter the subscribers by consumer name (replaces <a class="xref" href="../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> and <a class="xref" href="../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a>)</li>
 <li>Add new built-in (de-)serializers to support raw <code>string</code>, <code>Stream</code> and <code>byte[]</code> (see <a class="xref" href="../guides/broker/producing/serialization.html">Serializing the Produced Messages</a> and <a class="xref" href="../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>)</li>
 <li>Improve <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> handling for sequences (batch processing, chunking, etc.)</li>
-<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.2.0">Confluent.Kafka 2.8.0</a></li>
-<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v5.0.1.1416">MQTTnet 5.0.1.1416</a></li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.13.1">Confluent.Kafka 2.13.1</a></li>
+<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v5.1.0">MQTTnet 5.1.0</a></li>
 </ul>
 <h3 id="breaking-changes">Breaking Changes</h3>
 <p>This release includes many breaking changes, as the library underwent a significant refactoring. The following list might be incomplete but should give you an overview of the most important changes:</p>
 <ul>
-<li><code>IEventPublisher</code>, <code>ICommandPublisher</code> and <code>IQueryPublisher</code> replaced by extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></li>
-<li>Refactored the configuration model and related fluent API, refer to the updated <a class="xref" href="../guides/setup.html">Guides</a> and <a class="xref" href="../samples/intro.html">Samples</a> to see how it looks like in the new version
+<li>Refactored the configuration model and related fluent API, refer to the updated <a class="xref" href="../guides/setup.html">Guides</a> and <a class="xref" href="../samples/intro.html">Samples</a> to see what it looks like in the new version
 <ul>
-<li>Many types, properties and methods have been renamed or modified to improve readability, consistency, and ergonomics</li>
+<li>Many types, properties, and methods have been renamed or modified to improve readability, consistency, and ergonomics</li>
 <li>Reorganized the configuration namespaces, some extension methods might have been moved to a different namespace, thus requiring a different <code>using</code>.</li>
 <li>Changed the endpoint models and most of the configuration models to <a href="https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record">records</a> with init-only properties</li>
-<li>Building the endpoints directly is still supported but the strongly recommended preferred way is to use the fluent API, therefore from now on the documentation will only show that approach</li>
+<li>Building the endpoints directly is still supported, but the strongly recommended preferred way is to use the fluent API; therefore, from now on the documentation will only show that approach</li>
 <li>Removed all builders interfaces and exposed the actual classes directly (e.g. <code>ISilverbackBuilder</code> to <code>SilverbackBuilder</code>)</li>
 <li><code>AddOutbound</code>/<code>AddInbound</code> methods have been replaced by <code>AddKafkaClients</code>/<code>AddMqttClients</code> and <code>Produce</code>/<code>Consume</code> methods</li>
 <li><code>BatchSettings</code>, <code>ChunkSettings</code>, <code>SequenceSettings</code>, <code> EncryptionSettings</code>, etc. renamed to <code>BatchConfiguration</code>, <code>ChunkConfiguration</code>, <code>SequenceConfiguration</code>, <code> EncryptionConfiguration</code>, etc.</li>
@@ -215,9 +214,17 @@
 </ul>
 </li>
 <li>Split the <code>IMessageSerializer</code> interface into <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> and <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a></li>
-<li>Outbox and all storage dependent features have been rewritten from scratch, look at the <a class="xref" href="../guides/setup.html">Guides</a> for more details about the new implementation</li>
-<li>Exactly once guard has been replaced by the client side offset storage (see <a class="xref" href="../guides/broker/consuming/kafka/offset.html">Kafka Offset Storage</a>)
-Publishing.IPublisher&gt; itself and removed the <code>UseModel</code> configuration method (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li>Outbox and all storage-dependent features have been rewritten from scratch, look at the <a class="xref" href="../guides/setup.html">Guides</a> for more details about the new implementation
+<ul>
+<li>Important: the new Entity Framework based outbox works slightly differently than the previous one, and you might need to explicitly begin a transaction</li>
+</ul>
+</li>
+<li>Exactly once guard has been replaced by the client side offset storage (see <a class="xref" href="../guides/broker/consuming/kafka/offset.html">Kafka Offset Storage</a>)</li>
+<li>Replaced <code>IEventPublisher</code>, <code>ICommandPublisher</code>, and <code>IQueryPublisher</code> with equivalent extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)
+<ul>
+<li>Consequently removed the <code>UseModel</code> configuration method</li>
+</ul>
+</li>
 <li>Removed the whole <code>IBroker</code> and <code>IBrokerCollection</code> constructs
 <ul>
 <li>They are superseded by the <code>IProducerCollection</code> and <code>IConsumerCollection</code> interfaces, as well as the <code>IBrokerClientCollection</code> which grants access to all underlying broker clients</li>
@@ -226,11 +233,12 @@ Publishing.IPublisher&gt; itself and removed the <code>UseModel</code> configura
 <li>Changed some details in <a class="xref" href="../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a>/<a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> and their implementations</li>
 <li>A lot of methods have been changed to return a <code>ValueTask</code> instead of a <code>Task</code></li>
 <li>Kafka key won't be set to a random <code>Guid</code> anymore but will be <code>null</code> if not explicitly set</li>
-<li>Some changes to default settings:
+<li>Some changes to the default settings:
 <ul>
 <li>Increased default <a class="xref" href="../api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism">KafkaConsumerConfiguration.MaxDegreeOfParallelism</a> to 100</li>
 <li>Increased default <a class="xref" href="../api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_BackpressureLimit">KafkaConsumerConfiguration.BackpressureLimit</a> to 50</li>
 <li>Changed default <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> typename handling to <code>TypeNameHandling.None</code> to lay on the safe side</li>
+<li>By default, the <code>MqttProducer</code> will not throw an exception anymore if no subscriber is consuming the produced message (can be configured to log a warning, or throw an exception)</li>
 </ul>
 </li>
 <li>Several changes have been made to <a class="xref" href="../api/Silverback.Testing.ITestingHelper.html">ITestingHelper</a>, <a class="xref" href="../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>, and <a class="xref" href="../api/Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a></li>
@@ -238,9 +246,14 @@ Publishing.IPublisher&gt; itself and removed the <code>UseModel</code> configura
 <li>... (many more changes)</li>
 </ul>
 <h3 id="migration-guide">Migration Guide</h3>
-<p>The migration from Silverback 4.x.x to 5.x.x is a significant step and requires some effort. The following list should give you an overview of the most important steps:</p>
+<p>The migration from Silverback 4.x.x to 5.x.x is a significant step and requires some effort. The following list is not exhaustive and might not cover all the <a href="#breaking-changes">breaking changes</a> but should give you a good idea of the basic steps:</p>
 <ul>
-<li><em>...coming soon...</em></li>
+<li>Ensure your application targets .NET 10 as starting with v5 Silverback only supports the latest LTS release</li>
+<li>Upgrade all Silverback.* NuGet packages to 5.x.x</li>
+<li>Some namespace usings will need to be adjusted (e.g.,Silverback.Messaging.Configuration → Silverback.Configuration)</li>
+<li>Migrate the endpoints configuration to the new broker clients configuration (an example of the new fluent API can be found in the <a href="#highlights">Highlights</a> section above)</li>
+<li>Replace usage of <code>IEventPublisher</code>, <code>ICommandPublisher</code>, and <code>IQueryPublisher</code> with the related extension methods on the basic <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></li>
+<li>If using the outbox, adjust the DbContext / database schema</li>
 </ul>
 <h3 id="deprecation-notice">Deprecation Notice</h3>
 <p>The support for RabbitMQ has been dropped in this release and the <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> package has been deprecated. See <a href="https://github.com/BEagle1984/silverback/discussions/237">Deprecation notice: packages to be deprecated in Silverback v5</a>.</p>
@@ -274,7 +287,7 @@ Publishing.IPublisher&gt; itself and removed the <code>UseModel</code> configura
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -94,25 +94,70 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttBrokerOptionsConfigurator.html">MqttBrokerOptionsConfigurator</a></h4>
-      <section><p>This class will be located via assembly scanning and invoked when a <a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a> is
-added to the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientChannelConfiguration.html">MqttClientChannelConfiguration</a></h4>
+      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html">MqttClientTcpConfiguration</a> and <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html">MqttClientWebSocketConfiguration</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a></h4>
       <section><p>The configuration used to connect with the MQTT broker. This is actually a wrapper around the
-<span class="xref">MQTTnet.Client.MqttClientOptions</span> from the MQTTnet library.</p>
+<span class="xref">MQTTnet.MqttClientOptions</span> from the MQTTnet library.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html">MqttClientConfigBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilder.html">MqttClientConfigurationBuilder</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html">MqttConsumerEndpointBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html">MqttClientTcpConfiguration</a></h4>
+      <section><p>The configuration of the TCP connection to the MQTT message broker.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html">MqttLastWillMessageBuilder</a></h4>
-      <section><p>Builds the last will and testament (LWT) message related part of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.html">MqttClientTcpConfigurationBuilder</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html">MqttClientTcpConfiguration</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.html">MqttProducerEndpointBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a></h4>
+      <section><p>The TLS configuration.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html">MqttClientWebSocketConfiguration</a></h4>
+      <section><p>The configuration of the websocket connection to the MQTT message broker.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfigurationBuilder.html">MqttClientWebSocketConfigurationBuilder</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketConfiguration.html">MqttClientWebSocketConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></h4>
+      <section><p>The proxy configuration.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfigurationBuilder.html">MqttClientWebSocketProxyConfigurationBuilder</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder.html">MqttClientsConfigurationBuilder</a></h4>
+      <section><p>Configures the MQTT clients building the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a></h4>
+      <section><p>The MQTT topic from which the message was consumed.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfiguration.html">MqttConsumerEndpointConfiguration</a></h4>
+      <section><p>The MQTT consumer configuration.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointConfigurationBuilder-1.html">MqttConsumerEndpointConfigurationBuilder&lt;TMessage&gt;</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></h4>
+      <section><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfigurationBuilder-1.html">MqttLastWillMessageConfigurationBuilder&lt;TMessage&gt;</a></h4>
+      <section><p>Builds the last will and testament (LWT) message related part of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpoint.html">MqttProducerEndpoint</a></h4>
+      <section><p>The MQTT topic where the message must be produced to.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a></h4>
+      <section><p>The MQTT producer configuration.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfigurationBuilder-1.html">MqttProducerEndpointConfigurationBuilder&lt;TMessage&gt;</a></h4>
+      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointConfiguration.html">MqttProducerEndpointConfiguration</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html">MqttUserProperty</a></h4>
+      <section><p>A user property to be sent with the <i>CONNECT</i> packet. It can be used to send connection related properties from the client to
+the server.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
@@ -122,20 +167,10 @@ added to the <a class="xref" href="https://learn.microsoft.com/dotnet/api/micros
       <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.html">IMockedMqttOptionsBuilder</a></h4>
       <section><p>Exposes the methods to configure the mocked MQTT.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html">IMqttConsumerEndpointBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html">IMqttEndpointsConfigurationBuilder</a></h4>
-      <section><p>Exposes the methods to configure the connection to Mqtt and add the inbound and outbound endpoints.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html">IMqttLastWillMessageBuilder</a></h4>
-      <section><p>Builds the last will and testament (LWT) message related part of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a>.</p>
+    <h3 id="enums">Enums
+</h3>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.NoMatchingSubscribersBehavior.html">NoMatchingSubscribersBehavior</a></h4>
+      <section><p>Defines the behavior when no matching subscribers are found for the produced message.</p>
 </section>
 </article>
           </div>
@@ -164,7 +199,7 @@ added to the <a class="xref" href="https://learn.microsoft.com/dotnet/api/micros
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

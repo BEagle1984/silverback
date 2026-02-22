@@ -160,7 +160,7 @@ namespace Silverback.Examples.Messages
 <a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
 </li>
 <li role="presentation">
 <a href="#tabpanel_1_producer-background-service" role="tab" aria-controls="tabpanel_1_producer-background-service" data-tab="producer-background-service" tabindex="-1">Background Service</a>
@@ -168,76 +168,72 @@ namespace Silverback.Examples.Messages
 </ul>
 <section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
 <pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Producer
+namespace Silverback.Samples.Kafka.Avro.Producer;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Enable Silverback
-            services
-                .AddSilverback()
+        // Enable Silverback
+        services.AddSilverback()
 
-                // Use Apache Kafka as message broker
-                .WithConnectionToMessageBroker(
-                    options =&gt; options
-                        .AddKafka())
+            // Use Apache Kafka as message broker and the Confluent schema registry
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .AddConfluentSchemaRegistry())
 
-                // Delegate the inbound/outbound endpoints configuration to a separate
-                // class.
-                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;();
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;();
 
-            // Add the hosted service that produces the random sample messages
-            services.AddHostedService&lt;ProducerBackgroundService&gt;();
-        }
+        // Add the hosted service that produces the random sample messages
+        services.AddHostedService&lt;ProducerBackgroundService&gt;();
+    }
 
-        public void Configure()
-        {
-        }
+    public void Configure()
+    {
     }
 }
 </code></pre></section>
 <section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using Silverback.Examples.Messages;
+<pre><code class="lang-csharp" name="Producer.BrokerClientsConfigurator">using Silverback.Examples.Messages;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Producer
+namespace Silverback.Samples.Kafka.Avro.Producer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
-    public class EndpointsConfigurator : IEndpointsConfigurator
+    public void Configure(BrokerClientsConfigurationBuilder builder)
     {
-        public void Configure(IEndpointsConfigurationBuilder builder)
-        {
-            builder
-                .AddKafkaEndpoints(
-                    endpoints =&gt; endpoints
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
 
-                        // Configure the properties needed by all consumers/producers
-                        .Configure(
-                            config =&gt;
-                            {
-                                // The bootstrap server address is needed to connect
-                                config.BootstrapServers =
-                                    &quot;PLAINTEXT://localhost:9092&quot;;
-                            })
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
 
-                        // Produce the AvroMessage to the samples-avro topic
-                        .AddOutbound&lt;AvroMessage&gt;(
-                            endpoint =&gt; endpoint
-                                .ProduceTo(&quot;samples-avro&quot;)
+                    // Add a producer
+                    .AddProducer(
+                        producer =&gt; producer
 
-                                // Configure Avro serialization
-                                .SerializeAsAvro(
-                                    avro =&gt; avro.Configure(
-                                        schemaRegistry =&gt;
-                                        {
-                                            schemaRegistry.Url = &quot;localhost:8081&quot;;
-                                        },
-                                        serializer =&gt;
-                                        {
-                                            serializer.AutoRegisterSchemas = true;
-                                        }))));
-        }
+                            // Produce the AvroMessage to the samples-avro topic
+                            .Produce&lt;AvroMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ProduceTo(&quot;samples-avro&quot;)
+                                    .SetKafkaKey(message =&gt; message?.number.ToString())
+
+                                    // Configure Avro serialization
+                                    .SerializeAsAvro(
+                                        avro =&gt; avro
+                                            .ConnectToSchemaRegistry(&quot;localhost:8081&quot;)
+                                            .Configure(
+                                                serializer =&gt;
+                                                {
+                                                    serializer.AutoRegisterSchemas = false;
+                                                    serializer.UseLatestVersion = true;
+                                                })))));
     }
 }
 </code></pre></section>
@@ -246,73 +242,69 @@ namespace Silverback.Samples.Kafka.Avro.Producer
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+using Confluent.SchemaRegistry;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Messages;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Serialization;
 
-namespace Silverback.Samples.Kafka.Avro.Producer
+namespace Silverback.Samples.Kafka.Avro.Producer;
+
+public class ProducerBackgroundService : BackgroundService
 {
-    public class ProducerBackgroundService : BackgroundService
+    private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory;
+
+    private readonly IPublisher _publisher;
+
+    private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+
+    public ProducerBackgroundService(
+        IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory,
+        IPublisher publisher,
+        ILogger&lt;ProducerBackgroundService&gt; logger)
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _schemaRegistryClientFactory = schemaRegistryClientFactory;
+        _publisher = publisher;
+        _logger = logger;
+    }
 
-        private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // Push the Avro schema to the schema registry
+        ISchemaRegistryClient schemaRegistry = _schemaRegistryClientFactory.GetClient(
+            schemaRegistryConfigurationBuilder =&gt; schemaRegistryConfigurationBuilder
+                .WithUrl(&quot;localhost:8081&quot;));
 
-        public ProducerBackgroundService(
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger&lt;ProducerBackgroundService&gt; logger)
+        await schemaRegistry.RegisterSchemaAsync(
+            &quot;samples-avro-value&quot;,
+            new Schema(AvroMessage._SCHEMA.ToString(), null, SchemaType.Avro, null, null));
+
+        int number = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
+            await ProduceMessageAsync(++number);
+
+            await Task.Delay(100, stoppingToken);
         }
+    }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    private async Task ProduceMessageAsync(int number)
+    {
+        try
         {
-            // Create a service scope and resolve the IPublisher
-            // (the IPublisher cannot be resolved from the root scope and cannot
-            // therefore be directly injected into the BackgroundService)
-            using var scope = _serviceScopeFactory.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService&lt;IPublisher&gt;();
-            var broker = scope.ServiceProvider.GetRequiredService&lt;IBroker&gt;();
-
-            int number = 0;
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                // Check whether the connection has been established, since the
-                // BackgroundService will start immediately, before the application
-                // is completely bootstrapped
-                if (!broker.IsConnected)
+            await _publisher.PublishAsync(
+                new AvroMessage
                 {
-                    await Task.Delay(100, stoppingToken);
-                    continue;
-                }
+                    number = number.ToString(CultureInfo.InvariantCulture)
+                });
 
-                await ProduceMessageAsync(publisher, ++number);
-
-                await Task.Delay(100, stoppingToken);
-            }
+            _logger.LogInformation(&quot;Produced {Number}&quot;, number);
         }
-
-        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        catch (Exception ex)
         {
-            try
-            {
-                await publisher.PublishAsync(
-                    new AvroMessage
-                    {
-                        number = number.ToString(CultureInfo.InvariantCulture)
-                    });
-
-                _logger.LogInformation(&quot;Produced {Number}&quot;, number);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, &quot;Failed to produce {Number}&quot;, number);
-            }
+            _logger.LogError(ex, &quot;Failed to produce {Number}&quot;, number);
         }
     }
 }
@@ -328,7 +320,7 @@ namespace Silverback.Samples.Kafka.Avro.Producer
 <a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">BrokerClientsConfigurator</a>
 </li>
 <li role="presentation">
 <a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
@@ -336,88 +328,73 @@ namespace Silverback.Samples.Kafka.Avro.Producer
 </ul>
 <section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
 <pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Consumer
+namespace Silverback.Samples.Kafka.Avro.Consumer;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Enable Silverback
-            services
-                .AddSilverback()
+        // Enable Silverback
+        services.AddSilverback()
 
-                // Use Apache Kafka as message broker
-                .WithConnectionToMessageBroker(
-                    options =&gt; options
-                        .AddKafka())
+            // Use Apache Kafka as message broker and the Confluent schema registry
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .AddConfluentSchemaRegistry())
 
-                // Delegate the inbound/outbound endpoints configuration to a separate
-                // class.
-                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;()
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator&lt;BrokerClientsConfigurator&gt;()
 
-                // Register the subscribers
-                .AddSingletonSubscriber&lt;AvroMessageSubscriber&gt;();
-        }
+            // Register the subscribers
+            .AddSingletonSubscriber&lt;AvroMessageSubscriber&gt;();
+    }
 
-        public void Configure()
-        {
-        }
+    public void Configure()
+    {
     }
 }
 </code></pre></section>
 <section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Consumer.EndpointsConfigurator">using Confluent.Kafka;
-using Silverback.Examples.Messages;
+<pre><code class="lang-csharp" name="Consumer.BrokerClientsConfigurator">using Silverback.Examples.Messages;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Consumer
+namespace Silverback.Samples.Kafka.Avro.Consumer;
+
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
-    public class EndpointsConfigurator : IEndpointsConfigurator
+    public void Configure(BrokerClientsConfigurationBuilder builder)
     {
-        public void Configure(IEndpointsConfigurationBuilder builder)
-        {
-            builder
-                .AddKafkaEndpoints(
-                    endpoints =&gt; endpoints
+        builder
+            .AddKafkaClients(
+                clients =&gt; clients
 
-                        // Configure the properties needed by all consumers/producers
-                        .Configure(
-                            config =&gt;
-                            {
-                                // The bootstrap server address is needed to connect
-                                config.BootstrapServers =
-                                    &quot;PLAINTEXT://localhost:9092&quot;;
-                            })
+                    // The bootstrap server address is needed to connect
+                    .WithBootstrapServers(&quot;PLAINTEXT://localhost:19092&quot;)
 
-                        // Consume the samples-avro topic
-                        .AddInbound&lt;AvroMessage&gt;(
-                            endpoint =&gt; endpoint
-                                .ConsumeFrom(&quot;samples-avro&quot;)
+                    // Add a consumer
+                    .AddConsumer(
+                        consumer =&gt; consumer
 
-                                // Configure Avro deserialization
-                                .DeserializeAvro(
-                                    avro =&gt; avro.Configure(
-                                        schemaRegistry =&gt;
-                                        {
-                                            schemaRegistry.Url = &quot;localhost:8081&quot;;
-                                        }))
-                                .Configure(
-                                    config =&gt;
-                                    {
-                                        // The consumer needs at least the bootstrap
-                                        // server address and a group id to be able
-                                        // to connect
-                                        config.GroupId = &quot;sample-consumer&quot;;
+                            // Set the consumer group id
+                            .WithGroupId(&quot;sample-consumer&quot;)
 
-                                        // AutoOffsetReset.Earliest means that the
-                                        // consumer must start consuming from the
-                                        // beginning of the topic, if no offset was
-                                        // stored for this consumer group
-                                        config.AutoOffsetReset =
-                                            AutoOffsetReset.Earliest;
-                                    })));
-        }
+                            // AutoOffsetReset.Earliest means that the consumer
+                            // must start consuming from the beginning of the topic,
+                            // if no offset was stored for this consumer group
+                            .AutoResetOffsetToEarliest()
+
+                            // Consume the AvroMessage from the samples-avro topic
+                            .Consume&lt;AvroMessage&gt;(
+                                endpoint =&gt; endpoint
+                                    .ConsumeFrom(&quot;samples-avro&quot;)
+
+                                    // Configure Avro deserialization
+                                    .DeserializeAvro(
+                                        avro =&gt; avro
+                                            .ConnectToSchemaRegistry(&quot;localhost:8081&quot;)))));
     }
 }
 </code></pre></section>
@@ -425,20 +402,19 @@ namespace Silverback.Samples.Kafka.Avro.Consumer
 <pre><code class="lang-csharp" name="Consumer.Subscriber">using Microsoft.Extensions.Logging;
 using Silverback.Examples.Messages;
 
-namespace Silverback.Samples.Kafka.Avro.Consumer
+namespace Silverback.Samples.Kafka.Avro.Consumer;
+
+public class AvroMessageSubscriber
 {
-    public class AvroMessageSubscriber
+    private readonly ILogger&lt;AvroMessageSubscriber&gt; _logger;
+
+    public AvroMessageSubscriber(ILogger&lt;AvroMessageSubscriber&gt; logger)
     {
-        private readonly ILogger&lt;AvroMessageSubscriber&gt; _logger;
-
-        public AvroMessageSubscriber(ILogger&lt;AvroMessageSubscriber&gt; logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnMessageReceived(AvroMessage message) =&gt;
-            _logger.LogInformation(&quot;Received {MessageNumber}&quot;, message.number);
+        _logger = logger;
     }
+
+    public void OnMessageReceived(AvroMessage message) =&gt;
+        _logger.LogInformation(&quot;Received {MessageNumber}&quot;, message.number);
 }
 </code></pre></section>
 </div>
@@ -474,7 +450,7 @@ namespace Silverback.Samples.Kafka.Avro.Consumer
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

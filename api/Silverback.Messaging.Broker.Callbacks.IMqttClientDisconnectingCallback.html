@@ -90,32 +90,27 @@
 
   <h1 id="Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback" class="text-break">Interface IMqttClientDisconnectingCallback
 </h1>
-  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_">OnClientDisconnectingAsync(MqttClientConfig)</a> event handler.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html#Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_">OnClientDisconnectingAsync(MqttClientConfiguration)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Callbacks</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IMqttClientDisconnectingCallback : IBrokerCallback</code></pre>
+    <pre><code class="lang- hljs">public interface IMqttClientDisconnectingCallback : IBrokerClientCallback</code></pre>
   </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.OnClientDisconnectingAsync(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/Callbacks/IMqttClientDisconnectingCallback.cs/#L24">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_" data-uid="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.OnClientDisconnectingAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_" data-uid="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.OnClientDisconnectingAsync(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig)">OnClientDisconnectingAsync(MqttClientConfig)</h4>
-  <div class="markdown level1 summary"><p>Called when the underlying <span class="xref">MQTTnet.Client.IMqttClient</span> is disconnecting from the broker.</p>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfiguration_" data-uid="Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.OnClientDisconnectingAsync(Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration)">OnClientDisconnectingAsync(MqttClientConfiguration)</h4>
+  <div class="markdown level1 summary"><p>Called when the underlying <span class="xref">MQTTnet.IMqttClient</span> is disconnecting from the broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task OnClientDisconnectingAsync(MqttClientConfig config)</code></pre>
+    <pre><code class="lang- hljs">Task OnClientDisconnectingAsync(MqttClientConfiguration configuration)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -128,8 +123,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a></td>
-        <td><span class="parametername">config</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfiguration.html">MqttClientConfiguration</a></td>
+        <td><span class="parametername">configuration</span></td>
         <td><p>The client configuration.</p>
 </td>
       </tr>
@@ -158,12 +153,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IMqttClientDisconnectingCallback.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/Callbacks/IMqttClientDisconnectingCallback.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -184,7 +173,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

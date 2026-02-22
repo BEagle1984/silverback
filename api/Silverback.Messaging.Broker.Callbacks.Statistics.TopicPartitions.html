@@ -100,25 +100,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Callbacks</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.Statistics.html">Statistics</a></h6>
@@ -127,15 +127,22 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class TopicPartitions</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions__ctor_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions__ctor" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.#ctor">TopicPartitions()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public TopicPartitions()</code></pre>
+  </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Partition.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Partition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/TopicPartitions.cs/#L17">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Partition_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Partition*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Partition" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Partition">Partition</h4>
   <div class="markdown level1 summary"></div>
@@ -143,7 +150,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;partition&quot;)]
-public long Partition { get; set; }</code></pre>
+public long Partition { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -160,13 +167,8 @@ public long Partition { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Topic.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Topic%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/TopicPartitions.cs/#L14">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Topic_" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Topic*"></a>
   <h4 id="Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions_Topic" data-uid="Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.Topic">Topic</h4>
   <div class="markdown level1 summary"></div>
@@ -174,7 +176,7 @@ public long Partition { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">[JsonPropertyName(&quot;topic&quot;)]
-public string Topic { get; set; }</code></pre>
+public string Topic { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -198,12 +200,6 @@ public string Topic { get; set; }</code></pre>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_Statistics_TopicPartitions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/Statistics/TopicPartitions.cs/#L11" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -224,7 +220,7 @@ public string Topic { get; set; }</code></pre>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

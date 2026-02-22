@@ -96,19 +96,37 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_AutoUnwrap">IEnvelope.AutoUnwrap</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_AddHeader_System_String_System_Object_">IOutboundEnvelope.AddHeader(string, object)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_Endpoint">IRawOutboundEnvelope.Endpoint</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_AddOrReplaceHeader_System_String_System_Object_">IOutboundEnvelope.AddOrReplaceHeader(string, object)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_BrokerMessageIdentifier">IRawOutboundEnvelope.BrokerMessageIdentifier</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_AddHeaderIfNotExists_System_String_System_Object_">IOutboundEnvelope.AddHeaderIfNotExists(string, object)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointName">IRawOutboundEnvelope.ActualEndpointName</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_GetEndpoint">IOutboundEnvelope.GetEndpoint()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointDisplayName">IRawOutboundEnvelope.ActualEndpointDisplayName</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingRawMessage_System_IO_Stream_">IOutboundEnvelope.CloneReplacingRawMessage(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_CloneReplacingMessage__1___0_">IOutboundEnvelope.CloneReplacingMessage&lt;TNewMessage&gt;(TNewMessage)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_EndpointConfiguration">IOutboundEnvelope.EndpointConfiguration</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_Producer">IOutboundEnvelope.Producer</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_BrokerMessageIdentifier">IOutboundEnvelope.BrokerMessageIdentifier</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html#Silverback_Messaging_Messages_IOutboundEnvelope_Context">IOutboundEnvelope.Context</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IBrokerEnvelope.html#Silverback_Messaging_Messages_IBrokerEnvelope_IsTombstone">IBrokerEnvelope.IsTombstone</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_Headers">IRawBrokerEnvelope.Headers</a>
@@ -116,12 +134,15 @@
     <div>
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_RawMessage">IRawBrokerEnvelope.RawMessage</a>
     </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_MessageType">IEnvelope.MessageType</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Messages.html">Messages</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Messages_IOutboundEnvelope_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IOutboundEnvelope&lt;out TMessage&gt; : IOutboundEnvelope, IBrokerEnvelope, IEnvelope, IRawOutboundEnvelope, IRawBrokerEnvelope where TMessage : class</code></pre>
+    <pre><code class="lang- hljs">public interface IOutboundEnvelope&lt;out TMessage&gt; : IOutboundEnvelope, IBrokerEnvelope, IRawBrokerEnvelope, IEnvelope&lt;TMessage&gt;, IEnvelope</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -134,19 +155,15 @@
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td></td>
+        <td><p>The type of the message being produced.</p>
+</td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_IOutboundEnvelope_1_Message.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.IOutboundEnvelope%601.Message%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope`1.cs/#L13">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Messages_IOutboundEnvelope_1_Message_" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope`1.Message*"></a>
   <h4 id="Silverback_Messaging_Messages_IOutboundEnvelope_1_Message" data-uid="Silverback.Messaging.Messages.IOutboundEnvelope`1.Message">Message</h4>
   <div class="markdown level1 summary"><p>Gets the deserialized message body.</p>
@@ -178,12 +195,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_IOutboundEnvelope_1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.IOutboundEnvelope%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/IOutboundEnvelope`1.cs/#L7" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -204,7 +215,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

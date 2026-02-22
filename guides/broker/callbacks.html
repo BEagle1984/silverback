@@ -86,41 +86,42 @@
             <article class="content wrap" id="_content" data-uid="broker-callbacks">
 <h1 id="broker-callbacks">Broker Callbacks</h1>
 
-<p>Broker callbacks allow you to handle specific events during the lifecycle of a message broker client. These callbacks help you react to various broker-related events.</p>
-<h2 id="registering-a-callback-handler">Registering a Callback Handler</h2>
-<p>To use a callback, implement the corresponding interface and register the handler using one of the following methods:</p>
+<p>Broker callbacks let you react to lifecycle events raised by broker clients (Kafka consumers/producers, MQTT clients, etc.).</p>
+<h2 id="register-a-callback-handler">Register a Callback Handler</h2>
+<p>To handle callbacks, implement one (or more) callback interfaces and register your handler as an <code>IBrokerClientCallback</code>.</p>
+<p>You can register the handler with the desired lifetime:</p>
 <ul>
-<li><code>AddSingletonBrokerCallbacksHandler&lt;THandler&gt;()</code></li>
-<li><code>AddScopedBrokerCallbacksHandler&lt;THandler&gt;()</code></li>
-<li><code>AddTransientBrokerCallbacksHandler&lt;THandler&gt;()</code></li>
+<li><code>AddSingletonBrokerClientCallback&lt;THandler&gt;()</code></li>
+<li><code>AddScopedBrokerClientCallback&lt;THandler&gt;()</code></li>
+<li><code>AddTransientBrokerClientCallback&lt;THandler&gt;()</code></li>
 </ul>
 <h2 id="generic-callback">Generic Callback</h2>
 <p>The following callback applies to all broker implementations:</p>
 <ul>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IBrokerClientsConfiguredCallback.html">IBrokerClientsConfiguredCallback</a><br>
-Invoked immediately after the broker clients have been initialized based on the specified client and endpoint configuration.</li>
+Invoked immediately after clients and endpoints have been configured.</li>
 </ul>
-<h3 id="example-registering-a-ibrokerclientsconfiguredcallback">Example: Registering a IBrokerClientsConfiguredCallback</h3>
-<pre><code class="lang-csharp">.AddSilverback()
-.WithConnectionToMessageBroker(options =&gt; options.AddKafka())
-.AddKafkaClients(clients =&gt; clients
-    .WithBootstrapServers(...)
-    .AddProducer(...)
-    .AddConsumer(...))
-.AddSingletonBrokerCallbacksHandler&lt;MyCallbackHandler&gt;();
+<h3 id="example">Example</h3>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(...)
+        .AddConsumer(...))
+    .AddSingletonBrokerClientCallback&lt;MyCallbackHandler&gt;();
 </code></pre>
 <pre><code class="lang-csharp">public class MyCallbackHandler : IBrokerClientsConfiguredCallback
 {
     public async Task OnBrokerClientsConfiguredAsync()
     {
-        // Perform required initialization logic
-    } 
+        // Perform required initialization logic.
+    }
 }
 </code></pre>
 <h2 id="kafka-specific-callbacks">Kafka-Specific Callbacks</h2>
-<p><a href="https://github.com/confluentinc/confluent-kafka-dotnet">Confluent.Kafka</a> the underlying library used for Kafka integration, provides various events for handling partition assignments, logging, statistics, and more. Silverback proxies these events as callbacks.</p>
-<h3 id="consumer-callbacks">Consumer Callbacks</h3>
-<p>The following callbacks are available for Kafka consumers:</p>
+<p><a href="https://github.com/confluentinc/confluent-kafka-dotnet">Confluent.Kafka</a> (used by the Kafka integration) exposes events for partition assignments, errors, statistics, and more. Silverback surfaces those events as callbacks.</p>
+<h3 id="consumer-callbacks">Consumer callbacks</h3>
+<p>Available callbacks for Kafka consumers:</p>
 <ul>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html">IKafkaPartitionsAssignedCallback</a><br>
 Triggered when the consumer receives a new partition assignment.</li>
@@ -135,17 +136,15 @@ Triggered when consumer statistics are received (requires <code>StatisticsInterv
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html">IKafkaConsumerLogCallback</a><br>
 Triggered when the consumer logs a message.</li>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html">IKafkaPartitionEofCallback</a><br>
-Triggered when the consumer reaches the end of a partition (requires EnablePartitionEof = true).</li>
+Triggered when the consumer reaches the end of a partition (requires <code>EnablePartitionEof = true</code>).</li>
 </ul>
-<h4 id="example-resetting-offsets-on-partition-assignment">Example: Resetting Offsets on Partition Assignment</h4>
-<p>In this example, the callback resets the offset to the beginning of each assigned partition, ensuring that past messages are replayed.</p>
-<pre><code class="lang-csharp">.AddSilverback()
-.WithConnectionToMessageBroker(options =&gt; options.AddKafka())
-.AddKafkaClients(clients =&gt; clients
-    .WithBootstrapServers(...)
-    .AddProducer(...)
-    .AddConsumer(...))
-.AddSingletonBrokerCallbackHandler&lt;OffsetsResetCallbackHandler&gt;();
+<h4 id="example-reset-offsets-on-partition-assignment">Example: reset offsets on partition assignment</h4>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(...))
+    .AddSingletonBrokerClientCallback&lt;OffsetsResetCallbackHandler&gt;();
 </code></pre>
 <pre><code class="lang-csharp">public class OffsetsResetCallbackHandler : IKafkaPartitionsAssignedCallback
 {
@@ -153,14 +152,13 @@ Triggered when the consumer reaches the end of a partition (requires EnableParti
         IReadOnlyCollection&lt;TopicPartition&gt; topicPartitions,
         IKafkaConsumer consumer)
     {
-        // Reset offset to beginning for each assigned partition
-        return topicPartitions.Select(topicPartition =&gt; 
-            new TopicPartitionOffset(topicPartition, Offset.Beginning));
+        // Reset offset to beginning for each assigned partition.
+        return topicPartitions.Select(tp =&gt; new TopicPartitionOffset(tp, Offset.Beginning));
     }
 }
 </code></pre>
-<h3 id="producer-callbacks">Producer Callbacks</h3>
-<p>The following callbacks are available for Kafka producers:</p>
+<h3 id="producer-callbacks">Producer callbacks</h3>
+<p>Available callbacks for Kafka producers:</p>
 <ul>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html">IKafkaProducerStatisticsCallback</a><br>
 Triggered when producer statistics are received (requires <code>StatisticsIntervalMs &gt; 0</code>).</li>
@@ -168,37 +166,37 @@ Triggered when producer statistics are received (requires <code>StatisticsInterv
 Triggered when the producer logs a message.</li>
 </ul>
 <h2 id="mqtt-specific-callbacks">MQTT-Specific Callbacks</h2>
-<p>MQTT clients trigger some lifecycle events that can be handled using the following callbacks:</p>
+<p>MQTT clients expose connect/disconnect lifecycle events.</p>
 <ul>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IMqttClientConnectedCallback.html">IMqttClientConnectedCallback</a><br>
 Triggered when the client successfully connects to the broker.</li>
 <li><a class="xref" href="../../api/Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html">IMqttClientDisconnectingCallback</a><br>
 Triggered when the client is about to disconnect (not called if the connection is lost unexpectedly).</li>
 </ul>
-<h4 id="example-sending-a-message-when-the-client-connects">Example: Sending a Message When the Client Connects</h4>
-<p>In this example, a message is published as soon as the MQTT client establishes a connection.</p>
-<pre><code class="lang-csharp">services
-    .AddSilverback()
+<h4 id="example-publish-a-message-when-the-client-connects">Example: publish a message when the client connects</h4>
+<pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddMqtt())
     .AddMqttClients(clients =&gt; clients
         .AddClient(...))
-    .AddSingletonBrokerCallbacksHandler&lt;ConnectionCallbackHandler&gt;();
+    .AddSingletonBrokerClientCallback&lt;ConnectionCallbackHandler&gt;();
 </code></pre>
 <pre><code class="lang-csharp">public class ConnectionCallbackHandler : IMqttClientConnectedCallback
 {
     private readonly IPublisher _publisher;
-    
+
     public ConnectionCallbackHandler(IPublisher publisher)
     {
         _publisher = publisher;
     }
-            
-    public Task OnClientConnectedAsync(MqttClientConfig config) =&gt;
-        _publisher.PublishAsync(new ClientConnectedMessage());
+
+    public async Task OnClientConnectedAsync(MqttClientConfig config) =&gt;
+        await _publisher.PublishAsync(new ClientConnectedMessage());
 }
 </code></pre>
 <h2 id="additional-resources">Additional Resources</h2>
-<p>For more details, refer to the <a class="xref" href="../../api/Silverback.html">API Reference</a> for each callback interface.</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.html">API Reference</a></li>
+</ul>
 </article>
           </div>
 
@@ -229,7 +227,7 @@ Triggered when the client is about to disconnect (not called if the connection i
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

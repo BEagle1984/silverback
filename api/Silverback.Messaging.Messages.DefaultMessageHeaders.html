@@ -101,25 +101,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Messages.html">Messages</a></h6>
@@ -130,13 +130,8 @@
   </div>
   <h3 id="fields">Fields
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkIndex.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.ChunkIndex%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L35">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkIndex" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.ChunkIndex">ChunkIndex</h4>
   <div class="markdown level1 summary"><p>The message chunk index, used when chunking is enabled.</p>
 </div>
@@ -160,13 +155,33 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_ChunksCount.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.ChunksCount%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L40">View source</a>
-  </span>
+
+
+  <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkMessageId" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.ChunkMessageId">ChunkMessageId</h4>
+  <div class="markdown level1 summary"><p>The message identifier used to uniquely identify the message each chunk belongs to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public const string ChunkMessageId = &quot;x-message-id&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_ChunksCount" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.ChunksCount">ChunksCount</h4>
   <div class="markdown level1 summary"><p>The total number of chunks the message was split into, used when chunking is enabled.</p>
 </div>
@@ -190,15 +205,10 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_ContentType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.ContentType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L87">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_ContentType" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.ContentType">ContentType</h4>
-  <div class="markdown level1 summary"><p>The MIME type of a binary file. See <a class="xref" href="Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a>.</p>
+  <div class="markdown level1 summary"><p>The MIME type of the binary message. See <a class="xref" href="Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -220,13 +230,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.EncryptionKeyId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L96">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.EncryptionKeyId">EncryptionKeyId</h4>
   <div class="markdown level1 summary"><p>The encryption key identifier.</p>
 </div>
@@ -254,16 +259,11 @@
   <div class="markdown level1 remarks"><p>The header is required for the key rotation feature. When rotating keys, it will be used on the
 consumer side to determine the correct key to be used to decrypt the message.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.FailedAttempts%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L30">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.FailedAttempts">FailedAttempts</h4>
-  <div class="markdown level1 summary"><p>If an exception if thrown the failed attempts will be incremented and stored as header. This is
-necessary for the error policies to work.</p>
+  <div class="markdown level1 summary"><p>If an exception is thrown, the failed attempts will be incremented and stored as header. This is necessary for the error
+policies to work.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -285,15 +285,10 @@ necessary for the error policies to work.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_FailureReason.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.FailureReason%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L102">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_FailureReason" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.FailureReason">FailureReason</h4>
-  <div class="markdown level1 summary"><p>This will be set by the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the reason why
+  <div class="markdown level1 summary"><p>This will be set by the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the reason why
 the message failed to be processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -316,46 +311,10 @@ the message failed to be processed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_FirstChunkOffset.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.FirstChunkOffset%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L52">View source</a>
-  </span>
-  <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_FirstChunkOffset" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.FirstChunkOffset">FirstChunkOffset</h4>
-  <div class="markdown level1 summary"><p>The <a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a> value of the first chunk of the same message, used when
-chunking is enabled.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public const string FirstChunkOffset = &quot;x-chunk-first-offset&quot;</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_IsLastChunk.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.IsLastChunk%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L46">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_IsLastChunk" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.IsLastChunk">IsLastChunk</h4>
-  <div class="markdown level1 summary"><p>A boolean value indicating whether the message is the last one of a chunks sequence, used when
+  <div class="markdown level1 summary"><p>A boolean value indicating whether the message is the last one of a chunk sequence, used when
 chunking is enabled.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -378,46 +337,10 @@ chunking is enabled.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_MessageId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.MessageId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L18">View source</a>
-  </span>
-  <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_MessageId" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.MessageId">MessageId</h4>
-  <div class="markdown level1 summary"><p>The message identifier.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public const string MessageId = &quot;x-message-id&quot;</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.MessageType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L24">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.MessageType">MessageType</h4>
-  <div class="markdown level1 summary"><p>The assembly qualified name of the message type. Used by the default
-<a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
+  <div class="markdown level1 summary"><p>The assembly qualified name of the message type. Used by the default <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -439,16 +362,10 @@ chunking is enabled.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_TraceBaggage.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.TraceBaggage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L82">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_TraceBaggage" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.TraceBaggage">TraceBaggage</h4>
-  <div class="markdown level1 summary"><p>Used for distributed tracing. It corresponds to the string representation of the
-<code>Activity.Baggage</code> dictionary.</p>
+  <div class="markdown level1 summary"><p>Used for distributed tracing. It corresponds to the string representation of the <code>Activity.Baggage</code> dictionary.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -473,18 +390,12 @@ chunking is enabled.</p>
   <h5 id="Silverback_Messaging_Messages_DefaultMessageHeaders_TraceBaggage_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This is not part of the w3c standard.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_TraceId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.TraceId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L64">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_TraceId" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.TraceId">TraceId</h4>
-  <div class="markdown level1 summary"><p>Used for distributed tracing. It is set by the <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> using the current
-<code>Activity.Id</code>. The <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> uses it's value to set the
-<code>Activity.ParentId</code>. Note that an <code>Activity</code> is automatically started by the default
-<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation.</p>
+  <div class="markdown level1 summary"><p>Used for distributed tracing. It is set by the <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> using the current <code>Activity.Id</code>.
+The <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> uses it's value to set the <code>Activity.ParentId</code>. Note that an <code>Activity</code> is automatically
+started by the default <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -510,13 +421,8 @@ chunking is enabled.</p>
   <div class="markdown level1 remarks"><p>The header is implemented according to the W3C Trace Context proposal
 (<a href="https://www.w3.org/TR/trace-context-1/#traceparent-header">https://www.w3.org/TR/trace-context-1/#traceparent-header</a>).</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders_TraceState.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders.TraceState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L73">View source</a>
-  </span>
+
+
   <h4 id="Silverback_Messaging_Messages_DefaultMessageHeaders_TraceState" data-uid="Silverback.Messaging.Messages.DefaultMessageHeaders.TraceState">TraceState</h4>
   <div class="markdown level1 summary"><p>Used for distributed tracing. It corresponds to the <code>Activity.TraceStateString</code>.</p>
 </div>
@@ -551,12 +457,6 @@ chunking is enabled.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_DefaultMessageHeaders.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.DefaultMessageHeaders%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/DefaultMessageHeaders.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -577,7 +477,7 @@ chunking is enabled.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

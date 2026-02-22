@@ -86,7 +86,109 @@
             <article class="content wrap" id="_content" data-uid="consumer-behaviors">
 <h1 id="consumer-behaviors-pipeline">Consumer Behaviors Pipeline</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Each message consumed by Silverback is processed by a pipeline of behaviors that enable features and cross-cutting concerns. The <code>SortIndex</code> property of each behavior determines the order in which they are executed and each behavior must call the next behavior in the pipeline to continue processing.</p>
+<h2 id="default-behaviors">Default Behaviors</h2>
+<p>The following table lists the default behaviors that are executed when consuming a message.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: right;">Index</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html">ActivityConsumerBehavior</a></td>
+<td style="text-align: right;">100</td>
+<td style="text-align: left;">Starts an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> for the incoming message and extracts tracing information from headers when available.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html">FatalExceptionLoggerConsumerBehavior</a></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: left;">Logs fatal exceptions thrown while processing the message (used to flag unrecoverable errors and improve observability).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Headers.CustomHeadersMapperConsumerBehavior.html">CustomHeadersMapperConsumerBehavior</a></td>
+<td style="text-align: right;">300</td>
+<td style="text-align: left;">Maps message headers to the destination names configured with the custom header mappings.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Consuming.Transaction.TransactionHandlerConsumerBehavior.html">TransactionHandlerConsumerBehavior</a></td>
+<td style="text-align: right;">400</td>
+<td style="text-align: left;">Manages the transaction scope for the message processing, using the configured <a class="xref" href="../../../api/Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a> implementations.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Sequences.RawSequencerConsumerBehavior.html">RawSequencerConsumerBehavior</a></td>
+<td style="text-align: right;">500</td>
+<td style="text-align: left;">Handles raw sequence-related headers (for messages published as sequences) and prepares the message for sequencing logic.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Encryption.DecryptorConsumerBehavior.html">DecryptorConsumerBehavior</a></td>
+<td style="text-align: right;">700</td>
+<td style="text-align: left;">Decrypts the message payload when encryption is enabled on the endpoint.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.BinaryMessages.BinaryMessageHandlerConsumerBehavior.html">BinaryMessageHandlerConsumerBehavior</a></td>
+<td style="text-align: right;">800</td>
+<td style="text-align: left;">Switches to the <a class="xref" href="../../../api/Silverback.Messaging.BinaryMessages.BinaryMessageSerializer.html">BinaryMessageSerializer</a> when the consumed message implements <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a> and handles binary payloads.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html">DeserializerConsumerBehavior</a></td>
+<td style="text-align: right;">900</td>
+<td style="text-align: left;">Deserializes the message payload into the target CLR type using the configured <a class="xref" href="../../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Validation.ValidatorConsumerBehavior.html">ValidatorConsumerBehavior</a></td>
+<td style="text-align: right;">950</td>
+<td style="text-align: left;">Validates the deserialized message using the configured validation rules and validators.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Headers.HeadersReaderConsumerBehavior.html">HeadersReaderConsumerBehavior</a></td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: left;">Reads headers and maps them to message properties decorated with the <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Sequences.SequencerConsumerBehavior.html">SequencerConsumerBehavior</a></td>
+<td style="text-align: right;">1100</td>
+<td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../../api/Silverback.Messaging.Sequences.ISequenceReader.html">ISequenceReader</a> to reassemble sequences (e.g., chunked messages) and pass the resulting message(s) down the pipeline.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../../api/Silverback.Messaging.Consuming.PublisherConsumerBehavior.html">PublisherConsumerBehavior</a></td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">Publishes the message to the configured message handlers, in-memory subscribers or any other final destinations.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="custom-behaviors">Custom Behaviors</h2>
+<p>It is possible to add custom behaviors to the consumer pipeline to implement cross-cutting concerns or extend Silverback's processing. A consumer behavior is a class implementing the <code>IConsumerBehavior</code> interface. The <code>HandleAsync</code> method is invoked for each consumed message, allowing the behavior to modify the envelope, perform side-effects, or short-circuit the pipeline.</p>
+<pre><code class="lang-csharp">public class CustomConsumerBehavior : IConsumerBehavior
+{
+    public int SortIndex =&gt; 300;
+
+    public async ValueTask HandleAsync(
+        ConsumerPipelineContext context,
+        ConsumerBehaviorHandler next,
+        CancellationToken cancellationToken)
+    {
+        // ...
+
+        await next(context);
+    }
+}
+</code></pre>
+<p>The custom behavior must be registered at startup using the <code>AddSingletonBrokerBehavior</code>, or <code>AddTransientBrokerBehavior</code> method. The transient behavior will be resolved once per producer, while the singleton behavior will be shared.</p>
+<pre><code class="lang-csharp">services
+    .AddSilverback()
+    ...
+    .AddSingletonBrokerBehavior&lt;CustomHeadersConsumerBehavior&gt;();
+</code></pre>
+<p>Additional services can be injected into the behavior constructor or resolved from the <code>ServiceProvider</code> available on the <a class="xref" href="../../../api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> when a scoped instance is required.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../producing/behaviors.html">Producer Behaviors Pipeline</a> guide</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +219,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

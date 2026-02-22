@@ -81,9 +81,9 @@
 
 <p>Silverback tries to improve the performance with every release and a huge effort is put into optimizing the code and the integration with the underlying libraries. The development of v5.0.0 especially focused on performance improvements in several areas and the results speak for themselves. There surely is still room for further optimizations, but the current state is already quite satisfying.</p>
 <h2 id="benchmark-results">Benchmark Results</h2>
-<p>The following benchmarks were executed on a Windows 11 machine with an Intel(R) Core(TM) i9-10850K CPU @ 3.60GHz and 32 GB RAM. The benchmarks are built using the <a href="https://benchmarkdotnet.org/">BenchmarkDotNet</a> library and the source code is available on <a href="https://github.com/BEagle1984/silverback/tree/master/benchmarks">GitHub</a>.</p>
-<h3 id="mediator">Mediator</h3>
-<h4 id="v451">v4.5.1</h4>
+<p>The benchmarks were built with .NET 10 and run on a Windows 11 workstation (AMD Ryzen 9 9950X3D, 64 GB DDR5). They use <a href="https://benchmarkdotnet.org/">BenchmarkDotNet</a>, and the source code is available on <a href="https://github.com/BEagle1984/silverback/tree/master/benchmarks">GitHub</a>.</p>
+<h3 id="message-bus">Message Bus</h3>
+<h4 id="v462">v4.6.2</h4>
 <table>
 <thead>
 <tr>
@@ -99,93 +99,93 @@
 <tbody>
 <tr>
 <td>Publish with single sync subscriber</td>
-<td style="text-align: right;">3.482 us</td>
-<td style="text-align: right;">0.0301 us</td>
-<td style="text-align: right;">0.0267 us</td>
-<td style="text-align: right;">1.0529</td>
-<td style="text-align: right;">0.2594</td>
-<td style="text-align: right;">10.49 KB</td>
+<td style="text-align: right;">1.726 us</td>
+<td style="text-align: right;">0.0296 us</td>
+<td style="text-align: right;">0.0247 us</td>
+<td style="text-align: right;">0.2136</td>
+<td style="text-align: right;">0.2060</td>
+<td style="text-align: right;">10.5 KB</td>
 </tr>
 <tr>
 <td>Publish with single async subscriber</td>
-<td style="text-align: right;">5.229 us</td>
-<td style="text-align: right;">0.0432 us</td>
-<td style="text-align: right;">0.0404 us</td>
-<td style="text-align: right;">1.1292</td>
-<td style="text-align: right;">0.2747</td>
-<td style="text-align: right;">11.4 KB</td>
+<td style="text-align: right;">2.572 us</td>
+<td style="text-align: right;">0.0230 us</td>
+<td style="text-align: right;">0.0204 us</td>
+<td style="text-align: right;">0.2365</td>
+<td style="text-align: right;">0.2289</td>
+<td style="text-align: right;">11.42 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple sync subscribers</td>
-<td style="text-align: right;">4.036 us</td>
-<td style="text-align: right;">0.0264 us</td>
-<td style="text-align: right;">0.0220 us</td>
-<td style="text-align: right;">1.0910</td>
-<td style="text-align: right;">0.2670</td>
-<td style="text-align: right;">10.91 KB</td>
+<td style="text-align: right;">1.868 us</td>
+<td style="text-align: right;">0.0156 us</td>
+<td style="text-align: right;">0.0138 us</td>
+<td style="text-align: right;">0.2213</td>
+<td style="text-align: right;">0.2136</td>
+<td style="text-align: right;">10.75 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple async subscribers</td>
-<td style="text-align: right;">8.484 us</td>
-<td style="text-align: right;">0.0808 us</td>
-<td style="text-align: right;">0.0716 us</td>
-<td style="text-align: right;">1.3428</td>
-<td style="text-align: right;">0.3052</td>
-<td style="text-align: right;">13.65 KB</td>
+<td style="text-align: right;">4.317 us</td>
+<td style="text-align: right;">0.0463 us</td>
+<td style="text-align: right;">0.0410 us</td>
+<td style="text-align: right;">0.2747</td>
+<td style="text-align: right;">0.2594</td>
+<td style="text-align: right;">13.45 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple sync and async subscribers</td>
-<td style="text-align: right;">5.858 us</td>
-<td style="text-align: right;">0.0667 us</td>
-<td style="text-align: right;">0.0624 us</td>
-<td style="text-align: right;">1.1597</td>
-<td style="text-align: right;">0.2747</td>
-<td style="text-align: right;">11.65 KB</td>
+<td style="text-align: right;">2.750 us</td>
+<td style="text-align: right;">0.0494 us</td>
+<td style="text-align: right;">0.0588 us</td>
+<td style="text-align: right;">0.2441</td>
+<td style="text-align: right;">0.2365</td>
+<td style="text-align: right;">11.73 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with single sync subscriber</td>
-<td style="text-align: right;">3.396 us</td>
-<td style="text-align: right;">0.0177 us</td>
-<td style="text-align: right;">0.0166 us</td>
-<td style="text-align: right;">1.0376</td>
-<td style="text-align: right;">0.2861</td>
-<td style="text-align: right;">10.32 KB</td>
+<td style="text-align: right;">1.664 us</td>
+<td style="text-align: right;">0.0119 us</td>
+<td style="text-align: right;">0.0093 us</td>
+<td style="text-align: right;">0.2136</td>
+<td style="text-align: right;">0.2060</td>
+<td style="text-align: right;">10.31 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with single async subscriber</td>
-<td style="text-align: right;">5.861 us</td>
-<td style="text-align: right;">0.0591 us</td>
-<td style="text-align: right;">0.0461 us</td>
-<td style="text-align: right;">1.1597</td>
-<td style="text-align: right;">0.2441</td>
-<td style="text-align: right;">11.11 KB</td>
+<td style="text-align: right;">2.508 us</td>
+<td style="text-align: right;">0.0312 us</td>
+<td style="text-align: right;">0.0276 us</td>
+<td style="text-align: right;">0.2365</td>
+<td style="text-align: right;">0.2289</td>
+<td style="text-align: right;">11.05 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync subscribers</td>
-<td style="text-align: right;">3.997 us</td>
-<td style="text-align: right;">0.0411 us</td>
-<td style="text-align: right;">0.0384 us</td>
-<td style="text-align: right;">1.0681</td>
-<td style="text-align: right;">0.2670</td>
-<td style="text-align: right;">10.63 KB</td>
+<td style="text-align: right;">1.851 us</td>
+<td style="text-align: right;">0.0145 us</td>
+<td style="text-align: right;">0.0300 us</td>
+<td style="text-align: right;">0.2136</td>
+<td style="text-align: right;">0.1984</td>
+<td style="text-align: right;">10.66 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple async subscribers</td>
-<td style="text-align: right;">14.188 us</td>
-<td style="text-align: right;">0.2578 us</td>
-<td style="text-align: right;">0.2411 us</td>
-<td style="text-align: right;">1.2817</td>
-<td style="text-align: right;">0.3052</td>
-<td style="text-align: right;">12.53 KB</td>
+<td style="text-align: right;">4.406 us</td>
+<td style="text-align: right;">0.0880 us</td>
+<td style="text-align: right;">0.1736 us</td>
+<td style="text-align: right;">0.2441</td>
+<td style="text-align: right;">0.1831</td>
+<td style="text-align: right;">12.51 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync and async subscribers</td>
-<td style="text-align: right;">7.038 us</td>
-<td style="text-align: right;">0.1091 us</td>
-<td style="text-align: right;">0.1020 us</td>
-<td style="text-align: right;">1.1597</td>
+<td style="text-align: right;">2.799 us</td>
+<td style="text-align: right;">0.0532 us</td>
+<td style="text-align: right;">0.0497 us</td>
 <td style="text-align: right;">0.2441</td>
-<td style="text-align: right;">11.29 KB</td>
+<td style="text-align: right;">0.2289</td>
+<td style="text-align: right;">11.36 KB</td>
 </tr>
 </tbody>
 </table>
@@ -204,189 +204,95 @@
 <tbody>
 <tr>
 <td>Publish with single sync subscriber</td>
-<td style="text-align: right;">549.6 ns</td>
-<td style="text-align: right;">3.43 ns</td>
-<td style="text-align: right;">2.87 ns</td>
-<td style="text-align: right;">0.0849</td>
-<td style="text-align: right;">896 B</td>
+<td style="text-align: right;">195.5 ns</td>
+<td style="text-align: right;">2.55 ns</td>
+<td style="text-align: right;">2.13 ns</td>
+<td style="text-align: right;">0.0219</td>
+<td style="text-align: right;">1.08 KB</td>
 </tr>
 <tr>
 <td>Publish with single async subscriber</td>
-<td style="text-align: right;">1,586.0 ns</td>
-<td style="text-align: right;">13.75 ns</td>
-<td style="text-align: right;">12.19 ns</td>
-<td style="text-align: right;">0.1297</td>
-<td style="text-align: right;">1367 B</td>
+<td style="text-align: right;">843.5 ns</td>
+<td style="text-align: right;">15.90 ns</td>
+<td style="text-align: right;">14.87 ns</td>
+<td style="text-align: right;">0.0305</td>
+<td style="text-align: right;">1.54 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple sync subscribers</td>
-<td style="text-align: right;">1,295.7 ns</td>
-<td style="text-align: right;">20.67 ns</td>
-<td style="text-align: right;">19.34 ns</td>
-<td style="text-align: right;">0.1354</td>
-<td style="text-align: right;">1424 B</td>
+<td style="text-align: right;">198.3 ns</td>
+<td style="text-align: right;">1.63 ns</td>
+<td style="text-align: right;">1.44 ns</td>
+<td style="text-align: right;">0.0219</td>
+<td style="text-align: right;">1.08 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple async subscribers</td>
-<td style="text-align: right;">4,282.9 ns</td>
-<td style="text-align: right;">48.49 ns</td>
-<td style="text-align: right;">45.36 ns</td>
-<td style="text-align: right;">0.2670</td>
-<td style="text-align: right;">2838 B</td>
+<td style="text-align: right;">853.3 ns</td>
+<td style="text-align: right;">3.77 ns</td>
+<td style="text-align: right;">2.94 ns</td>
+<td style="text-align: right;">0.0305</td>
+<td style="text-align: right;">1.54 KB</td>
 </tr>
 <tr>
 <td>Publish with multiple sync and async subscribers</td>
-<td style="text-align: right;">2,253.0 ns</td>
-<td style="text-align: right;">37.62 ns</td>
-<td style="text-align: right;">35.19 ns</td>
-<td style="text-align: right;">0.1717</td>
-<td style="text-align: right;">1800 B</td>
+<td style="text-align: right;">1,037.7 ns</td>
+<td style="text-align: right;">12.75 ns</td>
+<td style="text-align: right;">11.30 ns</td>
+<td style="text-align: right;">0.0381</td>
+<td style="text-align: right;">2 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with single sync subscriber</td>
-<td style="text-align: right;">558.3 ns</td>
-<td style="text-align: right;">5.98 ns</td>
-<td style="text-align: right;">5.30 ns</td>
-<td style="text-align: right;">0.0849</td>
-<td style="text-align: right;">896 B</td>
+<td style="text-align: right;">205.0 ns</td>
+<td style="text-align: right;">1.09 ns</td>
+<td style="text-align: right;">0.97 ns</td>
+<td style="text-align: right;">0.0219</td>
+<td style="text-align: right;">1.08 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with single async subscriber</td>
-<td style="text-align: right;">1,870.6 ns</td>
-<td style="text-align: right;">7.80 ns</td>
-<td style="text-align: right;">6.92 ns</td>
-<td style="text-align: right;">0.1926</td>
-<td style="text-align: right;">2006 B</td>
+<td style="text-align: right;">1,025.1 ns</td>
+<td style="text-align: right;">20.23 ns</td>
+<td style="text-align: right;">21.64 ns</td>
+<td style="text-align: right;">0.0458</td>
+<td style="text-align: right;">2.24 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync subscribers</td>
-<td style="text-align: right;">1,286.3 ns</td>
-<td style="text-align: right;">6.54 ns</td>
-<td style="text-align: right;">5.46 ns</td>
-<td style="text-align: right;">0.1354</td>
-<td style="text-align: right;">1424 B</td>
+<td style="text-align: right;">204.4 ns</td>
+<td style="text-align: right;">1.83 ns</td>
+<td style="text-align: right;">1.71 ns</td>
+<td style="text-align: right;">0.0219</td>
+<td style="text-align: right;">1.08 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple async subscribers</td>
-<td style="text-align: right;">5,734.0 ns</td>
-<td style="text-align: right;">23.99 ns</td>
-<td style="text-align: right;">22.44 ns</td>
-<td style="text-align: right;">0.4120</td>
-<td style="text-align: right;">4279 B</td>
+<td style="text-align: right;">1,027.4 ns</td>
+<td style="text-align: right;">15.70 ns</td>
+<td style="text-align: right;">15.42 ns</td>
+<td style="text-align: right;">0.0458</td>
+<td style="text-align: right;">2.24 KB</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync and async subscribers</td>
-<td style="text-align: right;">2,734.4 ns</td>
-<td style="text-align: right;">11.75 ns</td>
-<td style="text-align: right;">10.41 ns</td>
-<td style="text-align: right;">0.2708</td>
-<td style="text-align: right;">2835 B</td>
+<td style="text-align: right;">1,370.5 ns</td>
+<td style="text-align: right;">11.19 ns</td>
+<td style="text-align: right;">9.92 ns</td>
+<td style="text-align: right;">0.0610</td>
+<td style="text-align: right;">3.09 KB</td>
 </tr>
 </tbody>
 </table>
+<h4 id="comparison-v500-vs-v462">Comparison v5.0.0 vs. v4.6.2</h4>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th style="text-align: right;">Mean</th>
-<th style="text-align: right;">Error</th>
-<th style="text-align: right;">StdDev</th>
-<th style="text-align: right;">Gen0</th>
-<th style="text-align: right;">Allocated</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>'Publish with single sync subscriber'</td>
-<td style="text-align: right;">528.8 ns</td>
-<td style="text-align: right;">3.25 ns</td>
-<td style="text-align: right;">2.88 ns</td>
-<td style="text-align: right;">0.0858</td>
-<td style="text-align: right;">904 B</td>
-</tr>
-<tr>
-<td>'Publish with single async subscriber'</td>
-<td style="text-align: right;">1,592.1 ns</td>
-<td style="text-align: right;">19.88 ns</td>
-<td style="text-align: right;">18.59 ns</td>
-<td style="text-align: right;">0.1297</td>
-<td style="text-align: right;">1375 B</td>
-</tr>
-<tr>
-<td>'Publish with multiple sync subscribers'</td>
-<td style="text-align: right;">546.2 ns</td>
-<td style="text-align: right;">5.68 ns</td>
-<td style="text-align: right;">5.31 ns</td>
-<td style="text-align: right;">0.0858</td>
-<td style="text-align: right;">904 B</td>
-</tr>
-<tr>
-<td>'Publish with multiple async subscribers'</td>
-<td style="text-align: right;">1,657.0 ns</td>
-<td style="text-align: right;">25.14 ns</td>
-<td style="text-align: right;">23.52 ns</td>
-<td style="text-align: right;">0.1297</td>
-<td style="text-align: right;">1374 B</td>
-</tr>
-<tr>
-<td>'Publish with multiple sync and async subscribers'</td>
-<td style="text-align: right;">2,274.4 ns</td>
-<td style="text-align: right;">20.24 ns</td>
-<td style="text-align: right;">18.93 ns</td>
-<td style="text-align: right;">0.1717</td>
-<td style="text-align: right;">1807 B</td>
-</tr>
-<tr>
-<td>'PublishAsync with single sync subscriber'</td>
-<td style="text-align: right;">557.9 ns</td>
-<td style="text-align: right;">3.79 ns</td>
-<td style="text-align: right;">3.36 ns</td>
-<td style="text-align: right;">0.0858</td>
-<td style="text-align: right;">904 B</td>
-</tr>
-<tr>
-<td>'PublishAsync with single async subscriber'</td>
-<td style="text-align: right;">1,804.0 ns</td>
-<td style="text-align: right;">24.96 ns</td>
-<td style="text-align: right;">23.34 ns</td>
-<td style="text-align: right;">0.1965</td>
-<td style="text-align: right;">2062 B</td>
-</tr>
-<tr>
-<td>'PublishAsync with multiple sync subscribers'</td>
-<td style="text-align: right;">564.2 ns</td>
-<td style="text-align: right;">2.78 ns</td>
-<td style="text-align: right;">2.60 ns</td>
-<td style="text-align: right;">0.0858</td>
-<td style="text-align: right;">904 B</td>
-</tr>
-<tr>
-<td>'PublishAsync with multiple async subscribers'</td>
-<td style="text-align: right;">1,818.6 ns</td>
-<td style="text-align: right;">10.61 ns</td>
-<td style="text-align: right;">9.40 ns</td>
-<td style="text-align: right;">0.1965</td>
-<td style="text-align: right;">2062 B</td>
-</tr>
-<tr>
-<td>'PublishAsync with multiple sync and async subscribers'</td>
-<td style="text-align: right;">2,724.3 ns</td>
-<td style="text-align: right;">14.32 ns</td>
-<td style="text-align: right;">13.39 ns</td>
-<td style="text-align: right;">0.2747</td>
-<td style="text-align: right;">2892 B</td>
-</tr>
-</tbody>
-</table>
-<h4 id="comparison-v500-vs-v451">Comparison v5.0.0 vs. v4.5.1</h4>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th style="text-align: right;">Mean 4.5.1</th>
+<th style="text-align: right;">Mean 4.6.2</th>
 <th style="text-align: right;">Mean 5.0.0</th>
 <th style="text-align: right;">Mean Diff</th>
-<th style="text-align: right;">Allocated 4.5.1</th>
+<th style="text-align: right;">Allocated 4.6.2</th>
 <th style="text-align: right;">Allocated 5.0.0</th>
 <th style="text-align: right;">Allocated Diff</th>
 </tr>
@@ -394,122 +300,118 @@
 <tbody>
 <tr>
 <td>Publish with single sync subscriber</td>
-<td style="text-align: right;">3.482 us</td>
-<td style="text-align: right;">0.529 us</td>
-<td style="text-align: right;">-85 %</td>
-<td style="text-align: right;">10.49 KB</td>
-<td style="text-align: right;">0.904 KB</td>
-<td style="text-align: right;">-91 %</td>
-</tr>
-<tr>
-<td>Publish with single async subscriber</td>
-<td style="text-align: right;">5.229 us</td>
-<td style="text-align: right;">1.592 us</td>
-<td style="text-align: right;">-70 %</td>
-<td style="text-align: right;">11.40 KB</td>
-<td style="text-align: right;">1.375 KB</td>
-<td style="text-align: right;">-88 %</td>
-</tr>
-<tr>
-<td>Publish with multiple sync subscribers</td>
-<td style="text-align: right;">4.036 us</td>
-<td style="text-align: right;">0.546 us</td>
-<td style="text-align: right;">-86 %</td>
-<td style="text-align: right;">10.91 KB</td>
-<td style="text-align: right;">0.904 KB</td>
-<td style="text-align: right;">-92 %</td>
-</tr>
-<tr>
-<td>Publish with multiple async subscribers</td>
-<td style="text-align: right;">8.484 us</td>
-<td style="text-align: right;">1.657 us</td>
-<td style="text-align: right;">-80 %</td>
-<td style="text-align: right;">13.65 KB</td>
-<td style="text-align: right;">1.374 KB</td>
+<td style="text-align: right;">1.726 us</td>
+<td style="text-align: right;">0.196 us</td>
+<td style="text-align: right;">-89 %</td>
+<td style="text-align: right;">10.50 KB</td>
+<td style="text-align: right;">1.08 KB</td>
 <td style="text-align: right;">-90 %</td>
 </tr>
 <tr>
+<td>Publish with single async subscriber</td>
+<td style="text-align: right;">2.572 us</td>
+<td style="text-align: right;">0.844 us</td>
+<td style="text-align: right;">-67 %</td>
+<td style="text-align: right;">11.42 KB</td>
+<td style="text-align: right;">1.54 KB</td>
+<td style="text-align: right;">-87 %</td>
+</tr>
+<tr>
+<td>Publish with multiple sync subscribers</td>
+<td style="text-align: right;">1.868 us</td>
+<td style="text-align: right;">0.198 us</td>
+<td style="text-align: right;">-89 %</td>
+<td style="text-align: right;">10.75 KB</td>
+<td style="text-align: right;">1.08 KB</td>
+<td style="text-align: right;">-90 %</td>
+</tr>
+<tr>
+<td>Publish with multiple async subscribers</td>
+<td style="text-align: right;">4.317 us</td>
+<td style="text-align: right;">0.853 us</td>
+<td style="text-align: right;">-80 %</td>
+<td style="text-align: right;">13.45 KB</td>
+<td style="text-align: right;">1.54 KB</td>
+<td style="text-align: right;">-89 %</td>
+</tr>
+<tr>
 <td>Publish with multiple sync and async subscribers</td>
-<td style="text-align: right;">5.858 us</td>
-<td style="text-align: right;">2.274 us</td>
-<td style="text-align: right;">-61 %</td>
-<td style="text-align: right;">11.65 KB</td>
-<td style="text-align: right;">1.807 KB</td>
-<td style="text-align: right;">-85 %</td>
+<td style="text-align: right;">2.750 us</td>
+<td style="text-align: right;">1.038 us</td>
+<td style="text-align: right;">-62 %</td>
+<td style="text-align: right;">11.73 KB</td>
+<td style="text-align: right;">2.00 KB</td>
+<td style="text-align: right;">-83 %</td>
 </tr>
 <tr>
 <td>PublishAsync with single sync subscriber</td>
-<td style="text-align: right;">3.396 us</td>
-<td style="text-align: right;">0.557 us</td>
-<td style="text-align: right;">-84 %</td>
-<td style="text-align: right;">10.32 KB</td>
-<td style="text-align: right;">0.904 KB</td>
-<td style="text-align: right;">-91 %</td>
+<td style="text-align: right;">1.664 us</td>
+<td style="text-align: right;">0.205 us</td>
+<td style="text-align: right;">-88 %</td>
+<td style="text-align: right;">10.31 KB</td>
+<td style="text-align: right;">1.08 KB</td>
+<td style="text-align: right;">-90 %</td>
 </tr>
 <tr>
 <td>PublishAsync with single async subscriber</td>
-<td style="text-align: right;">5.861 us</td>
-<td style="text-align: right;">1.804 us</td>
-<td style="text-align: right;">-69 %</td>
-<td style="text-align: right;">11.11 KB</td>
-<td style="text-align: right;">2.062 KB</td>
-<td style="text-align: right;">-81 %</td>
+<td style="text-align: right;">2.508 us</td>
+<td style="text-align: right;">1.025 us</td>
+<td style="text-align: right;">-59 %</td>
+<td style="text-align: right;">11.05 KB</td>
+<td style="text-align: right;">2.24 KB</td>
+<td style="text-align: right;">-80 %</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync subscribers</td>
-<td style="text-align: right;">3.997 us</td>
-<td style="text-align: right;">0.564 us</td>
-<td style="text-align: right;">-86 %</td>
-<td style="text-align: right;">10.63 KB</td>
-<td style="text-align: right;">0.904 KB</td>
-<td style="text-align: right;">-91 %</td>
+<td style="text-align: right;">1.851 us</td>
+<td style="text-align: right;">0.204 us</td>
+<td style="text-align: right;">-89 %</td>
+<td style="text-align: right;">10.66 KB</td>
+<td style="text-align: right;">1.08 KB</td>
+<td style="text-align: right;">-90 %</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple async subscribers</td>
-<td style="text-align: right;">14.188 us</td>
-<td style="text-align: right;">1.818 us</td>
-<td style="text-align: right;">-87 %</td>
-<td style="text-align: right;">12.53 KB</td>
-<td style="text-align: right;">2.062 KB</td>
-<td style="text-align: right;">-84 %</td>
+<td style="text-align: right;">4.406 us</td>
+<td style="text-align: right;">1.027 us</td>
+<td style="text-align: right;">-77 %</td>
+<td style="text-align: right;">12.51 KB</td>
+<td style="text-align: right;">2.24 KB</td>
+<td style="text-align: right;">-82 %</td>
 </tr>
 <tr>
 <td>PublishAsync with multiple sync and async subscribers</td>
-<td style="text-align: right;">7.038 us</td>
-<td style="text-align: right;">2.724 us</td>
-<td style="text-align: right;">-61 %</td>
-<td style="text-align: right;">11.29 KB</td>
-<td style="text-align: right;">2.892 KB</td>
-<td style="text-align: right;">-74 %</td>
+<td style="text-align: right;">2.799 us</td>
+<td style="text-align: right;">1.371 us</td>
+<td style="text-align: right;">-51 %</td>
+<td style="text-align: right;">11.36 KB</td>
+<td style="text-align: right;">3.09 KB</td>
+<td style="text-align: right;">-73 %</td>
 </tr>
 </tbody>
 </table>
 <h3 id="kafka-producer">Kafka Producer</h3>
 <p>Publishing 1000 messages to Kafka (running in docker on the local machine) to a single topic using a single producer.</p>
-<h4 id="v451-1">v4.5.1</h4>
+<h4 id="v462-1">v4.6.2</h4>
 <table>
 <thead>
 <tr>
-<th>Method</th>
+<th>ethod</th>
 <th style="text-align: right;">Mean</th>
 <th style="text-align: right;">Error</th>
 <th style="text-align: right;">StdDev</th>
 <th style="text-align: right;">Ratio</th>
-<th style="text-align: right;">Gen0</th>
 <th style="text-align: right;">Allocated</th>
-<th style="text-align: right;">Alloc Ratio</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>PublishAsync inside foreach</td>
-<td style="text-align: right;">15.54 s</td>
-<td style="text-align: right;">0.007 s</td>
-<td style="text-align: right;">0.006 s</td>
+<td style="text-align: right;">15.68 s</td>
+<td style="text-align: right;">0.025 s</td>
+<td style="text-align: right;">0.024 s</td>
 <td style="text-align: right;">1.00</td>
-<td style="text-align: right;">2000.0000</td>
-<td style="text-align: right;">21.58 MB</td>
-<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">20.17 MB</td>
 </tr>
 </tbody>
 </table>
@@ -531,37 +433,37 @@
 <tbody>
 <tr>
 <td>PublishAsync inside foreach</td>
-<td style="text-align: right;">15,534.45 ms</td>
-<td style="text-align: right;">6.023 ms</td>
-<td style="text-align: right;">5.634 ms</td>
+<td style="text-align: right;">15,603.73 ms</td>
+<td style="text-align: right;">15.956 ms</td>
+<td style="text-align: right;">12.457 ms</td>
 <td style="text-align: right;">1.000</td>
 <td style="text-align: right;">-</td>
 <td style="text-align: right;">-</td>
-<td style="text-align: right;">7.24 MB</td>
+<td style="text-align: right;">6.31 MB</td>
 <td style="text-align: right;">1.00</td>
 </tr>
 <tr>
 <td>WrapAndPublishBatchAsync</td>
-<td style="text-align: right;">15.61 ms</td>
-<td style="text-align: right;">0.207 ms</td>
-<td style="text-align: right;">0.193 ms</td>
+<td style="text-align: right;">15.59 ms</td>
+<td style="text-align: right;">0.139 ms</td>
+<td style="text-align: right;">0.123 ms</td>
 <td style="text-align: right;">0.001</td>
-<td style="text-align: right;">421.8750</td>
-<td style="text-align: right;">281.2500</td>
-<td style="text-align: right;">4.32 MB</td>
-<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">62.5000</td>
+<td style="text-align: right;">31.2500</td>
+<td style="text-align: right;">3.43 MB</td>
+<td style="text-align: right;">0.54</td>
 </tr>
 </tbody>
 </table>
-<h4 id="comparison-v500-vs-v451-1">Comparison v5.0.0 vs. v4.5.1</h4>
+<h4 id="comparison-v500-vs-v462-1">Comparison v5.0.0 vs. v4.6.2</h4>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th style="text-align: right;">Mean 4.5.1</th>
+<th style="text-align: right;">Mean 4.6.2</th>
 <th style="text-align: right;">Mean 5.0.0</th>
 <th style="text-align: right;">Mean Diff</th>
-<th style="text-align: right;">Allocated 4.5.1</th>
+<th style="text-align: right;">Allocated 4.6.2</th>
 <th style="text-align: right;">Allocated 5.0.0</th>
 <th style="text-align: right;">Allocated Diff</th>
 </tr>
@@ -569,27 +471,25 @@
 <tbody>
 <tr>
 <td>PublishAsync inside foreach</td>
-<td style="text-align: right;">15.54 s</td>
-<td style="text-align: right;">15.53 s</td>
-<td style="text-align: right;">0 %</td>
-<td style="text-align: right;">21.58 MB</td>
-<td style="text-align: right;">7.24 MB</td>
-<td style="text-align: right;">-66 %</td>
+<td style="text-align: right;">15.68 s</td>
+<td style="text-align: right;">15.60 s</td>
+<td style="text-align: right;">-</td>
+<td style="text-align: right;">20.17 MB</td>
+<td style="text-align: right;">6.31 MB</td>
+<td style="text-align: right;">-69 %</td>
 </tr>
 <tr>
 <td>WrapAndPublishBatchAsync</td>
-<td style="text-align: right;">*15.54 s</td>
+<td style="text-align: right;">*15.68 s</td>
 <td style="text-align: right;">0.02 s</td>
 <td style="text-align: right;">-99.9 %</td>
-<td style="text-align: right;">21.58 MB</td>
-<td style="text-align: right;">4.32 MB</td>
-<td style="text-align: right;">-80 %</td>
+<td style="text-align: right;">20.17 MB</td>
+<td style="text-align: right;">3.43 MB</td>
+<td style="text-align: right;">-83 %</td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li><code>WrapAndPublishBatchAsync</code> did not exist in v4.5.1 so it's compared against <code>PublishAsync</code> inside a <code>foreach</code>, being it the only straightforward possibility in v4.5.1.</li>
-</ul>
+<p>* <code>WrapAndPublishBatchAsync</code> did not exist in v4.6.2 so it's compared against <code>PublishAsync</code> inside a <code>foreach</code>, being it the only straightforward possibility in v4.6.2.</p>
 </article>
           </div>
 
@@ -620,7 +520,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

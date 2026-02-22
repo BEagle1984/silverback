@@ -86,7 +86,7 @@
             <article class="content wrap" id="_content" data-uid="broker">
 <h1 id="connecting-to-a-message-broker">Connecting to a Message Broker</h1>
 
-<p>To connect Silverback to a message broker, you need to reference the appropriate integration package.</p>
+<p>To connect Silverback to a message broker, reference the appropriate integration package.</p>
 <div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
@@ -98,12 +98,12 @@
 </ul>
 <section id="tabpanel_1_kafka" role="tabpanel" data-tab="kafka">
 
-<pre><code class="lang-poweshell">dotnet add package Silverback.Integration.Kafka
+<pre><code class="lang-powershell">dotnet add package Silverback.Integration.Kafka
 </code></pre>
 </section>
 <section id="tabpanel_1_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
 
-<pre><code class="lang-poweshell">dotnet add package Silverback.Integration.Mqtt
+<pre><code class="lang-powershell">dotnet add package Silverback.Integration.MQTT
 </code></pre>
 </section>
 </div>
@@ -362,13 +362,13 @@ The same applies to MQTT clients and topics.</p>
 <h5>Important</h5>
 <p>If your application is not using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>), you must connect the clients manually as shown above.</p>
 </div>
-<h2 id="graceful-shutdown">Graceful shutdown</h2>
+<h2 id="graceful-shutdown">Graceful Shutdown</h2>
 <p>Silverback automatically disconnects consumers and producers gracefully when the application stops. This ensures consistency and is performed regardless of the connection mode.</p>
 <div class="IMPORTANT">
 <h5>Important</h5>
 <p>If your application is not using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>), you must take care of the clients' graceful shutdown manually.</p>
 </div>
-<h2 id="consumers-management">Consumers Management</h2>
+<h2 id="consumer-management">Consumer Management</h2>
 <p>You can monitor and control consumers programmatically.</p>
 <p>The following example demonstrates how to monitor the total number of consumed messages, stop and start a consumer to temporarily pause it, and restart any consumers that have been disconnected due to an unhandled exception during message processing.</p>
 <pre><code class="lang-csharp">public class ConsumerManagementService
@@ -454,7 +454,7 @@ The same applies to MQTT clients and topics.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

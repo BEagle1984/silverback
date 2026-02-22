@@ -110,25 +110,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Consuming.html">Consuming</a>.<a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.html">ErrorHandling</a></h6>
@@ -137,15 +128,51 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public abstract record ErrorPolicyBase : IErrorPolicy, IEquatable&lt;ErrorPolicyBase&gt;</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__ctor_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__ctor" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.#ctor">ErrorPolicyBase()</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected ErrorPolicyBase()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__ctor_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase__ctor_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.#ctor(Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase)">ErrorPolicyBase(ErrorPolicyBase)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected ErrorPolicyBase(ErrorPolicyBase original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ApplyRule.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ApplyRule%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L33">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ApplyRule_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ApplyRule*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ApplyRule" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ApplyRule">ApplyRule</h4>
   <div class="markdown level1 summary"><p>Gets the custom apply rule function.</p>
@@ -170,13 +197,34 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ExcludedExceptions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ExcludedExceptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L18">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_EqualityContract_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_EqualityContract" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ExcludedExceptions_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ExcludedExceptions*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ExcludedExceptions" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ExcludedExceptions">ExcludedExceptions</h4>
   <div class="markdown level1 summary"><p>Gets the collection of exception types this policy doesn't have to be applied to.</p>
@@ -201,13 +249,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_IncludedExceptions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.IncludedExceptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L23">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_IncludedExceptions_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.IncludedExceptions*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_IncludedExceptions" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.IncludedExceptions">IncludedExceptions</h4>
   <div class="markdown level1 summary"><p>Gets the collection of exception types this policy have to be applied to.</p>
@@ -232,13 +275,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MaxFailedAttempts%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L28">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MaxFailedAttempts*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MaxFailedAttempts">MaxFailedAttempts</h4>
   <div class="markdown level1 summary"><p>Gets the number of times this policy should be applied to the same message in case of multiple failed attempts.</p>
@@ -263,13 +301,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MessageToPublishFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MessageToPublishFactory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L38">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MessageToPublishFactory_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MessageToPublishFactory*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_MessageToPublishFactory" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.MessageToPublishFactory">MessageToPublishFactory</h4>
   <div class="markdown level1 summary"><p>Gets the factory that builds the message to be published after the policy is applied.</p>
@@ -296,13 +329,8 @@
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Build(System.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L41">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Build_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Build*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Build(System.IServiceProvider)">Build(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns the actual error policy implementation, built using the provided
@@ -348,13 +376,8 @@ error.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_BuildCore_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.BuildCore(System.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L44">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_BuildCore_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.BuildCore*"></a>
   <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_BuildCore_System_IServiceProvider_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.BuildCore(System.IServiceProvider)">BuildCore(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns the actual error policy implementation, built using the provided
@@ -400,6 +423,291 @@ error.</p>
       </tr>
     </tbody>
   </table>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Equals*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Equals(Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase)">Equals(ErrorPolicyBase?)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(ErrorPolicyBase? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Equals*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Equals_System_Object_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_GetHashCode_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_GetHashCode" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_PrintMembers_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ToString_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ToString*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_ToString" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a></div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_op_Equality_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_op_Equality_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.op_Equality(Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase,Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase)">operator ==(ErrorPolicyBase?, ErrorPolicyBase?)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(ErrorPolicyBase? left, ErrorPolicyBase? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_op_Inequality_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_op_Inequality_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase_" data-uid="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.op_Inequality(Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase,Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase)">operator !=(ErrorPolicyBase?, ErrorPolicyBase?)</h4>
+  <div class="markdown level1 summary"><p>Builds the error policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(ErrorPolicyBase? left, ErrorPolicyBase? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>
@@ -414,12 +722,6 @@ error.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Consuming_ErrorHandling_ErrorPolicyBase.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Consuming/ErrorHandling/ErrorPolicyBase.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -440,7 +742,7 @@ error.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

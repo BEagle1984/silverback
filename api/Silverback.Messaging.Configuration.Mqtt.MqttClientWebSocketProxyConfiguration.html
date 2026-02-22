@@ -106,25 +106,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
@@ -133,15 +124,51 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public record MqttClientWebSocketProxyConfiguration : IValidatableSettings, IEquatable&lt;MqttClientWebSocketProxyConfiguration&gt;</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__ctor" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.#ctor">MqttClientWebSocketProxyConfiguration()</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientWebSocketProxyConfiguration()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration__ctor_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration)">MqttClientWebSocketProxyConfiguration(MqttClientWebSocketProxyConfiguration)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected MqttClientWebSocketProxyConfiguration(MqttClientWebSocketProxyConfiguration original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Address.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Address%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L370">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Address_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Address*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Address" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Address">Address</h4>
   <div class="markdown level1 summary"><p>Gets the proxy address.</p>
@@ -166,13 +193,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassList.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassList%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L375">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassList_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassList*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassList" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassList">BypassList</h4>
   <div class="markdown level1 summary"><p>Gets the bypass list.</p>
@@ -197,13 +219,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassOnLocal.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassOnLocal%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L380">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassOnLocal_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassOnLocal*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_BypassOnLocal" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.BypassOnLocal">BypassOnLocal</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the proxy should be bypassed for local calls.</p>
@@ -228,13 +245,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Domain.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Domain%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L385">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Domain_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Domain*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Domain" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Domain">Domain</h4>
   <div class="markdown level1 summary"><p>Gets proxy server domain.</p>
@@ -259,13 +271,34 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Password.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Password%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L390">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_EqualityContract_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_EqualityContract" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Password_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Password*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Password" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Password">Password</h4>
   <div class="markdown level1 summary"><p>Gets the password to be used to authenticate with the proxy server.</p>
@@ -290,13 +323,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_UseDefaultCredentials.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.UseDefaultCredentials%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L395">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_UseDefaultCredentials_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.UseDefaultCredentials*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_UseDefaultCredentials" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.UseDefaultCredentials">UseDefaultCredentials</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the default (system) credentials should be used.</p>
@@ -321,13 +349,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Username.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Username%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L400">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Username_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Username*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Username" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Username">Username</h4>
   <div class="markdown level1 summary"><p>Gets the username to be used to authenticate with the proxy server.</p>
@@ -354,13 +377,195 @@
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Validate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientWebSocketProxyConfiguration.cs/#L15">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Equals_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Equals_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Equals(Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration)">Equals(MqttClientWebSocketProxyConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(MqttClientWebSocketProxyConfiguration? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Equals_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Equals_System_Object_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_GetHashCode_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_GetHashCode" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_PrintMembers_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_ToString_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.ToString*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_ToString" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a></div>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Validate_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Validate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Validate" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
@@ -370,6 +575,104 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public void Validate()</code></pre>
   </div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_op_Equality_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_op_Equality_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.op_Equality(Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration,Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration)">operator ==(MqttClientWebSocketProxyConfiguration?, MqttClientWebSocketProxyConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(MqttClientWebSocketProxyConfiguration? left, MqttClientWebSocketProxyConfiguration? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_op_Inequality_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_op_Inequality_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.op_Inequality(Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration,Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration)">operator !=(MqttClientWebSocketProxyConfiguration?, MqttClientWebSocketProxyConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The proxy configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(MqttClientWebSocketProxyConfiguration? left, MqttClientWebSocketProxyConfiguration? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration.html">MqttClientWebSocketProxyConfiguration</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a>
@@ -384,12 +687,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientWebSocketProxyConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientWebSocketProxyConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/_autogenerated.cs/#L361" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -410,7 +707,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

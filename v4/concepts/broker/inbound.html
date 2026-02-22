@@ -1,36 +1,36 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Inbound Endpoint | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Inbound Endpoint | Silverback ">
-    <meta name="generator" content="docfx 2.59.4.0">
-    
+    <meta name="generator" content="docfx ">
   
+
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-  
+
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+  
+  <meta property="docfx:rel" content="../../">
+  
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -96,16 +96,16 @@
 <h2 id="apache-kafka">Apache Kafka</h2>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka">Silverback.Integration.Kafka</a> and is used to declare an inbound endpoint connected to Apache Kafka.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-consumer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-consumer-fluent" data-tab="kafka-consumer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
+<a href="#tabpanel_1_kafka-consumer-fluent" role="tab" aria-controls="tabpanel_1_kafka-consumer-fluent" data-tab="kafka-consumer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-consumer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-consumer-legacy" data-tab="kafka-consumer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_1_kafka-consumer-legacy" role="tab" aria-controls="tabpanel_1_kafka-consumer-legacy" data-tab="kafka-consumer-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_kafka-consumer-fluent" role="tabpanel" data-tab="kafka-consumer-fluent">
+<section id="tabpanel_1_kafka-consumer-fluent" role="tabpanel" data-tab="kafka-consumer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -127,7 +127,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_kafka-consumer-legacy" role="tabpanel" data-tab="kafka-consumer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_kafka-consumer-legacy" role="tabpanel" data-tab="kafka-consumer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -162,16 +162,16 @@
 <h2 id="mqtt">MQTT</h2>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a> is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.MQTT">Silverback.Integration.MQTT</a> and is used to declare an inbound endpoint connected to an MQTT broker.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<div class="tabGroup" id="tabgroup_2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_mqtt-consumer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_mqtt-consumer-fluent" data-tab="mqtt-consumer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
+<a href="#tabpanel_2_mqtt-consumer-fluent" role="tab" aria-controls="tabpanel_2_mqtt-consumer-fluent" data-tab="mqtt-consumer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_mqtt-consumer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_mqtt-consumer-legacy" data-tab="mqtt-consumer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_2_mqtt-consumer-legacy" role="tab" aria-controls="tabpanel_2_mqtt-consumer-legacy" data-tab="mqtt-consumer-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-1_mqtt-consumer-fluent" role="tabpanel" data-tab="mqtt-consumer-fluent">
+<section id="tabpanel_2_mqtt-consumer-fluent" role="tabpanel" data-tab="mqtt-consumer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -194,7 +194,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_mqtt-consumer-legacy" role="tabpanel" data-tab="mqtt-consumer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_2_mqtt-consumer-legacy" role="tabpanel" data-tab="mqtt-consumer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -291,16 +291,16 @@
 <li><a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></li>
 <li><a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyChain.html">ErrorPolicyChain</a></li>
 </ul>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
+<div class="tabGroup" id="tabgroup_3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_error-handling-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_error-handling-fluent" data-tab="error-handling-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_3_error-handling-fluent" role="tab" aria-controls="tabpanel_3_error-handling-fluent" data-tab="error-handling-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_error-handling-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_error-handling-legacy" data-tab="error-handling-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_3_error-handling-legacy" role="tab" aria-controls="tabpanel_3_error-handling-legacy" data-tab="error-handling-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-2_error-handling-fluent" role="tabpanel" data-tab="error-handling-fluent">
+<section id="tabpanel_3_error-handling-fluent" role="tabpanel" data-tab="error-handling-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -324,7 +324,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_error-handling-legacy" role="tabpanel" data-tab="error-handling-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_3_error-handling-legacy" role="tabpanel" data-tab="error-handling-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -399,16 +399,16 @@ Some message broker implementations might transparently cope with the missing me
 </code></pre>
 <h3 id="publishing-events">Publishing events</h3>
 <p>Messages can be published when a policy is applied, in order to execute custom code.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
+<div class="tabGroup" id="tabgroup_4">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_eventhandler-configurator" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_eventhandler-configurator" data-tab="eventhandler-configurator" tabindex="0" aria-selected="true">EndpointsConfigurator</a>
+<a href="#tabpanel_4_eventhandler-configurator" role="tab" aria-controls="tabpanel_4_eventhandler-configurator" data-tab="eventhandler-configurator" tabindex="0" aria-selected="true">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_eventhandler" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_eventhandler" data-tab="eventhandler" tabindex="-1">Event Handler</a>
+<a href="#tabpanel_4_eventhandler" role="tab" aria-controls="tabpanel_4_eventhandler" data-tab="eventhandler" tabindex="-1">Event Handler</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-3_eventhandler-configurator" role="tabpanel" data-tab="eventhandler-configurator">
+<section id="tabpanel_4_eventhandler-configurator" role="tabpanel" data-tab="eventhandler-configurator">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -432,7 +432,7 @@ Some message broker implementations might transparently cope with the missing me
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-3_eventhandler" role="tabpanel" data-tab="eventhandler" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_4_eventhandler" role="tabpanel" data-tab="eventhandler" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public void OnProcessingFailed(ProcessingFailedEvent @event)
 {
@@ -451,19 +451,19 @@ Some message broker implementations might transparently cope with the missing me
 </figure>
 <p>Refer to the <a class="xref" href="../../api/Silverback.Messaging.Sequences.Batch.BatchSettings.html">BatchSettings</a> documentation for details about the configuration.</p>
 <p>The batch can be subscribed either as <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a>, <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. See also <a class="xref" href="streaming.html">Streaming</a> for details.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-4">
+<div class="tabGroup" id="tabgroup_5">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_batch-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_batch-fluent" data-tab="batch-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_5_batch-fluent" role="tab" aria-controls="tabpanel_5_batch-fluent" data-tab="batch-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_batch-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_batch-legacy" data-tab="batch-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_5_batch-legacy" role="tab" aria-controls="tabpanel_5_batch-legacy" data-tab="batch-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_batch-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_batch-subscriber" data-tab="batch-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_5_batch-subscriber" role="tab" aria-controls="tabpanel_5_batch-subscriber" data-tab="batch-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-4_batch-fluent" role="tabpanel" data-tab="batch-fluent">
+<section id="tabpanel_5_batch-fluent" role="tabpanel" data-tab="batch-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -484,7 +484,7 @@ Some message broker implementations might transparently cope with the missing me
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-4_batch-legacy" role="tabpanel" data-tab="batch-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_5_batch-legacy" role="tabpanel" data-tab="batch-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -507,7 +507,7 @@ Some message broker implementations might transparently cope with the missing me
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-4_batch-subscriber" role="tabpanel" data-tab="batch-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_5_batch-subscriber" role="tabpanel" data-tab="batch-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class InventoryService
 {
@@ -548,19 +548,19 @@ Some message broker implementations might transparently cope with the missing me
 <h5>Note</h5>
 <p>The <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package is also required and the <code>DbContext</code> must include a <code>DbSet</code> of <a class="xref" href="../../api/Silverback.Database.Model.StoredOffset.html">StoredOffset</a>. See also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>.</p>
 </div>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-5">
+<div class="tabGroup" id="tabgroup_6">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-5_offsetstore-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-5_offsetstore-startup" data-tab="offsetstore-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_6_offsetstore-startup" role="tab" aria-controls="tabpanel_6_offsetstore-startup" data-tab="offsetstore-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-5_offsetstore-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-5_offsetstore-fluent" data-tab="offsetstore-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_6_offsetstore-fluent" role="tab" aria-controls="tabpanel_6_offsetstore-fluent" data-tab="offsetstore-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-5_offsetstore-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-5_offsetstore-legacy" data-tab="offsetstore-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_6_offsetstore-legacy" role="tab" aria-controls="tabpanel_6_offsetstore-legacy" data-tab="offsetstore-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-5_offsetstore-startup" role="tabpanel" data-tab="offsetstore-startup">
+<section id="tabpanel_6_offsetstore-startup" role="tabpanel" data-tab="offsetstore-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -577,7 +577,7 @@ Some message broker implementations might transparently cope with the missing me
 } 
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-5_offsetstore-fluent" role="tabpanel" data-tab="offsetstore-fluent" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_6_offsetstore-fluent" role="tabpanel" data-tab="offsetstore-fluent" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -598,7 +598,7 @@ Some message broker implementations might transparently cope with the missing me
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-5_offsetstore-legacy" role="tabpanel" data-tab="offsetstore-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_6_offsetstore-legacy" role="tabpanel" data-tab="offsetstore-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -628,19 +628,19 @@ Some message broker implementations might transparently cope with the missing me
 <h5>Note</h5>
 <p>The <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package is also required and the <code>DbContext</code> must include a <code>DbSet</code> of <a class="xref" href="../../api/Silverback.Database.Model.InboundLogEntry.html">InboundLogEntry</a>. See also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>.</p>
 </div>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-6">
+<div class="tabGroup" id="tabgroup_7">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-6_log-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-6_log-startup" data-tab="log-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_7_log-startup" role="tab" aria-controls="tabpanel_7_log-startup" data-tab="log-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-6_log-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-6_log-fluent" data-tab="log-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_7_log-fluent" role="tab" aria-controls="tabpanel_7_log-fluent" data-tab="log-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-6_log-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-6_log-legacy" data-tab="log-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_7_log-legacy" role="tab" aria-controls="tabpanel_7_log-legacy" data-tab="log-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-6_log-startup" role="tabpanel" data-tab="log-startup">
+<section id="tabpanel_7_log-startup" role="tabpanel" data-tab="log-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -657,7 +657,7 @@ Some message broker implementations might transparently cope with the missing me
 } 
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-6_log-fluent" role="tabpanel" data-tab="log-fluent" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_7_log-fluent" role="tabpanel" data-tab="log-fluent" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -678,7 +678,7 @@ Some message broker implementations might transparently cope with the missing me
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-6_log-legacy" role="tabpanel" data-tab="log-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_7_log-legacy" role="tabpanel" data-tab="log-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -720,7 +720,7 @@ Some message broker implementations might transparently cope with the missing me
 </ul>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -737,7 +737,7 @@ Some message broker implementations might transparently cope with the missing me
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -748,13 +748,13 @@ Some message broker implementations might transparently cope with the missing me
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-            © 2020 Sergio Aquilini
-            
+      © 2020 Sergio Aquilini
+      
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>

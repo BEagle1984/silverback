@@ -96,13 +96,15 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></div>
-    <div class="level2"><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a></div>
-    <div class="level3"><span class="xref">SymmetricEncryptionSettings</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a></div>
+    <div class="level2"><span class="xref">SymmetricEncryptionSettings</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a>&gt;</div>
+    <div><a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a></div>
+    <div><a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a>&gt;</div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -128,55 +130,106 @@
       <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_PaddingMode">SymmetricEncryptionSettingsBase.PaddingMode</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Validate">SymmetricEncryptionSettingsBase.Validate()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Encryption.html">Encryption</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public class SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase, IValidatableEndpointSettings</code></pre>
+    <pre><code class="lang- hljs">public record SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase, IEquatable&lt;SymmetricEncryptionSettingsBase&gt;, IEncryptionSettings, IValidatableSettings, IEquatable&lt;SymmetricEncryptionSettings&gt;</code></pre>
   </div>
-  <h3 id="properties">Properties
+  <h3 id="constructors">Constructors
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L18">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier">KeyIdentifier</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the key identifier to be sent in the header (see
-<a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId">EncryptionKeyId</a>). It will be used on the consumer side to
-determine the correct key to be used to decrypt the message.</p>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings__ctor_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings__ctor" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.#ctor">SymmetricEncryptionSettings()</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public string? KeyIdentifier { get; set; }</code></pre>
+    <pre><code class="lang- hljs">public SymmetricEncryptionSettings()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings__ctor_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings__ctor_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.#ctor(Silverback.Messaging.Encryption.SymmetricEncryptionSettings)">SymmetricEncryptionSettings(SymmetricEncryptionSettings)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected SymmetricEncryptionSettings(SymmetricEncryptionSettings original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_EqualityContract_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_EqualityContract" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_EqualityContract">SymmetricEncryptionSettingsBase.EqualityContract</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier">KeyIdentifier</h4>
+  <div class="markdown level1 summary"><p>Gets the key identifier to be sent in the header (see <a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId">EncryptionKeyId</a>). It will be used on
+the consumer side to determine the correct key to be used to decrypt the message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public string? KeyIdentifier { get; init; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -193,9 +246,365 @@ determine the correct key to be used to decrypt the message.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals(Silverback.Messaging.Encryption.SymmetricEncryptionSettings)">Equals(SymmetricEncryptionSettings?)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(SymmetricEncryptionSettings? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals(Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase)">Equals(SymmetricEncryptionSettingsBase?)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override sealed bool Equals(SymmetricEncryptionSettingsBase? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Equals_Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_">SymmetricEncryptionSettingsBase.Equals(SymmetricEncryptionSettingsBase?)</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Equals_System_Object_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Equals_System_Object_">SymmetricEncryptionSettingsBase.Equals(object?)</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_GetHashCode_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_GetHashCode" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_GetHashCode">SymmetricEncryptionSettingsBase.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PrintMembers_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_PrintMembers_System_Text_StringBuilder_">SymmetricEncryptionSettingsBase.PrintMembers(StringBuilder)</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_ToString_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.ToString*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_ToString" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_ToString">SymmetricEncryptionSettingsBase.ToString()</a></div>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate">Validate()</h4>
+  <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override void Validate()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Validate">SymmetricEncryptionSettingsBase.Validate()</a></div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_op_Equality_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_op_Equality_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.op_Equality(Silverback.Messaging.Encryption.SymmetricEncryptionSettings,Silverback.Messaging.Encryption.SymmetricEncryptionSettings)">operator ==(SymmetricEncryptionSettings?, SymmetricEncryptionSettings?)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(SymmetricEncryptionSettings? left, SymmetricEncryptionSettings? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_op_Inequality_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_op_Inequality_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.op_Inequality(Silverback.Messaging.Encryption.SymmetricEncryptionSettings,Silverback.Messaging.Encryption.SymmetricEncryptionSettings)">operator !=(SymmetricEncryptionSettings?, SymmetricEncryptionSettings?)</h4>
+  <div class="markdown level1 summary"><p>The encryption settings used to encrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(SymmetricEncryptionSettings? left, SymmetricEncryptionSettings? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
   </div>
 </article>
           </div>
@@ -204,12 +613,6 @@ determine the correct key to be used to decrypt the message.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L11" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -230,7 +633,7 @@ determine the correct key to be used to decrypt the message.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

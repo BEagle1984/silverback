@@ -90,32 +90,27 @@
 
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback" class="text-break">Interface IKafkaPartitionsAssignedCallback
 </h1>
-  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_KafkaConsumer_">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, KafkaConsumer)</a> event handler.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_IKafkaConsumer_">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, IKafkaConsumer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Callbacks</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IKafkaPartitionsAssignedCallback : IBrokerCallback</code></pre>
+    <pre><code class="lang- hljs">public interface IKafkaPartitionsAssignedCallback : IBrokerClientCallback</code></pre>
   </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned(System.Collections.Generic.IReadOnlyCollection%7BConfluent.Kafka.TopicPartition%7D%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs/#L37">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned(System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},Silverback.Messaging.Broker.KafkaConsumer)">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, KafkaConsumer)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_IKafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned(System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},Silverback.Messaging.Broker.IKafkaConsumer)">OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, IKafkaConsumer)</h4>
   <div class="markdown level1 summary"><p>Called when a new consumer group partition assignment has been received by the consumer.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">IEnumerable&lt;TopicPartitionOffset&gt;? OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt; topicPartitions, KafkaConsumer consumer)</code></pre>
+    <pre><code class="lang- hljs">IEnumerable&lt;TopicPartitionOffset&gt;? OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt; topicPartitions, IKafkaConsumer consumer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -134,7 +129,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IKafkaConsumer.html">IKafkaConsumer</a></td>
         <td><span class="parametername">consumer</span></td>
         <td><p>The related consumer instance.</p>
 </td>
@@ -153,17 +148,17 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TopicPartitionOffset</span>&gt;</td>
         <td><p>
-        Optionally returns the actual partitions to consume from and start offsets are specified by the
-        return value of the this set of partitions is not required to match the assignment provided by the
-        consumer group, but typically will. Partition offsets may be a specific offset, or special value (
-        <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
-        committed offset for each partition, or if there is no committed offset, in accordance with the
-        <code>auto.offset.reset</code> configuration property.
-    </p>
+    Optionally returns the actual partitions to consume from and start offsets are specified by the
+    return value of the this set of partitions is not required to match the assignment provided by the
+    consumer group, but typically will. Partition offsets may be a specific offset, or special value (
+    <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
+    committed offset for each partition, or if there is no committed offset, in accordance with the
+    <code>auto.offset.reset</code> configuration property.
+</p>
 <p>
-        When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
-        considered <code>Unset</code>.
-    </p>
+    When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
+    considered <code>Unset</code>.
+</p>
 </td>
       </tr>
     </tbody>
@@ -175,12 +170,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs/#L12" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -201,7 +190,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -86,7 +86,26 @@
             <article class="content wrap" id="_content" data-uid="consuming-tracing">
 <h1 id="distributed-tracing-and-consumers">Distributed Tracing and Consumers</h1>
 
-<p><em>...coming soon...</em></p>
+<p>In .NET, distributed tracing is built around the concept of <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a>, which represents a unit of work in the system. When your application processes an incoming request (e.g. an HTTP call) or handles an incoming message from a broker, an <code>Activity</code> can be started to capture timing information and correlation context. This enables end-to-end traceability across services and components.</p>
+<p>When trace context is propagated, the .NET runtime and ASP.NET Core follow the <a href="https://www.w3.org/TR/trace-context/">W3C Trace Context specification</a> and use standard headers such as <code>traceparent</code> and <code>tracestate</code>, plus optional baggage to enrich the trace.</p>
+<p>Similarly, Silverback makes consuming traced messages a seamless experience. If the incoming message contains a trace context, Silverback automatically extracts it and continues the distributed trace when invoking your message handler. This means that:</p>
+<ul>
+<li>The current <code>Activity</code> is created/continued using the incoming <code>traceparent</code> and <code>tracestate</code> values.</li>
+<li>Any propagated baggage is restored so it’s available while processing the message (depending on the transport).</li>
+<li>Any additional work performed while handling the message (database calls, outbound HTTP calls, producing new messages, etc.) naturally becomes part of the same trace.</li>
+</ul>
+<p>In other words, if your producers propagate tracing context (which Silverback also does automatically), consumers don’t require any special code: the trace simply flows through your message handling pipeline.</p>
+<p>[!Important]</p>
+<blockquote>
+<p>This works out of the box with Kafka and MQTT 5 (leveraging user properties), while previous MQTT versions don't support custom headers and therefore can't propagate the trace context.</p>
+</blockquote>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../default-headers.html">Default Headers</a> guide</li>
+<li><a class="xref" href="../producing/tracing.html">Distributed Tracing and Producers</a> guide</li>
+<li><a href="https://www.w3.org/TR/trace-context/">Distributed Tracing</a> specification</li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> class documentation</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +136,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

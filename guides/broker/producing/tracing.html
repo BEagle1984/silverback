@@ -86,7 +86,25 @@
             <article class="content wrap" id="_content" data-uid="producing-tracing">
 <h1 id="distributed-tracing-and-producers">Distributed Tracing and Producers</h1>
 
-<p><em>...coming soon...</em></p>
+<p>In .NET, distributed tracing is built around the concept of <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a>, which represents a unit of work in the system. When an application handles a request or performs a specific operation, an <code>Activity</code> is started to capture timing information and correlation context. This enables end-to-end traceability across services and components.</p>
+<p>When propagating requests, the .NET runtime and ASP.NET Core automatically forward the current trace context via standard headers such as <code>traceparent</code> and <code>tracestate</code>. For example, when using <code>HttpClient</code>, these headers are automatically added to outgoing HTTP requests, ensuring the downstream services can continue the trace.</p>
+<p>Similarly, Silverback ensures that the current tracing context is propagated when producing messages. This means that:</p>
+<ul>
+<li>The <code>traceparent</code> and <code>tracestate</code> headers are set to maintain compatibility with the <a href="https://www.w3.org/TR/trace-context/">W3C Trace Context specification</a>.</li>
+<li>Any baggage (key-value pairs used for additional metadata) is also forwarded in the <code>tracebaggage</code> header, depending on the transport.</li>
+</ul>
+<p>This transparent propagation allows all downstream consumers to continue the trace and provide full observability of the system.</p>
+<p>[!Important]</p>
+<blockquote>
+<p>This works out of the box with Kafka and MQTT 5 (leveraging user properties), while previous MQTT versions don't support custom headers and therefore can't propagate the trace context.</p>
+</blockquote>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../default-headers.html">Default Headers</a> guide</li>
+<li><a class="xref" href="../consuming/tracing.html">Distributed Tracing and Consumers</a> guide</li>
+<li><a href="https://www.w3.org/TR/trace-context/">Distributed Tracing</a> specification</li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> class documentation</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +135,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

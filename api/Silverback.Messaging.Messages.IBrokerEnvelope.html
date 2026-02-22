@@ -99,16 +99,13 @@
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_Headers">IRawBrokerEnvelope.Headers</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_Endpoint">IRawBrokerEnvelope.Endpoint</a>
-    </div>
-    <div>
       <a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html#Silverback_Messaging_Messages_IRawBrokerEnvelope_RawMessage">IRawBrokerEnvelope.RawMessage</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_AutoUnwrap">IEnvelope.AutoUnwrap</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_Message">IEnvelope.Message</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_Message">IEnvelope.Message</a>
+      <a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html#Silverback_Messaging_Messages_IEnvelope_MessageType">IEnvelope.MessageType</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Messages.html">Messages</a></h6>
@@ -117,6 +114,36 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public interface IBrokerEnvelope : IRawBrokerEnvelope, IEnvelope</code></pre>
   </div>
+  <h3 id="properties">Properties
+</h3>
+
+
+  <a id="Silverback_Messaging_Messages_IBrokerEnvelope_IsTombstone_" data-uid="Silverback.Messaging.Messages.IBrokerEnvelope.IsTombstone*"></a>
+  <h4 id="Silverback_Messaging_Messages_IBrokerEnvelope_IsTombstone" data-uid="Silverback.Messaging.Messages.IBrokerEnvelope.IsTombstone">IsTombstone</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the message is a tombstone (i.e. it's just a marker to indicate that the message with the same
+key has been deleted).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">bool IsTombstone { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><p>A value indicating whether the message is a tombstone.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
 
@@ -124,12 +151,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_IBrokerEnvelope.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.IBrokerEnvelope%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Messages/IBrokerEnvelope.cs/#L9" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -150,7 +171,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

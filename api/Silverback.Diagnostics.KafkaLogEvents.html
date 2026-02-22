@@ -102,25 +102,25 @@ Silverback.Integration.Kafka package.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Diagnostics.html">Diagnostics</a></h6>
@@ -131,22 +131,17 @@ Silverback.Integration.Kafka package.</p>
   </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerDisconnectError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L250">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerDisconnectError*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerDisconnectError">ConfluentConsumerDisconnectError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
-disconnecting the underlying Confluent.Kafka consumer.</p>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientError*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientError">ConfluentAdminClientError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a non-fatal error is reported
+by the <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConfluentConsumerDisconnectError { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -163,17 +158,195 @@ disconnecting the underlying Confluent.Kafka consumer.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L216">View source</a>
-  </span>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Fatal errors are reported with a different event id.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientFatalError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientFatalError*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientFatalError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientFatalError">ConfluentAdminClientFatalError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a fatal error is reported by
+the <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientFatalError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientFatalError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Non-fatal errors are reported with a different event id.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogCritical_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogCritical*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogCritical" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogCritical">ConfluentAdminClientLogCritical</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
+the underlying <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientLogCritical { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogCritical_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogDebug_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogDebug*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogDebug" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogDebug">ConfluentAdminClientLogDebug</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
+the underlying <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientLogDebug { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogDebug_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogError*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogError">ConfluentAdminClientLogError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
+the underlying <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientLogError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogInformation_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogInformation*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogInformation" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogInformation">ConfluentAdminClientLogInformation</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
+the underlying <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientLogInformation { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogInformation_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogWarning_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogWarning*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogWarning" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentAdminClientLogWarning">ConfluentAdminClientLogWarning</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
+the underlying <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentAdminClientLogWarning { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentAdminClientLogWarning_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
+</div>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerError">ConfluentConsumerError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a non fatal error is reported
-by the <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a non-fatal error is reported
+by the <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -198,17 +371,12 @@ by the <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Fatal errors are reported with a different event id.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerFatalError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L156">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerFatalError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerFatalError">ConfluentConsumerFatalError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a fatal error is reported by
-the <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -231,19 +399,14 @@ the <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
     </tbody>
   </table>
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Non fatal errors are reported with a different event id.</p>
+  <div class="markdown level1 remarks"><p>Non-fatal errors are reported with a different event id.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogCritical%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L342">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogCritical*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogCritical">ConfluentConsumerLogCritical</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -268,17 +431,12 @@ the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogDebug%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L390">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogDebug*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogDebug">ConfluentConsumerLogDebug</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -303,17 +461,12 @@ the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L354">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogError">ConfluentConsumerLogError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -338,17 +491,12 @@ the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogInformation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L378">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogInformation*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogInformation">ConfluentConsumerLogInformation</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -373,17 +521,12 @@ the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogWarning%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L366">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogWarning*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentConsumerLogWarning">ConfluentConsumerLogWarning</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -408,17 +551,12 @@ the underlying <span class="xref">Confluent.Kafka.Consumer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogCritical%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L282">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogCritical*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogCritical">ConfluentProducerLogCritical</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -443,17 +581,12 @@ the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogDebug%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L330">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogDebug*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogDebug">ConfluentProducerLogDebug</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -478,17 +611,12 @@ the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L294">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogError">ConfluentProducerLogError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -513,17 +641,12 @@ the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogInformation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L318">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogInformation*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogInformation">ConfluentProducerLogInformation</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -548,17 +671,12 @@ the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogWarning%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L306">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogWarning*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogWarning">ConfluentProducerLogWarning</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from
-the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span>.</p>
+the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -583,13 +701,8 @@ the underlying <span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>A different event id is used per each log level.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConsumerStatisticsReceived.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConsumerStatisticsReceived%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L174">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConsumerStatisticsReceived_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumerStatisticsReceived*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConsumerStatisticsReceived" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumerStatisticsReceived">ConsumerStatisticsReceived</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the consumer statistics are
@@ -615,13 +728,8 @@ received.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConsumingCanceled.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConsumingCanceled%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L74">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConsumingCanceled_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumingCanceled*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConsumingCanceled" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumingCanceled">ConsumingCanceled</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the <code>Consume</code> is aborted
@@ -647,13 +755,8 @@ received.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ConsumingMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ConsumingMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L23">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConsumingMessage_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumingMessage*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConsumingMessage" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConsumingMessage">ConsumingMessage</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message is consumed from a
@@ -679,45 +782,8 @@ Kafka topic.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_CreatingConfluentProducer.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.CreatingConfluentProducer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L83">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_CreatingConfluentProducer_" data-uid="Silverback.Diagnostics.KafkaLogEvents.CreatingConfluentProducer*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_CreatingConfluentProducer" data-uid="Silverback.Diagnostics.KafkaLogEvents.CreatingConfluentProducer">CreatingConfluentProducer</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<span class="xref">Confluent.Kafka.Producer&lt;TKey, TValue&gt;</span> is being instantiated.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent CreatingConfluentProducer { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_EndOfPartition.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.EndOfPartition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L32">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_EndOfPartition_" data-uid="Silverback.Diagnostics.KafkaLogEvents.EndOfPartition*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_EndOfPartition" data-uid="Silverback.Diagnostics.KafkaLogEvents.EndOfPartition">EndOfPartition</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the end of partition is
@@ -743,83 +809,12 @@ reached.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ErrorRecoveringFromKafkaException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L63">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ErrorRecoveringFromKafkaException*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException" data-uid="Silverback.Diagnostics.KafkaLogEvents.ErrorRecoveringFromKafkaException">ErrorRecoveringFromKafkaException</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a> is unable to recover from the <a class="xref" href="Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery">KafkaExceptionAutoRecovery</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">[Obsolete(&quot;Not used anymore.&quot;, true)]
-public static LogEvent ErrorRecoveringFromKafkaException { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.KafkaErrorHandlerError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L165">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaErrorHandlerError*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaErrorHandlerError">KafkaErrorHandlerError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the custom error handler
-throws an unhandled exception.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent KafkaErrorHandlerError { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionAutoRecovery%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L42">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery_" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionAutoRecovery*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionAutoRecovery">KafkaExceptionAutoRecovery</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a
-<span class="xref">Confluent.Kafka.KafkaException</span> is thrown inside the <code>Consume</code> method. The consumer
-will automatically recover from these exceptions (<code>EnableAutoRecovery</code> is <code>true</code>).</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a <span class="xref">Confluent.Kafka.KafkaException</span> is thrown inside the
+<code>Consume</code> method. The consumer will automatically recover from these exceptions (<code>EnableAutoRecovery</code> is <code>true</code>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -841,18 +836,12 @@ will automatically recover from these exceptions (<code>EnableAutoRecovery</code
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionNoAutoRecovery%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L52">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery_" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionNoAutoRecovery*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionNoAutoRecovery">KafkaExceptionNoAutoRecovery</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a
-<span class="xref">Confluent.Kafka.KafkaException</span> is thrown inside the <code>Consume</code> method. The consumer
-will be stopped (<code>EnableAutoRecovery</code> is <code>false</code>).</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a <span class="xref">Confluent.Kafka.KafkaException</span> is thrown inside the
+<code>Consume</code> method. The consumer will be stopped (<code>EnableAutoRecovery</code> is <code>false</code>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -874,49 +863,11 @@ will be stopped (<code>EnableAutoRecovery</code> is <code>false</code>).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L225">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError" data-uid="Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError">KafkaLogHandlerError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the custom log handler
-throws an unhandled exception.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent KafkaLogHandlerError { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.OffsetCommitError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L144">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetCommitError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetCommitError">OffsetCommitError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while
-committing the offset.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs committing the offset.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -938,17 +889,11 @@ committing the offset.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_OffsetCommitted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.OffsetCommitted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L135">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_OffsetCommitted_" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetCommitted*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_OffsetCommitted" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetCommitted">OffsetCommitted</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an offset is successfully
-committed.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an offset is successfully committed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -970,13 +915,34 @@ committed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionAssigned%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L105">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_OffsetSentToTransaction_" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetSentToTransaction*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_OffsetSentToTransaction" data-uid="Silverback.Diagnostics.KafkaLogEvents.OffsetSentToTransaction">OffsetSentToTransaction</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an offset is sent to the transaction.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent OffsetSentToTransaction { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionAssigned*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionAssigned">PartitionAssigned</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new consumer group partition
@@ -1005,48 +971,8 @@ assignment has been received by a consumer.</p>
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>An event will be logged for each assigned partition.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionManuallyAssigned%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L204">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionManuallyAssigned*"></a>
-  <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionManuallyAssigned">PartitionManuallyAssigned</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the partitions are manually
-assigned.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PartitionManuallyAssigned { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>An event will be logged for each assigned partition.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionOffsetReset.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionOffsetReset%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L114">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionOffsetReset_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionOffsetReset*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionOffsetReset" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionOffsetReset">PartitionOffsetReset</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the offset of an assigned
@@ -1072,13 +998,8 @@ partition is being reset.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionPaused.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionPaused%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L233">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionPaused_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionPaused*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionPaused" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionPaused">PartitionPaused</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a partition is paused.</p>
@@ -1103,13 +1024,8 @@ partition is being reset.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionResumed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionResumed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L241">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionResumed_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionResumed*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionResumed" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionResumed">PartitionResumed</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a partition is resumed.</p>
@@ -1134,13 +1050,8 @@ partition is being reset.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PartitionRevoked%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L126">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionRevoked*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionRevoked">PartitionRevoked</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a group partition assignment
@@ -1169,17 +1080,41 @@ is being revoked.</p>
   <h5 id="Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>An event will be logged for each revoked partition.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L259">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_PartitionStaticallyAssigned_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionStaticallyAssigned*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_PartitionStaticallyAssigned" data-uid="Silverback.Diagnostics.KafkaLogEvents.PartitionStaticallyAssigned">PartitionStaticallyAssigned</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a static partition assignment is set for the consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent PartitionStaticallyAssigned { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_PartitionStaticallyAssigned_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>An event will be logged for each assigned partition.</p>
+</div>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery" data-uid="Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery">PollTimeoutAutoRecovery</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a poll timeout is notified.
-The consumer will automatically recover from these situation (<code>EnableAutoRecovery</code> is <code>true</code>).</p>
+The consumer will automatically recover from this situation (<code>EnableAutoRecovery</code> is <code>true</code>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1201,13 +1136,8 @@ The consumer will automatically recover from these situation (<code>EnableAutoRe
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L268">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery_" data-uid="Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery" data-uid="Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery">PollTimeoutNoAutoRecovery</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a poll timeout is notified.
@@ -1233,13 +1163,8 @@ The consumer will be stopped (<code>EnableAutoRecovery</code> is <code>false</co
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ProduceNotAcknowledged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L93">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ProduceNotAcknowledged*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged" data-uid="Silverback.Diagnostics.KafkaLogEvents.ProduceNotAcknowledged">ProduceNotAcknowledged</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message is sent to the
@@ -1266,13 +1191,8 @@ broker but no acknowledge is received. This is logged only if <code>ThrowIfNotAc
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_ProducerStatisticsReceived.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.ProducerStatisticsReceived%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L183">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ProducerStatisticsReceived_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ProducerStatisticsReceived*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ProducerStatisticsReceived" data-uid="Silverback.Diagnostics.KafkaLogEvents.ProducerStatisticsReceived">ProducerStatisticsReceived</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the producer statistics are
@@ -1298,13 +1218,35 @@ received.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents.StatisticsDeserializationError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L192">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_StaleConsumer_" data-uid="Silverback.Diagnostics.KafkaLogEvents.StaleConsumer*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_StaleConsumer" data-uid="Silverback.Diagnostics.KafkaLogEvents.StaleConsumer">StaleConsumer</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the consumer did not consume any message within the
+stall detection threshold.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent StaleConsumer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.StatisticsDeserializationError*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError" data-uid="Silverback.Diagnostics.KafkaLogEvents.StatisticsDeserializationError">StatisticsDeserializationError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the statistics JSON cannot be
@@ -1330,6 +1272,110 @@ deserialized.</p>
       </tr>
     </tbody>
   </table>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_TransactionAborted_" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionAborted*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_TransactionAborted" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionAborted">TransactionAborted</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a transaction is aborted.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent TransactionAborted { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_TransactionCommitted_" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionCommitted*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_TransactionCommitted" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionCommitted">TransactionCommitted</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a transaction is committed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent TransactionCommitted { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_TransactionStarted_" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionStarted*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_TransactionStarted" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionStarted">TransactionStarted</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new transaction is started.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent TransactionStarted { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_TransactionsInitialized_" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionsInitialized*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_TransactionsInitialized" data-uid="Silverback.Diagnostics.KafkaLogEvents.TransactionsInitialized">TransactionsInitialized</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the transactional producer has been initialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent TransactionsInitialized { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
 
@@ -1337,12 +1383,6 @@ deserialized.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_KafkaLogEvents.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.KafkaLogEvents%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Diagnostics/KafkaLogEvents.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -1363,7 +1403,7 @@ deserialized.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

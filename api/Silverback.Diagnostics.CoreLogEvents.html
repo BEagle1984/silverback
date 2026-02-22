@@ -101,25 +101,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Diagnostics.html">Diagnostics</a></h6>
@@ -130,22 +130,17 @@
   </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_AcquiringDistributedLock.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.AcquiringDistributedLock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L31">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_AcquiringDistributedLock_" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquiringDistributedLock*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_AcquiringDistributedLock" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquiringDistributedLock">AcquiringDistributedLock</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> start trying to acquire a lock.</p>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_AcquireLockConcurrencyException_" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquireLockConcurrencyException*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_AcquireLockConcurrencyException" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquireLockConcurrencyException">AcquireLockConcurrencyException</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a concurrency related exception occurs while trying to
+acquire a lock. This is usually not an issue and just means that the lock was acquired by another instance in the meantime.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent AcquiringDistributedLock { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent AcquireLockConcurrencyException { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -162,13 +157,34 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_BackgroundServiceException.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.BackgroundServiceException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L113">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_AcquireLockFailed_" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquireLockFailed*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_AcquireLockFailed" data-uid="Silverback.Diagnostics.CoreLogEvents.AcquireLockFailed">AcquireLockFailed</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception occurs while trying to acquire a lock.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent AcquireLockFailed { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceException_" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceException*"></a>
   <h4 id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceException" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceException">BackgroundServiceException</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs executing the
@@ -194,46 +210,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_BackgroundServiceLockAcquired.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.BackgroundServiceLockAcquired%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L104">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceLockAcquired_" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceLockAcquired*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceLockAcquired" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceLockAcquired">BackgroundServiceLockAcquired</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the lock has been acquired and
-the
-<a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> is being executed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BackgroundServiceLockAcquired { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_BackgroundServiceStarting.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.BackgroundServiceStarting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L94">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceStarting_" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceStarting*"></a>
   <h4 id="Silverback_Diagnostics_CoreLogEvents_BackgroundServiceStarting" data-uid="Silverback.Diagnostics.CoreLogEvents.BackgroundServiceStarting">BackgroundServiceStarting</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written the
@@ -259,22 +237,16 @@ the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_DistributedLockAcquired.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.DistributedLockAcquired%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L40">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_DistributedLockAcquired_" data-uid="Silverback.Diagnostics.CoreLogEvents.DistributedLockAcquired*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_DistributedLockAcquired" data-uid="Silverback.Diagnostics.CoreLogEvents.DistributedLockAcquired">DistributedLockAcquired</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> acquires a lock.</p>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_LockAcquired_" data-uid="Silverback.Diagnostics.CoreLogEvents.LockAcquired*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_LockAcquired" data-uid="Silverback.Diagnostics.CoreLogEvents.LockAcquired">LockAcquired</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a distributed lock is acquired by the current instance.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent DistributedLockAcquired { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent LockAcquired { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -291,22 +263,16 @@ the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_DistributedLockReleased.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.DistributedLockReleased%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L58">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_DistributedLockReleased_" data-uid="Silverback.Diagnostics.CoreLogEvents.DistributedLockReleased*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_DistributedLockReleased" data-uid="Silverback.Diagnostics.CoreLogEvents.DistributedLockReleased">DistributedLockReleased</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> releases a lock.</p>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_LockLost_" data-uid="Silverback.Diagnostics.CoreLogEvents.LockLost*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_LockLost" data-uid="Silverback.Diagnostics.CoreLogEvents.LockLost">LockLost</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a distributed lock is lost.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent DistributedLockReleased { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent LockLost { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -323,22 +289,16 @@ the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_FailedToAcquireDistributedLock.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.FailedToAcquireDistributedLock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L49">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_FailedToAcquireDistributedLock_" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToAcquireDistributedLock*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_FailedToAcquireDistributedLock" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToAcquireDistributedLock">FailedToAcquireDistributedLock</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> acquires a lock.</p>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_LockReleased_" data-uid="Silverback.Diagnostics.CoreLogEvents.LockReleased*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_LockReleased" data-uid="Silverback.Diagnostics.CoreLogEvents.LockReleased">LockReleased</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a distributed lock is released.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent FailedToAcquireDistributedLock { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent LockReleased { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -355,141 +315,8 @@ the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_FailedToCheckDistributedLock.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.FailedToCheckDistributedLock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L76">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_FailedToCheckDistributedLock_" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToCheckDistributedLock*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_FailedToCheckDistributedLock" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToCheckDistributedLock">FailedToCheckDistributedLock</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> checks whether a lock is still valid.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent FailedToCheckDistributedLock { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_FailedToReleaseDistributedLock.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.FailedToReleaseDistributedLock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L67">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_FailedToReleaseDistributedLock_" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToReleaseDistributedLock*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_FailedToReleaseDistributedLock" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToReleaseDistributedLock">FailedToReleaseDistributedLock</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> releases a lock.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent FailedToReleaseDistributedLock { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_FailedToSendDistributedLockHeartbeat.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.FailedToSendDistributedLockHeartbeat%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L85">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_FailedToSendDistributedLockHeartbeat_" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToSendDistributedLockHeartbeat*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_FailedToSendDistributedLockHeartbeat" data-uid="Silverback.Diagnostics.CoreLogEvents.FailedToSendDistributedLockHeartbeat">FailedToSendDistributedLockHeartbeat</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> tries to send the heartbeat to keep the lock alive.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent FailedToSendDistributedLockHeartbeat { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceException.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L140">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceException_" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceException*"></a>
-  <h4 id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceException" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceException">RecurringBackgroundServiceException</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown during
-an execution of the <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent RecurringBackgroundServiceException { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceSleeping.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceSleeping%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L131">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceSleeping_" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceSleeping*"></a>
   <h4 id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceSleeping" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceSleeping">RecurringBackgroundServiceSleeping</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
@@ -515,13 +342,8 @@ an execution of the <a class="xref" href="Silverback.Background.RecurringDistrib
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceStopped.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceStopped%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L122">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceStopped_" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceStopped*"></a>
   <h4 id="Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceStopped" data-uid="Silverback.Diagnostics.CoreLogEvents.RecurringBackgroundServiceStopped">RecurringBackgroundServiceStopped</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
@@ -547,13 +369,34 @@ an execution of the <a class="xref" href="Silverback.Background.RecurringDistrib
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents_SubscriberResultDiscarded.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents.SubscriberResultDiscarded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L21">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_CoreLogEvents_ReleaseLockFailed_" data-uid="Silverback.Diagnostics.CoreLogEvents.ReleaseLockFailed*"></a>
+  <h4 id="Silverback_Diagnostics_CoreLogEvents_ReleaseLockFailed" data-uid="Silverback.Diagnostics.CoreLogEvents.ReleaseLockFailed">ReleaseLockFailed</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception occurs while trying to release a lock.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ReleaseLockFailed { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_CoreLogEvents_SubscriberResultDiscarded_" data-uid="Silverback.Diagnostics.CoreLogEvents.SubscriberResultDiscarded*"></a>
   <h4 id="Silverback_Diagnostics_CoreLogEvents_SubscriberResultDiscarded" data-uid="Silverback.Diagnostics.CoreLogEvents.SubscriberResultDiscarded">SubscriberResultDiscarded</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>
@@ -586,12 +429,6 @@ discards the return value of a subscribed method because it doesn't match with t
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_CoreLogEvents.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.CoreLogEvents%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/CoreLogEvents.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -612,7 +449,7 @@ discards the return value of a subscribed method because it doesn't match with t
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

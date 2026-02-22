@@ -101,34 +101,25 @@
       <section><p>Checks that all the consumers are connected.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.HealthChecks.EndpointCheckResult.html">EndpointCheckResult</a></h4>
-      <section><p>Encapsulates the result of a check performed against an <a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a>.</p>
+      <section><p>Encapsulates the result of a check performed against a consumer or a producer.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboundEndpointsHealthCheck.html">OutboundEndpointsHealthCheck</a></h4>
-      <section><p>Sends a ping message to all the outbound endpoints to verify that they can all be produced to.</p>
+      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.HealthCheckBuilderExtensions.html">HealthCheckBuilderExtensions</a></h4>
+      <section><p>Adds methods such as <a class="xref" href="Silverback.Messaging.HealthChecks.HealthCheckBuilderExtensions.html#Silverback_Messaging_HealthChecks_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, TimeSpan?, string, HealthStatus?, IEnumerable&lt;string&gt;?)</a> and <a class="xref" href="Silverback.Messaging.HealthChecks.HealthCheckBuilderExtensions.html#Silverback_Messaging_HealthChecks_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_Nullable_System_TimeSpan__System_Nullable_System_Int32__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck(IHealthChecksBuilder, TimeSpan?, int?, string, HealthStatus?, IEnumerable&lt;string&gt;?)</a> to the
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.ihealthchecksbuilder">IHealthChecksBuilder</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboundEndpointsHealthCheckService.html">OutboundEndpointsHealthCheckService</a></h4>
-      <section><p>Checks that all outbound endpoints are reachable.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboundQueueHealthCheckService.html">OutboundQueueHealthCheckService</a></h4>
-      <section><p>Checks that the outbound queue is being processed at a sustainable pace.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboxQueueHealthCheck.html">OutboxQueueHealthCheck</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboxHealthCheck.html">OutboxHealthCheck</a></h4>
       <section><p>Monitors the outbox, verifying that the messages are being processed.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.PingMessage.html">PingMessage</a></h4>
-      <section><p>The message that is periodically produced by the <a class="xref" href="Silverback.Messaging.HealthChecks.OutboundEndpointsHealthCheckService.html">OutboundEndpointsHealthCheckService</a>
-to verify that the endpoints are reachable.</p>
+      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.OutboxHealthCheckService.html">OutboxHealthCheckService</a></h4>
+      <section><p>Checks that the outbox is being processed at a sustainable pace.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
       <h4><a class="xref" href="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html">IConsumersHealthCheckService</a></h4>
       <section><p>Checks that all the consumers are connected.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.IOutboundEndpointsHealthCheckService.html">IOutboundEndpointsHealthCheckService</a></h4>
-      <section><p>Checks that all outbound endpoints are reachable.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.IOutboundQueueHealthCheckService.html">IOutboundQueueHealthCheckService</a></h4>
-      <section><p>Checks that the outbound queue is being processed at a sustainable pace.</p>
+      <h4><a class="xref" href="Silverback.Messaging.HealthChecks.IOutboxHealthCheckService.html">IOutboxHealthCheckService</a></h4>
+      <section><p>Checks that the outbox is being processed at a sustainable pace.</p>
 </section>
 </article>
           </div>
@@ -157,7 +148,7 @@ to verify that the endpoints are reachable.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

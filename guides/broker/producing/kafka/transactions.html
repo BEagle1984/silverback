@@ -86,7 +86,63 @@
             <article class="content wrap" id="_content" data-uid="kafka-transactions">
 <h1 id="kafka-transactions">Kafka Transactions</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Kafka transactions let you produce messages atomically: either all messages in the transaction are published, or none are.</p>
+<p>This is useful for multi-topic writes and consume-transform-produce scenarios.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>A Kafka transaction cannot span multiple producers. Configure all messages that must be part of the same transaction to be sent by the same producer.</p>
+</div>
+<h2 id="enabling-transactions">Enabling Transactions</h2>
+<p>Enable transactions on the producer by setting a <code>transactional.id</code> (via <code>EnableTransactions</code>).</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .EnableTransactions(&quot;transactional-id&quot;)
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;))
+            .Produce&lt;AnotherMessage&gt;(&quot;endpoint2&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-other-topic&quot;)))));
+</code></pre>
+<h2 id="using-transactions">Using Transactions</h2>
+<p>Initialize a transaction, publish messages, then commit.</p>
+<pre><code class="lang-csharp">using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
+
+await publisher.PublishEventAsync(new MyMessage());
+await publisher.PublishEventAsync(new MyMessage());
+await publisher.PublishEventAsync(new AnotherMessage());
+
+transaction.Commit();
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>If you don’t commit the transaction, it will be aborted when the transaction is disposed.</p>
+</div>
+<h2 id="committing-consumed-offsets-in-a-transaction">Committing Consumed Offsets in a Transaction</h2>
+<p>In consume-transform-produce scenarios you may want Kafka offsets to be committed only when the transaction is committed.</p>
+<p>Enable it on the consumer with <code>SendOffsetsToTransaction</code>.</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>When <code>SendOffsetsToTransaction</code> is enabled, offsets are committed as part of the active Kafka transaction. If no transaction is active, offsets are not committed.</p>
+</div>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .EnableTransactions(&quot;transactional-id&quot;)
+            .Produce&lt;OutputMessage&gt;(&quot;endpoint-out&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;out-topic&quot;)))
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;InputMessage&gt;(&quot;endpoint-in&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;in-topic&quot;))
+            .SendOffsetsToTransaction())));
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../../api/Silverback.html">API Reference</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +173,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

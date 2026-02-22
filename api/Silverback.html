@@ -94,14 +94,20 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.InstanceIdentifier.html">InstanceIdentifier</a></h4>
-      <section><p>The identifier used to distinguish the instances of the same type. Used mostly for logging and debugging.</p>
+      <h4><a class="xref" href="Silverback.AsyncEvent-1.html">AsyncEvent&lt;TArg&gt;</a></h4>
+      <section><p>Represents an event that can be handled asynchronously via a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a></h4>
+      <section><p>The exception that is thrown when the specified configuration is not valid.</p>
 </section>
       <h4><a class="xref" href="Silverback.SilverbackException.html">SilverbackException</a></h4>
       <section><p>The base class for all the custom exceptions thrown by Silverback.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
+      <h4><a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a></h4>
+      <section><p>Used to persist objects that are valid within the same DI scope. This is used, for example, to share the storage transaction.</p>
+</section>
       <h4><a class="xref" href="Silverback.ISorted.html">ISorted</a></h4>
       <section><p>Declares a <code>SortIndex</code> property that can be used to properly order the objects implementing this
 interface.</p>
@@ -133,7 +139,7 @@ interface.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

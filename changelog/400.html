@@ -86,8 +86,13 @@
             <article class="content wrap" id="_content" data-uid="releases-400">
 <h1 id="release-notes-v4xx">Release Notes v4.x.x</h1>
 
-<h2 id="461"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.6.1">4.6.1</a></h2>
+<h2 id="462"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.6.2">4.6.2</a></h2>
 <h3 id="fixes">Fixes</h3>
+<ul>
+<li>Fix distributed background services graceful shutdown [<a href="https://github.com/BEagle1984/silverback/issues/247">#247</a>]</li>
+</ul>
+<h2 id="461"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.6.1">4.6.1</a></h2>
+<h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Fix message validation [<a href="https://github.com/BEagle1984/silverback/pull/246">#246</a>]</li>
 </ul>
@@ -97,12 +102,12 @@
 <li>Add <code>GetOffsetsForTimestamp</code> to <code>KafkaConsumer</code></li>
 <li>Allow specifying the number of partitions per topic in the mocked Kafka</li>
 </ul>
-<h3 id="fixes-1">Fixes</h3>
+<h3 id="fixes-2">Fixes</h3>
 <ul>
 <li>Further improve assembly qualified name parsing for generic types</li>
 </ul>
 <h2 id="451"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.5.1">4.5.1</a></h2>
-<h3 id="fixes-2">Fixes</h3>
+<h3 id="fixes-3">Fixes</h3>
 <ul>
 <li>Fix assembly qualified name parsing for generic types</li>
 </ul>
@@ -116,8 +121,11 @@
 <h2 id="441"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.4.1">4.4.1</a></h2>
 <h3 id="whats-new-2">What's New</h3>
 <ul>
-<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.3.0">Confluent.Kafka 2.3.0</a></li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.3.0">Confluent.Kafka 2.3.0</a>
+<ul>
 <li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v4.3.2.930">MQTTnet 4.3.2.930</a></li>
+</ul>
+</li>
 </ul>
 <h2 id="440"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.4.0">4.4.0</a></h2>
 <h3 id="whats-new-3">What's New</h3>
@@ -126,19 +134,19 @@
 <li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v4.3.1.873">MQTTnet 4.3.1.873</a></li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.2.0">Confluent.Kafka 2.2.0</a></li>
 </ul>
-<h3 id="fixes-3">Fixes</h3>
+<h3 id="fixes-4">Fixes</h3>
 <ul>
 <li>Correctly set message timestamp in mocked Kafka</li>
 <li>Properly handle Kafka partitions revoked event when no partitions were assigned [<a href="https://github.com/BEagle1984/silverback/issues/214">#214</a>]</li>
 <li>Respect <code>IgnoreUnhandledException</code> when batch processing [<a href="https://github.com/BEagle1984/silverback/issues/216">#216</a>]</li>
 </ul>
 <h2 id="432"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.3.2">4.3.2</a></h2>
-<h3 id="fixes-4">Fixes</h3>
+<h3 id="fixes-5">Fixes</h3>
 <ul>
 <li>Fix potential message loss in <code>OutboxWorker</code></li>
 </ul>
 <h2 id="431"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.3.1">4.3.1</a></h2>
-<h3 id="fixes-5">Fixes</h3>
+<h3 id="fixes-6">Fixes</h3>
 <ul>
 <li>Fix deadlock in <code>OutboxWorker</code> when <code>enforceMessageOrder=true</code> (default)</li>
 </ul>
@@ -151,7 +159,7 @@
 <li>Add <code>ReasonCode</code> and <code>ReasonString</code> to <code>MqttProduceException</code> message</li>
 </ul>
 <h2 id="421"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.2.1">4.2.1</a></h2>
-<h3 id="fixes-6">Fixes</h3>
+<h3 id="fixes-7">Fixes</h3>
 <ul>
 <li>Prevent an <code>ObjectDisposedException</code> to be thrown by the <code>BrokerCallbackInvoker</code> during application shutdown</li>
 <li>Fix possible deadlock in <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a> with timeout</li>
@@ -162,12 +170,12 @@
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.0">Confluent.Kafka 2.1.0</a></li>
 </ul>
 <h2 id="412"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.1.2">4.1.2</a></h2>
-<h3 id="fixes-7">Fixes</h3>
+<h3 id="fixes-8">Fixes</h3>
 <ul>
 <li>Fix chained error policies attempts counter</li>
 </ul>
 <h2 id="411"><a href="https://github.com/BEagle1984/silverback/releases/tag/v4.1.1">4.1.1</a></h2>
-<h3 id="fixes-8">Fixes</h3>
+<h3 id="fixes-9">Fixes</h3>
 <ul>
 <li>Fix bug in outbox producer writing to the wrong endpoint [<a href="https://github.com/BEagle1984/silverback/issues/165">#165</a>]</li>
 </ul>
@@ -225,7 +233,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

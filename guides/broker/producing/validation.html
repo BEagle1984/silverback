@@ -86,7 +86,40 @@
             <article class="content wrap" id="_content" data-uid="producing-validation">
 <h1 id="validating-the-produced-messages">Validating the Produced Messages</h1>
 
-<p><em>...coming soon...</em></p>
+<p>The messages are being validated using the same mechanism implemented in the asp.net controllers.</p>
+<p>You can either decorate the message model with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">System.ComponentModel.DataAnnotations.ValidationAttribute</a> standard implementations, create your own attributes (extending <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">ValidationAttribute</a>) or otherwise you can implement the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject">IValidatableObject</a> interface in your message model.</p>
+<h2 id="logging-invalid-messages">Logging Invalid Messages</h2>
+<p>By default, the validation is enabled and the <a class="xref" href="../../../api/Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a> is set to <code>LogWarning</code>. This means that a warning is logged if the produced message is not valid.</p>
+<h2 id="preventing-invalid-messages-to-be-produced">Preventing Invalid Messages to be Produced</h2>
+<p>If you want to prevent invalid messages from being produced, you can set the <a class="xref" href="../../../api/Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a> to <code>ThrowException</code>. This way, an exception will be thrown by the <code>Publish</code> method if the message is not valid.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .ValidateMessage(throwException: true))));                    
+
+</code></pre>
+<h2 id="disabling-validation">Disabling Validation</h2>
+<p>Validation can affect performance, with the impact varying based on object size, the number of validations, and their complexity. If performance is a critical concern for your use case, you may consider disabling validation.</p>
+<p>If your models don't have any validation attributes, no validation will be performed by default. However, you can explicitly disable the validation using the <code>DisableMessageValidation</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .DisableMessageValidation())));
+
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../consuming/validation.html">Validating the Consumed Messages</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +150,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

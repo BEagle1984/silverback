@@ -90,8 +90,8 @@
 
   <h1 id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor" class="text-break">Class KafkaConsumerLocalTimeoutMonitor
 </h1>
-  <div class="markdown level0 summary"><p>Handles the consumer error callback and reverts the consumer <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready">Ready</a> status
-to <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Connected">Connected</a> when the local poll timeout is exceeded. The consumer should
+  <div class="markdown level0 summary"><p>Handles the consumer error callback and reverts the consumer <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Connected">Connected</a> status
+to <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Started">Started</a> when the local poll timeout is exceeded. The consumer should
 eventually reconnect but this allows to accurately track its status.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -103,19 +103,10 @@ eventually reconnect but this allows to accurately track its status.</p>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html">IKafkaConsumerLogCallback</a></div>
-    <div><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html">IBrokerCallback</a></div>
+    <div><a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallback.html">IBrokerClientCallback</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -123,35 +114,54 @@ eventually reconnect but this allows to accurately track its status.</p>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
   <h5 id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback, IBrokerCallback</code></pre>
+    <pre><code class="lang- hljs">public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback, IBrokerClientCallback</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor__ctor_" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor__ctor" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.#ctor">KafkaConsumerLocalTimeoutMonitor()</h4>
+  <div class="markdown level1 summary"><p>Handles the consumer error callback and reverts the consumer <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Connected">Connected</a> status
+to <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Started">Started</a> when the local poll timeout is exceeded. The consumer should
+eventually reconnect but this allows to accurately track its status.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public KafkaConsumerLocalTimeoutMonitor()</code></pre>
   </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumerLocalTimeoutMonitor.cs/#L17">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog*"></a>
-  <h4 id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaConsumer)">OnConsumerLog(LogMessage, KafkaConsumer)</h4>
+  <h4 id="Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_IKafkaConsumer_" data-uid="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.IKafkaConsumer)">OnConsumerLog(LogMessage, IKafkaConsumer)</h4>
   <div class="markdown level1 summary"><p>Called when a log message is being reported by the underlying consumer.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer)</code></pre>
+    <pre><code class="lang- hljs">public bool OnConsumerLog(LogMessage logMessage, IKafkaConsumer consumer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -170,7 +180,7 @@ eventually reconnect but this allows to accurately track its status.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IKafkaConsumer.html">IKafkaConsumer</a></td>
         <td><span class="parametername">consumer</span></td>
         <td><p>The related consumer instance.</p>
 </td>
@@ -199,7 +209,7 @@ handled in any other way by Silverback.</p>
       <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html">IKafkaConsumerLogCallback</a>
   </div>
   <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html">IBrokerCallback</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IBrokerClientCallback.html">IBrokerClientCallback</a>
   </div>
 </article>
           </div>
@@ -208,12 +218,6 @@ handled in any other way by Silverback.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumerLocalTimeoutMonitor.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -234,7 +238,7 @@ handled in any other way by Silverback.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

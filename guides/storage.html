@@ -86,8 +86,243 @@
             <article class="content wrap" id="_content" data-uid="storage">
 <h1 id="storage-integration">Storage Integration</h1>
 
-<p><em>...coming soon...</em></p>
-<pre><code></code></pre>
+<p>Silverback's <em>storage layer</em> provides a set of <strong>optional persistence components</strong> that enable features which need a durable, shared state outside the message broker.</p>
+<p>Today, storage is used primarily for:</p>
+<ul>
+<li><strong>Transactional Outbox</strong> (reliably publish messages after a DB transaction commits)</li>
+<li><strong>Kafka client-side offset storage</strong> (store consumer offsets in your DB for exactly-once <em>w.r.t.</em> your database)</li>
+<li><strong>Distributed locking</strong> (ensure that only one node/instance performs a critical background task)</li>
+</ul>
+<p>This guide explains the purpose of the storage layer, what implementations exist, how to initialize/provision the required tables, how to use the features at a high level, and how distributed locking works.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Storage is intentionally modular.
+You reference and configure <em>only</em> the storage packages you need.</p>
+</div>
+<h2 id="what-packages-exist">What Packages Exist</h2>
+<p>At the moment, Silverback ships the following storage-related packages:</p>
+<h3 id="in-memory-developmenttesting">In-memory (development/testing)</h3>
+<p>Package: <code>Silverback.Storage.Memory</code></p>
+<p>Provides:</p>
+<ul>
+<li>In-memory transactional outbox (volatile)</li>
+<li>In-memory Kafka offset store (volatile)</li>
+<li>In-memory lock (not truly distributed)</li>
+</ul>
+<p>Use it for unit tests, local development, or demos. If the process stops, all data is lost.</p>
+<h3 id="sqlite-developmenttesting">SQLite (development/testing)</h3>
+<p>Package: <code>Silverback.Storage.Sqlite</code></p>
+<p>Provides:</p>
+<ul>
+<li>SQLite outbox table + reader/writer</li>
+<li>SQLite Kafka offset store table</li>
+<li>Uses the in-memory lock by default (intended for testing)</li>
+</ul>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>SQLite is great for local/dev scenarios.
+If you need <em>horizontal scalability</em>, SQLite is usually not the right choice.</p>
+</div>
+<h3 id="postgresql">PostgreSQL</h3>
+<p>Package: <code>Silverback.Storage.PostgreSql</code></p>
+<p>Provides:</p>
+<ul>
+<li>PostgreSQL outbox table + reader/writer</li>
+<li>PostgreSQL Kafka offset store table</li>
+<li>Two distributed lock implementations:
+<ul>
+<li>PostgreSQL <strong>advisory locks</strong> (default and recommended)</li>
+<li>PostgreSQL <strong>table-based lock</strong> (locks table with heartbeat)</li>
+</ul>
+</li>
+</ul>
+<h3 id="entity-framework-when-you-already-use-ef-core">Entity Framework (when you already use EF Core)</h3>
+<p>Package: <code>Silverback.Storage.EntityFramework</code></p>
+<p>Provides:</p>
+<ul>
+<li>EF Core outbox reader/writer (stores messages in your <code>DbContext</code>)</li>
+<li>EF Core Kafka offset store (stores offsets in your <code>DbContext</code>)</li>
+<li>EF Core table-based distributed lock (locks table with heartbeat)</li>
+</ul>
+<p>Because EF storage uses your application's model, tables are typically created via <strong>migrations</strong>.</p>
+<h3 id="relational-abstraction-internal-building-block">Relational abstraction (internal building block)</h3>
+<p>Package: <code>Silverback.Storage.Relational</code></p>
+<p>This package contains shared building blocks for relational stores (e.g., the base implementation of table-based locks). Most applications don't need to reference it directly.</p>
+<h2 id="how-to-initialize--provision-the-storage">How to Initialize / Provision the Storage</h2>
+<p>Some storage features require database tables.</p>
+<p>How these tables are created depends on the chosen provider:</p>
+<ul>
+<li><strong>Entity Framework</strong>: tables are part of your <code>DbContext</code> and are typically created via migrations.</li>
+<li><strong>Relational storage packages</strong> (SQLite/PostgreSQL): you can create tables programmatically using <code>SilverbackStorageInitializer</code>.</li>
+</ul>
+<h3 id="using-silverbackstorageinitializer">Using <code>SilverbackStorageInitializer</code></h3>
+<p>The initializer is a tiny helper type you can instantiate from your <code>IServiceProvider</code> and then call provider-specific extension methods.</p>
+<p>Example (conceptual):</p>
+<pre><code class="lang-csharp">await using var services = serviceCollection.BuildServiceProvider();
+var initializer = new SilverbackStorageInitializer(services);
+
+await initializer.CreateSqliteOutboxAsync(connectionString);
+await initializer.CreateSqliteKafkaOffsetStoreAsync(connectionString);
+</code></pre>
+<p>Provider-specific provisioning methods currently include (non-exhaustive):</p>
+<ul>
+<li>SQLite:
+<ul>
+<li><code>CreateSqliteOutboxAsync</code></li>
+<li><code>CreateSqliteKafkaOffsetStoreAsync</code></li>
+</ul>
+</li>
+<li>PostgreSQL:
+<ul>
+<li><code>CreatePostgreSqlOutboxAsync</code></li>
+<li><code>CreatePostgreSqlKafkaOffsetStoreAsync</code></li>
+<li><code>CreatePostgreSqlLocksTableAsync</code> (only needed for table-based locks)</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Advisory locks do <strong>not</strong> require a table.</p>
+<p>Table-based locks (PostgreSQL table lock + EF lock) do require a locks table.</p>
+</div>
+<h3 id="entity-framework-tables">Entity Framework tables</h3>
+<p>When using EF Core, you include the storage entities in your <code>DbContext</code>.</p>
+<p>Outbox:</p>
+<pre><code class="lang-csharp">public DbSet&lt;SilverbackOutboxMessage&gt; Outbox { get; set; } = null!;
+</code></pre>
+<p>Locks (if used):</p>
+<pre><code class="lang-csharp">public DbSet&lt;SilverbackLock&gt; Locks { get; set; } = null!;
+</code></pre>
+<p>Kafka offsets:</p>
+<pre><code class="lang-csharp">public DbSet&lt;SilverbackStoredOffset&gt; KafkaOffsets { get; set; } = null!;
+</code></pre>
+<p>Then create the tables using EF migrations.</p>
+<h2 id="how-to-use-storage-features-high-level">How to Use Storage Features (High Level)</h2>
+<p>Storage is usually not used directly.
+Instead you:</p>
+<ol>
+<li>Reference the storage package</li>
+<li>Register it in Silverback via <code>WithConnectionToMessageBroker(...).AddXyz...</code></li>
+<li>Enable the feature (outbox worker / offset store / distributed lock usage)</li>
+</ol>
+<h3 id="transactional-outbox">Transactional Outbox</h3>
+<p>The transactional outbox stores outbound messages in a local persistence store and lets a background worker publish them.</p>
+<p>High level steps:</p>
+<ol>
+<li>Configure an outbox implementation (EF/SQLite/PostgreSQL)</li>
+<li>Configure the outbox worker to process the outbox</li>
+<li>Configure producers/endpoints to store produced messages in the outbox</li>
+<li>Enlist the same DB transaction in the publisher (recommended)</li>
+</ol>
+<p>See the dedicated guide:</p>
+<ul>
+<li><a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a></li>
+</ul>
+<h3 id="kafka-offset-storage-client-side-offsets">Kafka offset storage (client-side offsets)</h3>
+<p>Client-side offset storage persists offsets outside Kafka so that your processing + offset advancement can be committed atomically in your DB transaction.</p>
+<p>High level steps:</p>
+<ol>
+<li>Configure an offset store implementation (Memory/SQLite/PostgreSQL/EF)</li>
+<li>Disable committing offsets to Kafka (<code>DisableOffsetsCommit()</code>)</li>
+<li>Enable client-side offset storage on your consumer</li>
+<li>Enlist the same DB transaction in the <code>KafkaOffsetStoreScope</code> (recommended)</li>
+</ol>
+<p>See the dedicated guide:</p>
+<ul>
+<li><a class="xref" href="broker/consuming/kafka/offset.html">Kafka Offset Storage</a></li>
+</ul>
+<h2 id="distributed-locking">Distributed Locking</h2>
+<p>Some features (most notably the outbox worker) must ensure that only <strong>one</strong> instance is active across a cluster.
+Silverback achieves this by acquiring a lock before running and by monitoring lock ownership.</p>
+<p>Depending on the storage package you use, the default lock implementation may differ:</p>
+<ul>
+<li>In-memory storage uses <code>InMemoryLock</code> (not distributed)</li>
+<li>PostgreSQL storage supports advisory locks (default) and table-based locks</li>
+<li>Entity Framework storage uses a table-based lock</li>
+</ul>
+<h3 id="why-locks-exist">Why locks exist</h3>
+<p>Distributed locks are used to avoid scenarios like:</p>
+<ul>
+<li>two instances producing outbox messages concurrently (leading to duplicates)</li>
+<li>multiple nodes running a single-instance maintenance task</li>
+</ul>
+<h3 id="lock-handle-and-lock-loss">Lock handle and lock loss</h3>
+<p>When a lock is acquired, Silverback obtains a <code>DistributedLockHandle</code>.</p>
+<p>Key behaviors:</p>
+<ul>
+<li>The handle is <strong>disposable</strong>. Disposing it releases the lock.</li>
+<li>The handle exposes a <code>LockLostToken</code>.
+<ul>
+<li>Continuous background work can observe this token and stop if the lock is lost.</li>
+<li>For advisory locks, this token is signaled if the underlying database lock/session is lost.</li>
+<li>For heartbeat-based locks, this token is signaled if a heartbeat update fails.</li>
+</ul>
+</li>
+</ul>
+<h3 id="postgresql-advisory-lock">PostgreSQL advisory lock</h3>
+<p>Implementation: <code>PostgreSqlAdvisoryLock</code> (uses <code>DistributedLock.Postgres</code> a.k.a. Medallion.Threading).</p>
+<p>Characteristics:</p>
+<ul>
+<li>No locks table required.</li>
+<li>Strong choice for clustered deployments.</li>
+<li>Lock is held for the lifetime of the DB session/handle.</li>
+<li><code>LockLostToken</code> is provided by the underlying advisory lock handle.</li>
+</ul>
+<p>You can configure advisory locks explicitly where a distributed lock is configurable (for example in the outbox worker):</p>
+<pre><code class="lang-csharp">.WithDistributedLock(lockSettings =&gt; lockSettings
+    .UsePostgreSqlAdvisoryLock(&quot;outbox&quot;, connectionString))
+</code></pre>
+<h3 id="table-based-lock-postgresql-and-ef">Table-based lock (PostgreSQL and EF)</h3>
+<p>Base implementation: <code>TableBasedDistributedLock</code>.</p>
+<p>How it works:</p>
+<ol>
+<li>A process tries to acquire the lock by writing/updating a row for <code>LockName</code> and claiming it with a unique <code>Handler</code> id.</li>
+<li>While the lock is held, a background heartbeat periodically updates the lock row.</li>
+<li>If heartbeats stop (crash, network issues), the lock becomes eligible to be re-acquired after <code>LockTimeout</code>.</li>
+</ol>
+<p>Settings to know (defaults shown):</p>
+<ul>
+<li><code>AcquireInterval</code> (default 1s): delay between acquisition attempts.</li>
+<li><code>HeartbeatInterval</code> (default 500ms): how often the owner writes heartbeats.</li>
+<li><code>LockTimeout</code> (default 5s): if <code>LastHeartbeat</code> is older than this, the lock is considered stale and can be taken over.</li>
+</ul>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>With table-based locks, <em>clock skew</em> across nodes can cause surprising behavior.
+Prefer a consistent time source and keep nodes time-synchronized.</p>
+</div>
+<p>PostgreSQL table lock specifics:</p>
+<ul>
+<li>Implementation: <code>PostgreSqlTableLock</code></li>
+<li>Requires a locks table (create via <code>CreatePostgreSqlLocksTableAsync</code>)</li>
+</ul>
+<p>Entity Framework lock specifics:</p>
+<ul>
+<li>Implementation: <code>EntityFrameworkLock</code></li>
+<li>Uses a <code>DbContext</code> and the <code>SilverbackLock</code> entity/table.</li>
+<li>Handles acquisition races by catching <code>DbUpdateException</code> (another process won).</li>
+</ul>
+<h3 id="in-memory-lock">In-memory lock</h3>
+<p>Implementation: <code>InMemoryLock</code>.</p>
+<ul>
+<li>Uses a local <code>SemaphoreSlim</code>.</li>
+<li>Not distributed: it only protects code paths within the same process.</li>
+<li><code>LockLostToken</code> is <code>CancellationToken.None</code>.</li>
+</ul>
+<h2 id="putting-it-together-which-storage-should-i-pick">Putting It Together: Which Storage Should I Pick?</h2>
+<p>A practical rule of thumb:</p>
+<ul>
+<li><strong>Unit tests / local quick start</strong>: <code>Silverback.Storage.Memory</code></li>
+<li><strong>Local integration tests</strong>: <code>Silverback.Storage.Sqlite</code></li>
+<li><strong>Production with PostgreSQL</strong>: <code>Silverback.Storage.PostgreSql</code> (advisory locks recommended)</li>
+<li><strong>Production with EF Core and a relational database</strong>: <code>Silverback.Storage.EntityFramework</code></li>
+</ul>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="broker/producing/outbox.html">Transactional Outbox</a></li>
+<li><a class="xref" href="broker/consuming/kafka/offset.html">Kafka Offset Storage</a></li>
+</ul>
 </article>
           </div>
 
@@ -118,7 +353,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

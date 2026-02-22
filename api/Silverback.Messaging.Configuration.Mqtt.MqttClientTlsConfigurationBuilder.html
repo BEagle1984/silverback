@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class MqttClientTlsConfigurationBuilder
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class MqttClientTlsConfigurationBuilder
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder">
+
+
+  <h1 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder" class="text-break">Class MqttClientTlsConfigurationBuilder
+</h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">MqttClientTlsConfigurationBuilder</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class MqttClientTlsConfigurationBuilder</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder__ctor" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.#ctor">MqttClientTlsConfigurationBuilder()</h4>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder()</code></pre>
+  </div>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_AllowUntrustedCertificates_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.AllowUntrustedCertificates*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_AllowUntrustedCertificates" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.AllowUntrustedCertificates">AllowUntrustedCertificates()</h4>
+  <div class="markdown level1 summary"><p>Enables allowing untrusted certificates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder AllowUntrustedCertificates()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_Build_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_Build" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfiguration Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html">MqttClientTlsConfiguration</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableAllowUntrustedCertificates_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableAllowUntrustedCertificates*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableAllowUntrustedCertificates" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableAllowUntrustedCertificates">DisableAllowUntrustedCertificates()</h4>
+  <div class="markdown level1 summary"><p>Disables allowing untrusted certificates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder DisableAllowUntrustedCertificates()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableIgnoreCertificateChainErrors_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableIgnoreCertificateChainErrors*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableIgnoreCertificateChainErrors" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableIgnoreCertificateChainErrors">DisableIgnoreCertificateChainErrors()</h4>
+  <div class="markdown level1 summary"><p>Disables ignoring certificate chain errors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder DisableIgnoreCertificateChainErrors()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableIgnoreCertificateRevocationErrors_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableIgnoreCertificateRevocationErrors*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableIgnoreCertificateRevocationErrors" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableIgnoreCertificateRevocationErrors">DisableIgnoreCertificateRevocationErrors()</h4>
+  <div class="markdown level1 summary"><p>Disables ignoring certificate revocation errors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder DisableIgnoreCertificateRevocationErrors()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableRenegotiation_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableRenegotiation*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableRenegotiation" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableRenegotiation">DisableRenegotiation()</h4>
+  <div class="markdown level1 summary"><p>Disables renegotiation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder DisableRenegotiation()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableTls*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_DisableTls" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.DisableTls">DisableTls()</h4>
+  <div class="markdown level1 summary"><p>Disables TLS usage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder DisableTls()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_EnableRenegotiation_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.EnableRenegotiation*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_EnableRenegotiation" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.EnableRenegotiation">EnableRenegotiation()</h4>
+  <div class="markdown level1 summary"><p>Enables renegotiation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder EnableRenegotiation()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.EnableTls*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_EnableTls" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.EnableTls">EnableTls()</h4>
+  <div class="markdown level1 summary"><p>Enables TLS usage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder EnableTls()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_IgnoreCertificateChainErrors_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.IgnoreCertificateChainErrors*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_IgnoreCertificateChainErrors" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.IgnoreCertificateChainErrors">IgnoreCertificateChainErrors()</h4>
+  <div class="markdown level1 summary"><p>Enables ignoring certificate chain errors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder IgnoreCertificateChainErrors()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_IgnoreCertificateRevocationErrors_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.IgnoreCertificateRevocationErrors*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_IgnoreCertificateRevocationErrors" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.IgnoreCertificateRevocationErrors">IgnoreCertificateRevocationErrors()</h4>
+  <div class="markdown level1 summary"><p>Enables ignoring certificate revocation errors.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder IgnoreCertificateRevocationErrors()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithApplicationProtocols_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithApplicationProtocols*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithApplicationProtocols_System_Net_Security_SslApplicationProtocol___" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithApplicationProtocols(System.Net.Security.SslApplicationProtocol[])">WithApplicationProtocols(params SslApplicationProtocol[])</h4>
+  <div class="markdown level1 summary"><p>Sets the application protocols (ALPN) to use.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithApplicationProtocols(params SslApplicationProtocol[] protocols)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.security.sslapplicationprotocol">SslApplicationProtocol</a>[]</td>
+        <td><span class="parametername">protocols</span></td>
+        <td><p>The protocols.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCertificateSelectionHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCertificateSelectionHandler*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCertificateSelectionHandler_System_Func_MQTTnet_MqttClientCertificateSelectionEventArgs_System_Security_Cryptography_X509Certificates_X509Certificate__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCertificateSelectionHandler(System.Func{MQTTnet.MqttClientCertificateSelectionEventArgs,System.Security.Cryptography.X509Certificates.X509Certificate})">WithCertificateSelectionHandler(Func&lt;MqttClientCertificateSelectionEventArgs, X509Certificate&gt;?)</h4>
+  <div class="markdown level1 summary"><p>Sets the certificate selection handler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithCertificateSelectionHandler(Func&lt;MqttClientCertificateSelectionEventArgs, X509Certificate&gt;? handler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">MqttClientCertificateSelectionEventArgs</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509certificate">X509Certificate</a>&gt;</td>
+        <td><span class="parametername">handler</span></td>
+        <td><p>The handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCertificateValidationHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCertificateValidationHandler*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCertificateValidationHandler_System_Func_MQTTnet_MqttClientCertificateValidationEventArgs_System_Boolean__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCertificateValidationHandler(System.Func{MQTTnet.MqttClientCertificateValidationEventArgs,System.Boolean})">WithCertificateValidationHandler(Func&lt;MqttClientCertificateValidationEventArgs, bool&gt;?)</h4>
+  <div class="markdown level1 summary"><p>Sets the certificate validation handler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithCertificateValidationHandler(Func&lt;MqttClientCertificateValidationEventArgs, bool&gt;? handler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">MqttClientCertificateValidationEventArgs</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</td>
+        <td><span class="parametername">handler</span></td>
+        <td><p>The handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCipherSuitesPolicy_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCipherSuitesPolicy*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithCipherSuitesPolicy_System_Net_Security_CipherSuitesPolicy_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithCipherSuitesPolicy(System.Net.Security.CipherSuitesPolicy)">WithCipherSuitesPolicy(CipherSuitesPolicy?)</h4>
+  <div class="markdown level1 summary"><p>Sets the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.security.ciphersuitespolicy">CipherSuitesPolicy</a> to use.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithCipherSuitesPolicy(CipherSuitesPolicy? cipherSuitesPolicy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.security.ciphersuitespolicy">CipherSuitesPolicy</a></td>
+        <td><span class="parametername">cipherSuitesPolicy</span></td>
+        <td><p>The cipher suites policy.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithClientCertificatesProvider_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithClientCertificatesProvider*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithClientCertificatesProvider_MQTTnet_IMqttClientCertificatesProvider_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithClientCertificatesProvider(MQTTnet.IMqttClientCertificatesProvider)">WithClientCertificatesProvider(IMqttClientCertificatesProvider?)</h4>
+  <div class="markdown level1 summary"><p>Sets the provider for the client certificates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithClientCertificatesProvider(IMqttClientCertificatesProvider? provider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IMqttClientCertificatesProvider</span></td>
+        <td><span class="parametername">provider</span></td>
+        <td><p>The <span class="xref">MQTTnet.IMqttClientCertificatesProvider</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithEncryptionPolicy_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithEncryptionPolicy*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithEncryptionPolicy_System_Net_Security_EncryptionPolicy_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithEncryptionPolicy(System.Net.Security.EncryptionPolicy)">WithEncryptionPolicy(EncryptionPolicy)</h4>
+  <div class="markdown level1 summary"><p>Sets the encryption policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithEncryptionPolicy(EncryptionPolicy policy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.security.encryptionpolicy">EncryptionPolicy</a></td>
+        <td><span class="parametername">policy</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.security.encryptionpolicy">EncryptionPolicy</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithRevocationMode_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithRevocationMode*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithRevocationMode_System_Security_Cryptography_X509Certificates_X509RevocationMode_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithRevocationMode(System.Security.Cryptography.X509Certificates.X509RevocationMode)">WithRevocationMode(X509RevocationMode)</h4>
+  <div class="markdown level1 summary"><p>Sets the revocation mode.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithRevocationMode(X509RevocationMode revocationMode)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509revocationmode">X509RevocationMode</a></td>
+        <td><span class="parametername">revocationMode</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509revocationmode">X509RevocationMode</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithSslProtocol_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithSslProtocol*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithSslProtocol_System_Security_Authentication_SslProtocols_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithSslProtocol(System.Security.Authentication.SslProtocols)">WithSslProtocol(SslProtocols)</h4>
+  <div class="markdown level1 summary"><p>Sets the SSL/TLS protocol to be used.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithSslProtocol(SslProtocols sslProtocol)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.authentication.sslprotocols">SslProtocols</a></td>
+        <td><span class="parametername">sslProtocol</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.authentication.sslprotocols">SslProtocols</a> value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTargetHost_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTargetHost*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTargetHost_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTargetHost(System.String)">WithTargetHost(string?)</h4>
+  <div class="markdown level1 summary"><p>Sets the target host for SNI/certificate validation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithTargetHost(string? targetHost)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">targetHost</span></td>
+        <td><p>The target host.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTrustChain_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTrustChain*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTrustChain_System_Security_Cryptography_X509Certificates_X509Certificate2Collection_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTrustChain(System.Security.Cryptography.X509Certificates.X509Certificate2Collection)">WithTrustChain(X509Certificate2Collection?)</h4>
+  <div class="markdown level1 summary"><p>Sets the trust chain.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithTrustChain(X509Certificate2Collection? trustChain)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509certificate2collection">X509Certificate2Collection</a></td>
+        <td><span class="parametername">trustChain</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509certificate2collection">X509Certificate2Collection</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTrustChain_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTrustChain*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientTlsConfigurationBuilder_WithTrustChain_System_Security_Cryptography_X509Certificates_X509Certificate2___" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.WithTrustChain(System.Security.Cryptography.X509Certificates.X509Certificate2[])">WithTrustChain(params X509Certificate2[])</h4>
+  <div class="markdown level1 summary"><p>Sets the trust chain from the specified certificates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttClientTlsConfigurationBuilder WithTrustChain(params X509Certificate2[] certificates)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.x509certificates.x509certificate2">X509Certificate2</a>[]</td>
+        <td><span class="parametername">certificates</span></td>
+        <td><p>The certificates.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfigurationBuilder.html">MqttClientTlsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2026 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

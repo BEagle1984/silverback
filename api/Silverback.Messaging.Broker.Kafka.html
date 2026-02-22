@@ -94,8 +94,11 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html">ConfluentAdminClientBuilder</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactory.html">ConfluentAdminClientFactory</a></h4>
       <section><p>Wraps the <span class="xref">Confluent.Kafka.AdminClientBuilder</span>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientFactoryExtensions.html">ConfluentAdminClientFactoryExtensions</a></h4>
+      <section><p>Adds some convenience methods to the <a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientFactory.html">IConfluentAdminClientFactory</a> interface.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentConsumerBuilder.html">ConfluentConsumerBuilder</a></h4>
       <section><p>Wraps the <span class="xref">Confluent.Kafka.ConsumerBuilder&lt;TKey, TValue&gt;</span>.</p>
@@ -103,7 +106,7 @@
       <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentProducerBuilder.html">ConfluentProducerBuilder</a></h4>
       <section><p>Wraps the <span class="xref">Confluent.Kafka.ProducerBuilder&lt;TKey, TValue&gt;</span>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html">MockedConfluentAdminClientBuilder</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientFactory.html">MockedConfluentAdminClientFactory</a></h4>
       <section><p>The builder for the <span class="xref">Silverback.Messaging.Broker.Kafka.Mocks.MockedConfluentAdminClient</span>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html">MockedConfluentConsumerBuilder</a></h4>
@@ -117,18 +120,23 @@
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html">IConfluentAdminClientBuilder</a></h4>
-      <section><p>Used to build the <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientFactory.html">IConfluentAdminClientFactory</a></h4>
+      <section><p>The factory used to create <span class="xref">Confluent.Kafka.IAdminClient</span> instances.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html">IConfluentConsumerBuilder</a></h4>
       <section><p>The <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> builder used by the <a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a>.</p>
 </section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentConsumerWrapper.html">IConfluentConsumerWrapper</a></h4>
+      <section><p>Wraps the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> and handles the connection lifecycle.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.html">IConfluentProducerBuilder</a></h4>
       <section><p>The <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> builder used by the <a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a>.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html">IConfluentProducersCache</a></h4>
-      <section><p>Creates and stores the <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> instances in order to reuse them for the
-same <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html">KafkaProducerConfig</a> configuration.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerWrapper.html">IConfluentProducerWrapper</a></h4>
+      <section><p>Wraps the underlying <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> and handles the connection lifecycle.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerWrapperFactory.html">IConfluentProducerWrapperFactory</a></h4>
+      <section><p>Creates <a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerWrapper.html">IConfluentProducerWrapper</a> instances.</p>
 </section>
 </article>
           </div>
@@ -157,7 +165,7 @@ same <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProduce
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

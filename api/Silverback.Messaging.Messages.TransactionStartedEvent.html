@@ -108,25 +108,25 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Messages.html">Messages</a></h6>
@@ -134,6 +134,21 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
   <h5 id="Silverback_Messaging_Messages_TransactionStartedEvent_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class TransactionStartedEvent : ISilverbackEvent, IMessage</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Messages_TransactionStartedEvent__ctor_" data-uid="Silverback.Messaging.Messages.TransactionStartedEvent.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Messages_TransactionStartedEvent__ctor" data-uid="Silverback.Messaging.Messages.TransactionStartedEvent.#ctor">TransactionStartedEvent()</h4>
+  <div class="markdown level1 summary"><p>The event published when a (database) transaction is being started. It is fired by the data access
+before saving changes (see Silverback.Core.EntityFrameworkCore) and it is internally used (in
+Silverback.Integration) to trigger additional tasks related to the publishing of the domain events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public TransactionStartedEvent()</code></pre>
   </div>
   <h3 id="implements">Implements</h3>
   <div>
@@ -149,12 +164,6 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Messages_TransactionStartedEvent.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Messages.TransactionStartedEvent%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Messages/TransactionStartedEvent.cs/#L11" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -175,7 +184,7 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

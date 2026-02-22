@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ConsumerEndpointConfigurationBuilderTests
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ConsumerEndpointConfigurationBuilderTests
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests">
+
+
+  <h1 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests" class="text-break">Class ConsumerEndpointConfigurationBuilderTests
+</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">ConsumerEndpointConfigurationBuilderTests</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Configuration.html">Configuration</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.dll</h6>
+  <h5 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class ConsumerEndpointConfigurationBuilderTests</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests__ctor_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.#ctor*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.#ctor">ConsumerEndpointConfigurationBuilderTests()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ConsumerEndpointConfigurationBuilderTests()</code></pre>
+  </div>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage">Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage">Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetJsonMessageDeserializerByDefault_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetJsonMessageDeserializerByDefault*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetJsonMessageDeserializerByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetJsonMessageDeserializerByDefault">Build_ShouldSetJsonMessageDeserializerByDefault()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetJsonMessageDeserializerByDefault()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetMessageValidationModeToLogWarningByDefault_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetMessageValidationModeToLogWarningByDefault*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetMessageValidationModeToLogWarningByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetMessageValidationModeToLogWarningByDefault">Build_ShouldSetMessageValidationModeToLogWarningByDefault()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetMessageValidationModeToLogWarningByDefault()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage">Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetRawMessageDeserializerByDefault_WhenMessageTypeIsRawMessage()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage">Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsStringMessage()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage">Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetStringMessageDeserializerByDefault_WhenMessageTypeIsTypedStringMessage()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject">Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid">Build_ShouldThrow_WhenConfigurationIsNotValid()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Build_ShouldThrow_WhenConfigurationIsNotValid()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Constructor_ShouldSetDisplayName_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Constructor_ShouldSetDisplayName*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Constructor_ShouldSetDisplayName" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Constructor_ShouldSetDisplayName">Constructor_ShouldSetDisplayName()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Constructor_ShouldSetDisplayName()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer">ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled">ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetDeserializer">ConsumeBinaryMessages_ShouldSetDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldSetDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetTypeDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetTypeDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldSetTypeDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldSetTypeDeserializer">ConsumeBinaryMessages_ShouldSetTypeDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldSetTypeDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor">ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldThrow_WhenMessageDoesNotHaveDefaultConstructor()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid">ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaw_ShouldSetDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaw_ShouldSetDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaw_ShouldSetDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaw_ShouldSetDeserializer">ConsumeRaw_ShouldSetDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeRaw_ShouldSetDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaw_ShouldSetTypeDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaw_ShouldSetTypeDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaw_ShouldSetTypeDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaw_ShouldSetTypeDeserializer">ConsumeRaw_ShouldSetTypeDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeRaw_ShouldSetTypeDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaws_ShouldSetConfiguredDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaws_ShouldSetConfiguredDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeRaws_ShouldSetConfiguredDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeRaws_ShouldSetConfiguredDeserializer">ConsumeRaws_ShouldSetConfiguredDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeRaws_ShouldSetConfiguredDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetConfiguredDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetConfiguredDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetConfiguredDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetConfiguredDeserializer">ConsumeStrings_ShouldSetConfiguredDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeStrings_ShouldSetConfiguredDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetDeserializer">ConsumeStrings_ShouldSetDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeStrings_ShouldSetDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetTypeDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetTypeDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ConsumeStrings_ShouldSetTypeDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ConsumeStrings_ShouldSetTypeDeserializer">ConsumeStrings_ShouldSetTypeDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ConsumeStrings_ShouldSetTypeDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified">DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified">DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Decrypt_ShouldSetEncryptionSettings_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Decrypt_ShouldSetEncryptionSettings*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_Decrypt_ShouldSetEncryptionSettings" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.Decrypt_ShouldSetEncryptionSettings">Decrypt_ShouldSetEncryptionSettings()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void Decrypt_ShouldSetEncryptionSettings()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializer">DeserializeJson_ShouldSetDeserializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetDeserializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified">DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified">DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject">DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled">DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled">DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeUsing_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeUsing_ShouldSetSerializer*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DeserializeUsing_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DeserializeUsing_ShouldSetSerializer">DeserializeUsing_ShouldSetSerializer()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DeserializeUsing_ShouldSetSerializer()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DisableMessageValidation_ShouldSetMessageValidationMode_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DisableMessageValidation_ShouldSetMessageValidationMode*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_DisableMessageValidation_ShouldSetMessageValidationMode" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.DisableMessageValidation_ShouldSetMessageValidationMode">DisableMessageValidation_ShouldSetMessageValidationMode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void DisableMessageValidation_ShouldSetMessageValidationMode()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_EnableBatchProcessing_ShouldSetBatchSettings_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.EnableBatchProcessing_ShouldSetBatchSettings*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_EnableBatchProcessing_ShouldSetBatchSettings_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.EnableBatchProcessing_ShouldSetBatchSettings(System.Int32)">EnableBatchProcessing_ShouldSetBatchSettings(int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Theory]
+[InlineData(new object[] { 1 })]
+[InlineData(new object[] { 2000 })]
+public void EnableBatchProcessing_ShouldSetBatchSettings(int size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">size</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange(System.Int32)">EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange(int)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Theory]
+[InlineData(new object[] { 0 })]
+[InlineData(new object[] { -1 })]
+public void EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange(int size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">size</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled">IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_OnError_ShouldSetErrorPolicy_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.OnError_ShouldSetErrorPolicy*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_OnError_ShouldSetErrorPolicy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.OnError_ShouldSetErrorPolicy">OnError_ShouldSetErrorPolicy()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void OnError_ShouldSetErrorPolicy()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_OnError_ShouldSetErrorPolicyViaBuilder_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.OnError_ShouldSetErrorPolicyViaBuilder*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_OnError_ShouldSetErrorPolicyViaBuilder" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.OnError_ShouldSetErrorPolicyViaBuilder">OnError_ShouldSetErrorPolicyViaBuilder()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void OnError_ShouldSetErrorPolicyViaBuilder()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ThrowIfUnhandled_ShouldSetThrowIfUnhandled_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ThrowIfUnhandled_ShouldSetThrowIfUnhandled*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ThrowIfUnhandled_ShouldSetThrowIfUnhandled" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ThrowIfUnhandled_ShouldSetThrowIfUnhandled">ThrowIfUnhandled_ShouldSetThrowIfUnhandled()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ThrowIfUnhandled_ShouldSetThrowIfUnhandled()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse">ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue">ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_WithSequenceTimeout_ShouldSetSequenceTimeout_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.WithSequenceTimeout_ShouldSetSequenceTimeout*"></a>
+  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ConsumerEndpointConfigurationBuilderTests_WithSequenceTimeout_ShouldSetSequenceTimeout" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ConsumerEndpointConfigurationBuilderTests.WithSequenceTimeout_ShouldSetSequenceTimeout">WithSequenceTimeout_ShouldSetSequenceTimeout()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public void WithSequenceTimeout_ShouldSetSequenceTimeout()</code></pre>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2026 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

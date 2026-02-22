@@ -86,7 +86,27 @@
             <article class="content wrap" id="_content" data-uid="consuming-chunking">
 <h1 id="consuming-chunked-messages">Consuming Chunked Messages</h1>
 
-<p><em>...coming soon...</em></p>
+<p>When messages are split into smaller parts (chunks) by the producer, the consumer is responsible for reassembling them into the original message before delivering it to the subscribers. Silverback handles chunked messages automatically, so in most cases you don't need to write any special consumer-side logic (if the messages are produced using Silverback or another framework that adds compatible headers).</p>
+<figure>
+	<a href="../../../images/diagrams/chunk-basic.png"><img src="../../../images/diagrams/chunk-basic.png" alt="Chunking diagram"></a>
+    <figcaption>The messages are being split into small chunks and reassembled on the consumer side.</figcaption>
+</figure>
+<h2 id="consumer-configuration">Consumer Configuration</h2>
+<p>No special configuration is required on the consumer to support chunked messages.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>All chunks belonging to the same message are acknowledged/committed at once, when the full message has been reassembled and processed by the subscriber. Similarly, when an exception is thrown, the error policy is applied to all chunks.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>The chunks belonging to the same message are expected to be contiguous and in strict order. When using Kafka, the chunks belonging to the same message are also supposed to be in the same partition.</p>
+</div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../producing/chunking.html">Producing Chunked Messages</a> guide</li>
+<li><a class="xref" href="../default-headers.html">Default Headers</a> guide</li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +137,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

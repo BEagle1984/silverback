@@ -87,8 +87,16 @@
 <h1 id="setting-headers">Setting Headers</h1>
 
 <p>Both Kafka and MQTT 5 support custom headers (called user properties in MQTT). With Silverback there are many ways to set headers.</p>
+<h2 id="using-wrapandpublish--wrapandpublishbatch">Using WrapAndPublish / WrapAndPublishBatch</h2>
+<p>The <code>WrapAndPublish</code>, <code>WrapAndPublishAsync</code>, <code>WrapAndPublishBatch</code> and <code>WrapAndPublishBatchAsync</code> methods of the <code>IPublisher</code> can be used to wrap the messages in an envelope and add additional metadata, such as headers.</p>
+<pre><code class="lang-csharp">await _publisher.WrapAndPublishAsync(
+    new MyMessage { ... },
+    envelope =&gt; envelope
+        .AddHeader(&quot;x-source&quot;, &quot;my-app&quot;)
+        .AddHeader(&quot;x-priority&quot;, envelope.Message.Priority));
+</code></pre>
 <h2 id="enrichers-in-the-endpoint-configuration">Enrichers in the Endpoint Configuration</h2>
-<p>Using an enricher configured fro the endpoint you can add static headers to all produced messages.</p>
+<p>Using an enricher configured for the endpoint you can add static headers to all produced messages.</p>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
     .AddKafkaClients(clients =&gt; clients
@@ -110,8 +118,8 @@
                 .AddHeader(&quot;header1&quot;, message =&gt; message.Property1)
                 .AddHeader(&quot;header2&quot;, envelope =&gt; envelope.Message.Property2))));
 </code></pre>
-<h2 id="headerattribute-in-the-message-model">HeaderAttribute in the Message Model</h2>
-<p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> is straightforward: simply decorate the properties you want to publish as headers and specify an header name.</p>
+<h2 id="headerattribute-on-the-message-model">HeaderAttribute on the Message Model</h2>
+<p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> is straightforward: simply decorate the properties you want to publish as headers and specify a header name.</p>
 <pre><code class="lang-csharp">using Silverback.Messaging.Messages;
 
 namespace Sample
@@ -144,18 +152,10 @@ namespace Sample
 <h5>Important</h5>
 <p>Only the message type will be scanned, therefore the properties decorated with the <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> must be in the root of the message object.</p>
 </div>
-<h2 id="using-wrapandpublish--wrapandpublishbatch">Using WrapAndPublish / WrapAndPublishBatch</h2>
-<p>The <code>WrapAndPublish</code>, <code>WrapAndPublishAsync</code>, <code>WrapAndPublishBatch</code> and <code>WrapAndPublishBatchAsync</code> methods of the <code>IPublisher</code> can be used to wrap the messages in an envelope and add additional metadata, such as headers.</p>
-<pre><code class="lang-csharp">await _publisher.WrapAndPublishAsync(
-    new MyMessage { ... },
-    envelope =&gt; envelope
-        .AddHeader(&quot;x-source&quot;, &quot;my-app&quot;)
-        .AddHeader(&quot;x-priority&quot;, envelope.Message.Priority));
-</code></pre>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
 <li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
-<li><a class="xref" href="../consuming/headers.html">Reading Headers</a> guide</li>
+<li><a class="xref" href="../consuming/headers.html">Reading Headers</a></li>
 <li><a class="xref" href="../default-headers.html">Default Headers</a></li>
 </ul>
 </article>
@@ -188,7 +188,7 @@ namespace Sample
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

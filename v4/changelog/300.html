@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Release Notes v3.x.x | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Release Notes v3.x.x | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="releases-300">
+<h1 id="release-notes-v3xx">Release Notes v3.x.x</h1>
+
+<h2 id="380"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.8.0">3.8.0</a></h2>
+<h3 id="whats-new">What's New</h3>
+<ul>
+<li>Topic name resolvers can be used to filter the messages to be produce: returning <code>null</code> will discard the message</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Fix error policies not being triggered consistently when batch consuming</li>
+<li>Make <code>IntegrationSpy</code> fully thread-safe</li>
+<li>Prevent errors when the <a class="xref" href="../api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.html">IKafkaPartitionsRevokedCallback</a> is invoked during application shutdown</li>
+<li>Improve error handling during connection to MQTT</li>
+</ul>
+<h2 id="373"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.3">3.7.3</a></h2>
+<h3 id="fixes-1">Fixes</h3>
+<ul>
+<li>Support topic names with symbols (e.g. hyphens) in mocked MQTT broker</li>
+</ul>
+<h2 id="372"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.2">3.7.2</a></h2>
+<h3 id="fixes-2">Fixes</h3>
+<ul>
+<li>Correctly invoke the <a class="xref" href="../api/Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html">IKafkaOffsetCommittedCallback</a> when auto commit is disabled [<a href="https://github.com/BEagle1984/silverback/issues/167">#167</a>]</li>
+</ul>
+<h2 id="371"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.1">3.7.1</a></h2>
+<h3 id="fixes-3">Fixes</h3>
+<ul>
+<li>Improve message streams abort process to avoid first chance exceptions (e.g. during dispose)</li>
+</ul>
+<h2 id="370"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.7.0">3.7.0</a></h2>
+<h3 id="whats-new-1">What's New</h3>
+<ul>
+<li>Implement basic support for Kafka transactions via <a class="xref" href="../api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html">KafkaTransactionalProducer</a> <em>(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)</em></li>
+<li>Skip chunking when processing single chunk messages</li>
+</ul>
+<h3 id="fixes-4">Fixes</h3>
+<ul>
+<li>Fix possible race condition in consumer pipeline</li>
+</ul>
+<h2 id="361"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.1">3.6.1</a></h2>
+<h3 id="fixes-5">Fixes</h3>
+<ul>
+<li>Handle race condition in <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a> with timeout</li>
+<li>Limit consumer status history</li>
+</ul>
+<h2 id="360"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.0">3.6.0</a></h2>
+<h3 id="whats-new-2">What's New</h3>
+<ul>
+<li>Handle <code>IAsyncEnumerable&lt;T&gt;</code> returned by the subscriber and republished the contained messages</li>
+<li>Enrich Kafka messages moved by the <a class="xref" href="../api/Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> adding some extra headers containing some information about the source topic, partition, offset, etc. (see <a class="xref" href="../guides/broker/default-headers.html">Default Headers</a>)</li>
+<li>Allow filters such as the <a class="xref" href="../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> or <a class="xref" href="../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> to be added to the subscribers at runtime via the configuration API</li>
+<li>Add overload for <code>Publish</code> method in the error policies that forwards the exception as well as the envelope</li>
+<li>Throw <code>TimeoutException</code> from <a class="xref" href="../api/Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a> and <a class="xref" href="../api/Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a></li>
+<li>Improve MQTT connection related logs (info for successful reconnect and add broker name to log messages)</li>
+<li>Support shared sessions in mocked MQTT broker</li>
+</ul>
+<h3 id="fixes-6">Fixes</h3>
+<ul>
+<li>Ensure each consumed message gets a unique traceId (when the traceparent header is not present)</li>
+<li>Fix memory leak in consumer</li>
+<li>Fully validate messages, including nested objects</li>
+</ul>
+<h2 id="350"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.5.0">3.5.0</a></h2>
+<h3 id="whats-new-3">What's New</h3>
+<ul>
+<li>Log <code>MqttClient</code> internal events (see <a class="xref" href="../guides/logging.html">Logging</a>)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.8.2">Confluent.Kafka 1.8.2</a></li>
+<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.16">MQTTnet 3.0.16</a></li>
+<li>Upgrade to <a href="https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.2">RabbitMQ.Client 6.2.2</a></li>
+<li>Update several dependencies</li>
+</ul>
+<h3 id="fixes-7">Fixes</h3>
+<ul>
+<li>Fix <a class="xref" href="../api/Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a> reconnection issues</li>
+<li>Handle edge cases related to MQTT acknowledgment timeout in <a class="xref" href="../api/Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></li>
+<li>Allow max retries specification and error policies chains with MQTT V3</li>
+</ul>
+<h2 id="340"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.4.0">3.4.0</a></h2>
+<h3 id="whats-new-4">What's New</h3>
+<ul>
+<li>Support encryption key rotation (see <a class="xref" href="../guides/broker/producing/encryption.html">Encrypt Produced Messages</a>)</li>
+</ul>
+<h2 id="331"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.1">3.3.1</a></h2>
+<h3 id="fixes-8">Fixes</h3>
+<ul>
+<li>Fix <code>AddHeaders&lt;TMessage&gt;</code> and <code>WithKafkaKey&lt;TMessage&gt;</code> not being correctly invoked by all <code>IProducer.Produce</code> and <code>IProducer.ProducerAsync</code> overloads</li>
+<li>Add endpoint friendly name to all logs</li>
+</ul>
+<h2 id="330"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.0">3.3.0</a></h2>
+<h3 id="whats-new-5">What's New</h3>
+<ul>
+<li>Optimize in-memory mocked Kafka (avoid spawning too many threads)</li>
+<li>Support multiple brokers (with overlapping topic names) in mocked Kafka and MQTT</li>
+<li>Add message validation for both producer and consumer (see <a class="xref" href="../guides/broker/producing/validation.html">Validating the Produced Messages</a> and <a class="xref" href="../guides/broker/consuming/validation.html">Validating the Consumed Messages</a>)</li>
+<li>Add new <code>AddInbound</code> overloads specifying message type for a more compact configuration when using the typed deserializer (see <a class="xref" href="../guides/broker/producing/serialization.html">Serializing the Produced Messages</a>)</li>
+</ul>
+<h3 id="fixes-9">Fixes</h3>
+<ul>
+<li>Invoke the Kafka partition EOF callback for all connected consumers</li>
+<li>Ignore null or empty Kafka key in producer</li>
+</ul>
+<h2 id="320"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.2.0">3.2.0</a></h2>
+<h3 id="whats-new-6">What's New</h3>
+<ul>
+<li>Add new Kafka partition EOF callback to be notified when the end of a partition is reached by the consumer (see <a class="xref" href="../guides/broker/callbacks.html">Broker Callbacks</a> and <a class="xref" href="../api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html">IKafkaPartitionEofCallback</a>)</li>
+<li>Allow multiple calls to <code>IKafkaConsumerEndpointBuilder.Configure</code> or <code>IKafkaProducerEndpointBuilder.Configure</code> for the same endpoint</li>
+<li>Observe a grace period in the <a class="xref" href="../api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html">ConsumersHealthCheck</a> to prevent false positives during a normal Kafka rebalance</li>
+<li>Add optional friendly name to the endpoints (see <code>IEndpointBuilder&lt;TBuilder&gt;.WithName</code> and <code>Endpoint.FriendlyName</code>)</li>
+<li>Allow filtering the endpoints targeted by the <a class="xref" href="../api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html">ConsumersHealthCheck</a> (see <a class="xref" href="../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html">AddConsumersCheck</a>)</li>
+</ul>
+<h2 id="311"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.1">3.1.1</a></h2>
+<h3 id="fixes-10">Fixes</h3>
+<ul>
+<li>Invoke broker callbacks during the application shutdown to allow custom code to be run when disconnecting</li>
+</ul>
+<h2 id="310"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.0">3.1.0</a></h2>
+<h3 id="whats-new-7">What's New</h3>
+<ul>
+<li>Add new ways to configure headers and kafka key (see <a class="xref" href="../guides/broker/producing/headers.html">Setting Headers</a>, <a class="xref" href="../guides/broker/consuming/headers.html">Reading Headers</a>, and <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)</li>
+<li>New callbacks for Kafka log events (see <a class="xref" href="../guides/broker/callbacks.html">Broker Callbacks</a>)</li>
+<li>Improve consumer status tracking introducing <a class="xref" href="../api/Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus.Ready</a>
+<ul>
+<li>Revert the Kafka consumer status from <code>Ready</code> to <code>Connected</code> whenever partitions are revoked or a poll timeout occurs</li>
+<li>Adapt consumer health check to monitor the new status and report unhealthy if not <code>Ready</code> (see <a class="xref" href="../guides/broker/consuming/health-check.html">Consumers Health Check</a>)</li>
+</ul>
+</li>
+<li>Try to automatically recover from Kafka maximum poll interval exceed errors</li>
+<li>Improve Kafka static partition assignment with resolver function and fetching the available partitions (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0">Confluent.Kafka 1.7.0</a></li>
+<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.15">MQTTnet 3.0.15</a></li>
+</ul>
+<h3 id="fixes-11">Fixes</h3>
+<ul>
+<li>Prevent possible race condition causing messages to be skipped when a <code>RetryPolicy</code> kicks in for messages from multiple Kafka partitions simultaneously</li>
+<li>Prevent <code>ObjectDisposedException</code> to be thrown when Kafka events (e.g. statistics) are fired during the application shutdown</li>
+<li>Prevent <code>ObjectDisposedException</code> to be thrown when <code>Consumer.Dispose</code> is called multiple times</li>
+<li>Properly clear the trace context (<code>Activity</code>) when reconnecting the consumer to prevent the newly started consume loop to be tracked under the current message traceId</li>
+<li>Fix wrong prefix in MQTT log event names</li>
+</ul>
+<h2 id="301"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.1">3.0.1</a></h2>
+<h3 id="fixes-12">Fixes</h3>
+<ul>
+<li>Fix <code>IOutboxWriter</code> lifecycle [<a href="https://github.com/BEagle1984/silverback/issues/128">#128</a>]</li>
+</ul>
+<h2 id="300"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0">3.0.0</a></h2>
+<h3 id="whats-new-8">What's New</h3>
+<ul>
+<li>Add support for MQTT (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>, <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>, <a class="xref" href="../guides/broker/consuming/basics.html">Consuming Messages</a>, ...)</li>
+<li>Simplify configuration and reduce boilerplate
+<ul>
+<li>Simplify subscribers registration and get rid of the <code>ISubscriber</code> interface (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li>Scan subscribers automatically at startup to reduce cost of first message</li>
+<li>Connect brokers and handle graceful shutdown automatically (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+<li>Improve endpoints configuration API (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+<li>Add <code>IServiceCollection.ConfigureSilverback</code> extension method to conveniently split the configuration code (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+</ul>
+</li>
+<li>Refactor Silverback.Integration to support streaming
+<ul>
+<li>Create <a class="xref" href="../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a></li>
+<li>Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory</li>
+<li>Redesign sequences handling to support chunking, batch consuming and future sequences as well</li>
+</ul>
+</li>
+<li>Improve Kafka partitions handling (see <a class="xref" href="../guides/broker/producing/kafka/partitioning.html">Kafka Key and Partitioning</a>)
+<ul>
+<li>Process partitions independently and concurrently</li>
+<li>Add setting to produce to a specific partition</li>
+<li>Add setting to manually assign the consumer partitions</li>
+</ul>
+</li>
+<li>Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see <code>throwIfUnhandled</code> argument in the <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> methods and <code>ThrowIfUnhandled</code> property in the <code>IConsumerEndpoint</code>)</li>
+<li>Handle null messages as <a class="xref" href="../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/consuming/tombstone.html">Consuming Tombstone Messages</a>)</li>
+<li>Replace <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> with <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to improve serialization and deserialization performance (the old serializers have been moved into the <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package, see <a class="xref" href="../guides/broker/producing/serialization.html">Serializing the Produced Messages</a>)</li>
+<li>Improve outbound routing customization options with endpoint name resolvers (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
+<li>Add non-blocking <code>Produce</code>/<code>ProduceAsync</code>/<code>RawProduce</code>/<code>RawProduceAsync</code> overloads to <a class="xref" href="../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a>, better suitable for higher throughput scenarios</li>
+<li>Refactor broker event handlers (see <a class="xref" href="../guides/broker/callbacks.html">Broker Callbacks</a>)</li>
+<li>Expose <a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StopAsync_System_Boolean_">IConsumer.StopAsync</a> and <a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StartAsync">IConsumer.StartAsync</a> methods to pause and resume consumers</li>
+<li>Add log levels configuration (see <a class="xref" href="../guides/logging.html">Logging</a>)</li>
+<li>Improve (distributed) tracing (see <a class="xref" href="../guides/logging.html">Logging</a>)</li>
+<li>Allow header names customization (see <a class="xref" href="../guides/broker/default-headers.html">Default Headers</a>)</li>
+<li>Add consumer status information and statistics (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+<li>Add basic consumer health check (see <a class="xref" href="../guides/broker/consuming/health-check.html">Consumers Health Check</a>)</li>
+<li>Allow broker behaviors to be registered as transient, meaning that an instance will be created per each producer or consumer (see <a class="xref" href="../guides/broker/producing/behaviors.html">Producer Behaviors Pipeline</a> and <a class="xref" href="../guides/broker/consuming/behaviors.html">Consumer Behaviors Pipeline</a>)</li>
+<li>Improve code quality
+<ul>
+<li>Enhance CI pipeline to use Roslyn analyzers</li>
+<li>Integrate <a href="https://sonarcloud.io/dashboard?id=silverback">SonarCloud</a>)</li>
+<li>Improve integration tests</li>
+<li>Increase automated tests coverage</li>
+<li>Enable nullable reference types and adjust all API</li>
+<li>Document the entire public API</li>
+</ul>
+</li>
+<li>Released some utilities to help writing automated tests involving Silverback.Integration (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.6.2">Confluent.Kafka 1.6.2</a></li>
+<li>Upgrade to <a href="https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.1">RabbitMQ.Client 6.2.1</a></li>
+</ul>
+<h3 id="fixes-13">Fixes</h3>
+<ul>
+<li>Fix <code>OutboxWorker</code> not publishing custom headers [<a href="https://github.com/BEagle1984/silverback/issues/102">#102</a>]</li>
+</ul>
+<h3 id="breaking-changes">Breaking Changes</h3>
+<ul>
+<li>Refactored <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>
+<ul>
+<li>Removed the overloads to publish a batch of messages (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li>Cannot subscribe to collection of messages anymore (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>), unless they are consumed from a message broker (see <a class="xref" href="../guides/broker/consuming/basics.html">Consuming Messages</a>)</li>
+</ul>
+</li>
+<li>The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore) and in the same partition in case of Kafka</li>
+<li>Removed <code>ISubscriber</code> interface</li>
+<li>Removed <code>BusConfigurator</code> (moved all the configuration into the <code>ISilverbackBuilder</code> extension methods)
+<ul>
+<li>Replaced <code>BusConfigurator.Connect</code> with <code>ISilverbackBuilder.AddEndpointsConfigurator</code> and <code>ISilverbackBuilder.AddEndpoints</code> (or <code>ISilverbackBuilder.AddKafkaEndpoints</code> etc.) to configure the endpoints, while the broker is connected automatically at startup (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+<li>Replaced <code>BusConfigurator.Subscribe</code> methods with <code>ISilverbackBuilder.AddDelegateSubscriber</code> (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li>Replaced <code>BusConfigurator.HandleMessagesOfType</code> methods with <code>ISilverbackBuilder.HandleMessageOfType</code> (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>)</li>
+<li><code>BusConfigurator.ScanSubscribers</code> is not needed anymore since it gets called automatically at startup (from an <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a>)</li>
+</ul>
+</li>
+<li>Removed <code>IServiceCollection.Add*Subscriber</code>, <code>IServiceCollection.Add*Behavior</code>, <code>IServiceCollection.Add*BrokerBehavior</code>, <code>IServiceCollection.AddEndpointsConfigurator</code>, <code>IServiceCollection.Add*OutboundRouter</code> extension methods, use the same methods on the <code>ISilverbackBuilder</code> (using <code>IServiceCollection.ConfigureSilverback</code> to get an instance if the <code>ISilverbackBuilder</code> if necessary, as shown in  <a class="xref" href="../guides/setup.html">Setting Up Silverback</a>)</li>
+<li>Removed <code>IBrokerOptionsBuilder.Add*BrokerBehavior</code>, <code>IBrokerOptionsBuilder.RegisterConfigurator</code>, <code>IBrokerOptionsBuilder.Add*OutboundRouter</code> extension methods, use the same methods on the <code>ISilverbackBuilder</code> (using <code>IServiceCollection.ConfigureSilverback</code> to get an instance if the <code>ISilverbackBuilder</code> if necessary, as shown in  <a class="xref" href="../guides/setup.html">Setting Up Silverback</a>)</li>
+<li>Reorganized the <code>Silverback.Messaging.Configuration</code> namespace moving some broker specific types under <code>Silverback.Messaging.Configuration.Kafka</code>, <code>Silverback.Messaging.Configuration.Rabbit</code> or <code>Silverback.Messaging.Configuration.Mqtt</code></li>
+<li>The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued</li>
+<li>Removed <em>Silverback</em> prefix from exceptions name</li>
+<li>Removed the <code>IRequest&lt;TResponse&gt;</code> interface (it was implemented by both <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> and <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>)</li>
+<li>Changed <em>Impl</em> methods suffix with <em>Core</em>, this affects some virtual members in the <code>Broker</code> and other base classes</li>
+<li><code>IConsumer.Received</code> event replaced by a callback delegate</li>
+<li><code>IBroker.GetConsumer</code> and <code>IBrokerCollection.GetConsumer</code> methods renamed to <code>IBroker.AddConsumer</code> and <code>IBrokerCollection.AddConsumer</code></li>
+<li><code>IQueueProducer</code> and <code>IQueueConsumer</code> renamed to <code>IOutboxWriter</code> and <code>IOutboxReader</code></li>
+<li>The messages with a null body are by default mapped to a <a class="xref" href="../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/consuming/tombstone.html">Consuming Tombstone Messages</a>)</li>
+<li>Database:
+<ul>
+<li>Moved all entities (used with Entity Framework Core) to the <code>Silverback.Database.Model</code> namespace</li>
+<li>Replaced <code>InboundMessage</code> entity with <code>InboundLogEntry</code></li>
+<li>Replaced <code>OutboundMessage</code> entity with <code>OutboxMessage</code></li>
+<li>Removed <code>TemporaryMessageChunk</code></li>
+<li>Modified schema of <code>StoredOffset</code> entity</li>
+</ul>
+</li>
+<li>Moved and renamed some internally used types (e.g. <code>QueuedMessage</code>, <code>DbQueuedMessage</code>, ...)</li>
+<li>Complete redesign of the error policies</li>
+<li>Removed <code>IMessageIdProvider</code> and all related logic: the <code>Id</code> or <code>MessageId</code> property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore</li>
+<li><code>WithConnectionTo&lt;&gt;</code>, <code>WithConnectionToKafka</code>, <code>WithConnectionToRabbitMQ</code> and <code>WithInMemoryBroker</code> have been removed, please use the new <code>WithConnectionToMessageBroker</code> and <code>AddKafka</code>/<code>AddRabbit</code> methods (see <a class="xref" href="../guides/broker/connecting.html">Connecting to a Message Broker</a>)</li>
+<li>Replaced the internal messages for the Kafka events such as partitions revoked/assigned, offset commit, error, log and statistics with event handler interfaces (see <a class="xref" href="../guides/broker/callbacks.html">Broker Callbacks</a>)</li>
+<li>Deprecated <a href="https://www.nuget.org/packages/Silverback.Integration.InMemory">Silverback.Integration.InMemory</a>, use <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a>, <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing">Silverback.Integration.RabbitMQ.Testing</a>, etc. instead</li>
+<li>Renamed <code>PartitioningKeyMemberAttribute</code> to <a class="xref" href="../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a></li>
+<li><a href="https://www.nuget.org/packages/Silverback.Integration.Configuration">Silverback.Integration.Configuration</a> has been discontinued</li>
+<li>Renamed <code>Settings</code> property to <code>Options</code> in the default <a class="xref" href="../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> (since the switch to <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a>)</li>
+<li>Removed <code>LogWithLevel</code> method from <a class="xref" href="../api/Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a>, use the new <code>WithLogLevels</code> configuration instead</li>
+<li>Removed <code>Parallel</code> option from <a class="xref" href="../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a></li>
+<li>Renamed <code>Offset</code> to a more generic <code>BrokerMessageIdentifier</code> in the <a href="https://www.nuget.org/packages/Silverback.Integration">Silverback.Integration</a> abstractions (including the envelopes)</li>
+<li>Some changes to the behaviors:
+<ul>
+<li>Renamed <code>Handle</code> to <code>HandleAsync</code> in the <a class="xref" href="../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a>, <a class="xref" href="../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="../api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a></li>
+<li>Changed signature of the <code>HandleAsync</code> method (see <a class="xref" href="../guides/mediator.html">Using the Mediator</a>, <a class="xref" href="../guides/broker/producing/behaviors.html">Producer Behaviors Pipeline</a> and <a class="xref" href="../guides/broker/consuming/behaviors.html">Consumer Behaviors Pipeline</a>)</li>
+<li>Changed some sort indexes and introduced some new broker behaviors, you may need to adjust the sort index of your custom behaviors (see <a class="xref" href="../guides/broker/producing/behaviors.html">Producer Behaviors Pipeline</a> and <a class="xref" href="../guides/broker/consuming/behaviors.html">Consumer Behaviors Pipeline</a> for the updated list of built-in behaviors)</li>
+</ul>
+</li>
+<li>Replaced <code>IBroker.Connect</code> and <code>IBroker.Disconnect</code> with <code>IBroker.ConnectAsync</code> and <code>IBroker.DisconnectAsync</code></li>
+<li>Some major changes to batch consuming:
+<ul>
+<li>Removed all batch events (<code>BatchStartedEvent</code>, <code>BatchCompleteEvent</code>, <code>BatchProcessedEvent</code>, <code>BatchAbortedEvent</code>), refer to <a class="xref" href="../guides/broker/consuming/basics.html">Consuming Messages</a> to learn how to leverage the new <a class="xref" href="../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a></li>
+<li>Setting the batch size to 1 doesn't disable batching anymore, set the <code>Batch</code> to <code>null</code> in the <a class="xref" href="../api/Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a> to disable it</li>
+<li>When batching is enabled the messages can be subscribed only via the <a class="xref" href="../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/consuming/basics.html">Consuming Messages</a>), the subscribers to the single messages will not be invoked</li>
+</ul>
+</li>
+<li><a class="xref" href="../api/Silverback.Messaging.Sequences.Chunking.ChunkSettings.html">ChunkSettings</a> moved from <code>Silverback.Messaging.LargeMessages</code> namespace to <code>Silverback.Messaging.Sequences.Chunking</code></li>
+<li>Replaced <code>CoreEventIds</code>, <code>IntegrationEventIds</code>, <code>KafkaEventIds</code> and <code>RabbitEventIds</code> with <a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html">CoreLogEvents</a>, <a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html">IntegrationLogEvents</a>, <a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html">KafkaLogEvents</a> and <code>RabbitLogEvents</code> (see also <a class="xref" href="../guides/logging.html">Logging</a>)</li>
+<li>Deprecated support for Entity Framework 2, only the version 3.0.1 of <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> will work with Silverback 3.0.0</li>
+<li>Modified message encryption for chunked messages and it will not be compatible with previous versions of Silverback (affects chunking+encryption only)</li>
+</ul>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/changelog/300.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2025 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

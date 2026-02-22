@@ -94,17 +94,23 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a></h4>
-      <section><p>Represents a binary file that is being transferred over the message broker.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.BinaryMessage.html">BinaryMessage</a></h4>
+      <section><p>A binary message that is being transferred over the message broker without serializing and deserializing it.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a></h4>
       <section><p>Contains the constants with the names of the standard message headers used by Silverback.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.EnvelopeFactory.html">EnvelopeFactory</a></h4>
-      <section><p>Can be used to instantiate an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> or an <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a>.</p>
-</section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a></h4>
       <section><p>Used to decorate a property which value must be produced/consumed as message header.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.html">InboundEnvelopeBuilderExtensions</a></h4>
+      <section><p>Adds the <code>WithOffset</code> methods to the <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a></h4>
+      <section><p>Creates the <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> instances to be used for testing.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.KafkaEnvelopeExtensions.html">KafkaEnvelopeExtensions</a></h4>
+      <section><p>Adds some convenience extension methods to the envelope interfaces.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a></h4>
       <section><p>The values of the properties decorated with this attribute are used to build the message key that
@@ -114,7 +120,7 @@ will be used by Kafka (for partitioning, compacting, etc.).</p>
       <section><p>Contains the constants with the names of the Kafka specific message headers used by Silverback.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a></h4>
-      <section><p>An header added to the message being sent over a message broker.</p>
+      <section><p>A header added to the message being sent over a message broker.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></h4>
       <section><p>A modifiable collection of message headers.</p>
@@ -127,18 +133,32 @@ will be used by Kafka (for partitioning, compacting, etc.).</p>
 methods to add the internal events to a temporary collection exposed via the
 <a class="xref" href="Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a> implementation.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.RabbitMessageHeaders.html">RabbitMessageHeaders</a></h4>
-      <section><p>Contains the constants with the names of the RabbitMQ specific message headers used by Silverback.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.MqttEnvelopeExtensions.html">MqttEnvelopeExtensions</a></h4>
+      <section><p>Adds some convenience extension methods to the envelope interfaces.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.RabbitRoutingKeyAttribute.html">RabbitRoutingKeyAttribute</a></h4>
-      <section><p>The value of the property decorated with this attribute will be used as routing key. The routing key
-can be used by RabbitMQ to route the messages to the proper queue.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.MqttMessageHeaders.html">MqttMessageHeaders</a></h4>
+      <section><p>Contains the constants with the names of the Kafka specific message headers used by Silverback.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.OutboundEnvelopeBuilder-1.html">OutboundEnvelopeBuilder&lt;TMessage&gt;</a></h4>
+      <section><p>Creates the <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> instances to be used for testing.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a></h4>
+      <section><p>Wraps a raw message <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.RawMessage-1.html">RawMessage&lt;T&gt;</a></h4>
+      <section><p>Wraps a raw message <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.StringMessage.html">StringMessage</a></h4>
+      <section><p>Wraps a raw message <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.StringMessage-1.html">StringMessage&lt;T&gt;</a></h4>
+      <section><p>Wraps a raw message <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.Tombstone.html">Tombstone</a></h4>
-      <section><p>Represents a tombstone message (a message with null body).</p>
+      <section><p>A tombstone message (a message with null body).</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a></h4>
-      <section><p>Represents a tombstone message (a message with null body).</p>
+      <section><p>A tombstone message (a message with null body).</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.TransactionAbortedEvent.html">TransactionAbortedEvent</a></h4>
       <section><p>The event published when an exception occurs during the processing of a (database) transaction. It
@@ -159,23 +179,26 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a></h4>
-      <section><p>Represents a binary file that is being transferred over the message broker.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a></h4>
+      <section><p>A binary message that is being transferred over the message broker without serializing and deserializing it.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IBrokerEnvelope.html">IBrokerEnvelope</a></h4>
       <section><p>Wraps the deserialized inbound or outbound message.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></h4>
-      <section><p>Represents a message that triggers an action.</p>
+      <section><p>A message that triggers an action.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a></h4>
-      <section><p>Represents a message that triggers an action with a result <code class="typeparamref">TResult</code>.</p>
+      <section><p>A message that triggers an action with a result <code class="typeparamref">TResult</code>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IEnvelope.html">IEnvelope</a></h4>
       <section><p>Wraps a message when it's being transferred over a message broker.</p>
 </section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.IEnvelope-1.html">IEnvelope&lt;TMessage&gt;</a></h4>
+      <section><p>Wraps a message when it's being transferred over a message broker.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></h4>
-      <section><p>Represents a message that notifies an event.</p>
+      <section><p>A message that notifies an event.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a></h4>
       <section><p>Wraps the message that is being consumed from an inbound endpoint.</p>
@@ -184,13 +207,13 @@ Silverback.Integration) to trigger additional tasks related to the publishing of
       <section><p>Wraps the message that is being consumed from an inbound endpoint.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IIntegrationCommand.html">IIntegrationCommand</a></h4>
-      <section><p>Represents a message that is sent over the message broker to trigger an action.</p>
+      <section><p>A message that is sent over the message broker to trigger an action.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IIntegrationEvent.html">IIntegrationEvent</a></h4>
-      <section><p>Represents a message that is sent over the message broker to notify an event.</p>
+      <section><p>A message that is sent over the message broker to notify an event.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a></h4>
-      <section><p>Represents a message that is sent over the message broker. It is further specialized as
+      <section><p>A message that is sent over the message broker. It is further specialized as
 <a class="xref" href="Silverback.Messaging.Messages.IIntegrationEvent.html">IIntegrationEvent</a> and <a class="xref" href="Silverback.Messaging.Messages.IIntegrationCommand.html">IIntegrationCommand</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.ILazyMessageStreamEnumerable-1.html">ILazyMessageStreamEnumerable&lt;TMessage&gt;</a></h4>
@@ -203,12 +226,11 @@ features like automatic republishing. It is a good practice for all messages to 
 interface but it's not mandatory.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a></h4>
-      <section><p>Represent a stream of messages being published through the internal bus. It is an enumerable that is
+      <section><p>Represent a stream of messages being published via the message bus. It is an enumerable that is
 asynchronously pushed with messages.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamObservable-1.html">IMessageStreamObservable&lt;TMessage&gt;</a></h4>
-      <section><p>Represent a stream of messages being published through the internal bus. It is an observable that is
-asynchronously pushed with messages.</p>
+      <section><p>Represent a stream of messages being published via the message bus. It is an observable that is asynchronously pushed with messages.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a></h4>
       <section><p>Relays the streamed messages to all the linked <span class="xref">Silverback.Messaging.Messages.MessageStreamEnumerable&lt;TMessage&gt;</span>.</p>
@@ -227,7 +249,7 @@ interface.</p>
       <section><p>Wraps the message that is being produced to an outbound endpoint.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a></h4>
-      <section><p>Represents a message that queries a result of type <code class="typeparamref">TResult</code>.</p>
+      <section><p>A message that queries a result of type <code class="typeparamref">TResult</code>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IRawBrokerEnvelope.html">IRawBrokerEnvelope</a></h4>
       <section><p>Wraps the serialized inbound or outbound message.</p>
@@ -235,11 +257,14 @@ interface.</p>
       <h4><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></h4>
       <section><p>Wraps the message that is being consumed from an inbound endpoint.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a></h4>
-      <section><p>Wraps the message that is being produced to an outbound endpoint.</p>
-</section>
       <h4><a class="xref" href="Silverback.Messaging.Messages.ISilverbackEvent.html">ISilverbackEvent</a></h4>
       <section><p>An event that is triggered internally by Silverback.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.ITombstone.html">ITombstone</a></h4>
+      <section><p>A tombstone message (a message with null body).</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Messages.ITombstone-1.html">ITombstone&lt;TMessage&gt;</a></h4>
+      <section><p>A tombstone message (a message with null body).</p>
 </section>
 </article>
           </div>
@@ -268,7 +293,7 @@ interface.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

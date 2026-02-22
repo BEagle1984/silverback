@@ -86,9 +86,8 @@
             <article class="content wrap" id="_content" data-uid="producing">
 <h1 id="producing-messages">Producing Messages</h1>
 
-<p>The integration with message brokers is based on the concept of producers and consumers. Producers are responsible for sending messages to the broker, while consumers receive and process them. This guide focuses on the producing side.</p>
-<h2 id="producer-configuration">Producer Configuration</h2>
-<p>Silverback provides a fluent API to configure the producer settings. The following example demonstrates how to set up a basic Kafka and MQTT producer.</p>
+<p>This guide explains how to configure producers and publish messages to Kafka or MQTT.</p>
+<h2 id="configure-producers">Configure Producers</h2>
 <div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
@@ -119,62 +118,60 @@
             .WithClientId(&quot;client1&quot;)
             .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
                 .ProduceTo(&quot;messages/my&quot;)
-                .WithAtLeastOnceQoS());
+                .WithAtLeastOnceQoS())));
 </code></pre>
 </section>
 </div>
 
-<p>The <code>AddProducer</code> or <code>AddClient</code> method is used to configure the producer. The <code>Produce&lt;TMessage&gt;</code> method is used to wire up the producer for a specific message type. The <code>ProduceTo</code> method specifies the topic to which the messages should be sent.</p>
-<p>Each <code>AddProducer</code> call will result in a producer to be created. The <code>Produce&lt;TMessage&gt;</code> method can be called multiple times to configure multiple message types for the same producer, each with its own settings, and leading to optimized resource usage and sometimes overall performance in comparison to using a dedicated producer for each message type.</p>
+<p>Use <code>AddProducer</code> (Kafka) or <code>AddClient</code> (MQTT) to create a producer/client instance. Use <code>Produce&lt;TMessage&gt;</code> to associate message types to endpoints. An endpoint usually specifies a destination topic via <code>ProduceTo</code>.</p>
 <div class="NOTE">
 <h5>Note</h5>
-<p>While Kafka producers and consumers are different entities, MQTT clients are used for both producing and consuming messages.</p>
+<p>With MQTT, the same client instance can both produce and consume.</p>
 </div>
 <div class="TIP">
 <h5>Tip</h5>
-<p>Assigning a name to the producer or client and its endpoints is optional but can be useful for logging and debugging purposes, as well as for direct access to the producer or client instance for advanced scenarios. Furthermore, it allows you to ensure that each client and endpoint is only configured once, even if you duplicate the declaration (for example if needed in multiple feature slices).</p>
+<p>Naming producers/clients and endpoints is optional, but helps with logs and avoids duplicate registration across modules/features.</p>
 </div>
 <div class="TIP">
 <h5>Tip</h5>
-<p>For a more in-depth documentation about the configuration of the underlying libraries refer to the <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet documentation</a> and [MQTTNet documentation](<a href="https://github.com/chkr1011/MQTTnet/wiki">MQTTNet documentation</a> respectively.</p>
+<p>Underlying client configuration:</p>
+<ul>
+<li>Kafka: <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html</a></li>
+<li>MQTTnet: <a href="https://github.com/chkr1011/MQTTnet/wiki">https://github.com/chkr1011/MQTTnet/wiki</a></li>
+</ul>
 </div>
-<h2 id="producing-messages-1">Producing Messages</h2>
-<p>Once the producer is configured, you can use the <code>IPublisher</code> to send messages through the mediator and Silverback will take care of routing them to the appropriate producer.</p>
-<pre><code class="lang-csharp">await _publisher.PublishAsync(new MyMessage { ... });
+<h2 id="publish-messages">Publish Messages</h2>
+<p>Once configured, publish messages via <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+<pre><code class="lang-csharp">await _publisher.PublishAsync(new MyMessage { /* ... */ });
 </code></pre>
-<h3 id="wrapandpublish">WrapAndPublish</h3>
-<p>The <code>WrapAndPublish</code> and <code>WrapAndPublishAsync</code> methods can be used to wrap the message in an envelope and add additional metadata, such as headers.</p>
+<h3 id="add-metadata-wrapandpublish">Add Metadata (WrapAndPublish)</h3>
+<p>Use <code>WrapAndPublishAsync</code> to attach headers and other metadata.</p>
 <pre><code class="lang-csharp">await _publisher.WrapAndPublishAsync(
-    new MyMessage { ... },
+    new MyMessage { /* ... */ },
     envelope =&gt; envelope
-        .AddHeader(&quot;x-priority&quot;, 1))
+        .AddHeader(&quot;x-priority&quot;, 1)
         .AddHeader(&quot;x-random&quot;, Random.Shared.Next()));
 </code></pre>
-<h3 id="wrapandpublishbatch">WrapAndPublishBatch</h3>
-<p>The <code>WrapAndPublishBatch</code> and <code>WrapAndPublishBatchAsync</code> methods can be used to publish multiple messages in a single batch, leveraging the batching capabilities of Kafka for a much greater throughput (see <a class="xref" href="../../../peformance.html">benchmarks</a>).</p>
-<pre><code class="lang-csharp">public async Task PublishBatch(IEnumerable&lt;MyMessage&gt; messages)
-{
-    await _publisher.WrapAndPublishBatchAsync(
+<h3 id="publish-batches-wrapandpublishbatch">Publish Batches (WrapAndPublishBatch)</h3>
+<p>Use <code>WrapAndPublishBatchAsync</code> to publish multiple messages efficiently.</p>
+<pre><code class="lang-csharp">public Task PublishBatchAsync(IEnumerable&lt;MyMessage&gt; messages) =&gt;
+    _publisher.WrapAndPublishBatchAsync(
         messages,
         envelope =&gt; envelope
-            .AddHeader(&quot;x-priority&quot;, 1))
+            .AddHeader(&quot;x-priority&quot;, 1)
             .AddHeader(&quot;x-random&quot;, Random.Shared.Next()));
-}
 </code></pre>
-<p>Some overloads allow you to specify a mapping function, so that you can use a streaming source and build the message models on-the-fly before they are wrapped.</p>
-<pre><code class="lang-csharp">public async Task PublishBatch(IAsyncEnumerable&lt;Order&gt; orderEntities)
-{
-    await _publisher.WrapAndPublishBatchAsync(
-        orderEntities,
-        orderEntity =&gt; new OrderReceived { OrderNumer = orderEntity.Number },
-        (envelope, orderEntity) =&gt; envelope
-            .AddHeader(&quot;x-priority&quot;, orderEntity.Priority)));
-}
+<p>Some overloads allow mapping from a streaming source.</p>
+<pre><code class="lang-csharp">public Task PublishBatchAsync(IAsyncEnumerable&lt;Order&gt; orders) =&gt;
+    _publisher.WrapAndPublishBatchAsync(
+        orders,
+        order =&gt; new OrderReceived { OrderNumber = order.Number },
+        (envelope, order) =&gt; envelope.AddHeader(&quot;x-priority&quot;, order.Priority));
 </code></pre>
 <h2 id="routing">Routing</h2>
 <p>The <code>Produce&lt;TMessage&gt;</code> method is used to configure the specified message type to be routed through the producer. The <code>ProduceTo</code> method specifies the topic to which the messages should be sent. Each endpoint can be configured with additional settings, such as specific headers or message properties, or a different serialization strategy.</p>
 <figure>
-	<a href="../../../images/diagrams/outbound-routing.png"><img src="../../../images/diagrams/outbound-routing.png"></a>
+	<a href="../../../images/diagrams/outbound-routing.png"><img src="../../../images/diagrams/outbound-routing.png" alt="Outbound routing diagram"></a>
     <figcaption>The messages are dynamically routed to the appropriate endpoint.</figcaption>
 </figure>
 <p>By default, Silverback routes the messages based on the message type. However, you can also implement custom routing logic.</p>
@@ -213,17 +210,16 @@
         .AddClient(client =&gt; client
             .WithClientId(&quot;my.client&quot;)
             .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
-                .ProduceTo(envelope =&gt; envelope.Headers.GetValue&lt;int&gt;(&quot;x-random&quot;) % 2 == 0 ? &quot;my/even&quot; : &quot;my/odd&quot;)));
+                .ProduceTo(envelope =&gt; envelope.Headers.GetValue&lt;int&gt;(&quot;x-random&quot;) % 2 == 0 ? &quot;my/even&quot; : &quot;my/odd&quot;))));
 </code></pre>
 </section>
 </div>
 
 <div class="TIP">
 <h5>Tip</h5>
-<p>Several overloads of the <code>ProduceTo</code> method allow you to specify the routing function based on the bare message or the envelope, giving you access to the message content, its headers and other metadata.
-Furthermore, for Kafka you can also specify the partition to produce to.</p>
+<p>Several overloads of the <code>ProduceTo</code> method let you build the destination topic from the message or the envelope, giving you access to the payload, headers, and broker-specific metadata.</p>
 </div>
-<p>You can also use a built-in string format to specify only the variable parts of the topic name.</p>
+<p>You can also use a format string where only the variable parts are generated.</p>
 <div class="tabGroup" id="tabgroup_3">
 <ul role="tablist">
 <li role="presentation">
@@ -243,7 +239,7 @@ Furthermore, for Kafka you can also specify the partition to produce to.</p>
             .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
                 .ProduceTo(
                     &quot;my-{0}&quot;,
-                    message =&gt; message.Id % 2 == 0 ? [&quot;even&quot;] : [&quot;odd&quot;]))));
+                    message =&gt; message.Id % 2 == 0 ? new object[] { &quot;even&quot; } : new object[] { &quot;odd&quot; }))));
 </code></pre>
 </section>
 <section id="tabpanel_3_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
@@ -257,12 +253,16 @@ Furthermore, for Kafka you can also specify the partition to produce to.</p>
             .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
                 .ProduceTo(
                     &quot;my/{0}&quot;,
-                    message =&gt; message.Id % 2 == 0 ? [&quot;even&quot;] : [&quot;odd&quot;]))));
+                    message =&gt; message.Id % 2 == 0 ? new object[] { &quot;even&quot; } : new object[] { &quot;odd&quot; }))));
 </code></pre>
 </section>
 </div>
 <h3 id="resolver-class">Resolver Class</h3>
-<p>The custom routing logic can also be implemented in a dedicated endpoint resolver class. The resolver must implement the <a class="xref" href="../../../api/Silverback.Messaging.Producing.EndpointResolvers.IKafkaProducerEndpointResolver-1.html">IKafkaProducerEndpointResolver&lt;TMessage&gt;</a> or <a class="xref" href="../../../api/Silverback.Messaging.Producing.EndpointResolvers.IMqttProducerEndpointResolver-1.html">IMqttProducerEndpointResolver&lt;TMessage&gt;</a> interface and is resolved via the DI container, thus allowing you to inject dependencies.</p>
+<p>You can also implement routing in a dedicated resolver, resolved via DI (so you can inject services). The resolver must implement:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Producing.EndpointResolvers.IKafkaProducerEndpointResolver-1.html">IKafkaProducerEndpointResolver&lt;TMessage&gt;</a> (Kafka)</li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Producing.EndpointResolvers.IMqttProducerEndpointResolver-1.html">IMqttProducerEndpointResolver&lt;TMessage&gt;</a> (MQTT)</li>
+</ul>
 <div class="tabGroup" id="tabgroup_4">
 <ul role="tablist">
 <li role="presentation">
@@ -331,7 +331,7 @@ Furthermore, for Kafka you can also specify the partition to produce to.</p>
 </section>
 </div>
 <h3 id="dynamic-routing">Dynamic Routing</h3>
-<p>The routing can also be fully dynamic and be delegated to the actual code publishing the message.</p>
+<p>If you want to select the destination at publish time (instead of in configuration), enable dynamic routing.</p>
 <div class="tabGroup" id="tabgroup_6">
 <ul role="tablist">
 <li role="presentation">
@@ -378,23 +378,41 @@ Furthermore, for Kafka you can also specify the partition to produce to.</p>
 
 <pre><code class="lang-csharp">await _publisher.WrapAndPublishAsync(
     new MyMessage { ... },
-    envelope =&gt; envelope
-        .SetKafkaDestinationTopic(&quot;my-topic&quot;)));
+    envelope =&gt; envelope.SetKafkaDestinationTopic(&quot;my-topic&quot;));
 </code></pre>
 </section>
 <section id="tabpanel_7_mqtt" role="tabpanel" data-tab="mqtt" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">await _publisher.WrapAndPublishAsync(
     new MyMessage { ... },
-    envelope =&gt; envelope
-        .SetMqttDestinationTopic(&quot;my/topic&quot;)));
+    envelope =&gt; envelope.SetMqttDestinationTopic(&quot;my/topic&quot;));
 </code></pre>
 </section>
 </div>
 <h3 id="kafka-partitioning">Kafka Partitioning</h3>
-<p>For Kafka producers, you can also specify the partition to produce to or influence it using a partitioning key. More information can be found in the <a class="xref" href="kafka/partitioning.html">Kafka Key and Partitioning</a> guide.</p>
+<p>For Kafka producers, you can also specify the partition to produce to or influence it using a partitioning key. See <a class="xref" href="kafka/partitioning.html">Kafka Keys and Partitioning</a>.</p>
+<h3 id="filtering">Filtering</h3>
+<p>You can add a predicate to filter which messages are produced to a given endpoint.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(...)
+        .AddProducer(producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-even-messages&quot;)
+                .Filter(message =&gt; message.Number % 2 == 0))
+            .Produce&lt;MyMessage&gt;(endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-odd-messages&quot;)
+                .Filter(message =&gt; message.Number % 2 == 1))));
+</code></pre>
 <h2 id="additional-resources">Additional Resources</h2>
-<p>For more information about the producer configuration possibilities refer to the other guides in this section and the <a class="xref" href="../../../api/Silverback.html">API Reference</a>.</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../bus.html">Using the Message Bus</a></li>
+<li><a class="xref" href="../consuming/basics.html">Consuming Messages</a></li>
+<li><a class="xref" href="../../../samples/intro.html">Samples</a></li>
+<li>Other guides in this section for in-depth information about producer features.</li>
+</ul>
 </article>
           </div>
 
@@ -425,7 +443,7 @@ Furthermore, for Kafka you can also specify the partition to produce to.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

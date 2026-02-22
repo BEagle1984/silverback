@@ -86,6 +86,197 @@
             <article class="content wrap" id="_content" data-uid="deserialization">
 <h1 id="deserializing-the-consumed-messages">Deserializing the Consumed Messages</h1>
 
+<p>The message payload received from the broker needs to be deserialized from a byte array into the target message type before it can be processed by the subscribers. By default, Silverback uses <code>System.Text.Json</code> to deserialize the message payload. This can be customized by tweaking the deserializer settings, using another one of the built-in deserializers or implementing a custom deserializer.</p>
+<h2 id="json">JSON</h2>
+<h3 id="systemtextjson">System.Text.Json</h3>
+<p>The default deserializer is <code>System.Text.Json</code>. It is used to deserialize the message payload from a JSON string. The deserializer settings can be customized using the <code>Configure</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeJson(deserializer =&gt; deserializer
+                    .Configure(
+                        options =&gt;
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        })))));
+</code></pre>
+<h3 id="newtonsoftjson">Newtonsoft.Json</h3>
+<p>Silverback also provides a deserializer based on <code>Newtonsoft.Json</code>. It is found in the <a href="https://www.nuget.org/packages/Silverback.Newtonsoft/">Silverback.Newtonsoft</a> package and can be enabled by calling the <code>DeserializeJsonUsingNewtonsoft</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeJsonUsingNewtonsoft())));
+</code></pre>
+<p>Optionally, the deserializer settings can be customized using the <code>Configure</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeJsonUsingNewtonsoft(deserializer =&gt; deserializer
+                    .Configure(
+                        settings =&gt;
+                        {
+                            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        }))));
+</code></pre>
+<h3 id="schema-registry">Schema Registry</h3>
+<p>To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This uses the Confluent deserializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeJsonUsingSchemaRegistry(deserializer =&gt; deserializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)
+                    .Configure(
+                        config =&gt;
+                        {
+                            config.AutoRegisterSchemas = false;
+                        }))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Kafka Schema Registry</a> guide.</p>
+</div>
+<h2 id="raw">Raw</h2>
+<p>The raw deserializer is not a traditional deserializer. Instead, it leaves the message payload as-is, returning the original byte array or stream. This is particularly useful when the payload is already a byte array or a stream and does not require transformation.</p>
+<p>When consuming raw messages the consumer will provide one of the following types:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage-1.html">RawMessage&lt;T&gt;</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a></li>
+</ul>
+<p>The generic type parameter in <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage-1.html">RawMessage&lt;T&gt;</a> is used solely for message routing purposes, ensuring that the message is delivered to the correct endpoint, just as a custom derived class would.</p>
+<p>When the consumer endpoint is configured to route a <a class="xref" href="../../../api/Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> or a derived class, the raw deserializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;RawMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h3 id="binary">Binary</h3>
+<p>The binary deserializer is similar to the raw deserializer but supports the <code>x-message-type</code> header, meaning that these messages can be mixed with other (JSON-deserialized) messages on the same topic and Silverback will be able to discriminate them.</p>
+<p>When consuming binary messages use:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.BinaryMessage.html">BinaryMessage</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.BinaryMessage.html">BinaryMessage</a></li>
+<li>A custom class implementing <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a></li>
+</ul>
+<p>When the consumer endpoint is configured to route a type implementing <a class="xref" href="../../../api/Silverback.Messaging.Messages.IBinaryMessage.html">IBinaryMessage</a>, the binary deserializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyBinaryMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<h2 id="string">String</h2>
+<p>The string deserializer decodes a byte array into a raw string.</p>
+<p>To consume a string message, use one of the following types:</p>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a></li>
+<li><a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage-1.html">StringMessage&lt;T&gt;</a></li>
+<li>A custom class derived from <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a></li>
+</ul>
+<p>The generic type parameter in <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage-1.html">StringMessage&lt;T&gt;</a> is used solely for message routing purposes, ensuring that the message is delivered to the correct endpoint, just as a custom derived class would.</p>
+<p>When the consumer endpoint is configured to route a <a class="xref" href="../../../api/Silverback.Messaging.Messages.StringMessage.html">StringMessage</a> or a derived class, the string deserializer is used by default.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;StringMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;))));
+</code></pre>
+<p>The default encoding is UTF-8, but it can be customized using the <code>WithEncoding</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;StringMessage&lt;MyMessage&gt;&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .ConsumeStrings(deserializer =&gt; deserializer
+                    .WithEncoding(MessageEncoding.Unicode)))));
+</code></pre>
+<h2 id="avro">Avro</h2>
+<p>To deserialize Avro formatted messages you can use the Avro deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Avro deserializer and requires a schema registry.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeAvro(deserializer =&gt; deserializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The C# message models can be generated from an Avro schema using <a href="https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/">AvroGen</a>.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Kafka Schema Registry</a> guide.</p>
+</div>
+<h2 id="protobuf">Protobuf</h2>
+<p>To deserialize Protobuf messages you can use the Protobuf deserializer found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This deserializer is based on the Confluent Protobuf deserializer and requires a schema registry.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeProtobuf(deserializer =&gt; deserializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>To learn more about the schema registry support, refer to the <a class="xref" href="kafka/schema-registry.html">Kafka Schema Registry</a> guide.</p>
+</div>
+<h2 id="custom-deserializer">Custom Deserializer</h2>
+<p>To implement a custom deserializer, create a class implementing the <a class="xref" href="../../../api/Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a> interface.</p>
+<pre><code class="lang-csharp">public class MyCustomDeserializer : IMessageDeserializer
+{
+    public ValueTask&lt;DeserializedMessage&gt; DeserializeAsync(Stream? messageStream, MessageHeaderCollection headers, ConsumerEndpoint endpoint)
+    {
+        // Implement the deserialization logic here
+    }
+}
+</code></pre>
+<p>The custom deserializer can be plugged in calling the <code>DeserializeUsing</code> method.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DeserializeUsing(new MyCustomDeserializer()))));
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../../samples/intro.html">Samples</a></li>
+<li><a class="xref" href="../producing/serialization.html">Serializing the Produced Messages</a> guide</li>
+</ul>
 </article>
           </div>
 
@@ -116,7 +307,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -105,25 +105,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Subscribers.html">Subscribers</a></h6>
@@ -132,15 +123,66 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public record MethodReturnType : IEquatable&lt;MethodReturnType&gt;</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType__ctor_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType__ctor_Silverback_Messaging_Subscribers_MethodReturnType_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.#ctor(Silverback.Messaging.Subscribers.MethodReturnType)">MethodReturnType(MethodReturnType)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected MethodReturnType(MethodReturnType original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_HasResult.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.HasResult%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L25">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_EqualityContract_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_EqualityContract" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_HasResult_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.HasResult*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_HasResult" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.HasResult">HasResult</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the method is returning a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> or a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a>
@@ -166,13 +208,8 @@ with a result.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_IsTask.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.IsTask%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L31">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_IsTask_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.IsTask*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_IsTask" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.IsTask">IsTask</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the method is returning a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> or a
@@ -198,13 +235,8 @@ with a result.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_IsValueTask.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.IsValueTask%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L37">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_IsValueTask_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.IsValueTask*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_IsValueTask" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.IsValueTask">IsValueTask</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the method is returning a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> or a
@@ -232,13 +264,8 @@ with a result.</p>
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResult_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResult(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L98">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResult_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResult*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResult_System_Object_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResult(System.Object)">AwaitAndUnwrapResult(object?)</h4>
   <div class="markdown level1 summary"><p>Handles the result of the method invoked via reflection awaiting the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> and
@@ -283,13 +310,8 @@ unwrapping the <a class="xref" href="https://learn.microsoft.com/dotnet/api/syst
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResultAsync_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResultAsync(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L113">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResultAsync_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResultAsync*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_AwaitAndUnwrapResultAsync_System_Object_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.AwaitAndUnwrapResultAsync(System.Object)">AwaitAndUnwrapResultAsync(object?)</h4>
   <div class="markdown level1 summary"><p>Handles the result of the method invoked via reflection awaiting the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> and
@@ -334,13 +356,8 @@ unwrapping the <a class="xref" href="https://learn.microsoft.com/dotnet/api/syst
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType_CreateFromMethodInfo_System_Reflection_MethodInfo_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType.CreateFromMethodInfo(System.Reflection.MethodInfo)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L56">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Subscribers_MethodReturnType_CreateFromMethodInfo_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.CreateFromMethodInfo*"></a>
   <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_CreateFromMethodInfo_System_Reflection_MethodInfo_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.CreateFromMethodInfo(System.Reflection.MethodInfo)">CreateFromMethodInfo(MethodInfo)</h4>
   <div class="markdown level1 summary"><p>Creates a <a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a> with the information from the specified <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo">MethodInfo</a>.</p>
@@ -384,6 +401,291 @@ unwrapping the <a class="xref" href="https://learn.microsoft.com/dotnet/api/syst
       </tr>
     </tbody>
   </table>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_Equals_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.Equals*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_Equals_Silverback_Messaging_Subscribers_MethodReturnType_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.Equals(Silverback.Messaging.Subscribers.MethodReturnType)">Equals(MethodReturnType?)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(MethodReturnType? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_Equals_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.Equals*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_Equals_System_Object_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_GetHashCode_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_GetHashCode" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_PrintMembers_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_ToString_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.ToString*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_ToString" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a></div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_op_Equality_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_op_Equality_Silverback_Messaging_Subscribers_MethodReturnType_Silverback_Messaging_Subscribers_MethodReturnType_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.op_Equality(Silverback.Messaging.Subscribers.MethodReturnType,Silverback.Messaging.Subscribers.MethodReturnType)">operator ==(MethodReturnType?, MethodReturnType?)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(MethodReturnType? left, MethodReturnType? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Subscribers_MethodReturnType_op_Inequality_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_MethodReturnType_op_Inequality_Silverback_Messaging_Subscribers_MethodReturnType_Silverback_Messaging_Subscribers_MethodReturnType_" data-uid="Silverback.Messaging.Subscribers.MethodReturnType.op_Inequality(Silverback.Messaging.Subscribers.MethodReturnType,Silverback.Messaging.Subscribers.MethodReturnType)">operator !=(MethodReturnType?, MethodReturnType?)</h4>
+  <div class="markdown level1 summary"><p>Describes the sync or async method return type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(MethodReturnType? left, MethodReturnType? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.MethodReturnType.html">MethodReturnType</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
@@ -395,12 +697,6 @@ unwrapping the <a class="xref" href="https://learn.microsoft.com/dotnet/api/syst
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_MethodReturnType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.MethodReturnType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Core/Messaging/Subscribers/MethodReturnType.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -421,7 +717,7 @@ unwrapping the <a class="xref" href="https://learn.microsoft.com/dotnet/api/syst
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

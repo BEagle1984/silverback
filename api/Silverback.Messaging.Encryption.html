@@ -95,21 +95,17 @@
     <h3 id="classes">Classes
 </h3>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.DecryptorConsumerBehavior.html">DecryptorConsumerBehavior</a></h4>
-      <section><p>Decrypts the message according to the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></h4>
-      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a> and other future encryption types.</p>
+      <section><p>Decrypts the message according to the <a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.EncryptorProducerBehavior.html">EncryptorProducerBehavior</a></h4>
-      <section><p>Encrypts the message according to the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+      <section><p>Encrypts the message according to the <a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a></h4>
-      <section><p>The base class for the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> implementations used to encrypt and decrypt the
-integration messages.</p>
+      <section><p>The base class for the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a> implementations used to encrypt and decrypt the integration messages.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.html">SilverbackCryptoStreamFactory</a></h4>
       <section><p>The factory used to create the <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> implementation according to the
-<a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+<a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a> or <a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.SymmetricDecryptStream.html">SymmetricDecryptStream</a></h4>
       <section><p>The implementation of <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> based on a
@@ -131,9 +127,15 @@ message broker.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a></h4>
+      <section><p>The interface to be implemented by the decryption settings classes such as <a class="xref" href="Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html">SymmetricDecryptionSettings</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a></h4>
+      <section><p>The interface to be implemented by the encryption settings classes such as <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a>.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.html">ISilverbackCryptoStreamFactory</a></h4>
       <section><p>The factory used to create the <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> implementation according to the
-<a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+<a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a> or <a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a>.</p>
 </section>
 </article>
           </div>
@@ -162,7 +164,7 @@ message broker.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

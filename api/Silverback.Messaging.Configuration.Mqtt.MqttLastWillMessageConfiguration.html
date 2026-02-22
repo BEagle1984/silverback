@@ -106,25 +106,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
@@ -133,15 +124,51 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public record MqttLastWillMessageConfiguration : IValidatableSettings, IEquatable&lt;MqttLastWillMessageConfiguration&gt;</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__ctor" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.#ctor">MqttLastWillMessageConfiguration()</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public MqttLastWillMessageConfiguration()</code></pre>
+  </div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration__ctor_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration)">MqttLastWillMessageConfiguration(MqttLastWillMessageConfiguration)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected MqttLastWillMessageConfiguration(MqttLastWillMessageConfiguration original)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ContentType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ContentType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L21">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ContentType_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ContentType*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ContentType" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ContentType">ContentType</h4>
   <div class="markdown level1 summary"><p>Gets the content type.</p>
@@ -166,13 +193,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_CorrelationData.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.CorrelationData%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L26">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_CorrelationData_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.CorrelationData*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_CorrelationData" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.CorrelationData">CorrelationData</h4>
   <div class="markdown level1 summary"><p>Gets the correlation data.</p>
@@ -197,13 +219,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Delay.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Delay%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L33">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Delay_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Delay*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Delay" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Delay">Delay</h4>
   <div class="markdown level1 summary"><p>Gets the number of seconds to wait before sending the last will message. If the client reconnects between this interval the message
@@ -229,13 +246,34 @@ will not be sent.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Expiration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Expiration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L38">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_EqualityContract_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_EqualityContract" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual Type EqualityContract { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Expiration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Expiration*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Expiration" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Expiration">Expiration</h4>
   <div class="markdown level1 summary"><p>Gets the message expiry interval.</p>
@@ -260,13 +298,8 @@ will not be sent.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Payload.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Payload%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L43">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Payload_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Payload*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Payload" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Payload">Payload</h4>
   <div class="markdown level1 summary"><p>Gets the message payload.</p>
@@ -291,13 +324,8 @@ will not be sent.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_PayloadFormatIndicator.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.PayloadFormatIndicator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L49">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_PayloadFormatIndicator_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.PayloadFormatIndicator*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_PayloadFormatIndicator" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.PayloadFormatIndicator">PayloadFormatIndicator</h4>
   <div class="markdown level1 summary"><p>Gets the payload format indicator.</p>
@@ -322,13 +350,8 @@ will not be sent.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_QualityOfServiceLevel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.QualityOfServiceLevel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L55">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_QualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.QualityOfServiceLevel*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_QualityOfServiceLevel" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.QualityOfServiceLevel">QualityOfServiceLevel</h4>
   <div class="markdown level1 summary"><p>Gets the quality of service level (at most once, at least once or exactly once).
@@ -354,13 +377,8 @@ The default is <span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel.AtM
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ResponseTopic.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ResponseTopic%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L60">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ResponseTopic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ResponseTopic*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ResponseTopic" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ResponseTopic">ResponseTopic</h4>
   <div class="markdown level1 summary"><p>Gets the response topic.</p>
@@ -385,13 +403,8 @@ The default is <span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel.AtM
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Retain.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Retain%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L66">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Retain_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Retain*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Retain" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Retain">Retain</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether the message have to be sent with the retain flag, causing them to be persisted on the broker.
@@ -417,13 +430,8 @@ The default is <code>false</code>.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Topic.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Topic%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L71">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Topic_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Topic*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Topic" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Topic">Topic</h4>
   <div class="markdown level1 summary"><p>Gets the target topic.</p>
@@ -448,13 +456,8 @@ The default is <code>false</code>.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_UserProperties.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.UserProperties%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L76">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_UserProperties_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.UserProperties*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_UserProperties" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.UserProperties">UserProperties</h4>
   <div class="markdown level1 summary"><p>Gets the user properties of the will message.</p>
@@ -474,20 +477,202 @@ The default is <code>false</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Collections.IValueReadOnlyCollection-1.html">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html">MqttUserProperty</a>&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/7e0c3e9cd54a35a2ff348a9e97923044700928c5/src/Silverback.Core/Collections/IValueReadOnlyCollection%601.cs">IValueReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttUserProperty.html">MqttUserProperty</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Validate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L79">View source</a>
-  </span>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Equals_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Equals_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Equals(Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration)">Equals(MqttLastWillMessageConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public virtual bool Equals(MqttLastWillMessageConfiguration? other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Equals_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Equals_System_Object_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_GetHashCode_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_GetHashCode" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_PrintMembers_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected virtual bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ToString_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ToString*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_ToString" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a></div>
+
+
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Validate_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Validate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Validate" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Throws a <a class="xref" href="Silverback.SilverbackConfigurationException.html">SilverbackConfigurationException</a> if the configuration is not valid.</p>
@@ -497,6 +682,104 @@ The default is <code>false</code>.</p>
   <div class="codewrapper">
     <pre><code class="lang- hljs">public void Validate()</code></pre>
   </div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_op_Equality_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_op_Equality_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.op_Equality(Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration,Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration)">operator ==(MqttLastWillMessageConfiguration?, MqttLastWillMessageConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(MqttLastWillMessageConfiguration? left, MqttLastWillMessageConfiguration? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_op_Inequality_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_op_Inequality_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.op_Inequality(Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration,Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration)">operator !=(MqttLastWillMessageConfiguration?, MqttLastWillMessageConfiguration?)</h4>
+  <div class="markdown level1 summary"><p>The configuration of the last will message to be sent when the client disconnects ungracefully.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(MqttLastWillMessageConfiguration? left, MqttLastWillMessageConfiguration? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration.html">MqttLastWillMessageConfiguration</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Configuration.IValidatableSettings.html">IValidatableSettings</a>
@@ -511,12 +794,6 @@ The default is <code>false</code>.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttLastWillMessageConfiguration.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -537,7 +814,7 @@ The default is <code>false</code>.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

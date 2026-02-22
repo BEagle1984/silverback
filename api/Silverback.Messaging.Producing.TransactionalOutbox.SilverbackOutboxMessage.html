@@ -101,25 +101,25 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Producing.html">Producing</a>.<a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.html">TransactionalOutbox</a></h6>
@@ -128,15 +128,23 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class SilverbackOutboxMessage</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage__ctor_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage__ctor" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.#ctor">SilverbackOutboxMessage()</h4>
+  <div class="markdown level1 summary"><p>Represents a message stored in the outbox.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public SilverbackOutboxMessage()</code></pre>
+  </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Content.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Content%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L26">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Content_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Content*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Content" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Content">Content</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message raw binary content.</p>
@@ -162,13 +170,8 @@ public byte[]? Content { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Created.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Created%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L52">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Created_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Created*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Created" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Created">Created</h4>
   <div class="markdown level1 summary"><p>Gets or sets the creation timestamp.</p>
@@ -194,13 +197,8 @@ public DateTime Created { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_DynamicEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.DynamicEndpoint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L46">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_DynamicEndpoint_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.DynamicEndpoint*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_DynamicEndpoint" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.DynamicEndpoint">DynamicEndpoint</h4>
   <div class="markdown level1 summary"><p>Gets or sets the serialized dynamic endpoint.</p>
@@ -226,13 +224,8 @@ public string? DynamicEndpoint { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_EndpointName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.EndpointName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L39">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_EndpointName_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.EndpointName*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_EndpointName" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.EndpointName">EndpointName</h4>
   <div class="markdown level1 summary"><p>Gets or sets the endpoint name.</p>
@@ -259,13 +252,8 @@ public string EndpointName { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Headers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Headers%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L33">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Headers_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Headers*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Headers" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Headers">Headers</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message headers.</p>
@@ -291,13 +279,8 @@ public string? Headers { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Id.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Id%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L19">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Id_" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Id*"></a>
   <h4 id="Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage_Id" data-uid="Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage.Id">Id</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message Id.</p>
@@ -331,12 +314,6 @@ public long Id { get; set; }</code></pre>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_TransactionalOutbox_SilverbackOutboxMessage.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.TransactionalOutbox.SilverbackOutboxMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Storage.EntityFramework/Messaging/Producing/TransactionalOutbox/SilverbackOutboxMessage.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -357,7 +334,7 @@ public long Id { get; set; }</code></pre>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

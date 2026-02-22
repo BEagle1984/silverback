@@ -101,15 +101,21 @@
       <section><p>The exception that is thrown when the MQTT client connection fails.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.html">MqttNetClientFactory</a></h4>
-      <section><p>Wraps the <span class="xref">MQTTnet.MqttFactory</span>.</p>
+      <section><p>Wraps the <span class="xref">MQTTnet.MqttClientFactory</span>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Mqtt.MqttProduceException.html">MqttProduceException</a></h4>
       <section><p>The exception that is thrown when the result of a publish to the MQTT broker doesn't indicate success.</p>
 </section>
     <h3 id="interfaces">Interfaces
 </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Mqtt.IMqttClientWrapper.html">IMqttClientWrapper</a></h4>
+      <section><p>Wraps the underlying <span class="xref">MQTTnet.MqttClient</span> and handles the connection lifecycle.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.Mqtt.IMqttClientWrapperFactory.html">IMqttClientWrapperFactory</a></h4>
+      <section><p>Creates <a class="xref" href="Silverback.Messaging.Broker.Mqtt.IMqttClientWrapperFactory.html">IMqttClientWrapperFactory</a> instances.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Mqtt.IMqttNetClientFactory.html">IMqttNetClientFactory</a></h4>
-      <section><p>The factory used to create the <span class="xref">MQTTnet.Client.IMqttClient</span> instances.</p>
+      <section><p>The factory used to create the <span class="xref">MQTTnet.IMqttClient</span> instances.</p>
 </section>
 </article>
           </div>
@@ -138,7 +144,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

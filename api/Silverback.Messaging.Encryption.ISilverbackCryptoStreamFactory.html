@@ -91,7 +91,7 @@
   <h1 id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory" class="text-break">Interface ISilverbackCryptoStreamFactory
 </h1>
   <div class="markdown level0 summary"><p>The factory used to create the <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> implementation according to the
-<a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+<a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a> or <a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Encryption.html">Encryption</a></h6>
@@ -102,21 +102,16 @@
   </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream%2CSilverback.Messaging.Encryption.EncryptionSettings%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/ISilverbackCryptoStreamFactory.cs/#L43">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream*"></a>
-  <h4 id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_System_String_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings,System.String)">GetDecryptStream(Stream, EncryptionSettings, string?)</h4>
+  <h4 id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_IDecryptionSettings_System_String_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.IDecryptionSettings,System.String)">GetDecryptStream(Stream, IDecryptionSettings, string?)</h4>
   <div class="markdown level1 summary"><p>Gets a <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> compatible with the specified settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">SilverbackCryptoStream GetDecryptStream(Stream stream, EncryptionSettings settings, string? keyIdentifier = null)</code></pre>
+    <pre><code class="lang- hljs">SilverbackCryptoStream GetDecryptStream(Stream stream, IDecryptionSettings settings, string? keyIdentifier = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -135,9 +130,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a></td>
         <td><span class="parametername">settings</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> specifying the cryptographic algorithm settings.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.IDecryptionSettings.html">IDecryptionSettings</a> specifying the cryptographic algorithm settings.</p>
 </td>
       </tr>
       <tr>
@@ -164,21 +159,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetEncryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetEncryptStream(System.IO.Stream%2CSilverback.Messaging.Encryption.EncryptionSettings)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/ISilverbackCryptoStreamFactory.cs/#L26">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetEncryptStream_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetEncryptStream*"></a>
-  <h4 id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetEncryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetEncryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings)">GetEncryptStream(Stream, EncryptionSettings)</h4>
+  <h4 id="Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetEncryptStream_System_IO_Stream_Silverback_Messaging_Encryption_IEncryptionSettings_" data-uid="Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetEncryptStream(System.IO.Stream,Silverback.Messaging.Encryption.IEncryptionSettings)">GetEncryptStream(Stream, IEncryptionSettings)</h4>
   <div class="markdown level1 summary"><p>Gets a <a class="xref" href="Silverback.Messaging.Encryption.SilverbackCryptoStream.html">SilverbackCryptoStream</a> compatible with the specified settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings)</code></pre>
+    <pre><code class="lang- hljs">SilverbackCryptoStream GetEncryptStream(Stream stream, IEncryptionSettings settings)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -197,9 +187,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a></td>
         <td><span class="parametername">settings</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> specifying the cryptographic algorithm settings.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.IEncryptionSettings.html">IEncryptionSettings</a> specifying the cryptographic algorithm settings.</p>
 </td>
       </tr>
     </tbody>
@@ -227,12 +217,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/ISilverbackCryptoStreamFactory.cs/#L12" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -253,7 +237,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

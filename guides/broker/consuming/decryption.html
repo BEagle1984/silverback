@@ -86,7 +86,62 @@
             <article class="content wrap" id="_content" data-uid="decryption">
 <h1 id="decrypt-consumed-messages">Decrypt Consumed Messages</h1>
 
-<p><em>...coming soon...</em></p>
+<p>End-to-end message encryption in Silverback is handled transparently in the producer and consumer and works independently from the used <a class="xref" href="../producing/serialization.html">Serializing the Produced Messages</a> or other features like <a class="xref" href="../producing/chunking.html">Producing Chunked Messages</a>. The consumer automatically decrypts messages if the endpoint is configured with the appropriate decryption settings.</p>
+<figure>
+	<a href="../../../images/diagrams/encryption.png"><img src="../../../images/diagrams/encryption.png" alt="End-to-end message encryption and decryption."></a>
+    <figcaption>The messages are transparently encrypted and decrypted.</figcaption>
+</figure>
+<h2 id="symmetric-decryption">Symmetric Decryption</h2>
+<p>Enabling end-to-end decryption using a symmetric algorithm requires additional configuration on the endpoint.</p>
+<p>The default symmetric encryption algorithm is AES.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DecryptUsingAes(decryptionKey))));
+</code></pre>
+<p>But you can customize it.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .Decrypt(new SymmetricDecryptionSettings
+                {
+                    AlgorithmName = &quot;TripleDES&quot;,
+                    Key = decryptionKey
+                }))));
+</code></pre>
+<p>The <a class="xref" href="../../../api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html">SymmetricDecryptionSettings</a> class contains common algorithm settings (block size, initialization vector, ...). The <code>AlgorithmName</code> value is passed to <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create">SymmetricAlgorithm.Create(string)</a>. AES is used by default.</p>
+<h3 id="random-initialization-vector">Random Initialization Vector</h3>
+<p>If the producer didn't set a static initialization vector, a random IV is generated per message and prepended to the ciphertext. The consumer automatically extracts the IV and uses it for decryption. This is the recommended behavior for improved security.</p>
+<h3 id="key-rotation">Key Rotation</h3>
+<p>To support key rotation the producer can include an identifier for the key used to encrypt each message. The consumer must be able to resolve keys by identifier to decrypt historic messages. This is done specifying a key provider function.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddConsumer(&quot;consumer1&quot;, consumer =&gt; consumer
+            .Consume&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ConsumeFrom(&quot;my-topic&quot;)
+                .DecryptUsingAes(
+                    keyIdentifier =&gt; keyIdentifier switch
+                    {
+                        &quot;old-key&quot; =&gt; &quot;...&quot;,
+                        _ =&gt; &quot;...&quot;
+                    }))));
+</code></pre>
+<p>(Implementation details of a key resolver depend on your integration; the important part is that the consumer can obtain the right key by the identifier included with the message.)</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../producing/encryption.html">Encrypt Produced Messages</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +172,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -94,42 +94,13 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Background.DbDistributedLockManager.html">DbDistributedLockManager</a></h4>
-      <section><p>Implements a lock mechanism that relies on a shared database table to synchronize different
-processes.</p>
-</section>
       <h4><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></h4>
       <section><p>Extends the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a> adding a distributed lock
 mechanism to prevent concurrent executions.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a></h4>
-      <section><p>Represents a lock that has been acquired through an <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Background.DistributedLockSettings.html">DistributedLockSettings</a></h4>
-      <section><p>The settings to be applied to the configured <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Background.NullLockManager.html">NullLockManager</a></h4>
-      <section><p>This implementation of <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> doesn't actually acquire nor check any
-lock. Is is used when the <a class="xref" href="Silverback.Background.NullLockSettings.html">NullLockSettings</a> are specified or no other
-<a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> is registered.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Background.NullLockSettings.html">NullLockSettings</a></h4>
-      <section><p>Used to signal that no lock has to be acquired nor checked.</p>
-</section>
       <h4><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a></h4>
       <section><p>Extends the <a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> calling the execute method at regular
 intervals. The distributed lock mechanism prevents concurrent executions.</p>
-</section>
-    <h3 id="interfaces">Interfaces
-</h3>
-      <h4><a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a></h4>
-      <section><p>Implements a lock mechanism that relies on a shared persisted storage (such as a database) to
-synchronize different processes.</p>
-</section>
-    <h3 id="enums">Enums
-</h3>
-      <h4><a class="xref" href="Silverback.Background.DistributedLockStatus.html">DistributedLockStatus</a></h4>
-      <section><p>Specifies the current status of the <a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a>.</p>
 </section>
 </article>
           </div>
@@ -158,7 +129,7 @@ synchronize different processes.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

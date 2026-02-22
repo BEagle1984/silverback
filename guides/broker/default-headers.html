@@ -89,6 +89,7 @@
 <p>Silverback will add some headers to the produced messages. They may vary depending on the scenario.
 Here is the list of the default headers that may be sent.</p>
 <p>The static classes <a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.KafkaMessageHeaders.html">KafkaMessageHeaders</a> contain all default header names constants.</p>
+<h3 id="default">Default</h3>
 <table>
 <thead>
 <tr>
@@ -98,16 +99,16 @@ Here is the list of the default headers that may be sent.</p>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageId">MessageId</a></td>
-<td style="text-align: left;"><code>x-message-id</code></td>
-</tr>
-<tr>
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType">MessageType</a></td>
 <td style="text-align: left;"><code>x-message-type</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts">FailedAttempts</a></td>
 <td style="text-align: left;"><code>x-failed-attempts</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkMessageId">ChunkMessageId</a></td>
+<td style="text-align: left;"><code>x-message-id</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkIndex">ChunkIndex</a></td>
@@ -147,7 +148,7 @@ Here is the list of the default headers that may be sent.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="kafka-specific-headers">Kafka Specific Headers</h2>
+<h3 id="kafka">Kafka</h3>
 <table>
 <thead>
 <tr>
@@ -185,6 +186,15 @@ Here is the list of the default headers that may be sent.</p>
 <td style="text-align: left;"><code>x-chunk-first-offset</code></td>
 </tr>
 </tbody>
+</table>
+<h3 id="mqtt">MQTT</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Header</th>
+<th style="text-align: left;">Name</th>
+</tr>
+</thead>
 </table>
 <h2 id="customizing-default-header-names">Customizing Default Header Names</h2>
 <p>The default header names can be overridden using the <code>WithCustomHeaderName</code> configuration method.</p>
@@ -224,7 +234,7 @@ Here is the list of the default headers that may be sent.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

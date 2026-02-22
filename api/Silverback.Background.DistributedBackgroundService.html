@@ -118,13 +118,7 @@ mechanism to prevent concurrent executions.</p>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.dispose">BackgroundService.Dispose()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.executetask">BackgroundService.ExecuteTask</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
@@ -133,10 +127,19 @@ mechanism to prevent concurrent executions.</p>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Background.html">Background</a></h6>
@@ -147,21 +150,16 @@ mechanism to prevent concurrent executions.</p>
   </div>
   <h3 id="constructors">Constructors
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService__ctor_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_DistributedBackgroundService__.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService.%23ctor(Silverback.Background.DistributedLockSettings%2CSilverback.Background.IDistributedLockManager%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Background.DistributedBackgroundService%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L55">View source</a>
-  </span>
+
+
   <a id="Silverback_Background_DistributedBackgroundService__ctor_" data-uid="Silverback.Background.DistributedBackgroundService.#ctor*"></a>
-  <h4 id="Silverback_Background_DistributedBackgroundService__ctor_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_DistributedBackgroundService__" data-uid="Silverback.Background.DistributedBackgroundService.#ctor(Silverback.Background.DistributedLockSettings,Silverback.Background.IDistributedLockManager,Silverback.Diagnostics.ISilverbackLogger{Silverback.Background.DistributedBackgroundService})">DistributedBackgroundService(DistributedLockSettings?, IDistributedLockManager, ISilverbackLogger&lt;DistributedBackgroundService&gt;)</h4>
+  <h4 id="Silverback_Background_DistributedBackgroundService__ctor_Silverback_Lock_IDistributedLock_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_DistributedBackgroundService__" data-uid="Silverback.Background.DistributedBackgroundService.#ctor(Silverback.Lock.IDistributedLock,Silverback.Diagnostics.ISilverbackLogger{Silverback.Background.DistributedBackgroundService})">DistributedBackgroundService(IDistributedLock, ISilverbackLogger&lt;DistributedBackgroundService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected DistributedBackgroundService(DistributedLockSettings? distributedLockSettings, IDistributedLockManager distributedLockManager, ISilverbackLogger&lt;DistributedBackgroundService&gt; logger)</code></pre>
+    <pre><code class="lang- hljs">protected DistributedBackgroundService(IDistributedLock distributedLock, ISilverbackLogger&lt;DistributedBackgroundService&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -174,56 +172,9 @@ mechanism to prevent concurrent executions.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Background.DistributedLockSettings.html">DistributedLockSettings</a></td>
-        <td><span class="parametername">distributedLockSettings</span></td>
-        <td><p>Customizes the lock mechanism settings.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a></td>
-        <td><span class="parametername">distributedLockManager</span></td>
-        <td><p>The <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a>&gt;</td>
-        <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService__ctor_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_DistributedBackgroundService__.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService.%23ctor(Silverback.Background.IDistributedLockManager%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Background.DistributedBackgroundService%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L36">View source</a>
-  </span>
-  <a id="Silverback_Background_DistributedBackgroundService__ctor_" data-uid="Silverback.Background.DistributedBackgroundService.#ctor*"></a>
-  <h4 id="Silverback_Background_DistributedBackgroundService__ctor_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_DistributedBackgroundService__" data-uid="Silverback.Background.DistributedBackgroundService.#ctor(Silverback.Background.IDistributedLockManager,Silverback.Diagnostics.ISilverbackLogger{Silverback.Background.DistributedBackgroundService})">DistributedBackgroundService(IDistributedLockManager, ISilverbackLogger&lt;DistributedBackgroundService&gt;)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> class using the
-default settings for the lock mechanism.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">protected DistributedBackgroundService(IDistributedLockManager distributedLockManager, ISilverbackLogger&lt;DistributedBackgroundService&gt; logger)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a></td>
-        <td><span class="parametername">distributedLockManager</span></td>
-        <td><p>The <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a>.</p>
+        <td><a class="xref" href="Silverback.Lock.IDistributedLock.html">IDistributedLock</a></td>
+        <td><span class="parametername">distributedLock</span></td>
+        <td><p>The <a class="xref" href="Silverback.Lock.IDistributedLock.html">IDistributedLock</a>.</p>
 </td>
       </tr>
       <tr>
@@ -236,21 +187,16 @@ default settings for the lock mechanism.</p>
   </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService_Lock.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService.Lock%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L71">View source</a>
-  </span>
-  <a id="Silverback_Background_DistributedBackgroundService_Lock_" data-uid="Silverback.Background.DistributedBackgroundService.Lock*"></a>
-  <h4 id="Silverback_Background_DistributedBackgroundService_Lock" data-uid="Silverback.Background.DistributedBackgroundService.Lock">Lock</h4>
-  <div class="markdown level1 summary"><p>Gets the acquired <a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a>.</p>
+
+
+  <a id="Silverback_Background_DistributedBackgroundService_DistributedLock_" data-uid="Silverback.Background.DistributedBackgroundService.DistributedLock*"></a>
+  <h4 id="Silverback_Background_DistributedBackgroundService_DistributedLock" data-uid="Silverback.Background.DistributedBackgroundService.DistributedLock">DistributedLock</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Lock.IDistributedLock.html">IDistributedLock</a> used by this service.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected DistributedLock? Lock { get; }</code></pre>
+    <pre><code class="lang- hljs">protected IDistributedLock DistributedLock { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -262,29 +208,23 @@ default settings for the lock mechanism.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a></td>
+        <td><a class="xref" href="Silverback.Lock.IDistributedLock.html">IDistributedLock</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService.ExecuteAsync(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L74">View source</a>
-  </span>
-  <a id="Silverback_Background_DistributedBackgroundService_ExecuteAsync_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteAsync*"></a>
-  <h4 id="Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteAsync(System.Threading.CancellationToken)">ExecuteAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>This method is called when the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a> starts. The implementation should return a task that represents
-the lifetime of the long running operation(s) being performed.</p>
+
+
+  <a id="Silverback_Background_DistributedBackgroundService_AcquireLockAndExecuteAsync_" data-uid="Silverback.Background.DistributedBackgroundService.AcquireLockAndExecuteAsync*"></a>
+  <h4 id="Silverback_Background_DistributedBackgroundService_AcquireLockAndExecuteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.DistributedBackgroundService.AcquireLockAndExecuteAsync(System.Threading.CancellationToken)">AcquireLockAndExecuteAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Acquires the lock and calls the <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_">ExecuteLockedAsync(CancellationToken)</a> method to perform the operation(s).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override Task ExecuteAsync(CancellationToken stoppingToken)</code></pre>
+    <pre><code class="lang- hljs">protected virtual Task AcquireLockAndExecuteAsync(CancellationToken stoppingToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -299,7 +239,7 @@ the lifetime of the long running operation(s) being performed.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td><p>Triggered when <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice.stopasync">StopAsync(CancellationToken)</a> is called.</p>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -315,25 +255,63 @@ the lifetime of the long running operation(s) being performed.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that represents the long running operations.</p>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Background_DistributedBackgroundService_ExecuteAsync_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteAsync*"></a>
+  <h4 id="Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteAsync(System.Threading.CancellationToken)">ExecuteAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Extends the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a> adding a distributed lock
+mechanism to prevent concurrent executions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override sealed Task ExecuteAsync(CancellationToken stoppingToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">stoppingToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.executeasync">BackgroundService.ExecuteAsync(CancellationToken)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService.ExecuteLockedAsync(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L123">View source</a>
-  </span>
+
+
   <a id="Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteLockedAsync*"></a>
   <h4 id="Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.DistributedBackgroundService.ExecuteLockedAsync(System.Threading.CancellationToken)">ExecuteLockedAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>This method is called when the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a> starts and the lock is acquired. The
-implementation should return a task that represents the lifetime of the long running operation(s)
-being performed.</p>
+  <div class="markdown level1 summary"><p>This method is called after the lock is acquired to perform the actual operation(s). The implementation should return a task
+that represents the lifetime of the operation(s) being performed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -369,7 +347,7 @@ being performed.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> that represents the long running operations.</p>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
@@ -388,12 +366,6 @@ being performed.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_DistributedBackgroundService.md&amp;value=---%0Auid%3A%20Silverback.Background.DistributedBackgroundService%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/DistributedBackgroundService.cs/#L18" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -414,7 +386,7 @@ being performed.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -96,7 +96,7 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html">TypeBasedExtensibleFactory</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a>, <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a>&gt;</div>
+    <div class="level1"><a class="xref" href="https://github.com/BEagle1984/silverback/blob/7e0c3e9cd54a35a2ff348a9e97923044700928c5/src/Silverback.Core/ExtensibleFactories/TypeBasedExtensibleFactory%602.cs">TypeBasedExtensibleFactory</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a>, <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a>&gt;</div>
     <div class="level2"><span class="xref">ChunkEnricherFactory</span></div>
   </div>
   <div classs="implements">
@@ -121,25 +121,25 @@
       <a class="xref" href="Silverback.ExtensibleFactories.TypeBasedExtensibleFactory-2.html#Silverback_ExtensibleFactories_TypeBasedExtensibleFactory_2_GetService_System_Type_System_IServiceProvider_">TypeBasedExtensibleFactory&lt;IChunkEnricher, ProducerEndpointConfiguration&gt;.GetService(Type, IServiceProvider)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Sequences.html">Sequences</a>.<a class="xref" href="Silverback.Messaging.Sequences.Chunking.html">Chunking</a></h6>
@@ -148,15 +148,23 @@
   <div class="codewrapper">
     <pre><code class="lang- hljs">public class ChunkEnricherFactory : TypeBasedExtensibleFactory&lt;IChunkEnricher, ProducerEndpointConfiguration&gt;, IChunkEnricherFactory</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory__ctor_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory__ctor" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.#ctor">ChunkEnricherFactory()</h4>
+  <div class="markdown level1 summary"><p>Builds an <a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a> instance for the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ChunkEnricherFactory()</code></pre>
+  </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory_GetEnricher_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.GetEnricher(Silverback.Messaging.Configuration.ProducerEndpointConfiguration%2CSystem.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkEnricherFactory.cs/#L14">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory_GetEnricher_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.GetEnricher*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory_GetEnricher_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_System_IServiceProvider_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory.GetEnricher(Silverback.Messaging.Configuration.ProducerEndpointConfiguration,System.IServiceProvider)">GetEnricher(ProducerEndpointConfiguration, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns an <a class="xref" href="Silverback.Messaging.Sequences.Chunking.IChunkEnricher.html">IChunkEnricher</a> according to the specified endpoint.</p>
@@ -217,12 +225,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkEnricherFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkEnricherFactory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkEnricherFactory.cs/#L11" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -243,7 +245,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

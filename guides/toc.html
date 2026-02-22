@@ -16,11 +16,11 @@
                     <a href="setup.html" name="" title="Setting Up Silverback">Setting Up Silverback</a>
                 </li>
                 <li>
-                    <a href="mediator.html" name="" title="Using the Mediator">Using the Mediator</a>
+                    <a href="bus.html" name="" title="Using the Message Bus">Using the Message Bus</a>
                 </li>
                 <li>
                     <span class="expand-stub"></span>
-                    <a>Message Broker</a>
+                    <a>Message Broker Integration</a>
 
                     <ul class="nav level2">
                           <li>
@@ -50,9 +50,6 @@
                                         <a href="broker/producing/encryption.html" name="" title="Encryption">Encryption</a>
                                     </li>
                                     <li>
-                                        <a href="broker/producing/tombstone.html" name="" title="Tombstone">Tombstone</a>
-                                    </li>
-                                    <li>
                                         <a href="broker/producing/validation.html" name="" title="Validation">Validation</a>
                                     </li>
                                     <li>
@@ -70,7 +67,10 @@
 
                                         <ul class="nav level4">
                                               <li>
-                                                  <a href="broker/producing/kafka/partitioning.html" name="" title="Key and Partitioning">Key and Partitioning</a>
+                                                  <a href="broker/producing/kafka/partitioning.html" name="" title="Keys and Partitioning">Keys and Partitioning</a>
+                                              </li>
+                                              <li>
+                                                  <a href="broker/producing/kafka/tombstone.html" name="" title="Tombstone Messages">Tombstone Messages</a>
                                               </li>
                                               <li>
                                                   <a href="broker/producing/kafka/transactions.html" name="" title="Transactions">Transactions</a>
@@ -97,13 +97,13 @@
                                         <a href="broker/consuming/headers.html" name="" title="Headers">Headers</a>
                                     </li>
                                     <li>
+                                        <a href="broker/consuming/batch-processing.html" name="" title="Batch Processing">Batch Processing</a>
+                                    </li>
+                                    <li>
                                         <a href="broker/consuming/chunking.html" name="" title="Chunking">Chunking</a>
                                     </li>
                                     <li>
                                         <a href="broker/consuming/decryption.html" name="" title="Decryption">Decryption</a>
-                                    </li>
-                                    <li>
-                                        <a href="broker/consuming/tombstone.html" name="" title="Tombstone">Tombstone</a>
                                     </li>
                                     <li>
                                         <a href="broker/consuming/validation.html" name="" title="Validation">Validation</a>
@@ -115,7 +115,7 @@
                                         <a href="broker/consuming/tracing.html" name="" title="Tracing">Tracing</a>
                                     </li>
                                     <li>
-                                        <a href="broker/consuming/health-check.html" name="" title="Health Check">Health Check</a>
+                                        <a href="broker/consuming/health-check.html" name="" title="Consumer Health Check">Consumer Health Check</a>
                                     </li>
                                     <li>
                                         <span class="expand-stub"></span>
@@ -124,6 +124,9 @@
                                         <ul class="nav level4">
                                               <li>
                                                   <a href="broker/consuming/kafka/subscription.html" name="" title="Subscription and Assignment">Subscription and Assignment</a>
+                                              </li>
+                                              <li>
+                                                  <a href="broker/consuming/kafka/tombstone.html" name="" title="Tombstone Messages">Tombstone Messages</a>
                                               </li>
                                               <li>
                                                   <a href="broker/consuming/kafka/offset.html" name="" title="Offset Storage">Offset Storage</a>
@@ -144,7 +147,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="logging.html" name="" title="Logging">Logging</a>
+                    <a href="logging.html" name="" title="Logging and Tracing">Logging and Tracing</a>
                 </li>
                 <li>
                     <a href="domain-events.html" name="" title="DDD Domain Events">DDD Domain Events</a>
@@ -161,7 +164,7 @@
                               <a href="practical/conversion.html" name="" title="Seamless Message Conversion">Seamless Message Conversion</a>
                           </li>
                           <li>
-                              <a href="practical/same-message.html" name="" title="Consuming Same Message from Multiple Topics">Consuming Same Message from Multiple Topics</a>
+                              <a href="practical/same-message.html" name="" title="Consuming the Same Message from Multiple Topics">Consuming the Same Message from Multiple Topics</a>
                           </li>
                           <li>
                               <a href="practical/multiple-consumers.html" name="" title="Multiple Consumers for the Same Topic">Multiple Consumers for the Same Topic</a>
@@ -170,7 +173,7 @@
                               <a href="practical/mqtt-request-response.html" name="" title="MQTT 5 Request-Response">MQTT 5 Request-Response</a>
                           </li>
                           <li>
-                              <a href="practical/background-services.html" name="" title="Background Services with Distributed Lock">Background Services with Distributed Lock</a>
+                              <a href="practical/background-services.html" name="" title="Background Services with a Distributed Lock">Background Services with a Distributed Lock</a>
                           </li>
                     </ul>
                 </li>

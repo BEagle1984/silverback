@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Kafka Key and Partitioning | Silverback </title>
+    <title>Kafka Keys and Partitioning | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Kafka Key and Partitioning | Silverback ">
+    <meta name="title" content="Kafka Keys and Partitioning | Silverback ">
     <meta name="generator" content="docfx ">
   
 
@@ -84,8 +84,56 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="kafka-partitioning">
-<h1 id="kafka-key-and-partitioning">Kafka Key and Partitioning</h1>
+<h1 id="kafka-keys-and-partitioning">Kafka Keys and Partitioning</h1>
 
+<p>Kafka partitions determine message ordering and parallelism. By default, Kafka distributes messages across partitions, but you can control routing via message keys or explicit partition selection.</p>
+<h2 id="key-based-partitioning">Key-Based Partitioning</h2>
+<p>By default (no explicit partition), Kafka derives the partition from the message key.</p>
+<ul>
+<li>If you set a key, messages with the same key are routed to the same partition and keep their relative order.</li>
+<li>If you don't set a key, a key may be generated and partitioning will be effectively random.</li>
+</ul>
+<h3 id="using-wrapandpublishasync--wrapandpublishbatchasync">Using <code>WrapAndPublishAsync</code> / <code>WrapAndPublishBatchAsync</code></h3>
+<p>Set the key by configuring the outbound envelope:</p>
+<pre><code class="lang-csharp">await publisher.WrapAndPublishAsync(
+    new MyMessage { Content = &quot;Hello, World!&quot; },
+    envelope =&gt; envelope.SetKafkaKey(&quot;42&quot;));
+</code></pre>
+<h3 id="via-endpoint-configuration">Via Endpoint Configuration</h3>
+<p>Define the Kafka key in the endpoint configuration using <code>SetKafkaKey</code>.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SetKafkaKey(message =&gt; message.Id))));
+</code></pre>
+<h2 id="custom-partitioning">Custom Partitioning</h2>
+<p>If you need explicit control over partition selection, use the <code>ProduceTo</code> overload that accepts a partition selector.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;, message =&gt; message.Id % 3))));
+</code></pre>
+<h2 id="static-partitioning">Static Partitioning</h2>
+<p>To send all messages to a fixed partition, set the <code>partition</code> parameter.</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;, partition: 3))));
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../../api/Silverback.html">API Reference</a></li>
+</ul>
 </article>
           </div>
 
@@ -116,7 +164,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

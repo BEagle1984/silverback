@@ -86,7 +86,43 @@
             <article class="content wrap" id="_content" data-uid="consuming-headers">
 <h1 id="reading-headers">Reading Headers</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Kafka and MQTT 5 support custom headers (called <em>user properties</em> in MQTT). In Silverback you can access them either via the inbound envelope or by mapping them to model properties.</p>
+<h2 id="subscribe-to-iinboundenvelopetmessage">Subscribe to <code>IInboundEnvelope&lt;TMessage&gt;</code></h2>
+<p>Subscribe to <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> to access the message and its metadata (headers, broker-specific data, etc.). The envelope exposes a <code>Headers</code> collection.</p>
+<pre><code class="lang-csharp">public class MySubscriber
+{
+    public async Task HandleAsync(IInboundEnvelope&lt;MyMessage&gt; envelope)
+    {
+        int priority = envelope.Headers.GetValue&lt;int&gt;(&quot;x-priority&quot;);
+
+        // ...
+    }
+}
+</code></pre>
+<h2 id="use-headerattribute-on-the-message-model">Use <code>HeaderAttribute</code> on the message model</h2>
+<p>Decorate message properties with <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> to map header values into the model.</p>
+<pre><code class="lang-csharp">using Silverback.Messaging.Messages;
+
+public class OrderCreatedEvent
+{
+    [Header(&quot;x-order-type&quot;)]
+    [JsonIgnore]
+    public OrderType OrderType { get; set; }
+
+    [Header(&quot;x-books-order&quot;)]
+    public bool ContainsBooks =&gt; Items.Any(item =&gt; item.Type == &quot;book&quot;);
+}
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Only the message type is scanned. Properties decorated with <a class="xref" href="../../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> must be declared on the root message object (not nested types).</p>
+</div>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../default-headers.html">Default Headers</a></li>
+<li><a class="xref" href="../producing/headers.html">Setting Headers</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +153,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

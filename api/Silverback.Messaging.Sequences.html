@@ -94,28 +94,22 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a></h4>
-      <section><p>Encapsulates the result of the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silverback_Messaging_Sequences_ISequence_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">AddAsync(IRawInboundEnvelope, ISequence?, bool)</a> method.</p>
-</section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.IncompleteSequence.html">IncompleteSequence</a></h4>
       <section><p>Represent an incomplete sequence (missing the first message) and is used to signal the pipeline to ignore
 the message.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.RawSequence.html">RawSequence</a></h4>
-      <section><p>Represents a set of logically related messages, like the chunks belonging to the same message or the
-messages in a dataset.</p>
+      <section><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.RawSequencerConsumerBehavior.html">RawSequencerConsumerBehavior</a></h4>
       <section><p>Uses the available implementations of <a class="xref" href="Silverback.Messaging.Sequences.ISequenceReader.html">ISequenceReader</a> to assign the incoming message to
 the right sequence.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.Sequence.html">Sequence</a></h4>
-      <section><p>Represents a set of logically related messages, like the chunks belonging to the same message or the
-messages in a dataset.</p>
+      <section><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase&lt;TEnvelope&gt;</a></h4>
-      <section><p>Represents a set of logically related messages, like the chunks belonging to the same message or the
-messages in a dataset.</p>
+      <section><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.SequenceException.html">SequenceException</a></h4>
       <section><p>The exception that is thrown when a sequence cannot be properly recreated (e.g. because of bad
@@ -140,11 +134,15 @@ the right sequence.</p>
       <section><p>Uses the available implementations of <a class="xref" href="Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a> to set the proper headers and
 split the published message or messages set to create the sequences.</p>
 </section>
+    <h3 id="structs">Structs
+</h3>
+      <h4><a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a></h4>
+      <section><p>Encapsulates the result of the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html#Silverback_Messaging_Sequences_ISequence_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">AddAsync(IRawInboundEnvelope, ISequence?, bool)</a> method.</p>
+</section>
     <h3 id="interfaces">Interfaces
 </h3>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></h4>
-      <section><p>Represents a set of logically related messages, like the chunks belonging to the same message or the
-messages in a dataset.</p>
+      <section><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Sequences.ISequenceReader.html">ISequenceReader</a></h4>
       <section><p>Can recognize a message that belongs to a sequence and match it with the proper
@@ -190,7 +188,7 @@ split a single message into multiple messages.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

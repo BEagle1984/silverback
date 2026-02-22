@@ -102,25 +102,25 @@ package.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Diagnostics.html">Diagnostics</a></h6>
@@ -131,22 +131,16 @@ package.</p>
   </div>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_BrokerConnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.BrokerConnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L139">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnected">BrokerConnected</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when connected to the message
-broker.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientCreated_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientCreated*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientCreated" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientCreated">BrokerClientCreated</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new broker client is instantiated.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BrokerConnected { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientCreated { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -163,22 +157,17 @@ broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_BrokerConnecting.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.BrokerConnecting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L130">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnecting_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnecting*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnecting" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnecting">BrokerConnecting</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when connecting to the message
-broker.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnectError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnectError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnectError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnectError">BrokerClientDisconnectError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown when disconnecting the broker
+client.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BrokerConnecting { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientDisconnectError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -195,54 +184,17 @@ broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_BrokerConnectionError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.BrokerConnectionError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L184">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnectionError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnectionError*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerConnectionError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerConnectionError">BrokerConnectionError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown when
-connecting to the message broker.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BrokerConnectionError { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L157">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnected">BrokerDisconnected</h4>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnected*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnected">BrokerClientDisconnected</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when disconnected from the message
 broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BrokerDisconnected { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientDisconnected { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -259,22 +211,17 @@ broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnecting.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnecting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L148">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnecting_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnecting*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnecting" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerDisconnecting">BrokerDisconnecting</h4>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnecting_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnecting*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientDisconnecting" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientDisconnecting">BrokerClientDisconnecting</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when disconnecting from the message
 broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent BrokerDisconnecting { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientDisconnecting { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -291,22 +238,17 @@ broker.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.CallbackHandlerError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L566">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CallbackHandlerError*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CallbackHandlerError">CallbackHandlerError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
-by a broker callback handler.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitializeError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitializeError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitializeError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitializeError">BrokerClientInitializeError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown when initializing the broker
+client.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent CallbackHandlerError { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientInitializeError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -323,23 +265,151 @@ by a broker callback handler.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.CannotMoveSequences%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L417">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CannotMoveSequences*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CannotMoveSequences">CannotMoveSequences</h4>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitialized_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitialized*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitialized" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitialized">BrokerClientInitialized</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the broker client has been successfully initialized.
+The connection with the broker will eventually be established.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientInitialized { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitializing_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitializing*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientInitializing" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientInitializing">BrokerClientInitializing</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the broker client is initializing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientInitializing { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientReconnectError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientReconnectError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientReconnectError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientReconnectError">BrokerClientReconnectError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown reconnecting the broker client
+(auto recovery from errors).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientReconnectError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientsInitializationError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientsInitializationError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_BrokerClientsInitializationError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.BrokerClientsInitializationError">BrokerClientsInitializationError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown when initializing the
+broker clients.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent BrokerClientsInitializationError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_CallbackError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CallbackError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CallbackError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CallbackError">CallbackError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown by a client callback handler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent CallbackError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequence_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CannotMoveSequence*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequence" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CannotMoveSequence">CannotMoveSequence</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> cannot be applied because the failing message belongs to a
-sequences (it's either chunked, being processed in batch, etc.).</p>
+<a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> cannot be applied because the failing message belongs to a
+sequence (it's either chunked, being processed in batch, etc.).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent CannotMoveSequences { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent CannotMoveSequence { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -356,13 +426,8 @@ sequences (it's either chunked, being processed in batch, etc.).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerCommitError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L230">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerCommitError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerCommitError">ConsumerCommitError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs in the
@@ -388,22 +453,16 @@ consumer during the commit operation.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnectError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L248">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnectError*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnectError">ConsumerConnectError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
-connecting the consumer.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerCreated_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerCreated*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerCreated" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerCreated">ConsumerCreated</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new consumer is instantiated.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConsumerConnectError { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ConsumerCreated { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -420,146 +479,12 @@ connecting the consumer.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L193">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerConnected">ConsumerConnected</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the consumer is connected to
-the endpoint and will start consuming.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConsumerConnected { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnectError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L257">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnectError*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnectError">ConsumerDisconnectError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
-disconnecting the consumer.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConsumerDisconnectError { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L202">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisconnected">ConsumerDisconnected</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the consumer is disconnected
-from the endpoint.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConsumerDisconnected { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisposingError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L221">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisposingError*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerDisposingError">ConsumerDisposingError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-consumer is disconnecting. This may in some cases cause inconsistencies, with some messages not being
-properly committed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ConsumerDisposingError { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerFatalError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L211">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerFatalError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerFatalError">ConsumerFatalError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an unhandled error occurs
-while consuming and the consumer will be stopped.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log written when an error occurs processing the consumed message, and
+it isn't handled even by the <a class="xref" href="Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html">FatalExceptionLoggerConsumerBehavior</a> (which should never happen).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -581,13 +506,8 @@ while consuming and the consumer will be stopped.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerRollbackError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L239">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerRollbackError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerRollbackError">ConsumerRollbackError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs in the
@@ -613,13 +533,8 @@ consumer during the rollback operation.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerStartError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L266">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerStartError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerStartError">ConsumerStartError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
@@ -645,13 +560,8 @@ starting the consumer.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ConsumerStopError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L275">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerStopError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ConsumerStopError">ConsumerStopError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
@@ -677,22 +587,16 @@ stopping the consumer.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_CreatingNewConsumer.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.CreatingNewConsumer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L166">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_CreatingNewConsumer_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CreatingNewConsumer*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CreatingNewConsumer" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CreatingNewConsumer">CreatingNewConsumer</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new consumer is being
-instantiated.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_EndpointBuilderError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.EndpointBuilderError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_EndpointBuilderError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.EndpointBuilderError">EndpointBuilderError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown by the endpoint builder action.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent CreatingNewConsumer { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent EndpointBuilderError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -709,49 +613,12 @@ instantiated.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_CreatingNewProducer.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.CreatingNewProducer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L175">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_CreatingNewProducer_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CreatingNewProducer*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_CreatingNewProducer" data-uid="Silverback.Diagnostics.IntegrationLogEvents.CreatingNewProducer">CreatingNewProducer</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new producer is being
-instantiated.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent CreatingNewProducer { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.EndpointConfiguratorError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L557">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.EndpointConfiguratorError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.EndpointConfiguratorError">EndpointConfiguratorError</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown from
-within an <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a>.</p>
+within an <a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -773,117 +640,12 @@ within an <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsCon
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorInitializingActivity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L447">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorInitializingActivity*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorInitializingActivity">ErrorInitializingActivity</h4>
-  <div class="markdown level1 summary"><p>Reserved, not used anymore.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">[Obsolete(&quot;Not used anymore.&quot;, true)]
-public static LogEvent ErrorInitializingActivity { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L41">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundMessage*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundMessage">ErrorProcessingInboundMessage</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while
-processing an inbound message.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ErrorProcessingInboundMessage { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>If the message belongs to a sequence the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</a> event is logged
-instead.</p>
-</div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundSequence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L90">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundSequence*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while
-processing an inbound sequence.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ErrorProcessingInboundSequence { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingOutbox%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L521">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingOutbox*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProcessingOutbox">ErrorProcessingOutbox</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the
-<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> processes the outbox queue.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a>
+processes the outbox queue.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -905,13 +667,8 @@ processing an inbound sequence.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L318">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingMessage*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingMessage">ErrorProducingMessage</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs producing a message.</p>
@@ -936,17 +693,12 @@ processing an inbound sequence.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingOutboxStoredMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingOutboxStoredMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L512">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingOutboxStoredMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingOutboxStoredMessage*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingOutboxStoredMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingOutboxStoredMessage">ErrorProducingOutboxStoredMessage</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while
-producing the message stored in the outbox.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs  producing the message stored in the
+outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -968,50 +720,12 @@ producing the message stored in the outbox.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L284">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer">ErrorReconnectingConsumer</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an exception is thrown
-reconnecting the consumer (auto recovery from errors).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ErrorReconnectingConsumer { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceAborted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L101">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceAborted*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted" data-uid="Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceAborted">IncompleteSequenceAborted</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an incomplete sequence is
-aborted because a new sequence starts before the current one is completed or the timeout elapses before
-the sequence can be completed).</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log written when a sequence is aborted because a new one starts before it
+completes, or because it times out before completion.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1033,13 +747,35 @@ the sequence can be completed).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.InvalidEndpointConfiguration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L548">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceSkipped_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceSkipped*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceSkipped" data-uid="Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceSkipped">IncompleteSequenceSkipped</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an incomplete sequence is  skipped because the first
+consumed message of that sequence doesn't correspond to the actual sequence beginning (e.g., the first chunk).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent IncompleteSequenceSkipped { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidEndpointConfiguration*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidEndpointConfiguration">InvalidEndpointConfiguration</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when trying to connect an endpoint
@@ -1065,22 +801,17 @@ with an invalid configuration.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProcessed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L539">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProcessed*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProcessed">InvalidMessageProcessed</h4>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageConsumed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageConsumed*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageConsumed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageConsumed">InvalidMessageConsumed</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an invalid message
-has been processed (see <a class="xref" href="Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a>).</p>
+has been consumed (see <a class="xref" href="Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent InvalidMessageProcessed { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent InvalidMessageConsumed { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1097,13 +828,8 @@ has been processed (see <a class="xref" href="Silverback.Messaging.Validation.Me
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProduced%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L530">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProduced*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced" data-uid="Silverback.Diagnostics.IntegrationLogEvents.InvalidMessageProduced">InvalidMessageProduced</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an invalid message
@@ -1129,44 +855,8 @@ has been produced (see <a class="xref" href="Silverback.Messaging.Validation.Mes
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.LowLevelTracing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L574">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.LowLevelTracing*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing" data-uid="Silverback.Diagnostics.IntegrationLogEvents.LowLevelTracing">LowLevelTracing</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.eventid">EventId</a> of the low level tracing logs.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent LowLevelTracing { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageAddedToSequence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L50">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageAddedToSequence*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageAddedToSequence">MessageAddedToSequence</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an inbound message is added to
@@ -1192,50 +882,13 @@ a sequence (e.g. <a class="xref" href="Silverback.Messaging.Sequences.Chunking.C
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageAlreadyProcessed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L467">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageAlreadyProcessed*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageAlreadyProcessed">MessageAlreadyProcessed</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message is being skipped
-since already processed (according to the stored offsets or message id).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent MessageAlreadyProcessed { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageMoved.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageMoved%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L398">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageMoved_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageMoved*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageMoved" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageMoved">MessageMoved</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message couldn't be
 processed and is moved to another endpoint. This event occurs when the
-<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> is applied.</p>
+<a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> is applied.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1257,13 +910,8 @@ processed and is moved to another endpoint. This event occurs when the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageProduced.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageProduced%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L310">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageProduced_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageProduced*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageProduced" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageProduced">MessageProduced</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message is produced.</p>
@@ -1288,17 +936,12 @@ processed and is moved to another endpoint. This event occurs when the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageSkipped%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L407">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageSkipped*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageSkipped">MessageSkipped</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message couldn't be
-processed and is skipped. This event occurs when the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> is applied.</p>
+processed and is skipped. This event occurs when the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> is applied.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1320,22 +963,16 @@ processed and is skipped. This event occurs when the <a class="xref" href="Silve
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.MessageWrittenToOutbox%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L476">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageWrittenToOutbox*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox" data-uid="Silverback.Diagnostics.IntegrationLogEvents.MessageWrittenToOutbox">MessageWrittenToOutbox</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message is being written
-to the outbox.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_OutboundMessageFiltered_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.OutboundMessageFiltered*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_OutboundMessageFiltered" data-uid="Silverback.Diagnostics.IntegrationLogEvents.OutboundMessageFiltered">OutboundMessageFiltered</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an outbound message is filtered out.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent MessageWrittenToOutbox { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent OutboundMessageFiltered { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1352,49 +989,12 @@ to the outbox.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.NullMessageSkipped%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L458">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.NullMessageSkipped*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped" data-uid="Silverback.Diagnostics.IntegrationLogEvents.NullMessageSkipped">NullMessageSkipped</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a null message is
-skipped (see <a class="xref" href="Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html#Silverback_Messaging_Serialization_NullMessageHandlingStrategy_Skip">Skip</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent NullMessageSkipped { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_OutboxEmpty.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.OutboxEmpty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L494">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_OutboxEmpty_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.OutboxEmpty*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_OutboxEmpty" data-uid="Silverback.Diagnostics.IntegrationLogEvents.OutboxEmpty">OutboxEmpty</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> doesn't find any message in the outbox.</p>
+<a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> doesn't find any message in the outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1416,22 +1016,16 @@ skipped (see <a class="xref" href="Silverback.Messaging.Serialization.NullMessag
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_PolicyApplyRuleReturnedFalse.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.PolicyApplyRuleReturnedFalse%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L359">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_PolicyApplyRuleReturnedFalse_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyApplyRuleReturnedFalse*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_PolicyApplyRuleReturnedFalse" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyApplyRuleReturnedFalse">PolicyApplyRuleReturnedFalse</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written during the evaluation of an error
-policy, when the policy isn't applied because of it's apply rule.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessage*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessage">ProcessingConsumedMessage</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a consumed message is being processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PolicyApplyRuleReturnedFalse { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ProcessingConsumedMessage { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1448,22 +1042,16 @@ policy, when the policy isn't applied because of it's apply rule.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_PolicyChainCompleted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.PolicyChainCompleted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L368">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_PolicyChainCompleted_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyChainCompleted*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_PolicyChainCompleted" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyChainCompleted">PolicyChainCompleted</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when all chained policies have been
-applied but the processing still failed and the consumer will therefore be stopped.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessageError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessageError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessageError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessageError">ProcessingConsumedMessageError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs processing the consumed message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PolicyChainCompleted { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ProcessingConsumedMessageError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1480,22 +1068,20 @@ applied but the processing still failed and the consumer will therefore be stopp
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionExcluded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L349">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionExcluded*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionExcluded">PolicyExceptionExcluded</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written during the evaluation of an error
-policy, when the policy isn't applied because the current exception type is in the exclusion list.</p>
+  <h5 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessageError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If the message belongs to a sequence the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingError">SequenceProcessingError</a> event is logged instead.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessageFatalError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessageFatalError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingConsumedMessageFatalError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingConsumedMessageFatalError">ProcessingConsumedMessageFatalError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an unhandled error occurs processing the
+consumed message and the consumer will be stopped.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PolicyExceptionExcluded { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ProcessingConsumedMessageFatalError { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1512,114 +1098,11 @@ policy, when the policy isn't applied because the current exception type is in t
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionNotIncluded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L339">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionNotIncluded*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyExceptionNotIncluded">PolicyExceptionNotIncluded</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written during the evaluation of an error
-policy, when the policy isn't applied because the current exception type is not in the inclusion list.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PolicyExceptionNotIncluded { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L328">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded" data-uid="Silverback.Diagnostics.IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded">PolicyMaxFailedAttemptsExceeded</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written during the evaluation of an error
-policy, when the maximum configured failed attempts for the policies are exceeded and the policy isn't
-applied anymore.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent PolicyMaxFailedAttemptsExceeded { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ProcessingInboundMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L28">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingInboundMessage*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingInboundMessage">ProcessingInboundMessage</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an inbound message is being
-processed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ProcessingInboundMessage { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ProcessingOutboxStoredMessage.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ProcessingOutboxStoredMessage%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L503">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingOutboxStoredMessage_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingOutboxStoredMessage*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProcessingOutboxStoredMessage" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProcessingOutboxStoredMessage">ProcessingOutboxStoredMessage</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message stored in the
-outbox is being processed.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message stored in the outbox is being processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1641,22 +1124,16 @@ outbox is being processed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ProducerConnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L293">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerConnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerConnected">ProducerConnected</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the producer is connected to
-the endpoint and ready to produce.</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProducerCreated_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerCreated*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProducerCreated" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerCreated">ProducerCreated</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a new consumer is instantiated.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ProducerConnected { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent ProducerCreated { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1673,49 +1150,12 @@ the endpoint and ready to produce.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ProducerDisconnected%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L302">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerDisconnected*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ProducerDisconnected">ProducerDisconnected</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the producer is disconnected
-from the endpoint.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent ProducerDisconnected { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.ReadingMessagesFromOutbox%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L485">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ReadingMessagesFromOutbox*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox" data-uid="Silverback.Diagnostics.IntegrationLogEvents.ReadingMessagesFromOutbox">ReadingMessagesFromOutbox</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the
-<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> loads a batch of enqueued messages.</p>
+<a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> loads a batch of enqueued messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1737,50 +1177,12 @@ from the endpoint.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_RetryDelayed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.RetryDelayed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L388">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_RetryDelayed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RetryDelayed*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_RetryDelayed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RetryDelayed">RetryDelayed</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message couldn't be
-processed and a delay is applied before retrying it.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent RetryDelayed { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.RetryMessageProcessing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L379">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RetryMessageProcessing*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RetryMessageProcessing">RetryMessageProcessing</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message couldn't be
-processed and the retry policy is applied, processing the message again. This event occurs when the
-<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> is applied.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a message couldn't be processed and the
+<a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> is applied.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1802,17 +1204,12 @@ processed and the retry policy is applied, processing the message again. This ev
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.RollbackToRetryFailed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L427">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RollbackToRetryFailed*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RollbackToRetryFailed">RollbackToRetryFailed</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a the rollback initiated by
-the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> fails with an exception. This will cause the consumer to be
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a rollback initiated by
+the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> fails with an exception. This will cause the consumer to be
 disconnected and reconnected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1835,17 +1232,12 @@ disconnected and reconnected.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.RollbackToSkipFailed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L438">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RollbackToSkipFailed*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed" data-uid="Silverback.Diagnostics.IntegrationLogEvents.RollbackToSkipFailed">RollbackToSkipFailed</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a the rollback initiated by
-the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> fails with an exception. This will cause the consumer to be
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a rollback initiated by
+the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> fails with an exception. This will cause the consumer to be
 disconnected and reconnected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1868,17 +1260,12 @@ disconnected and reconnected.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.SequenceCompleted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L68">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceCompleted*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceCompleted">SequenceCompleted</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when all messages belonging to the
-sequence have been consumed and published to the internal bus.</p>
+sequence have been consumed and published via the message bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1900,20 +1287,13 @@ sequence have been consumed and published to the internal bus.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.SequenceProcessingAborted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L80">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceProcessingAborted*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceProcessingAborted">SequenceProcessingAborted</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the processing of a sequence
-of messages is aborted, but not because of an error (an <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</a> is
-logged instead) or an incomplete sequence that gets discarded (an
-<a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted">IncompleteSequenceAborted</a> or an <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence">SkippingIncompleteSequence</a> is logged
-instead).</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the processing of a sequence is aborted,
+but not because of an error (an <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingError">SequenceProcessingError</a> is logged instead) or an incomplete sequence that gets
+discarded (an <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted">IncompleteSequenceAborted</a> or an <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceSkipped">IncompleteSequenceSkipped</a> is logged instead).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1935,13 +1315,34 @@ instead).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.SequenceStarted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L59">View source</a>
-  </span>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceProcessingError*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceProcessingError">SequenceProcessingError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs processing an inbound sequence.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent SequenceProcessingError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceStarted*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceStarted">SequenceStarted</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the first message of a new
@@ -1967,17 +1368,12 @@ sequence is consumed.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L121">View source</a>
-  </span>
+
+
   <a id="Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError*"></a>
   <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError">SequenceTimeoutError</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs while
-executing the timeout action on an inbound sequence.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an error occurs executing the timeout action on a
+sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1999,23 +1395,43 @@ executing the timeout action on an inbound sequence.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents.SkippingIncompleteSequence%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L112">View source</a>
-  </span>
-  <a id="Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SkippingIncompleteSequence*"></a>
-  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence" data-uid="Silverback.Diagnostics.IntegrationLogEvents.SkippingIncompleteSequence">SkippingIncompleteSequence</h4>
-  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when an incomplete sequence is
-skipped because first consumed message of that sequence doesn't correspond to the actual sequence
-beginning (e.g. the first chunk).</p>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_StoringIntoOutbox_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.StoringIntoOutbox*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_StoringIntoOutbox" data-uid="Silverback.Diagnostics.IntegrationLogEvents.StoringIntoOutbox">StoringIntoOutbox</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when the message is being written
+to the outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static LogEvent SkippingIncompleteSequence { get; }</code></pre>
+    <pre><code class="lang- hljs">public static LogEvent StoringIntoOutbox { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Diagnostics_IntegrationLogEvents_Tracing_" data-uid="Silverback.Diagnostics.IntegrationLogEvents.Tracing*"></a>
+  <h4 id="Silverback_Diagnostics_IntegrationLogEvents_Tracing" data-uid="Silverback.Diagnostics.IntegrationLogEvents.Tracing">Tracing</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.eventid">EventId</a> of the unspecific tracing logs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent Tracing { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2039,12 +1455,6 @@ beginning (e.g. the first chunk).</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IntegrationLogEvents.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IntegrationLogEvents%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Diagnostics/IntegrationLogEvents.cs/#L21" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -2065,7 +1475,7 @@ beginning (e.g. the first chunk).</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

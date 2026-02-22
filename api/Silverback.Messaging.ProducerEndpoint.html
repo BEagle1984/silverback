@@ -90,8 +90,7 @@
 
   <h1 id="Silverback_Messaging_ProducerEndpoint" data-uid="Silverback.Messaging.ProducerEndpoint" class="text-break">Class ProducerEndpoint
 </h1>
-  <div class="markdown level0 summary"><p>Represents a message broker endpoint to produce to (such as a Kafka topic or RabbitMQ queue or
-exchange).</p>
+  <div class="markdown level0 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -99,46 +98,20 @@ exchange).</p>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a></div>
     <div class="level2"><span class="xref">ProducerEndpoint</span></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.RabbitProducerEndpoint.html">RabbitProducerEndpoint</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.ProducerEndpoint-1.html">ProducerEndpoint&lt;TConfiguration&gt;</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></div>
-    <div><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a>&gt;</div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>&gt;</div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_DefaultSerializer">Endpoint.DefaultSerializer</a>
+      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_RawName">Endpoint.RawName</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_DisplayName">Endpoint.DisplayName</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Name">Endpoint.Name</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_FriendlyName">Endpoint.FriendlyName</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Serializer">Endpoint.Serializer</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Encryption">Endpoint.Encryption</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_MessageValidationMode">Endpoint.MessageValidationMode</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
@@ -147,35 +120,30 @@ exchange).</p>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_ProducerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint, IEndpoint</code></pre>
+    <pre><code class="lang- hljs">public abstract record ProducerEndpoint : Endpoint, IEquatable&lt;Endpoint&gt;, IEquatable&lt;ProducerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L51">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string?&gt;)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
+  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_Silverback_Messaging_ProducerEndpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(Silverback.Messaging.ProducerEndpoint)">ProducerEndpoint(ProducerEndpoint)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected ProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string?&gt; nameFunction)</code></pre>
+    <pre><code class="lang- hljs">protected ProducerEndpoint(ProducerEndpoint original)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -188,64 +156,22 @@ exchange).</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced. If the function returns
-<code>null</code> the message will not be produced.</p>
-</td>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">original</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L40">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, string?&gt;)</h4>
+  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String,Silverback.Messaging.Configuration.ProducerEndpointConfiguration)">ProducerEndpoint(string, ProducerEndpointConfiguration)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected ProducerEndpoint(Func&lt;IOutboundEnvelope, string?&gt; nameFunction)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced. If the function returns
-<code>null</code> the message will not be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L29">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String)">ProducerEndpoint(string)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">protected ProducerEndpoint(string name)</code></pre>
+    <pre><code class="lang- hljs">protected ProducerEndpoint(string rawName, ProducerEndpointConfiguration configuration)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -259,106 +185,30 @@ exchange).</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">name</span></td>
+        <td><span class="parametername">rawName</span></td>
         <td><p>The endpoint name.</p>
 </td>
       </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%5B%5D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L69">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String[]})">ProducerEndpoint(string, Func&lt;IOutboundEnvelope, string[]&gt;)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">protected ProducerEndpoint(string nameFormat, Func&lt;IOutboundEnvelope, string[]&gt; argumentsFunction)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
       <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">nameFormat</span></td>
-        <td><p>The endpoint name format string that will be combined with the arguments returned by the
-<code class="paramref">argumentsFunction</code> using a <code>string.Format</code>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]&gt;</td>
-        <td><span class="parametername">argumentsFunction</span></td>
-        <td><p>The function returning the arguments to be used to format the string.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Type)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L84">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Type_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Type)">ProducerEndpoint(Type)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">protected ProducerEndpoint(Type resolverType)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
-        <td><span class="parametername">resolverType</span></td>
-        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IProducerEndpointNameResolver.html">IProducerEndpointNameResolver</a> to be used to resolve the actual endpoint
-name.</p>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a></td>
+        <td><span class="parametername">configuration</span></td>
+        <td><p>The endpoint configuration.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Chunk.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Chunk%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L103">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_Chunk_" data-uid="Silverback.Messaging.ProducerEndpoint.Chunk*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_Chunk" data-uid="Silverback.Messaging.ProducerEndpoint.Chunk">Chunk</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the message chunking settings. This option can be used to split large messages into
-smaller chunks.</p>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_Configuration_" data-uid="Silverback.Messaging.ProducerEndpoint.Configuration*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_Configuration" data-uid="Silverback.Messaging.ProducerEndpoint.Configuration">Configuration</h4>
+  <div class="markdown level1 summary"><p>Gets the producer endpoint configuration.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ChunkSettings? Chunk { get; set; }</code></pre>
+    <pre><code class="lang- hljs">public ProducerEndpointConfiguration Configuration { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -370,27 +220,21 @@ smaller chunks.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSettings.html">ChunkSettings</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_MessageEnrichers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.MessageEnrichers%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L115">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_MessageEnrichers_" data-uid="Silverback.Messaging.ProducerEndpoint.MessageEnrichers*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_MessageEnrichers" data-uid="Silverback.Messaging.ProducerEndpoint.MessageEnrichers">MessageEnrichers</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the collection of <a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a> to be used to enrich the outbound
-message.</p>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_EqualityContract_" data-uid="Silverback.Messaging.ProducerEndpoint.EqualityContract*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_EqualityContract" data-uid="Silverback.Messaging.ProducerEndpoint.EqualityContract">EqualityContract</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ICollection&lt;IOutboundMessageEnricher&gt; MessageEnrichers { get; set; }</code></pre>
+    <pre><code class="lang- hljs">protected override Type EqualityContract { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -402,61 +246,25 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a>&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Strategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Strategy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L109">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_Strategy_" data-uid="Silverback.Messaging.ProducerEndpoint.Strategy*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_Strategy" data-uid="Silverback.Messaging.ProducerEndpoint.Strategy">Strategy</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
-messages will be sent to the message broker directly.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public IProduceStrategy Strategy { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_EqualityContract">Endpoint.EqualityContract</a></div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L139">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_BaseEquals_" data-uid="Silverback.Messaging.ProducerEndpoint.BaseEquals*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)">BaseEquals(Endpoint?)</h4>
-  <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a> is equal to the current
-<a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a>.</p>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_Equals_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_Equals_Silverback_Messaging_Endpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals(Silverback.Messaging.Endpoint)">Equals(Endpoint?)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override bool BaseEquals(Endpoint? other)</code></pre>
+    <pre><code class="lang- hljs">public override sealed bool Equals(Endpoint? other)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -471,8 +279,7 @@ messages will be sent to the message broker directly.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a></td>
         <td><span class="parametername">other</span></td>
-        <td><p>The object to compare with the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -487,28 +294,22 @@ messages will be sent to the message broker directly.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p>Returns a value indicating whether the other object is equal to the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_BaseEquals_Silverback_Messaging_Endpoint_">Endpoint.BaseEquals(Endpoint?)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L124">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_GetActualName_" data-uid="Silverback.Messaging.ProducerEndpoint.GetActualName*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_" data-uid="Silverback.Messaging.ProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider)">GetActualName(IOutboundEnvelope, IServiceProvider)</h4>
-  <div class="markdown level1 summary"><p>Gets the actual target endpoint name for the message being produced.</p>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Equals_Silverback_Messaging_Endpoint_">Endpoint.Equals(Endpoint?)</a></div>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_Equals_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_Equals_Silverback_Messaging_ProducerEndpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals(Silverback.Messaging.ProducerEndpoint)">Equals(ProducerEndpoint?)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public string? GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider)</code></pre>
+    <pre><code class="lang- hljs">public virtual bool Equals(ProducerEndpoint? other)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -521,16 +322,9 @@ messages will be sent to the message broker directly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
-        <td><span class="parametername">envelope</span></td>
-        <td><p>The envelope containing the message being produced.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
-        <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> in the current scope.</p>
-</td>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -544,37 +338,261 @@ messages will be sent to the message broker directly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><p>The actual name of the endpoint to be produced to.</p>
-</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Validate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L128">View source</a>
-  </span>
-  <a id="Silverback_Messaging_ProducerEndpoint_Validate_" data-uid="Silverback.Messaging.ProducerEndpoint.Validate*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_Validate" data-uid="Silverback.Messaging.ProducerEndpoint.Validate">Validate()</h4>
-  <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
-not valid.</p>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_Equals_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.ProducerEndpoint.Equals(System.Object)">Equals(object?)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public override void Validate()</code></pre>
+    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Validate">Endpoint.Validate()</a></div>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Equals_System_Object_">Endpoint.Equals(object?)</a></div>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.ProducerEndpoint.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_GetHashCode" data-uid="Silverback.Messaging.ProducerEndpoint.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_GetHashCode">Endpoint.GetHashCode()</a></div>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_PrintMembers_" data-uid="Silverback.Messaging.ProducerEndpoint.PrintMembers*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Messaging.ProducerEndpoint.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">protected override bool PrintMembers(StringBuilder builder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
+        <td><span class="parametername">builder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_PrintMembers_System_Text_StringBuilder_">Endpoint.PrintMembers(StringBuilder)</a></div>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_ToString_" data-uid="Silverback.Messaging.ProducerEndpoint.ToString*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_ToString" data-uid="Silverback.Messaging.ProducerEndpoint.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_ToString">Endpoint.ToString()</a></div>
+  <h3 id="operators">Operators
+</h3>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_op_Equality_" data-uid="Silverback.Messaging.ProducerEndpoint.op_Equality*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_op_Equality_Silverback_Messaging_ProducerEndpoint_Silverback_Messaging_ProducerEndpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.op_Equality(Silverback.Messaging.ProducerEndpoint,Silverback.Messaging.ProducerEndpoint)">operator ==(ProducerEndpoint?, ProducerEndpoint?)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator ==(ProducerEndpoint? left, ProducerEndpoint? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_ProducerEndpoint_op_Inequality_" data-uid="Silverback.Messaging.ProducerEndpoint.op_Inequality*"></a>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_op_Inequality_Silverback_Messaging_ProducerEndpoint_Silverback_Messaging_ProducerEndpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.op_Inequality(Silverback.Messaging.ProducerEndpoint,Silverback.Messaging.ProducerEndpoint)">operator !=(ProducerEndpoint?, ProducerEndpoint?)</h4>
+  <div class="markdown level1 summary"><p>The endpoint (e.g. the topic) where the message must be produced to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static bool operator !=(ProducerEndpoint? left, ProducerEndpoint? right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a></td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
   </div>
   <div>
-      <a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
   </div>
 </article>
           </div>
@@ -583,12 +601,6 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L19" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -609,7 +621,7 @@ not valid.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IMessageWrapper
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IMessageWrapper
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper">
+
+
+  <h1 id="Silverback_Messaging_Producing_Routing_IMessageWrapper" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper" class="text-break">Interface IMessageWrapper
+</h1>
+  <div class="markdown level0 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and produces them using the specified producers.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Producing.html">Producing</a>.<a class="xref" href="Silverback.Messaging.Producing.Routing.html">Routing</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h5 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public interface IMessageWrapper</code></pre>
+  </div>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync__1___0_Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync%60%601(%60%600%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L43">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync__1___0_Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync``1(``0,Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">WrapAndProduceAsync&lt;TMessage&gt;(TMessage?, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceAsync&lt;TMessage&gt;(TMessage? message, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TMessage</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelope.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync__2___0_Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync%60%602(%60%600%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2C%60%601%7D%2C%60%601%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L81">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceAsync__2___0_Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceAsync``2(``0,Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">WrapAndProduceAsync&lt;TMessage, TArgument&gt;(TMessage?, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the message in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceAsync&lt;TMessage, TArgument&gt;(TMessage? message, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TMessage</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%601(System.Collections.Generic.IAsyncEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L426">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``1(System.Collections.Generic.IAsyncEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage&gt;(IAsyncEnumerable&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage&gt;(IAsyncEnumerable&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%601(System.Collections.Generic.IEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L270">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``1(System.Collections.Generic.IEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage&gt;(IEnumerable&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage&gt;(IEnumerable&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%601(System.Collections.Generic.IReadOnlyCollection%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L114">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__1_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0___System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``1(System.Collections.Generic.IReadOnlyCollection{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0}},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage&gt;(IReadOnlyCollection&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage&gt;(IReadOnlyCollection&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IAsyncEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2C%60%601%7D%2C%60%601%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L464">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IAsyncEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IAsyncEnumerable&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IAsyncEnumerable&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IAsyncEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L503">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IAsyncEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IAsyncEnumerable&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IAsyncEnumerable&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TSource, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2C%60%601%7D%2C%60%601%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L308">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IEnumerable&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IEnumerable&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L347">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IEnumerable&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IEnumerable&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TSource, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IReadOnlyCollection%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2C%60%601%7D%2C%60%601%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L152">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___0____1____1_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IReadOnlyCollection{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``0},``1},``1,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IReadOnlyCollection&lt;TMessage?&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wraps the messages in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TMessage, TArgument&gt;(IReadOnlyCollection&lt;TMessage?&gt; messages, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">messages</span></td>
+        <td><p>The messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%602(System.Collections.Generic.IReadOnlyCollection%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L191">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__2_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``2(System.Collections.Generic.IReadOnlyCollection{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0},System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IReadOnlyCollection&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage&gt;(IReadOnlyCollection&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource&gt;? envelopeConfigurationAction = null, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;TSource, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>An optional action that can be used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%603(System.Collections.Generic.IAsyncEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%602%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%2C%60%602%7D%2C%60%602%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L548">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IAsyncEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``3(System.Collections.Generic.IAsyncEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IAsyncEnumerable&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IAsyncEnumerable&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TArgument, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;TSource, TArgument, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">mapperFunction</code> and the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%603(System.Collections.Generic.IEnumerable%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%602%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%2C%60%602%7D%2C%60%602%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L392">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IEnumerable___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``3(System.Collections.Generic.IEnumerable{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IEnumerable&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IEnumerable&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TArgument, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;TSource, TArgument, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">mapperFunction</code> and the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync%60%603(System.Collections.Generic.IReadOnlyCollection%7B%60%600%7D%2CSilverback.Messaging.Publishing.IPublisher%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IProducer%7D%2CSystem.Func%7B%60%600%2C%60%602%2C%60%601%7D%2CSystem.Action%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%601%7D%2C%60%600%2C%60%602%7D%2C%60%602%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L236">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync*"></a>
+  <h4 id="Silverback_Messaging_Producing_Routing_IMessageWrapper_WrapAndProduceBatchAsync__3_System_Collections_Generic_IReadOnlyCollection___0__Silverback_Messaging_Publishing_IPublisher_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Func___0___2___1__System_Action_Silverback_Messaging_Messages_IOutboundEnvelope___1____0___2____2_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Producing.Routing.IMessageWrapper.WrapAndProduceBatchAsync``3(System.Collections.Generic.IReadOnlyCollection{``0},Silverback.Messaging.Publishing.IPublisher,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IProducer},System.Func{``0,``2,``1},System.Action{Silverback.Messaging.Messages.IOutboundEnvelope{``1},``0,``2},``2,System.Threading.CancellationToken)">WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IReadOnlyCollection&lt;TSource&gt;, IPublisher, IReadOnlyCollection&lt;IProducer&gt;, Func&lt;TSource, TArgument, TMessage?&gt;, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt;, TArgument, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Maps the source objects into messages, wraps them in an <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> and publishes them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">Task WrapAndProduceBatchAsync&lt;TSource, TMessage, TArgument&gt;(IReadOnlyCollection&lt;TSource&gt; sources, IPublisher publisher, IReadOnlyCollection&lt;IProducer&gt; producers, Func&lt;TSource, TArgument, TMessage?&gt; mapperFunction, Action&lt;IOutboundEnvelope&lt;TMessage&gt;, TSource, TArgument&gt; envelopeConfigurationAction, TArgument argument, CancellationToken cancellationToken = default) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;TSource&gt;</td>
+        <td><span class="parametername">sources</span></td>
+        <td><p>The source objects to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>&gt;</td>
+        <td><span class="parametername">producers</span></td>
+        <td><p>The producers to be used to produce the message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;TSource, TArgument, TMessage&gt;</td>
+        <td><span class="parametername">mapperFunction</span></td>
+        <td><p>The function used to map the source objects to messages.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, TSource, TArgument&gt;</td>
+        <td><span class="parametername">envelopeConfigurationAction</span></td>
+        <td><p>The action used to configure the envelopes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TArgument</span></td>
+        <td><span class="parametername">argument</span></td>
+        <td><p>The argument to be passed to the <code class="paramref">mapperFunction</code> and the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSource</span></td>
+        <td><p>The type of the source objects.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TArgument</span></td>
+        <td><p>The type of the argument passed to the <code class="paramref">envelopeConfigurationAction</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_Routing_IMessageWrapper.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.Routing.IMessageWrapper%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/Routing/IMessageWrapper.cs/#L17" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2020 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

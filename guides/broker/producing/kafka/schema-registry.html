@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Confluent Schema Registry | Silverback </title>
+    <title>Kafka Schema Registry | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Confluent Schema Registry | Silverback ">
+    <meta name="title" content="Kafka Schema Registry | Silverback ">
     <meta name="generator" content="docfx ">
   
 
@@ -83,10 +83,113 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="schema-registry">
-<h1 id="confluent-schema-registry">Confluent Schema Registry</h1>
+            <article class="content wrap" id="_content" data-uid="kafka-schema-registry-serializer">
+<h1 id="kafka-schema-registry">Kafka Schema Registry</h1>
 
-<p><em>...coming soon...</em></p>
+<p>Use Confluent Schema Registry to validate and evolve message schemas for Kafka topics. Silverback integrates with Schema Registry via <code>Silverback.Integration.Kafka.SchemaRegistry</code> and provides endpoint-level serialization for Avro, JSON Schema, and Protobuf.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>A running Confluent Schema Registry instance.</li>
+<li>The <code>Silverback.Integration.Kafka.SchemaRegistry</code> package referenced by your application.</li>
+</ul>
+<h2 id="configure-producer-endpoints">Configure Producer Endpoints</h2>
+<p>Configure Schema Registry per endpoint using one of:</p>
+<ul>
+<li><code>SerializeAsAvro</code></li>
+<li><code>SerializeAsJsonUsingSchemaRegistry</code></li>
+<li><code>SerializeAsProtobuf</code></li>
+</ul>
+<p>Example (JSON Schema):</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJsonUsingSchemaRegistry(json =&gt; json
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)
+                    .Configure(config =&gt;
+                    {
+                        config.AutoRegisterSchemas = false;
+                    })))));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Consumer setup is documented in <a class="xref" href="../../consuming/kafka/schema-registry.html">Kafka Schema Registry</a>.</p>
+</div>
+<h2 id="supported-serializers">Supported Serializers</h2>
+<h3 id="json-schema">JSON Schema</h3>
+<p>Use <code>SerializeAsJsonUsingSchemaRegistry</code>:</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsJsonUsingSchemaRegistry(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<h3 id="avro">Avro</h3>
+<p>Use <code>SerializeAsAvro</code>:</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsAvro(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>You can generate C# models from an Avro schema using <a href="https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/">AvroGen</a>.</p>
+</div>
+<h3 id="protobuf">Protobuf</h3>
+<p>Use <code>SerializeAsProtobuf</code>:</p>
+<pre><code class="lang-csharp">services.AddSilverback()
+    .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
+    .AddKafkaClients(clients =&gt; clients
+        .WithBootstrapServers(&quot;PLAINTEXT://localhost:9092&quot;)
+        .AddProducer(&quot;producer1&quot;, producer =&gt; producer
+            .Produce&lt;MyMessage&gt;(&quot;endpoint1&quot;, endpoint =&gt; endpoint
+                .ProduceTo(&quot;my-topic&quot;)
+                .SerializeAsProtobuf(serializer =&gt; serializer
+                    .ConnectToSchemaRegistry(&quot;http://localhost:4242&quot;)))));
+</code></pre>
+<h2 id="schema-registration">Schema Registration</h2>
+<p>In most setups, schemas are registered by producers.</p>
+<p>If you disable automatic schema registration (<code>AutoRegisterSchemas = false</code>), ensure schemas are registered before producing messages.</p>
+<p>You can register schemas programmatically using <a class="xref" href="../../../../api/Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory.html">IConfluentSchemaRegistryClientFactory</a>:</p>
+<pre><code class="lang-csharp">class SchemaRegistrationService
+{
+    private readonly IConfluentSchemaRegistryClientFactory _factory;
+
+    public SchemaRegistrationService(IConfluentSchemaRegistryClientFactory factory)
+    {
+        _factory = factory;
+    }
+
+    public async Task RegisterSchemasAsync(string formattedSchema, string topicName)
+    {
+        ISchemaRegistryClient client = _factory.GetClient(registry =&gt; registry
+            .WithUrl(&quot;http://localhost:4242&quot;));
+
+        await client.RegisterSchemaAsync(
+            topicName + &quot;-value&quot;,
+            new Schema(formattedSchema, SchemaType.Protobuf));
+    }
+}
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a class="xref" href="../../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../serialization.html">Serializing the Produced Messages</a></li>
+<li><a class="xref" href="../../consuming/kafka/schema-registry.html">Kafka Schema Registry</a></li>
+<li><a href="https://docs.confluent.io/platform/current/schema-registry/index.html">Confluent Schema Registry</a></li>
+</ul>
 </article>
           </div>
 
@@ -117,7 +220,7 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2025 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>

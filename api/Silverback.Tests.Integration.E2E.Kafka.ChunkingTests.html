@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ChunkingTests
+ | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ChunkingTests
+ | Silverback ">
+    <meta name="generator" content="docfx ">
+  
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+  
+  <meta property="docfx:rel" content="../">
+  
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests">
+
+
+  <h1 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests" class="text-break">Class ChunkingTests
+</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.E2ETests.html">E2ETests</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html">KafkaTests</a></div>
+    <div class="level3"><span class="xref">ChunkingTests</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html#Silverback_Tests_Integration_E2E_TestHost_KafkaTests_DefaultTopicName">KafkaTests.DefaultTopicName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html#Silverback_Tests_Integration_E2E_TestHost_KafkaTests_DefaultGroupId">KafkaTests.DefaultGroupId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html#Silverback_Tests_Integration_E2E_TestHost_KafkaTests_Helper">KafkaTests.Helper</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html#Silverback_Tests_Integration_E2E_TestHost_KafkaTests_DefaultTopic">KafkaTests.DefaultTopic</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.KafkaTests.html#Silverback_Tests_Integration_E2E_TestHost_KafkaTests_DefaultConsumerGroup">KafkaTests.DefaultConsumerGroup</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.E2ETests.html#Silverback_Tests_Integration_E2E_TestHost_E2ETests_Dispose">E2ETests.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.E2ETests.html#Silverback_Tests_Integration_E2E_TestHost_E2ETests_Dispose_System_Boolean_">E2ETests.Dispose(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Tests.Integration.E2E.TestHost.E2ETests.html#Silverback_Tests_Integration_E2E_TestHost_E2ETests_Host">E2ETests.Host</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.E2E.html">E2E</a>.<a class="xref" href="Silverback.Tests.Integration.E2E.Kafka.html">Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.E2E.dll</h6>
+  <h5 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public class ChunkingTests : KafkaTests, IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests__ctor_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.#ctor*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests__ctor_Xunit_Abstractions_ITestOutputHelper_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.#ctor(Xunit.Abstractions.ITestOutputHelper)">ChunkingTests(ITestOutputHelper)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public ChunkingTests(ITestOutputHelper testOutputHelper)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ITestOutputHelper</span></td>
+        <td><span class="parametername">testOutputHelper</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage">Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson">Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage">Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteBinaryMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson">Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldAbortAndNotCommit_WhenRebalancingWithIncompleteJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted">Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAborted()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk">Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldCommitAndConsumeNextMessage_WhenBinaryMessageReadAbortedMidChunk()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted">Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldCommitAndConsumeNextMessage_WhenSingleChunkBinaryMessageReadAborted()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch">Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeBinaryMessageAndCommit_WhenConsumedInBatch()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions">Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeBinaryMessagesConcurrently_WhenProducedToMultiplePartitions()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader">Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader">Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader">Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader">Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader">Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedJsonWithChunksCountHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader">Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeChunkedJsonWithIsLastChunkHeader()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch">Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeJsonAndCommit_WhenConsumedInBatch()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions">Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldConsumeJsonMessagesConcurrently_WhenProducedToMultiplePartitions()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage">Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardBinaryMessageMissingFirstChunkAndConsumeNextMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout">Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts">Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteBinaryMessage_WhenNextSequenceStarts()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJsonAfterTimeout_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJsonAfterTimeout*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJsonAfterTimeout" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJsonAfterTimeout">Chunking_ShouldDiscardIncompleteJsonAfterTimeout()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteJsonAfterTimeout()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain">Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteJsonAndConsumeNextMessage_WhenSameMessageIsSentAgain()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts">Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteJson_WhenNextSequenceStarts()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived">Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardIncompleteJson_WhenNoSequenceMessageReceived()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage">Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDiscardJsonMissingFirstChunkAndConsumeNextMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk">Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsAfterFirstChunk()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately">Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldDisconnectAndNotCommit_WhenBinaryMessageProcessingFailsImmediately()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage">Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldIgnoreDuplicatedChunksInBinaryMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreDuplicatedChunksInJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreDuplicatedChunksInJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreDuplicatedChunksInJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreDuplicatedChunksInJson">Chunking_ShouldIgnoreDuplicatedChunksInJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldIgnoreDuplicatedChunksInJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson">Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldIgnoreErrorPolicy_WhenDiscardingIncompleteJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedBinaryMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedBinaryMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedBinaryMessage">Chunking_ShouldProduceAndConsumeChunkedBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeChunkedBinaryMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedJson">Chunking_ShouldProduceAndConsumeChunkedJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeChunkedJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames">Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeChunkedJsonWithCustomHeaderNames()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage">Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessage()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch">Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeSingleChunkBinaryMessageInBatch()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkJson_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkJson*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkJson" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkJson">Chunking_ShouldProduceAndConsumeSingleChunkJson()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeSingleChunkJson()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch">Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceAndConsumeSingleChunkJsonInBatch()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceChunkedJsonViaOutbox_" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceChunkedJsonViaOutbox*"></a>
+  <h4 id="Silverback_Tests_Integration_E2E_Kafka_ChunkingTests_Chunking_ShouldProduceChunkedJsonViaOutbox" data-uid="Silverback.Tests.Integration.E2E.Kafka.ChunkingTests.Chunking_ShouldProduceChunkedJsonViaOutbox">Chunking_ShouldProduceChunkedJsonViaOutbox()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">[Fact]
+public Task Chunking_ShouldProduceChunkedJsonViaOutbox()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+      © 2026 Sergio Aquilini
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

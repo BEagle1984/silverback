@@ -108,16 +108,16 @@ according to the endpoint settings.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Producing.html">Producing</a></h6>
@@ -126,15 +126,24 @@ according to the endpoint settings.</p>
   <div class="codewrapper">
     <pre><code class="lang- hljs">public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable&lt;IProduceStrategy&gt;, IEquatable&lt;DefaultProduceStrategy&gt;</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+</h3>
+
+
+  <a id="Silverback_Messaging_Producing_DefaultProduceStrategy__ctor_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy__ctor" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.#ctor">DefaultProduceStrategy()</h4>
+  <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+according to the endpoint settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public DefaultProduceStrategy()</code></pre>
+  </div>
   <h3 id="methods">Methods
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_Build_Silverback_ISilverbackContext_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.Build(Silverback.ISilverbackContext%2CSilverback.Messaging.Configuration.ProducerEndpointConfiguration)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L31">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_Build_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Build*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_Build_Silverback_ISilverbackContext_Silverback_Messaging_Configuration_ProducerEndpointConfiguration_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Build(Silverback.ISilverbackContext,Silverback.Messaging.Configuration.ProducerEndpointConfiguration)">Build(ISilverbackContext, ProducerEndpointConfiguration)</h4>
   <div class="markdown level1 summary"><p>Returns the actual strategy implementation, built using the provided <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a>.</p>
@@ -184,16 +193,12 @@ according to the endpoint settings.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_Silverback_Messaging_Producing_DefaultProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(Silverback.Messaging.Producing.DefaultProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L35">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_Silverback_Messaging_Producing_DefaultProduceStrategy_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(Silverback.Messaging.Producing.DefaultProduceStrategy)">Equals(DefaultProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+  <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+according to the endpoint settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -213,8 +218,7 @@ according to the endpoint settings.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Producing.DefaultProduceStrategy.html">DefaultProduceStrategy</a></td>
         <td><span class="parametername">other</span></td>
-        <td><p>An object to compare with this object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -229,21 +233,16 @@ according to the endpoint settings.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_Silverback_Messaging_Producing_IProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(Silverback.Messaging.Producing.IProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L38">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_Silverback_Messaging_Producing_IProduceStrategy_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(Silverback.Messaging.Producing.IProduceStrategy)">Equals(IProduceStrategy?)</h4>
-  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+  <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+according to the endpoint settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -263,8 +262,7 @@ according to the endpoint settings.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Producing.IProduceStrategy.html">IProduceStrategy</a></td>
         <td><span class="parametername">other</span></td>
-        <td><p>An object to compare with this object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -279,21 +277,16 @@ according to the endpoint settings.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(System.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L41">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_Equals_System_Object_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.Equals(System.Object)">Equals(object?)</h4>
-  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+  <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+according to the endpoint settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -313,8 +306,7 @@ according to the endpoint settings.</p>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
         <td><span class="parametername">obj</span></td>
-        <td><p>The object to compare with the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -329,23 +321,18 @@ according to the endpoint settings.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.GetHashCode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L44">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_GetHashCode_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_GetHashCode" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.GetHashCode">GetHashCode()</h4>
-  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+  <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+according to the endpoint settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -363,8 +350,7 @@ according to the endpoint settings.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><p>A hash code for the current object.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -372,13 +358,8 @@ according to the endpoint settings.</p>
   <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a></div>
   <h3 id="operators">Operators
 </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_op_Equality_Silverback_Messaging_Producing_DefaultProduceStrategy_Silverback_Messaging_Producing_DefaultProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.op_Equality(Silverback.Messaging.Producing.DefaultProduceStrategy%2CSilverback.Messaging.Producing.DefaultProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L25">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_op_Equality_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.op_Equality*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_op_Equality_Silverback_Messaging_Producing_DefaultProduceStrategy_Silverback_Messaging_Producing_DefaultProduceStrategy_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.op_Equality(Silverback.Messaging.Producing.DefaultProduceStrategy,Silverback.Messaging.Producing.DefaultProduceStrategy)">operator ==(DefaultProduceStrategy?, DefaultProduceStrategy?)</h4>
   <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
@@ -426,13 +407,8 @@ according to the endpoint settings.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy_op_Inequality_Silverback_Messaging_Producing_DefaultProduceStrategy_Silverback_Messaging_Producing_DefaultProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy.op_Inequality(Silverback.Messaging.Producing.DefaultProduceStrategy%2CSilverback.Messaging.Producing.DefaultProduceStrategy)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L28">View source</a>
-  </span>
+
+
   <a id="Silverback_Messaging_Producing_DefaultProduceStrategy_op_Inequality_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.op_Inequality*"></a>
   <h4 id="Silverback_Messaging_Producing_DefaultProduceStrategy_op_Inequality_Silverback_Messaging_Producing_DefaultProduceStrategy_Silverback_Messaging_Producing_DefaultProduceStrategy_" data-uid="Silverback.Messaging.Producing.DefaultProduceStrategy.op_Inequality(Silverback.Messaging.Producing.DefaultProduceStrategy,Silverback.Messaging.Producing.DefaultProduceStrategy)">operator !=(DefaultProduceStrategy?, DefaultProduceStrategy?)</h4>
   <div class="markdown level1 summary"><p>This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
@@ -497,12 +473,6 @@ according to the endpoint settings.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Producing_DefaultProduceStrategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Producing.DefaultProduceStrategy%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/5.0.0/src/Silverback.Integration/Messaging/Producing/DefaultProduceStrategy.cs/#L20" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
@@ -523,7 +493,7 @@ according to the endpoint settings.</p>
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
+      © 2026 Sergio Aquilini
       
           </div>
         </div>
