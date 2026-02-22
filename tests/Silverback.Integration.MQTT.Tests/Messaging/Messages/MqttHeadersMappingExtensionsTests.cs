@@ -7,6 +7,8 @@ using Shouldly;
 using Silverback.Messaging.Messages;
 using Xunit;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Messages;
 
 public class MqttHeadersMappingExtensionsTests

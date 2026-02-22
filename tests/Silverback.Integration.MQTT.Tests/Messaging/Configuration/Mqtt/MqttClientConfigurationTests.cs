@@ -419,8 +419,10 @@ public class MqttClientConfigurationTests
 
         options.UserProperties.ShouldBe(
         [
+#pragma warning disable CS0618 // Type or member is obsolete
             new MQTTnet.Packets.MqttUserProperty("key1", "value1"),
             new MQTTnet.Packets.MqttUserProperty("key2", "value2")
+#pragma warning restore CS0618 // Type or member is obsolete
         ]);
     }
 

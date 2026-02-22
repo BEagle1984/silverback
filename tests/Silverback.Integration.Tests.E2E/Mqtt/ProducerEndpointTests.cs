@@ -260,10 +260,10 @@ public partial class ProducerEndpointTests : MqttTests
         message.GetContentAsString().ShouldBe("{\"Content\":\"Hello E2E!\"}");
 
         List<MqttUserProperty> userProperties = message.UserProperties;
-        userProperties.ShouldContain(property => property.Name == "x-content" && property.Value == "Hello E2E!");
-        userProperties.ShouldContain(property => property.Name == "x-static" && property.Value == "42");
-        userProperties.ShouldContain(property => property.Name == "x-custom-header" && property.Value == "Hello header!");
-        userProperties.ShouldContain(property => property.Name == "x-custom-header2" && property.Value == "False");
+        userProperties.ShouldContain(property => property.Name == "x-content" && property.ReadValueAsString() == "Hello E2E!");
+        userProperties.ShouldContain(property => property.Name == "x-static" && property.ReadValueAsString() == "42");
+        userProperties.ShouldContain(property => property.Name == "x-custom-header" && property.ReadValueAsString() == "Hello header!");
+        userProperties.ShouldContain(property => property.Name == "x-custom-header2" && property.ReadValueAsString() == "False");
         userProperties.ShouldNotContain(property => property.Name == "x-content-nope");
     }
 

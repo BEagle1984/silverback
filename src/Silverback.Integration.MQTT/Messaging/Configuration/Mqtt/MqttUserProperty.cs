@@ -1,6 +1,8 @@
 // Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Text;
 using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -29,5 +31,5 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableSetting
     }
 
     internal MQTTnet.Packets.MqttUserProperty ToMqttNetType() =>
-        new(Name, Value);
+        new(Name, new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(Value ?? string.Empty)));
 }
