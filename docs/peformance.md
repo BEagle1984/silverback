@@ -80,4 +80,4 @@ Publishing 1000 messages to Kafka (running in docker on the local machine) to a 
 | PublishAsync inside foreach                           |    15.68 s |    15.60 s |         - |        20.17 MB |         6.31 MB |          -69 % |
 | WrapAndPublishBatchAsync                              |   *15.68 s |     0.02 s |   -99.9 % |        20.17 MB |         3.43 MB |          -83 % |
 
-\* `WrapAndPublishBatchAsync` did not exist in v4.6.2 so it's compared against `PublishAsync` inside a `foreach`, being it the only straightforward possibility in v4.5.1.
+\* `WrapAndPublishBatchAsync` did not exist in v4.6.2 so it's compared against `PublishAsync` inside a `foreach`, being it the only straightforward possibility in v4.6.2.
