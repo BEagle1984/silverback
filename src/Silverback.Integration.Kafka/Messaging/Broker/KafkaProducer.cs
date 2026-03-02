@@ -63,6 +63,8 @@ public sealed class KafkaProducer : Producer
         _logger = Check.NotNull(logger, nameof(logger));
 
         EndpointConfiguration = Configuration.Endpoints.Single();
+
+        Client.Producer = this;
     }
 
     /// <inheritdoc cref="Producer.Client" />

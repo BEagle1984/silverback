@@ -44,6 +44,13 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
     public KafkaProducerConfiguration Configuration { get; }
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
+    public KafkaProducer Producer
+    {
+        get => field ?? throw new InvalidOperationException("The producer is not initialized yet.");
+        set => field = Check.NotNull(value, nameof(value));
+    }
+
     public void Produce(TopicPartition topicPartition, Message<byte[]?, byte[]?> message, Action<DeliveryReport<byte[]?, byte[]?>> deliveryHandler)
     {
         IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();

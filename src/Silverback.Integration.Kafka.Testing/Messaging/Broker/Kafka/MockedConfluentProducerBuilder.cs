@@ -50,6 +50,9 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
         return this;
     }
 
+    /// <inheritdoc cref="IConfluentProducerBuilder.SetErrorHandler" />
+    public IConfluentProducerBuilder SetErrorHandler(Action<IProducer<byte[]?, byte[]?>, Error> errorHandler) => this;
+
     /// <inheritdoc cref="IConfluentProducerBuilder.SetLogHandler" />
     // Not yet implemented / not needed
     public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler) => this;

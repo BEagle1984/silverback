@@ -46,6 +46,17 @@ public interface IConfluentProducerBuilder
     IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler);
 
     /// <summary>
+    ///     Sets the handler to call on error events.
+    /// </summary>
+    /// <param name="errorHandler">
+    ///     The event handler.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    IConfluentProducerBuilder SetErrorHandler(Action<IProducer<byte[]?, byte[]?>, Error> errorHandler);
+
+    /// <summary>
     ///     Builds the <see cref="IProducer{TKey,TValue}" /> instance.
     /// </summary>
     /// <returns>

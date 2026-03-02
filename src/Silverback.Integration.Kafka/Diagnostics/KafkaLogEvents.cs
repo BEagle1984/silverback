@@ -266,6 +266,30 @@ public static class KafkaLogEvents
         "Offset {Topic}[{Partition}]@{Offset} sent to transaction | ProducerName: {ProducerName}, TransactionalId: {TransactionalId}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non-fatal error is reported
+    ///     by the <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
+    /// </summary>
+    /// <remarks>
+    ///     Fatal errors are reported with a different event id.
+    /// </remarks>
+    public static LogEvent ConfluentProducerError { get; } = new(
+        LogLevel.Warning,
+        GetEventId(199, nameof(ConfluentProducerError)),
+        "Error in Kafka producer: '{ErrorReason}' ({ErrorCode}) | ProducerName: {ProducerName}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
+    ///     the <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
+    /// </summary>
+    /// <remarks>
+    ///     Non-fatal errors are reported with a different event id.
+    /// </remarks>
+    public static LogEvent ConfluentProducerFatalError { get; } = new(
+        LogLevel.Error,
+        GetEventId(200, nameof(ConfluentProducerFatalError)),
+        "Fatal error in Kafka producer: '{ErrorReason}' ({ErrorCode}) | ProducerName: {ProducerName}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
     ///     the underlying <see cref="Confluent.Kafka.IProducer{TKey,TValue}" />.
     /// </summary>

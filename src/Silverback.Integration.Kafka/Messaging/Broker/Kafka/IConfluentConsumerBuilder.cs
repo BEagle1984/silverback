@@ -19,7 +19,7 @@ public interface IConfluentConsumerBuilder
     ///     The configuration.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetConfig(ConsumerConfig config);
 
@@ -30,20 +30,9 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler);
-
-    /// <summary>
-    ///     Sets the handler to call on error events.
-    /// </summary>
-    /// <param name="errorHandler">
-    ///     The event handler.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler);
 
     /// <summary>
     ///     Sets the handler to call on partitions assigned events.
@@ -52,7 +41,7 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetPartitionsAssignedHandler(Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>> partitionsAssignedHandler);
 
@@ -63,7 +52,7 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetPartitionsAssignedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler);
 
@@ -74,7 +63,7 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetPartitionsRevokedHandler(Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>> partitionsRevokedHandler);
 
@@ -85,7 +74,7 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetPartitionsRevokedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler);
 
@@ -96,7 +85,7 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetOffsetsCommittedHandler(Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler);
 
@@ -108,9 +97,20 @@ public interface IConfluentConsumerBuilder
     ///     The event handler.
     /// </param>
     /// <returns>
-    ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
     /// </returns>
     IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler);
+
+    /// <summary>
+    ///     Sets the handler to call on error events.
+    /// </summary>
+    /// <param name="errorHandler">
+    ///     The event handler.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IConfluentConsumerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler);
 
     /// <summary>
     ///     Builds the <see cref="IConsumer{TKey,TValue}" /> instance.

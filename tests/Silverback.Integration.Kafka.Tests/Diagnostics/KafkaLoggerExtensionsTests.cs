@@ -279,24 +279,14 @@ public sealed class KafkaLoggerExtensionsTests : IDisposable
     public void LogConfluentConsumerError_ShouldLog()
     {
         _silverbackLogger.LogConfluentConsumerError(new Error(ErrorCode.IllegalGeneration), _consumer);
-
-        _loggerSubstitute.Received(
-            LogLevel.Warning,
-            null,
-            "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22) | ConsumerName: consumer1",
-            2039);
+        _loggerSubstitute.Received(LogLevel.Warning, null, "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22) | ConsumerName: consumer1", 2039);
     }
 
     [Fact]
     public void LogConfluentConsumerFatalError_ShouldLog()
     {
         _silverbackLogger.LogConfluentConsumerFatalError(new Error(ErrorCode.RequestTimedOut), _consumer);
-
-        _loggerSubstitute.Received(
-            LogLevel.Error,
-            null,
-            "Fatal error in Kafka consumer: 'Broker: Request timed out' (7) | ConsumerName: consumer1",
-            2040);
+        _loggerSubstitute.Received(LogLevel.Error, null, "Fatal error in Kafka consumer: 'Broker: Request timed out' (7) | ConsumerName: consumer1", 2040);
     }
 
     [Fact]
@@ -408,6 +398,30 @@ public sealed class KafkaLoggerExtensionsTests : IDisposable
 
         string expectedMessage = "Offset topic1[13]@42 sent to transaction | ProducerName: producer1, TransactionalId: transactional1";
         _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 2074);
+    }
+
+    [Fact]
+    public void LogConfluentProducerError_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentProducerError(new Error(ErrorCode.IllegalGeneration), _producer);
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Error in Kafka producer: 'Broker: Specified group generation id is not valid' (22) | ProducerName: producer1",
+            2199);
+    }
+
+    [Fact]
+    public void LogConfluentProducerFatalError_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentProducerFatalError(new Error(ErrorCode.RequestTimedOut), _producer);
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Fatal error in Kafka producer: 'Broker: Request timed out' (7) | ProducerName: producer1",
+            2200);
     }
 
     [Fact]

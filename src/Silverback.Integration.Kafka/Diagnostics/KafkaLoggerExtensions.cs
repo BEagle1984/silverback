@@ -92,6 +92,12 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, int, long, string, string?, Exception?> OffsetSentToTransaction =
         SilverbackLoggerMessage.Define<string, int, long, string, string?>(KafkaLogEvents.OffsetSentToTransaction);
 
+    private static readonly Action<ILogger, string, int, string, Exception?> ConfluentProducerError =
+        SilverbackLoggerMessage.Define<string, int, string>(KafkaLogEvents.ConfluentProducerError);
+
+    private static readonly Action<ILogger, string, int, string, Exception?> ConfluentProducerFatalError =
+        SilverbackLoggerMessage.Define<string, int, string>(KafkaLogEvents.ConfluentProducerFatalError);
+
     private static readonly Action<ILogger, string, string, string, Exception?> ConfluentProducerLogCritical =
         SilverbackLoggerMessage.Define<string, string, string>(KafkaLogEvents.ConfluentProducerLogCritical);
 
@@ -318,6 +324,32 @@ internal static class KafkaLoggerExtensions
             return;
 
         ConfluentProducerLogCritical(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, producerWrapper.DisplayName, null);
+    }
+
+    public static void LogConfluentProducerError(this ISilverbackLogger logger, Error error, KafkaProducer producer)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentProducerError))
+            return;
+
+        ConfluentProducerError(
+            logger.InnerLogger,
+            GetErrorReason(error),
+            (int)error.Code,
+            producer.DisplayName,
+            null);
+    }
+
+    public static void LogConfluentProducerFatalError(this ISilverbackLogger logger, Error error, KafkaProducer producer)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentProducerFatalError))
+            return;
+
+        ConfluentProducerFatalError(
+            logger.InnerLogger,
+            GetErrorReason(error),
+            (int)error.Code,
+            producer.DisplayName,
+            null);
     }
 
     public static void LogConfluentProducerLogError(this ISilverbackLogger logger, LogMessage logMessage, IConfluentProducerWrapper producerWrapper)

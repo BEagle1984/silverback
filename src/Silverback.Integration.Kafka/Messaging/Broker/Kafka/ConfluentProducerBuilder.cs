@@ -17,6 +17,8 @@ public class ConfluentProducerBuilder : IConfluentProducerBuilder
 
     private Action<IProducer<byte[]?, byte[]?>, LogMessage>? _logHandler;
 
+    private Action<IProducer<byte[]?, byte[]?>, Error>? _errorHandler;
+
     /// <inheritdoc cref="IConfluentProducerBuilder.SetConfiguration" />
     public IConfluentProducerBuilder SetConfiguration(ProducerConfig config)
     {
@@ -38,6 +40,13 @@ public class ConfluentProducerBuilder : IConfluentProducerBuilder
         return this;
     }
 
+    /// <inheritdoc cref="IConfluentProducerBuilder.SetErrorHandler" />
+    public IConfluentProducerBuilder SetErrorHandler(Action<IProducer<byte[]?, byte[]?>, Error> errorHandler)
+    {
+        _errorHandler = errorHandler;
+        return this;
+    }
+
     /// <inheritdoc cref="IConfluentProducerBuilder.Build" />
     public IProducer<byte[]?, byte[]?> Build()
     {
@@ -51,6 +60,9 @@ public class ConfluentProducerBuilder : IConfluentProducerBuilder
 
         if (_logHandler != null)
             builder.SetLogHandler(_logHandler);
+
+        if (_errorHandler != null)
+            builder.SetErrorHandler(_errorHandler);
 
         return builder.Build();
     }

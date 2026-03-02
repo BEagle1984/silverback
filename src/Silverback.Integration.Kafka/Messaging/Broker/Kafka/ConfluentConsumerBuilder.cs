@@ -17,20 +17,17 @@ public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
 
     private Action<IConsumer<byte[]?, byte[]?>, string>? _statisticsHandler;
 
-    private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>? _partitionsAssignedHandler;
 
-    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
-        _partitionsAssignedHandler;
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>? _partitionsRevokedHandlerFunc;
 
-    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
-        _partitionsRevokedHandlerFunc;
-
-    private Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>?
-        _partitionsRevokedHandlerAction;
+    private Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>? _partitionsRevokedHandlerAction;
 
     private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
 
     private Action<IConsumer<byte[]?, byte[]?>, LogMessage>? _logHandler;
+
+    private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
 
     /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />
     public IConfluentConsumerBuilder SetConfig(ConsumerConfig config)
@@ -43,13 +40,6 @@ public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
     public IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
     {
         _statisticsHandler = statisticsHandler;
-        return this;
-    }
-
-    /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
-    public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
-    {
-        _errorHandler = errorHandler;
         return this;
     }
 
@@ -108,6 +98,13 @@ public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
         return this;
     }
 
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
+    public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
+    {
+        _errorHandler = errorHandler;
+        return this;
+    }
+
     /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
     public IConsumer<byte[]?, byte[]?> Build()
     {
@@ -118,9 +115,6 @@ public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
 
         if (_statisticsHandler != null)
             builder.SetStatisticsHandler(_statisticsHandler);
-
-        if (_errorHandler != null)
-            builder.SetErrorHandler(_errorHandler);
 
         if (_partitionsAssignedHandler != null)
             builder.SetPartitionsAssignedHandler(_partitionsAssignedHandler);
@@ -135,6 +129,9 @@ public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
 
         if (_logHandler != null)
             builder.SetLogHandler(_logHandler);
+
+        if (_errorHandler != null)
+            builder.SetErrorHandler(_errorHandler);
 
         return builder.Build();
     }

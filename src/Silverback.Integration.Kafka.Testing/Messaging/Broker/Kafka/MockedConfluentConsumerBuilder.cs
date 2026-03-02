@@ -26,13 +26,13 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
 
     private Action<IConsumer<byte[]?, byte[]?>, string>? _statisticsHandler;
 
-    private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
-
     private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>? _partitionsAssignedHandler;
 
     private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>? _partitionsRevokedHandler;
 
     private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
+
+    private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MockedConfluentConsumerBuilder" /> class.
@@ -67,13 +67,6 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     public IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
     {
         _statisticsHandler = statisticsHandler;
-        return this;
-    }
-
-    /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
-    public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
-    {
-        _errorHandler = errorHandler;
         return this;
     }
 
@@ -125,6 +118,13 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     public IConfluentConsumerBuilder SetOffsetsCommittedHandler(Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
     {
         _offsetsCommittedHandler = offsetsCommittedHandler;
+        return this;
+    }
+
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
+    public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
+    {
+        _errorHandler = errorHandler;
         return this;
     }
 

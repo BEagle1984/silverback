@@ -21,6 +21,11 @@ public interface IConfluentProducerWrapper : IBrokerClient
     KafkaProducerConfiguration Configuration { get; }
 
     /// <summary>
+    ///     Gets or sets the related producer instance.
+    /// </summary>
+    KafkaProducer Producer { get; set; }
+
+    /// <summary>
     ///     Produces the specified message to the specified topic and partition.
     /// </summary>
     /// <param name="topicPartition">
