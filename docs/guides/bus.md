@@ -86,16 +86,63 @@ public async Task<QueryResult> PublishSomething()
 Each message type (<xref:Silverback.Messaging.Messages.IEvent>, <xref:Silverback.Messaging.Messages.ICommand>/<xref:Silverback.Messaging.Messages.ICommand`1>, and <xref:Silverback.Messaging.Messages.IQuery`1>) includes specialized extensions for <xref:Silverback.Messaging.Publishing.IPublisher> to improve semantics and clarity.
 
 ```csharp
-public async Task PublishEvent()
+public class MyService
 {
-    MyEvent myEvent = new MyEvent() { ... };
-    await _publisher.PublishEventAsync(myEvent);
+    private readonly IPublisher _publisher;
+    
+    public MyService(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+    
+    public async Task PublishEvent()
+    {
+        MyEvent myEvent = new MyEvent() { ... };
+        await _publisher.PublishEventAsync(myEvent);
+    }
+    
+    public async Task ExecuteCommand()
+    {
+        MyCommand myCommand = new MyCommand() { ... };
+        await _publisher.ExecuteCommandAsync(myCommand);
+    }
 }
+```
 
-public async Task ExecuteCommand()
+Alternatively to the extension methods you can use the <xref:Silverback.Messaging.Publishing.IApplicationPublisher>. This interface declares the same methods defined as extensions for the basic <xref:Silverback.Messaging.Publishing.IPublisher>, offering better testability (as you cannot mock extension methods).
+
+```csharp
+public class Startup
 {
-    MyCommand myCommand = new MyCommand() { ... };
-    await _publisher.ExecuteCommandAsync(myCommand);
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddApplicationPublisher();
+    }
+}
+```
+```csharp
+public class MyService
+{
+    private readonly IApplicationPublisher _publisher;
+    
+    public MyService(IApplicationPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+    
+    public async Task PublishEvent()
+    {
+        MyEvent myEvent = new MyEvent() { ... };
+        await _publisher.PublishEventAsync(myEvent);
+    }
+    
+    public async Task ExecuteCommand()
+    {
+        MyCommand myCommand = new MyCommand() { ... };
+        await _publisher.ExecuteCommandAsync(myCommand);
+    }
 }
 ```
 
