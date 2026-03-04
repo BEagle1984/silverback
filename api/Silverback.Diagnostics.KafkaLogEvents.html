@@ -553,6 +553,66 @@ the underlying <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;<
 </div>
 
 
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerError*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerError">ConfluentProducerError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a non-fatal error is reported
+by the <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentProducerError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Fatal errors are reported with a different event id.</p>
+</div>
+
+
+  <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerFatalError_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerFatalError*"></a>
+  <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerFatalError" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerFatalError">ConfluentProducerFatalError</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a fatal error is reported by
+the <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static LogEvent ConfluentProducerFatalError { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerFatalError_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Non-fatal errors are reported with a different event id.</p>
+</div>
+
+
   <a id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical_" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogCritical*"></a>
   <h4 id="Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical" data-uid="Silverback.Diagnostics.KafkaLogEvents.ConfluentProducerLogCritical">ConfluentProducerLogCritical</h4>
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> representing the log that is written when a log event is received from

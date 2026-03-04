@@ -175,6 +175,51 @@
   </table>
 
 
+  <a id="Silverback_Messaging_Broker_Kafka_IConfluentProducerBuilder_SetErrorHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.SetErrorHandler*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentProducerBuilder_SetErrorHandler_System_Action_Confluent_Kafka_IProducer_System_Byte___System_Byte____Confluent_Kafka_Error__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.SetErrorHandler(System.Action{Confluent.Kafka.IProducer{System.Byte[],System.Byte[]},Confluent.Kafka.Error})">SetErrorHandler(Action&lt;IProducer&lt;byte[]?, byte[]?&gt;, Error&gt;)</h4>
+  <div class="markdown level1 summary"><p>Sets the handler to call on error events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">IConfluentProducerBuilder SetErrorHandler(Action&lt;IProducer&lt;byte[]?, byte[]?&gt;, Error&gt; errorHandler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<span class="xref">IProducer</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[], <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]&gt;, <span class="xref">Error</span>&gt;</td>
+        <td><span class="parametername">errorHandler</span></td>
+        <td><p>The event handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.html">IConfluentProducerBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.html">IConfluentProducerBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentProducerBuilder_SetLogHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.SetLogHandler*"></a>
   <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentProducerBuilder_SetLogHandler_System_Action_Confluent_Kafka_IProducer_System_Byte___System_Byte____Confluent_Kafka_LogMessage__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.SetLogHandler(System.Action{Confluent.Kafka.IProducer{System.Byte[],System.Byte[]},Confluent.Kafka.LogMessage})">SetLogHandler(Action&lt;IProducer&lt;byte[]?, byte[]?&gt;, LogMessage&gt;)</h4>
   <div class="markdown level1 summary"><p>Set the handler to call when there is information available to be logged. If not specified, a default

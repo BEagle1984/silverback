@@ -149,16 +149,59 @@ Producing to a message broker does <em>not</em> require a scope and is therefore
 </div>
 <h3 id="silverbackcoremodel-extensions">Silverback.Core.Model Extensions</h3>
 <p>Each message type (<a class="xref" href="../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>, and <a class="xref" href="../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>) includes specialized extensions for <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to improve semantics and clarity.</p>
-<pre><code class="lang-csharp">public async Task PublishEvent()
+<pre><code class="lang-csharp">public class MyService
 {
-    MyEvent myEvent = new MyEvent() { ... };
-    await _publisher.PublishEventAsync(myEvent);
+    private readonly IPublisher _publisher;
+    
+    public MyService(IPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+    
+    public async Task PublishEvent()
+    {
+        MyEvent myEvent = new MyEvent() { ... };
+        await _publisher.PublishEventAsync(myEvent);
+    }
+    
+    public async Task ExecuteCommand()
+    {
+        MyCommand myCommand = new MyCommand() { ... };
+        await _publisher.ExecuteCommandAsync(myCommand);
+    }
 }
-
-public async Task ExecuteCommand()
+</code></pre>
+<p>Alternatively to the extension methods you can use the <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a>. This interface declares the same methods defined as extensions for the basic <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>, offering better testability (as you cannot mock extension methods).</p>
+<pre><code class="lang-csharp">public class Startup
 {
-    MyCommand myCommand = new MyCommand() { ... };
-    await _publisher.ExecuteCommandAsync(myCommand);
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .AddApplicationPublisher();
+    }
+}
+</code></pre>
+<pre><code class="lang-csharp">public class MyService
+{
+    private readonly IApplicationPublisher _publisher;
+    
+    public MyService(IApplicationPublisher publisher)
+    {
+        _publisher = publisher;
+    }
+    
+    public async Task PublishEvent()
+    {
+        MyEvent myEvent = new MyEvent() { ... };
+        await _publisher.PublishEventAsync(myEvent);
+    }
+    
+    public async Task ExecuteCommand()
+    {
+        MyCommand myCommand = new MyCommand() { ... };
+        await _publisher.ExecuteCommandAsync(myCommand);
+    }
 }
 </code></pre>
 <h2 id="subscribing-to-messages">Subscribing to Messages</h2>

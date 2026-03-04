@@ -86,11 +86,21 @@
             <article class="content wrap" id="_content" data-uid="releases-500">
 <h1 id="release-notes-v5xx">Release Notes v5.x.x</h1>
 
+<h2 id="510"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.1.0">5.1.0</a></h2>
+<h3 id="whats-new">What's New</h3>
+<ul>
+<li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> as an alternative to the extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.13.2">Confluent.Kafka 2.13.2</a></li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Correctly bind the error handler to the Kafka producer to prevent uncontrolled logging to stderr</li>
+</ul>
 <h2 id="500"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.0.0">5.0.0</a></h2>
 <p>Silverback 5.0.0 is the most significant update in the library’s history, built on years of user feedback and real-world experience. This release is more than just an upgrade, it’s a <strong>complete refactoring</strong> that enhances flexibility, performance, and maintainability while laying a strong foundation for future innovations.</p>
 <h3 id="highlights">Highlights</h3>
 <ul>
-<li>An <strong>improved configuration API</strong> that makes it easier to set up Silverback exactly the way you want, with a more intuitive and consistent syntax. The new fluent API is designed to be more readable and straightforward and to giving you more control over the Kafka and MQTT clients that are used under the hood.</li>
+<li>An <strong>improved configuration API</strong> that makes it easier to set up Silverback exactly the way you want, with a more intuitive and consistent syntax. The new fluent API is designed to be more readable and straightforward and to give you more control over the Kafka and MQTT clients that are used under the hood.</li>
 </ul>
 <pre><code class="lang-csharp">services.AddSilverback()
     .WithConnectionToMessageBroker(options =&gt; options.AddKafka())
@@ -158,7 +168,7 @@
 </li>
 </ul>
 <p>In the following sections, you'll find more a more detailed and canonical list of improvements, new features, and breaking changes.</p>
-<h3 id="whats-new">What's New</h3>
+<h3 id="whats-new-1">What's New</h3>
 <ul>
 <li>Clean up code and increase tests coverage</li>
 <li>Reduce allocations and improve performance in many places (see <a class="xref" href="../peformance.html">Performance</a>)</li>
@@ -252,7 +262,7 @@
 <li>Upgrade all Silverback.* NuGet packages to 5.x.x</li>
 <li>Some namespace usings will need to be adjusted (e.g.,Silverback.Messaging.Configuration → Silverback.Configuration)</li>
 <li>Migrate the endpoints configuration to the new broker clients configuration (an example of the new fluent API can be found in the <a href="#highlights">Highlights</a> section above)</li>
-<li>Replace usage of <code>IEventPublisher</code>, <code>ICommandPublisher</code>, and <code>IQueryPublisher</code> with the related extension methods on the basic <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></li>
+<li>Replace usage of <code>IEventPublisher</code>, <code>ICommandPublisher</code>, and <code>IQueryPublisher</code> with the related extension methods on the basic <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> or the consolidated <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> (introduced in <a href="#510">v5.1.0</a>) if you prefer a more testable approach (see also <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
 <li>If using the outbox, adjust the DbContext / database schema</li>
 </ul>
 <h3 id="deprecation-notice">Deprecation Notice</h3>
