@@ -140,7 +140,7 @@ public sealed class KafkaProducer : Producer
 
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {
-                Key = GetKafkaKey(envelope),
+                Key = await GetKafkaKeyAsync(envelope).ConfigureAwait(false),
                 Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
             };
 
@@ -165,6 +165,16 @@ public sealed class KafkaProducer : Producer
     }
 
     private static byte[]? GetKafkaKey(IOutboundEnvelope envelope) =>
+        envelope.RawKey != null
+            ? envelope.RawKey.ReadAll()
+            : GetKafkaKeyFromHeader(envelope);
+
+    private static async ValueTask<byte[]?> GetKafkaKeyAsync(IOutboundEnvelope envelope) =>
+        envelope.RawKey != null
+            ? await envelope.RawKey.ReadAllAsync().ConfigureAwait(false)
+            : GetKafkaKeyFromHeader(envelope);
+
+    private static byte[]? GetKafkaKeyFromHeader(IOutboundEnvelope envelope) =>
         envelope.Headers.TryGetValue(KafkaMessageHeaders.MessageKey, out string? kafkaKey) && kafkaKey != null
             ? Encoding.UTF8.GetBytes(kafkaKey)
             : null;

@@ -198,12 +198,17 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 
-        if (message.Key != null)
+        // If a deserializer is specified, then key will be deserialized by behaviour pipeline.
+        if (message.Key != null &&
+            endpoint.Configuration.KeyDeserializer == null)
+        {
             headers.AddOrReplace(KafkaMessageHeaders.MessageKey, Encoding.UTF8.GetString(message.Key));
+        }
 
         headers.AddOrReplace(KafkaMessageHeaders.Timestamp, message.Timestamp.UtcDateTime.ToString("O"));
 
         await HandleMessageAsync(
+                message.Key,
                 message.Value,
                 headers,
                 endpoint,

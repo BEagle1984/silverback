@@ -10,6 +10,7 @@ using NSubstitute;
 using Shouldly;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Serialization;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
@@ -201,5 +202,19 @@ public class KafkaConsumerEndpointConfigurationBuilderTests
         ]);
         configuration.PartitionOffsetsProvider.ShouldNotBeNull();
         configuration.PartitionOffsetsProvider.ShouldBeOfType<Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>>();
+    }
+
+    [Fact]
+    public void DeserializeKeyUsing_ShouldSetKeyDeserializer()
+    {
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+        IMessageKeyDeserializer deserializer = Substitute.For<IMessageKeyDeserializer>();
+
+        builder
+            .ConsumeFrom("topic1")
+            .DeserializeKeyUsing(deserializer);
+
+        KafkaConsumerEndpointConfiguration configuration = builder.Build();
+        configuration.KeyDeserializer.ShouldBe(deserializer);
     }
 }

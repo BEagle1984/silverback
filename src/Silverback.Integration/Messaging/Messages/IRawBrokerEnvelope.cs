@@ -16,6 +16,12 @@ public interface IRawBrokerEnvelope
     MessageHeaderCollection Headers { get; }
 
     /// <summary>
+    ///     Gets or sets the serialized message key (used by broker technologies
+    ///     that support message keys, e.g., Kafka).
+    /// </summary>
+    Stream? RawKey { get; set; }
+
+    /// <summary>
     ///     Gets or sets the serialized message body.
     /// </summary>
     Stream? RawMessage { get; set; }
