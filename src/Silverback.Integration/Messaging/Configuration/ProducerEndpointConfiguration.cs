@@ -36,6 +36,12 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     } = NullProducerEndpointResolver.Instance;
 
     /// <summary>
+    ///     Gets the <see cref="IMessageKeySerializer" /> to be used to serialize the message keys (used by
+    ///     broker technologies that support keys).
+    /// </summary>
+    public IMessageKeySerializer? KeySerializer { get; init; }
+
+    /// <summary>
     ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize the messages being produced.
     ///     The default is the <see cref="JsonMessageSerializer" />.
     /// </summary>

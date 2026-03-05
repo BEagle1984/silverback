@@ -12,6 +12,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -249,6 +250,20 @@ public class KafkaProducerEndpointConfigurationBuilderTests
         KafkaProducerEndpointConfiguration configuration = builder.Build();
         configuration.EndpointResolver.ShouldBeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.ShouldStartWith("dynamic-TestTypedEndpointResolver-");
+    }
+
+    [Fact]
+    public void SerializeKeyUsing_ShouldSetKeyDeserializer()
+    {
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+        IMessageKeySerializer serializer = Substitute.For<IMessageKeySerializer>();
+
+        builder
+            .ProduceTo("some-topic")
+            .SerializeKeyUsing(serializer);
+
+        KafkaProducerEndpointConfiguration configuration = builder.Build();
+        configuration.KeySerializer.ShouldBe(serializer);
     }
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]

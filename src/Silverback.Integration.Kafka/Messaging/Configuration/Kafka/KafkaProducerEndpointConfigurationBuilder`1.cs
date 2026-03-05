@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -22,6 +23,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     where TMessage : class
 {
     private IProducerEndpointResolver<KafkaProducerEndpoint>? _endpointResolver;
+
+    private IMessageKeySerializer? _keySerializer;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> class.
@@ -323,6 +326,22 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     }
 
     /// <summary>
+    ///     Specifies the <see cref="IMessageKeySerializer" /> to be used to serialize the
+    ///     message keys.
+    /// </summary>
+    /// <param name="serializer">
+    ///     The <see cref="IMessageKeySerializer" />.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SerializeKeyUsing(IMessageKeySerializer serializer)
+    {
+        _keySerializer = Check.NotNull(serializer, nameof(serializer));
+        return This;
+    }
+
+    /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
     /// </summary>
     /// <param name="valueProvider">
@@ -382,6 +401,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>
         new()
         {
+            KeySerializer = _keySerializer,
             EndpointResolver = _endpointResolver ?? NullProducerEndpointResolver<KafkaProducerEndpoint>.Instance
         };
 }

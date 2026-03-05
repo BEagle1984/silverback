@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Collections;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -23,6 +24,8 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     private TopicPartitionOffset[]? _topicPartitionOffsets;
 
     private Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>>? _partitionOffsetsProvider;
+
+    private IMessageKeyDeserializer? _keyDeserializer;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> class.
@@ -234,6 +237,23 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
         return this;
     }
 
+    /// <summary>
+    ///     Specifies the <see cref="IMessageKeyDeserializer" /> to be used to deserialize the message key
+    ///     within the consumer behavior pipeline. This enables error policies (retry, move to DLQ, etc.)
+    ///     to handle key deserialization errors.
+    /// </summary>
+    /// <param name="keyDeserializer">
+    ///     The <see cref="IMessageKeyDeserializer" /> instance to use.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerEndpointConfigurationBuilder<TMessage> DeserializeKeyUsing(IMessageKeyDeserializer keyDeserializer)
+    {
+        _keyDeserializer = Check.NotNull(keyDeserializer, nameof(keyDeserializer));
+        return This;
+    }
+
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override KafkaConsumerEndpointConfiguration CreateConfiguration()
     {
@@ -241,6 +261,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
 
         configuration = configuration with
         {
+            KeyDeserializer = _keyDeserializer,
             TopicPartitions = _topicPartitionOffsets?.AsValueReadOnlyCollection() ?? configuration.TopicPartitions,
             PartitionOffsetsProvider = _partitionOffsetsProvider
         };

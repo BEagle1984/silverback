@@ -17,7 +17,13 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     private static readonly IErrorPolicy DefaultErrorPolicy = new StopConsumerErrorPolicy();
 
     /// <summary>
-    ///     Gets the <see cref="IMessageDeserializer" /> to be used to deserialize the consumed messages.
+    ///     Gets the <see cref="IMessageKeyDeserializer" /> to be used to deserialize the consumed message keys
+    ///     (used by broker technologies that support keys).
+    /// </summary>
+    public IMessageKeyDeserializer? KeyDeserializer { get; init; }
+
+    /// <summary>
+    ///     Gets the <see cref="IMessageDeserializer" /> to be used to deserialize the consumed message values.
     ///     The default is the <see cref="JsonMessageDeserializer{TMessage}" />.
     /// </summary>
     public IMessageDeserializer Deserializer { get; init; } = DefaultDeserializers.Json;

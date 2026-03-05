@@ -11,13 +11,16 @@ namespace Silverback.Messaging.Messages;
 internal abstract record RawBrokerEnvelope : IRawBrokerEnvelope
 {
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Collection initializer doesn't work with nullable argument")]
-    protected RawBrokerEnvelope(Stream? rawMessage, IReadOnlyCollection<MessageHeader>? headers)
+    protected RawBrokerEnvelope(Stream? rawKey, Stream? rawMessage, IReadOnlyCollection<MessageHeader>? headers)
     {
+        RawKey = rawKey;
         RawMessage = rawMessage;
         Headers = headers == null ? [] : [.. headers];
     }
 
     public MessageHeaderCollection Headers { get; init; }
+
+    public Stream? RawKey { get; set; }
 
     public Stream? RawMessage { get; set; }
 

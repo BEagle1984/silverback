@@ -387,9 +387,44 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         IReadOnlyCollection<MessageHeader> headers,
         ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier,
+        ISequenceStore sequenceStore) =>
+        await HandleMessageAsync(null, message, headers, endpoint, brokerMessageIdentifier, sequenceStore)
+            .ConfigureAwait(false);
+
+    /// <summary>
+    ///     Handles the consumed message, pushing it through the consumer behaviors pipeline.
+    /// </summary>
+    /// <param name="key">
+    ///     The key of the consumed message.
+    /// </param>
+    /// <param name="message">
+    ///     The body of the consumed message.
+    /// </param>
+    /// <param name="headers">
+    ///     The headers of the consumed message.
+    /// </param>
+    /// <param name="endpoint">
+    ///     The endpoint from which the message was consumed.
+    /// </param>
+    /// <param name="brokerMessageIdentifier">
+    ///     The identifier of the consumed message.
+    /// </param>
+    /// <param name="sequenceStore">
+    ///     The <see cref="ISequenceStore" /> to be used.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Context is disposed by the TransactionHandler")]
+    protected virtual async ValueTask HandleMessageAsync(
+        byte[]? key,
+        byte[]? message,
+        IReadOnlyCollection<MessageHeader> headers,
+        ConsumerEndpoint endpoint,
+        IBrokerMessageIdentifier brokerMessageIdentifier,
         ISequenceStore sequenceStore)
     {
-        RawInboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
+        RawInboundEnvelope envelope = new(key, message, headers, endpoint, this, brokerMessageIdentifier);
         ConsumerPipelineContext context = new(envelope, this, sequenceStore, _behaviors, ServiceProvider);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
