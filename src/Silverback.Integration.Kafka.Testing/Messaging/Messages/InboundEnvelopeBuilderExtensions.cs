@@ -3,12 +3,13 @@
 
 using System;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Adds the <c>WithOffset</c> methods to the <see cref="InboundEnvelopeBuilder{TMessage}" />.
+///     Adds the Kafka specific methods to the <see cref="InboundEnvelopeBuilder{TMessage}" />.
 /// </summary>
 public static class InboundEnvelopeBuilderExtensions
 {
@@ -33,13 +34,13 @@ public static class InboundEnvelopeBuilderExtensions
     /// <returns>
     ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public static InboundEnvelopeBuilder<TMessage> WithOffset<TMessage>(
+    public static InboundEnvelopeBuilder<TMessage> WithKafkaOffset<TMessage>(
         this InboundEnvelopeBuilder<TMessage> builder,
         string topic,
         int partition,
         long offset)
         where TMessage : class =>
-        WithOffset(builder, new KafkaOffset(topic, partition, offset));
+        builder.WithKafkaOffset(new KafkaOffset(topic, partition, offset));
 
     /// <summary>
     ///     Sets the offset of the message.
@@ -56,7 +57,7 @@ public static class InboundEnvelopeBuilderExtensions
     /// <returns>
     ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public static InboundEnvelopeBuilder<TMessage> WithOffset<TMessage>(this InboundEnvelopeBuilder<TMessage> builder, KafkaOffset offset)
+    public static InboundEnvelopeBuilder<TMessage> WithKafkaOffset<TMessage>(this InboundEnvelopeBuilder<TMessage> builder, KafkaOffset offset)
         where TMessage : class =>
         Check.NotNull(builder, nameof(builder)).WithIdentifier(offset);
 
@@ -99,4 +100,33 @@ public static class InboundEnvelopeBuilderExtensions
         DateTime timestamp)
         where TMessage : class =>
         Check.NotNull(builder, nameof(builder)).AddHeader(KafkaMessageHeaders.Timestamp, timestamp);
+
+    /// <summary>
+    ///     Sets the topic and, optionally, the partition from which the message was consumed.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the message.
+    /// </typeparam>
+    /// <param name="builder">
+    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" />.
+    /// </param>
+    /// <param name="topic">
+    ///     The topic.
+    /// </param>
+    /// <param name="partition">
+    ///     The partition index. Set to 0 if not specified.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="InboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public static InboundEnvelopeBuilder<TMessage> WithKafkaTopic<TMessage>(
+        this InboundEnvelopeBuilder<TMessage> builder,
+        string topic,
+        int partition = 0)
+        where TMessage : class =>
+        Check.NotNull(builder, nameof(builder)).WithEndpoint(
+            new KafkaConsumerEndpoint(
+                topic,
+                partition,
+                new KafkaConsumerEndpointConfiguration()));
 }

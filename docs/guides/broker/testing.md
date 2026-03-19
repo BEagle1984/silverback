@@ -171,7 +171,7 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 
 ## Kafka Specifics
 
-### Access in-memory topics
+### Access In-Memory topics
 
 When using the mocked Kafka broker you can inspect the internal topics via <xref:Silverback.Testing.IKafkaTestingHelper.GetTopic(System.String,System.String)>.
 
@@ -184,7 +184,7 @@ var topic = Helper.GetTopic("test-topic");
 
 If your test configures multiple Kafka clusters, use the overload that also takes the `bootstrapServers`.
 
-### Inspect consumer groups
+### Inspect Consumer Groups
 
 The mocked broker tracks consumer groups and offsets. You can access them via <xref:Silverback.Testing.IKafkaTestingHelper.ConsumerGroups> or retrieve a specific group via <xref:Silverback.Testing.IKafkaTestingHelper.GetConsumerGroup(System.String)>.
 
@@ -193,9 +193,9 @@ var group = Helper.GetConsumerGroup("test-group");
 // group.Consumers / group.CommittedOffsets ...
 ```
 
-### Create an ad-hoc producer
+### Create a Producer on-the-fly
 
-Sometimes you want to produce to Kafka without going through the application’s publisher (e.g. to simulate an external producer).
+Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).
 
 ```csharp
 var producer = Helper.GetProducer(
@@ -208,7 +208,7 @@ await producer.ProduceAsync(new SomeMessage());
 
 ## MQTT Specifics
 
-### Inspect client sessions
+### Inspect Client Sessions
 
 With the mocked MQTT broker you can inspect client sessions via <xref:Silverback.Testing.IMqttTestingHelper.GetClientSession(System.String)>.
 
@@ -217,7 +217,7 @@ var session = Helper.GetClientSession("client-id");
 // inspect subscriptions, pending messages, ...
 ```
 
-### Read published messages
+### Read Published Messages
 
 To quickly retrieve the raw MQTT messages published to a topic, use <xref:Silverback.Testing.IMqttTestingHelper.GetMessages(System.String)>.
 
@@ -226,7 +226,7 @@ var messages = Helper.GetMessages("test/topic");
 messages.Count.ShouldBeGreaterThan(0);
 ```
 
-### Create an ad-hoc MQTT producer
+### Create a Producer on-the-fly
 
 ```csharp
 var producer = Helper.GetProducer(
@@ -237,4 +237,16 @@ var producer = Helper.GetProducer(
 await producer.ProduceAsync(new SomeMessage());
 ```
 
-## Additional Resources
+## Envelope Builders
+
+Builders are also available to create the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> and <xref:Silverback.Messaging.Messages.IOutboundEnvelope`1> for the unit tests:
+* <xref:Silverback.Messaging.Messages.InboundEnvelopeBuilder`1>
+* <xref:Silverback.Messaging.Messages.OutboundEnvelopeBuilder`1>
+
+```csharp
+var envelope = new InboundEnvelopeBuilder<MyMessage>()
+    .WithMessage(new MyMessage() { ... })
+    .WithKafkaKey("1234")
+    .WithKafkaTopic("test-topic")
+    .Build();
+```

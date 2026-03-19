@@ -52,7 +52,7 @@ Consumed messages are published to the <xref:bus> and handled by your subscriber
 You can subscribe to:
 
 - The deserialized message (`MyMessage`).
-- The envelope (`IInboundEnvelope<TMessage>`) to access metadata (headers, broker identifier, etc.).
+- The envelope (`IInboundEnvelope<MyMessage>`) to access metadata (headers, broker identifier, etc.).
 
 ```csharp
 public class MySubscriber

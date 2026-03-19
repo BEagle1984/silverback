@@ -3,7 +3,9 @@
 
 using System;
 using Shouldly;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -13,23 +15,23 @@ namespace Silverback.Tests.Integration.Kafka.Testing.Messaging.Messages;
 public class InboundEnvelopeBuilderExtensionsTests
 {
     [Fact]
-    public void WithOffset_ShouldSetIdentifier()
+    public void WithKafkaOffset_ShouldSetIdentifier()
     {
         InboundEnvelopeBuilder<TestEventOne> builder = new();
         KafkaOffset offset = new("topic", 0, 42);
 
-        builder.WithOffset(offset);
+        builder.WithKafkaOffset(offset);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
         envelope.BrokerMessageIdentifier.ShouldBeSameAs(offset);
     }
 
     [Fact]
-    public void WithOffset_ShouldBuildKafkaOffsetAndSetIdentifier()
+    public void WithKafkaOffset_ShouldBuildKafkaOffsetAndSetIdentifier()
     {
         InboundEnvelopeBuilder<TestEventOne> builder = new();
 
-        builder.WithOffset("topic", 0, 42);
+        builder.WithKafkaOffset("topic", 0, 42);
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
         envelope.BrokerMessageIdentifier.ShouldBe(new KafkaOffset("topic", 0, 42));
@@ -57,5 +59,19 @@ public class InboundEnvelopeBuilderExtensionsTests
 
         IInboundEnvelope<TestEventOne> envelope = builder.Build();
         envelope.GetKafkaTimestamp().ShouldBe(timestamp);
+    }
+
+    [Fact]
+    public void WithKafkaTopic_ShouldSetTopicAndPartition()
+    {
+        InboundEnvelopeBuilder<TestEventOne> builder = new();
+
+        builder.WithKafkaTopic("topic", 42);
+
+        IInboundEnvelope<TestEventOne> envelope = builder.Build();
+        KafkaConsumerEndpoint kafkaEndpoint = envelope.Endpoint.ShouldBeOfType<KafkaConsumerEndpoint>();
+        kafkaEndpoint.TopicPartition.Topic.ShouldBe("topic");
+        kafkaEndpoint.TopicPartition.Partition.Value.ShouldBe(42);
+        kafkaEndpoint.Configuration.ShouldBeOfType<KafkaConsumerEndpointConfiguration>();
     }
 }

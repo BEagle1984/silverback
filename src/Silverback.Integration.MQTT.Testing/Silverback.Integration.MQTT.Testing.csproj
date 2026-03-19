@@ -25,7 +25,4 @@
     <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-  </ItemGroup>
-
 </Project>
