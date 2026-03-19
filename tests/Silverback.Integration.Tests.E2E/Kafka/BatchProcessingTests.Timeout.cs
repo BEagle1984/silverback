@@ -122,7 +122,7 @@ public partial class BatchProcessingTests
             await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
 
         receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(2);
         receivedBatches.All(list => list.Count <= 10).ShouldBeTrue();

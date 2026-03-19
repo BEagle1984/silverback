@@ -42,7 +42,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource = new();
 
-    private readonly SemaphoreSlim _addingSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _addAndCompleteSemaphoreSlim = new(1, 1);
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -268,14 +268,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         try
         {
-            await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+            await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
-            if (!IsPending || IsCompleting)
-                return AddToSequenceResult.Failed;
+            if (!IsPending)
+                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
 
             if (_enforceTimeout)
             {
-                if (await EnforceTimeoutAsync().ConfigureAwait(false))
+                if (IsTimeoutElapsed())
                     return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
                 else
                     ResetTimeout();
@@ -309,15 +309,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (Length == TotalLength || IsLastMessage(envelope))
             {
                 TotalLength = Length;
-                IsCompleting = true;
 
                 _logger.LogTrace(
                     "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
                     () => [GetType().Name, SequenceId, TotalLength]);
-            }
 
-            if (IsCompleting)
-                await CompleteAsync().ConfigureAwait(false);
+                await CompleteCoreAsync().ConfigureAwait(false);
+            }
 
             return AddToSequenceResult.Success(pushedStreamsCount);
         }
@@ -341,7 +339,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            _addingSemaphoreSlim.Release();
+            _addAndCompleteSemaphoreSlim.Release();
         }
     }
 
@@ -368,17 +366,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </returns>
     protected virtual async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
-        if (!IsPending)
-            return;
+        await _addAndCompleteSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        _logger.LogTrace(
-            "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
-            () => [GetType().Name, SequenceId, Length]);
-
-        IsComplete = true;
-        IsCompleting = false;
-
-        await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await CompleteCoreAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _addAndCompleteSemaphoreSlim.Release();
+        }
     }
 
     /// <summary>
@@ -406,8 +403,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogTrace("Waiting adding semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
 
-        _addingSemaphoreSlim.Wait();
-        _addingSemaphoreSlim.Dispose();
+        _addAndCompleteSemaphoreSlim.Wait();
+        _addAndCompleteSemaphoreSlim.Dispose();
 
         // If necessary, cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
         if (!SequencerBehaviorsTask.IsCompleted)
@@ -440,10 +437,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
     }
 
+    private bool IsTimeoutElapsed() => DateTime.UtcNow > _timeoutExpiration;
+
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async ValueTask<bool> EnforceTimeoutAsync()
     {
-        if (DateTime.UtcNow <= _timeoutExpiration)
+        if (!IsTimeoutElapsed())
             return false;
 
         try
@@ -456,6 +455,29 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
 
         return true;
+    }
+
+    private async ValueTask CompleteCoreAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsPending)
+            return;
+
+        _logger.LogTrace(
+            "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
+            () => [GetType().Name, SequenceId, Length]);
+
+        IsCompleting = true;
+
+        try
+        {
+            await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
+
+            IsComplete = true;
+        }
+        finally
+        {
+            IsCompleting = false;
+        }
     }
 
     private void ResetTimeout()

@@ -180,10 +180,13 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             // If the sequence was new, it means it was never handed over to the transaction handler
             // (no message was added to the sequence so far, the timeout elapsed before the sequence
             // was used).
-            if (!addToSequenceResult.IsSuccess && sequence.IsNew)
+            if (!addToSequenceResult.IsSuccess)
             {
-                await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
-                sequence.Dispose();
+                if (sequence.IsNew)
+                {
+                    await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
+                    sequence.Dispose();
+                }
             }
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
