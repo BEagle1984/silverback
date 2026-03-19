@@ -17,8 +17,6 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrapper
 {
-    private readonly ConsumerConfig _confluentConfiguration;
-
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
 
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
@@ -48,14 +46,13 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         : base(name, logger)
     {
         Configuration = Check.NotNull(configuration, nameof(configuration));
-        _confluentConfiguration = configuration.ToConfluentConfig();
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _consumerBuilder = Check.NotNull(consumerBuilder, nameof(consumerBuilder))
-            .SetConfig(_confluentConfiguration)
+            .SetConfig(configuration.ToConfluentConfig())
             .SetEventsHandlers(this, Configuration, _brokerClientCallbacksInvoker, _logger);
         _adminClientFactory = Check.NotNull(adminClientFactory, nameof(adminClientFactory));
     }
@@ -263,7 +260,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>> partitionOffsetsProvider,
         TopicPartitionOffset topicPartitionOffset)
     {
-        _adminClient ??= _adminClientFactory.GetClient(_confluentConfiguration);
+        _adminClient ??= _adminClientFactory.GetClient(Configuration.ToConfluentAdminClientConfig());
 
         List<TopicPartition> availablePartitions =
             [.. _adminClient

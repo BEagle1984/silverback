@@ -24,4 +24,6 @@ public abstract partial record KafkaClientConfiguration<TConfluentConfig> : IVal
     }
 
     internal abstract TConfluentConfig ToConfluentConfig();
+
+    internal AdminClientConfig ToConfluentAdminClientConfig() => MapToAdminClientConfig();
 }

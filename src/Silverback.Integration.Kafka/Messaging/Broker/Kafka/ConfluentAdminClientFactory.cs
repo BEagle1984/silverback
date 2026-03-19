@@ -26,7 +26,7 @@ public class ConfluentAdminClientFactory : IConfluentAdminClientFactory
     }
 
     /// <inheritdoc cref="IConfluentAdminClientFactory.GetClient" />
-    public IAdminClient GetClient(ClientConfig config) =>
+    public IAdminClient GetClient(AdminClientConfig config) =>
         new AdminClientBuilder(config)
             .SetErrorHandler((_, error) => OnError(error, _logger))
             .SetLogHandler((_, logMessage) => OnLog(logMessage, _logger))

@@ -648,6 +648,116 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
 
         return confluentConfig;
     }
+
+    /// <summary>
+    ///     Maps to the Confluent admin client configuration.
+    /// </summary>
+    /// <returns>
+    ///     The Confluent admin client configuration.
+    /// </returns>
+    protected AdminClientConfig MapToAdminClientConfig()
+    {
+        AdminClientConfig confluentConfig = new()
+        {
+            SaslMechanism = SaslMechanism,
+            Acks = Acks,
+            ClientId = ClientId,
+            BootstrapServers = BootstrapServers,
+            MessageMaxBytes = MessageMaxBytes,
+            MessageCopyMaxBytes = MessageCopyMaxBytes,
+            ReceiveMessageMaxBytes = ReceiveMessageMaxBytes,
+            MaxInFlight = MaxInFlight,
+            MetadataRecoveryStrategy = MetadataRecoveryStrategy,
+            MetadataRecoveryRebootstrapTriggerMs = MetadataRecoveryRebootstrapTriggerMs,
+            TopicMetadataRefreshIntervalMs = TopicMetadataRefreshIntervalMs,
+            MetadataMaxAgeMs = MetadataMaxAgeMs,
+            TopicMetadataRefreshFastIntervalMs = TopicMetadataRefreshFastIntervalMs,
+            TopicMetadataRefreshSparse = TopicMetadataRefreshSparse,
+            TopicMetadataPropagationMaxMs = TopicMetadataPropagationMaxMs,
+            TopicBlacklist = TopicBlacklist,
+            Debug = Debug,
+            SocketTimeoutMs = SocketTimeoutMs,
+            SocketSendBufferBytes = SocketSendBufferBytes,
+            SocketReceiveBufferBytes = SocketReceiveBufferBytes,
+            SocketKeepaliveEnable = SocketKeepaliveEnable,
+            SocketNagleDisable = SocketNagleDisable,
+            SocketMaxFails = SocketMaxFails,
+            BrokerAddressTtl = BrokerAddressTtl,
+            BrokerAddressFamily = BrokerAddressFamily,
+            SocketConnectionSetupTimeoutMs = SocketConnectionSetupTimeoutMs,
+            ConnectionsMaxIdleMs = ConnectionsMaxIdleMs,
+            ReconnectBackoffMs = ReconnectBackoffMs,
+            ReconnectBackoffMaxMs = ReconnectBackoffMaxMs,
+            StatisticsIntervalMs = StatisticsIntervalMs,
+            ApiVersionRequest = ApiVersionRequest,
+            ApiVersionRequestTimeoutMs = ApiVersionRequestTimeoutMs,
+            ApiVersionFallbackMs = ApiVersionFallbackMs,
+            BrokerVersionFallback = BrokerVersionFallback,
+            AllowAutoCreateTopics = AllowAutoCreateTopics,
+            SecurityProtocol = SecurityProtocol,
+            SslCipherSuites = SslCipherSuites,
+            SslCurvesList = SslCurvesList,
+            SslSigalgsList = SslSigalgsList,
+            SslKeyLocation = SslKeyLocation,
+            SslKeyPassword = SslKeyPassword,
+            SslKeyPem = SslKeyPem,
+            SslCertificateLocation = SslCertificateLocation,
+            SslCertificatePem = SslCertificatePem,
+            SslCaLocation = SslCaLocation,
+            HttpsCaLocation = HttpsCaLocation,
+            HttpsCaPem = HttpsCaPem,
+            SslCaPem = SslCaPem,
+            SslCaCertificateStores = SslCaCertificateStores,
+            SslCrlLocation = SslCrlLocation,
+            SslKeystoreLocation = SslKeystoreLocation,
+            SslKeystorePassword = SslKeystorePassword,
+            SslProviders = SslProviders,
+            SslEngineLocation = SslEngineLocation,
+            SslEngineId = SslEngineId,
+            EnableSslCertificateVerification = EnableSslCertificateVerification,
+            SslEndpointIdentificationAlgorithm = SslEndpointIdentificationAlgorithm,
+            SaslKerberosServiceName = SaslKerberosServiceName,
+            SaslKerberosPrincipal = SaslKerberosPrincipal,
+            SaslKerberosKinitCmd = SaslKerberosKinitCmd,
+            SaslKerberosKeytab = SaslKerberosKeytab,
+            SaslKerberosMinTimeBeforeRelogin = SaslKerberosMinTimeBeforeRelogin,
+            SaslUsername = SaslUsername,
+            SaslPassword = SaslPassword,
+            SaslOauthbearerConfig = SaslOauthbearerConfig,
+            EnableSaslOauthbearerUnsecureJwt = EnableSaslOauthbearerUnsecureJwt,
+            SaslOauthbearerMethod = SaslOauthbearerMethod,
+            SaslOauthbearerClientId = SaslOauthbearerClientId,
+            SaslOauthbearerClientSecret = SaslOauthbearerClientSecret,
+            SaslOauthbearerScope = SaslOauthbearerScope,
+            SaslOauthbearerExtensions = SaslOauthbearerExtensions,
+            SaslOauthbearerTokenEndpointUrl = SaslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerGrantType = SaslOauthbearerGrantType,
+            SaslOauthbearerAssertionAlgorithm = SaslOauthbearerAssertionAlgorithm,
+            SaslOauthbearerAssertionPrivateKeyFile = SaslOauthbearerAssertionPrivateKeyFile,
+            SaslOauthbearerAssertionPrivateKeyPassphrase = SaslOauthbearerAssertionPrivateKeyPassphrase,
+            SaslOauthbearerAssertionPrivateKeyPem = SaslOauthbearerAssertionPrivateKeyPem,
+            SaslOauthbearerAssertionFile = SaslOauthbearerAssertionFile,
+            SaslOauthbearerAssertionClaimAud = SaslOauthbearerAssertionClaimAud,
+            SaslOauthbearerAssertionClaimExpSeconds = SaslOauthbearerAssertionClaimExpSeconds,
+            SaslOauthbearerAssertionClaimIss = SaslOauthbearerAssertionClaimIss,
+            SaslOauthbearerAssertionClaimJtiInclude = SaslOauthbearerAssertionClaimJtiInclude,
+            SaslOauthbearerAssertionClaimNbfSeconds = SaslOauthbearerAssertionClaimNbfSeconds,
+            SaslOauthbearerAssertionClaimSub = SaslOauthbearerAssertionClaimSub,
+            SaslOauthbearerAssertionJwtTemplateFile = SaslOauthbearerAssertionJwtTemplateFile,
+            SaslOauthbearerMetadataAuthenticationType = SaslOauthbearerMetadataAuthenticationType,
+            PluginLibraryPaths = PluginLibraryPaths,
+            ClientRack = ClientRack,
+            RetryBackoffMs = RetryBackoffMs,
+            RetryBackoffMaxMs = RetryBackoffMaxMs,
+            ClientDnsLookup = ClientDnsLookup,
+            EnableMetricsPush = EnableMetricsPush
+        };
+
+        if (CancellationDelayMaxMs.HasValue)
+            confluentConfig.CancellationDelayMaxMs = CancellationDelayMaxMs.Value;
+
+        return confluentConfig;
+    }
 }
 
 /// <content>

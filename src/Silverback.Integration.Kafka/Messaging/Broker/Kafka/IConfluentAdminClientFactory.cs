@@ -19,5 +19,5 @@ public interface IConfluentAdminClientFactory
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
-    IAdminClient GetClient(ClientConfig config);
+    IAdminClient GetClient(AdminClientConfig config);
 }

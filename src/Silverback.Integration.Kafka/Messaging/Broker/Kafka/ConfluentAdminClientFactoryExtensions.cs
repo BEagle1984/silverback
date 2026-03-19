@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
@@ -50,7 +49,7 @@ public static class ConfluentAdminClientFactoryExtensions
     ///     The <see cref="IAdminClient" />.
     /// </returns>
     public static IAdminClient GetClient(this IConfluentAdminClientFactory factory, KafkaClientConfiguration configuration) =>
-        Check.NotNull(factory, nameof(factory)).GetClient(Check.NotNull(configuration, nameof(configuration)).ToConfluentConfig());
+        Check.NotNull(factory, nameof(factory)).GetClient(Check.NotNull(configuration, nameof(configuration)).ToConfluentAdminClientConfig());
 
     /// <summary>
     ///     Creates a new <see cref="IAdminClient" /> instance using the specified configuration.
@@ -68,9 +67,7 @@ public static class ConfluentAdminClientFactoryExtensions
     {
         Check.NotNull(configuration, nameof(configuration));
 
-        ClientConfig cleanedUpConfig = CleanUpConfig(configuration.ToConfluentConfig(), "dotnet.producer.");
-
-        return Check.NotNull(factory, nameof(factory)).GetClient(cleanedUpConfig);
+        return Check.NotNull(factory, nameof(factory)).GetClient(configuration.ToConfluentAdminClientConfig());
     }
 
     /// <summary>
@@ -89,23 +86,6 @@ public static class ConfluentAdminClientFactoryExtensions
     {
         Check.NotNull(configuration, nameof(configuration));
 
-        ClientConfig cleanedUpConfig = CleanUpConfig(configuration.ToConfluentConfig(), "dotnet.consumer.");
-
-        return Check.NotNull(factory, nameof(factory)).GetClient(cleanedUpConfig);
-    }
-
-    private static ClientConfig CleanUpConfig(ClientConfig config, string prefixToDiscard)
-    {
-        Dictionary<string, string> cleanedUpConfig = [];
-
-        foreach (KeyValuePair<string, string> keyValuePair in config)
-        {
-            if (keyValuePair.Key.StartsWith(prefixToDiscard, StringComparison.Ordinal))
-                continue;
-
-            cleanedUpConfig.Add(keyValuePair.Key, keyValuePair.Value);
-        }
-
-        return new ClientConfig(cleanedUpConfig);
+        return Check.NotNull(factory, nameof(factory)).GetClient(configuration.ToConfluentAdminClientConfig());
     }
 }

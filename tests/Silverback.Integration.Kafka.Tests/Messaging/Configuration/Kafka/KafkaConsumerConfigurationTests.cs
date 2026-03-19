@@ -431,9 +431,9 @@ public class KafkaConsumerConfigurationTests
         {
             Exception exception = act.ShouldThrow<BrokerConfigurationException>();
             exception.Message.ShouldBe(
-            value < 1
-                ? "MaxDegreeOfParallelism must be greater or equal to 1."
-                : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
+                value < 1
+                    ? "MaxDegreeOfParallelism must be greater or equal to 1."
+                    : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
         }
     }
 
@@ -662,6 +662,23 @@ public class KafkaConsumerConfigurationTests
         ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
         confluentConfig.GroupId.ShouldBe("group1");
+    }
+
+    [Fact]
+    public void ToConfluentAdminClientConfig_ShouldReturnConfigWithoutConsumerSpecificSettings()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            BootstrapServers = "PLAINTEXT://tests",
+            GroupId = "group-42",
+            FetchMaxBytes = 42
+        };
+
+        AdminClientConfig confluentConfig = configuration.ToConfluentAdminClientConfig();
+
+        confluentConfig.BootstrapServers.ShouldBe("PLAINTEXT://tests");
+        confluentConfig.ShouldNotContain(config => config.Key == "group.id");
+        confluentConfig.ShouldNotContain(config => config.Key == "fetch.max.bytes");
     }
 
     private static KafkaConsumerConfiguration GetValidConfiguration() =>

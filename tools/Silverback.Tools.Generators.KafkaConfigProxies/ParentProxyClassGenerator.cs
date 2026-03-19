@@ -78,5 +78,23 @@ public class ParentProxyClassGenerator : ProxyClassGenerator
         StringBuilder.AppendLine();
         StringBuilder.AppendLine("        return confluentConfig;");
         StringBuilder.AppendLine("    }");
+        StringBuilder.AppendLine();
+        StringBuilder.AppendLine("    /// <summary>");
+        StringBuilder.AppendLine("    ///     Maps to the Confluent admin client configuration.");
+        StringBuilder.AppendLine("    /// </summary>");
+        StringBuilder.AppendLine("    /// <returns>");
+        StringBuilder.AppendLine("    ///     The Confluent admin client configuration.");
+        StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine("    protected AdminClientConfig MapToAdminClientConfig()");
+        StringBuilder.AppendLine("    {");
+        StringBuilder.AppendLine("        AdminClientConfig confluentConfig = new()");
+        StringBuilder.AppendLine("        {");
+        StringBuilder.Append(mapMethodStringBuilder);
+        StringBuilder.AppendLine("        };");
+        StringBuilder.AppendLine();
+        StringBuilder.Append(mapMethodStringBuilder2);
+        StringBuilder.AppendLine();
+        StringBuilder.AppendLine("        return confluentConfig;");
+        StringBuilder.AppendLine("    }");
     }
 }
