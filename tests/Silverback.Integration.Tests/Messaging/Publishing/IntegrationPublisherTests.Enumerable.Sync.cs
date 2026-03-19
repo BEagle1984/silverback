@@ -12,33 +12,31 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
-public partial class IntegrationPublisherExtensionsTests
+public partial class IntegrationPublisherTests
 {
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
 
-        await _publisher.WrapAndPublishBatchAsync(messages, cancellationToken);
+        _publisher.WrapAndPublishBatch(messages);
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -50,11 +48,11 @@ public partial class IntegrationPublisherExtensionsTests
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing()
+    public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
@@ -62,11 +60,10 @@ public partial class IntegrationPublisherExtensionsTests
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
 
-        await _publisher.WrapAndPublishBatchAsync(messages, cancellationToken);
+        _publisher.WrapAndPublishBatch(messages);
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -78,29 +75,27 @@ public partial class IntegrationPublisherExtensionsTests
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
         int count = 0;
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             envelope => envelope
                 .SetKafkaKey($"{++count}")
-                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
-            cancellationToken);
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName));
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -118,11 +113,11 @@ public partial class IntegrationPublisherExtensionsTests
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
@@ -130,17 +125,15 @@ public partial class IntegrationPublisherExtensionsTests
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
         int count = 0;
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             envelope => envelope
                 .SetKafkaKey($"{++count}")
-                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
-            cancellationToken);
+                .AddHeader("x-topic", envelope.EndpointConfiguration.RawName));
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -158,29 +151,27 @@ public partial class IntegrationPublisherExtensionsTests
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+                    capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             static (envelope, counter) => envelope
                 .SetKafkaKey($"{counter.Increment()}")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
-            new Counter(),
-            cancellationToken);
+            new Counter());
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -198,11 +189,11 @@ public partial class IntegrationPublisherExtensionsTests
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne?> messages = new[] { message1, message2, null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [message1, message2, null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
@@ -210,17 +201,15 @@ public partial class IntegrationPublisherExtensionsTests
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
-        CancellationToken cancellationToken = new(false);
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             static (envelope, counter) => envelope
                 .SetKafkaKey($"{counter.Increment()}")
                 .AddHeader("x-topic", envelope.EndpointConfiguration.RawName),
-            new Counter(),
-            cancellationToken);
+            new Counter());
 
-        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
+        await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), CancellationToken.None);
         capturedEnvelopes.ShouldNotBeNull();
         capturedEnvelopes.Length.ShouldBe(3);
         capturedEnvelopes[0].Message.ShouldBeEquivalentTo(message1);
@@ -240,38 +229,48 @@ public partial class IntegrationPublisherExtensionsTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndPublishBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
+    public async Task WrapAndPublishBatch_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
     {
-        IAsyncEnumerable<TestEventOne?> messages = new[] { new TestEventOne(), new TestEventOne(), null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
+        await strategy.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
+                envelopes =>
+                    _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
         await strategy.ProduceAsync(
             Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
                     _ = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
-        await _publisher.WrapAndPublishBatchAsync(messages);
+        _publisher.WrapAndPublishBatch(messages);
 
         if (enableSubscribing)
-            await _publisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
         else
-            await _publisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
     }
 
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WrapAndPublishBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
+    public async Task WrapAndPublishBatch_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
     {
-        IAsyncEnumerable<TestEventOne?> messages = new[] { new TestEventOne(), new TestEventOne(), null }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
+        await strategy.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
+                envelopes =>
+                    _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
         await strategy.ProduceAsync(
             Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
                     _ = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             (_, _) =>
             {
@@ -279,42 +278,42 @@ public partial class IntegrationPublisherExtensionsTests
             1);
 
         if (enableSubscribing)
-            await _publisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
         else
-            await _publisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerable()
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne> messages = new[] { message1, message2 }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(messages);
+        Action act = () => _publisher.WrapAndPublishBatch(messages);
 
-        Exception exception = await act.ShouldThrowAsync<RoutingException>();
+        Exception exception = act.ShouldThrow<RoutingException>();
         exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
         strategy.ReceivedCalls().ShouldBeEmpty();
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerableAndPassingArgument()
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerableAndPassingArgument()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
-        IAsyncEnumerable<TestEventOne> messages = new[] { message1, message2 }.ToAsyncEnumerable();
+        IEnumerable<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(
+        Action act = () => _publisher.WrapAndPublishBatch(
             messages,
             (_, _) =>
             {
             },
             1);
 
-        Exception exception = await act.ShouldThrowAsync<RoutingException>();
+        Exception exception = act.ShouldThrow<RoutingException>();
         exception.Message.ShouldBe("No producer found for message of type 'TestEventOne'.");
         strategy.ReceivedCalls().ShouldBeEmpty();
     }

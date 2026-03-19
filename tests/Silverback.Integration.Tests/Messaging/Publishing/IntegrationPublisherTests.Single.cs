@@ -10,13 +10,12 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
-public partial class IntegrationPublisherExtensionsTests
+public partial class IntegrationPublisherTests
 {
     [Fact]
     public async Task WrapAndPublishAsync_ShouldProduceEnvelopes()

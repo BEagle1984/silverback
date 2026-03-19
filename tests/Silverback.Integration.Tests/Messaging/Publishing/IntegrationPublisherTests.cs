@@ -11,17 +11,22 @@ using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
-public partial class IntegrationPublisherExtensionsTests
+public partial class IntegrationPublisherTests
 {
-    private readonly IPublisher _publisher = Substitute.For<IPublisher>();
+    private readonly IPublisher _wrappedPublisher;
+
+    private readonly IntegrationPublisher _publisher;
 
     private readonly ProducerCollection _producers = [];
 
-    public IntegrationPublisherExtensionsTests()
+    public IntegrationPublisherTests()
     {
+        _wrappedPublisher = Substitute.For<IPublisher>();
+        _publisher = new IntegrationPublisher(_wrappedPublisher);
+
         IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
         serviceProvider.GetService(typeof(IProducerCollection)).Returns(_producers);
-        _publisher.Context.Returns(new SilverbackContext(serviceProvider));
+        _wrappedPublisher.Context.Returns(new SilverbackContext(serviceProvider));
     }
 
     private (IProducer Producer, IProduceStrategyImplementation Strategy) AddProducer<TMessage>(string topic, bool enableSubscribing = false)

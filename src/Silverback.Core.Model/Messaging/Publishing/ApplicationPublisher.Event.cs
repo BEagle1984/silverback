@@ -10,14 +10,14 @@ namespace Silverback.Messaging.Publishing;
 internal partial class ApplicationPublisher
 {
     public void PublishEvent(IEvent eventMessage, bool throwIfUnhandled = false) =>
-        Publish(eventMessage, throwIfUnhandled);
+        _publisher.PublishEvent(eventMessage, throwIfUnhandled);
 
     public Task PublishEventAsync(IEvent eventMessage, CancellationToken cancellationToken = default) =>
-        PublishAsync(eventMessage, false, cancellationToken);
+        _publisher.PublishEventAsync(eventMessage, false, cancellationToken);
 
     public Task PublishEventAsync(
         IEvent eventMessage,
         bool throwIfUnhandled,
         CancellationToken cancellationToken = default) =>
-        PublishAsync(eventMessage, throwIfUnhandled, cancellationToken);
+        _publisher.PublishEventAsync(eventMessage, throwIfUnhandled, cancellationToken);
 }

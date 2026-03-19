@@ -12,5 +12,4 @@ namespace Silverback.Messaging.Publishing;
 ///     Extended by the <see cref="IPublisher" /> interface to add specific methods to publish <see cref="ICommand" />/<see cref="ICommand{TResult}" />,
 ///     <see cref="IQuery{TResult}" />, and <see cref="IEvent" /> messages.
 /// </remarks>
-/// .
-public partial interface IApplicationPublisher : IPublisher;
+public partial interface IApplicationPublisher;

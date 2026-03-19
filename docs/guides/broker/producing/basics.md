@@ -65,6 +65,8 @@ await _publisher.WrapAndPublishAsync(
         .AddHeader("x-random", Random.Shared.Next()));
 ```
 
+Alternatively to the extension methods you can use the <xref:Silverback.Messaging.Publishing.IIntegrationPublisher>. This interface declares the same `WrapAndPublish` methods defined as extensions for the basic <xref:Silverback.Messaging.Publishing.IPublisher>, offering better testability (as you cannot mock extension methods).
+
 ### Publish Batches (WrapAndPublishBatch)
 
 Use `WrapAndPublishBatchAsync` to publish multiple messages efficiently.
@@ -87,6 +89,8 @@ public Task PublishBatchAsync(IAsyncEnumerable<Order> orders) =>
         order => new OrderReceived { OrderNumber = order.Number },
         (envelope, order) => envelope.AddHeader("x-priority", order.Priority));
 ```
+
+Alternatively to the extension methods you can use the <xref:Silverback.Messaging.Publishing.IIntegrationPublisher>. This interface declares the same `WrapAndPublishBatch` methods defined as extensions for the basic <xref:Silverback.Messaging.Publishing.IPublisher>, offering better testability (as you cannot mock extension methods).
 
 ## Routing
 

@@ -12,14 +12,13 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
-public partial class IntegrationPublisherExtensionsTests
+public partial class IntegrationPublisherTests
 {
     [Fact]
     public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForAsyncEnumerable()
@@ -243,9 +242,9 @@ public partial class IntegrationPublisherExtensionsTests
         _publisher.WrapAndPublishBatch(messages);
 
         if (enableSubscribing)
-            await _publisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
         else
-            await _publisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
     }
 
     [Theory]
@@ -269,9 +268,9 @@ public partial class IntegrationPublisherExtensionsTests
             1);
 
         if (enableSubscribing)
-            await _publisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.Received(3).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
         else
-            await _publisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+            await _wrappedPublisher.DidNotReceive().PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
     }
 
     [Fact]

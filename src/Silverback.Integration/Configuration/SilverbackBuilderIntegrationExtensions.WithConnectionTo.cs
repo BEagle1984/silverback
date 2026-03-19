@@ -18,6 +18,7 @@ using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Producing.Filter;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
@@ -60,6 +61,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddTypeBasedExtensibleFactory<IBrokerMessageIdentifiersTrackerFactory, BrokerMessageIdentifiersTrackerFactory>()
             .EnableStorage()
             .Services
+            .AddTransient<IIntegrationPublisher, IntegrationPublisher>()
             .AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>()
             .AddSingleton<IArgumentResolver, TombstoneMessageArgumentResolver>();
 

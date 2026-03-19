@@ -12,14 +12,13 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
-using Silverback.Messaging.Publishing;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
-public partial class IntegrationPublisherExtensionsTests
+public partial class IntegrationPublisherTests
 {
     [Fact]
     public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForMappedCollection()
@@ -232,7 +231,7 @@ public partial class IntegrationPublisherExtensionsTests
             source => source == null ? null : new TestEventOne { Content = $"{source}" });
 
         // Expect to publish 3 messages twice (once per enabled producer)
-        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
+        await _wrappedPublisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
     }
 
     [Fact]
@@ -269,7 +268,7 @@ public partial class IntegrationPublisherExtensionsTests
             });
 
         // Expect to publish 3 messages twice (once per enabled producer)
-        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
+        await _wrappedPublisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
     }
 
     [Fact]
@@ -307,7 +306,7 @@ public partial class IntegrationPublisherExtensionsTests
             1);
 
         // Expect to publish 3 messages twice (once per enabled producer)
-        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
+        await _wrappedPublisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), CancellationToken.None);
     }
 
     [Fact]

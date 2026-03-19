@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
 using Xunit;
@@ -36,14 +37,14 @@ public class SilverbackBuilderAddApplicationPublisherExtensionsTest
             .AddFakeLogger()
             .AddSilverback()
             .AddApplicationPublisher()
-            .AddDelegateSubscriber<TestMessage>(_ => callCount++));
+            .AddDelegateSubscriber<TestEvent>(_ => callCount++));
         IApplicationPublisher applicationPublisher = serviceProvider.GetRequiredService<IApplicationPublisher>();
 
-        applicationPublisher.Publish(new TestMessage());
-        await applicationPublisher.PublishAsync(new TestMessage());
+        applicationPublisher.PublishEvent(new TestEvent());
+        await applicationPublisher.PublishEventAsync(new TestEvent());
 
         callCount.ShouldBe(2);
     }
 
-    private class TestMessage;
+    private class TestEvent : IEvent;
 }

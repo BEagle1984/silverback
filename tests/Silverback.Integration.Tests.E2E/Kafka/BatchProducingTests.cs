@@ -95,7 +95,7 @@ public class BatchProducingTests : KafkaTests
                     .EnableSubscribing()))) // Enable subscribing to ensure we don't fall into a mortal loop
             .AddIntegrationSpy());
 
-        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        IIntegrationPublisher publisher = Host.ServiceProvider.GetRequiredService<IIntegrationPublisher>();
         await publisher.WrapAndPublishBatchAsync([new TestEventOne(), new TestEventOne()]);
         await publisher.WrapAndPublishBatchAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() }.AsEnumerable());
 
@@ -108,7 +108,7 @@ public class BatchProducingTests : KafkaTests
     }
 
     [Fact]
-    public async Task WrapAndPublishAsync_ShouldProduceAsyncBatch()
+    public async Task WrapAndPublishBatchAsync_ShouldProduceAsyncBatch()
     {
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -128,7 +128,7 @@ public class BatchProducingTests : KafkaTests
             yield return new TestEventThree();
         }
 
-        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
+        IIntegrationPublisher publisher = Host.ServiceProvider.GetRequiredService<IIntegrationPublisher>();
         await publisher.WrapAndPublishBatchAsync(GetMessagesAsync());
 
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(3);
