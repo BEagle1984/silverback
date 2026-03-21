@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -41,11 +42,25 @@ public class Subscriber
 
     public async Task OnMessageReceivedAsync(IAsyncEnumerable<IInboundEnvelope<UnboundedMessage>> stream)
     {
+        IInboundEnvelope<TestBenchMessage>? firstEnvelope = null;
+        
         await foreach (IInboundEnvelope<TestBenchMessage> envelope in stream)
         {
-            await ProcessEnvelopeAsync(envelope);
+            firstEnvelope ??= envelope;
+
+            try
+            {
+                await ProcessEnvelopeAsync(envelope);
+            }
+            catch 
+            {
+                firstEnvelope.Headers.Add("X-Failed-Message", envelope.Message?.MessageId);
+                throw;
+            }
         }
     }
+
+    public void OnMessageSkipped(MessageSkipped skipped) => _logger.LogInformation("Message {MessageId} from topic {TopicName} skipped via error policy", skipped.MessageId, skipped.TopicName);
 
     private async Task ProcessEnvelopeAsync(IInboundEnvelope<TestBenchMessage> envelope)
     {

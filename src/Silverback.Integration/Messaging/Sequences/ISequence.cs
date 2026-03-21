@@ -136,10 +136,10 @@ public interface ISequence : IDisposable
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
     ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
-    ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
+    Task<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
 
     /// <summary>
     ///     Aborts the sequence processing. Used, for example, to signal that an exception occurred or the enumeration returned prematurely.

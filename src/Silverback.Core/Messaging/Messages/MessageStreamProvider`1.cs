@@ -99,14 +99,13 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_aborted)
             return;
 
-        _lazyStreams.ParallelForEach(
-            lazyStream =>
-            {
-                if (lazyStream.Stream != null)
-                    lazyStream.Stream.Abort();
-                else
-                    lazyStream.Cancel();
-            });
+        _lazyStreams.ParallelForEach(lazyStream =>
+        {
+            if (lazyStream.Stream != null)
+                lazyStream.Stream.Abort();
+            else
+                lazyStream.Cancel();
+        });
 
         _aborted = true;
     }
@@ -120,14 +119,13 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (_completed)
             return;
 
-        await _lazyStreams.ParallelForEachAsync(
-            async lazyStream =>
-            {
-                if (lazyStream.Stream != null)
-                    await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
-                else
-                    lazyStream.Cancel();
-            }).ConfigureAwait(false);
+        await _lazyStreams.ParallelForEachAsync(async lazyStream =>
+        {
+            if (lazyStream.Stream != null)
+                await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
+            else
+                lazyStream.Cancel();
+        }).ConfigureAwait(false);
 
         _completed = true;
     }
@@ -208,8 +206,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
             return true;
         }
 
-        if (message is IEnvelope { Message: not null } envelope &&
-            lazyStream.MessageType.IsInstanceOfType(envelope.Message))
+        if (message is IEnvelope { Message: not null } envelope && lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
             messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, onPullAction, onPullActionArgument, cancellationToken);
             return true;
@@ -222,7 +219,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
         filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private IEnumerable<Task> PushToCompatibleStreams(TMessage message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken)
+    private IEnumerable<Task> PushToCompatibleStreams(
+        TMessage message,
+        Action<object?>? onPullAction,
+        object? onPullActionArgument,
+        CancellationToken cancellationToken)
     {
         foreach (ILazyMessageStreamEnumerable lazyStream in _lazyStreams)
         {

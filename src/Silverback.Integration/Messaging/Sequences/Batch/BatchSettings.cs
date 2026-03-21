@@ -8,13 +8,13 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Sequences.Batch;
 
 /// <summary>
-///     The batch consuming settings.
+///     The batch processing settings.
 /// </summary>
 public sealed record BatchSettings : IValidatableSettings
 {
     /// <summary>
     ///     Gets the number of messages to be processed in batch. Setting this property to a value
-    ///     greater than 1 enables batch consuming.
+    ///     greater than 1 enables batch processing.
     /// </summary>
     public int Size { get; init; } = 1;
 

@@ -72,6 +72,9 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Successfully processed message (?<messageId>[^']+) from topic (?<topicName>[^\s]+)")]
     private static partial Regex MessageProcessedRegex();
 
+    [GeneratedRegex(@"Message (?<messageId>[^']+) from topic (?<topicName>[^\s]+) skipped via error policy")]
+    private static partial Regex MessageSkippedRegex();
+
     [GeneratedRegex(@"Assigned partition (?<topicName>.+)\[(?<partition>\d+)\]")]
     private static partial Regex PartitionAssignedRegex();
 
@@ -177,6 +180,9 @@ public sealed partial class ContainerLogParser : IDisposable
         if (MatchProcessed(message, timestamp))
             return;
 
+        if (MatchSkipped(message, timestamp))
+            return;
+
         if (MatchStarted(message, timestamp))
             return;
 
@@ -236,6 +242,26 @@ public sealed partial class ContainerLogParser : IDisposable
         return true;
     }
 
+    private bool MatchSkipped(string message, DateTime timestamp)
+    {
+        Match match = MessageSkippedRegex().Match(message);
+        if (!match.Success)
+            return false;
+
+        _container.Statistics.IncrementProcessedMessagesCount();
+        TopicViewModel? topicViewModel = _messagesTracker.TrackProcessed(match.Groups["topicName"].Value, match.Groups["messageId"].Value);
+
+        if (topicViewModel != null)
+        {
+            _mainViewModel.Trace.TraceProcessed(
+                match.Groups["messageId"].Value,
+                topicViewModel,
+                new LogEntry(timestamp, message, _container));
+        }
+
+        return true;
+    }
+
     private bool MatchStarted(string message, DateTime timestamp)
     {
         if (_container.Started.HasValue)
@@ -266,12 +292,11 @@ public sealed partial class ContainerLogParser : IDisposable
         _mainViewModel.Logs.AddInformation(timestamp, "Shutdown initiated", _container);
 
         // Delayed dispose to allow the log parser to finish processing the last messages
-        Task.Run(
-            async () =>
-            {
-                await Task.Delay(TimeSpan.FromMinutes(5), _stoppingTokenSource.Token);
-                Dispose();
-            });
+        Task.Run(async () =>
+        {
+            await Task.Delay(TimeSpan.FromMinutes(5), _stoppingTokenSource.Token);
+            Dispose();
+        });
     }
 
     private bool MatchPartitionAssigned(string message, DateTime timestamp)

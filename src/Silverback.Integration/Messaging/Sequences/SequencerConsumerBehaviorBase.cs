@@ -129,11 +129,11 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
                     // Abort only parent sequences and don't consider the enumeration as aborted if the
                     // sequence is actually complete
-                    if (sequence.ParentSequence != null || sequence.IsComplete)
+                    if (sequence.ParentSequence != null || sequence.IsComplete || sequence.IsCompleting)
                         return;
 
-                    // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
-                    // The reason behind this call here may be counterintuitive but with
+                    // Call AbortAsync to abort the uncompleted sequence to avoid unreleased locks.
+                    // The reason behind this call here may be counterintuitive, but with
                     // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
                     await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                 }
@@ -180,13 +180,10 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             // If the sequence was new, it means it was never handed over to the transaction handler
             // (no message was added to the sequence so far, the timeout elapsed before the sequence
             // was used).
-            if (!addToSequenceResult.IsSuccess)
+            if (!addToSequenceResult.IsSuccess && sequence.IsNew)
             {
-                if (sequence.IsNew)
-                {
-                    await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
-                    sequence.Dispose();
-                }
+                await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
+                sequence.Dispose();
             }
         }
         while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
@@ -247,14 +244,14 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ISequence sequence,
         CancellationToken cancellationToken)
     {
-        if (sequence.IsNew)
-        {
-            await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
+        if (!sequence.IsNew)
+            return;
 
-            if (context.ProcessingTask != null)
-                MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+        await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogSequenceStarted(sequence);
-        }
+        if (context.ProcessingTask != null)
+            MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+
+        _logger.LogSequenceStarted(sequence);
     }
 }

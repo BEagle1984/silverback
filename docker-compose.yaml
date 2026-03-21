@@ -1,4 +1,4 @@
-# Conduktor: http://localhost:8080
+# Conduktor: http://localhost:8080 (user: admin@silverback-messaging.net / pwd: admin)
 # EMQX dashboard: http://localhost:18083 (user: admin / pwd: emqx)
 # MQTTX: http://localhost:8084
 # PGAdmin: http://localhost:8082 (database password: Si1v3rbacK)
@@ -71,7 +71,7 @@ services:
       CDK_CLUSTERS_0_ID: "default"
       CDK_CLUSTERS_0_NAME: "Silverback Kafka Cluster"
       CDK_CLUSTERS_0_COLOR: "#5388f4"
-      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: "PLAINTEXT://kafka-1:19092,PLAINTEXT://kafka-2:29092"
+      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: "PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9092"
       CDK_CLUSTERS_0_SCHEMAREGISTRY_URL: "http://schema-registry:8081"
       CDK_ADMIN_EMAIL: "admin@silverback-messaging.net"
       CDK_ADMIN_PASSWORD: "admin"

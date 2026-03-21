@@ -118,7 +118,7 @@
                 <TextBox Grid.Row="0" Grid.Column="1"
                          Text="{Binding MessageId, Mode=OneWay}"
                          Style="{StaticResource ReadOnlyTextBox}" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Timestamp:" Style="{StaticResource Label}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Topic:" Style="{StaticResource Label}" />
                 <TextBox Grid.Row="1" Grid.Column="1"
                          Text="{Binding Topic.TopicName, Mode=OneWay}"
                          Foreground="{Binding Topic, Converter={StaticResource TopicViewModelTypeToBrush}}"

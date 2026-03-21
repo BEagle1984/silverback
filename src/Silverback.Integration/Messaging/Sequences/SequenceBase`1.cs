@@ -188,14 +188,41 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         StreamProvider.CreateStream<TMessage>(filters);
 
     /// <inheritdoc cref="ISequence.AddAsync" />
-    public ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
+    public async Task<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         Check.NotNull(envelope, nameof(envelope));
 
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-        return AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled);
+        await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+        try
+        {
+            return await AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogTrace(
+                ex,
+                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+                () => [GetType().Name, SequenceId]);
+
+            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogTrace(
+                ex,
+                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+                () => [GetType().Name, SequenceId]);
+
+            throw;
+        }
+        finally
+        {
+            _addAndCompleteSemaphoreSlim.Release();
+        }
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
@@ -261,38 +288,38 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
     ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
-    protected virtual async ValueTask<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
+    protected virtual async Task<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
+        if (!IsPending)
+            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+
+        if (_enforceTimeout)
+        {
+            if (IsTimeoutElapsed())
+            {
+                // await Task.Delay(100).ConfigureAwait(false);
+                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+            }
+
+            ResetTimeout();
+        }
+
+        if (sequence != null && sequence != this)
+        {
+            _sequences ??= [];
+            _sequences.Add(sequence);
+            (sequence as ISequenceImplementation)?.SetParentSequence(this);
+        }
+
+        _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+        int pushedStreamsCount;
         try
         {
-            await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-
-            if (!IsPending)
-                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
-
-            if (_enforceTimeout)
-            {
-                if (IsTimeoutElapsed())
-                    return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
-                else
-                    ResetTimeout();
-            }
-
-            if (sequence != null && sequence != this)
-            {
-                _sequences ??= [];
-                _sequences.Add(sequence);
-                (sequence as ISequenceImplementation)?.SetParentSequence(this);
-            }
-
-            _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
-
-            _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-            int pushedStreamsCount = await _streamProvider.PushAsync(
+            pushedStreamsCount = await _streamProvider.PushAsync(
                     envelope,
                     throwIfUnhandled,
                     static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
@@ -303,44 +330,33 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
             if (pushedStreamsCount == 0)
                 return AddToSequenceResult.Success(0);
-
-            Length++;
-
-            if (Length == TotalLength || IsLastMessage(envelope))
-            {
-                TotalLength = Length;
-
-                _logger.LogTrace(
-                    "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
-                    () => [GetType().Name, SequenceId, TotalLength]);
-
-                await CompleteCoreAsync().ConfigureAwait(false);
-            }
-
-            return AddToSequenceResult.Success(pushedStreamsCount);
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            _logger.LogTrace(
-                ex,
-                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () => [GetType().Name, SequenceId]);
-
-            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogTrace(
-                ex,
-                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () => [GetType().Name, SequenceId]);
+            // Consider the message as successfully processed if the enumeration was aborted and track the related identifier
+            if (IsAborted && AbortReason == SequenceAbortReason.EnumerationAborted)
+                _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
 
             throw;
         }
-        finally
+
+        Length++; // Increment only after checking that the message was pushed to at least one stream
+
+        // Track identifier only after successfully processing to ensure that no message is lost (committing message that was excluded from the batch)
+        _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
+
+        if (Length == TotalLength || IsLastMessage(envelope))
         {
-            _addAndCompleteSemaphoreSlim.Release();
+            TotalLength = Length;
+
+            _logger.LogTrace(
+                "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
+                () => [GetType().Name, SequenceId, TotalLength]);
+
+            await CompleteCoreAsync().ConfigureAwait(false);
         }
+
+        return AddToSequenceResult.Success(pushedStreamsCount);
     }
 
     /// <summary>
@@ -471,7 +487,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         try
         {
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
-
             IsComplete = true;
         }
         finally
@@ -540,11 +555,22 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
             () => [GetType().Name, SequenceId, AbortReason]);
 
-        await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
-        if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
-            LogAbort();
-
+        // Abort pending processing (if still pending) and wait for AddAsync to gracefully complete, ensuring that the identifiers
+        // are properly tracked in all cases (enumeration aborted included)
         _streamProvider.AbortIfPending();
+        await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+        try
+        {
+            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+            if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
+                LogAbort();
+        }
+        finally
+        {
+            _addAndCompleteSemaphoreSlim.Release();
+        }
+
         await _abortCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         _abortingTaskCompletionSource?.SetResult(true);
     }

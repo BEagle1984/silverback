@@ -12,8 +12,14 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     private static readonly string ClientId = $"testbench-consumer-{Environment.GetEnvironmentVariable("CONTAINER_NAME")}";
 
-    private static readonly Action<IErrorPolicyBuilder> DefaultErrorPolicy =
-        policy => policy.Retry(5).ThenSkip();
+    private static readonly Action<IErrorPolicyBuilder> DefaultErrorPolicy = policy => policy
+        .Retry(5)
+        .ThenSkip(skip => skip.Publish(envelope =>
+        {
+            string? messageId = envelope.Headers.GetValue("X-Failed-Message");
+
+            return messageId == null ? null : new MessageSkipped(messageId, envelope.Endpoint.RawName);
+        }));
 
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder

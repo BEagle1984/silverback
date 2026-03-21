@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker.Kafka;
 
 /// <summary>
-///     Keeps track of the offsets of the messages being produced or consumed.
+///     Keeps track of the offsets of the messages being consumed.
 /// </summary>
 public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
 {

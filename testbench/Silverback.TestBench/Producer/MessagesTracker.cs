@@ -97,7 +97,7 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
             if (TrackLost(_mainViewModel.GetTopic(message.TargetTopicName), message.MessageId))
             {
                 _logger.LogCritical(
-                    "Message {MessageId} produced on topic {Topic} was not consumed within the expected time ({Threshold})" +
+                    "Message {MessageId} produced on topic {Topic} was not consumed within the expected time ({Threshold}) " +
                     "and is considered lost",
                     message.MessageId,
                     _mainViewModel.GetTopic(message.TargetTopicName).TopicName,

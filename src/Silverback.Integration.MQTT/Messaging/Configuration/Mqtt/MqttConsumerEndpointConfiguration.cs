@@ -28,7 +28,7 @@ public sealed record MqttConsumerEndpointConfiguration : ConsumerEndpointConfigu
     } = ValueReadOnlyCollection.Empty<string>();
 
     /// <summary>
-    ///     Gets the quality of service level (at most once, at least once or exactly once).
+    ///     Gets the quality of service level (at most once, at least once, or exactly once).
     ///     The default is <see cref="MqttQualityOfServiceLevel.AtMostOnce" />.
     /// </summary>
     public MqttQualityOfServiceLevel QualityOfServiceLevel { get; init; }
