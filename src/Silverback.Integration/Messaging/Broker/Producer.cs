@@ -206,8 +206,7 @@ public abstract class Producer : IProducer, IDisposable
         {
             OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
-
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
+            _logger.LogProduced(envelope);
 
             return brokerMessageIdentifier;
         }
@@ -226,7 +225,7 @@ public abstract class Producer : IProducer, IDisposable
             OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
             IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(envelope);
 
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
+            _logger.LogProduced(envelope);
 
             return brokerMessageIdentifier;
         }
@@ -318,11 +317,10 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                new OutboundEnvelope(messageContent, headers, EndpointConfiguration, this),
-                cancellationToken).ConfigureAwait(false);
+            OutboundEnvelope envelope = new(messageContent, headers, EndpointConfiguration, this);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
+            _logger.LogProduced(envelope);
 
             return brokerMessageIdentifier;
         }
@@ -341,11 +339,10 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                new OutboundEnvelope(messageStream, headers, EndpointConfiguration, this),
-                cancellationToken).ConfigureAwait(false);
+            OutboundEnvelope envelope = new(messageStream, headers, EndpointConfiguration, this);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(envelope, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogProduced(EndpointConfiguration, brokerMessageIdentifier);
+            _logger.LogProduced(envelope);
 
             return brokerMessageIdentifier;
         }
@@ -456,15 +453,15 @@ public abstract class Producer : IProducer, IDisposable
             envelope,
             static (identifier, state) =>
             {
-                state.Logger.LogProduced(state.EndpointConfiguration, identifier);
+                state.Logger.LogProduced(state.Envelope);
                 state.OnSuccess.Invoke(identifier);
             },
             static (exception, state) =>
             {
-                state.Logger.LogProduceError(state.EndpointConfiguration, exception);
+                state.Logger.LogProduceError(state.Envelope.EndpointConfiguration, exception);
                 state.OnError.Invoke(exception);
             },
-            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, Logger: _logger));
+            (OnSuccess: onSuccess, OnError: onError, Envelope: envelope, Logger: _logger));
 
     private void RawProduce<TState>(
         OutboundEnvelope envelope,
@@ -475,13 +472,13 @@ public abstract class Producer : IProducer, IDisposable
             envelope,
             static (identifier, innerState) =>
             {
-                innerState.Logger.LogProduced(innerState.EndpointConfiguration, identifier);
+                innerState.Logger.LogProduced(innerState.Envelope);
                 innerState.OnSuccess.Invoke(identifier, innerState.State);
             },
             static (exception, innerState) =>
             {
-                innerState.Logger.LogProduceError(innerState.EndpointConfiguration, exception);
+                innerState.Logger.LogProduceError(innerState.Envelope.EndpointConfiguration, exception);
                 innerState.OnError.Invoke(exception, innerState.State);
             },
-            (OnSuccess: onSuccess, OnError: onError, EndpointConfiguration, envelope.Headers, State: state, Logger: _logger));
+            (OnSuccess: onSuccess, OnError: onError, Envelope: envelope, State: state, Logger: _logger));
 }

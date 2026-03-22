@@ -2,13 +2,17 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.TestBench.Producer.Messages;
 using Silverback.TestBench.ViewModel;
 using Silverback.TestBench.ViewModel.Logs;
 using Silverback.TestBench.ViewModel.Topics;
@@ -62,31 +66,84 @@ public class ProducerBackgroundService : BackgroundService
             using Activity activity = new("Produce");
             activity.Start();
 
-            RoutableTestBenchMessage message = new(topic);
             try
             {
-                await _publisher.PublishAsync(message, stoppingToken);
-                _messagesTracker.TrackProduced(message);
-                _mainViewModel.Trace.TraceProduced(
-                    message.MessageId,
-                    _mainViewModel.GetTopic(message.TargetTopicName),
-                    new LogEntry(DateTime.UtcNow, "Message produced", null));
-
-                TimeSpan produceDelay = topic.ProduceDelay;
-                double speedMultiplier = _mainViewModel.ProduceSpeedMultiplier;
-
-                if (produceDelay != TimeSpan.Zero && speedMultiplier > 0)
+                IReadOnlyCollection<IOutboundEnvelope<RoutableTestBenchMessage>> envelopes = await (topic switch
                 {
-                    TimeSpan produceSpeedMultiplier = produceDelay / speedMultiplier;
-                    await Task.Delay(produceSpeedMultiplier, stoppingToken);
+                    KafkaTopicViewModel kafkaTopic =>
+                        ProduceAsync(topic, () => new KafkaRoutableTestBenchMessage(kafkaTopic), stoppingToken),
+                    MqttTopicViewModel mqttTopic =>
+                        ProduceAsync(topic, () => new MqttRoutableTestBenchMessage(mqttTopic), stoppingToken),
+                    _ => throw new InvalidOperationException($"Unsupported topic type: {topic.GetType().FullName}")
+                });
+
+                foreach (IOutboundEnvelope<RoutableTestBenchMessage> envelope in envelopes)
+                {
+                    _logger.LogInformation(
+                        "Message {MessageId} was produced to {MessageDestination}",
+                        envelope.Message?.MessageId,
+                        envelope.GetEndpoint().RawName);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Produce of message {MessageId} failed", message.MessageId);
-                _mainViewModel.Logs.AddError(DateTime.UtcNow, $"Produce of message {message.MessageId} failed: {ex}", null);
-                _messagesTracker.TrackProduceError(message);
+                _logger.LogError(ex, "Produce failed");
             }
+        }
+    }
+
+    private async Task<IReadOnlyCollection<IOutboundEnvelope<RoutableTestBenchMessage>>> ProduceAsync<TMessage>(
+        TopicViewModel topic,
+        Func<TMessage> messageFactory,
+        CancellationToken stoppingToken)
+        where TMessage : RoutableTestBenchMessage
+    {
+        List<IOutboundEnvelope<RoutableTestBenchMessage>> envelopes = [];
+
+        await _publisher.WrapAndPublishBatchAsync(
+            GetMessagesToProduceAsync(topic, messageFactory, stoppingToken),
+            (envelope, envelopesList) =>
+            {
+                envelope.SetKafkaDestinationTopic(envelope.Message?.TargetTopicName ?? "empty-topic-name");
+                envelope.SetMqttDestinationTopic(envelope.Message?.TargetTopicName ?? "empty-topic-name");
+                envelopesList.Add(envelope);
+            },
+            envelopes,
+            stoppingToken);
+
+        return envelopes;
+    }
+
+    private async IAsyncEnumerable<TMessage> GetMessagesToProduceAsync<TMessage>(
+        TopicViewModel topic,
+        Func<TMessage> messageFactory,
+        [EnumeratorCancellation] CancellationToken stoppingToken)
+        where TMessage : RoutableTestBenchMessage
+    {
+        int count = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            TMessage message = messageFactory();
+            yield return message;
+
+            _messagesTracker.TrackProduced(message);
+            _mainViewModel.Trace.TraceProduced(
+                message.MessageId,
+                _mainViewModel.GetTopic(message.TargetTopicName),
+                new LogEntry(DateTime.UtcNow, "Message produced", null));
+
+            if (stoppingToken.IsCancellationRequested || !_mainViewModel.IsProducing || !topic.IsEnabled || count++ >= 1000)
+                yield break;
+
+            TimeSpan produceDelay = topic.ProduceDelay;
+            double speedMultiplier = _mainViewModel.ProduceSpeedMultiplier;
+
+            if (produceDelay == TimeSpan.Zero || !(speedMultiplier > 0))
+                continue;
+
+            TimeSpan produceSpeedMultiplier = produceDelay / speedMultiplier;
+            await Task.Delay(produceSpeedMultiplier, stoppingToken);
         }
     }
 }

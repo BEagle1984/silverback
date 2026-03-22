@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -43,7 +42,7 @@ public class Subscriber
     public async Task OnMessageReceivedAsync(IAsyncEnumerable<IInboundEnvelope<UnboundedMessage>> stream)
     {
         IInboundEnvelope<TestBenchMessage>? firstEnvelope = null;
-        
+
         await foreach (IInboundEnvelope<TestBenchMessage> envelope in stream)
         {
             firstEnvelope ??= envelope;
@@ -52,7 +51,7 @@ public class Subscriber
             {
                 await ProcessEnvelopeAsync(envelope);
             }
-            catch 
+            catch
             {
                 firstEnvelope.Headers.Add("X-Failed-Message", envelope.Message?.MessageId);
                 throw;

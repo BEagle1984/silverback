@@ -209,23 +209,8 @@ internal static class IntegrationLoggerExtensions
 
         MessageProduced(
             logger.InnerLogger,
-            envelope.EndpointConfiguration.DisplayName,
+            envelope.GetEndpoint().DisplayName,
             envelope.BrokerMessageIdentifier?.ToLogString(),
-            null);
-    }
-
-    public static void LogProduced(
-        this ISilverbackLogger logger,
-        EndpointConfiguration endpointConfiguration,
-        IBrokerMessageIdentifier? brokerMessageIdentifier)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
-            return;
-
-        MessageProduced(
-            logger.InnerLogger,
-            endpointConfiguration.DisplayName,
-            brokerMessageIdentifier?.ToLogString(),
             null);
     }
 

@@ -6,13 +6,13 @@ using System.Text.Json.Serialization;
 using Silverback.TestBench.Models;
 using Silverback.TestBench.ViewModel.Topics;
 
-namespace Silverback.TestBench.Producer;
+namespace Silverback.TestBench.Producer.Messages;
 
-public class RoutableTestBenchMessage : TestBenchMessage
+public abstract class RoutableTestBenchMessage : TestBenchMessage
 {
     private static readonly Random Random = new();
 
-    public RoutableTestBenchMessage(TopicViewModel targetTopicConfiguration)
+    protected RoutableTestBenchMessage(TopicViewModel targetTopicConfiguration)
     {
         TargetTopicName = targetTopicConfiguration.TopicName;
 

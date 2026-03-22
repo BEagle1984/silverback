@@ -2,54 +2,31 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Configuration;
-using Silverback.TestBench.ViewModel;
-using Silverback.TestBench.ViewModel.Topics;
+using Silverback.TestBench.Producer.Messages;
 
 namespace Silverback.TestBench.Producer;
 
 public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
-    private readonly MainViewModel _mainViewModel;
-
-    public BrokerClientsConfigurator(MainViewModel mainViewModel)
-    {
-        _mainViewModel = mainViewModel;
-    }
-
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder
             .AddKafkaClients(clients => clients
-                .AddProducer(producer =>
-                {
-                    producer
-                        .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092")
-                        .WithClientId("testbench-producer");
-
-                    foreach (KafkaTopicViewModel topic in _mainViewModel.KafkaTopics)
-                    {
-                        producer.Produce<RoutableTestBenchMessage>(
-                            $"kafka-{topic.TopicName}",
-                            endpoint => endpoint
-                                .ProduceTo(topic.TopicName)
-                                .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                                .Filter(message => message?.TargetTopicName == topic.TopicName)
-                                .SetKafkaKey(message => message?.MessageId));
-                    }
-                }))
+                .AddProducer(producer => producer
+                    .WithBootstrapServers("PLAINTEXT://localhost:19092,PLAINTEXT://localhost:29092")
+                    .WithClientId("testbench-producer")
+                    .Produce<KafkaRoutableTestBenchMessage>(
+                        $"kafka-dynamic-topic",
+                        endpoint => endpoint
+                            .ProduceToDynamicTopic()
+                            //.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
+                            .SetKafkaKey(message => message?.MessageId))))
             .AddMqttClients(clients => clients
-                .AddClient(client =>
-                {
-                    client.ConnectViaTcp("localhost").WithClientId("testbench-producer");
-
-                    foreach (MqttTopicViewModel topic in _mainViewModel.MqttTopics)
-                    {
-                        client.Produce<RoutableTestBenchMessage>(
-                            $"mqtt-{topic.TopicName}",
-                            endpoint => endpoint
-                                .ProduceTo(topic.TopicName)
-                                .StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                                .WithAtLeastOnceQoS()
-                                .Filter(message => message?.TargetTopicName == topic.TopicName));
-                    }
-                }));
+                .AddClient(client => client
+                    .ConnectViaTcp("localhost").WithClientId("testbench-producer")
+                    .Produce<MqttRoutableTestBenchMessage>(
+                        $"mqtt-dynamic-topic",
+                        endpoint => endpoint
+                            .ProduceToDynamicTopic()
+                            //.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
+                            .WithAtLeastOnceQoS())));
 }

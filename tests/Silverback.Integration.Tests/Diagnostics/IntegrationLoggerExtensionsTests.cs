@@ -115,7 +115,7 @@ public class IntegrationLoggerExtensionsTests
     }
 
     [Fact]
-    public void LogProduced_ShouldLogEnvelope()
+    public void LogProduced_ShouldLog()
     {
         OutboundEnvelope envelope = new(
             null,
@@ -126,20 +126,6 @@ public class IntegrationLoggerExtensionsTests
             new TestOffset("a", "42"));
 
         _silverbackLogger.LogProduced(envelope);
-
-        _loggerSubstitute.Received(
-            LogLevel.Information,
-            null,
-            "Message produced | EndpointName: test1, BrokerMessageId: 42",
-            1005);
-    }
-
-    [Fact]
-    public void LogProduced_ShouldLogEndpointConfiguration()
-    {
-        TestProducerEndpointConfiguration endpointConfiguration = new("test1");
-
-        _silverbackLogger.LogProduced(endpointConfiguration, new TestOffset("a", "42"));
 
         _loggerSubstitute.Received(
             LogLevel.Information,

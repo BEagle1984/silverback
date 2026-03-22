@@ -37,32 +37,30 @@ public partial class App
         base.OnStartup(e);
 
         _host = Host.CreateDefaultBuilder(e.Args)
-            .ConfigureServices(
-                (_, services) =>
-                {
-                    services
-                        .AddSingleton(this)
-                        .AddSerilog(Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"));
+            .ConfigureServices((_, services) =>
+            {
+                services
+                    .AddSingleton(this)
+                    .AddSerilog(Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"));
 
-                    services.AddSilverback()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddKafka()
-                                .AddMqtt()
-                                .AddPostgreSqlOutbox()
-                                .AddOutboxWorker(
-                                    worker => worker
-                                        .ProcessOutbox(outbox => outbox.UsePostgreSql(PostgreSqlConnectionString))
-                                        .WithInterval(TimeSpan.FromMilliseconds(50))))
-                        .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
+                services.AddSilverback()
+                    .WithConnectionToMessageBroker(options => options
+                        .AddKafka()
+                        .AddMqtt()
+                        .AddPostgreSqlOutbox())
+                    // .AddOutboxWorker(
+                    //     worker => worker
+                    //         .ProcessOutbox(outbox => outbox.UsePostgreSql(PostgreSqlConnectionString))
+                    //         .WithInterval(TimeSpan.FromMilliseconds(50))))
+                    .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
 
-                    AddUtils(services);
-                    AddWindows(services);
+                AddUtils(services);
+                AddWindows(services);
 
-                    AddProducer(services);
-                    AddContainers(services);
-                    AddLogsAndTrace(services);
-                })
+                AddProducer(services);
+                AddContainers(services);
+                AddLogsAndTrace(services);
+            })
             .Build();
 
         _logger = _host.Services.GetRequiredService<ILogger<App>>();

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.TestBench.Producer.Messages;
 using Silverback.TestBench.ViewModel;
 using Silverback.TestBench.ViewModel.Logs;
 using Silverback.TestBench.ViewModel.Topics;
