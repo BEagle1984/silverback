@@ -61,6 +61,16 @@ services.AddSilverback()
                         }))));
 ```
 
+### Polymorphic Serialization
+
+Silverback by default adds an `x-message-type` header to the produced messages to allow the consumer to discriminate the message type and deserialize it accordingly. This allows polymorphic serialization, meaning that the producer can send messages of different types to the same topic and the consumer will be able to deserialize them correctly.
+
+For example, if the producer is configured to produce messages of type `MyMessage` but it actually produces a message of type `MyDerivedMessage`, the `x-message-type` header will be set to the **assembly qualified name** of `MyDerivedMessage`.
+
+This header will always be sent, even if the actual message type is the same as the one specified in the producer configuration. This header can be dropped using the `DisableMessageTypeHeader` method.
+
+To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., `TypeNameHandling` in `Newtonsoft.Json`).
+
 ### Schema Registry
 
 To integrate with Confluent Schema Registry, you can use the dedicated JSON serializer designed for schema registry support found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This uses the Confluent serializer under the hood, which in turn uses `Newtonsoft.Json`.

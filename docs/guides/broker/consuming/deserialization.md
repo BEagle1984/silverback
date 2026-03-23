@@ -61,6 +61,14 @@ services.AddSilverback()
                         }))));
 ```
 
+### Polymorphic Deserialization
+
+Using the `WithOptionalMessageTypeHeader` or `WithMandatoryMessageTypeHeader` method, the deserializer can be configured to use the `x-message-type` header to determine the target message type. This allows for polymorphic deserialization, where different message types can be deserialized from the same topic.
+
+For security reasons, this feature is disabled by default.
+
+To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., `TypeNameHandling` in `Newtonsoft.Json`). 
+
 ### Schema Registry
 
 To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the [Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/) package. This uses the Confluent deserializer under the hood, which in turn uses `Newtonsoft.Json`.
