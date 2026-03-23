@@ -82,7 +82,7 @@ public class ProducerBackgroundService : BackgroundService
                     _logger.LogInformation(
                         "Message {MessageId} was produced to {MessageDestination}",
                         envelope.Message?.MessageId,
-                        envelope.GetEndpoint().RawName);
+                        envelope.BrokerMessageIdentifier?.ToVerboseLogString() ?? envelope.GetEndpoint().RawName);
                 }
             }
             catch (Exception ex)
