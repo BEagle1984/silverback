@@ -237,7 +237,7 @@ Helper.Spy.OutboundEnvelopes.ShouldNotBeEmpty();
 Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 </code></pre>
 <h2 id="kafka-specifics">Kafka Specifics</h2>
-<h3 id="access-in-memory-topics">Access in-memory topics</h3>
+<h3 id="access-in-memory-topics">Access In-Memory topics</h3>
 <p>When using the mocked Kafka broker you can inspect the internal topics via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetTopic_System_String_System_String_">GetTopic(string, string?)</a>.</p>
 <pre><code class="lang-csharp">var topic = Helper.GetTopic(&quot;test-topic&quot;);
 
@@ -245,13 +245,13 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 // topic.Partitions...
 </code></pre>
 <p>If your test configures multiple Kafka clusters, use the overload that also takes the <code>bootstrapServers</code>.</p>
-<h3 id="inspect-consumer-groups">Inspect consumer groups</h3>
+<h3 id="inspect-consumer-groups">Inspect Consumer Groups</h3>
 <p>The mocked broker tracks consumer groups and offsets. You can access them via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_ConsumerGroups">ConsumerGroups</a> or retrieve a specific group via <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_GetConsumerGroup_System_String_">GetConsumerGroup(string)</a>.</p>
 <pre><code class="lang-csharp">var group = Helper.GetConsumerGroup(&quot;test-group&quot;);
 // group.Consumers / group.CommittedOffsets ...
 </code></pre>
-<h3 id="create-an-ad-hoc-producer">Create an ad-hoc producer</h3>
-<p>Sometimes you want to produce to Kafka without going through the application’s publisher (e.g. to simulate an external producer).</p>
+<h3 id="create-a-producer-on-the-fly">Create a Producer on-the-fly</h3>
+<p>Sometimes you want to produce to Kafka without going through the application’s publisher (e.g., to simulate an external producer).</p>
 <pre><code class="lang-csharp">var producer = Helper.GetProducer(
     config =&gt; config
         .WithBootstrapServers(&quot;PLAINTEXT://tests&quot;)
@@ -260,17 +260,17 @@ Helper.Spy.InboundEnvelopes.ShouldNotBeEmpty();
 await producer.ProduceAsync(new SomeMessage());
 </code></pre>
 <h2 id="mqtt-specifics">MQTT Specifics</h2>
-<h3 id="inspect-client-sessions">Inspect client sessions</h3>
+<h3 id="inspect-client-sessions">Inspect Client Sessions</h3>
 <p>With the mocked MQTT broker you can inspect client sessions via <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html#Silverback_Testing_IMqttTestingHelper_GetClientSession_System_String_">GetClientSession(string)</a>.</p>
 <pre><code class="lang-csharp">var session = Helper.GetClientSession(&quot;client-id&quot;);
 // inspect subscriptions, pending messages, ...
 </code></pre>
-<h3 id="read-published-messages">Read published messages</h3>
+<h3 id="read-published-messages">Read Published Messages</h3>
 <p>To quickly retrieve the raw MQTT messages published to a topic, use <a class="xref" href="../../api/Silverback.Testing.IMqttTestingHelper.html#Silverback_Testing_IMqttTestingHelper_GetMessages_System_String_">GetMessages(string)</a>.</p>
 <pre><code class="lang-csharp">var messages = Helper.GetMessages(&quot;test/topic&quot;);
 messages.Count.ShouldBeGreaterThan(0);
 </code></pre>
-<h3 id="create-an-ad-hoc-mqtt-producer">Create an ad-hoc MQTT producer</h3>
+<h3 id="create-a-producer-on-the-fly-1">Create a Producer on-the-fly</h3>
 <pre><code class="lang-csharp">var producer = Helper.GetProducer(
     config =&gt; config
         .WithClientId(&quot;external-producer&quot;)
@@ -278,7 +278,18 @@ messages.Count.ShouldBeGreaterThan(0);
 
 await producer.ProduceAsync(new SomeMessage());
 </code></pre>
-<h2 id="additional-resources">Additional Resources</h2>
+<h2 id="envelope-builders">Envelope Builders</h2>
+<p>Builders are also available to create the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> for the unit tests:</p>
+<ul>
+<li><a class="xref" href="../../api/Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a></li>
+<li><a class="xref" href="../../api/Silverback.Messaging.Messages.OutboundEnvelopeBuilder-1.html">OutboundEnvelopeBuilder&lt;TMessage&gt;</a></li>
+</ul>
+<pre><code class="lang-csharp">var envelope = new InboundEnvelopeBuilder&lt;MyMessage&gt;()
+    .WithMessage(new MyMessage() { ... })
+    .WithKafkaKey(&quot;1234&quot;)
+    .WithKafkaTopic(&quot;test-topic&quot;)
+    .Build();
+</code></pre>
 </article>
           </div>
 

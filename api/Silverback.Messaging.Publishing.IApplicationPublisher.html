@@ -93,35 +93,11 @@
   <div class="markdown level0 summary"><p>Publishes messages via the message bus, forwarding them to the subscribers.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_Publish_System_Object_System_Boolean_">IPublisher.Publish(object, bool)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_Publish__1_System_Object_System_Boolean_">IPublisher.Publish&lt;TResult&gt;(object, bool)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Threading_CancellationToken_">IPublisher.PublishAsync(object, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_System_Boolean_System_Threading_CancellationToken_">IPublisher.PublishAsync(object, bool, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Threading_CancellationToken_">IPublisher.PublishAsync&lt;TResult&gt;(object, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_System_Boolean_System_Threading_CancellationToken_">IPublisher.PublishAsync&lt;TResult&gt;(object, bool, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_Context">IPublisher.Context</a>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Publishing.html">Publishing</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Core.Model.dll</h6>
   <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IApplicationPublisher : IPublisher</code></pre>
+    <pre><code class="lang- hljs">public interface IApplicationPublisher</code></pre>
   </div>
   <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
@@ -905,43 +881,6 @@ through a message broker).</p>
   <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
 <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
 </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommand_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand_System_Boolean_">CommandPublisherExtensions.ExecuteCommand(IPublisher, ICommand, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommandAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand_System_Boolean_System_Threading_CancellationToken_">CommandPublisherExtensions.ExecuteCommandAsync(IPublisher, ICommand, bool, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommandAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand_System_Threading_CancellationToken_">CommandPublisherExtensions.ExecuteCommandAsync(IPublisher, ICommand, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommandAsync__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand___0__System_Boolean_System_Threading_CancellationToken_">CommandPublisherExtensions.ExecuteCommandAsync&lt;TResult&gt;(IPublisher, ICommand&lt;TResult&gt;, bool, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommandAsync__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand___0__System_Threading_CancellationToken_">CommandPublisherExtensions.ExecuteCommandAsync&lt;TResult&gt;(IPublisher, ICommand&lt;TResult&gt;, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisherExtensions.html#Silverback_Messaging_Publishing_CommandPublisherExtensions_ExecuteCommand__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_ICommand___0__System_Boolean_">CommandPublisherExtensions.ExecuteCommand&lt;TResult&gt;(IPublisher, ICommand&lt;TResult&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html#Silverback_Messaging_Publishing_EventPublisherExtensions_PublishEvent_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IEvent_System_Boolean_">EventPublisherExtensions.PublishEvent(IPublisher, IEvent, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html#Silverback_Messaging_Publishing_EventPublisherExtensions_PublishEventAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IEvent_System_Boolean_System_Threading_CancellationToken_">EventPublisherExtensions.PublishEventAsync(IPublisher, IEvent, bool, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.EventPublisherExtensions.html#Silverback_Messaging_Publishing_EventPublisherExtensions_PublishEventAsync_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IEvent_System_Threading_CancellationToken_">EventPublisherExtensions.PublishEventAsync(IPublisher, IEvent, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html#Silverback_Messaging_Publishing_QueryPublisherExtensions_ExecuteQueryAsync__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IQuery___0__System_Boolean_System_Threading_CancellationToken_">QueryPublisherExtensions.ExecuteQueryAsync&lt;TResult&gt;(IPublisher, IQuery&lt;TResult&gt;, bool, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html#Silverback_Messaging_Publishing_QueryPublisherExtensions_ExecuteQueryAsync__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IQuery___0__System_Threading_CancellationToken_">QueryPublisherExtensions.ExecuteQueryAsync&lt;TResult&gt;(IPublisher, IQuery&lt;TResult&gt;, CancellationToken)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisherExtensions.html#Silverback_Messaging_Publishing_QueryPublisherExtensions_ExecuteQuery__1_Silverback_Messaging_Publishing_IPublisher_Silverback_Messaging_Messages_IQuery___0__System_Boolean_">QueryPublisherExtensions.ExecuteQuery&lt;TResult&gt;(IPublisher, IQuery&lt;TResult&gt;, bool)</a>
-  </div>
 </article>
           </div>
 

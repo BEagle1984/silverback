@@ -86,13 +86,24 @@
             <article class="content wrap" id="_content" data-uid="releases-500">
 <h1 id="release-notes-v5xx">Release Notes v5.x.x</h1>
 
-<h2 id="510"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.1.0">5.1.0</a></h2>
+<h2 id="520"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.2.0">5.2.0</a></h2>
 <h3 id="whats-new">What's New</h3>
+<ul>
+<li>Add <code>WithKafkaTopic</code> and <code>WithMqttTopic</code> extension methods for the <a class="xref" href="../api/Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
+<li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IIntegrationPublisher.html">IIntegrationPublisher</a> as an alternative to the <code>WrapAndPublish</code> extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Ensure that the Kafka AdminClient is initialized with a clean configuration to prevent warnings from being logged</li>
+<li>Fix a race condition potentially preventing the batch sequence from completing successfully when the timeout is reached</li>
+</ul>
+<h2 id="510"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.1.0">5.1.0</a></h2>
+<h3 id="whats-new-1">What's New</h3>
 <ul>
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> as an alternative to the extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.13.2">Confluent.Kafka 2.13.2</a></li>
 </ul>
-<h3 id="fixes">Fixes</h3>
+<h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Correctly bind the error handler to the Kafka producer to prevent uncontrolled logging to stderr</li>
 </ul>
@@ -168,7 +179,7 @@
 </li>
 </ul>
 <p>In the following sections, you'll find more a more detailed and canonical list of improvements, new features, and breaking changes.</p>
-<h3 id="whats-new-1">What's New</h3>
+<h3 id="whats-new-2">What's New</h3>
 <ul>
 <li>Clean up code and increase tests coverage</li>
 <li>Reduce allocations and improve performance in many places (see <a class="xref" href="../peformance.html">Performance</a>)</li>
@@ -247,7 +258,9 @@
 <ul>
 <li>Increased default <a class="xref" href="../api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxDegreeOfParallelism">KafkaConsumerConfiguration.MaxDegreeOfParallelism</a> to 100</li>
 <li>Increased default <a class="xref" href="../api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_BackpressureLimit">KafkaConsumerConfiguration.BackpressureLimit</a> to 50</li>
-<li>Changed default <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> typename handling to <code>TypeNameHandling.None</code> to lay on the safe side</li>
+<li>The JSON deserializers don't use the <code>x-message-type</code> header anymore by default, meaning that you have to explicitly activate the feature to deserilize polymorphic messages (see <a class="xref" href="../guides/broker/consuming/deserialization.html">Deserializing the Consumed Messages</a>)</li>
+<li>Changed default <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> typename handling to <code>TypeNameHandling.None</code>, meaning that you need to explicitly set the type name handling strategy if you want to support polymorphic nested properties</li>
+<li>Reverted default and null value handling in <a class="xref" href="../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> to Newtonsoft.Json's default</li>
 <li>By default, the <code>MqttProducer</code> will not throw an exception anymore if no subscriber is consuming the produced message (can be configured to log a warning, or throw an exception)</li>
 </ul>
 </li>

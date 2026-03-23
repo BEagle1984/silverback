@@ -130,6 +130,10 @@
                             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                         }))));
 </code></pre>
+<h3 id="polymorphic-deserialization">Polymorphic Deserialization</h3>
+<p>Using the <code>WithOptionalMessageTypeHeader</code> or <code>WithMandatoryMessageTypeHeader</code> method, the deserializer can be configured to use the <code>x-message-type</code> header to determine the target message type. This allows for polymorphic deserialization, where different message types can be deserialized from the same topic.</p>
+<p>For security reasons, this feature is disabled by default.</p>
+<p>To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., <code>TypeNameHandling</code> in <code>Newtonsoft.Json</code>).</p>
 <h3 id="schema-registry">Schema Registry</h3>
 <p>To integrate with Confluent Schema Registry, you can use the dedicated JSON deserializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This uses the Confluent deserializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
 <pre><code class="lang-csharp">services.AddSilverback()

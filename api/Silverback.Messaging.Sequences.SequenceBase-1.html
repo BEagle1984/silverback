@@ -733,7 +733,7 @@ sequence.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ValueTask&lt;AddToSequenceResult&gt; AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">public Task&lt;AddToSequenceResult&gt; AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -776,8 +776,8 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
 the operation was successful and the number of streams that have been actually pushed.</p>
 </td>
       </tr>
@@ -792,7 +792,7 @@ the operation was successful and the number of streams that have been actually p
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected virtual ValueTask&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang- hljs">protected virtual Task&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -835,8 +835,8 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The task result contains a flag indicating whether
 the operation was successful and the number of streams that have been actually pushed.</p>
 </td>
       </tr>

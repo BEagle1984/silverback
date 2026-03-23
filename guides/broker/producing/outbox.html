@@ -207,10 +207,10 @@
 <h3 id="distributed-lock">Distributed Lock</h3>
 <p>The default locking mechanism from the selected storage package is automatically used (custom locks table for Entity Framework, advisory locks for PostgreSQL, in-memory for Sqlite, etc.), but you can customize this. The following example shows how to leverage PostgreSQL advisory locks with Entity Framework.</p>
 <pre><code class="lang-csharp">.AddOutboxWorker(worker =&gt; worker
+    .WithDistributedLock(distributedLock =&gt; distributedLock
+        .UsePostgreSqlAdvisoryLock(connectionString))
     .ProcessOutbox(outbox =&gt; outbox
-        .UsePostgreSql(connectionString)
-        .WithDistributedLock(distributedLock =&gt; distributedLock
-            .UsePostgreSqlAdvisoryLock(connectionString)))
+        .UsePostgreSql(connectionString)))
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>

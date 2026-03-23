@@ -130,6 +130,11 @@
                             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                         }))));
 </code></pre>
+<h3 id="polymorphic-serialization">Polymorphic Serialization</h3>
+<p>Silverback by default adds an <code>x-message-type</code> header to the produced messages to allow the consumer to discriminate the message type and deserialize it accordingly. This allows polymorphic serialization, meaning that the producer can send messages of different types to the same topic and the consumer will be able to deserialize them correctly.</p>
+<p>For example, if the producer is configured to produce messages of type <code>MyMessage</code> but it actually produces a message of type <code>MyDerivedMessage</code>, the <code>x-message-type</code> header will be set to the <strong>assembly qualified name</strong> of <code>MyDerivedMessage</code>.</p>
+<p>This header will always be sent, even if the actual message type is the same as the one specified in the producer configuration. This header can be dropped using the <code>DisableMessageTypeHeader</code> method.</p>
+<p>To handle polymorphic nested properties, you have instead to rely on the serializer built-in functionality (e.g., <code>TypeNameHandling</code> in <code>Newtonsoft.Json</code>).</p>
 <h3 id="schema-registry">Schema Registry</h3>
 <p>To integrate with Confluent Schema Registry, you can use the dedicated JSON serializer designed for schema registry support found in the <a href="https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/">Silverback.Kafka.SchemaRegistry</a> package. This uses the Confluent serializer under the hood, which in turn uses <code>Newtonsoft.Json</code>.</p>
 <pre><code class="lang-csharp">services.AddSilverback()

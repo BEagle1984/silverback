@@ -2319,7 +2319,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Silverback.Messaging.Broker.Kafka.OffsetsTracker",
-      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.yml\" sourcestartlinenumber=\"1\">Keeps track of the offsets of the messages being produced or consumed.</p>\n"
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Broker.Kafka.OffsetsTracker.yml\" sourcestartlinenumber=\"1\">Keeps track of the offsets of the messages being consumed.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -5903,7 +5903,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions",
-      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.yml\" sourcestartlinenumber=\"1\">Adds the <code>WithOffset</code> methods to the <xref href=\"Silverback.Messaging.Messages.InboundEnvelopeBuilder%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.yml\" sourcestartlinenumber=\"1\">Adds the Kafka specific methods to the <xref href=\"Silverback.Messaging.Messages.InboundEnvelopeBuilder%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7307,6 +7307,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Publishing.IIntegrationPublisher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Publishing.IIntegrationPublisher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Publishing.IIntegrationPublisher",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Publishing.IIntegrationPublisher.yml\" sourcestartlinenumber=\"1\">Exposes the methods to enrich and publish the messages to the configured message broker endpoints.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Silverback.Messaging.Publishing.IPublisher.yml",
       "output": {
         ".html": {
@@ -7443,7 +7457,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Silverback.Messaging.Sequences.Batch.BatchSettings",
-      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Sequences.Batch.BatchSettings.yml\" sourcestartlinenumber=\"1\">The batch consuming settings.</p>\n"
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Sequences.Batch.BatchSettings.yml\" sourcestartlinenumber=\"1\">The batch processing settings.</p>\n"
     },
     {
       "type": "ManagedReference",

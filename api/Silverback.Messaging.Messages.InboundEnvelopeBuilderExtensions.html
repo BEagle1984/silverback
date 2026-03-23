@@ -90,7 +90,7 @@
 
   <h1 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions" class="text-break">Class InboundEnvelopeBuilderExtensions
 </h1>
-  <div class="markdown level0 summary"><p>Adds the <code>WithOffset</code> methods to the <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+  <div class="markdown level0 summary"><p>Adds the Kafka specific methods to the <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -152,7 +152,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><span class="parametername">builder</span></td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </td>
@@ -175,7 +175,153 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset*"></a>
+  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},Silverback.Messaging.Broker.KafkaOffset)">WithKafkaOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, KafkaOffset)</h4>
+  <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithKafkaOffset&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, KafkaOffset offset) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">builder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The offset.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset*"></a>
+  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_System_Int32_System_Int64_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String,System.Int32,System.Int64)">WithKafkaOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string, int, long)</h4>
+  <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithKafkaOffset&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, string topic, int partition, long offset) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">builder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">topic</span></td>
+        <td><p>The topic.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">partition</span></td>
+        <td><p>The partition.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The offset.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </td>
       </tr>
@@ -219,7 +365,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><span class="parametername">builder</span></td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </td>
@@ -242,7 +388,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </td>
       </tr>
@@ -266,14 +412,14 @@
   </table>
 
 
-  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithOffset*"></a>
-  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},Silverback.Messaging.Broker.KafkaOffset)">WithOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, KafkaOffset)</h4>
-  <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
+  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaTopic_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaTopic*"></a>
+  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithKafkaTopic__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_System_Int32_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithKafkaTopic``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String,System.Int32)">WithKafkaTopic&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string, int)</h4>
+  <div class="markdown level1 summary"><p>Sets the topic and, optionally, the partition from which the message was consumed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithOffset&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, KafkaOffset offset) where TMessage : class</code></pre>
+    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithKafkaTopic&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, string topic, int partition = 0) where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -286,74 +432,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">builder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a></td>
-        <td><span class="parametername">offset</span></td>
-        <td><p>The offset.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-
-
-  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithOffset_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithOffset*"></a>
-  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithOffset__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_System_Int32_System_Int64_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithOffset``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String,System.Int32,System.Int64)">WithOffset&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string, int, long)</h4>
-  <div class="markdown level1 summary"><p>Sets the offset of the message.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithOffset&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, string topic, int partition, long offset) where TMessage : class</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><span class="parametername">builder</span></td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
 </td>
@@ -367,13 +446,7 @@
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
         <td><span class="parametername">partition</span></td>
-        <td><p>The partition.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
-        <td><span class="parametername">offset</span></td>
-        <td><p>The offset.</p>
+        <td><p>The partition index. Set to 0 if not specified.</p>
 </td>
       </tr>
     </tbody>
@@ -388,7 +461,141 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/a4e442de0859b9451d5c2039778b12c383f3d7cf/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttCorrelationData_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttCorrelationData*"></a>
+  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttCorrelationData__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_Byte___" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttCorrelationData``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.Byte[])">WithMqttCorrelationData&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, byte[])</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithMqttCorrelationData&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, byte[] correlationData) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">builder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</td>
+        <td><span class="parametername">correlationData</span></td>
+        <td><p>The correlation data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <a id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttTopic_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttTopic*"></a>
+  <h4 id="Silverback_Messaging_Messages_InboundEnvelopeBuilderExtensions_WithMqttTopic__1_Silverback_Messaging_Messages_InboundEnvelopeBuilder___0__System_String_" data-uid="Silverback.Messaging.Messages.InboundEnvelopeBuilderExtensions.WithMqttTopic``1(Silverback.Messaging.Messages.InboundEnvelopeBuilder{``0},System.String)">WithMqttTopic&lt;TMessage&gt;(InboundEnvelopeBuilder&lt;TMessage&gt;, string)</h4>
+  <div class="markdown level1 summary"><p>Sets the topic from which the message was consumed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang- hljs">public static InboundEnvelopeBuilder&lt;TMessage&gt; WithMqttTopic&lt;TMessage&gt;(this InboundEnvelopeBuilder&lt;TMessage&gt; builder, string topic) where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">builder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">topic</span></td>
+        <td><p>The topic name.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/93bc9a815f6109f09ea2c2bdddceb63a32e4ce4d/src/Silverback.Integration.Testing/Messaging/Messages/InboundEnvelopeBuilder%601.cs">InboundEnvelopeBuilder</a>&lt;TMessage&gt;</td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> so that additional calls can be chained.</p>
 </td>
       </tr>

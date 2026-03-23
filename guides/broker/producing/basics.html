@@ -152,6 +152,7 @@
         .AddHeader(&quot;x-priority&quot;, 1)
         .AddHeader(&quot;x-random&quot;, Random.Shared.Next()));
 </code></pre>
+<p>Alternatively to the extension methods you can use the <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IIntegrationPublisher.html">IIntegrationPublisher</a>. This interface declares the same <code>WrapAndPublish</code> methods defined as extensions for the basic <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>, offering better testability (as you cannot mock extension methods).</p>
 <h3 id="publish-batches-wrapandpublishbatch">Publish Batches (WrapAndPublishBatch)</h3>
 <p>Use <code>WrapAndPublishBatchAsync</code> to publish multiple messages efficiently.</p>
 <pre><code class="lang-csharp">public Task PublishBatchAsync(IEnumerable&lt;MyMessage&gt; messages) =&gt;
@@ -168,6 +169,7 @@
         order =&gt; new OrderReceived { OrderNumber = order.Number },
         (envelope, order) =&gt; envelope.AddHeader(&quot;x-priority&quot;, order.Priority));
 </code></pre>
+<p>Alternatively to the extension methods you can use the <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IIntegrationPublisher.html">IIntegrationPublisher</a>. This interface declares the same <code>WrapAndPublishBatch</code> methods defined as extensions for the basic <a class="xref" href="../../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>, offering better testability (as you cannot mock extension methods).</p>
 <h2 id="routing">Routing</h2>
 <p>The <code>Produce&lt;TMessage&gt;</code> method is used to configure the specified message type to be routed through the producer. The <code>ProduceTo</code> method specifies the topic to which the messages should be sent. Each endpoint can be configured with additional settings, such as specific headers or message properties, or a different serialization strategy.</p>
 <figure>
