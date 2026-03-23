@@ -125,10 +125,10 @@ The default locking mechanism from the selected storage package is automatically
 
 ```csharp
 .AddOutboxWorker(worker => worker
+    .WithDistributedLock(distributedLock => distributedLock
+        .UsePostgreSqlAdvisoryLock(connectionString))
     .ProcessOutbox(outbox => outbox
-        .UsePostgreSql(connectionString)
-        .WithDistributedLock(distributedLock => distributedLock
-            .UsePostgreSqlAdvisoryLock(connectionString)))
+        .UsePostgreSql(connectionString)))
 ```
 
 > [!Note]
