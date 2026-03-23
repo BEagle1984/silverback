@@ -24,6 +24,8 @@ namespace Silverback.TestBench;
 
 public partial class App
 {
+    public const bool UseOutbox = false;
+
     public const string PostgreSqlConnectionString = "Host=localhost;Database=silverback;Username=dbadmin;Password=Si1v3rbacK";
 
     private IHost? _host;
@@ -44,14 +46,19 @@ public partial class App
                     .AddSerilog(Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"));
 
                 services.AddSilverback()
-                    .WithConnectionToMessageBroker(options => options
-                        .AddKafka()
-                        .AddMqtt()
-                        .AddPostgreSqlOutbox())
-                    // .AddOutboxWorker(
-                    //     worker => worker
-                    //         .ProcessOutbox(outbox => outbox.UsePostgreSql(PostgreSqlConnectionString))
-                    //         .WithInterval(TimeSpan.FromMilliseconds(50))))
+                    .WithConnectionToMessageBroker(options =>
+                    {
+                        options.AddKafka().AddMqtt().AddPostgreSqlOutbox();
+
+#pragma warning disable CS0162 // Unreachable code detected
+                        if (UseOutbox)
+                        {
+                            options.AddOutboxWorker(worker => worker
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(PostgreSqlConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50)));
+                        }
+#pragma warning restore CS0162 // Unreachable code detected
+                    })
                     .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
 
                 AddUtils(services);

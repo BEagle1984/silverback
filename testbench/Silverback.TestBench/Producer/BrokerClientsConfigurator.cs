@@ -16,17 +16,31 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                     .WithClientId("testbench-producer")
                     .Produce<KafkaRoutableTestBenchMessage>(
                         $"kafka-dynamic-topic",
-                        endpoint => endpoint
-                            .ProduceToDynamicTopic()
-                            //.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                            .SetKafkaKey(message => message?.MessageId))))
+                        endpoint =>
+                        {
+                            endpoint.ProduceToDynamicTopic().SetKafkaKey(message => message?.MessageId);
+
+#pragma warning disable CS0162 // Unreachable code detected
+                            if (App.UseOutbox)
+                            {
+                                endpoint.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString));
+                            }
+#pragma warning restore CS0162 // Unreachable code detected
+                        })))
             .AddMqttClients(clients => clients
                 .AddClient(client => client
                     .ConnectViaTcp("localhost").WithClientId("testbench-producer")
                     .Produce<MqttRoutableTestBenchMessage>(
                         $"mqtt-dynamic-topic",
-                        endpoint => endpoint
-                            .ProduceToDynamicTopic()
-                            //.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString))
-                            .WithAtLeastOnceQoS())));
+                        endpoint =>
+                        {
+                            endpoint.ProduceToDynamicTopic().WithAtLeastOnceQoS();
+
+#pragma warning disable CS0162 // Unreachable code detected
+                            if (App.UseOutbox)
+                            {
+                                endpoint.StoreToOutbox(outbox => outbox.UsePostgreSql(App.PostgreSqlConnectionString));
+                            }
+#pragma warning restore CS0162 // Unreachable code detected
+                        })));
 }
