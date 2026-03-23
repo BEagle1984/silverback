@@ -54,7 +54,7 @@ public class TombstoneMessageArgumentResolver : ISingleMessageArgumentResolver
         if (parameterType.IsGenericType)
         {
             Type messageType = parameterType.GetGenericArguments()[0];
-            return Activator.CreateInstance(typeof(Tombstone<>).MakeGenericType(messageType), messageKey)!;
+            return Activator.CreateInstance(typeof(Tombstone<>).MakeGenericType(messageType), messageKey);
         }
 
         return new Tombstone(messageKey);

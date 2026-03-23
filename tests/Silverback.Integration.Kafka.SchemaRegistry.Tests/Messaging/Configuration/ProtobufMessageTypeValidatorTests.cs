@@ -59,7 +59,7 @@ public class ProtobufMessageTypeValidatorTests
         {
         }
 
-        public MessageDescriptor Descriptor { get; } = null!;
+        public MessageDescriptor Descriptor => null!;
 
         public void MergeFrom(ProtobufMessageNoCtor message) => throw new NotSupportedException();
 

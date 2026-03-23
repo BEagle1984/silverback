@@ -1,6 +1,6 @@
 [*]
 
-# Microsoft.CodeAnalysis.NetAnalyzers
+# Microsoft.CodeAnalysis.NetAnalyzers   
 # CA1030: Use events where appropriate
 dotnet_diagnostic.CA1030.severity = none
 # CA1031: Do not catch general exception types
@@ -47,6 +47,8 @@ dotnet_diagnostic.CA5358.severity = none
 dotnet_diagnostic.CA5394.severity = none
 # CA5398: Avoid hardcoded SslProtocols values
 dotnet_diagnostic.CA5398.severity = none
+# IDE0370: Suppression is unnecessary
+dotnet_diagnostic.IDE0370.severity = none
 
 # StyleCop.Analyzers
 # SA1600: A C# code element is missing a documentation header

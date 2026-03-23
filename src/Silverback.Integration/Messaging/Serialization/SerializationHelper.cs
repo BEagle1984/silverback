@@ -31,7 +31,7 @@ internal static class SerializationHelper
             messageType,
             type => typeof(InboundEnvelope<>).MakeGenericType(type).GetConstructor([typeof(IRawInboundEnvelope), type])!);
 
-        return constructor.Invoke([rawInboundEnvelope, deserializedMessage]) as IInboundEnvelope
-               ?? throw new InvalidOperationException("Failed to create the typed envelope.");
+        return constructor.Invoke([rawInboundEnvelope, deserializedMessage]) as IInboundEnvelope ??
+               throw new InvalidOperationException("Failed to create the typed envelope.");
     }
 }
