@@ -34,6 +34,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private bool _disposed;
 
+    private bool _isCompleting;
+
     private bool _isAborting;
 
     /// <inheritdoc cref="MessageStreamProvider.MessageType" />
@@ -99,8 +101,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.Abort" />
     public override void Abort()
     {
-        if (_isAborting) // prevent deadlocking on reentry
+        if (_isAborting || _isCompleting) // prevent deadlocking on reentry
             return;
+
+        if (_isCompleting)
+            throw new InvalidOperationException("The streams are being completed.");
 
         _completeSemaphore.Wait();
 
@@ -134,6 +139,12 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.CompleteAsync" />
     public override async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
+        if (_isCompleting || _isAborting) // prevent deadlocking on reentry
+            return;
+
+        if (_isAborting)
+            throw new InvalidOperationException("The streams are being aborted.");
+
         await _completeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
         try
@@ -143,6 +154,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             if (_completed)
                 return;
+
+            _isCompleting = true;
 
             await _lazyStreams.ParallelForEachAsync(async lazyStream =>
             {
@@ -156,6 +169,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         }
         finally
         {
+            _isCompleting = false;
             _completeSemaphore.Release();
         }
     }
@@ -215,8 +229,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (!_aborted && !_completed)
             CompleteAsync().SafeWait();
 
-        _completeSemaphore.Wait();
-        _completeSemaphore.Dispose();
+        // _completeSemaphore.Wait();
+        // _completeSemaphore.Dispose();
 
         _disposed = true;
     }

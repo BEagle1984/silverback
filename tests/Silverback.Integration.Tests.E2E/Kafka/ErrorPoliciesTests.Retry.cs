@@ -828,8 +828,12 @@ public partial class ErrorPoliciesTests
                     .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(100))
-                        .OnError(policy => policy.Retry(10)))))
+                        .OnError(policy => policy.Retry(10))))
+            )
             .AddDelegateSubscriber<IEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddDelegateSubscriber<IEnumerable<TestEventFour>>((IEnumerable<TestEventFour> enumerable) => {})
+            .AddDelegateSubscriber<IEnumerable<TestEventThree>>((IEnumerable<TestEventThree> enumerable) => {})
+            .AddDelegateSubscriber<IEnumerable<TestEventTwo>>((IEnumerable<TestEventTwo> enumerable) => {})
             .AddIntegrationSpy());
 
         void HandleBatch(IEnumerable<IIntegrationEvent> batch)
