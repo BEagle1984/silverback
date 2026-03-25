@@ -24,11 +24,19 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 {
     private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = [];
 
+    private readonly SemaphoreSlim _completeSemaphore = new(1, 1);
+
     private MethodInfo? _genericCreateStreamMethodInfo;
 
     private bool _completed;
 
     private bool _aborted;
+
+    private bool _disposed;
+
+    private bool _isCompleting;
+
+    private bool _isAborting;
 
     /// <inheritdoc cref="MessageStreamProvider.MessageType" />
     public override Type MessageType => typeof(TMessage);
@@ -93,41 +101,77 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.Abort" />
     public override void Abort()
     {
-        if (_completed)
-            throw new InvalidOperationException("The streams are already completed.");
-
-        if (_aborted)
+        if (_isAborting || _isCompleting) // prevent deadlocking on reentry
             return;
 
-        _lazyStreams.ParallelForEach(lazyStream =>
-        {
-            if (lazyStream.Stream != null)
-                lazyStream.Stream.Abort();
-            else
-                lazyStream.Cancel();
-        });
+        if (_isCompleting)
+            throw new InvalidOperationException("The streams are being completed.");
 
-        _aborted = true;
+        _completeSemaphore.Wait();
+
+        try
+        {
+            if (_completed)
+                throw new InvalidOperationException("The streams are already completed.");
+
+            if (_aborted)
+                return;
+
+            _isAborting = true;
+
+            _lazyStreams.ParallelForEach(lazyStream =>
+            {
+                if (lazyStream.Stream != null)
+                    lazyStream.Stream.Abort();
+                else
+                    lazyStream.Cancel();
+            });
+
+            _aborted = true;
+        }
+        finally
+        {
+            _isAborting = false;
+            _completeSemaphore.Release();
+        }
     }
 
     /// <inheritdoc cref="MessageStreamProvider.CompleteAsync" />
     public override async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
-        if (_aborted)
-            throw new InvalidOperationException("The stream are already aborted.");
-
-        if (_completed)
+        if (_isCompleting || _isAborting) // prevent deadlocking on reentry
             return;
 
-        await _lazyStreams.ParallelForEachAsync(async lazyStream =>
-        {
-            if (lazyStream.Stream != null)
-                await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
-            else
-                lazyStream.Cancel();
-        }).ConfigureAwait(false);
+        if (_isAborting)
+            throw new InvalidOperationException("The streams are being aborted.");
 
-        _completed = true;
+        await _completeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+        try
+        {
+            if (_aborted)
+                throw new InvalidOperationException("The stream are already aborted.");
+
+            if (_completed)
+                return;
+
+            _isCompleting = true;
+
+            await _lazyStreams.ParallelForEachAsync(async lazyStream =>
+            {
+                if (lazyStream.Stream != null)
+                    await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
+                else
+                    lazyStream.Cancel();
+            }).ConfigureAwait(false);
+
+            _completed = true;
+        }
+        finally
+        {
+            _isCompleting = false;
+            _completeSemaphore.Release();
+        }
     }
 
     /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
@@ -179,8 +223,16 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="IDisposable.Dispose" />
     public override void Dispose()
     {
+        if (_disposed)
+            return;
+
         if (!_aborted && !_completed)
             CompleteAsync().SafeWait();
+
+        _completeSemaphore.Wait();
+        _completeSemaphore.Dispose();
+
+        _disposed = true;
     }
 
     private static LazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>

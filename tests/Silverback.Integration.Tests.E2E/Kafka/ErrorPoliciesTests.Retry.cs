@@ -32,23 +32,19 @@ public partial class ErrorPoliciesTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent dummy)
         {
@@ -74,25 +70,20 @@ public partial class ErrorPoliciesTests
         int consumedCount = 0;
         SemaphoreSlim semaphore = new(0);
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(2).ThenSkip()))))
-                .AddDelegateSubscriber<TestEventOne>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(2).ThenSkip()))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(TestEventOne message)
         {
@@ -138,26 +129,21 @@ public partial class ErrorPoliciesTests
         int consumedCount = 0;
         SemaphoreSlim semaphore = new(0);
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .ProcessAllPartitionsTogether()
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(2).ThenSkip()))))
-                .AddDelegateSubscriber<TestEventOne>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .ProcessAllPartitionsTogether()
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(2).ThenSkip()))))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(TestEventOne message)
         {
@@ -201,23 +187,19 @@ public partial class ErrorPoliciesTests
     {
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent message)
         {
@@ -240,23 +222,19 @@ public partial class ErrorPoliciesTests
     {
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent message)
         {
@@ -278,31 +256,24 @@ public partial class ErrorPoliciesTests
     {
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent message)
         {
@@ -320,12 +291,11 @@ public partial class ErrorPoliciesTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(16);
-        Helper.Spy.RawOutboundEnvelopes.ForEach(
-            envelope =>
-            {
-                envelope.RawMessage.ShouldNotBeNull();
-                envelope.RawMessage.Length.ShouldBeLessThanOrEqualTo(10);
-            });
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope =>
+        {
+            envelope.RawMessage.ShouldNotBeNull();
+            envelope.RawMessage.Length.ShouldBeLessThanOrEqualTo(10);
+        });
 
         tryCount.ShouldBe(8);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(8);
@@ -346,31 +316,24 @@ public partial class ErrorPoliciesTests
     {
         Counter[] tryCounters = new Counter[4];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationMessage>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<TestIndexedMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationMessage>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<TestIndexedMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(TestIndexedMessage message)
         {
@@ -404,31 +367,24 @@ public partial class ErrorPoliciesTests
         int tryCount = 0;
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage)
         {
@@ -478,30 +434,24 @@ public partial class ErrorPoliciesTests
         Stream rawMessage = await DefaultSerializers.Json.SerializeAsync(message);
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(AesEncryptionKey)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent unused)
         {
@@ -530,31 +480,25 @@ public partial class ErrorPoliciesTests
         Stream rawMessage = await DefaultSerializers.Json.SerializeAsync(message);
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)
-                                        .EncryptUsingAes(AesEncryptionKey)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EnableChunking(10)
+                        .EncryptUsingAes(AesEncryptionKey)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(AesEncryptionKey)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent unused)
         {
@@ -570,12 +514,11 @@ public partial class ErrorPoliciesTests
 
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(8);
         Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().ShouldNotBe(rawMessage.Read(10));
-        Helper.Spy.RawOutboundEnvelopes.ForEach(
-            envelope =>
-            {
-                envelope.RawMessage.ShouldNotBeNull();
-                envelope.RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
-            });
+        Helper.Spy.RawOutboundEnvelopes.ForEach(envelope =>
+        {
+            envelope.RawMessage.ShouldNotBeNull();
+            envelope.RawMessage!.Length.ShouldBeLessThanOrEqualTo(10);
+        });
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeEquivalentTo(message));
     }
@@ -586,30 +529,71 @@ public partial class ErrorPoliciesTests
         int tryMessageCount = 0;
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(2)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
 
         async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
         {
             await foreach (IIntegrationEvent dummy in batch)
+            {
+                tryMessageCount++;
+                if (tryMessageCount is not 2 and not 4 and not 5)
+                    throw new InvalidOperationException($"Retry {tryMessageCount}!");
+            }
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
+
+        completedBatches.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenThrowingWhileSynchronouslyEnumerating()
+    {
+        int tryMessageCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        void HandleBatch(IEnumerable<IIntegrationEvent> batch)
+        {
+            foreach (IIntegrationEvent dummy in batch)
             {
                 tryMessageCount++;
                 if (tryMessageCount is not 2 and not 4 and not 5)
@@ -637,27 +621,22 @@ public partial class ErrorPoliciesTests
         int tryMessageCount = 0;
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .ProcessAllPartitionsTogether()
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(2)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .ProcessAllPartitionsTogether()
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
 
         async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
         {
@@ -689,31 +668,27 @@ public partial class ErrorPoliciesTests
         int tryMessageCount = 0;
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .ProcessAllPartitionsTogether()
-                                .Consume(
-                                    "endpoint1",
-                                    endpoint => endpoint
-                                        .ConsumeFrom(
-                                            new TopicPartition(DefaultTopicName, 0),
-                                            new TopicPartition(DefaultTopicName, 1),
-                                            new TopicPartition(DefaultTopicName, 2))
-                                        .EnableBatchProcessing(2)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .ProcessAllPartitionsTogether()
+                    .Consume(
+                        "endpoint1",
+                        endpoint => endpoint
+                            .ConsumeFrom(
+                                new TopicPartition(DefaultTopicName, 0),
+                                new TopicPartition(DefaultTopicName, 1),
+                                new TopicPartition(DefaultTopicName, 2))
+                            .EnableBatchProcessing(2)
+                            .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
 
         async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
         {
@@ -745,26 +720,21 @@ public partial class ErrorPoliciesTests
         int tryCount = 0;
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(2)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
 
         async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
         {
@@ -793,27 +763,133 @@ public partial class ErrorPoliciesTests
     }
 
     [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenThrowingAfterEnumerationCompletedByTimeout()
+    {
+        int tryCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(100))
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+                // Do nothing
+            }
+
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
+
+        completedBatches.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenThrowingAfterSynchronousEnumerationCompletedByTimeout()
+    {
+        int tryCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(100))
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IEnumerable<IIntegrationEvent>>(HandleBatch)
+
+            // Add extra batch subscribers to verify that the extra streams are correctly canceled
+            .AddDelegateSubscriber<IEnumerable<TestEventFour>>(_ =>
+            {
+                // Do nothing
+            })
+            .AddDelegateSubscriber<IEnumerable<TestEventThree>>(_ =>
+            {
+                // Do nothing
+            })
+            .AddDelegateSubscriber<IEnumerable<TestEventTwo>>(_ =>
+            {
+                // Do nothing
+            })
+            .AddIntegrationSpy());
+
+        void HandleBatch(IEnumerable<IIntegrationEvent> batch)
+        {
+            foreach (IIntegrationEvent dummy in batch)
+            {
+                // Do nothing
+            }
+
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(6);
+
+        completedBatches.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task RetryPolicy_ShouldStopConsumer_WhenStillFailingAfterRetries()
     {
         int tryCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Retry(10)))))
-                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(IIntegrationEvent message)
         {
