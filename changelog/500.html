@@ -86,18 +86,13 @@
             <article class="content wrap" id="_content" data-uid="releases-500">
 <h1 id="release-notes-v5xx">Release Notes v5.x.x</h1>
 
-<h2 id="521"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.2.1">5.2.1</a></h2>
-<h3 id="fixes">Fixes</h3>
-<ul>
-<li>Fix a potential deadlock in the batch sequence completion</li>
-</ul>
 <h2 id="520"><a href="https://github.com/BEagle1984/silverback/releases/tag/v5.2.0">5.2.0</a></h2>
 <h3 id="whats-new">What's New</h3>
 <ul>
 <li>Add <code>WithKafkaTopic</code> and <code>WithMqttTopic</code> extension methods for the <a class="xref" href="../api/Silverback.Messaging.Messages.InboundEnvelopeBuilder-1.html">InboundEnvelopeBuilder&lt;TMessage&gt;</a> (see <a class="xref" href="../guides/broker/testing.html">Testing</a>)</li>
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IIntegrationPublisher.html">IIntegrationPublisher</a> as an alternative to the <code>WrapAndPublish</code> extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/broker/producing/basics.html">Producing Messages</a>)</li>
 </ul>
-<h3 id="fixes-1">Fixes</h3>
+<h3 id="fixes">Fixes</h3>
 <ul>
 <li>Ensure that the Kafka AdminClient is initialized with a clean configuration to prevent warnings from being logged</li>
 <li>Fix a race condition potentially preventing the batch sequence from completing successfully when the timeout is reached</li>
@@ -108,7 +103,7 @@
 <li>Add <a class="xref" href="../api/Silverback.Messaging.Publishing.IApplicationPublisher.html">IApplicationPublisher</a> as an alternative to the extension methods on <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (see <a class="xref" href="../guides/bus.html">Using the Message Bus</a>)</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.13.2">Confluent.Kafka 2.13.2</a></li>
 </ul>
-<h3 id="fixes-2">Fixes</h3>
+<h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Correctly bind the error handler to the Kafka producer to prevent uncontrolled logging to stderr</li>
 </ul>
