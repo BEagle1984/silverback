@@ -97,6 +97,7 @@ public partial class BatchProcessingTests
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
                         .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(_ => {})
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
@@ -112,6 +113,7 @@ public partial class BatchProcessingTests
                     await Task.Delay(500); // Wait past the timeout to process the remaining messages
             }
 
+            await Task.Delay(5000);
             Interlocked.Increment(ref completedBatches);
         }
 

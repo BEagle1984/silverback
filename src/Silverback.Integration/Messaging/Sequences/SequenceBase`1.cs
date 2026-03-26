@@ -293,7 +293,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </returns>
     protected virtual async Task<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
-        if (!IsPending)
+        if (!IsPending || IsCompleting)
             return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
 
         if (_enforceTimeout)
@@ -486,6 +486,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
+            await Task.Delay(1000);
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
             IsComplete = true;
         }

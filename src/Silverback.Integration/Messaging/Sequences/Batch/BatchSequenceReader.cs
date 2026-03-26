@@ -40,8 +40,16 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
 
         BatchSequence? currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(sequenceId, true)
             .ConfigureAwait(false);
-
-        return currentSequence == null || !currentSequence.IsPending || currentSequence.IsCompleting;
+        return currentSequence == null|| !currentSequence.IsPending;
+        if (currentSequence != null && currentSequence.IsCompleting)
+            throw new InvalidOperationException("ahahah");
+        
+        
+        TODO
+            Test with constant stream and shortish timeout (1s)
+        
+        
+        return currentSequence == null || !currentSequence.IsPending;
     }
 
     /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
