@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class MessageWrapperTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class MessageWrapperTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class MessageWrapperTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MessageWrapperTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests">
+
+        <article data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests" class="text-break">Class MessageWrapperTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">MessageWrapperTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests" class="text-break">
+Class MessageWrapperTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Producing.html">Producing</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Producing.Routing.html">Routing</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class MessageWrapperTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MessageWrapperTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,1760 +141,2041 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Producing.html">Producing</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Producing.Routing.html">Routing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class MessageWrapperTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests__ctor_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.#ctor">MessageWrapperTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.#ctor">
+  MessageWrapperTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public MessageWrapperTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public MessageWrapperTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_Instance_ShouldReturnStaticInstance_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.Instance_ShouldReturnStaticInstance*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_Instance_ShouldReturnStaticInstance" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.Instance_ShouldReturnStaticInstance">Instance_ShouldReturnStaticInstance()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_Instance_ShouldReturnStaticInstance" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.Instance_ShouldReturnStaticInstance">
+  Instance_ShouldReturnStaticInstance()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Instance_ShouldReturnStaticInstance()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing">WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing">
+  WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument">WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument">
+  WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldInvokeSubscribersAccordingToEnableSubscribing_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes">WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes">
+  WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument">WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument">
+  WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones">WrapAndProduceAsync_ShouldProduceConfiguredTombstones()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones">
+  WrapAndProduceAsync_ShouldProduceConfiguredTombstones()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceConfiguredTombstones()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument">WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument">
+  WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceConfiguredTombstones_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceEnvelopes_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceEnvelopes*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceEnvelopes" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceEnvelopes">WrapAndProduceAsync_ShouldProduceEnvelopes()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceEnvelopes" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceEnvelopes">
+  WrapAndProduceAsync_ShouldProduceEnvelopes()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceEnvelopes()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceTombstones_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceTombstones*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceTombstones" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceTombstones">WrapAndProduceAsync_ShouldProduceTombstones()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceAsync_ShouldProduceTombstones" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceAsync_ShouldProduceTombstones">
+  WrapAndProduceAsync_ShouldProduceTombstones()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceAsync_ShouldProduceTombstones()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForCollectionAccordingToEnableSubscribing_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForConfiguredMappedCollectionAccordingToEnableSubscribing_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedAsyncEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedCollectionAccordingToEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument_System_Boolean_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(System.Boolean)">
+  WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { false })]
 [InlineData(new object[] { true })]
 public Task WrapAndProduceBatchAsync_ShouldInvokeSubscribersForMappedEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enableSubscribing</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enableSubscribing</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgumentAndEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedAsyncEnumerable_WhenPassingArgumentAndEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedCollection_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceConfiguredEnvelopesForMappedEnumerable_WhenPassingArgumentAndEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForCollection()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedAsyncEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedCollection()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing">WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing">
+  WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldProduceEnvelopesForMappedEnumerable_WhenEnableSubscribing()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForAsyncEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedAsyncEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument_" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument">WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Producing_Routing_MessageWrapperTests_WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument" data-uid="Silverback.Tests.Integration.Messaging.Producing.Routing.MessageWrapperTests.WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument">
+  WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForMappedEnumerable_WhenPassingArgument()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Producing/Routing/MessageWrapperTests.AsyncEnumerable.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

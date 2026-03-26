@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class IntegrationLoggerExtensionsTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class IntegrationLoggerExtensionsTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class IntegrationLoggerExtensionsTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class IntegrationLoggerExtensionsTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests">
+
+        <article data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests" class="text-break">Class IntegrationLoggerExtensionsTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">IntegrationLoggerExtensionsTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests" class="text-break">
+Class IntegrationLoggerExtensionsTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Diagnostics.html">Diagnostics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class IntegrationLoggerExtensionsTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">IntegrationLoggerExtensionsTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,668 +141,1555 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Diagnostics.html">Diagnostics</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class IntegrationLoggerExtensionsTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests__ctor_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests__ctor" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.#ctor">IntegrationLoggerExtensionsTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests__ctor" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.#ctor">
+  IntegrationLoggerExtensionsTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IntegrationLoggerExtensionsTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public IntegrationLoggerExtensionsTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientCreated_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientCreated_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientCreated_ShouldLog">LogBrokerClientCreated_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientCreated_ShouldLog">
+  LogBrokerClientCreated_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientCreated_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnectError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnectError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnectError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnectError_ShouldLog">LogBrokerClientDisconnectError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnectError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnectError_ShouldLog">
+  LogBrokerClientDisconnectError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientDisconnectError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnected_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnected_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnected_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnected_ShouldLog">LogBrokerClientDisconnected_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnected_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnected_ShouldLog">
+  LogBrokerClientDisconnected_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientDisconnected_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnecting_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnecting_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnecting_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnecting_ShouldLog">LogBrokerClientDisconnecting_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientDisconnecting_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientDisconnecting_ShouldLog">
+  LogBrokerClientDisconnecting_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientDisconnecting_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializeError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializeError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializeError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializeError_ShouldLog">LogBrokerClientInitializeError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializeError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializeError_ShouldLog">
+  LogBrokerClientInitializeError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientInitializeError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitialized_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitialized_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitialized_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitialized_ShouldLog">LogBrokerClientInitialized_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitialized_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitialized_ShouldLog">
+  LogBrokerClientInitialized_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientInitialized_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializing_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializing_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializing_ShouldLog">LogBrokerClientInitializing_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientInitializing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientInitializing_ShouldLog">
+  LogBrokerClientInitializing_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientInitializing_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientReconnectError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientReconnectError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientReconnectError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientReconnectError_ShouldLog">LogBrokerClientReconnectError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientReconnectError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientReconnectError_ShouldLog">
+  LogBrokerClientReconnectError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientReconnectError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientsInitializationError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientsInitializationError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientsInitializationError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientsInitializationError_ShouldLog">LogBrokerClientsInitializationError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogBrokerClientsInitializationError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogBrokerClientsInitializationError_ShouldLog">
+  LogBrokerClientsInitializationError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogBrokerClientsInitializationError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCallbackError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCallbackError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCallbackError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCallbackError_ShouldLog">LogCallbackError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCallbackError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCallbackError_ShouldLog">
+  LogCallbackError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogCallbackError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCannotMoveSequence_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCannotMoveSequence_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCannotMoveSequence_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCannotMoveSequence_ShouldLog">LogCannotMoveSequence_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogCannotMoveSequence_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogCannotMoveSequence_ShouldLog">
+  LogCannotMoveSequence_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogCannotMoveSequence_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCommitError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCommitError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCommitError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCommitError_ShouldLog">LogConsumerCommitError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCommitError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCommitError_ShouldLog">
+  LogConsumerCommitError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerCommitError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCreated_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCreated_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCreated_ShouldLog">LogConsumerCreated_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerCreated_ShouldLog">
+  LogConsumerCreated_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerCreated_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerFatalError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerFatalError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerFatalError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerFatalError_ShouldLog">LogConsumerFatalError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerFatalError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerFatalError_ShouldLog">
+  LogConsumerFatalError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerFatalError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerRollbackError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerRollbackError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerRollbackError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerRollbackError_ShouldLog">LogConsumerRollbackError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerRollbackError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerRollbackError_ShouldLog">
+  LogConsumerRollbackError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerRollbackError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStartError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStartError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStartError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStartError_ShouldLog">LogConsumerStartError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStartError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStartError_ShouldLog">
+  LogConsumerStartError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerStartError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStopError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStopError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStopError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStopError_ShouldLog">LogConsumerStopError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerStopError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerStopError_ShouldLog">
+  LogConsumerStopError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerStopError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerTrace_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerTrace_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerTrace_ShouldLog">LogConsumerTrace_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogConsumerTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogConsumerTrace_ShouldLog">
+  LogConsumerTrace_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogConsumerTrace_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointBuilderError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointBuilderError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointBuilderError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointBuilderError_ShouldLog">LogEndpointBuilderError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointBuilderError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointBuilderError_ShouldLog">
+  LogEndpointBuilderError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogEndpointBuilderError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointConfiguratorError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointConfiguratorError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointConfiguratorError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointConfiguratorError_ShouldLog">LogEndpointConfiguratorError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogEndpointConfiguratorError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogEndpointConfiguratorError_ShouldLog">
+  LogEndpointConfiguratorError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogEndpointConfiguratorError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProcessingOutbox_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProcessingOutbox_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProcessingOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProcessingOutbox_ShouldLog">LogErrorProcessingOutbox_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProcessingOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProcessingOutbox_ShouldLog">
+  LogErrorProcessingOutbox_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogErrorProcessingOutbox_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProducingOutboxStoredMessage_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProducingOutboxStoredMessage_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProducingOutboxStoredMessage_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProducingOutboxStoredMessage_ShouldLog">LogErrorProducingOutboxStoredMessage_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogErrorProducingOutboxStoredMessage_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogErrorProducingOutboxStoredMessage_ShouldLog">
+  LogErrorProducingOutboxStoredMessage_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogErrorProducingOutboxStoredMessage_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceAborted_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceAborted_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceAborted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceAborted_ShouldLog">LogIncompleteSequenceAborted_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceAborted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceAborted_ShouldLog">
+  LogIncompleteSequenceAborted_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogIncompleteSequenceAborted_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceSkipped_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceSkipped_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceSkipped_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceSkipped_ShouldLog">LogIncompleteSequenceSkipped_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogIncompleteSequenceSkipped_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogIncompleteSequenceSkipped_ShouldLog">
+  LogIncompleteSequenceSkipped_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogIncompleteSequenceSkipped_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidEndpointConfiguration_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidEndpointConfiguration_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidEndpointConfiguration_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidEndpointConfiguration_ShouldLog">LogInvalidEndpointConfiguration_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidEndpointConfiguration_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidEndpointConfiguration_ShouldLog">
+  LogInvalidEndpointConfiguration_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogInvalidEndpointConfiguration_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageConsumed_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageConsumed_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageConsumed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageConsumed_ShouldLog">LogInvalidMessageConsumed_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageConsumed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageConsumed_ShouldLog">
+  LogInvalidMessageConsumed_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogInvalidMessageConsumed_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageProduced_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageProduced_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageProduced_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageProduced_ShouldLog">LogInvalidMessageProduced_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogInvalidMessageProduced_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogInvalidMessageProduced_ShouldLog">
+  LogInvalidMessageProduced_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogInvalidMessageProduced_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageAddedToSequence_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageAddedToSequence_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageAddedToSequence_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageAddedToSequence_ShouldLog">LogMessageAddedToSequence_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageAddedToSequence_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageAddedToSequence_ShouldLog">
+  LogMessageAddedToSequence_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogMessageAddedToSequence_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageMoved_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageMoved_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageMoved_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageMoved_ShouldLog">LogMessageMoved_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageMoved_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageMoved_ShouldLog">
+  LogMessageMoved_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogMessageMoved_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageSkipped_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageSkipped_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageSkipped_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageSkipped_ShouldLog">LogMessageSkipped_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogMessageSkipped_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogMessageSkipped_ShouldLog">
+  LogMessageSkipped_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogMessageSkipped_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboundMessageFiltered_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboundMessageFiltered_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboundMessageFiltered_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboundMessageFiltered_ShouldLog">LogOutboundMessageFiltered_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboundMessageFiltered_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboundMessageFiltered_ShouldLog">
+  LogOutboundMessageFiltered_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogOutboundMessageFiltered_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboxEmpty_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboxEmpty_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboxEmpty_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboxEmpty_ShouldLog">LogOutboxEmpty_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogOutboxEmpty_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogOutboxEmpty_ShouldLog">
+  LogOutboxEmpty_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogOutboxEmpty_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingError_ShouldLog">LogProcessingError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingError_ShouldLog">
+  LogProcessingError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessingError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingFatalError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingFatalError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingFatalError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingFatalError_ShouldLog">LogProcessingFatalError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingFatalError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingFatalError_ShouldLog">
+  LogProcessingFatalError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessingFatalError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingOutboxStoredMessage_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingOutboxStoredMessage_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingOutboxStoredMessage_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingOutboxStoredMessage_ShouldLog">LogProcessingOutboxStoredMessage_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingOutboxStoredMessage_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingOutboxStoredMessage_ShouldLog">
+  LogProcessingOutboxStoredMessage_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessingOutboxStoredMessage_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog">LogProcessingTrace_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog">
+  LogProcessingTrace_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessingTrace_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog_WhenExceptionSpecified_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog_WhenExceptionSpecified*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog_WhenExceptionSpecified" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog_WhenExceptionSpecified">LogProcessingTrace_ShouldLog_WhenExceptionSpecified()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessingTrace_ShouldLog_WhenExceptionSpecified" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessingTrace_ShouldLog_WhenExceptionSpecified">
+  LogProcessingTrace_ShouldLog_WhenExceptionSpecified()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessingTrace_ShouldLog_WhenExceptionSpecified()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessing_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessing_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessing_ShouldLog">LogProcessing_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProcessing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProcessing_ShouldLog">
+  LogProcessing_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProcessing_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEndpointConfiguration_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEndpointConfiguration*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEndpointConfiguration" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEndpointConfiguration">LogProduceError_ShouldLogEndpointConfiguration()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEndpointConfiguration" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEndpointConfiguration">
+  LogProduceError_ShouldLogEndpointConfiguration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProduceError_ShouldLogEndpointConfiguration()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEnvelope_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEnvelope*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEnvelope" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEnvelope">LogProduceError_ShouldLogEnvelope()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduceError_ShouldLogEnvelope" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduceError_ShouldLogEnvelope">
+  LogProduceError_ShouldLogEnvelope()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProduceError_ShouldLogEnvelope()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEndpointConfiguration_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEndpointConfiguration*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEndpointConfiguration" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEndpointConfiguration">LogProduced_ShouldLogEndpointConfiguration()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEndpointConfiguration" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEndpointConfiguration">
+  LogProduced_ShouldLogEndpointConfiguration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProduced_ShouldLogEndpointConfiguration()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEnvelope_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEnvelope*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEnvelope" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEnvelope">LogProduced_ShouldLogEnvelope()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProduced_ShouldLogEnvelope" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProduced_ShouldLogEnvelope">
+  LogProduced_ShouldLogEnvelope()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProduced_ShouldLogEnvelope()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProducerCreated_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProducerCreated_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProducerCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProducerCreated_ShouldLog">LogProducerCreated_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogProducerCreated_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogProducerCreated_ShouldLog">
+  LogProducerCreated_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogProducerCreated_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogReadingMessagesFromOutbox_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogReadingMessagesFromOutbox_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogReadingMessagesFromOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogReadingMessagesFromOutbox_ShouldLog">LogReadingMessagesFromOutbox_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogReadingMessagesFromOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogReadingMessagesFromOutbox_ShouldLog">
+  LogReadingMessagesFromOutbox_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogReadingMessagesFromOutbox_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRetryProcessing_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRetryProcessing_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRetryProcessing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRetryProcessing_ShouldLog">LogRetryProcessing_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRetryProcessing_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRetryProcessing_ShouldLog">
+  LogRetryProcessing_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogRetryProcessing_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToRetryFailed_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToRetryFailed_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToRetryFailed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToRetryFailed_ShouldLog">LogRollbackToRetryFailed_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToRetryFailed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToRetryFailed_ShouldLog">
+  LogRollbackToRetryFailed_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogRollbackToRetryFailed_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToSkipFailed_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToSkipFailed_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToSkipFailed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToSkipFailed_ShouldLog">LogRollbackToSkipFailed_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogRollbackToSkipFailed_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogRollbackToSkipFailed_ShouldLog">
+  LogRollbackToSkipFailed_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogRollbackToSkipFailed_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceAborted_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceAborted_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceAborted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceAborted_ShouldLog">LogSequenceAborted_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceAborted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceAborted_ShouldLog">
+  LogSequenceAborted_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogSequenceAborted_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceCompleted_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceCompleted_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceCompleted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceCompleted_ShouldLog">LogSequenceCompleted_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceCompleted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceCompleted_ShouldLog">
+  LogSequenceCompleted_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogSequenceCompleted_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceProcessingError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceProcessingError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceProcessingError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceProcessingError_ShouldLog">LogSequenceProcessingError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceProcessingError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceProcessingError_ShouldLog">
+  LogSequenceProcessingError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogSequenceProcessingError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceStarted_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceStarted_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceStarted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceStarted_ShouldLog">LogSequenceStarted_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceStarted_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceStarted_ShouldLog">
+  LogSequenceStarted_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogSequenceStarted_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceTimeoutError_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceTimeoutError_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceTimeoutError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceTimeoutError_ShouldLog">LogSequenceTimeoutError_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogSequenceTimeoutError_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogSequenceTimeoutError_ShouldLog">
+  LogSequenceTimeoutError_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogSequenceTimeoutError_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogStoringIntoOutbox_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogStoringIntoOutbox_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogStoringIntoOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogStoringIntoOutbox_ShouldLog">LogStoringIntoOutbox_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogStoringIntoOutbox_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogStoringIntoOutbox_ShouldLog">
+  LogStoringIntoOutbox_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogStoringIntoOutbox_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog">LogTrace_ShouldLog()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog">
+  LogTrace_ShouldLog()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogTrace_ShouldLog()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog_WhenExceptionSpecified_" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog_WhenExceptionSpecified*"></a>
-  <h4 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog_WhenExceptionSpecified" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog_WhenExceptionSpecified">LogTrace_ShouldLog_WhenExceptionSpecified()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Diagnostics_IntegrationLoggerExtensionsTests_LogTrace_ShouldLog_WhenExceptionSpecified" data-uid="Silverback.Tests.Integration.Diagnostics.IntegrationLoggerExtensionsTests.LogTrace_ShouldLog_WhenExceptionSpecified">
+  LogTrace_ShouldLog_WhenExceptionSpecified()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LogTrace_ShouldLog_WhenExceptionSpecified()</code></pre>
   </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Diagnostics/IntegrationLoggerExtensionsTests.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

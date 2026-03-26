@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ProducerEndpointConfigurationBuilderTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ProducerEndpointConfigurationBuilderTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class ProducerEndpointConfigurationBuilderTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ProducerEndpointConfigurationBuilderTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests">
+
+        <article data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests" class="text-break">Class ProducerEndpointConfigurationBuilderTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">ProducerEndpointConfigurationBuilderTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests" class="text-break">
+Class ProducerEndpointConfigurationBuilderTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Configuration.html">Configuration</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ProducerEndpointConfigurationBuilderTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ProducerEndpointConfigurationBuilderTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,415 +141,934 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Configuration.html">Configuration</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class ProducerEndpointConfigurationBuilderTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests__ctor_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.#ctor">ProducerEndpointConfigurationBuilderTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.#ctor">
+  ProducerEndpointConfigurationBuilderTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ProducerEndpointConfigurationBuilderTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public ProducerEndpointConfigurationBuilderTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricher_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricher*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricher" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricher">AddHeader_ShouldAddMessageEnricher()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricher" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricher">
+  AddHeader_ShouldAddMessageEnricher()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricher()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherForChildType_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherForChildType*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherForChildType">AddHeader_ShouldAddMessageEnricherForChildType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherForChildType">
+  AddHeader_ShouldAddMessageEnricherForChildType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricherForChildType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction">AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction">
+  AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType">AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType">
+  AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricherWithEnvelopeBasedValueFunctionForChildType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunction_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunction*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunction" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunction">AddHeader_ShouldAddMessageEnricherWithValueFunction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunction" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunction">
+  AddHeader_ShouldAddMessageEnricherWithValueFunction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricherWithValueFunction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType">AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType">
+  AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddHeader_ShouldAddMessageEnricherWithValueFunctionForChildType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage">Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage">
+  Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeImplementsIBinaryMessage()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage">Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage">
+  Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetJsonMessageSerializerByDefault_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetJsonMessageSerializerByDefault*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetJsonMessageSerializerByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetJsonMessageSerializerByDefault">Build_ShouldSetJsonMessageSerializerByDefault()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetJsonMessageSerializerByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetJsonMessageSerializerByDefault">
+  Build_ShouldSetJsonMessageSerializerByDefault()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetJsonMessageSerializerByDefault()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetMessageValidationModeToLogWarningByDefault_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetMessageValidationModeToLogWarningByDefault*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetMessageValidationModeToLogWarningByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetMessageValidationModeToLogWarningByDefault">Build_ShouldSetMessageValidationModeToLogWarningByDefault()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetMessageValidationModeToLogWarningByDefault" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetMessageValidationModeToLogWarningByDefault">
+  Build_ShouldSetMessageValidationModeToLogWarningByDefault()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetMessageValidationModeToLogWarningByDefault()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage">Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage">
+  Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetRawMessageSerializerByDefault_WhenMessageTypeIsRawMessage()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage">Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage">
+  Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldSetStringMessageSerializerByDefault_WhenMessageTypeIsStringMessage()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid">Build_ShouldThrow_WhenConfigurationIsNotValid()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid">
+  Build_ShouldThrow_WhenConfigurationIsNotValid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldThrow_WhenConfigurationIsNotValid()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Constructor_ShouldSetDisplayName_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Constructor_ShouldSetDisplayName*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Constructor_ShouldSetDisplayName" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Constructor_ShouldSetDisplayName">Constructor_ShouldSetDisplayName()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Constructor_ShouldSetDisplayName" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Constructor_ShouldSetDisplayName">
+  Constructor_ShouldSetDisplayName()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Constructor_ShouldSetDisplayName()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_DisableMessageValidation_ShouldSetMessageValidationMode_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.DisableMessageValidation_ShouldSetMessageValidationMode*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_DisableMessageValidation_ShouldSetMessageValidationMode" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.DisableMessageValidation_ShouldSetMessageValidationMode">DisableMessageValidation_ShouldSetMessageValidationMode()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_DisableMessageValidation_ShouldSetMessageValidationMode" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.DisableMessageValidation_ShouldSetMessageValidationMode">
+  DisableMessageValidation_ShouldSetMessageValidationMode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableMessageValidation_ShouldSetMessageValidationMode()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EnableChunking_ShouldSetChunkSettings_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EnableChunking_ShouldSetChunkSettings*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EnableChunking_ShouldSetChunkSettings" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EnableChunking_ShouldSetChunkSettings">EnableChunking_ShouldSetChunkSettings()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EnableChunking_ShouldSetChunkSettings" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EnableChunking_ShouldSetChunkSettings">
+  EnableChunking_ShouldSetChunkSettings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableChunking_ShouldSetChunkSettings()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyAndIV_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyAndIV*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyAndIV" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyAndIV">EncryptUsingAes_ShouldSetKeyAndIV()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyAndIV" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyAndIV">
+  EncryptUsingAes_ShouldSetKeyAndIV()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Encrypt.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EncryptUsingAes_ShouldSetKeyAndIV()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyIdentifier_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyIdentifier*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyIdentifier" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyIdentifier">EncryptUsingAes_ShouldSetKeyIdentifier()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_EncryptUsingAes_ShouldSetKeyIdentifier" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.EncryptUsingAes_ShouldSetKeyIdentifier">
+  EncryptUsingAes_ShouldSetKeyIdentifier()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Encrypt.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EncryptUsingAes_ShouldSetKeyIdentifier()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Encrypt_ShouldSetEncryptionSettings_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Encrypt_ShouldSetEncryptionSettings*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Encrypt_ShouldSetEncryptionSettings" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Encrypt_ShouldSetEncryptionSettings">Encrypt_ShouldSetEncryptionSettings()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_Encrypt_ShouldSetEncryptionSettings" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.Encrypt_ShouldSetEncryptionSettings">
+  Encrypt_ShouldSetEncryptionSettings()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Encrypt_ShouldSetEncryptionSettings()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceBinaryMessages_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceBinaryMessages_ShouldSetSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceBinaryMessages_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceBinaryMessages_ShouldSetSerializer">ProduceBinaryMessages_ShouldSetSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceBinaryMessages_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceBinaryMessages_ShouldSetSerializer">
+  ProduceBinaryMessages_ShouldSetSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ProduceBinaryMessages_ShouldSetSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceDirectly_ShouldSetStrategy_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceDirectly_ShouldSetStrategy*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceDirectly_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceDirectly_ShouldSetStrategy">ProduceDirectly_ShouldSetStrategy()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceDirectly_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceDirectly_ShouldSetStrategy">
+  ProduceDirectly_ShouldSetStrategy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ProduceDirectly_ShouldSetStrategy()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceRaw_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceRaw_ShouldSetSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceRaw_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceRaw_ShouldSetSerializer">ProduceRaw_ShouldSetSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceRaw_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceRaw_ShouldSetSerializer">
+  ProduceRaw_ShouldSetSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ProduceRaw_ShouldSetSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetConfiguredSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetConfiguredSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetConfiguredSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetConfiguredSerializer">ProduceStrings_ShouldSetConfiguredSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetConfiguredSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetConfiguredSerializer">
+  ProduceStrings_ShouldSetConfiguredSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ProduceStrings_ShouldSetConfiguredSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetSerializer">ProduceStrings_ShouldSetSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ProduceStrings_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ProduceStrings_ShouldSetSerializer">
+  ProduceStrings_ShouldSetSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ProduceStrings_ShouldSetSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializer">SerializeAsJson_ShouldSetSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializer">
+  SerializeAsJson_ShouldSetSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void SerializeAsJson_ShouldSetSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializerAndOptions_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializerAndOptions*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializerAndOptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializerAndOptions">SerializeAsJson_ShouldSetSerializerAndOptions()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeAsJson_ShouldSetSerializerAndOptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeAsJson_ShouldSetSerializerAndOptions">
+  SerializeAsJson_ShouldSetSerializerAndOptions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.Serialize.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void SerializeAsJson_ShouldSetSerializerAndOptions()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeUsing_ShouldSetSerializer_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeUsing_ShouldSetSerializer*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeUsing_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeUsing_ShouldSetSerializer">SerializeUsing_ShouldSetSerializer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_SerializeUsing_ShouldSetSerializer" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.SerializeUsing_ShouldSetSerializer">
+  SerializeUsing_ShouldSetSerializer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void SerializeUsing_ShouldSetSerializer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategy_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategy*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategy">StoreToOutbox_ShouldSetStrategy()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategy">
+  StoreToOutbox_ShouldSetStrategy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void StoreToOutbox_ShouldSetStrategy()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategyUsingBuilder_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategyUsingBuilder*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategyUsingBuilder" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategyUsingBuilder">StoreToOutbox_ShouldSetStrategyUsingBuilder()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_StoreToOutbox_ShouldSetStrategyUsingBuilder" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.StoreToOutbox_ShouldSetStrategyUsingBuilder">
+  StoreToOutbox_ShouldSetStrategyUsingBuilder()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void StoreToOutbox_ShouldSetStrategyUsingBuilder()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_UseStrategy_ShouldSetStrategy_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.UseStrategy_ShouldSetStrategy*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_UseStrategy_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.UseStrategy_ShouldSetStrategy">UseStrategy_ShouldSetStrategy()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_UseStrategy_ShouldSetStrategy" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.UseStrategy_ShouldSetStrategy">
+  UseStrategy_ShouldSetStrategy()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void UseStrategy_ShouldSetStrategy()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse">ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse">
+  ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue">ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_ProducerEndpointConfigurationBuilderTests_ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue" data-uid="Silverback.Tests.Integration.Messaging.Configuration.ProducerEndpointConfigurationBuilderTests.ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue">
+  ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()</code></pre>
   </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/ProducerEndpointConfigurationBuilderTests.AddHeader.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

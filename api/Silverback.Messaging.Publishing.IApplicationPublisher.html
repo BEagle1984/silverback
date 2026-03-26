@@ -1,922 +1,721 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IApplicationPublisher
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface IApplicationPublisher
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Interface IApplicationPublisher | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IApplicationPublisher | Silverback ">
+      
+      <meta name="description" content="Publishes messages via the message bus, forwarding them to the subscribers.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher">
+
+        <article data-uid="Silverback.Messaging.Publishing.IApplicationPublisher">
 
 
-  <h1 id="Silverback_Messaging_Publishing_IApplicationPublisher" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher" class="text-break">Interface IApplicationPublisher
-</h1>
-  <div class="markdown level0 summary"><p>Publishes messages via the message bus, forwarding them to the subscribers.</p>
-</div>
-  <div class="markdown level0 conceptual"></div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Publishing.html">Publishing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.Model.dll</h6>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public interface IApplicationPublisher</code></pre>
+
+  <h1 id="Silverback_Messaging_Publishing_IApplicationPublisher" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher" class="text-break">
+Interface IApplicationPublisher  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Publishing.html">Publishing</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Core.Model.dll</dd></dl>
   </div>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_remarks"><strong>Remarks</strong></h5>
+
+  <div class="markdown summary"><p>Publishes messages via the message bus, forwarding them to the subscribers.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IApplicationPublisher</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 id="Silverback_Messaging_Publishing_IApplicationPublisher_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
 <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
 </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand(Silverback.Messaging.Messages.ICommand,System.Boolean)">ExecuteCommand(ICommand, bool)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand(Silverback.Messaging.Messages.ICommand,System.Boolean)">
+  ExecuteCommand(ICommand, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">void ExecuteCommand(ICommand commandMessage, bool throwIfUnhandled = true)</code></pre>
+    <pre><code class="lang-csharp hljs">void ExecuteCommand(ICommand commandMessage, bool throwIfUnhandled = true)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand_Silverback_Messaging_Messages_ICommand_System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync(Silverback.Messaging.Messages.ICommand,System.Boolean,System.Threading.CancellationToken)">ExecuteCommandAsync(ICommand, bool, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync(Silverback.Messaging.Messages.ICommand,System.Boolean,System.Threading.CancellationToken)">
+  ExecuteCommandAsync(ICommand, bool, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task ExecuteCommandAsync(ICommand commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task ExecuteCommandAsync(ICommand commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync(Silverback.Messaging.Messages.ICommand,System.Threading.CancellationToken)">ExecuteCommandAsync(ICommand, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync(Silverback.Messaging.Messages.ICommand,System.Threading.CancellationToken)">
+  ExecuteCommandAsync(ICommand, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task ExecuteCommandAsync(ICommand commandMessage, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task ExecuteCommandAsync(ICommand commandMessage, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_Silverback_Messaging_Messages_ICommand_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean,System.Threading.CancellationToken)">ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, bool, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean,System.Threading.CancellationToken)">
+  ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, bool, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task&lt;TResult&gt; ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;TResult&gt; ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The Task result contains the
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The Task result contains the
 command result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Threading.CancellationToken)">ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommandAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Threading.CancellationToken)">
+  ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task&lt;TResult&gt; ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;TResult&gt; ExecuteCommandAsync&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The Task result contains the
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;TResult&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task&lt;TResult&gt;</a> representing the asynchronous operation. The Task result contains the
 command result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommandAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">ExecuteCommand&lt;TResult&gt;(ICommand&lt;TResult&gt;, bool)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteCommand``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">
+  ExecuteCommand&lt;TResult&gt;(ICommand&lt;TResult&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified command forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">TResult ExecuteCommand&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, bool throwIfUnhandled = true)</code></pre>
+    <pre><code class="lang-csharp hljs">TResult ExecuteCommand&lt;TResult&gt;(ICommand&lt;TResult&gt; commandMessage, bool throwIfUnhandled = true)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TResult</span></td>
-        <td><p>The command result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteCommand__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>commandMessage</code> <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</dt>
+    <dd><p>The command to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TResult</span></dt>
+    <dd><p>The command result.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean,System.Threading.CancellationToken)">ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, bool, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean,System.Threading.CancellationToken)">
+  ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, bool, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified query forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">ValueTask&lt;TResult&gt; ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;TResult&gt; ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">queryMessage</span></td>
-        <td><p>The query to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;TResult&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The ValueTask result contains the
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>queryMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</dt>
+    <dd><p>The query to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;TResult&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask&lt;TResult&gt;</a> representing the asynchronous operation. The ValueTask result contains the
 query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Threading.CancellationToken)">ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQueryAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Threading.CancellationToken)">
+  ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified query forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">ValueTask&lt;TResult&gt; ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask&lt;TResult&gt; ExecuteQueryAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">queryMessage</span></td>
-        <td><p>The query to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;TResult&gt;</td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation. The ValueTask result contains the
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>queryMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</dt>
+    <dd><p>The query to be executed.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1">ValueTask</a>&lt;TResult&gt;</dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation. The ValueTask result contains the
 query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQueryAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQuery_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQuery*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQuery__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQuery``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">ExecuteQuery&lt;TResult&gt;(IQuery&lt;TResult&gt;, bool)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQuery__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.ExecuteQuery``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">
+  ExecuteQuery&lt;TResult&gt;(IQuery&lt;TResult&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Executes the specified query forwarding it to its subscribers via the message bus and the
 method will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume
 the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">TResult ExecuteQuery&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled = true)</code></pre>
+    <pre><code class="lang-csharp hljs">TResult ExecuteQuery&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled = true)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
-        <td><span class="parametername">queryMessage</span></td>
-        <td><p>The query to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TResult</span></td>
-        <td><p>The query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_ExecuteQuery__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>queryMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</dt>
+    <dd><p>The query to be executed.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">TResult</span></dt>
+    <dd><p>The query result.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TResult</code></dt>
+    <dd><p>The type of the result that is expected to be returned by the subscribers.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEvent_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEvent*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEvent_Silverback_Messaging_Messages_IEvent_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEvent(Silverback.Messaging.Messages.IEvent,System.Boolean)">PublishEvent(IEvent, bool)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEvent_Silverback_Messaging_Messages_IEvent_System_Boolean_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEvent(Silverback.Messaging.Messages.IEvent,System.Boolean)">
+  PublishEvent(IEvent, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Publishes the specified event to its subscribers via the message bus and the method will not
 complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
 through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">void PublishEvent(IEvent eventMessage, bool throwIfUnhandled = false)</code></pre>
+    <pre><code class="lang-csharp hljs">void PublishEvent(IEvent eventMessage, bool throwIfUnhandled = false)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
-        <td><span class="parametername">eventMessage</span></td>
-        <td><p>The event to be published.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEvent_Silverback_Messaging_Messages_IEvent_System_Boolean__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>eventMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></dt>
+    <dd><p>The event to be published.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync(Silverback.Messaging.Messages.IEvent,System.Boolean,System.Threading.CancellationToken)">PublishEventAsync(IEvent, bool, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Boolean_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync(Silverback.Messaging.Messages.IEvent,System.Boolean,System.Threading.CancellationToken)">
+  PublishEventAsync(IEvent, bool, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Publishes the specified event to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>
 will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
 through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task PublishEventAsync(IEvent eventMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task PublishEventAsync(IEvent eventMessage, bool throwIfUnhandled, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
-        <td><span class="parametername">eventMessage</span></td>
-        <td><p>The event to be published.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Boolean_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>eventMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></dt>
+    <dd><p>The event to be published.</p>
+</dd>
+    <dt><code>throwIfUnhandled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync(Silverback.Messaging.Messages.IEvent,System.Threading.CancellationToken)">PublishEventAsync(IEvent, CancellationToken)</h4>
+
+  <h3 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Publishing.IApplicationPublisher.PublishEventAsync(Silverback.Messaging.Messages.IEvent,System.Threading.CancellationToken)">
+  PublishEventAsync(IEvent, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Publishes the specified event to its subscribers via the message bus and the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>
 will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
 through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">Task PublishEventAsync(IEvent eventMessage, CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">Task PublishEventAsync(IEvent eventMessage, CancellationToken cancellationToken = default)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
-        <td><span class="parametername">eventMessage</span></td>
-        <td><p>The event to be published.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="Silverback_Messaging_Publishing_IApplicationPublisher_PublishEventAsync_Silverback_Messaging_Messages_IEvent_System_Threading_CancellationToken__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>Extended by the <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> interface to add specific methods to publish <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>,
-<a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>, and <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a> messages.</p>
-</div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>eventMessage</code> <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></dt>
+    <dd><p>The event to be published.</p>
+</dd>
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a> that can be used to cancel the operation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Core.Model/Messaging/Publishing/IApplicationPublisher.Command.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

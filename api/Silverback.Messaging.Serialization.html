@@ -1,222 +1,264 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace Silverback.Messaging.Serialization
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace Silverback.Messaging.Serialization
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Namespace Silverback.Messaging.Serialization | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Namespace Silverback.Messaging.Serialization | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Serialization">
 
-  <h1 id="Silverback_Messaging_Serialization" data-uid="Silverback.Messaging.Serialization" class="text-break">Namespace Silverback.Messaging.Serialization
-</h1>
+        <article data-uid="Silverback.Messaging.Serialization">
+
+  <h1 id="Silverback_Messaging_Serialization" data-uid="Silverback.Messaging.Serialization" class="text-break">Namespace Silverback.Messaging.Serialization</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
+
+    <h3 id="classes">
+Classes
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html">AvroMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and deserializes the messages from Apache Avro format.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and serializes the messages in Apache Avro format.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html">DeserializerConsumerBehavior</a></h4>
-      <section><p>Deserializes the messages being consumed using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializer-1.html">JsonMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a></h4>
-      <section><p>Serializes the messages as JSON.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageDeserializer-1.html">JsonSchemaRegistryMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageSerializer-1.html">JsonSchemaRegistryMessageSerializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and serializes the messages as JSON.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageEncodingExtensions.html">MessageEncodingExtensions</a></h4>
-      <section><p>Adds a method to convert a <a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a> enum value to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a> instance.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializerException.html">MessageSerializerException</a></h4>
-      <section><p>The exception that is thrown by the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> implementations when the
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html">AvroMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and deserializes the messages from Apache Avro format.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and serializes the messages in Apache Avro format.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html">DeserializerConsumerBehavior</a></dt>
+      <dd><p>Deserializes the messages being consumed using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializer-1.html">JsonMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a></dt>
+      <dd><p>Serializes the messages as JSON.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageDeserializer-1.html">JsonSchemaRegistryMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageSerializer-1.html">JsonSchemaRegistryMessageSerializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and serializes the messages as JSON.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.MessageEncodingExtensions.html">MessageEncodingExtensions</a></dt>
+      <dd><p>Adds a method to convert a <a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a> enum value to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a> instance.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializerException.html">MessageSerializerException</a></dt>
+      <dd><p>The exception that is thrown by the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> implementations when the
 message cannot be serialized or deserialized. This exception is thrown only when a Silverback
 specific error occurs, other exceptions related to reflection or the underlying serializer are not
 wrapped.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a></h4>
-      <section><p>Serializes the messages as JSON.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageDeserializer-1.html">ProtobufMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and deserializes the messages from Protobuf format.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageSerializer-1.html">ProtobufMessageSerializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and serializes the messages in Protobuf format.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.RawMessageDeserializer-1.html">RawMessageDeserializer&lt;T&gt;</a></h4>
-      <section><p>Wraps the received message into a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.RawMessageSerializer.html">RawMessageSerializer</a></h4>
-      <section><p>This serializer just passed the <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> raw content to the producer.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.SchemaRegistryMessageDeserializer-1.html">SchemaRegistryMessageDeserializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and deserializes the messages.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.SchemaRegistryMessageSerializer-1.html">SchemaRegistryMessageSerializer&lt;TMessage&gt;</a></h4>
-      <section><p>Connects to the specified schema registry and deserializes the messages.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.SerializerProducerBehavior.html">SerializerProducerBehavior</a></h4>
-      <section><p>Serializes the message being produced using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.StringMessageDeserializer-1.html">StringMessageDeserializer&lt;T&gt;</a></h4>
-      <section><p>Decodes the received <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> and wraps it into a <a class="xref" href="Silverback.Messaging.Messages.StringMessage.html">StringMessage</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.StringMessageSerializer.html">StringMessageSerializer</a></h4>
-      <section><p>Serializes a simple <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
-</section>
-    <h3 id="structs">Structs
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Deserializes the JSON messages into an instance of <code class="typeparamref">TMessage</code>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a></dt>
+      <dd><p>Serializes the messages as JSON.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageDeserializer-1.html">ProtobufMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and deserializes the messages from Protobuf format.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageSerializer-1.html">ProtobufMessageSerializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and serializes the messages in Protobuf format.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.RawMessageDeserializer-1.html">RawMessageDeserializer&lt;T&gt;</a></dt>
+      <dd><p>Wraps the received message into a <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.RawMessageSerializer.html">RawMessageSerializer</a></dt>
+      <dd><p>This serializer just passed the <a class="xref" href="Silverback.Messaging.Messages.RawMessage.html">RawMessage</a> raw content to the producer.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.SchemaRegistryMessageDeserializer-1.html">SchemaRegistryMessageDeserializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and deserializes the messages.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.SchemaRegistryMessageSerializer-1.html">SchemaRegistryMessageSerializer&lt;TMessage&gt;</a></dt>
+      <dd><p>Connects to the specified schema registry and deserializes the messages.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.SerializerProducerBehavior.html">SerializerProducerBehavior</a></dt>
+      <dd><p>Serializes the message being produced using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.StringMessageDeserializer-1.html">StringMessageDeserializer&lt;T&gt;</a></dt>
+      <dd><p>Decodes the received <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> and wraps it into a <a class="xref" href="Silverback.Messaging.Messages.StringMessage.html">StringMessage</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.StringMessageSerializer.html">StringMessageSerializer</a></dt>
+      <dd><p>Serializes a simple <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>.</p>
+</dd>
+    </dl>
+    <h3 id="structs">
+Structs
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.DeserializedMessage.html">DeserializedMessage</a></h4>
-      <section><p>The result of <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html#Silverback_Messaging_Serialization_IMessageDeserializer_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_ConsumerEndpoint_">DeserializeAsync(Stream?, MessageHeaderCollection, ConsumerEndpoint)</a>.</p>
-</section>
-    <h3 id="interfaces">Interfaces
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.DeserializedMessage.html">DeserializedMessage</a></dt>
+      <dd><p>The result of <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html#Silverback_Messaging_Serialization_IMessageDeserializer_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_ConsumerEndpoint_">DeserializeAsync(Stream?, MessageHeaderCollection, ConsumerEndpoint)</a>.</p>
+</dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory.html">IConfluentSchemaRegistryClientFactory</a></h4>
-      <section><p>The factory used to create <span class="xref">Confluent.SchemaRegistry.ISchemaRegistryClient</span> instances.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a></h4>
-      <section><p>Deserializes the messages consumed from broker.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></h4>
-      <section><p>Serializes the messages produced to the broker.</p>
-</section>
-    <h3 id="enums">Enums
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.IConfluentSchemaRegistryClientFactory.html">IConfluentSchemaRegistryClientFactory</a></dt>
+      <dd><p>The factory used to create <span class="xref">Confluent.SchemaRegistry.ISchemaRegistryClient</span> instances.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a></dt>
+      <dd><p>Deserializes the messages consumed from broker.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></dt>
+      <dd><p>Serializes the messages produced to the broker.</p>
+</dd>
+    </dl>
+    <h3 id="enums">
+Enums
 </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializerTypeHeaderBehavior.html">JsonMessageDeserializerTypeHeaderBehavior</a></h4>
-      <section><p>Specifies how the <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a> has to deserialize according to the message type header.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a></h4>
-      <section><p>Specifies the message encoding.</p>
-</section>
-</article>
-          </div>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializerTypeHeaderBehavior.html">JsonMessageDeserializerTypeHeaderBehavior</a></dt>
+      <dd><p>Specifies how the <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a> has to deserialize according to the message type header.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a></dt>
+      <dd><p>Specifies the message encoding.</p>
+</dd>
+    </dl>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+</article>
+
+        <div class="contribution d-print-none">
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

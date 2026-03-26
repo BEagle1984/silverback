@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class MqttClientConfigurationBuilderTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class MqttClientConfigurationBuilderTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class MqttClientConfigurationBuilderTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MqttClientConfigurationBuilderTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests">
+
+        <article data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests" class="text-break">Class MqttClientConfigurationBuilderTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">MqttClientConfigurationBuilderTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests" class="text-break">
+Class MqttClientConfigurationBuilderTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.html">Mqtt</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.html">Mqtt</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.MQTT.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class MqttClientConfigurationBuilderTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MqttClientConfigurationBuilderTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,533 +141,1160 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.html">Mqtt</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.html">Configuration</a>.<a class="xref" href="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.html">Mqtt</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class MqttClientConfigurationBuilderTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests__ctor_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.#ctor">MqttClientConfigurationBuilderTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.#ctor">
+  MqttClientConfigurationBuilderTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public MqttClientConfigurationBuilderTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public MqttClientConfigurationBuilderTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AddUserProperty_ShouldAddUserProperties_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AddUserProperty_ShouldAddUserProperties*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AddUserProperty_ShouldAddUserProperties" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AddUserProperty_ShouldAddUserProperties">AddUserProperty_ShouldAddUserProperties()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AddUserProperty_ShouldAddUserProperties" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AddUserProperty_ShouldAddUserProperties">
+  AddUserProperty_ShouldAddUserProperties()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AddUserProperty_ShouldAddUserProperties()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue">AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue">
+  AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void AllowPacketFragmentation_ShouldSetAllowPacketFragmentationTrue()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldInferPortFromTls_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldInferPortFromTls*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldInferPortFromTls_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldInferPortFromTls(System.Boolean)">Build_ShouldInferPortFromTls(bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldInferPortFromTls_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldInferPortFromTls(System.Boolean)">
+  Build_ShouldInferPortFromTls(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { true })]
 [InlineData(new object[] { false })]
 public void Build_ShouldInferPortFromTls(bool useTls)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">useTls</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>useTls</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldReturnNewConfiguration_WhenReused_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldReturnNewConfiguration_WhenReused*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldReturnNewConfiguration_WhenReused" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldReturnNewConfiguration_WhenReused">Build_ShouldReturnNewConfiguration_WhenReused()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldReturnNewConfiguration_WhenReused" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldReturnNewConfiguration_WhenReused">
+  Build_ShouldReturnNewConfiguration_WhenReused()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldReturnNewConfiguration_WhenReused()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid">Build_ShouldThrow_WhenConfigurationIsNotValid()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Build_ShouldThrow_WhenConfigurationIsNotValid" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Build_ShouldThrow_WhenConfigurationIsNotValid">
+  Build_ShouldThrow_WhenConfigurationIsNotValid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Build_ShouldThrow_WhenConfigurationIsNotValid()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcp_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcp*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcp_System_String_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcp(System.String)">ConnectTo_ShouldConnectViaTcp(string)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcp_System_String_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcp(System.String)">
+  ConnectTo_ShouldConnectViaTcp(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { &quot;mqtt://test:42&quot; })]
 [InlineData(new object[] { &quot;tcp://test:42&quot; })]
 public void ConnectTo_ShouldConnectViaTcp(string uri)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">uri</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>uri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithCredentials_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithCredentials*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithCredentials" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithCredentials">ConnectTo_ShouldConnectViaTcpWithCredentials()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithCredentials" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithCredentials">
+  ConnectTo_ShouldConnectViaTcpWithCredentials()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectTo_ShouldConnectViaTcpWithCredentials()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithSsl_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithSsl*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithSsl" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithSsl">ConnectTo_ShouldConnectViaTcpWithSsl()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaTcpWithSsl" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaTcpWithSsl">
+  ConnectTo_ShouldConnectViaTcpWithSsl()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectTo_ShouldConnectViaTcpWithSsl()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaWebSocket_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaWebSocket*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaWebSocket_System_String_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaWebSocket(System.String)">ConnectTo_ShouldConnectViaWebSocket(string)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectTo_ShouldConnectViaWebSocket_System_String_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectTo_ShouldConnectViaWebSocket(System.String)">
+  ConnectTo_ShouldConnectViaWebSocket(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { &quot;ws://test:42/&quot; })]
 [InlineData(new object[] { &quot;wss://test:42/&quot; })]
 public void ConnectTo_ShouldConnectViaWebSocket(string uri)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">uri</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>uri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromBuilderAction">ConnectViaTcp_ShouldSetChannelFromBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromBuilderAction">
+  ConnectViaTcp_ShouldSetChannelFromBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPoint_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPoint*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPoint" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPoint">ConnectViaTcp_ShouldSetChannelFromEndPoint()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPoint" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPoint">
+  ConnectViaTcp_ShouldSetChannelFromEndPoint()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromEndPoint()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction">ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction">
+  ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromEndPointAndBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServer_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServer*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServer" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServer">ConnectViaTcp_ShouldSetChannelFromServer()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServer" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServer">
+  ConnectViaTcp_ShouldSetChannelFromServer()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromServer()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction">ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction">
+  ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromServerAndBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPort_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPort*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPort" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPort">ConnectViaTcp_ShouldSetChannelFromServerAndPort()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPort" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPort">
+  ConnectViaTcp_ShouldSetChannelFromServerAndPort()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromServerAndPort()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction">ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction">
+  ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaTcp_ShouldSetChannelFromServerAndPortAndBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromBuilderAction">ConnectViaWebSocket_ShouldSetChannelFromBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromBuilderAction">
+  ConnectViaWebSocket_ShouldSetChannelFromBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaWebSocket_ShouldSetChannelFromBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUri_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUri*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUri" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUri">ConnectViaWebSocket_ShouldSetChannelFromUri()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUri" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUri">
+  ConnectViaWebSocket_ShouldSetChannelFromUri()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaWebSocket_ShouldSetChannelFromUri()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction">ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction">
+  ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ConnectViaWebSocket_ShouldSetChannelFromUriAndBuilderAction()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Constructor_ShouldSetProtocolVersionToV500_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Constructor_ShouldSetProtocolVersionToV500*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Constructor_ShouldSetProtocolVersionToV500" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Constructor_ShouldSetProtocolVersionToV500">Constructor_ShouldSetProtocolVersionToV500()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Constructor_ShouldSetProtocolVersionToV500" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Constructor_ShouldSetProtocolVersionToV500">
+  Constructor_ShouldSetProtocolVersionToV500()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Constructor_ShouldSetProtocolVersionToV500()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsForMessageType_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsForMessageType*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsForMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsForMessageType">Consume_ShouldAddEndpointsForMessageType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsForMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsForMessageType">
+  Consume_ShouldAddEndpointsForMessageType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Consume_ShouldAddEndpointsForMessageType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId">Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId">
+  Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Consume_ShouldAddEndpointsWithSameTopicNameAndDifferentId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithoutMessageType_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithoutMessageType*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithoutMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithoutMessageType">Consume_ShouldAddEndpointsWithoutMessageType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldAddEndpointsWithoutMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldAddEndpointsWithoutMessageType">
+  Consume_ShouldAddEndpointsWithoutMessageType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Consume_ShouldAddEndpointsWithoutMessageType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameId">Consume_ShouldIgnoreEndpointsWithSameId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameId">
+  Consume_ShouldIgnoreEndpointsWithSameId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Consume_ShouldIgnoreEndpointsWithSameId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId">Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId">
+  Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Consume_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableKeepAlive_ShouldSetKeepAliveInterval_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableKeepAlive_ShouldSetKeepAliveInterval*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableKeepAlive_ShouldSetKeepAliveInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableKeepAlive_ShouldSetKeepAliveInterval">DisableKeepAlive_ShouldSetKeepAliveInterval()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableKeepAlive_ShouldSetKeepAliveInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableKeepAlive_ShouldSetKeepAliveInterval">
+  DisableKeepAlive_ShouldSetKeepAliveInterval()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableKeepAlive_ShouldSetKeepAliveInterval()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse">DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse">
+  DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisablePacketFragmentation_ShouldSetAllowPacketFragmentationFalse()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism">DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism">
+  DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableProblemInformation_ShouldSetRequestProblemInformation_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableProblemInformation_ShouldSetRequestProblemInformation*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableProblemInformation_ShouldSetRequestProblemInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableProblemInformation_ShouldSetRequestProblemInformation">DisableProblemInformation_ShouldSetRequestProblemInformation()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableProblemInformation_ShouldSetRequestProblemInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableProblemInformation_ShouldSetRequestProblemInformation">
+  DisableProblemInformation_ShouldSetRequestProblemInformation()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableProblemInformation_ShouldSetRequestProblemInformation()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableResponseInformation_ShouldSetRequestResponseInformation_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableResponseInformation_ShouldSetRequestResponseInformation*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableResponseInformation_ShouldSetRequestResponseInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableResponseInformation_ShouldSetRequestResponseInformation">DisableResponseInformation_ShouldSetRequestResponseInformation()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableResponseInformation_ShouldSetRequestResponseInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableResponseInformation_ShouldSetRequestResponseInformation">
+  DisableResponseInformation_ShouldSetRequestResponseInformation()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableResponseInformation_ShouldSetRequestResponseInformation()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaTcp_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaTcp*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaTcp" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaTcp">DisableTls_ShouldSetUseTls_WhenConnectingViaTcp()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaTcp" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaTcp">
+  DisableTls_ShouldSetUseTls_WhenConnectingViaTcp()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableTls_ShouldSetUseTls_WhenConnectingViaTcp()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket">DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket">
+  DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTryPrivate_ShouldSetTryPrivate_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTryPrivate_ShouldSetTryPrivate*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTryPrivate_ShouldSetTryPrivate" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTryPrivate_ShouldSetTryPrivate">DisableTryPrivate_ShouldSetTryPrivate()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_DisableTryPrivate_ShouldSetTryPrivate" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.DisableTryPrivate_ShouldSetTryPrivate">
+  DisableTryPrivate_ShouldSetTryPrivate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void DisableTryPrivate_ShouldSetTryPrivate()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism">EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism">
+  EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetTlsConfiguration_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetTlsConfiguration*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetTlsConfiguration" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetTlsConfiguration">EnableTls_ShouldSetTlsConfiguration()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetTlsConfiguration" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetTlsConfiguration">
+  EnableTls_ShouldSetTlsConfiguration()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableTls_ShouldSetTlsConfiguration()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaTcp_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaTcp*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaTcp" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaTcp">EnableTls_ShouldSetUseTls_WhenConnectingViaTcp()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaTcp" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaTcp">
+  EnableTls_ShouldSetUseTls_WhenConnectingViaTcp()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableTls_ShouldSetUseTls_WhenConnectingViaTcp()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket">EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket">
+  EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTryPrivate_ShouldSetTryPrivate_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTryPrivate_ShouldSetTryPrivate*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTryPrivate_ShouldSetTryPrivate" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTryPrivate_ShouldSetTryPrivate">EnableTryPrivate_ShouldSetTryPrivate()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_EnableTryPrivate_ShouldSetTryPrivate" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.EnableTryPrivate_ShouldSetTryPrivate">
+  EnableTryPrivate_ShouldSetTryPrivate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void EnableTryPrivate_ShouldSetTryPrivate()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitBackpressure_ShouldSetBackpressureLimit_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitBackpressure_ShouldSetBackpressureLimit*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitBackpressure_ShouldSetBackpressureLimit" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitBackpressure_ShouldSetBackpressureLimit">LimitBackpressure_ShouldSetBackpressureLimit()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitBackpressure_ShouldSetBackpressureLimit" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitBackpressure_ShouldSetBackpressureLimit">
+  LimitBackpressure_ShouldSetBackpressureLimit()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LimitBackpressure_ShouldSetBackpressureLimit()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldSetMaximumPacketSize_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldSetMaximumPacketSize*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldSetMaximumPacketSize" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldSetMaximumPacketSize">LimitPacketSize_ShouldSetMaximumPacketSize()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldSetMaximumPacketSize" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldSetMaximumPacketSize">
+  LimitPacketSize_ShouldSetMaximumPacketSize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LimitPacketSize_ShouldSetMaximumPacketSize()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldValidateRange_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldValidateRange*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldValidateRange_System_Int64_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldValidateRange(System.Int64,System.Boolean)">LimitPacketSize_ShouldValidateRange(long, bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitPacketSize_ShouldValidateRange_System_Int64_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitPacketSize_ShouldValidateRange(System.Int64,System.Boolean)">
+  LimitPacketSize_ShouldValidateRange(long, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 1, true })]
 [InlineData(new object[] { 42, true })]
 [InlineData(new object[] { 4294967295, true })]
@@ -656,48 +1304,65 @@ public void LimitPacketSize_ShouldSetMaximumPacketSize()</code></pre>
 [InlineData(new object[] { -1, false })]
 public void LimitPacketSize_ShouldValidateRange(long value, bool isValid)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">isValid</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>isValid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldSetTopicAliasMaximum_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldSetTopicAliasMaximum*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldSetTopicAliasMaximum" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldSetTopicAliasMaximum">LimitTopicAlias_ShouldSetTopicAliasMaximum()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldSetTopicAliasMaximum" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldSetTopicAliasMaximum">
+  LimitTopicAlias_ShouldSetTopicAliasMaximum()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LimitTopicAlias_ShouldSetTopicAliasMaximum()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldValidateRange_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldValidateRange*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldValidateRange_System_Int32_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldValidateRange(System.Int32,System.Boolean)">LimitTopicAlias_ShouldValidateRange(int, bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitTopicAlias_ShouldValidateRange_System_Int32_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitTopicAlias_ShouldValidateRange(System.Int32,System.Boolean)">
+  LimitTopicAlias_ShouldValidateRange(int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0, true })]
 [InlineData(new object[] { 42, true })]
 [InlineData(new object[] { 65535, true })]
@@ -706,48 +1371,65 @@ public void LimitTopicAlias_ShouldSetTopicAliasMaximum()</code></pre>
 [InlineData(new object[] { -1, false })]
 public void LimitTopicAlias_ShouldValidateRange(int value, bool isValid)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">isValid</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>isValid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldSetReceiveMaximum_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldSetReceiveMaximum*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldSetReceiveMaximum" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldSetReceiveMaximum">LimitUnacknowledgedPublications_ShouldSetReceiveMaximum()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldSetReceiveMaximum" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldSetReceiveMaximum">
+  LimitUnacknowledgedPublications_ShouldSetReceiveMaximum()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void LimitUnacknowledgedPublications_ShouldSetReceiveMaximum()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldValidateRange_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldValidateRange*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldValidateRange_System_Int32_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldValidateRange(System.Int32,System.Boolean)">LimitUnacknowledgedPublications_ShouldValidateRange(int, bool)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_LimitUnacknowledgedPublications_ShouldValidateRange_System_Int32_System_Boolean_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.LimitUnacknowledgedPublications_ShouldValidateRange(System.Int32,System.Boolean)">
+  LimitUnacknowledgedPublications_ShouldValidateRange(int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 1, true })]
 [InlineData(new object[] { 42, true })]
 [InlineData(new object[] { 65535, true })]
@@ -757,350 +1439,751 @@ public void LimitUnacknowledgedPublications_ShouldSetReceiveMaximum()</code></pr
 [InlineData(new object[] { -1, false })]
 public void LimitUnacknowledgedPublications_ShouldValidateRange(int value, bool isValid)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">isValid</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>isValid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified">Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified">
+  Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldAddEndpointWithGenericMessageType_WhenNoTypeIsSpecified()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpoints_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpoints*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpoints" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpoints">Produce_ShouldAddEndpoints()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpoints" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpoints">
+  Produce_ShouldAddEndpoints()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldAddEndpoints()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId">Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId">
+  Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType">Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType">
+  Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldAddEndpointsWithSameTopicNameAndDifferentMessageType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameId">Produce_ShouldIgnoreEndpointsWithSameId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameId">
+  Produce_ShouldIgnoreEndpointsWithSameId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldIgnoreEndpointsWithSameId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId">Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId">
+  Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Produce_ShouldIgnoreEndpointsWithSameTopicNameAndMessageTypeAndNoId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanSession_ShouldSetCleanSession_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanSession_ShouldSetCleanSession*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanSession_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanSession_ShouldSetCleanSession">RequestCleanSession_ShouldSetCleanSession()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanSession_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanSession_ShouldSetCleanSession">
+  RequestCleanSession_ShouldSetCleanSession()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestCleanSession_ShouldSetCleanSession()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanStart_ShouldSetCleanSession_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanStart_ShouldSetCleanSession*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanStart_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanStart_ShouldSetCleanSession">RequestCleanStart_ShouldSetCleanSession()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestCleanStart_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestCleanStart_ShouldSetCleanSession">
+  RequestCleanStart_ShouldSetCleanSession()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestCleanStart_ShouldSetCleanSession()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSession_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSession*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSession">RequestPersistentSession_ShouldSetCleanSession()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSession" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSession">
+  RequestPersistentSession_ShouldSetCleanSession()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestPersistentSession_ShouldSetCleanSession()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval">RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval">
+  RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestPersistentSession_ShouldSetCleanSessionAndSessionExpiryInterval()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestProblemInformation_ShouldSetRequestProblemInformation_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestProblemInformation_ShouldSetRequestProblemInformation*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestProblemInformation_ShouldSetRequestProblemInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestProblemInformation_ShouldSetRequestProblemInformation">RequestProblemInformation_ShouldSetRequestProblemInformation()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestProblemInformation_ShouldSetRequestProblemInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestProblemInformation_ShouldSetRequestProblemInformation">
+  RequestProblemInformation_ShouldSetRequestProblemInformation()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestProblemInformation_ShouldSetRequestProblemInformation()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestResponseInformation_ShouldSetRequestResponseInformation_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestResponseInformation_ShouldSetRequestResponseInformation*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestResponseInformation_ShouldSetRequestResponseInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestResponseInformation_ShouldSetRequestResponseInformation">RequestResponseInformation_ShouldSetRequestResponseInformation()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_RequestResponseInformation_ShouldSetRequestResponseInformation" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.RequestResponseInformation_ShouldSetRequestResponseInformation">
+  RequestResponseInformation_ShouldSetRequestResponseInformation()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RequestResponseInformation_ShouldSetRequestResponseInformation()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendKeepAlive_ShouldSetKeepAliveInterval_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendKeepAlive_ShouldSetKeepAliveInterval*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendKeepAlive_ShouldSetKeepAliveInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendKeepAlive_ShouldSetKeepAliveInterval">SendKeepAlive_ShouldSetKeepAliveInterval()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendKeepAlive_ShouldSetKeepAliveInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendKeepAlive_ShouldSetKeepAliveInterval">
+  SendKeepAlive_ShouldSetKeepAliveInterval()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void SendKeepAlive_ShouldSetKeepAliveInterval()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendLastWillMessage_ShouldSetWillMessageAndDelay_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendLastWillMessage_ShouldSetWillMessageAndDelay*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendLastWillMessage_ShouldSetWillMessageAndDelay" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendLastWillMessage_ShouldSetWillMessageAndDelay">SendLastWillMessage_ShouldSetWillMessageAndDelay()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_SendLastWillMessage_ShouldSetWillMessageAndDelay" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.SendLastWillMessage_ShouldSetWillMessageAndDelay">
+  SendLastWillMessage_ShouldSetWillMessageAndDelay()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void SendLastWillMessage_ShouldSetWillMessageAndDelay()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance">UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance">
+  UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void UseEnhancedAuthenticationExchangeHandler_ShouldSetHandlerFromInstance()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument">UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument">
+  UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void UseEnhancedAuthenticationHandler_ShouldSetHandlerFromGenericTypeArgument()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType">UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType">
+  UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void UseEnhancedAuthenticationHandler_ShouldSetHandlerFromType()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseProtocolVersion_ShouldSetProtocolVersion_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseProtocolVersion_ShouldSetProtocolVersion*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseProtocolVersion_ShouldSetProtocolVersion" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseProtocolVersion_ShouldSetProtocolVersion">UseProtocolVersion_ShouldSetProtocolVersion()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_UseProtocolVersion_ShouldSetProtocolVersion" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.UseProtocolVersion_ShouldSetProtocolVersion">
+  UseProtocolVersion_ShouldSetProtocolVersion()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void UseProtocolVersion_ShouldSetProtocolVersion()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout">WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout">
+  WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithAcknowledgmentTimeout_ShouldSetAcknowledgmentTimeout()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithClientId_ShouldSetClientId_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithClientId_ShouldSetClientId*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithClientId_ShouldSetClientId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithClientId_ShouldSetClientId">WithClientId_ShouldSetClientId()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithClientId_ShouldSetClientId" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithClientId_ShouldSetClientId">
+  WithClientId_ShouldSetClientId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithClientId_ShouldSetClientId()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsFromClientCredentials_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsFromClientCredentials*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsFromClientCredentials" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsFromClientCredentials">WithCredentials_ShouldSetCredentialsFromClientCredentials()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsFromClientCredentials" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsFromClientCredentials">
+  WithCredentials_ShouldSetCredentialsFromClientCredentials()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithCredentials_ShouldSetCredentialsFromClientCredentials()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithBytesPassword_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithBytesPassword*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithBytesPassword" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithBytesPassword">WithCredentials_ShouldSetCredentialsWithBytesPassword()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithBytesPassword" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithBytesPassword">
+  WithCredentials_ShouldSetCredentialsWithBytesPassword()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithCredentials_ShouldSetCredentialsWithBytesPassword()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithStringPassword_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithStringPassword*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithStringPassword" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithStringPassword">WithCredentials_ShouldSetCredentialsWithStringPassword()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithCredentials_ShouldSetCredentialsWithStringPassword" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithCredentials_ShouldSetCredentialsWithStringPassword">
+  WithCredentials_ShouldSetCredentialsWithStringPassword()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithCredentials_ShouldSetCredentialsWithStringPassword()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData">WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData">
+  WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithEnhancedAuthentication_ShouldSetAuthenticationMethodAndData()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithSessionExpiration_ShouldSetSessionExpiryInterval_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithSessionExpiration_ShouldSetSessionExpiryInterval*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithSessionExpiration_ShouldSetSessionExpiryInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithSessionExpiration_ShouldSetSessionExpiryInterval">WithSessionExpiration_ShouldSetSessionExpiryInterval()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithSessionExpiration_ShouldSetSessionExpiryInterval" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithSessionExpiration_ShouldSetSessionExpiryInterval">
+  WithSessionExpiration_ShouldSetSessionExpiryInterval()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithSessionExpiration_ShouldSetSessionExpiryInterval()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithTimeout_ShouldSetTimeout_" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithTimeout_ShouldSetTimeout*"></a>
-  <h4 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithTimeout_ShouldSetTimeout" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithTimeout_ShouldSetTimeout">WithTimeout_ShouldSetTimeout()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Mqtt_Messaging_Configuration_Mqtt_MqttClientConfigurationBuilderTests_WithTimeout_ShouldSetTimeout" data-uid="Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt.MqttClientConfigurationBuilderTests.WithTimeout_ShouldSetTimeout">
+  WithTimeout_ShouldSetTimeout()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithTimeout_ShouldSetTimeout()</code></pre>
   </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.MQTT.Tests/Messaging/Configuration/Mqtt/MqttClientConfigurationBuilderTests.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

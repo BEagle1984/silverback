@@ -1,114 +1,142 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class TestDynamicProducerEndpointResolver&lt;TMessage&gt;
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class TestDynamicProducerEndpointResolver&lt;TMessage&gt;
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class TestDynamicProducerEndpointResolver&lt;TMessage&gt; | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TestDynamicProducerEndpointResolver&lt;TMessage&gt; | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1">
+
+        <article data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1">
 
 
-  <h1 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1" class="text-break">Class TestDynamicProducerEndpointResolver&lt;TMessage&gt;
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;</div>
-    <div class="level2"><span class="xref">TestDynamicProducerEndpointResolver&lt;TMessage&gt;</span></div>
+
+  <h1 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1" class="text-break">
+Class TestDynamicProducerEndpointResolver&lt;TMessage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Types.html">Types</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Tests.Common.Integration.dll</dd></dl>
   </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IDynamicProducerEndpointResolver%601.cs">IDynamicProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>&gt;</div>
-    <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver.html">IDynamicProducerEndpointResolver</a></div>
-    <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IProducerEndpointResolver%601.cs">IProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>&gt;</div>
-    <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IProducerEndpointResolver.html">IProducerEndpointResolver</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;&gt;</div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed record TestDynamicProducerEndpointResolver&lt;TMessage&gt; : DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;, IDynamicProducerEndpointResolver&lt;TestProducerEndpoint&gt;, IDynamicProducerEndpointResolver, IProducerEndpointResolver&lt;TestProducerEndpoint&gt;, IProducerEndpointResolver, IEquatable&lt;DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;&gt;, IEquatable&lt;TestDynamicProducerEndpointResolver&lt;TMessage&gt;&gt; where TMessage : class</code></pre>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TMessage</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;</div>
+      <div><span class="xref">TestDynamicProducerEndpointResolver&lt;TMessage&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IDynamicProducerEndpointResolver%601.cs">IDynamicProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>&gt;</div>
+      <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver.html">IDynamicProducerEndpointResolver</a></div>
+      <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/IProducerEndpointResolver%601.cs">IProducerEndpointResolver</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>&gt;</div>
+      <div><a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IProducerEndpointResolver.html">IProducerEndpointResolver</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver-3.html#Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver_3_GetEndpoint_Silverback_Messaging_Messages_IOutboundEnvelope_">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.GetEndpoint(IOutboundEnvelope)</a>
     </div>
@@ -145,620 +173,519 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Types.html">Types</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Tests.Common.Integration.dll</h6>
-  <h5 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public sealed record TestDynamicProducerEndpointResolver&lt;TMessage&gt; : DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;, IDynamicProducerEndpointResolver&lt;TestProducerEndpoint&gt;, IDynamicProducerEndpointResolver, IProducerEndpointResolver&lt;TestProducerEndpoint&gt;, IProducerEndpointResolver, IEquatable&lt;DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;&gt;, IEquatable&lt;TestDynamicProducerEndpointResolver&lt;TMessage&gt;&gt; where TMessage : class</code></pre>
-  </div>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TMessage</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1__ctor_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.#ctor*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1__ctor_System_String_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.#ctor(System.String)">TestDynamicProducerEndpointResolver(string)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1__ctor_System_String_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.#ctor(System.String)">
+  TestDynamicProducerEndpointResolver(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public TestDynamicProducerEndpointResolver(string topic)</code></pre>
+    <pre><code class="lang-csharp hljs">public TestDynamicProducerEndpointResolver(string topic)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">topic</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_EqualityContract_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.EqualityContract*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_EqualityContract" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.EqualityContract">EqualityContract</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_EqualityContract" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.EqualityContract">
+  EqualityContract
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override Type EqualityContract { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Type EqualityContract { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.EqualityContract</a></div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">Type</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_DeserializeEndpoint_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.DeserializeEndpoint*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_DeserializeEndpoint_System_String_Silverback_Tests_Types_TestProducerEndpointConfiguration_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.DeserializeEndpoint(System.String,Silverback.Tests.Types.TestProducerEndpointConfiguration)">DeserializeEndpoint(string, TestProducerEndpointConfiguration)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_DeserializeEndpoint_System_String_Silverback_Tests_Types_TestProducerEndpointConfiguration_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.DeserializeEndpoint(System.String,Silverback.Tests.Types.TestProducerEndpointConfiguration)">
+  DeserializeEndpoint(string, TestProducerEndpointConfiguration)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Deserializes the endpoint from a string.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override TestProducerEndpoint DeserializeEndpoint(string serializedEndpoint, TestProducerEndpointConfiguration configuration)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override TestProducerEndpoint DeserializeEndpoint(string serializedEndpoint, TestProducerEndpointConfiguration configuration)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">serializedEndpoint</span></td>
-        <td><p>The serialized endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a></td>
-        <td><span class="parametername">configuration</span></td>
-        <td><p>The endpoint configuration.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></td>
-        <td><p>The deserialized endpoint.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.DeserializeEndpoint(string, TestProducerEndpointConfiguration)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serializedEndpoint</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The serialized endpoint.</p>
+</dd>
+    <dt><code>configuration</code> <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a></dt>
+    <dd><p>The endpoint configuration.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></dt>
+    <dd><p>The deserialized endpoint.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver__0_Silverback_Tests_Types_TestProducerEndpoint_Silverback_Tests_Types_TestProducerEndpointConfiguration__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver{`0,Silverback.Tests.Types.TestProducerEndpoint,Silverback.Tests.Types.TestProducerEndpointConfiguration})">Equals(DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;?)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_Silverback_Messaging_Producing_EndpointResolvers_DynamicProducerEndpointResolver__0_Silverback_Tests_Types_TestProducerEndpoint_Silverback_Tests_Types_TestProducerEndpointConfiguration__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(Silverback.Messaging.Producing.EndpointResolvers.DynamicProducerEndpointResolver{`0,Silverback.Tests.Types.TestProducerEndpoint,Silverback.Tests.Types.TestProducerEndpointConfiguration})">
+  Equals(DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public override sealed bool Equals(DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;? other)</code></pre>
+    <pre><code class="lang-csharp hljs">public override sealed bool Equals(DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;? other)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;</td>
-        <td><span class="parametername">other</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.Equals(DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver</a>&lt;TMessage, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a>, <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">Equals(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">
+  Equals(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public bool Equals(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? other)</code></pre>
+    <pre><code class="lang-csharp hljs">public bool Equals(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? other)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">other</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_System_Object_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(System.Object)">Equals(object?)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_Equals_System_Object_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public override bool Equals(object? obj)</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">obj</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.Equals(object)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetEndpointCore_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetEndpointCore*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetEndpointCore_Silverback_Messaging_Messages_IOutboundEnvelope__0__Silverback_Tests_Types_TestProducerEndpointConfiguration_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetEndpointCore(Silverback.Messaging.Messages.IOutboundEnvelope{`0},Silverback.Tests.Types.TestProducerEndpointConfiguration)">GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt;, TestProducerEndpointConfiguration)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetEndpointCore_Silverback_Messaging_Messages_IOutboundEnvelope__0__Silverback_Tests_Types_TestProducerEndpointConfiguration_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetEndpointCore(Silverback.Messaging.Messages.IOutboundEnvelope{`0},Silverback.Tests.Types.TestProducerEndpointConfiguration)">
+  GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt;, TestProducerEndpointConfiguration)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the computed actual destination endpoint for the message being produced.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override TestProducerEndpoint GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt; envelope, TestProducerEndpointConfiguration configuration)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override TestProducerEndpoint GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt; envelope, TestProducerEndpointConfiguration configuration)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">envelope</span></td>
-        <td><p>The envelope containing the message to be produced.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a></td>
-        <td><span class="parametername">configuration</span></td>
-        <td><p>The endpoint configuration.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> for the specified message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.GetEndpointCore(IOutboundEnvelope&lt;TMessage&gt;, TestProducerEndpointConfiguration)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>envelope</code> <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;</dt>
+    <dd><p>The envelope containing the message to be produced.</p>
+</dd>
+    <dt><code>configuration</code> <a class="xref" href="Silverback.Tests.Types.TestProducerEndpointConfiguration.html">TestProducerEndpointConfiguration</a></dt>
+    <dd><p>The endpoint configuration.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> for the specified message.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetHashCode_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetHashCode*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetHashCode" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetHashCode">GetHashCode()</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_GetHashCode" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public override int GetHashCode()</code></pre>
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.GetHashCode()</a></div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_PrintMembers_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.PrintMembers*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.PrintMembers(System.Text.StringBuilder)">PrintMembers(StringBuilder)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_PrintMembers_System_Text_StringBuilder_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.PrintMembers(System.Text.StringBuilder)">
+  PrintMembers(StringBuilder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override bool PrintMembers(StringBuilder builder)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override bool PrintMembers(StringBuilder builder)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></td>
-        <td><span class="parametername">builder</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.PrintMembers(StringBuilder)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>builder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_SerializeEndpoint_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.SerializeEndpoint*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_SerializeEndpoint_Silverback_Tests_Types_TestProducerEndpoint_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.SerializeEndpoint(Silverback.Tests.Types.TestProducerEndpoint)">SerializeEndpoint(TestProducerEndpoint)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_SerializeEndpoint_Silverback_Tests_Types_TestProducerEndpoint_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.SerializeEndpoint(Silverback.Tests.Types.TestProducerEndpoint)">
+  SerializeEndpoint(TestProducerEndpoint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Serializes the endpoint to a string.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">protected override string SerializeEndpoint(TestProducerEndpoint endpoint)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override string SerializeEndpoint(TestProducerEndpoint endpoint)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></td>
-        <td><span class="parametername">endpoint</span></td>
-        <td><p>The endpoint to be serialized.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><p>The serialized endpoint.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.SerializeEndpoint(TestProducerEndpoint)</a></div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>endpoint</code> <a class="xref" href="Silverback.Tests.Types.TestProducerEndpoint.html">TestProducerEndpoint</a></dt>
+    <dd><p>The endpoint to be serialized.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The serialized endpoint.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_ToString_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.ToString*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_ToString" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.ToString">ToString()</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_ToString" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public override string ToString()</code></pre>
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/src/Silverback.Integration/Messaging/Producing/EndpointResolvers/DynamicProducerEndpointResolver%603.cs">DynamicProducerEndpointResolver&lt;TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration&gt;.ToString()</a></div>
-  <h3 id="operators">Operators
-</h3>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Equality_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Equality*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Equality_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Equality(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0},Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">operator ==(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?, TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Equality_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Equality(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0},Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">
+  operator ==(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?, TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public static bool operator ==(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? left, TestDynamicProducerEndpointResolver&lt;TMessage&gt;? right)</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool operator ==(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? left, TestDynamicProducerEndpointResolver&lt;TMessage&gt;? right)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">left</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">right</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Inequality_" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Inequality*"></a>
-  <h4 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Inequality_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Inequality(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0},Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">operator !=(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?, TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)</h4>
+
+  <h3 id="Silverback_Tests_Types_TestDynamicProducerEndpointResolver_1_op_Inequality_Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__Silverback_Tests_Types_TestDynamicProducerEndpointResolver__0__" data-uid="Silverback.Tests.Types.TestDynamicProducerEndpointResolver`1.op_Inequality(Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0},Silverback.Tests.Types.TestDynamicProducerEndpointResolver{`0})">
+  operator !=(TestDynamicProducerEndpointResolver&lt;TMessage&gt;?, TestDynamicProducerEndpointResolver&lt;TMessage&gt;?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public static bool operator !=(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? left, TestDynamicProducerEndpointResolver&lt;TMessage&gt;? right)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">left</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</td>
-        <td><span class="parametername">right</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver-1.html">IDynamicProducerEndpointResolver&lt;TEndpoint&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IDynamicProducerEndpointResolver.html">IDynamicProducerEndpointResolver</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IProducerEndpointResolver-1.html">IProducerEndpointResolver&lt;TEndpoint&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Producing.EndpointResolvers.IProducerEndpointResolver.html">IProducerEndpointResolver</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable&lt;T&gt;</a>
-  </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(TestDynamicProducerEndpointResolver&lt;TMessage&gt;? left, TestDynamicProducerEndpointResolver&lt;TMessage&gt;? right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Silverback.Tests.Types.TestDynamicProducerEndpointResolver-1.html">TestDynamicProducerEndpointResolver</a>&lt;TMessage&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Tests.Common.Integration/Types/TestDynamicProducerEndpointResolver%601.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

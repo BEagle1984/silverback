@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class RetryErrorPolicyBuilderTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class RetryErrorPolicyBuilderTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class RetryErrorPolicyBuilderTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class RetryErrorPolicyBuilderTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests">
+
+        <article data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests" class="text-break">Class RetryErrorPolicyBuilderTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">RetryErrorPolicyBuilderTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests" class="text-break">
+Class RetryErrorPolicyBuilderTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Configuration.html">Configuration</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class RetryErrorPolicyBuilderTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">RetryErrorPolicyBuilderTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,471 +141,794 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Messaging.Configuration.html">Configuration</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class RetryErrorPolicyBuilderTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests__ctor_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.#ctor">RetryErrorPolicyBuilderTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests__ctor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.#ctor">
+  RetryErrorPolicyBuilderTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public RetryErrorPolicyBuilderTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public RetryErrorPolicyBuilderTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter">ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter">
+  ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedExceptions_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedExceptions*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedExceptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedExceptions">ApplyTo_ShouldAddIncludedExceptions()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldAddIncludedExceptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldAddIncludedExceptions">
+  ApplyTo_ShouldAddIncludedExceptions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyTo_ShouldAddIncludedExceptions()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldThrow_WhenTypeIsNull_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldThrow_WhenTypeIsNull*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldThrow_WhenTypeIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldThrow_WhenTypeIsNull">ApplyTo_ShouldThrow_WhenTypeIsNull()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyTo_ShouldThrow_WhenTypeIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyTo_ShouldThrow_WhenTypeIsNull">
+  ApplyTo_ShouldThrow_WhenTypeIsNull()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyTo_ShouldThrow_WhenTypeIsNull()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRule_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRule*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRule" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRule">ApplyWhen_ShouldSetApplyRule()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRule" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRule">
+  ApplyWhen_ShouldSetApplyRule()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyWhen_ShouldSetApplyRule()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRuleWithExceptionParameter_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRuleWithExceptionParameter*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRuleWithExceptionParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRuleWithExceptionParameter">ApplyWhen_ShouldSetApplyRuleWithExceptionParameter()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldSetApplyRuleWithExceptionParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldSetApplyRuleWithExceptionParameter">
+  ApplyWhen_ShouldSetApplyRuleWithExceptionParameter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyWhen_ShouldSetApplyRuleWithExceptionParameter()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldThrow_WhenFunctionIsNull_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldThrow_WhenFunctionIsNull*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldThrow_WhenFunctionIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldThrow_WhenFunctionIsNull">ApplyWhen_ShouldThrow_WhenFunctionIsNull()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_ApplyWhen_ShouldThrow_WhenFunctionIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.ApplyWhen_ShouldThrow_WhenFunctionIsNull">
+  ApplyWhen_ShouldThrow_WhenFunctionIsNull()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void ApplyWhen_ShouldThrow_WhenFunctionIsNull()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter">Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter">
+  Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedExceptions_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedExceptions*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedExceptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedExceptions">Exclude_ShouldAddExcludedExceptions()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldAddExcludedExceptions" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldAddExcludedExceptions">
+  Exclude_ShouldAddExcludedExceptions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Exclude_ShouldAddExcludedExceptions()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldThrow_WhenTypeIsNull_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldThrow_WhenTypeIsNull*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldThrow_WhenTypeIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldThrow_WhenTypeIsNull">Exclude_ShouldThrow_WhenTypeIsNull()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Exclude_ShouldThrow_WhenTypeIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Exclude_ShouldThrow_WhenTypeIsNull">
+  Exclude_ShouldThrow_WhenTypeIsNull()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Exclude_ShouldThrow_WhenTypeIsNull()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactory_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactory*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactory" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactory">Publish_ShouldSetMessageFactory()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactory" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactory">
+  Publish_ShouldSetMessageFactory()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Publish_ShouldSetMessageFactory()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactoryWithExceptionParameter_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactoryWithExceptionParameter*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactoryWithExceptionParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactoryWithExceptionParameter">Publish_ShouldSetMessageFactoryWithExceptionParameter()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldSetMessageFactoryWithExceptionParameter" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldSetMessageFactoryWithExceptionParameter">
+  Publish_ShouldSetMessageFactoryWithExceptionParameter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Publish_ShouldSetMessageFactoryWithExceptionParameter()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldThrow_WhenFunctionIsNull_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldThrow_WhenFunctionIsNull*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldThrow_WhenFunctionIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldThrow_WhenFunctionIsNull">Publish_ShouldThrow_WhenFunctionIsNull()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_Publish_ShouldThrow_WhenFunctionIsNull" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.Publish_ShouldThrow_WhenFunctionIsNull">
+  Publish_ShouldThrow_WhenFunctionIsNull()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Publish_ShouldThrow_WhenFunctionIsNull()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactor_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactor*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactor">WithExponentialDelay_ShouldSetInitialDelayAndFactor()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactor" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactor">
+  WithExponentialDelay_ShouldSetInitialDelayAndFactor()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithExponentialDelay_ShouldSetInitialDelayAndFactor()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay">WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay">
+  WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithExponentialDelay_ShouldSetInitialDelayAndFactorAndMaxDelay()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(System.Int32)">WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(System.Int32)">
+  WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithExponentialDelay_ShouldThrow_WhenDelayFactorIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(System.Int32)">WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(System.Int32)">
+  WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrement_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrement*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrement" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrement">WithIncrementalDelay_ShouldSetInitialDelayAndIncrement()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrement" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrement">
+  WithIncrementalDelay_ShouldSetInitialDelayAndIncrement()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithIncrementalDelay_ShouldSetInitialDelayAndIncrement()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay">WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay">
+  WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithIncrementalDelay_ShouldSetInitialDelayAndIncrementAndMaxDelay()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(System.Int32)">WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(System.Int32)">
+  WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(System.Int32)">WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(System.Int32)">
+  WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(System.Int32)">WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(System.Int32)">
+  WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithIncrementalDelay_ShouldThrow_WhenMaxDelayIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldSetInitialDelay_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldSetInitialDelay*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldSetInitialDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldSetInitialDelay">WithInterval_ShouldSetInitialDelay()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldSetInitialDelay" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldSetInitialDelay">
+  WithInterval_ShouldSetInitialDelay()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithInterval_ShouldSetInitialDelay()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero(System.Int32)">WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero(System.Int32)">
+  WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithInterval_ShouldThrow_WhenIntervalIsLowerOrEqualToZero(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldSetMaxFailedAttempts_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldSetMaxFailedAttempts*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldSetMaxFailedAttempts" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldSetMaxFailedAttempts">WithMaxRetries_ShouldSetMaxFailedAttempts()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldSetMaxFailedAttempts" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldSetMaxFailedAttempts">
+  WithMaxRetries_ShouldSetMaxFailedAttempts()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void WithMaxRetries_ShouldSetMaxFailedAttempts()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne*"></a>
-  <h4 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(System.Int32)">WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(int)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Messaging_Configuration_RetryErrorPolicyBuilderTests_WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne_System_Int32_" data-uid="Silverback.Tests.Integration.Messaging.Configuration.RetryErrorPolicyBuilderTests.WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(System.Int32)">
+  WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(new object[] { 0 })]
 [InlineData(new object[] { -42 })]
 public void WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(int value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Tests/Messaging/Configuration/RetryErrorPolicyBuilderTests.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

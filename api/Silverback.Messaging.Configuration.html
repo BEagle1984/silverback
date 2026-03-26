@@ -1,375 +1,518 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace Silverback.Messaging.Configuration
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace Silverback.Messaging.Configuration
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Namespace Silverback.Messaging.Configuration | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Namespace Silverback.Messaging.Configuration | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration">
 
-  <h1 id="Silverback_Messaging_Configuration" data-uid="Silverback.Messaging.Configuration" class="text-break">Namespace Silverback.Messaging.Configuration
-</h1>
+        <article data-uid="Silverback.Messaging.Configuration">
+
+  <h1 id="Silverback_Messaging_Configuration" data-uid="Silverback.Messaging.Configuration" class="text-break">Namespace Silverback.Messaging.Configuration</h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
-</h3>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.AvroMessageDeserializerBuilder.html">AvroMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html">AvroMessageDeserializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.AvroMessageSerializerBuilder.html">AvroMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BinaryMessageDeserializerBuilder.html">BinaryMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer-1.html">BinaryMessageDeserializer&lt;TModel&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BinaryMessageSerializerBuilder.html">BinaryMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryMessages.BinaryMessageSerializer.html">BinaryMessageSerializer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientConnectionOptions.html">BrokerClientConnectionOptions</a></h4>
-      <section><p>The options specifying if and when the broker clients have to be automatically connected.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a></h4>
-      <section><p>Configures the producers and consumers.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsInitializer.html">BrokerClientsInitializer</a></h4>
-      <section><p>Initializes the broker clients, producers and consumers.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerConfigurationException.html">BrokerConfigurationException</a></h4>
-      <section><p>The exception that is thrown when the broker client configuration is not valid.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a></h4>
-      <section><p>Exposes the methods to configure the connection with the message broker(s) and add the necessary services to the
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions.html">BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions_AddConfluentSchemaRegistry_Silverback_Messaging_Configuration_BrokerOptionsBuilder_">AddConfluentSchemaRegistry(BrokerOptionsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddKafkaExtensions.html">BrokerOptionsBuilderAddKafkaExtensions</a></h4>
-      <section><p>Adds the <code>AddKafka</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddMqttExtensions.html">BrokerOptionsBuilderAddMqttExtensions</a></h4>
-      <section><p>Adds the <code>AddMqtt</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderEntityFrameworkExtensions.html">BrokerOptionsBuilderEntityFrameworkExtensions</a></h4>
-      <section><p>Adds the Silverback.Storage.EntityFramework specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderKafkaTestingExtensions.html">BrokerOptionsBuilderKafkaTestingExtensions</a></h4>
-      <section><p>Adds the <code>AddMockedKafka</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderMemoryExtensions.html">BrokerOptionsBuilderMemoryExtensions</a></h4>
-      <section><p>Adds the Silverback.Storage.Memory specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderMqttTestingExtensions.html">BrokerOptionsBuilderMqttTestingExtensions</a></h4>
-      <section><p>Adds the <code>AddMockedMqtt</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderPostgreSqlExtensions.html">BrokerOptionsBuilderPostgreSqlExtensions</a></h4>
-      <section><p>Adds the Silverback.Storage.PostgreSql specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderSqliteExtensions.html">BrokerOptionsBuilderSqliteExtensions</a></h4>
-      <section><p>Adds the Silverback.Storage.Sqlite specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BusOptions.html">BusOptions</a></h4>
-      <section><p>Stores the message bus configuration (subscribers, etc.).</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ConsumerConfigurationBuilderNewtonsoftExtensions.html">ConsumerConfigurationBuilderNewtonsoftExtensions</a></h4>
-      <section><p>Adds the <code>DeserializeJsonUsingNewtonsoft</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a></h4>
-      <section><p>The consumer configuration.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html">ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeAvro__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_AvroMessageDeserializerBuilder__">DeserializeAvro&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;AvroMessageDeserializerBuilder&gt;?)</a>, <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeJsonUsingSchemaRegistry__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_JsonSchemaRegistryMessageDeserializerBuilder__">DeserializeJsonUsingSchemaRegistry&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;JsonSchemaRegistryMessageDeserializerBuilder&gt;?)</a>
-and <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeProtobuf__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_ProtobufMessageDeserializerBuilder__">DeserializeProtobuf&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;ProtobufMessageDeserializerBuilder&gt;?)</a>  methods to the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfiguration.html">EndpointConfiguration</a></h4>
-      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a> and <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html">EndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfiguration.html">EndpointConfiguration</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.html">EndpointsConfigurationBuilderAddKafkaClientsExtensions</a></h4>
-      <section><p>Adds the <code>AddKafkaEndpoints</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html">EndpointsConfigurationBuilderAddMqttEndpointsExtensions</a></h4>
-      <section><p>Adds the <code>AddMqttEndpoints</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EntityFrameworkKafkaOffsetStoreSettingsBuilder.html">EntityFrameworkKafkaOffsetStoreSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.html">EntityFrameworkKafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.EntityFrameworkOutboxSettingsBuilder.html">EntityFrameworkOutboxSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.html">EntityFrameworkOutboxSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder-1.html">ErrorPolicyBaseBuilder&lt;TBuilder&gt;</a></h4>
-      <section><p>Builds an <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.InMemoryKafkaOffsetStoreSettingsBuilder.html">InMemoryKafkaOffsetStoreSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.html">InMemoryKafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.InMemoryOutboxSettingsBuilder.html">InMemoryOutboxSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.html">InMemoryOutboxSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.JsonMessageDeserializerBuilder.html">JsonMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializer-1.html">JsonMessageDeserializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.JsonSchemaRegistryMessageDeserializerBuilder.html">JsonSchemaRegistryMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageDeserializer-1.html">JsonSchemaRegistryMessageDeserializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.JsonSchemaRegistryMessageSerializerBuilder.html">JsonSchemaRegistryMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageSerializer-1.html">JsonSchemaRegistryMessageSerializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html">KafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions.html">KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions_UseEntityFramework__1_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_">UseEntityFramework&lt;TDbContext&gt;(KafkaOffsetStoreSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderMemoryExtensions.html">KafkaOffsetStoreSettingsBuilderMemoryExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderMemoryExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderMemoryExtensions_UseMemory_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_">UseMemory(KafkaOffsetStoreSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions.html">KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions_UsePostgreSql_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_System_String_">UsePostgreSql(KafkaOffsetStoreSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderSqliteExtensions.html">KafkaOffsetStoreSettingsBuilderSqliteExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderSqliteExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderSqliteExtensions_UseSqlite_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_System_String_">UseSqlite(KafkaOffsetStoreSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.MoveMessageErrorPolicyBuilder.html">MoveMessageErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.NewtonsoftJsonMessageDeserializerBuilder.html">NewtonsoftJsonMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> or <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html">NewtonsoftJsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html">OutboxSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderEntityFrameworkExtensions.html">OutboxSettingsBuilderEntityFrameworkExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderEntityFrameworkExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderEntityFrameworkExtensions_UseEntityFramework__1_Silverback_Messaging_Configuration_OutboxSettingsBuilder_">UseEntityFramework&lt;TDbContext&gt;(OutboxSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderMemoryExtensions.html">OutboxSettingsBuilderMemoryExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderMemoryExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderMemoryExtensions_UseMemory_Silverback_Messaging_Configuration_OutboxSettingsBuilder_">UseMemory(OutboxSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderPostgreSqlExtensions.html">OutboxSettingsBuilderPostgreSqlExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderPostgreSqlExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderPostgreSqlExtensions_UsePostgreSql_Silverback_Messaging_Configuration_OutboxSettingsBuilder_System_String_">UsePostgreSql(OutboxSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderSqliteExtensions.html">OutboxSettingsBuilderSqliteExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderSqliteExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderSqliteExtensions_UseSqlite_Silverback_Messaging_Configuration_OutboxSettingsBuilder_System_String_">UseSqlite(OutboxSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.PostgreSqlKafkaOffsetStoreSettingsBuilder.html">PostgreSqlKafkaOffsetStoreSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.html">PostgreSqlKafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.PostgreSqlOutboxSettingsBuilder.html">PostgreSqlOutboxSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html">PostgreSqlOutboxSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerConfigurationBuilderNewtonsoftExtensions.html">ProducerConfigurationBuilderNewtonsoftExtensions</a></h4>
-      <section><p>Adds the <code>SerializeAsJsonUsingNewtonsoft</code> method to the
-<a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a></h4>
-      <section><p>The producer configuration.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html">ProducerEndpointConfigurationBuilderSchemaRegistryExtensions</a></h4>
-      <section><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsAvro__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_AvroMessageSerializerBuilder__">SerializeAsAvro&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;AvroMessageSerializerBuilder&gt;?)</a>, <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsJsonUsingSchemaRegistry__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_JsonSchemaRegistryMessageSerializerBuilder__">SerializeAsJsonUsingSchemaRegistry&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;JsonSchemaRegistryMessageSerializerBuilder&gt;?)</a>
-and <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsProtobuf__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_ProtobufMessageSerializerBuilder__">SerializeAsProtobuf&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;ProtobufMessageSerializerBuilder&gt;?)</a> methods to the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration-1.html">ProducerEndpointConfiguration&lt;TEndpoint&gt;</a></h4>
-      <section><p>The producer configuration.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProtobufMessageDeserializerBuilder.html">ProtobufMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageDeserializer-1.html">ProtobufMessageDeserializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.ProtobufMessageSerializerBuilder.html">ProtobufMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageSerializer-1.html">ProtobufMessageSerializer&lt;TMessage&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.RawMessageDeserializerBuilder.html">RawMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.RawMessageDeserializer-1.html">RawMessageDeserializer&lt;T&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.RetryErrorPolicyBuilder.html">RetryErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.SchemaRegistryDeserializerBuilder-1.html">SchemaRegistryDeserializerBuilder&lt;TBuilder&gt;</a></h4>
-      <section><p>Builds an <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a> based on the schema registry.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.SchemaRegistrySerializerBuilder-1.html">SchemaRegistrySerializerBuilder&lt;TBuilder&gt;</a></h4>
-      <section><p>Builds an <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> based on the schema registry.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.SkipMessageErrorPolicyBuilder.html">SkipMessageErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.SqliteKafkaOffsetStoreSettingsBuilder.html">SqliteKafkaOffsetStoreSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.html">SqliteKafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.SqliteOutboxSettingsBuilder.html">SqliteOutboxSettingsBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.html">SqliteOutboxSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.StopConsumerErrorPolicyBuilder.html">StopConsumerErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.StringMessageDeserializerBuilder.html">StringMessageDeserializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.StringMessageDeserializer-1.html">StringMessageDeserializer&lt;T&gt;</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.StringMessageSerializerBuilder.html">StringMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.StringMessageSerializer.html">StringMessageSerializer</a>.</p>
-</section>
-    <h3 id="interfaces">Interfaces
-</h3>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a></h4>
-      <section><p>This interface can be implemented to split the producers and consumers configuration across different types. The types implementing
-<a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a> must be registered using <a class="xref" href="Silverback.Configuration.SilverbackBuilderIntegrationExtensions.html#Silverback_Configuration_SilverbackBuilderIntegrationExtensions_AddBrokerClientsConfigurator__1_Silverback_Configuration_SilverbackBuilder_">AddBrokerClientsConfigurator&lt;TConfigurator&gt;(SilverbackBuilder)</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsInitializer.html">IBrokerClientsInitializer</a></h4>
-      <section><p>Initializes the broker clients, producers and consumers.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IKafkaOffsetStoreSettingsImplementationBuilder.html">IKafkaOffsetStoreSettingsImplementationBuilder</a></h4>
-      <section><p>Builds the specific implementation of the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html">KafkaOffsetStoreSettings</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html">IMessageSerializationBuilder&lt;TMessage, TBuilder&gt;</a></h4>
-      <section><p>Exposes the <a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html#Silverback_Messaging_Configuration_IMessageSerializationBuilder_2_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_">SerializeUsing(IMessageSerializer)</a> method, allowing to specify the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to serialize the messages.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.IOutboxSettingsImplementationBuilder.html">IOutboxSettingsImplementationBuilder</a></h4>
-      <section><p>Builds the specific implementation of the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html">OutboxSettings</a>.</p>
-</section>
-    <h3 id="enums">Enums
-</h3>
-      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientConnectionMode.html">BrokerClientConnectionMode</a></h4>
-      <section><p>Specifies if and when the message broker has to be automatically connected.</p>
-</section>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+    <h3 id="classes">
+Classes
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.AvroMessageDeserializerBuilder.html">AvroMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html">AvroMessageDeserializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.AvroMessageSerializerBuilder.html">AvroMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BinaryMessageDeserializerBuilder.html">BinaryMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryMessages.BinaryMessageDeserializer-1.html">BinaryMessageDeserializer&lt;TModel&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BinaryMessageSerializerBuilder.html">BinaryMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryMessages.BinaryMessageSerializer.html">BinaryMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientConnectionOptions.html">BrokerClientConnectionOptions</a></dt>
+      <dd><p>The options specifying if and when the broker clients have to be automatically connected.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a></dt>
+      <dd><p>Configures the producers and consumers.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsInitializer.html">BrokerClientsInitializer</a></dt>
+      <dd><p>Initializes the broker clients, producers and consumers.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerConfigurationException.html">BrokerConfigurationException</a></dt>
+      <dd><p>The exception that is thrown when the broker client configuration is not valid.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a></dt>
+      <dd><p>Exposes the methods to configure the connection with the message broker(s) and add the necessary services to the
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions.html">BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_BrokerOptionsBuilderAddConfluentSchemaRegistryExtensions_AddConfluentSchemaRegistry_Silverback_Messaging_Configuration_BrokerOptionsBuilder_">AddConfluentSchemaRegistry(BrokerOptionsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddKafkaExtensions.html">BrokerOptionsBuilderAddKafkaExtensions</a></dt>
+      <dd><p>Adds the <code>AddKafka</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAddMqttExtensions.html">BrokerOptionsBuilderAddMqttExtensions</a></dt>
+      <dd><p>Adds the <code>AddMqtt</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderEntityFrameworkExtensions.html">BrokerOptionsBuilderEntityFrameworkExtensions</a></dt>
+      <dd><p>Adds the Silverback.Storage.EntityFramework specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderKafkaTestingExtensions.html">BrokerOptionsBuilderKafkaTestingExtensions</a></dt>
+      <dd><p>Adds the <code>AddMockedKafka</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderMemoryExtensions.html">BrokerOptionsBuilderMemoryExtensions</a></dt>
+      <dd><p>Adds the Silverback.Storage.Memory specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderMqttTestingExtensions.html">BrokerOptionsBuilderMqttTestingExtensions</a></dt>
+      <dd><p>Adds the <code>AddMockedMqtt</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderPostgreSqlExtensions.html">BrokerOptionsBuilderPostgreSqlExtensions</a></dt>
+      <dd><p>Adds the Silverback.Storage.PostgreSql specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderSqliteExtensions.html">BrokerOptionsBuilderSqliteExtensions</a></dt>
+      <dd><p>Adds the Silverback.Storage.Sqlite specific methods to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilder.html">BrokerOptionsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BusOptions.html">BusOptions</a></dt>
+      <dd><p>Stores the message bus configuration (subscribers, etc.).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ConsumerConfigurationBuilderNewtonsoftExtensions.html">ConsumerConfigurationBuilderNewtonsoftExtensions</a></dt>
+      <dd><p>Adds the <code>DeserializeJsonUsingNewtonsoft</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a></dt>
+      <dd><p>The consumer configuration.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html">ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeAvro__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_AvroMessageDeserializerBuilder__">DeserializeAvro&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;AvroMessageDeserializerBuilder&gt;?)</a>, <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeJsonUsingSchemaRegistry__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_JsonSchemaRegistryMessageDeserializerBuilder__">DeserializeJsonUsingSchemaRegistry&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;JsonSchemaRegistryMessageDeserializerBuilder&gt;?)</a>
+and <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions_DeserializeProtobuf__3_Silverback_Messaging_Configuration_ConsumerEndpointConfigurationBuilder___0___1___2__System_Action_Silverback_Messaging_Configuration_ProtobufMessageDeserializerBuilder__">DeserializeProtobuf&lt;TMessage, TConfiguration, TBuilder&gt;(ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;, Action&lt;ProtobufMessageDeserializerBuilder&gt;?)</a>  methods to the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfigurationBuilder-3.html">ConsumerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfiguration.html">EndpointConfiguration</a></dt>
+      <dd><p>The base class for <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a> and <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointConfiguration.html">ConsumerEndpointConfiguration</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EndpointConfigurationBuilder-3.html">EndpointConfigurationBuilder&lt;TMessage, TConfiguration, TBuilder&gt;</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.EndpointConfiguration.html">EndpointConfiguration</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaClientsExtensions.html">EndpointsConfigurationBuilderAddKafkaClientsExtensions</a></dt>
+      <dd><p>Adds the <code>AddKafkaEndpoints</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html">EndpointsConfigurationBuilderAddMqttEndpointsExtensions</a></dt>
+      <dd><p>Adds the <code>AddMqttEndpoints</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.html">BrokerClientsConfigurationBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EntityFrameworkKafkaOffsetStoreSettingsBuilder.html">EntityFrameworkKafkaOffsetStoreSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.EntityFrameworkKafkaOffsetStoreSettings.html">EntityFrameworkKafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.EntityFrameworkOutboxSettingsBuilder.html">EntityFrameworkOutboxSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.EntityFrameworkOutboxSettings.html">EntityFrameworkOutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBaseBuilder-1.html">ErrorPolicyBaseBuilder&lt;TBuilder&gt;</a></dt>
+      <dd><p>Builds an <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.InMemoryKafkaOffsetStoreSettingsBuilder.html">InMemoryKafkaOffsetStoreSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.InMemoryKafkaOffsetStoreSettings.html">InMemoryKafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.InMemoryOutboxSettingsBuilder.html">InMemoryOutboxSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.InMemoryOutboxSettings.html">InMemoryOutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.JsonMessageDeserializerBuilder.html">JsonMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageDeserializer-1.html">JsonMessageDeserializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.JsonSchemaRegistryMessageDeserializerBuilder.html">JsonSchemaRegistryMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageDeserializer-1.html">JsonSchemaRegistryMessageDeserializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.JsonSchemaRegistryMessageSerializerBuilder.html">JsonSchemaRegistryMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonSchemaRegistryMessageSerializer-1.html">JsonSchemaRegistryMessageSerializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html">KafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions.html">KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensions_UseEntityFramework__1_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_">UseEntityFramework&lt;TDbContext&gt;(KafkaOffsetStoreSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderMemoryExtensions.html">KafkaOffsetStoreSettingsBuilderMemoryExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderMemoryExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderMemoryExtensions_UseMemory_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_">UseMemory(KafkaOffsetStoreSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions.html">KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions_UsePostgreSql_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_System_String_">UsePostgreSql(KafkaOffsetStoreSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderSqliteExtensions.html">KafkaOffsetStoreSettingsBuilderSqliteExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilderSqliteExtensions.html#Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilderSqliteExtensions_UseSqlite_Silverback_Messaging_Configuration_KafkaOffsetStoreSettingsBuilder_System_String_">UseSqlite(KafkaOffsetStoreSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.KafkaOffsetStoreSettingsBuilder.html">KafkaOffsetStoreSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.MoveMessageErrorPolicyBuilder.html">MoveMessageErrorPolicyBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.NewtonsoftJsonMessageDeserializerBuilder.html">NewtonsoftJsonMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a> or <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageDeserializer-1.html">NewtonsoftJsonMessageDeserializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html">NewtonsoftJsonMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html">OutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderEntityFrameworkExtensions.html">OutboxSettingsBuilderEntityFrameworkExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderEntityFrameworkExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderEntityFrameworkExtensions_UseEntityFramework__1_Silverback_Messaging_Configuration_OutboxSettingsBuilder_">UseEntityFramework&lt;TDbContext&gt;(OutboxSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderMemoryExtensions.html">OutboxSettingsBuilderMemoryExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderMemoryExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderMemoryExtensions_UseMemory_Silverback_Messaging_Configuration_OutboxSettingsBuilder_">UseMemory(OutboxSettingsBuilder)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderPostgreSqlExtensions.html">OutboxSettingsBuilderPostgreSqlExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderPostgreSqlExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderPostgreSqlExtensions_UsePostgreSql_Silverback_Messaging_Configuration_OutboxSettingsBuilder_System_String_">UsePostgreSql(OutboxSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderSqliteExtensions.html">OutboxSettingsBuilderSqliteExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilderSqliteExtensions.html#Silverback_Messaging_Configuration_OutboxSettingsBuilderSqliteExtensions_UseSqlite_Silverback_Messaging_Configuration_OutboxSettingsBuilder_System_String_">UseSqlite(OutboxSettingsBuilder, string)</a> method to the <a class="xref" href="Silverback.Messaging.Configuration.OutboxSettingsBuilder.html">OutboxSettingsBuilder</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.OutboxWorkerSettingsBuilder.html">OutboxWorkerSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxWorkerSettings.html">OutboxWorkerSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.PostgreSqlKafkaOffsetStoreSettingsBuilder.html">PostgreSqlKafkaOffsetStoreSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.PostgreSqlKafkaOffsetStoreSettings.html">PostgreSqlKafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.PostgreSqlOutboxSettingsBuilder.html">PostgreSqlOutboxSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.PostgreSqlOutboxSettings.html">PostgreSqlOutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProducerConfigurationBuilderNewtonsoftExtensions.html">ProducerConfigurationBuilderNewtonsoftExtensions</a></dt>
+      <dd><p>Adds the <code>SerializeAsJsonUsingNewtonsoft</code> method to the
+<a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a></dt>
+      <dd><p>The producer configuration.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html">ProducerEndpointConfigurationBuilderSchemaRegistryExtensions</a></dt>
+      <dd><p>Adds the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsAvro__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_AvroMessageSerializerBuilder__">SerializeAsAvro&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;AvroMessageSerializerBuilder&gt;?)</a>, <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsJsonUsingSchemaRegistry__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_JsonSchemaRegistryMessageSerializerBuilder__">SerializeAsJsonUsingSchemaRegistry&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;JsonSchemaRegistryMessageSerializerBuilder&gt;?)</a>
+and <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilderSchemaRegistryExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilderSchemaRegistryExtensions_SerializeAsProtobuf__4_Silverback_Messaging_Configuration_ProducerEndpointConfigurationBuilder___0___1___2___3__System_Action_Silverback_Messaging_Configuration_ProtobufMessageSerializerBuilder__">SerializeAsProtobuf&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;(ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;, Action&lt;ProtobufMessageSerializerBuilder&gt;?)</a> methods to the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfigurationBuilder-4.html">ProducerEndpointConfigurationBuilder&lt;TMessage, TConfiguration, TEndpoint, TBuilder&gt;</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration.html">ProducerEndpointConfiguration</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointConfiguration-1.html">ProducerEndpointConfiguration&lt;TEndpoint&gt;</a></dt>
+      <dd><p>The producer configuration.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProtobufMessageDeserializerBuilder.html">ProtobufMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageDeserializer-1.html">ProtobufMessageDeserializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.ProtobufMessageSerializerBuilder.html">ProtobufMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.ProtobufMessageSerializer-1.html">ProtobufMessageSerializer&lt;TMessage&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.RawMessageDeserializerBuilder.html">RawMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.RawMessageDeserializer-1.html">RawMessageDeserializer&lt;T&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.RetryErrorPolicyBuilder.html">RetryErrorPolicyBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.SchemaRegistryDeserializerBuilder-1.html">SchemaRegistryDeserializerBuilder&lt;TBuilder&gt;</a></dt>
+      <dd><p>Builds an <a class="xref" href="Silverback.Messaging.Serialization.IMessageDeserializer.html">IMessageDeserializer</a> based on the schema registry.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.SchemaRegistrySerializerBuilder-1.html">SchemaRegistrySerializerBuilder&lt;TBuilder&gt;</a></dt>
+      <dd><p>Builds an <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> based on the schema registry.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.SkipMessageErrorPolicyBuilder.html">SkipMessageErrorPolicyBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.SqliteKafkaOffsetStoreSettingsBuilder.html">SqliteKafkaOffsetStoreSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.SqliteKafkaOffsetStoreSettings.html">SqliteKafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.SqliteOutboxSettingsBuilder.html">SqliteOutboxSettingsBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.SqliteOutboxSettings.html">SqliteOutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.StopConsumerErrorPolicyBuilder.html">StopConsumerErrorPolicyBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.StringMessageDeserializerBuilder.html">StringMessageDeserializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.StringMessageDeserializer-1.html">StringMessageDeserializer&lt;T&gt;</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.StringMessageSerializerBuilder.html">StringMessageSerializerBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.StringMessageSerializer.html">StringMessageSerializer</a>.</p>
+</dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a></dt>
+      <dd><p>This interface can be implemented to split the producers and consumers configuration across different types. The types implementing
+<a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsConfigurator.html">IBrokerClientsConfigurator</a> must be registered using <a class="xref" href="Silverback.Configuration.SilverbackBuilderIntegrationExtensions.html#Silverback_Configuration_SilverbackBuilderIntegrationExtensions_AddBrokerClientsConfigurator__1_Silverback_Configuration_SilverbackBuilder_">AddBrokerClientsConfigurator&lt;TConfigurator&gt;(SilverbackBuilder)</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IBrokerClientsInitializer.html">IBrokerClientsInitializer</a></dt>
+      <dd><p>Initializes the broker clients, producers and consumers.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></dt>
+      <dd><p>Builds the <a class="xref" href="Silverback.Messaging.Consuming.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IKafkaOffsetStoreSettingsImplementationBuilder.html">IKafkaOffsetStoreSettingsImplementationBuilder</a></dt>
+      <dd><p>Builds the specific implementation of the <a class="xref" href="Silverback.Messaging.Consuming.KafkaOffsetStore.KafkaOffsetStoreSettings.html">KafkaOffsetStoreSettings</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html">IMessageSerializationBuilder&lt;TMessage, TBuilder&gt;</a></dt>
+      <dd><p>Exposes the <a class="xref" href="Silverback.Messaging.Configuration.IMessageSerializationBuilder-2.html#Silverback_Messaging_Configuration_IMessageSerializationBuilder_2_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_">SerializeUsing(IMessageSerializer)</a> method, allowing to specify the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to serialize the messages.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.IOutboxSettingsImplementationBuilder.html">IOutboxSettingsImplementationBuilder</a></dt>
+      <dd><p>Builds the specific implementation of the <a class="xref" href="Silverback.Messaging.Producing.TransactionalOutbox.OutboxSettings.html">OutboxSettings</a>.</p>
+</dd>
+    </dl>
+    <h3 id="enums">
+Enums
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Silverback.Messaging.Configuration.BrokerClientConnectionMode.html">BrokerClientConnectionMode</a></dt>
+      <dd><p>Specifies if and when the message broker has to be automatically connected.</p>
+</dd>
+    </dl>
+
+
+</article>
+
+        <div class="contribution d-print-none">
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

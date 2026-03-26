@@ -1,104 +1,125 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class KafkaStaticProducerEndpointResolverTests
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class KafkaStaticProducerEndpointResolverTests
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class KafkaStaticProducerEndpointResolverTests | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class KafkaStaticProducerEndpointResolverTests | Silverback ">
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests">
+
+        <article data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests">
 
 
-  <h1 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests" class="text-break">Class KafkaStaticProducerEndpointResolverTests
-</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">KafkaStaticProducerEndpointResolverTests</span></div>
+
+  <h1 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests" class="text-break">
+Class KafkaStaticProducerEndpointResolverTests  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.html">Kafka</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.Outbound.html">Outbound</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.html">EndpointResolvers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.Kafka.Tests.dll</dd></dl>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class KafkaStaticProducerEndpointResolverTests</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">KafkaStaticProducerEndpointResolverTests</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -120,170 +141,293 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Tests.html">Tests</a>.<a class="xref" href="Silverback.Tests.Integration.html">Integration</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.html">Kafka</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.Outbound.html">Outbound</a>.<a class="xref" href="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.html">EndpointResolvers</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.Tests.dll</h6>
-  <h5 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public class KafkaStaticProducerEndpointResolverTests</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests__ctor_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.#ctor*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests__ctor" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.#ctor">KafkaStaticProducerEndpointResolverTests()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests__ctor" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.#ctor">
+  KafkaStaticProducerEndpointResolverTests()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public KafkaStaticProducerEndpointResolverTests()</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaStaticProducerEndpointResolverTests()</code></pre>
   </div>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid">Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid">
+  Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Constructor_ShouldNotThrow_WhenTopicNameAndPartitionAreValid()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameIsValid_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameIsValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameIsValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameIsValid">Constructor_ShouldNotThrow_WhenTopicNameIsValid()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldNotThrow_WhenTopicNameIsValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldNotThrow_WhenTopicNameIsValid">
+  Constructor_ShouldNotThrow_WhenTopicNameIsValid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Constructor_ShouldNotThrow_WhenTopicNameIsValid()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenPartitionIsNotValid_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenPartitionIsNotValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenPartitionIsNotValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenPartitionIsNotValid">Constructor_ShouldThrow_WhenPartitionIsNotValid()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenPartitionIsNotValid" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenPartitionIsNotValid">
+  Constructor_ShouldThrow_WhenPartitionIsNotValid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void Constructor_ShouldThrow_WhenPartitionIsNotValid()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenTopicNameIsNotValid_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenTopicNameIsNotValid*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenTopicNameIsNotValid_System_String_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenTopicNameIsNotValid(System.String)">Constructor_ShouldThrow_WhenTopicNameIsNotValid(string?)</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_Constructor_ShouldThrow_WhenTopicNameIsNotValid_System_String_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.Constructor_ShouldThrow_WhenTopicNameIsNotValid(System.String)">
+  Constructor_ShouldThrow_WhenTopicNameIsNotValid(string?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Theory]
+    <pre><code class="lang-csharp hljs">[Theory]
 [InlineData(null)]
 [InlineData(new object[] { &quot;&quot; })]
 public void Constructor_ShouldThrow_WhenTopicNameIsNotValid(string? topic)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">topic</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>topic</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition">GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition">
+  GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void GetEndpoint_ShouldReturnTopicAndPartitionFromTopicAndPartition()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName">GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName">
+  GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void GetEndpoint_ShouldReturnTopicAndPartitionFromTopicName()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicAndPartition_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicAndPartition*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicAndPartition" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicAndPartition">RawName_ShouldReturnTopicAndPartition()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicAndPartition" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicAndPartition">
+  RawName_ShouldReturnTopicAndPartition()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RawName_ShouldReturnTopicAndPartition()</code></pre>
   </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
   <a id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified_" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified*"></a>
-  <h4 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified">RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified()</h4>
+
+  <h3 id="Silverback_Tests_Integration_Kafka_Messaging_Outbound_EndpointResolvers_KafkaStaticProducerEndpointResolverTests_RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified" data-uid="Silverback.Tests.Integration.Kafka.Messaging.Outbound.EndpointResolvers.KafkaStaticProducerEndpointResolverTests.RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified">
+  RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">[Fact]
+    <pre><code class="lang-csharp hljs">[Fact]
 public void RawName_ShouldReturnTopicName_WhenPartitionIsNotSpecified()</code></pre>
   </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/819b771067455c757bb0dbafe500f911d88ce496/tests/Silverback.Integration.Kafka.Tests/Messaging/Outbound/EndpointResolvers/KafkaStaticProducerEndpointResolverTests.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

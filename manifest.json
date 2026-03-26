@@ -17825,6 +17825,9 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -17895,6 +17898,9 @@
       "output": {
         ".html": {
           "relative_path": "changelog/toc.html"
+        },
+        ".json": {
+          "relative_path": "changelog/toc.json"
         }
       },
       "version": ""
@@ -18325,6 +18331,9 @@
       "output": {
         ".html": {
           "relative_path": "guides/toc.html"
+        },
+        ".json": {
+          "relative_path": "guides/toc.json"
         }
       },
       "version": ""
@@ -18785,6 +18794,9 @@
       "output": {
         ".html": {
           "relative_path": "samples/toc.html"
+        },
+        ".json": {
+          "relative_path": "samples/toc.json"
         }
       },
       "version": ""
@@ -18795,6 +18807,9 @@
       "output": {
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""

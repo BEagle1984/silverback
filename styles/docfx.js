@@ -1,4 +1,5 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 $(function () {
   var active = 'active';
   var expanded = 'in';
@@ -51,7 +52,7 @@ $(function () {
   // Styling for tables in conceptual documents using Bootstrap.
   // See http://getbootstrap.com/css/#tables
   function renderTables() {
-    $('table').addClass('table table-bordered table-striped table-condensed').wrap('<div class=\"table-responsive\"></div>');
+    $('table').addClass('table table-bordered table-condensed').wrap('<div class=\"table-responsive\"></div>');
   }
 
   // Styling for alerts.
@@ -65,7 +66,7 @@ $(function () {
   (function () {
     anchors.options = {
       placement: 'left',
-      visible: 'touch'
+      visible: 'hover'
     };
     anchors.add('article h2:not(.no-anchor), article h3:not(.no-anchor), article h4:not(.no-anchor)');
   })();
@@ -82,7 +83,7 @@ $(function () {
   // Enable highlight.js
   function highlight() {
     $('pre code').each(function (i, block) {
-      hljs.highlightBlock(block);
+      hljs.highlightElement(block);
     });
     $('pre code[highlight-lines]').each(function (i, block) {
       if (block.innerHTML === "") return;
@@ -127,13 +128,10 @@ $(function () {
       return;
     }
     try {
-      var worker = new Worker(relHref + 'styles/search-worker.js');
-      if (!worker && !window.worker) {
-        localSearch();
-      } else {
-        webWorkerSearch();
+      if(!window.Worker){
+        return;
       }
-
+      webWorkerSearch();
       renderSearchBox();
       highlightKeywords();
       addSearchEvent();
@@ -143,8 +141,8 @@ $(function () {
 
     //Adjust the position of search box in navbar
     function renderSearchBox() {
-      // autoCollapse();
-      // $(window).on('resize', autoCollapse);
+      autoCollapse();
+      $(window).on('resize', autoCollapse);
       $(document).on('click', '.navbar-collapse.in', function (e) {
         if ($(e.target).is('a')) {
           $(this).collapse('hide');
@@ -163,49 +161,13 @@ $(function () {
       }
     }
 
-    // Search factory
-    function localSearch() {
-      console.log("using local search");
-      var lunrIndex = lunr(function () {
-        this.ref('href');
-        this.field('title', { boost: 50 });
-        this.field('keywords', { boost: 20 });
-      });
-      lunr.tokenizer.seperator = /[\s\-\.]+/;
-      var searchData = {};
-      var searchDataRequest = new XMLHttpRequest();
-
-      var indexPath = relHref + "index.json";
-      if (indexPath) {
-        searchDataRequest.open('GET', indexPath);
-        searchDataRequest.onload = function () {
-          if (this.status != 200) {
-            return;
-          }
-          searchData = JSON.parse(this.responseText);
-          for (var prop in searchData) {
-            if (searchData.hasOwnProperty(prop)) {
-              lunrIndex.add(searchData[prop]);
-            }
-          }
-        }
-        searchDataRequest.send();
-      }
-
-      $("body").bind("queryReady", function () {
-        var hits = lunrIndex.search(query);
-        var results = [];
-        hits.forEach(function (hit) {
-          var item = searchData[hit.ref];
-          results.push({ 'href': item.href, 'title': item.title, 'keywords': item.keywords });
-        });
-        handleSearchResults(results);
-      });
-    }
-
     function webWorkerSearch() {
-      console.log("using Web Worker");
       var indexReady = $.Deferred();
+
+      var worker = new Worker(relHref + 'styles/search-worker.min.js');
+      worker.onerror = function (oEvent) {
+        console.error('Error occurred at search-worker. message: ' + oEvent.message);
+      }
 
       worker.onmessage = function (oEvent) {
         switch (oEvent.data.e) {
@@ -232,7 +194,7 @@ $(function () {
     // Highlight the searching keywords
     function highlightKeywords() {
       var q = url('?q');
-      if (q !== null) {
+      if (q) {
         var keywords = q.split("%20");
         keywords.forEach(function (keyword) {
           if (keyword !== "") {
@@ -251,12 +213,12 @@ $(function () {
 
         $('#search-query').keyup(function () {
           query = $(this).val();
-          if (query.length < 3) {
+          if (query === '') {
             flipContents("show");
           } else {
             flipContents("hide");
             $("body").trigger("queryReady");
-            $('#search-results>.search-list').text('Search Results for "' + query + '"');
+            $('#search-results>.search-list>span').text('"' + query + '"');
           }
         }).off("keydown");
       });
@@ -288,6 +250,9 @@ $(function () {
     }
 
     function extractContentBrief(content) {
+      if (!content) {
+        return
+      }
       var briefOffset = 512;
       var words = query.split(/\s+/g);
       var queryIndex = content.indexOf(words[0]);
@@ -301,12 +266,17 @@ $(function () {
 
     function handleSearchResults(hits) {
       var numPerPage = 10;
-      $('#pagination').empty();
-      $('#pagination').removeData("twbs-pagination");
+      var pagination = $('#pagination');
+      pagination.empty();
+      pagination.removeData("twbs-pagination");
       if (hits.length === 0) {
         $('#search-results>.sr-items').html('<p>No results found</p>');
       } else {
-        $('#pagination').twbsPagination({
+        pagination.twbsPagination({
+          first: pagination.data('first'),
+          prev: pagination.data('prev'),
+          next: pagination.data('next'),
+          last: pagination.data('last'),
           totalPages: Math.ceil(hits.length / numPerPage),
           visiblePages: 5,
           onPageClick: function (event, page) {
@@ -317,11 +287,11 @@ $(function () {
                 var currentUrl = window.location.href;
                 var itemRawHref = relativeUrlToAbsoluteUrl(currentUrl, relHref + hit.href);
                 var itemHref = relHref + hit.href + "?q=" + query;
-                var itemTitle = hit.title.substring(0, hit.title.length - 13); // removing " | Silverback" suffix
-                var itemBrief = extractContentBrief(hit.keywords);
+                var itemTitle = hit.title;
+                var itemBrief = extractContentBrief(hit.summary || '');
 
                 var itemNode = $('<div>').attr('class', 'sr-item');
-                var itemTitleNode = $('<div>').attr('class', 'item-title').append($('<a>').attr('href', itemHref).attr("target", "_blank").text(itemTitle));
+                var itemTitleNode = $('<div>').attr('class', 'item-title').append($('<a>').attr('href', itemHref).attr("target", "_blank").attr("rel", "noopener noreferrer").text(itemTitle));
                 var itemHrefNode = $('<div>').attr('class', 'item-href').text(itemRawHref);
                 var itemBriefNode = $('<div>').attr('class', 'item-brief').text(itemBrief);
                 itemNode.append(itemTitleNode).append(itemHrefNode).append(itemBriefNode);
@@ -349,7 +319,7 @@ $(function () {
       renderBreadcrumb();
       showSearch();
     }
-    
+
     function showSearch() {
       if ($('#search-results').length !== 0) {
           $('#search').show();
@@ -374,7 +344,7 @@ $(function () {
           navrel = navbarPath.substr(0, index + 1);
         }
         $('#navbar>ul').addClass('navbar-nav');
-        var currentAbsPath = util.getAbsolutePath(window.location.pathname);
+        var currentAbsPath = util.getCurrentWindowAbsolutePath();
         // set active item
         $('#navbar').find('a[href]').each(function (i, e) {
           var href = $(e).attr("href");
@@ -422,6 +392,8 @@ $(function () {
       $('#toc a.active').parents('li').each(function (i, e) {
         $(e).addClass(active).addClass(expanded);
         $(e).children('a').addClass(active);
+      })
+      $('#toc a.active').parents('li').each(function (i, e) {
         top += $(e).position().top;
       })
       $('.sidetoc').scrollTop(top - 50);
@@ -436,7 +408,7 @@ $(function () {
     function registerTocEvents() {
       var tocFilterInput = $('#toc_filter_input');
       var tocFilterClearButton = $('#toc_filter_clear');
-        
+
       $('.toc .nav > li > .expand-stub').click(function (e) {
         $(e.target).parent().toggleClass(expanded);
       });
@@ -470,7 +442,7 @@ $(function () {
           parent.removeClass(show);
           parent.removeClass(filtered);
         })
-        
+
         // Get leaf nodes
         $('#toc li>a').filter(function (i, e) {
           return $(e).siblings().length === 0
@@ -511,7 +483,7 @@ $(function () {
           return false;
         }
       });
-      
+
       // toc filter clear button
       tocFilterClearButton.hide();
       tocFilterClearButton.on("click", function(e){
@@ -549,7 +521,10 @@ $(function () {
         if (index > -1) {
           tocrel = tocPath.substr(0, index + 1);
         }
-        var currentHref = util.getAbsolutePath(window.location.pathname);
+        var currentHref = util.getCurrentWindowAbsolutePath();
+        if(!currentHref.endsWith('.html')) {
+          currentHref += '.html';
+        }
         $('#sidetoc').find('a[href]').each(function (i, e) {
           var href = $(e).attr("href");
           if (util.isRelativePath(href)) {
@@ -591,10 +566,12 @@ $(function () {
   //Setup Affix
   function renderAffix() {
     var hierarchy = getHierarchy();
-    if (hierarchy && hierarchy.length > 0) {
-      var html = '<h5 class="title">In this article</h5>'
-      html += util.formList(hierarchy, ['nav', 'bs-docs-sidenav']);
-      $("#affix").empty().append(html);
+    if (!hierarchy || hierarchy.length <= 0) {
+      $("#affix").hide();
+    }
+    else {
+      var html = util.formList(hierarchy, ['nav', 'bs-docs-sidenav']);
+      $("#affix>div").empty().append(html);
       if ($('footer').is(':visible')) {
         $(".sideaffix").css("bottom", "70px");
       }
@@ -978,7 +955,7 @@ $(function () {
     }
 
     function readTabsQueryStringParam() {
-      var qs = parseQueryString();
+      var qs = parseQueryString(window.location.search);
       var t = qs.tabs;
       if (t === undefined || t === '') {
         return [];
@@ -987,7 +964,7 @@ $(function () {
     }
 
     function updateTabsQueryStringParam(state) {
-      var qs = parseQueryString();
+      var qs = parseQueryString(window.location.search);
       qs.tabs = state.selectedTabs.join();
       var url = location.protocol + "//" + location.host + location.pathname + "?" + toQueryString(qs) + location.hash;
       if (location.href === url) {
@@ -1045,14 +1022,25 @@ $(function () {
     this.getAbsolutePath = getAbsolutePath;
     this.isRelativePath = isRelativePath;
     this.isAbsolutePath = isAbsolutePath;
+    this.getCurrentWindowAbsolutePath = getCurrentWindowAbsolutePath;
     this.getDirectory = getDirectory;
     this.formList = formList;
 
     function getAbsolutePath(href) {
-      // Use anchor to normalize href
-      var anchor = $('<a href="' + href + '"></a>')[0];
-      // Ignore protocal, remove search and query
-      return anchor.host + anchor.pathname;
+      if (isAbsolutePath(href)) return href;
+      var currentAbsPath = getCurrentWindowAbsolutePath();
+      var stack = currentAbsPath.split("/");
+      stack.pop();
+      var parts = href.split("/");
+      for (var i=0; i< parts.length; i++) {
+        if (parts[i] == ".") continue;
+        if (parts[i] == ".." && stack.length > 0)
+          stack.pop();
+        else
+          stack.push(parts[i]);
+      }
+      var p = stack.join("/");
+      return p;
     }
 
     function isRelativePath(href) {
@@ -1066,6 +1054,9 @@ $(function () {
       return (/^(?:[a-z]+:)?\/\//i).test(href);
     }
 
+    function getCurrentWindowAbsolutePath() {
+      return window.location.origin + window.location.pathname;
+    }
     function getDirectory(href) {
       if (!href) return '';
       var index = href.lastIndexOf('/');
@@ -1117,7 +1108,7 @@ $(function () {
      * If the jQuery element contains tags, this function will not change the element.
      */
     $.fn.breakWord = function () {
-      if (this.html() == this.text()) {
+      if (!this.html().match(/(<\w*)((\s\/>)|(.*<\/\w*>))/g)) {
         this.html(function (index, text) {
           return breakPlainText(text);
         })

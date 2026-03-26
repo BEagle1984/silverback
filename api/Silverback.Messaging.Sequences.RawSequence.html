@@ -1,113 +1,141 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class RawSequence
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class RawSequence
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class RawSequence | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class RawSequence | Silverback ">
+      
+      <meta name="description" content="A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Sequences.RawSequence">
+
+        <article data-uid="Silverback.Messaging.Sequences.RawSequence">
 
 
-  <h1 id="Silverback_Messaging_Sequences_RawSequence" data-uid="Silverback.Messaging.Sequences.RawSequence" class="text-break">Class RawSequence
-</h1>
-  <div class="markdown level0 summary"><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
+
+  <h1 id="Silverback_Messaging_Sequences_RawSequence" data-uid="Silverback.Messaging.Sequences.RawSequence" class="text-break">
+Class RawSequence  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Sequences/RawSequence.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Sequences.html">Sequences</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.</p>
 </div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</div>
-    <div class="level2"><span class="xref">RawSequence</span></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.Sequences.IncompleteSequence.html">IncompleteSequence</a></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class RawSequence : SequenceBase&lt;IRawInboundEnvelope&gt;, ISequence, IDisposable</code></pre>
   </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</div>
+      <div><span class="xref">RawSequence</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a></div>
+      <div><a class="xref" href="Silverback.Messaging.Sequences.IncompleteSequence.html">IncompleteSequence</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CreateStream__1_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Subscribers_IMessageFilter__">SequenceBase&lt;IRawInboundEnvelope&gt;.CreateStream&lt;TMessage&gt;(IReadOnlyCollection&lt;IMessageFilter&gt;)</a>
     </div>
@@ -213,113 +241,87 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Sequences.html">Sequences</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
-  <h5 id="Silverback_Messaging_Sequences_RawSequence_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public abstract class RawSequence : SequenceBase&lt;IRawInboundEnvelope&gt;, ISequence, IDisposable</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Messaging_Sequences_RawSequence__ctor_" data-uid="Silverback.Messaging.Sequences.RawSequence.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_RawSequence__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Boolean_System_Nullable_System_TimeSpan__Silverback_Messaging_Messages_IMessageStreamProvider_" data-uid="Silverback.Messaging.Sequences.RawSequence.#ctor(System.String,Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,System.Boolean,System.Nullable{System.TimeSpan},Silverback.Messaging.Messages.IMessageStreamProvider)">RawSequence(string, ConsumerPipelineContext, bool, TimeSpan?, IMessageStreamProvider?)</h4>
+
+  <h3 id="Silverback_Messaging_Sequences_RawSequence__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Boolean_System_Nullable_System_TimeSpan__Silverback_Messaging_Messages_IMessageStreamProvider_" data-uid="Silverback.Messaging.Sequences.RawSequence.#ctor(System.String,Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,System.Boolean,System.Nullable{System.TimeSpan},Silverback.Messaging.Messages.IMessageStreamProvider)">
+  RawSequence(string, ConsumerPipelineContext, bool, TimeSpan?, IMessageStreamProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Sequences/RawSequence.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.RawSequence.html">RawSequence</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">protected RawSequence(string sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true, TimeSpan? timeout = null, IMessageStreamProvider? streamProvider = null)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">sequenceId</span></td>
-        <td><p>The identifier that is used to match the consumed messages with their belonging sequence.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
-        <td><span class="parametername">context</span></td>
-        <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>, assuming that it will be the one from which the
-sequence gets published via the message bus.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">enforceTimeout</span></td>
-        <td><p>A value indicating whether the timeout has to be enforced.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</td>
-        <td><span class="parametername">timeout</span></td>
-        <td><p>The timeout to be applied. If not specified the value of <code>Endpoint.Sequence.Timeout</code> will be
-used.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a></td>
-        <td><span class="parametername">streamProvider</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a> to be pushed. A new one will be created if not provided.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected RawSequence(string sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true, TimeSpan? timeout = null, IMessageStreamProvider? streamProvider = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sequenceId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The identifier that is used to match the consumed messages with their belonging sequence.</p>
+</dd>
+    <dt><code>context</code> <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></dt>
+    <dd><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>, assuming that it will be the one from which the
+sequence gets published via the message bus.</p>
+</dd>
+    <dt><code>enforceTimeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the timeout has to be enforced.</p>
+</dd>
+    <dt><code>timeout</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
+    <dd><p>The timeout to be applied. If not specified the value of <code>Endpoint.Sequence.Timeout</code> will be
+used.</p>
+</dd>
+    <dt><code>streamProvider</code> <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a> to be pushed. A new one will be created if not provided.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Sequences/RawSequence.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

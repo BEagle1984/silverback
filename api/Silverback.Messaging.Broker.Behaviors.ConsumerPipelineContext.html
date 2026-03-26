@@ -1,109 +1,132 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ConsumerPipelineContext
- | Silverback </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ConsumerPipelineContext
- | Silverback ">
-    <meta name="generator" content="docfx ">
-  
+      <title>Class ConsumerPipelineContext | Silverback </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ConsumerPipelineContext | Silverback ">
+      
+      <meta name="description" content="The context that is passed along the consumer behaviors pipeline.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
-    <link rel="manifest" href="../images/icons/site.webmanifest">
-    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+      <script type="module" src="./../public/docfx.min.js"></script>
 
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
-    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list"></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination"></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext">
+
+        <article data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext">
 
 
-  <h1 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext" class="text-break">Class ConsumerPipelineContext
-</h1>
-  <div class="markdown level0 summary"><p>The context that is passed along the consumer behaviors pipeline.</p>
+
+  <h1 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext" class="text-break">
+Class ConsumerPipelineContext  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Behaviors.html">Behaviors</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Silverback.Integration.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>The context that is passed along the consumer behaviors pipeline.</p>
 </div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">ConsumerPipelineContext</span></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class ConsumerPipelineContext : IDisposable</code></pre>
   </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ConsumerPipelineContext</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -122,611 +145,706 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.html">Silverback</a>.<a class="xref" href="Silverback.Messaging.html">Messaging</a>.<a class="xref" href="Silverback.Messaging.Broker.html">Broker</a>.<a class="xref" href="Silverback.Messaging.Broker.Behaviors.html">Behaviors</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
-  <h5 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public sealed class ConsumerPipelineContext : IDisposable</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext__ctor_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext__ctor_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Broker_IConsumer_Silverback_Messaging_Sequences_ISequenceStore_System_Collections_Generic_IReadOnlyList_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.#ctor(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.Broker.IConsumer,Silverback.Messaging.Sequences.ISequenceStore,System.Collections.Generic.IReadOnlyList{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)">ConsumerPipelineContext(IRawInboundEnvelope, IConsumer, ISequenceStore, IReadOnlyList&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext__ctor_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Broker_IConsumer_Silverback_Messaging_Sequences_ISequenceStore_System_Collections_Generic_IReadOnlyList_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.#ctor(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.Broker.IConsumer,Silverback.Messaging.Sequences.ISequenceStore,System.Collections.Generic.IReadOnlyList{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)">
+  ConsumerPipelineContext(IRawInboundEnvelope, IConsumer, ISequenceStore, IReadOnlyList&lt;IConsumerBehavior&gt;, IServiceProvider)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ConsumerPipelineContext(IRawInboundEnvelope envelope, IConsumer consumer, ISequenceStore sequenceStore, IReadOnlyList&lt;IConsumerBehavior&gt; pipeline, IServiceProvider serviceProvider)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConsumerPipelineContext(IRawInboundEnvelope envelope, IConsumer consumer, ISequenceStore sequenceStore, IReadOnlyList&lt;IConsumerBehavior&gt; pipeline, IServiceProvider serviceProvider)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
-        <td><span class="parametername">envelope</span></td>
-        <td><p>The envelope containing the message being processed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></td>
-        <td><span class="parametername">consumer</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> that triggered this pipeline.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td><span class="parametername">sequenceStore</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> used to temporary store the pending sequences being consumed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</td>
-        <td><span class="parametername">pipeline</span></td>
-        <td><p>The behaviors composing the pipeline.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
-        <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> to be used to resolve the required services.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>envelope</code> <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></dt>
+    <dd><p>The envelope containing the message being processed.</p>
+</dd>
+    <dt><code>consumer</code> <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> that triggered this pipeline.</p>
+</dd>
+    <dt><code>sequenceStore</code> <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> used to temporary store the pending sequences being consumed.</p>
+</dd>
+    <dt><code>pipeline</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</dt>
+    <dd><p>The behaviors composing the pipeline.</p>
+</dd>
+    <dt><code>serviceProvider</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> to be used to resolve the required services.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Consumer_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Consumer*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Consumer" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Consumer">Consumer</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Consumer" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Consumer">
+  Consumer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> that triggered this pipeline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IConsumer Consumer { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IConsumer Consumer { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_CurrentStepIndex_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.CurrentStepIndex*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_CurrentStepIndex" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.CurrentStepIndex">CurrentStepIndex</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_CurrentStepIndex" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.CurrentStepIndex">
+  CurrentStepIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the index of the current step in the pipeline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public int CurrentStepIndex { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int CurrentStepIndex { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Envelope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Envelope*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Envelope" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Envelope">Envelope</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Envelope" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Envelope">
+  Envelope
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets or sets the envelopes containing the messages being processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IRawInboundEnvelope Envelope { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IRawInboundEnvelope Envelope { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceEnd_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceEnd*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceEnd" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceEnd">IsSequenceEnd</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceEnd" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceEnd">
+  IsSequenceEnd
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets a value indicating whether the current message was recognized as the end of the sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public bool IsSequenceEnd { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsSequenceEnd { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceStart_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceStart*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceStart" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceStart">IsSequenceStart</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceStart" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.IsSequenceStart">
+  IsSequenceStart
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets a value indicating whether the current message was recognized as the beginning of a new sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public bool IsSequenceStart { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsSequenceStart { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Pipeline_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Pipeline*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Pipeline" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Pipeline">Pipeline</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Pipeline" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Pipeline">
+  Pipeline
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the behaviors composing the pipeline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IReadOnlyList&lt;IConsumerBehavior&gt; Pipeline { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;IConsumerBehavior&gt; Pipeline { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ProcessingTask_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ProcessingTask*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ProcessingTask" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ProcessingTask">ProcessingTask</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ProcessingTask" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ProcessingTask">
+  ProcessingTask
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> representing the message processing when it is not directly awaited (e.g., when starting the
 processing of a <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html#Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Sequence">Sequence</a>. This <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a> will complete when all subscribers return.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public Task? ProcessingTask { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Task? ProcessingTask { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Sequence_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Sequence*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Sequence" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Sequence">Sequence</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Sequence" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Sequence">
+  Sequence
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> that the current message belongs to.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ISequence? Sequence { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ISequence? Sequence { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SequenceStore_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SequenceStore*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SequenceStore" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SequenceStore">SequenceStore</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SequenceStore" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SequenceStore">
+  SequenceStore
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> used to temporary store the pending sequences being consumed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ISequenceStore SequenceStore { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ISequenceStore SequenceStore { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ServiceProvider_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ServiceProvider*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ServiceProvider" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ServiceProvider">ServiceProvider</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ServiceProvider" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ServiceProvider">
+  ServiceProvider
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> to be used to resolve the necessary services.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IServiceProvider ServiceProvider { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IServiceProvider ServiceProvider { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SilverbackContext_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SilverbackContext*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SilverbackContext" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SilverbackContext">SilverbackContext</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SilverbackContext" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SilverbackContext">
+  SilverbackContext
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ISilverbackContext SilverbackContext { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ISilverbackContext SilverbackContext { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.ISilverbackContext.html">ISilverbackContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_TransactionManager_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.TransactionManager*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_TransactionManager" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.TransactionManager">TransactionManager</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_TransactionManager" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.TransactionManager">
+  TransactionManager
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a> that is handling the current pipeline transaction.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IConsumerTransactionManager TransactionManager { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IConsumerTransactionManager TransactionManager { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Consuming.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Clone_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Clone*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Clone_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Clone(Silverback.Messaging.Messages.IRawInboundEnvelope)">Clone(IRawInboundEnvelope?)</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Clone_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Clone(Silverback.Messaging.Messages.IRawInboundEnvelope)">
+  Clone(IRawInboundEnvelope?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Clones the current context, optionally replacing the envelope.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public ConsumerPipelineContext Clone(IRawInboundEnvelope? newEnvelope = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public ConsumerPipelineContext Clone(IRawInboundEnvelope? newEnvelope = null)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
-        <td><span class="parametername">newEnvelope</span></td>
-        <td><p>The new envelope to be used in the cloned context.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
-        <td><p>The cloned context.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>newEnvelope</code> <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></dt>
+    <dd><p>The new envelope to be used in the cloned context.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></dt>
+    <dd><p>The cloned context.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Dispose_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Dispose*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Dispose" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"><p>The context that is passed along the consumer behaviors pipeline.</p>
-</div>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Dispose" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.Dispose">
+  Dispose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public void Dispose()</code></pre>
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
   </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetCommitIdentifiers_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetCommitIdentifiers*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetCommitIdentifiers" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetCommitIdentifiers">GetCommitIdentifiers()</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetCommitIdentifiers" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetCommitIdentifiers">
+  GetCommitIdentifiers()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the identifiers to be used to commit after successful processing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetCommitIdentifiers()</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetCommitIdentifiers()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
-        <td><p>The identifiers to be used to commit.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</dt>
+    <dd><p>The identifiers to be used to commit.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetRollbackIdentifiers_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetRollbackIdentifiers*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetRollbackIdentifiers" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetRollbackIdentifiers">GetRollbackIdentifiers()</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_GetRollbackIdentifiers" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.GetRollbackIdentifiers">
+  GetRollbackIdentifiers()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Gets the identifiers to be used to roll back in case of error.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetRollbackIdentifiers()</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt; GetRollbackIdentifiers()</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
-        <td><p>The identifiers to be used to roll back.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</dt>
+    <dd><p>The identifiers to be used to roll back.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ReplaceServiceScope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ReplaceServiceScope*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ReplaceServiceScope_Microsoft_Extensions_DependencyInjection_IServiceScope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ReplaceServiceScope(Microsoft.Extensions.DependencyInjection.IServiceScope)">ReplaceServiceScope(IServiceScope)</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_ReplaceServiceScope_Microsoft_Extensions_DependencyInjection_IServiceScope_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.ReplaceServiceScope(Microsoft.Extensions.DependencyInjection.IServiceScope)">
+  ReplaceServiceScope(IServiceScope)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Replaces the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a> with the one from the specified scope.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public void ReplaceServiceScope(IServiceScope newServiceScope)</code></pre>
+    <pre><code class="lang-csharp hljs">public void ReplaceServiceScope(IServiceScope newServiceScope)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescope">IServiceScope</a></td>
-        <td><span class="parametername">newServiceScope</span></td>
-        <td><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescope">IServiceScope</a> to be used.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>newServiceScope</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescope">IServiceScope</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescope">IServiceScope</a> to be used.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetIsSequenceEnd_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetIsSequenceEnd*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetIsSequenceEnd" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetIsSequenceEnd">SetIsSequenceEnd()</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetIsSequenceEnd" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetIsSequenceEnd">
+  SetIsSequenceEnd()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Sets the <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html#Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_IsSequenceEnd">IsSequenceEnd</a> property to <code>true</code>, indicating that the current message was recognized as the end of
 the sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
+
   <div class="codewrapper">
-    <pre><code class="lang- hljs">public void SetIsSequenceEnd()</code></pre>
+    <pre><code class="lang-csharp hljs">public void SetIsSequenceEnd()</code></pre>
   </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetSequence_" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence*"></a>
-  <h4 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetSequence_Silverback_Messaging_Sequences_ISequence_System_Boolean__" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence,System.Boolean@)">SetSequence(ISequence, in bool)</h4>
+
+  <h3 id="Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetSequence_Silverback_Messaging_Sequences_ISequence_System_Boolean__" data-uid="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence,System.Boolean@)">
+  SetSequence(ISequence, in bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Sets the current sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang- hljs">public void SetSequence(ISequence sequence, in bool isSequenceStart)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></td>
-        <td><span class="parametername">sequence</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> being processed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">isSequenceStart</span></td>
-        <td><p>A value indicating whether the current message was recognized as the beginning of a new sequence.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-</article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-              </nav>
-            </div>
-          </div>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetSequence(ISequence sequence, in bool isSequenceStart)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sequence</code> <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></dt>
+    <dd><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> being processed.</p>
+</dd>
+    <dt><code>isSequenceStart</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>A value indicating whether the current message was recognized as the beginning of a new sequence.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/BEagle1984/silverback/blob/c659d7448fcecdd3464375ea1b3db2b9b0c8820f/src/Silverback.Integration/Messaging/Broker/Behaviors/ConsumerPipelineContext.cs" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="footer">
-          <div class="container contacts">
-            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
-          </div>
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">&uarr; Back to top</a>
-            </span>
-      © 2026 Sergio Aquilini
-      
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          © 2026 Sergio Aquilini
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
