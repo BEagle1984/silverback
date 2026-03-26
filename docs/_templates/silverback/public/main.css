@@ -1,0 +1,65 @@
+﻿.navbar-brand img {
+    height: 50px !important;
+}
+
+/* Home */
+
+.hero {
+    position: relative;
+    padding: 70px 0 20px 0;
+    clear: both;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-animation: intro 0.3s both;
+    animation: intro 0.3s both;
+    -webkit-animation-delay: 0.25s;
+    animation-delay: 0.25s;
+}
+.hero .lead {
+    /* max-width: 768px; */
+    max-width: 450px;
+}
+.hero::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+.hero a {
+    color: #fff;
+}
+.hero .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+@media (min-width: 80em) {
+    .hero .wrapper {
+        max-width: 1280px;
+    }
+}
+.hero .page-title,
+.hero .lead,
+.hero .btn {
+    color: #fff;
+    text-shadow: 1px 1px 1px #666;
+}
+.hero .lead {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+.hero .btn {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-width: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}

@@ -73,6 +73,7 @@
     "globalMetadata": {
       "_appTitle": "Silverback",
       "_appLogoPath": "images/logo.png",
+      "_appFaviconPath": "images/favicon.ico",
       "_appFooter": "© 2026 Sergio Aquilini",
       "_enableSearch": "true",
       "_gitContribute": {
@@ -85,6 +86,8 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
+      "default",
+      "modern",
       "_templates/silverback"
     ],
     "postProcessors": [
