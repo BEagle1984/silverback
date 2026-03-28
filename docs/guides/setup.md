@@ -24,7 +24,7 @@ If you need to integrate with a message broker, choose the appropriate package:
 
 - **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Enables Rx.NET integration, allowing observables from the message bus stream.
 - **[Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/)** – Supports serialization using Newtonsoft.Json instead of System.Text.Json.
-- **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.
+- **[Silverback.Integration.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/)** – Provides integration with Schema Registry for Protobuf, Avro, or JSON serialization with schema support.
 
 ### Storage Options
 

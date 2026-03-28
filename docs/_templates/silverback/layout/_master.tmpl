@@ -1,4 +1,4 @@
-{{!Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license.}}
+﻿{{!Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license.}}
 {{!include(/^public/.*/)}}
 {{!include(favicon.ico)}}
 {{!include(logo.svg)}}
@@ -39,7 +39,6 @@
       <meta name="loc:downloadPdf" content="{{__global.downloadPdf}}">
 
       <script type="module" src="./{{_rel}}public/docfx.min.js"></script>
-      <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'auto'
@@ -86,16 +85,62 @@
       {{/_disableNavbar}}
     </header>
 
-    <main class="container-xxl container-index">
+    <main class="container-xxl">
+      {{^_disableToc}}
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+      {{/_disableToc}}
 
       <div class="content">
-       
+        <div class="actionbar">
+          {{^_disableToc}}
+          <button class="btn btn-lg border-0 d-md-none"
+              type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas"
+              aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+          {{/_disableToc}}
+
+          {{^_disableBreadcrumb}}
+          <nav id="breadcrumb"></nav>
+          {{/_disableBreadcrumb}}
+        </div>
+
         <article data-uid="{{uid}}">
-          {{{conceptual}}}
+          {{!body}}
         </article>
 
-      </div>
+        {{^_disableNextArticle}}
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+        {{/_disableNextArticle}}
 
+      </div>
+      
+      {{^_disableAffix}}
+      <div class="affix">
+        {{^_disableContribution}}
+        <div class="contribution d-print-none">
+          {{#sourceurl}}
+          <a href="{{sourceurl}}" class="edit-link">{{__global.improveThisDoc}}</a>
+          {{/sourceurl}}
+          {{^sourceurl}}{{#docurl}}
+          <a href="{{docurl}}" class="edit-link">{{__global.improveThisDoc}}</a>
+          {{/docurl}}{{/sourceurl}}
+        </div>
+        {{/_disableContribution}}
+
+        <nav id="affix"></nav>
+      </div>
+      {{/_disableAffix}}
     </main>
 
     {{#_enableSearch}}
@@ -112,4 +157,3 @@
   </body>
   {{/redirect_url}}
 </html>
-

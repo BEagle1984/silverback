@@ -9,10 +9,10 @@ title: About
 
 Silverback is maintained by **Sergio Aquilini** (BEagle1984 on GitHub).
 
-<a class="btn btn-default" href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
-<a class="btn btn-default" href="https://www.linkedin.com/in/sergio-aquilini-689764140/" rel="nofollow noopener noreferrer"><i class='fab fa-linkedin'></i> LinkedIn</a>
-<a class="btn btn-default" href="mailto:sergio@aquilini.ch" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> Personal Email</a>
-<a class="btn btn-default" href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> Project Email</a>
+<a class="btn btn-outline-primary" href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='bi bi-github'></i> GitHub</a>
+<a class="btn btn-outline-primary" href="https://www.linkedin.com/in/sergio-aquilini-689764140/" rel="nofollow noopener noreferrer"><i class='bi bi-linkedin'></i> LinkedIn</a>
+<a class="btn btn-outline-primary" href="mailto:sergio@aquilini.ch" rel="nofollow noopener noreferrer"><i class='bi bi-envelope-at'></i> Personal Email</a>
+<a class="btn btn-outline-primary" href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='bi bi-envelope-at'></i> Project Email</a>
 
 ## License
 

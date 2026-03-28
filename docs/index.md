@@ -1,31 +1,14 @@
 ---
-documentType: index
 title: "Home"
+_disableAffix: true
+_disableToc: true
 ---
 
-<div role="main" class="hide-when-search">
-    <div style="background-color: #000; margin-bottom: 20px">
-        <div class="container body-container">
-            <div class="hero" style="background-image: url('images/splash.jpg');">
-                <div class="wrapper">
-                    <h1 id="page-title" class="page-title" itemprop="headline">        
-                        Silverback
-                    </h1>
-                    <p class="lead">
-                        <span style="font-size: .9em;">Simplicity at its core.</span><br />
-                        <span style="font-size: .9em;">Flexibility at its peak.</span><br />
-                        Effortless messaging for .NET
-                    </p>
-                    <p>
-                        <a href="https://github.com/BEagle1984/silverback/" class="btn"><i class="fab fa-github"></i> View on GitHub</a>
-                        <a href="https://www.nuget.org/packages?q=Silverback" class="btn"><i class="fas fa-arrow-alt-circle-down"></i> Get from NuGet</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container body-container body-content">
+# Silverback
+
+Simplicity at its core. Flexibility at its peak. Effortless messaging for .NET.
+
+## What is Silverback
 
 Silverback is a message bus and broker integration library for .NET.
 It is designed to simplify event-driven architectures and asynchronous messaging, with first-class support for **Apache Kafka** and **MQTT**.
@@ -79,5 +62,3 @@ This policy reduces maintenance overhead and keeps Silverback aligned with the .
 > [!Tip]
 > The v4 documentation is still browsable here: [silverback-messaging.net/v4/](/v4/)
 
-</div>
-<div style="height: 100px"></div>
