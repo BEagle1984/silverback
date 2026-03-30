@@ -1,65 +1,96 @@
-﻿.navbar-brand img {
-    height: 50px !important;
+﻿a {
+    text-decoration: none !important;
 }
 
-/* Home */
-
-.hero {
-    position: relative;
-    padding: 70px 0 20px 0;
-    clear: both;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    -webkit-animation: intro 0.3s both;
-    animation: intro 0.3s both;
-    -webkit-animation-delay: 0.25s;
-    animation-delay: 0.25s;
-}
-.hero .lead {
-    /* max-width: 768px; */
-    max-width: 450px;
-}
-.hero::after {
-    clear: both;
-    content: "";
-    display: table;
-}
-.hero a {
-    color: #fff;
-}
-.hero .wrapper {
-    padding-left: 1em;
-    padding-right: 1em;
+a.external::after {
+    display: none !important;
 }
 
-@media (min-width: 80em) {
-    .hero .wrapper {
-        max-width: 1280px;
+.container-index {
+
+    .content {
+        margin: 0 !important;
     }
 }
-.hero .page-title,
-.hero .lead,
-.hero .btn {
+
+[data-bs-theme="dark"] :not(a):not(pre) > code {
+    padding: 0.1em 0.2em;
+    background-color: #404040;
     color: #fff;
-    text-shadow: 1px 1px 1px #666;
+    border-radius: 3px;
+    font-size: 85%;
+    font-smooth: auto;
+    word-wrap: break-word;
 }
-.hero .lead {
-    font-size: 30px;
+.contribution {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+/* TOC */
+
+.toc-offcanvas {
+    max-width: 280px !important;
+}
+
+/* Navbar */
+
+header {
+    border: none !important;
+}
+
+.navbar {
+    background-color: #000;
+    padding: 0 !important;
+}
+
+.navbar .navbar-nav .nav-link {
+    color: #9d9d9d;
+}
+
+.navbar .navbar-nav .nav-link:focus,
+.navbar .navbar-nav .nav-link:hover {
+    color: #fff;
+}
+
+.navbar .navbar-nav .nav-link.active {
+    color: #fff !important;
+    border-bottom: solid 2px #fff !important;
+    background: transparent !important;
+}
+
+.navbar [data-bs-theme-value],
+.navbar .theme-switch,
+.navbar .bi-moon,
+.navbar .bi-sun {
+    color: #fff !important;
+    fill: #fff !important;
+}
+
+.navbar .btn {
+    color: #fff !important;
+}
+
+.navbar-brand img {
+    height: 45px;
+    width: auto;
+    padding: 0;
+}
+
+/* Figure */
+
+figure {
+    width: 100%;
+    margin-top: 20px;
     margin-bottom: 20px;
+    padding: 5px;
+    border-radius: 3px;
 }
-.hero .btn {
-    display: inline-block;
-    margin-bottom: 10px;
-    padding: 10px 20px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    border-width: 0;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: transparent;
-    color: #fff;
-    border: 1px solid #fff;
+
+figcaption {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+    text-align: left;
+    font-size: 14px;
 }

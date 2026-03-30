@@ -98,7 +98,8 @@
 <div class="IMPORTANT">
 <h5>Important</h5>
 <p>Client-side offset storage is not a Kafka feature. It’s an application pattern.
-Silverback deliberately <strong>disables committing offsets to Kafka</strong> and repositions the consumer based on the offsets stored in your chosen storage.</p>
+Silverback deliberately repositions the consumer based on the offsets stored in your chosen storage, instead of relying on the server-side Kafka offsets.
+You can even disable storing the offsets in the Kafka broker using <code>DisableOffsetsCommit()</code>.</p>
 </div>
 <h2 id="when-to-use-it">When to Use It</h2>
 <p>Use client-side offset storage when your application:</p>
@@ -293,22 +294,22 @@ await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString)
 </ul>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li>API Reference (<code>docs/api/</code>)</li>
-<li><a class="xref" href="../../../storage.html">Storage Integration</a> guide</li>
-<li><a class="xref" href="../../producing/outbox.html">Transactional Outbox</a> guide</li>
+<li><a class="xref" href="../../../../api/Silverback.html">API Reference</a></li>
+<li><a class="xref" href="../../../storage.html">Storage Integration</a></li>
+<li><a class="xref" href="../../producing/outbox.html">Transactional Outbox</a></li>
 </ul>
 
 </article>
 
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+      
+      <div class="affix">
         <div class="contribution d-print-none">
           <a href="https://github.com/beagle1984/silverback/blob/master/docs/guides/broker/consuming/kafka/offset.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
-        <div class="next-article d-print-none border-top" id="nextArticle"></div>
-
-      </div>
-
-      <div class="affix">
         <nav id="affix"></nav>
       </div>
     </main>
