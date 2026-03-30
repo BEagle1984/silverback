@@ -17,7 +17,8 @@ If the transaction commits, both the data and the new offset are persisted. If i
 
 > [!Important]
 > Client-side offset storage is not a Kafka feature. It’s an application pattern.
-> Silverback deliberately **disables committing offsets to Kafka** and repositions the consumer based on the offsets stored in your chosen storage.
+> Silverback deliberately repositions the consumer based on the offsets stored in your chosen storage, instead of relying on the server-side Kafka offsets.
+> You can even disable storing the offsets in the Kafka broker using `DisableOffsetsCommit()`.
 
 ## When to Use It
 
@@ -243,6 +244,6 @@ await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString)
 
 ## Additional Resources
 
-* API Reference (`docs/api/`)
-* <xref:storage> guide
-* <xref:outbox> guide
+- [API Reference](xref:Silverback)
+- <xref:storage>
+- <xref:outbox>
