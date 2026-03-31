@@ -16,8 +16,10 @@ public class MqttTopicViewModel : TopicViewModel
         string topicName,
         TimeSpan produceDelay,
         double simulateErrorProbability,
-        bool isEnabled = true)
-        : base(topicName, produceDelay, simulateErrorProbability, isEnabled)
+        bool isEnabled = true,
+        bool simulateProcessingTime = false,
+        bool simulateErrors = true)
+        : base(topicName, produceDelay, simulateErrorProbability, isEnabled, simulateProcessingTime, simulateErrors)
     {
         SubscriptionEvents = new ReadOnlyObservableCollection<MqttTopicSubscriptionEvent>(_subscriptionEvents);
     }

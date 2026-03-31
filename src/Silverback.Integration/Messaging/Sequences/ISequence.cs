@@ -142,6 +142,14 @@ public interface ISequence : IDisposable
     Task<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled);
 
     /// <summary>
+    ///     Aborts the sequence processing if it hasn't been completed (or aborted) yet.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task AbortIfIncompleteAsync();
+
+    /// <summary>
     ///     Aborts the sequence processing. Used, for example, to signal that an exception occurred or the enumeration returned prematurely.
     /// </summary>
     /// <param name="reason">
@@ -151,9 +159,9 @@ public interface ISequence : IDisposable
     ///     The exception that caused the abort if an exception was thrown.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null);
+    Task AbortAsync(SequenceAbortReason reason, Exception? exception = null);
 
     /// <summary>
     ///     Gets the identifiers to be used to commit after successful processing.

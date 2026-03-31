@@ -50,7 +50,7 @@ public class BatchSequence : Sequence
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    protected override async ValueTask OnTimeoutElapsedAsync()
+    protected override async Task OnTimeoutElapsedAsync()
     {
         try
         {

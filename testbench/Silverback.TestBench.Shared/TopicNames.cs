@@ -19,6 +19,8 @@ public static class TopicNames
 
         public const string Batch = "testbench-kafka-batch";
 
+        public const string Batch2 = "testbench-kafka-batch-2";
+
         public const string Unbounded = "testbench-kafka-unbounded";
     }
 

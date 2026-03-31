@@ -32,9 +32,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly TimeSpan _timeout;
 
-    private readonly CancellationTokenSource _abortCancellationTokenSource = new();
-
-    private readonly System.Threading.Lock _abortLockObject = new();
+    private readonly CancellationTokenSource _addCancellationTokenSource = new();
 
     private readonly ISilverbackLogger<SequenceBase<TEnvelope>> _logger;
 
@@ -42,7 +40,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource = new();
 
-    private readonly SemaphoreSlim _addAndCompleteSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _addSemaphoreSlim = new(1, 1);
+
+    private readonly SemaphoreSlim _completeSemaphoreSlim = new(1, 1);
+
+    private CompleteState _completeState = CompleteState.NotComplete;
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -104,14 +106,23 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             : null;
     }
 
+    private enum CompleteState
+    {
+        NotComplete,
+
+        Complete,
+
+        Aborted
+    }
+
     /// <inheritdoc cref="ISequence.SequenceId" />
     public string SequenceId { get; }
 
     /// <inheritdoc cref="ISequence.IsPending" />
-    public bool IsPending => !IsComplete && !IsAborted;
+    public bool IsPending => _completeState == CompleteState.NotComplete;
 
     /// <inheritdoc cref="ISequence.IsAborted" />
-    public bool IsAborted => AbortReason != SequenceAbortReason.None;
+    public bool IsAborted => _completeState == CompleteState.Aborted;
 
     /// <inheritdoc cref="ISequence.IsBeingConsumed" />
     public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
@@ -150,7 +161,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsCompleting { get; private set; }
 
     /// <inheritdoc cref="ISequence.IsComplete" />
-    public bool IsComplete { get; private set; }
+    public bool IsComplete => _completeState == CompleteState.Complete;
 
     /// <inheritdoc cref="ISequence.AbortReason" />
     public SequenceAbortReason AbortReason { get; private set; }
@@ -195,18 +206,26 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-        await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        bool semaphoreAcquired = false;
 
         try
         {
+            await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+            semaphoreAcquired = true;
+
             return await AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled).ConfigureAwait(false);
         }
         catch (OperationCanceledException ex)
         {
             _logger.LogTrace(
                 ex,
-                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+                "Operation canceled, skipping add to {sequenceType} '{sequenceId}' and waiting until it is completed.",
                 () => [GetType().Name, SequenceId]);
+
+            _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
+            semaphoreAcquired = false;
+
+            await _processingCompleteTaskCompletionSource.Task.ConfigureAwait(false);
 
             return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
         }
@@ -221,12 +240,32 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            _addAndCompleteSemaphoreSlim.Release();
+            if (semaphoreAcquired)
+                _addSemaphoreSlim.Release();
+        }
+    }
+
+    /// <inheritdoc cref="ISequence.AbortIfIncompleteAsync" />
+    public async Task AbortIfIncompleteAsync()
+    {
+        if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
+            return;
+
+        if (!IsPending)
+            return;
+
+        try
+        {
+            await AbortCoreAsync(SequenceAbortReason.IncompleteSequence, null).ConfigureAwait(false);
+        }
+        finally
+        {
+            _completeSemaphoreSlim.Release();
         }
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
-    public ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null)
+    public async Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
     {
         if (reason == SequenceAbortReason.None)
             throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
@@ -234,7 +273,17 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (reason == SequenceAbortReason.Error && exception == null)
             throw new ArgumentNullException(nameof(exception), "The exception must be specified if the reason is Error.");
 
-        return AbortCoreAsync(reason, exception);
+        if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
+            return;
+
+        try
+        {
+            await AbortCoreAsync(reason, exception).ConfigureAwait(false);
+        }
+        finally
+        {
+            _completeSemaphoreSlim.Release();
+        }
     }
 
     /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
@@ -299,10 +348,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (_enforceTimeout)
         {
             if (IsTimeoutElapsed())
-            {
-                // await Task.Delay(100).ConfigureAwait(false);
-                return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
-            }
+                throw new OperationCanceledException("The sequence timed out.");
 
             ResetTimeout();
         }
@@ -314,8 +360,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             (sequence as ISequenceImplementation)?.SetParentSequence(this);
         }
 
-        _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
         int pushedStreamsCount;
         try
         {
@@ -323,8 +367,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                     envelope,
                     throwIfUnhandled,
                     static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
-                    envelope,
-                    _abortCancellationTokenSource.Token)
+                    envelope)
                 .ConfigureAwait(false);
 
             // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
@@ -380,9 +423,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected virtual async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
+    protected virtual async Task CompleteAsync(CancellationToken cancellationToken = default)
     {
-        await _addAndCompleteSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+        if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
+            return;
 
         try
         {
@@ -390,7 +434,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            _addAndCompleteSemaphoreSlim.Release();
+            _completeSemaphoreSlim.Release();
         }
     }
 
@@ -413,20 +457,22 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _abortingTaskCompletionSource?.Task.SafeWait();
 
         _streamProvider.Dispose();
-        _abortCancellationTokenSource.Dispose();
+        _addCancellationTokenSource.Dispose();
 
         _sequences?.ForEach(sequence => sequence.Dispose());
 
-        _logger.LogTrace("Waiting adding semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _addSemaphoreSlim.Wait();
+        _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
+        _completeSemaphoreSlim.Wait();
+        _isDisposed = true;
 
-        _addAndCompleteSemaphoreSlim.Wait();
-        _addAndCompleteSemaphoreSlim.Dispose();
+        _addSemaphoreSlim.Dispose();
+        _completeSemaphoreSlim.Dispose();
 
         // If necessary, cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
         if (!SequencerBehaviorsTask.IsCompleted)
             _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
-
-        _isDisposed = true;
 
         _logger.LogTrace("{sequenceType} '{sequenceId}' disposed.", () => [GetType().Name, SequenceId]);
 
@@ -440,7 +486,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected virtual ValueTask OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
+    protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {
@@ -463,6 +509,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         try
         {
+            _logger.LogTrace(
+                "Timeout was elapsed for {sequenceType} '{sequenceId}', executing timeout logic...",
+                () => [GetType().Name, SequenceId]);
             await OnTimeoutElapsedAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -487,7 +536,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         try
         {
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
-            IsComplete = true;
+            await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            _completeState = CompleteState.Complete;
         }
         finally
         {
@@ -511,7 +561,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             {
                 int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
 
-                while (IsPending && !IsCompleting)
+                while (IsPending)
                 {
                     await Task.Delay(interval).ConfigureAwait(false);
 
@@ -522,32 +572,23 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             .FireAndForget();
     }
 
-    private async ValueTask AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
+    private async Task AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
     {
-        bool alreadyAborted;
-
-        lock (_abortLockObject)
-        {
-            alreadyAborted = IsAborted;
-
-            if (!alreadyAborted)
-            {
-                _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
-
-                if (reason > AbortReason)
-                {
-                    AbortReason = reason;
-                    AbortException = exception;
-                }
-            }
-        }
-
-        if (alreadyAborted)
+        if (IsAborted)
         {
             // Multiple calls to AbortAsync should wait until the sequence is aborted for real; otherwise the TransactionHandlerConsumerBehavior
             // could continue before the abort is done, preventing the error policies to be correctly and successfully applied.
             await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
             return;
+        }
+
+        _completeState = CompleteState.Aborted;
+        _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
+
+        if (reason > AbortReason)
+        {
+            AbortReason = reason;
+            AbortException = exception;
         }
 
         _logger.LogTrace(
@@ -558,7 +599,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         // Abort pending processing (if still pending) and wait for AddAsync to gracefully complete, ensuring that the identifiers
         // are properly tracked in all cases (enumeration aborted included)
         _streamProvider.AbortIfPending();
-        await _addAndCompleteSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        _logger.LogTrace("Aborting {sequenceType} '{sequenceId}' is waiting for add semaphore...", () => [GetType().Name, SequenceId]);
+        await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
         try
         {
@@ -568,10 +610,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            _addAndCompleteSemaphoreSlim.Release();
+            _addSemaphoreSlim.Release();
         }
 
-        await _abortCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+        await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         _abortingTaskCompletionSource?.SetResult(true);
     }
 
@@ -638,6 +680,28 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             default:
                 _logger.LogSequenceAborted(this, AbortReason);
                 break;
+        }
+    }
+
+    private async Task<bool> WaitIfNotDisposedAsync(SemaphoreSlim semaphore)
+    {
+        if (_isDisposed)
+        {
+            _logger.LogTrace("Sequence is disposed, no need to wait for semaphore");
+            return false;
+        }
+
+        try
+        {
+            _logger.LogTrace("Waiting for semaphore...");
+            await semaphore.WaitAsync().ConfigureAwait(false);
+            _logger.LogTrace("Semaphore acquired");
+            return true;
+        }
+        catch (ObjectDisposedException)
+        {
+            _logger.LogTrace("Object disposed exception while waiting for semaphore");
+            return false;
         }
     }
 }

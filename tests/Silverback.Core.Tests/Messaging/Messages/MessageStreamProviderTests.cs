@@ -55,17 +55,16 @@ public class MessageStreamProviderTests
 
         bool processed = false;
 
-        Task.Run(
-            async () =>
-            {
-                await Task.Delay(50);
-                using IEnumerator<IEvent> enumerator = stream.GetEnumerator();
-                enumerator.MoveNext();
-                await Task.Delay(50);
-                processed = true;
-                using IEnumerator<IEvent> enumerator2 = stream.GetEnumerator();
-                enumerator2.MoveNext();
-            }).FireAndForget();
+        Task.Run(async () =>
+        {
+            await Task.Delay(50);
+            using IEnumerator<IEvent> enumerator = stream.GetEnumerator();
+            enumerator.MoveNext();
+            await Task.Delay(50);
+            processed = true;
+            using IEnumerator<IEvent> enumerator2 = stream.GetEnumerator();
+            enumerator2.MoveNext();
+        }).FireAndForget();
 
         await provider.PushAsync(new TestEventOne());
 
@@ -322,11 +321,10 @@ public class MessageStreamProviderTests
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
 
-        Task enumerationTask = Task.Run(
-            () =>
-            {
-                count = stream.Count();
-            });
+        Task enumerationTask = Task.Run(() =>
+        {
+            count = stream.Count();
+        });
 
         await provider.PushAsync(1);
         await provider.PushAsync(2);
@@ -347,11 +345,10 @@ public class MessageStreamProviderTests
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
 
-        Task enumerationTask = Task.Run(
-            async () =>
-            {
-                count = await stream.CountAsync();
-            });
+        Task enumerationTask = Task.Run(async () =>
+        {
+            count = await stream.CountAsync();
+        });
 
         await provider.PushAsync(1);
         await provider.PushAsync(2);
@@ -372,11 +369,36 @@ public class MessageStreamProviderTests
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
 
-        Task enumerationTask = Task.Run(
-            () =>
-            {
-                count = stream.Count();
-            });
+        Task enumerationTask = Task.Run(() =>
+        {
+            count = stream.Count();
+        });
+
+        await provider.PushAsync(1);
+        await provider.PushAsync(2);
+        await provider.PushAsync(3);
+
+        count.ShouldBeNull();
+
+        provider.Abort();
+
+        await AsyncTestingUtil.WaitAsync(() => enumerationTask.IsCompleted);
+
+        count.ShouldBeNull();
+        enumerationTask.Status.ShouldBe(TaskStatus.Faulted);
+    }
+
+    [Fact]
+    public async Task Abort_ShouldCancelPendingAdd()
+    {
+        int? count = null;
+        MessageStreamProvider<int> provider = new();
+        IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
+
+        Task enumerationTask = Task.Run(() =>
+        {
+            count = stream.Count();
+        });
 
         await provider.PushAsync(1);
         await provider.PushAsync(2);
@@ -399,11 +421,10 @@ public class MessageStreamProviderTests
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
 
-        Task enumerationTask = Task.Run(
-            async () =>
-            {
-                count = await stream.CountAsync();
-            });
+        Task enumerationTask = Task.Run(async () =>
+        {
+            count = await stream.CountAsync();
+        });
 
         await provider.PushAsync(1);
         await provider.PushAsync(2);
@@ -427,17 +448,16 @@ public class MessageStreamProviderTests
         List<TestEventTwo> receivedTwos = [];
         bool completed = false;
 
-        Task.Run(
-            async () =>
+        Task.Run(async () =>
+        {
+            await lazyStream.WaitUntilCreatedAsync();
+            await foreach (TestEventTwo message in lazyStream.Stream!)
             {
-                await lazyStream.WaitUntilCreatedAsync();
-                await foreach (TestEventTwo message in lazyStream.Stream!)
-                {
-                    receivedTwos.Add(message);
-                }
+                receivedTwos.Add(message);
+            }
 
-                completed = true;
-            }).FireAndForget();
+            completed = true;
+        }).FireAndForget();
 
         Task createStreamTask = lazyStream.WaitUntilCreatedAsync();
 

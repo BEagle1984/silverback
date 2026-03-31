@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Ductus.FluentDocker.Builders;
@@ -15,6 +17,8 @@ namespace Silverback.Tests.Storage.PostgreSql;
 [Trait("Database", "PostgreSql")]
 public abstract class PostgresContainerTests : IAsyncLifetime
 {
+    private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromMinutes(1);
+
     private readonly IContainerService _postgresContainer;
 
     protected PostgresContainerTests()
@@ -41,15 +45,15 @@ public abstract class PostgresContainerTests : IAsyncLifetime
     {
         _postgresContainer.Stop();
         _postgresContainer.Dispose();
-        return Task.FromResult(Task.CompletedTask);
+        return Task.CompletedTask;
     }
 
     private async Task WaitForConnectionAsync()
     {
         bool connected = false;
-        int tryCount = 0;
+        Stopwatch stopwatch = Stopwatch.StartNew();
 
-        while (!connected)
+        while (!connected && stopwatch.Elapsed < ConnectionTimeout)
         {
             try
             {
@@ -59,11 +63,11 @@ public abstract class PostgresContainerTests : IAsyncLifetime
             }
             catch (NpgsqlException)
             {
-                if (++tryCount > 20)
-                    throw;
-
                 await Task.Delay(100);
             }
         }
+
+        if (!connected)
+            throw new TimeoutException("Could not connect to the database");
     }
 }

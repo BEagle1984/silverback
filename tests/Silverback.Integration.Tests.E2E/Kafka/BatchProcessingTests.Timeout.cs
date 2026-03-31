@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,6 +132,110 @@ public partial class BatchProcessingTests
     }
 
     [Fact]
+    public async Task Batch_ShouldProcessAllConsumedMessagesWhenTimingOutWhileEnumerating()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(30)))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+
+        async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            await foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+
+                if (list.Count == 20)
+                    await Task.Delay(50);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 100; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
+
+        receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(5);
+        receivedBatches.All(list => list.Count <= 30).ShouldBeTrue();
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(100);
+        completedBatches.ShouldBe(receivedBatches.Count);
+    }
+
+    [Fact]
+    [SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "Use ToList to make it blocking")]
+    public async Task Batch_ShouldProcessAllConsumedMessagesWhenTimingOutWhileSynchronouslyEnumerating()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(50)))))
+            .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleBatch));
+
+        void HandleBatch(IEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = [];
+            receivedBatches.Add(list);
+
+            foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+
+                if (list.Count == 20)
+                    Thread.Sleep(50);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 1; i <= 100; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromSeconds(500));
+
+        receivedBatches.Count.ShouldBeGreaterThanOrEqualTo(5);
+        receivedBatches.Sum(batch => batch.Count).ShouldBe(100);
+        completedBatches.ShouldBe(receivedBatches.Count);
+    }
+
+    [Fact]
     public async Task Batch_ShouldCompletePendingBatchAfterTimeout_WhenTimeoutLongerThanDefaultInterval()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
@@ -148,7 +253,7 @@ public partial class BatchProcessingTests
                     .CommitOffsetEach(1)
                     .Consume<TestEventOne>(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(2000)))))
+                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(2)))))
             .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)

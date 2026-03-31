@@ -191,7 +191,6 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 catch (Exception exception)
                 {
                     await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
-                    sequence.Dispose();
                     throw;
                 }
                 finally

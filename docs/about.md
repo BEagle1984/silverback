@@ -5,14 +5,15 @@ title: About
 
 # About
 
-## Author
-
 Silverback is maintained by **Sergio Aquilini** (BEagle1984 on GitHub).
 
-<a class="btn btn-outline-primary" href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='bi bi-github'></i> GitHub</a>
-<a class="btn btn-outline-primary" href="https://www.linkedin.com/in/sergio-aquilini-689764140/" rel="nofollow noopener noreferrer"><i class='bi bi-linkedin'></i> LinkedIn</a>
-<a class="btn btn-outline-primary" href="mailto:sergio@aquilini.ch" rel="nofollow noopener noreferrer"><i class='bi bi-envelope-at'></i> Personal Email</a>
-<a class="btn btn-outline-primary" href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='bi bi-envelope-at'></i> Project Email</a>
+[<i class='bi bi-github'></i> GitHub](https://github.com/BEagle1984)
+
+[<i class='bi bi-linkedin'></i> LinkedIn](https://www.linkedin.com/in/sergio-aquilini-689764140/)
+
+[<i class='bi bi-envelope-at'></i> Personal Email](mailto:sergio@aquilini.ch)
+
+[<i class='bi bi-envelope-at'></i> Project Email](mailto:silverback-project@outlook.com)
 
 ## License
 
@@ -20,9 +21,10 @@ The code is licensed under the **MIT License** (see [LICENSE](https://github.com
 
 ## Credits
 
-Silverback uses the following libraries:
 
-- [Rx.NET](https://github.com/dotnet/reactive)
-- [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
-- [Confluent Kafka .NET Client](https://github.com/confluentinc/confluent-kafka-dotnet)
-- [MQTTnet](https://github.com/chkr1011/MQTTnet)
+Silverback is built upon several outstanding open-source libraries:
+
+- [Rx.NET](https://github.com/dotnet/reactive) – Provides powerful reactive extensions for composing asynchronous and event-based programs.
+- [Json.NET](https://github.com/JamesNK/Newtonsoft.Json) – Used to be the gold standard for JSON serialization in .NET, still widely used for its flexibility and features.
+- [Confluent Kafka .NET Client](https://github.com/confluentinc/confluent-kafka-dotnet) – Facilitates integration with Apache Kafka for distributed messaging.
+- [MQTTnet](https://github.com/chkr1011/MQTTnet) – Supports MQTT-based messaging for IoT and lightweight communication scenarios.

@@ -65,24 +65,26 @@ public sealed class TestApplicationHost : IDisposable
         string appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
 
         _applicationFactory = new TestApplicationFactory()
-            .WithWebHostBuilder(
-                builder => builder
-                    .ConfigureServices(
-                        services =>
-                        {
-                            if (_testOutputHelper != null)
-                            {
-                                services.AddLogging(
-                                    configure =>
-                                        configure
-                                            .AddXUnit(_testOutputHelper)
-                                            .SetMinimumLevel(LogLevel.Trace)
-                                            .AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Information));
-                            }
+            .WithWebHostBuilder(builder => builder
+                .ConfigureServices(services =>
+                {
+                    if (_testOutputHelper != null)
+                    {
+                        services.AddLogging(configure =>
+                            configure
+                                .AddXUnit(
+                                    _testOutputHelper,
+                                    xunit =>
+                                    {
+                                        xunit.TimestampFormat = "HH:mm:ss.fff";
+                                    })
+                                .SetMinimumLevel(LogLevel.Trace)
+                                .AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Information));
+                    }
 
-                            _configurationActions.ForEach(configAction => configAction(services));
-                        })
-                    .UseSolutionRelativeContentRoot(appRoot));
+                    _configurationActions.ForEach(configAction => configAction(services));
+                })
+                .UseSolutionRelativeContentRoot(appRoot));
 
         _httpClient = _applicationFactory.CreateClient();
 

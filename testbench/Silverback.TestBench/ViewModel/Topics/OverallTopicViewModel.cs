@@ -8,7 +8,7 @@ namespace Silverback.TestBench.ViewModel.Topics;
 public class OverallTopicViewModel : TopicViewModel
 {
     public OverallTopicViewModel()
-        : base("*", TimeSpan.Zero, 0, true)
+        : base("*", TimeSpan.Zero, 0, true, false, false)
     {
     }
 }

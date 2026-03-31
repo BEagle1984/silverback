@@ -16,7 +16,7 @@ public abstract class E2ETests : IDisposable
     {
         ThreadPool.SetMinThreads(4 * Environment.ProcessorCount, 4 * Environment.ProcessorCount);
 
-        Semaphore.Wait();
+        //Semaphore.Wait();
 
         Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
     }

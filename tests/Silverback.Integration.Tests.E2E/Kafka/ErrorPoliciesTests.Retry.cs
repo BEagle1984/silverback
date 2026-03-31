@@ -93,7 +93,7 @@ public partial class ErrorPoliciesTests
                 return;
             }
 
-            tryCount++;
+            Interlocked.Increment(ref tryCount);
 
             semaphore.Wait();
             semaphore.Release();
@@ -527,6 +527,7 @@ public partial class ErrorPoliciesTests
     public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenThrowingWhileEnumerating()
     {
         int tryMessageCount = 0;
+        int receivedBatches = 0;
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -540,17 +541,19 @@ public partial class ErrorPoliciesTests
                     .WithGroupId(DefaultGroupId)
                     .Consume(endpoint => endpoint
                         .ConsumeFrom(DefaultTopicName)
-                        .EnableBatchProcessing(2)
+                        .EnableBatchProcessing(3)
                         .OnError(policy => policy.Retry(10)))))
             .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
             .AddIntegrationSpy());
 
         async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
         {
+            receivedBatches++;
+
             await foreach (IIntegrationEvent dummy in batch)
             {
                 tryMessageCount++;
-                if (tryMessageCount is not 2 and not 4 and not 5)
+                if (tryMessageCount is 1 or 4 or 9)
                     throw new InvalidOperationException($"Retry {tryMessageCount}!");
             }
 
@@ -558,15 +561,16 @@ public partial class ErrorPoliciesTests
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.ProduceAsync(new TestEventOne());
-        await producer.ProduceAsync(new TestEventOne());
+        for (int i = 0; i < 6; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
-        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
-
-        completedBatches.ShouldBe(1);
+        tryMessageCount.ShouldBe(12);
+        receivedBatches.ShouldBe(5);
+        completedBatches.ShouldBe(2);
     }
 
     [Fact]
@@ -612,6 +616,56 @@ public partial class ErrorPoliciesTests
         Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(5);
 
+        completedBatches.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenThrowingImmediately()
+    {
+        int tryCount = 0;
+        int messageCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2)
+                        .OnError(policy => policy.Retry(10)))))
+            .AddDelegateSubscriber<IEnumerable<IIntegrationEvent>>(HandleBatch)
+            .AddIntegrationSpy());
+
+        void HandleBatch(IEnumerable<IIntegrationEvent> batch)
+        {
+            if (tryCount++ < 2)
+                throw new InvalidOperationException("Retry!");
+
+            foreach (IIntegrationEvent dummy in batch)
+            {
+                messageCount++;
+            }
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Count.ShouldBe(2);
+        Helper.Spy.RawInboundEnvelopes.Count.ShouldBe(4);
+
+        tryCount.ShouldBe(3);
+        messageCount.ShouldBe(2);
         completedBatches.ShouldBe(1);
     }
 

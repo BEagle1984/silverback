@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Ductus.FluentDocker.Builders;
@@ -13,6 +14,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost.Database;
 
 public sealed class PostgreSqlDatabase : IDisposable
 {
+    private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromMinutes(1);
+
     private readonly IContainerService _postgresContainer;
 
     private PostgreSqlDatabase()
@@ -49,9 +52,9 @@ public sealed class PostgreSqlDatabase : IDisposable
     private async Task WaitForConnectionAsync()
     {
         bool connected = false;
-        int tryCount = 0;
+        Stopwatch stopwatch = Stopwatch.StartNew();
 
-        while (!connected)
+        while (!connected && stopwatch.Elapsed < ConnectionTimeout)
         {
             try
             {
@@ -61,11 +64,11 @@ public sealed class PostgreSqlDatabase : IDisposable
             }
             catch (NpgsqlException)
             {
-                if (++tryCount > 30)
-                    throw;
-
                 await Task.Delay(100);
             }
         }
+
+        if (!connected)
+            throw new TimeoutException("Could not connect to the database");
     }
 }

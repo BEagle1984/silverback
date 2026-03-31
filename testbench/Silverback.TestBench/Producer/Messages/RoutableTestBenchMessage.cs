@@ -16,10 +16,10 @@ public abstract class RoutableTestBenchMessage : TestBenchMessage
     {
         TargetTopicName = targetTopicConfiguration.TopicName;
 
-        double produceDelayTotalMilliseconds = targetTopicConfiguration.ProduceDelay.TotalMilliseconds;
-        SimulatedProcessingTime = TimeSpan.FromMilliseconds(Random.Next(0, (int)(produceDelayTotalMilliseconds * 0.9)));
+        if (targetTopicConfiguration.SimulateProcessingTime)
+            SimulatedProcessingTime = TimeSpan.FromMilliseconds(Random.Next(0, (int)(targetTopicConfiguration.ProduceDelay.TotalMilliseconds * 0.7)));
 
-        if (Random.NextDouble() < targetTopicConfiguration.SimulateErrorProbability)
+        if (targetTopicConfiguration.SimulateErrors && Random.NextDouble() < targetTopicConfiguration.SimulateErrorProbability)
             SimulatedFailuresCount = Random.Next(1, 3);
 
         MessageId = Guid.NewGuid().ToString("N");

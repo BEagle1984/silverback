@@ -153,10 +153,7 @@ public abstract class SequenceReaderBase : ISequenceReader
                 return;
 
             if (!sequence.IsComplete)
-            {
-                await sequence.AbortAsync(SequenceAbortReason.IncompleteSequence)
-                    .ConfigureAwait(false);
-            }
+                await sequence.AbortIfIncompleteAsync().ConfigureAwait(false);
 
             ISequence? parentSequence = sequence.ParentSequence;
 

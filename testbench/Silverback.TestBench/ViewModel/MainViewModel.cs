@@ -134,6 +134,12 @@ public class MainViewModel : ViewModelBase
                 0.01));
         Topics.Add(
             new KafkaTopicViewModel(
+                TopicNames.Kafka.Batch2,
+                12,
+                TimeSpan.FromMilliseconds(50),
+                0.01));
+        Topics.Add(
+            new KafkaTopicViewModel(
                 TopicNames.Kafka.Unbounded,
                 8,
                 TimeSpan.FromMilliseconds(100),

@@ -8,42 +8,52 @@ namespace Silverback.TestBench.ViewModel.Topics;
 
 public abstract class TopicViewModel : ViewModelBase
 {
-    private TimeSpan _produceDelay;
-
-    private double _simulateErrorProbability;
-
-    private bool _isEnabled;
-
     protected TopicViewModel(
         string topicName,
         TimeSpan produceDelay,
         double simulateErrorProbability,
-        bool isEnabled)
+        bool isEnabled,
+        bool simulateProcessingTime,
+        bool simulateErrors)
     {
         TopicName = topicName;
-        _produceDelay = produceDelay;
-        _simulateErrorProbability = simulateErrorProbability;
-        _isEnabled = isEnabled;
+        ProduceDelay = produceDelay;
+        SimulateErrorProbability = simulateErrorProbability;
+        IsEnabled = isEnabled;
+        SimulateProcessingTime = simulateProcessingTime;
+        SimulateErrors = simulateErrors;
     }
 
     public string TopicName { get; }
 
     public TimeSpan ProduceDelay
     {
-        get => _produceDelay;
-        set => SetProperty(ref _produceDelay, value, nameof(ProduceDelay));
+        get;
+        set => SetProperty(ref field, value, nameof(ProduceDelay));
+    }
+
+    public bool SimulateProcessingTime
+    {
+        get;
+        set => SetProperty(ref field, value, nameof(SimulateProcessingTime));
+    }
+
+    public bool SimulateErrors
+    {
+        get;
+        set => SetProperty(ref field, value, nameof(SimulateErrors));
     }
 
     public double SimulateErrorProbability
     {
-        get => _simulateErrorProbability;
-        set => SetProperty(ref _simulateErrorProbability, value, nameof(SimulateErrorProbability));
+        get;
+        set => SetProperty(ref field, value, nameof(SimulateErrorProbability));
     }
 
     public bool IsEnabled
     {
-        get => _isEnabled;
-        set => SetProperty(ref _isEnabled, value, nameof(IsEnabled));
+        get;
+        set => SetProperty(ref field, value, nameof(IsEnabled));
     }
 
     public TopicStatisticsViewModel Statistics { get; } = new();

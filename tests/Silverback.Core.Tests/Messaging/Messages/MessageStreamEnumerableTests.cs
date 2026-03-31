@@ -20,19 +20,18 @@ public class MessageStreamEnumerableTests
         MessageStreamEnumerable<Message> stream = new();
         bool success = false;
 
-        Task enumerationTask = Task.Run(
-            () =>
-            {
-                using IEnumerator<Message> enumerator = stream.GetEnumerator();
-                enumerator.MoveNext().ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(1);
-                enumerator.MoveNext().ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(2);
-                enumerator.MoveNext().ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(3);
-                enumerator.MoveNext().ShouldBeFalse();
-                success = true;
-            });
+        Task enumerationTask = Task.Run(() =>
+        {
+            using IEnumerator<Message> enumerator = stream.GetEnumerator();
+            enumerator.MoveNext().ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(1);
+            enumerator.MoveNext().ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(2);
+            enumerator.MoveNext().ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(3);
+            enumerator.MoveNext().ShouldBeFalse();
+            success = true;
+        });
 
         await stream.PushAsync(new Message(1));
         await stream.PushAsync(new Message(2));
@@ -51,19 +50,18 @@ public class MessageStreamEnumerableTests
         MessageStreamEnumerable<Message> stream = new();
         bool success = false;
 
-        Task enumerationTask = Task.Run(
-            async () =>
-            {
-                await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
-                (await enumerator.MoveNextAsync()).ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(1);
-                (await enumerator.MoveNextAsync()).ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(2);
-                (await enumerator.MoveNextAsync()).ShouldBeTrue();
-                enumerator.Current.Value.ShouldBe(3);
-                (await enumerator.MoveNextAsync()).ShouldBeFalse();
-                success = true;
-            });
+        Task enumerationTask = Task.Run(async () =>
+        {
+            await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
+            (await enumerator.MoveNextAsync()).ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(1);
+            (await enumerator.MoveNextAsync()).ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(2);
+            (await enumerator.MoveNextAsync()).ShouldBeTrue();
+            enumerator.Current.Value.ShouldBe(3);
+            (await enumerator.MoveNextAsync()).ShouldBeFalse();
+            success = true;
+        });
 
         await stream.PushAsync(new Message(1));
         await stream.PushAsync(new Message(2));
@@ -147,12 +145,11 @@ public class MessageStreamEnumerableTests
         using IEnumerator<Message> enumerator = stream.GetEnumerator();
 
         // The next MoveNext reaches the end of the enumerable
-        Task.Run(
-            () =>
-            {
-                enumerator.MoveNext();
-                completed = true;
-            }).FireAndForget();
+        Task.Run(() =>
+        {
+            enumerator.MoveNext();
+            completed = true;
+        }).FireAndForget();
 
         completed.ShouldBeFalse();
 
@@ -173,12 +170,11 @@ public class MessageStreamEnumerableTests
         await using IAsyncEnumerator<Message> enumerator = stream.GetAsyncEnumerator();
 
         // The next MoveNext reaches the end of the enumerable
-        Task.Run(
-            async () =>
-            {
-                await enumerator.MoveNextAsync();
-                completed = true;
-            }).FireAndForget();
+        Task.Run(async () =>
+        {
+            await enumerator.MoveNextAsync();
+            completed = true;
+        }).FireAndForget();
 
         completed.ShouldBeFalse();
 
@@ -191,6 +187,29 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    public async Task CompleteAsync_ShouldCompleteWhilePushing()
+    {
+        bool pushed = false;
+        MessageStreamEnumerable<Message> stream = new();
+
+        Task pushTask = Task.Run(async () =>
+        {
+            await stream.PushAsync(new Message(42));
+            pushed = true;
+        });
+
+        pushed.ShouldBeFalse();
+
+        await stream.CompleteAsync();
+
+        // Give the other thread a chance to exit the MoveNext
+        await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
+
+        pushed.ShouldBeFalse();
+        pushTask.Status.ShouldBe(TaskStatus.Canceled);
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
     public async Task Abort_ShouldAbortWhileEnumerating()
     {
@@ -198,12 +217,11 @@ public class MessageStreamEnumerableTests
         MessageStreamEnumerable<int> stream = new();
         using IEnumerator<int> enumerator = stream.GetEnumerator();
 
-        Task enumerationTask = Task.Run(
-            () =>
-            {
-                enumerator.MoveNext();
-                completed = true;
-            });
+        Task enumerationTask = Task.Run(() =>
+        {
+            enumerator.MoveNext();
+            completed = true;
+        });
 
         completed.ShouldBeFalse();
 
@@ -225,12 +243,11 @@ public class MessageStreamEnumerableTests
         MessageStreamEnumerable<int> stream = new();
         await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
 
-        Task enumerationTask = Task.Run(
-            async () =>
-            {
-                await enumerator.MoveNextAsync();
-                completed = true;
-            });
+        Task enumerationTask = Task.Run(async () =>
+        {
+            await enumerator.MoveNextAsync();
+            completed = true;
+        });
 
         completed.ShouldBeFalse();
 
@@ -249,12 +266,11 @@ public class MessageStreamEnumerableTests
         bool pushed = false;
         MessageStreamEnumerable<Message> stream = new();
 
-        Task pushTask = Task.Run(
-            async () =>
-            {
-                await stream.PushAsync(new Message(42));
-                pushed = true;
-            });
+        Task pushTask = Task.Run(async () =>
+        {
+            await stream.PushAsync(new Message(42));
+            pushed = true;
+        });
 
         pushed.ShouldBeFalse();
 
@@ -275,7 +291,7 @@ public class MessageStreamEnumerableTests
         await stream.CompleteAsync();
 
         Func<Task> act = async () => await stream.PushAsync(new Message(42));
-        await act.ShouldThrowAsync<InvalidOperationException>();
+        await act.ShouldThrowAsync<TaskCanceledException>();
     }
 
     [Fact]
@@ -285,7 +301,7 @@ public class MessageStreamEnumerableTests
         stream.Dispose();
 
         Func<Task> act = async () => await stream.PushAsync(new Message(42));
-        await act.ShouldThrowAsync<InvalidOperationException>();
+        await act.ShouldThrowAsync<ObjectDisposedException>();
     }
 
     private record Message(int Value);

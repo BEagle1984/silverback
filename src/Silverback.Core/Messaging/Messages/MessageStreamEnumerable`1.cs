@@ -25,7 +25,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private readonly SemaphoreSlim _processedSemaphore = new(0, 1);
 
-    private readonly CancellationTokenSource _abortCancellationTokenSource = new();
+    private readonly CancellationTokenSource _addCancellationTokenSource = new();
 
     private readonly System.Threading.Lock _completeLock = new();
 
@@ -35,14 +35,20 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private bool _isFirstMessage = true;
 
-    private bool _isComplete;
+    private CompleteState _completeState = CompleteState.NotComplete;
 
     private Action<object?>? _onPullAction;
 
     private object? _onPullActionArgument;
 
-    Task IMessageStreamEnumerable.PushAsync(object message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken) =>
-        PushAsync((TMessage)message, onPullAction, onPullActionArgument, cancellationToken);
+    private enum CompleteState
+    {
+        NotComplete,
+
+        Complete,
+
+        Aborted
+    }
 
     /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,Action{object},object,CancellationToken)" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
@@ -50,12 +56,9 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         Check.NotNull(message, nameof(message));
 
-        using CancellationTokenSource linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
+        using CancellationTokenSource linkedTokenSource = LinkWithAddCancellationTokenSource(cancellationToken);
 
         await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
-
-        if (_isComplete)
-            throw new InvalidOperationException("The stream has been marked as complete.");
 
         _current = message;
         _hasCurrent = true;
@@ -74,13 +77,13 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         lock (_completeLock)
         {
-            if (_isComplete)
+            if (_completeState != CompleteState.NotComplete)
                 return;
 
-            _isComplete = true;
+            _completeState = CompleteState.Aborted;
         }
 
-        _abortCancellationTokenSource.Cancel();
+        _addCancellationTokenSource.Cancel();
     }
 
     /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
@@ -88,10 +91,10 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     {
         lock (_completeLock)
         {
-            if (_isComplete)
+            if (_completeState != CompleteState.NotComplete)
                 return;
 
-            _isComplete = true;
+            _completeState = CompleteState.Complete;
         }
 
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -99,6 +102,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         SafelyRelease(_readSemaphore);
 
         _writeSemaphore.Release();
+
+        await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
@@ -108,6 +113,9 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
     public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
         GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
+
+    Task IMessageStreamEnumerable.PushAsync(object message, Action<object?>? onPullAction, object? onPullActionArgument, CancellationToken cancellationToken) =>
+        PushAsync((TMessage)message, onPullAction, onPullActionArgument, cancellationToken);
 
     /// <inheritdoc cref="IEnumerable.GetEnumerator" />
     [MustDisposeResource]
@@ -121,7 +129,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         _readSemaphore.Dispose();
         _writeSemaphore.Dispose();
         _processedSemaphore.Dispose();
-        _abortCancellationTokenSource.Dispose();
+        _addCancellationTokenSource.Dispose();
     }
 
     private static void SafelyRelease(SemaphoreSlim semaphore)
@@ -163,6 +171,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
     private async Task<bool> WaitForNextAsync(CancellationToken cancellationToken)
     {
         if (!_isFirstMessage)
@@ -172,17 +181,28 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
             SafelyRelease(_processedSemaphore);
         }
 
-        using CancellationTokenSource linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
+        using CancellationTokenSource linkedTokenSource = LinkWithAddCancellationTokenSource(cancellationToken);
 
-        await _readSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+        try
+        {
+            await _readSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Handle the case where the token is canceled because the stream is complete, and don't throw but signal the end of the stream
+            if (_completeState == CompleteState.Complete)
+                return false;
+
+            throw;
+        }
 
         _isFirstMessage = false;
 
         return _hasCurrent;
     }
 
-    private CancellationTokenSource LinkWithAbortCancellationTokenSource(CancellationToken cancellationToken) =>
+    private CancellationTokenSource LinkWithAddCancellationTokenSource(CancellationToken cancellationToken) =>
         CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
-            _abortCancellationTokenSource.Token);
+            _addCancellationTokenSource.Token);
 }
