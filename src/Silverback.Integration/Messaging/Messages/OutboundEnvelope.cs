@@ -21,7 +21,7 @@ internal record OutboundEnvelope : RawBrokerEnvelope, IOutboundEnvelope
         IProducer producer,
         ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(null, headers)
+        : base(null, null, headers)
     {
         EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Producer = Check.NotNull(producer, nameof(producer));

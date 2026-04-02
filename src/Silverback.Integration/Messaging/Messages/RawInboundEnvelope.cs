@@ -32,7 +32,35 @@ internal record RawInboundEnvelope : RawBrokerEnvelope, IRawInboundEnvelope
         ConsumerEndpoint endpoint,
         IConsumer consumer,
         IBrokerMessageIdentifier brokerMessageIdentifier)
-        : base(rawMessage, headers)
+        : this(null, rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
+    {
+    }
+
+    public RawInboundEnvelope(
+        byte[]? rawKey,
+        byte[]? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : this(
+            rawKey != null ? new MemoryStream(rawKey) : null,
+            rawMessage != null ? new MemoryStream(rawMessage) : null,
+            headers,
+            endpoint,
+            consumer,
+            brokerMessageIdentifier)
+    {
+    }
+
+    public RawInboundEnvelope(
+        Stream? rawKey,
+        Stream? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : base(rawKey, rawMessage, headers)
     {
         Endpoint = Check.NotNull(endpoint, nameof(endpoint));
         BrokerMessageIdentifier = Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));

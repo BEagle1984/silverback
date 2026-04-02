@@ -49,6 +49,11 @@ public static class BrokerBehaviorsSortIndexes
         public const int MessageKeyInitializer = 300;
 
         /// <summary>
+        ///     The (broker-specific) behavior serializing the message key using a custom key serializer.
+        /// </summary>
+        public const int KeySerializer = 350;
+
+        /// <summary>
         ///     The <see cref="FilterProducerBehavior" /> sort index.
         /// </summary>
         public const int Filter = 400;
@@ -123,6 +128,11 @@ public static class BrokerBehaviorsSortIndexes
         ///     The <see cref="BinaryMessageHandlerConsumerBehavior" /> sort index.
         /// </summary>
         public const int BinaryMessageHandler = 800;
+
+        /// <summary>
+        ///     The <see cref="KeyDeserializerConsumerBehavior" /> sort index.
+        /// </summary>
+        public const int KeyDeserializer = 850;
 
         /// <summary>
         ///     The <see cref="DeserializerConsumerBehavior" /> sort index.

@@ -30,8 +30,8 @@ public sealed class PostgreSqlDatabase : IDisposable
 
         IPEndPoint hostExposedEndpoint = _postgresContainer.ToHostExposedEndpoint("5432/tcp");
         ConnectionString = $"User ID=postgres;Password=silverback;" +
-                           $"Host={hostExposedEndpoint.Address};Port={hostExposedEndpoint.Port};" +
-                           $"Database=silverback-storage-tests;Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
+                           $"Host=localhost;Port={hostExposedEndpoint.Port};" +
+                           $"Database=silverback-storage-tests;Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;SSL Mode=Disable;";
     }
 
     public string ConnectionString { get; }
