@@ -206,13 +206,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-        bool semaphoreAcquired = false;
+        if (!await WaitIfNotDisposedAsync(_addSemaphoreSlim).ConfigureAwait(false))
+            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+
+        bool lockReleased = false;
 
         try
         {
-            await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-            semaphoreAcquired = true;
-
             return await AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled).ConfigureAwait(false);
         }
         catch (OperationCanceledException ex)
@@ -223,7 +223,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 () => [GetType().Name, SequenceId]);
 
             _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
-            semaphoreAcquired = false;
+            lockReleased = true;
 
             await _processingCompleteTaskCompletionSource.Task.ConfigureAwait(false);
 
@@ -240,7 +240,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            if (semaphoreAcquired)
+            if (!lockReleased)
                 _addSemaphoreSlim.Release();
         }
     }
@@ -457,7 +457,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _abortingTaskCompletionSource?.Task.SafeWait();
 
         _streamProvider.Dispose();
-        _addCancellationTokenSource.Dispose();
+        _addCancellationTokenSource.Cancel();
 
         _sequences?.ForEach(sequence => sequence.Dispose());
 
@@ -468,6 +468,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _isDisposed = true;
 
         _addSemaphoreSlim.Dispose();
+        _addCancellationTokenSource.Dispose();
         _completeSemaphoreSlim.Dispose();
 
         // If necessary, cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)

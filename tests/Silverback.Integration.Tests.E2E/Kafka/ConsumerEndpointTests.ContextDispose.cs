@@ -12,7 +12,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 

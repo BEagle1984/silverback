@@ -188,9 +188,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         try
         {
-            ConsumeResult<byte[]?, byte[]?>? result = client.Consume(_consumer.Configuration.PollingTimeout);
-            cancellationToken.ThrowIfCancellationRequested();
-            return result;
+            return client.Consume(_consumer.Configuration.PollingTimeout);
         }
         catch (OperationCanceledException)
         {

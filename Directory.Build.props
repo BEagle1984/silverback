@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Label="Package information">
-    <BaseVersionSuffix></BaseVersionSuffix>
+    <BaseVersionSuffix>-beta.2</BaseVersionSuffix>
     <BaseVersion>5.2.2$(BaseVersionSuffix)</BaseVersion>
     <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
