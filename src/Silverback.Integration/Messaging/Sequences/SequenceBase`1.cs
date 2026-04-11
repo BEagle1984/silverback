@@ -456,8 +456,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _abortingTaskCompletionSource?.Task.SafeWait();
 
-        _streamProvider.Dispose();
         _addCancellationTokenSource.Cancel();
+        _streamProvider.Dispose();
 
         _sequences?.ForEach(sequence => sequence.Dispose());
 
