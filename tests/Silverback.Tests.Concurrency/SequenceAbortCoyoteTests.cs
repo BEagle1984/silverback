@@ -3,13 +3,11 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Coyote.SystematicTesting;
 using Shouldly;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Xunit;
 using Xunit.Abstractions;
-using CoyoteConfiguration = Microsoft.Coyote.Configuration;
 
 namespace Silverback.Tests.Concurrency;
 
@@ -36,7 +34,7 @@ public class SequenceAbortCoyoteTests
     [Fact]
     public void ConcurrentAbort_ShouldReachAbortedStateExactlyOnce()
     {
-        RunCoyoteTest(
+        CoyoteTestRunner.Run(
             async () =>
             {
                 ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
@@ -54,13 +52,14 @@ public class SequenceAbortCoyoteTests
                 sequence.IsAborted.ShouldBeTrue();
                 sequence.IsPending.ShouldBeFalse();
                 sequence.AbortReason.ShouldBe(SequenceAbortReason.IncompleteSequence);
-            });
+            },
+            _output);
     }
 
     [Fact]
     public void AbortThenAbortIfIncomplete_ShouldBothReturnAndRemainAborted()
     {
-        RunCoyoteTest(
+        CoyoteTestRunner.Run(
             async () =>
             {
                 ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
@@ -77,7 +76,8 @@ public class SequenceAbortCoyoteTests
                 sequence.IsAborted.ShouldBeTrue();
                 sequence.IsPending.ShouldBeFalse();
                 sequence.AbortReason.ShouldBe(SequenceAbortReason.Error);
-            });
+            },
+            _output);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class SequenceAbortCoyoteTests
         // This mixes the two code paths that both take _completeSemaphoreSlim, so any
         // release-path asymmetry (such as the bug we found and fixed in AbortIfIncompleteAsync)
         // will manifest as either a deadlock or a stuck semaphore that Dispose() then hits.
-        RunCoyoteTest(
+        CoyoteTestRunner.Run(
             async () =>
             {
                 ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
@@ -102,7 +102,8 @@ public class SequenceAbortCoyoteTests
                 sequence.IsAborted.ShouldBeTrue();
                 sequence.IsPending.ShouldBeFalse();
                 sequence.AbortReason.ShouldBe(SequenceAbortReason.IncompleteSequence);
-            });
+            },
+            _output);
     }
 
     [Fact]
@@ -112,7 +113,7 @@ public class SequenceAbortCoyoteTests
         // should set AbortException; the second should observe IsAborted, wait on
         // _abortingTaskCompletionSource, and return. AbortException must be exactly one of the two
         // exceptions we passed in — no null, no partial state.
-        RunCoyoteTest(
+        CoyoteTestRunner.Run(
             async () =>
             {
                 ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
@@ -132,29 +133,7 @@ public class SequenceAbortCoyoteTests
                 Exception abortException = sequence.AbortException;
                 (abortException == ex1 || abortException == ex2).ShouldBeTrue(
                     "AbortException must be one of the exceptions that was passed in, not a wrapper or null.");
-            });
-    }
-
-    private void RunCoyoteTest(Func<Task> testBody, int iterations = 100)
-    {
-        CoyoteConfiguration config = CoyoteConfiguration.Create()
-            .WithTestingIterations((uint)iterations)
-            .WithVerbosityEnabled()
-            .WithConsoleLoggingEnabled();
-
-        TestingEngine engine = TestingEngine.Create(config, testBody);
-        engine.Run();
-
-        string report = engine.GetReport();
-        _output.WriteLine(report);
-
-        if (engine.TestReport.NumOfFoundBugs > 0)
-        {
-            string bugReports = string.Join("\n---\n", engine.TestReport.BugReports);
-            _output.WriteLine("Bug reports:");
-            _output.WriteLine(bugReports);
-            throw new Xunit.Sdk.XunitException(
-                $"Coyote found {engine.TestReport.NumOfFoundBugs} bug(s) across {iterations} iterations.\n\n{report}\n\nBug reports:\n{bugReports}");
-        }
+            },
+            _output);
     }
 }
