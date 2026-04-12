@@ -384,7 +384,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             return false;
 
         if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
-            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait(cancellationToken);
+            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait();
 
         IReadOnlyCollection<TopicPartition> assignedPartitions = [.. _consumerGroup
             .GetAssignment(this)

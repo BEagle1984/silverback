@@ -87,13 +87,13 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         {
             // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
             // synchronously to stay within a single long-running thread with the Consume loop.
-            channel.WriteAsync(consumeResult, cancellationToken).SafeWait(cancellationToken);
+            channel.WriteAsync(consumeResult, cancellationToken).SafeWait();
         }
         catch (OperationCanceledException)
         {
             try
             {
-                channel.WriteOverflowAsync(consumeResult).SafeWait(CancellationToken.None);
+                channel.WriteOverflowAsync(consumeResult).SafeWait();
             }
             catch (ChannelClosedException)
             {
