@@ -278,4 +278,75 @@ public class MqttConcurrencyPatternCoyoteTests
             },
             _output);
     }
+
+    // MC5 — ConsumedApplicationMessage TaskCompletionSource reassignment race.
+    //
+    // ConsumerChannelsManager.cs:69-73 (MQTT):
+    //   if (await consumedMessage.TaskCompletionSource.Task)
+    //       break;
+    //   consumedMessage.TaskCompletionSource = new TaskCompletionSource<bool>();
+    //
+    // MqttConsumer.cs:164,171:
+    //   consumedMessage.TaskCompletionSource.SetResult(true);   // commit
+    //   consumedMessage?.TaskCompletionSource.SetResult(false); // rollback
+    //
+    // After the channel reader awaits the TCS, it reassigns a new TCS. But
+    // CommitCoreAsync/RollbackCoreAsync may still hold the OLD TCS reference
+    // and call SetResult on it. The new TCS is never signaled, so the channel
+    // reader blocks forever waiting for the commit/rollback ack that was sent
+    // to a dead TCS.
+    [Fact]
+    public void MqttConsumedMessage_TcsReassignment_ShouldNotLoseSignal()
+    {
+        CoyoteTestRunner.Run(
+            async () =>
+            {
+                TaskCompletionSource<bool> tcs = new();
+                bool signalReceived = false;
+
+                // T1: channel reader — await, then reassign TCS
+                Task channelReader = Task.Run(
+                    async () =>
+                    {
+                        // First await returns false (rollback), so loop continues
+                        bool shouldBreak = await tcs.Task.ConfigureAwait(false);
+                        if (shouldBreak) return;
+
+                        // Reassign — mirrors line 73
+                        tcs = new TaskCompletionSource<bool>();
+
+                        // Await again for the next commit/rollback signal
+                        bool result = await tcs.Task.ConfigureAwait(false);
+                        signalReceived = true;
+                    });
+
+                // T2: commit path — sets result on the TCS reference it holds.
+                // If T1 reassigned between T2 capturing the ref and T2 calling SetResult,
+                // T2 sets the OLD tcs (already completed) and the NEW tcs is never signaled.
+                await Task.Yield();
+
+                // First signal: rollback (false) — wakes up T1's first await
+                TaskCompletionSource<bool> capturedTcs = tcs;
+                capturedTcs.SetResult(false);
+
+                await Task.Yield();
+
+                // Second signal: commit (true) — should wake T1's second await
+                // But if T1 already reassigned tcs, capturedTcs2 points to the OLD one
+                TaskCompletionSource<bool> capturedTcs2 = tcs;
+                await Task.Yield();
+                capturedTcs2.SetResult(true);
+
+                // Give channelReader time to complete
+                Task finished = await Task.WhenAny(channelReader, Task.Delay(2000)).ConfigureAwait(false);
+
+                finished.ShouldBe(
+                    channelReader,
+                    "Channel reader blocked forever. The commit signal was sent to " +
+                    "a stale TaskCompletionSource that was already completed. The new " +
+                    "TCS created by the channel reader was never signaled. " +
+                    "See finding MC5 / MQTT ConsumerChannelsManager:73.");
+            },
+            _output);
+    }
 }
