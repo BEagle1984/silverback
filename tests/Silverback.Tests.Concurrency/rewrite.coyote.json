@@ -3,6 +3,7 @@
   "Assemblies": [
     "Silverback.Core.dll",
     "Silverback.Integration.dll",
+    "Silverback.Integration.Kafka.dll",
     "Silverback.Tests.Concurrency.dll"
   ],
   "IsRewritingThreads": true,
