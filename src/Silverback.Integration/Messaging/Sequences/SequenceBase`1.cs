@@ -181,7 +181,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     void ISequenceImplementation.NotifyProcessingCompleted()
     {
         _processingCompleteTaskCompletionSource.TrySetResult(true);
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
     }
 
     /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
@@ -190,7 +190,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _processingCompleteTaskCompletionSource.TrySetException(exception);
 
         // Don't forward the error, it's enough to handle it once
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
         _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
     }
 
@@ -250,12 +250,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
             return;
-
-        if (!IsPending)
-            return;
-
         try
         {
+            if (!IsPending)
+                return;
+
             await AbortCoreAsync(SequenceAbortReason.IncompleteSequence, null).ConfigureAwait(false);
         }
         finally
@@ -396,7 +395,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
                 () => [GetType().Name, SequenceId, TotalLength]);
 
-            await CompleteCoreAsync().ConfigureAwait(false);
+            await _completeSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                await CompleteCoreAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                _completeSemaphoreSlim.Release();
+            }
         }
 
         return AddToSequenceResult.Success(pushedStreamsCount);

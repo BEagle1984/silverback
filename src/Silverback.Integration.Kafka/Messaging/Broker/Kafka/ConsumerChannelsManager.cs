@@ -147,10 +147,11 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             return;
         }
 
+        bool semaphoreWaited = false;
         if (_channels.Count > _consumer.Configuration.MaxDegreeOfParallelism)
         {
-            await _messagesLimiterSemaphoreSlim.WaitAsync(channel.ReadCancellationToken)
-                .ConfigureAwait(false);
+            await _messagesLimiterSemaphoreSlim.WaitAsync(channel.ReadCancellationToken).ConfigureAwait(false);
+            semaphoreWaited = true;
         }
 
         try
@@ -160,7 +161,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         }
         finally
         {
-            if (_messagesLimiterSemaphoreSlim.CurrentCount < _consumer.Configuration.MaxDegreeOfParallelism)
+            if (semaphoreWaited)
                 _messagesLimiterSemaphoreSlim.Release();
         }
     }

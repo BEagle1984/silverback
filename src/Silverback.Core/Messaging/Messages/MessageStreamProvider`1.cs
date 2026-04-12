@@ -101,11 +101,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.Abort" />
     public override void Abort()
     {
-        if (_isAborting || _isCompleting) // prevent deadlocking on reentry
+        if (_isAborting || _isCompleting) // prevent deadlocking on reentry (it's a very optimistic approach, could harden later)
             return;
-
-        if (_isCompleting)
-            throw new InvalidOperationException("The streams are being completed.");
 
         _completeSemaphore.Wait();
 
@@ -139,11 +136,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     /// <inheritdoc cref="MessageStreamProvider.CompleteAsync" />
     public override async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
-        if (_isCompleting || _isAborting) // prevent deadlocking on reentry
+        if (_isCompleting || _isAborting) // prevent deadlocking on reentry (it's a very optimistic approach, could harden later)
             return;
-
-        if (_isAborting)
-            throw new InvalidOperationException("The streams are being aborted.");
 
         await _completeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
