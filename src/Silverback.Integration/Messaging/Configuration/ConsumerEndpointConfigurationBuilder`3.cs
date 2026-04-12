@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Encryption;
@@ -44,11 +45,13 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
 
     private IDecryptionSettings? _encryptionSettings;
 
+    private bool? _allowUnboundedSequences;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///   The <see cref="IServiceProvider" />.
+    ///     The <see cref="IServiceProvider" />.
     /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
@@ -170,6 +173,21 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
         return This;
     }
 
+    /// <summary>
+    ///     Specifies that the subscribers can subscribe a stream (<see cref="IAsyncEnumerable{T}" />, <see cref="IEnumerable{T}" />,
+    ///     etc.) pushed with all messages consumed from that endpoint (or partition). This setup can be used for basic stream processing,
+    ///     but it's more fragile and should be used with care. Some features, like error policies, won't work as expected.
+    ///     This is disabled by default.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder AllowStreaming()
+    {
+        _allowUnboundedSequences = true;
+        return This;
+    }
+
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.Build" />
     public sealed override TConfiguration Build()
     {
@@ -191,7 +209,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
                 Timeout = _sequenceTimeout ?? configuration.Sequence.Timeout
             },
             ThrowIfUnhandled = _throwIfUnhandled ?? configuration.ThrowIfUnhandled,
-            Encryption = _encryptionSettings ?? configuration.Encryption
+            Encryption = _encryptionSettings ?? configuration.Encryption,
+            AllowStreaming = _allowUnboundedSequences ?? configuration.AllowStreaming
         };
 
         configuration.Validate();

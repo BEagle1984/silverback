@@ -36,7 +36,7 @@ public partial class StreamingTests
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)
@@ -85,7 +85,7 @@ public partial class StreamingTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .ProcessAllPartitionsTogether()
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)
@@ -134,7 +134,7 @@ public partial class StreamingTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .LimitParallelism(2)
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)

@@ -4,6 +4,7 @@
 using System;
 using Shouldly;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -45,6 +46,34 @@ public class ConsumerEndpointConfigurationTests
     public void Validate_ShouldThrow_WhenErrorPolicyIsNull()
     {
         TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { ErrorPolicy = null! };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenBothBatchAndStreamingAreEnabled()
+    {
+        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Batch = new BatchSettings(),
+            AllowStreaming = true
+        };
+
+        Action act = configuration.Validate;
+
+        act.ShouldThrow<BrokerConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenErrorPoliciesDefinedForStreaming()
+    {
+        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            ErrorPolicy = new RetryErrorPolicyBuilder().Build(),
+            AllowStreaming = true
+        };
 
         Action act = configuration.Validate;
 

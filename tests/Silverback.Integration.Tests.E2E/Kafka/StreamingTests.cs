@@ -44,7 +44,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamEnumerable<TestEventOne> stream)
@@ -91,7 +91,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>> stream)
@@ -138,7 +138,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventOne> stream)
@@ -185,7 +185,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IEnumerable<TestEventOne> stream)
@@ -232,7 +232,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleUnboundedStream));
 
         async ValueTask HandleUnboundedStream(IAsyncEnumerable<TestEventOne> stream)
@@ -280,7 +280,7 @@ public partial class StreamingTests : KafkaTests
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamObservable<TestEventOne> stream) =>

@@ -36,7 +36,7 @@ public partial class StreamingTests
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleUnboundedStream));
 
         async ValueTask HandleUnboundedStream(IEnumerable<TestEventOne> stream)
@@ -90,7 +90,7 @@ public partial class StreamingTests
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
                 .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamObservable<TestEventOne> observable) =>

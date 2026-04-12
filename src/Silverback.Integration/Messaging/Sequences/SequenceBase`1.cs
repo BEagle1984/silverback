@@ -636,8 +636,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             switch (AbortReason)
             {
                 case SequenceAbortReason.Error:
-                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
-                        .ConfigureAwait(false))
+                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!).ConfigureAwait(false))
                     {
                         await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 

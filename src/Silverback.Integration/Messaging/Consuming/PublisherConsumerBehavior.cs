@@ -62,7 +62,9 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         {
             bool throwIfUnhandled = context.Envelope.Endpoint.Configuration.ThrowIfUnhandled;
 
-            if (context.Envelope is IInboundEnvelope envelope && HasMessageStreamSubscriber(context))
+            if (context.Envelope is IInboundEnvelope envelope &&
+                context.Envelope.Endpoint.Configuration.AllowStreaming &&
+                HasMessageStreamSubscriber(context))
             {
                 UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
