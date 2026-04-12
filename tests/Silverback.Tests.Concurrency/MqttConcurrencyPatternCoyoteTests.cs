@@ -224,6 +224,47 @@ public class MqttConcurrencyPatternCoyoteTests
             _output);
     }
 
+    // MC3 aggressive — same TOCTOU pattern with Task.Yield() at the race point.
+    [Fact]
+    public void PendingReconnect_ConcurrentTryConnect_Aggressive_ShouldReconnectExactlyOnce()
+    {
+        CoyoteTestRunner.RunAggressive(
+            async () =>
+            {
+                bool mqttClientWasConnected = true;
+                bool pendingReconnect = false;
+                int reconnectCount = 0;
+
+                async Task TryConnect()
+                {
+                    if (mqttClientWasConnected)
+                    {
+                        await Task.Yield(); // scheduling point at the race window
+                        pendingReconnect = true;
+                        mqttClientWasConnected = false;
+                    }
+
+                    if (pendingReconnect)
+                    {
+                        await Task.Yield(); // scheduling point
+                        pendingReconnect = false;
+                        Interlocked.Increment(ref reconnectCount);
+                    }
+                }
+
+                Task t1 = Task.Run(TryConnect);
+                Task t2 = Task.Run(TryConnect);
+
+                await Task.WhenAll(t1, t2).ConfigureAwait(false);
+
+                reconnectCount.ShouldBe(
+                    1,
+                    $"Reconnect executed {reconnectCount} times instead of 1. See MC3.");
+            },
+            _output,
+            iterations: 1_000);
+    }
+
     // MC4 — channel.Reset() racing with OnMessageReceivedAsync.
     //
     // ConsumerChannelsManager.OnMessageReceivedAsync (lines 87-88):
@@ -277,6 +318,58 @@ public class MqttConcurrencyPatternCoyoteTests
                     "replaced. See MC4.");
             },
             _output);
+    }
+
+    // MC4 aggressive — same pattern with Task.Yield() between check and reset.
+    [Fact]
+    public void ChannelReset_ConcurrentWithWrite_Aggressive_ShouldNotLoseMessages()
+    {
+        CoyoteTestRunner.RunAggressive(
+            async () =>
+            {
+                Channel<string> channel = Channel.CreateBounded<string>(10);
+                channel.Writer.Complete();
+                bool isCompleted = true;
+                ConcurrentBag<string> written = new();
+
+                async Task OnMessageReceived(string message)
+                {
+                    if (isCompleted)
+                    {
+                        await Task.Yield(); // scheduling point at the race window
+                        channel = Channel.CreateBounded<string>(10);
+                        isCompleted = false;
+                    }
+
+                    await Task.Yield(); // between reset and write
+
+                    bool success = channel.Writer.TryWrite(message);
+                    if (success)
+                        written.Add(message);
+                }
+
+                Task[] tasks = Enumerable.Range(0, 4)
+                    .Select(i => Task.Run(async () => await OnMessageReceived($"msg-{i}").ConfigureAwait(false)))
+                    .ToArray();
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                // The real bug: messages end up in orphaned channels that got replaced.
+                // TryWrite "succeeds" on any channel, but the replaced channel is never
+                // read. Count messages in the FINAL channel to detect the loss.
+                int readable = 0;
+                while (channel.Reader.TryRead(out _))
+                    readable++;
+
+                readable.ShouldBe(
+                    4,
+                    $"Only {readable}/4 messages in the final channel. " +
+                    "Concurrent OnMessageReceivedAsync callbacks each created their own " +
+                    "channel via Reset; messages written to replaced channels are lost. " +
+                    "See MC4.");
+            },
+            _output,
+            iterations: 1_000);
     }
 
     // MC5 — ConsumedApplicationMessage TaskCompletionSource reassignment race.

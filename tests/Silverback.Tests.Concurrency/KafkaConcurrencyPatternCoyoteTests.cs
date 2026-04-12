@@ -256,6 +256,54 @@ public class KafkaConcurrencyPatternCoyoteTests
             _output);
     }
 
+    // H7 aggressive — same pattern as above but with Task.Yield() inserted
+    // between the check and the set to give Coyote an explicit scheduling point.
+    // The default 100-iteration run passes because the check-then-act is
+    // synchronous with no yield between the two statements. The aggressive
+    // variant proves the pattern is unsafe by widening the race window to a
+    // point Coyote can schedule.
+    [Fact]
+    public void ConsumeLoopHandlerStart_ConcurrentCalls_Aggressive_ShouldStartExactlyOneLoop()
+    {
+        CoyoteTestRunner.RunAggressive(
+            async () =>
+            {
+                bool isConsuming = false;
+                int loopsStarted = 0;
+
+                async Task Start()
+                {
+                    if (isConsuming)
+                        return;
+
+                    await Task.Yield(); // scheduling point at the race window
+
+                    isConsuming = true;
+                    Interlocked.Increment(ref loopsStarted);
+
+                    Task.Run(
+                        async () =>
+                        {
+                            await Task.Yield();
+                        }).FireAndForget();
+                }
+
+                Task t1 = Task.Run(Start);
+                Task t2 = Task.Run(Start);
+
+                await Task.WhenAll(t1, t2).ConfigureAwait(false);
+                await Task.Yield();
+
+                loopsStarted.ShouldBe(
+                    1,
+                    $"Started {loopsStarted} consume loops instead of 1. " +
+                    "Two concurrent Start() calls both read IsConsuming=false " +
+                    "and both started a loop. See audit H7.");
+            },
+            _output,
+            iterations: 1_000);
+    }
+
     // M2 — OffsetsTracker.TrackOffset performs two non-atomic AddOrUpdates.
     //
     // OffsetsTracker.TrackOffset (lines 27-42) updates _commitOffsets and

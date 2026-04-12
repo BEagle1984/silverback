@@ -30,6 +30,35 @@ internal static class CoyoteTestRunner
             .WithVerbosityEnabled()
             .WithConsoleLoggingEnabled();
 
+        RunWithConfig(config, testBody, output, iterations);
+    }
+
+    // Aggressive mode: 10k iterations, concurrency fuzzing enabled, potential deadlocks
+    // not treated as bugs (so the scheduler explores past suspected-but-legal lock inversions),
+    // and a longer deadlock timeout. Use for tests that pass under the default 100 iterations
+    // to widen the search space.
+    public static void RunAggressive(
+        Func<Task> testBody,
+        ITestOutputHelper output,
+        int iterations = 10_000)
+    {
+        CoyoteConfiguration config = CoyoteConfiguration.Create()
+            .WithTestingIterations((uint)iterations)
+            .WithSystematicFuzzingEnabled()
+            .WithPotentialDeadlocksReportedAsBugs(false)
+            .WithDeadlockTimeout(30_000)
+            .WithVerbosityEnabled()
+            .WithConsoleLoggingEnabled();
+
+        RunWithConfig(config, testBody, output, iterations);
+    }
+
+    private static void RunWithConfig(
+        CoyoteConfiguration config,
+        Func<Task> testBody,
+        ITestOutputHelper output,
+        int iterations)
+    {
         TestingEngine engine = TestingEngine.Create(config, testBody);
         engine.Run();
 
