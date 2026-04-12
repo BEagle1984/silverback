@@ -16,11 +16,12 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Messaging.Consuming.KafkaOffsetStore;
 
-public sealed class PostgreSqlKafkaOffsetStoreTests : PostgresContainerTests
+public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerTests
 {
     private readonly PostgreSqlKafkaOffsetStoreSettings _offsetStoreSettings;
 
-    public PostgreSqlKafkaOffsetStoreTests()
+    public PostgreSqlKafkaOffsetStoreFixture(PostgresContainerFixture fixture)
+        : base(fixture)
     {
         _offsetStoreSettings = new PostgreSqlKafkaOffsetStoreSettings(ConnectionString);
     }
@@ -28,11 +29,10 @@ public sealed class PostgreSqlKafkaOffsetStoreTests : PostgresContainerTests
     [Fact]
     public async Task GetStoredOffsets_ShouldReturnStoredOffsetsForGroup()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddPostgreSqlKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddPostgreSqlKafkaOffsetStore()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(_offsetStoreSettings);
@@ -60,17 +60,16 @@ public sealed class PostgreSqlKafkaOffsetStoreTests : PostgresContainerTests
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddPostgreSqlKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddPostgreSqlKafkaOffsetStore()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(_offsetStoreSettings);

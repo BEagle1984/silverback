@@ -25,22 +25,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
 [Trait("Dependency", "Docker")]
 [Trait("Database", "PostgreSql")]
-public class OutboxPostgreSqlTests : KafkaTests
+public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainerFixture>
 {
-    public OutboxPostgreSqlTests(ITestOutputHelper testOutputHelper)
+    private readonly PostgresContainerFixture _postgresContainerFixture;
+
+    public OutboxPostgreSqlTests(ITestOutputHelper testOutputHelper, PostgresContainerFixture postgresContainerFixture)
         : base(testOutputHelper)
     {
+        _postgresContainerFixture = postgresContainerFixture;
     }
 
     [Fact]
     public async Task Outbox_ShouldProduceMessages()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -48,7 +51,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                         .AddPostgreSqlOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -59,7 +62,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -85,7 +88,7 @@ public class OutboxPostgreSqlTests : KafkaTests
     [Fact]
     public async Task Outbox_ShouldProduceMessages_WhenUsingTableBasedLock()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -93,8 +96,8 @@ public class OutboxPostgreSqlTests : KafkaTests
                 .InitDatabase(
                     async storageInitializer =>
                     {
-                        await storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString);
-                        await storageInitializer.CreatePostgreSqlLocksTableAsync(database.ConnectionString);
+                        await storageInitializer.CreatePostgreSqlOutboxAsync(connectionString);
+                        await storageInitializer.CreatePostgreSqlLocksTableAsync(connectionString);
                     })
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
@@ -103,10 +106,10 @@ public class OutboxPostgreSqlTests : KafkaTests
                         .AddPostgreSqlOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
                                 .WithDistributedLock(
                                     distributedLock => distributedLock
-                                        .UsePostgreSqlTable("outbox-lock", database.ConnectionString))
+                                        .UsePostgreSqlTable("outbox-lock", connectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -117,7 +120,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -143,12 +146,12 @@ public class OutboxPostgreSqlTests : KafkaTests
     [Fact]
     public async Task Outbox_ShouldProduceBatch()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -156,7 +159,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                         .AddPostgreSqlOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -167,7 +170,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -196,12 +199,12 @@ public class OutboxPostgreSqlTests : KafkaTests
     [Fact]
     public async Task Outbox_ShouldProduceAsyncBatch()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -209,7 +212,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                         .AddPostgreSqlOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -220,7 +223,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -249,12 +252,12 @@ public class OutboxPostgreSqlTests : KafkaTests
     [Fact]
     public async Task Outbox_ShouldUseTransaction()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -263,7 +266,7 @@ public class OutboxPostgreSqlTests : KafkaTests
                         .AddOutboxWorker(
                             worker => worker
                                 .ProcessOutbox(outbox => outbox
-                                    .UsePostgreSql(database.ConnectionString))
+                                    .UsePostgreSql(connectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -274,14 +277,14 @@ public class OutboxPostgreSqlTests : KafkaTests
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        await using NpgsqlConnection connection = new(database.ConnectionString);
+        await using NpgsqlConnection connection = new(connectionString);
         await connection.OpenAsync();
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())

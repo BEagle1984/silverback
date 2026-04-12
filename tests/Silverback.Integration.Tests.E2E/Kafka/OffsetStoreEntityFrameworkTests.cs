@@ -27,11 +27,14 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-public class OffsetStoreEntityFrameworkTests : KafkaTests
+public class OffsetStoreEntityFrameworkTests : KafkaTests, IClassFixture<PostgresContainerFixture>
 {
-    public OffsetStoreEntityFrameworkTests(ITestOutputHelper testOutputHelper)
+    private readonly PostgresContainerFixture _postgresContainerFixture;
+
+    public OffsetStoreEntityFrameworkTests(ITestOutputHelper testOutputHelper, PostgresContainerFixture postgresContainerFixture)
         : base(testOutputHelper)
     {
+        _postgresContainerFixture = postgresContainerFixture;
     }
 
     [Fact]
@@ -240,15 +243,13 @@ public class OffsetStoreEntityFrameworkTests : KafkaTests
     [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction_WhenUsingPostgreSql()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
-
         int received = 0;
         bool mustCommit = false;
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(database.ConnectionString))
+                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(_postgresContainerFixture.GetNewConnectionString()))
                 .InitDbContext<TestDbContext>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(

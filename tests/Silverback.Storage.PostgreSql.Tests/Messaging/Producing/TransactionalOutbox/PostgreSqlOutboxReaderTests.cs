@@ -26,7 +26,8 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
 
     private readonly PostgreSqlOutboxWriter _outboxWriter;
 
-    public PostgreSqlOutboxReaderTests()
+    public PostgreSqlOutboxReaderTests(PostgresContainerFixture fixture)
+        : base(fixture)
     {
         _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString);
         _dataAccess = new PostgreSqlDataAccess(ConnectionString);
@@ -36,11 +37,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task AcknowledgeAsync_ShouldRemoveItemsFromStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -67,11 +67,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetAsync_ShouldReturnItemsBatch()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -98,11 +97,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetAsync_ShouldReturnEmptyCollectionIfStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -118,11 +116,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetAsync_ShouldReturnTheSameItemsIfNotRemoved()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -147,11 +144,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetAsync_ShouldReturnStoredItemsInChronologicalOrder()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -176,11 +172,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetLengthAsync_ShouldReturnCommittedItemsCount()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -200,11 +195,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetLengthAsync_ShouldReturnZero_WhenTheStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -220,11 +214,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetMaxAgeAsync_ShouldReturnOldestItemAge()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -244,11 +237,10 @@ public sealed class PostgreSqlOutboxReaderTests : PostgresContainerTests
     [Fact]
     public async Task GetMaxAgeAsync_ShouldReturnZero_WhenTheStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);

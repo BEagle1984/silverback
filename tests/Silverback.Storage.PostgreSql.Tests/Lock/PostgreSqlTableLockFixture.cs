@@ -14,11 +14,12 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Lock;
 
-public class PostgreSqlTableLockTests : PostgresContainerTests
+public class PostgreSqlTableLockFixture : PostgresContainerTests
 {
     private readonly PostgreSqlTableLockSettings _lockSettings;
 
-    public PostgreSqlTableLockTests()
+    public PostgreSqlTableLockFixture(PostgresContainerFixture fixture)
+        : base(fixture)
     {
         _lockSettings = new PostgreSqlTableLockSettings("test-lock", ConnectionString)
         {
@@ -31,12 +32,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task AcquireAsync_ShouldReturnHandle()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -53,12 +53,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task AcquireAsync_ShouldGrantExclusiveLockByName()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -106,12 +105,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlTableLockHandle_Dispose_ShouldReleaseLock()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -131,12 +129,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlTableLockHandle_Dispose_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -155,12 +152,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlTableLockHandle_DisposeAsync_ShouldReleaseLock()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -180,12 +176,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlTableLockHandle_DisposeAsync_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
@@ -204,12 +199,11 @@ public class PostgreSqlTableLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlTableLockHandle_ShouldHeartbeat()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);

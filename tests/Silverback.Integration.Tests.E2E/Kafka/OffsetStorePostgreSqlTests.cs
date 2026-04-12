@@ -28,23 +28,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
 [Trait("Dependency", "Docker")]
 [Trait("Database", "PostgreSql")]
-public class OffsetStorePostgreSqlTests : KafkaTests
+public class OffsetStorePostgreSqlTests : KafkaTests, IClassFixture<PostgresContainerFixture>
 {
-    public OffsetStorePostgreSqlTests(ITestOutputHelper testOutputHelper)
+    private readonly PostgresContainerFixture _postgresContainerFixture;
+
+    public OffsetStorePostgreSqlTests(ITestOutputHelper testOutputHelper, PostgresContainerFixture postgresContainerFixture)
         : base(testOutputHelper)
     {
+        _postgresContainerFixture = postgresContainerFixture;
     }
 
     [Fact]
     public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
-
         int received = 0;
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
-            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
@@ -54,7 +56,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .DisableOffsetsCommit()
-                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(connectionString))
                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
             .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
             .AddIntegrationSpy());
@@ -90,13 +92,13 @@ public class OffsetStorePostgreSqlTests : KafkaTests
     [Fact]
     public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         int received = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
-            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
@@ -106,7 +108,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .DisableOffsetsCommit()
-                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(connectionString))
                     .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
             .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
             .AddIntegrationSpy());
@@ -144,14 +146,14 @@ public class OffsetStorePostgreSqlTests : KafkaTests
     [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         int received = 0;
         bool mustCommit = false;
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
-            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka()
@@ -161,14 +163,14 @@ public class OffsetStorePostgreSqlTests : KafkaTests
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .DisableOffsetsCommit()
-                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(connectionString))
                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
             .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
             .AddIntegrationSpy());
 
         async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
         {
-            await using NpgsqlConnection connection = new(database.ConnectionString);
+            await using NpgsqlConnection connection = new(connectionString);
             await connection.OpenAsync();
 
             await using (DbTransaction transaction = await connection.BeginTransactionAsync())
@@ -227,13 +229,13 @@ public class OffsetStorePostgreSqlTests : KafkaTests
     [Fact]
     public async Task OffsetStore_ShouldStoreBatchOffsets()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = _postgresContainerFixture.GetNewConnectionString();
 
         int received = 0;
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
-            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(connectionString))
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
@@ -243,7 +245,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .DisableOffsetsCommit()
-                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(connectionString))
                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(5))))
             .AddDelegateSubscriber<IEnumerable<TestEventOne>>(batch =>
                 batch.ForEach(_ => Interlocked.Increment(ref received)))

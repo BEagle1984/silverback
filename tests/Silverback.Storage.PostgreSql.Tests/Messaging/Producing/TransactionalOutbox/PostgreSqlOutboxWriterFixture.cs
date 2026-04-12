@@ -19,13 +19,14 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Messaging.Producing.TransactionalOutbox;
 
-public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
+public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerTests
 {
     private readonly PostgreSqlOutboxSettings _outboxSettings;
 
     private readonly PostgreSqlOutboxReader _outboxReader;
 
-    public PostgreSqlOutboxWriterTests()
+    public PostgreSqlOutboxWriterFixture(PostgresContainerFixture fixture)
+        : base(fixture)
     {
         _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString);
         _outboxReader = new PostgreSqlOutboxReader(_outboxSettings);
@@ -34,11 +35,10 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
     [Fact]
     public async Task AddAsync_ShouldAddItemToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -55,28 +55,24 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
     public async Task AddAsync_ShouldAddItemsToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -91,28 +87,24 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
     public async Task AddAsync_ShouldAddAsyncItemsToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -127,28 +119,24 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
     public async Task AddAsync_ShouldEnlistInTransaction()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -198,11 +186,10 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
     [Fact]
     public async Task AddAsync_ShouldEnlistInTransaction_WhenStoringBatch()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
@@ -260,11 +247,10 @@ public sealed class PostgreSqlOutboxWriterTests : PostgresContainerTests
     [Fact]
     public async Task AddAsync_ShouldEnlistInTransaction_WhenStoringAsyncBatch()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddPostgreSqlOutbox()));
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);

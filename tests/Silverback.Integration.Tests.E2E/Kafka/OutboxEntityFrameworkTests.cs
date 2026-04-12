@@ -27,11 +27,14 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-public class OutboxEntityFrameworkTests : KafkaTests
+public class OutboxEntityFrameworkTests : KafkaTests, IClassFixture<PostgresContainerFixture>
 {
-    public OutboxEntityFrameworkTests(ITestOutputHelper testOutputHelper)
+    private readonly PostgresContainerFixture _postgresContainerFixture;
+
+    public OutboxEntityFrameworkTests(ITestOutputHelper testOutputHelper, PostgresContainerFixture postgresContainerFixture)
         : base(testOutputHelper)
     {
+        _postgresContainerFixture = postgresContainerFixture;
     }
 
     [Fact]
@@ -275,12 +278,10 @@ public class OutboxEntityFrameworkTests : KafkaTests
     [Trait("Database", "PostgreSql")]
     public async Task Outbox_ShouldUseTransaction_WhenUsingPostgreSql()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
-
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(database.ConnectionString))
+                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(_postgresContainerFixture.GetNewConnectionString()))
                 .InitDbContext<TestDbContext>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(

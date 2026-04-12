@@ -12,16 +12,20 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Lock;
 
-public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
+public class PostgreSqlAdvisoryLockFixture : PostgresContainerTests
 {
+    public PostgreSqlAdvisoryLockFixture(PostgresContainerFixture fixture)
+        : base(fixture)
+    {
+    }
+
     [Fact]
     public async Task AcquireAsync_ShouldReturnHandle()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new PostgreSqlAdvisoryLockSettings("Lock", ConnectionString),
@@ -36,11 +40,10 @@ public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
     [Fact]
     public async Task AcquireAsync_ShouldGrantExclusiveLockByName()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         IDistributedLock distributedLockA1 = lockFactory.GetDistributedLock(
@@ -84,12 +87,11 @@ public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlAdvisoryLockHandle_Dispose_ShouldReleaseLock()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new PostgreSqlAdvisoryLockSettings("Lock", ConnectionString),
@@ -109,11 +111,10 @@ public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlAdvisoryLockHandle_Dispose_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new PostgreSqlAdvisoryLockSettings("Lock", ConnectionString),
@@ -130,12 +131,11 @@ public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlAdvisoryLockHandle_DisposeAsync_ShouldReleaseLock()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .EnableStorage()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .EnableStorage()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new PostgreSqlAdvisoryLockSettings("Lock", ConnectionString),
@@ -155,11 +155,10 @@ public class PostgreSqlAdvisoryLockTests : PostgresContainerTests
     [Fact]
     public async Task PostgreSqlAdvisoryLockHandle_DisposeAsync_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlAdvisoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new PostgreSqlAdvisoryLockSettings("Lock2", ConnectionString),
