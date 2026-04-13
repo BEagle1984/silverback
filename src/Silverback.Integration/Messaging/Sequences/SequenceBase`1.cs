@@ -362,11 +362,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         int pushedStreamsCount;
         try
         {
+            _addCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
             pushedStreamsCount = await _streamProvider.PushAsync(
                     envelope,
                     throwIfUnhandled,
                     static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
-                    envelope)
+                    envelope,
+                    _addCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
             // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
@@ -460,21 +463,20 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!disposing)
             return;
 
+        _isDisposed = true;
+
         _logger.LogTrace("Disposing {sequenceType} '{sequenceId}'...", () => [GetType().Name, SequenceId]);
 
         _abortingTaskCompletionSource?.Task.SafeWait();
-
         _addCancellationTokenSource.Cancel();
-        _streamProvider.Dispose();
-
-        _sequences?.ForEach(sequence => sequence.Dispose());
 
         _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
         _addSemaphoreSlim.Wait();
         _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
         _completeSemaphoreSlim.Wait();
-        _isDisposed = true;
 
+        _streamProvider.Dispose();
+        _sequences?.ForEach(sequence => sequence.Dispose());
         _addSemaphoreSlim.Dispose();
         _addCancellationTokenSource.Dispose();
         _completeSemaphoreSlim.Dispose();
