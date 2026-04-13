@@ -38,7 +38,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     [Fact]
     public async Task Outbox_ShouldProduceMessages()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -88,7 +88,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     [Fact]
     public async Task Outbox_ShouldProduceMessages_WhenUsingTableBasedLock()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -146,7 +146,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     [Fact]
     public async Task Outbox_ShouldProduceBatch()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -199,7 +199,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     [Fact]
     public async Task Outbox_ShouldProduceAsyncBatch()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -252,7 +252,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     [Fact]
     public async Task Outbox_ShouldUseTransaction()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

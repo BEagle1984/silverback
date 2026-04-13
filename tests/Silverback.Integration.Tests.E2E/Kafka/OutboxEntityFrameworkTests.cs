@@ -278,10 +278,12 @@ public class OutboxEntityFrameworkTests : KafkaTests, IClassFixture<PostgresCont
     [Trait("Database", "PostgreSql")]
     public async Task Outbox_ShouldUseTransaction_WhenUsingPostgreSql()
     {
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(_postgresContainerFixture.GetNewConnectionString()))
+                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(connectionString))
                 .InitDbContext<TestDbContext>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(

@@ -245,11 +245,12 @@ public class OffsetStoreEntityFrameworkTests : KafkaTests, IClassFixture<Postgre
     {
         int received = 0;
         bool mustCommit = false;
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(_postgresContainerFixture.GetNewConnectionString()))
+                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(connectionString))
                 .InitDbContext<TestDbContext>()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(

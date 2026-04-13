@@ -42,7 +42,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests, IClassFixture<PostgresCont
     public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets()
     {
         int received = 0;
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         await Host.ConfigureServicesAndRunAsync(services => services
             .AddLogging()
@@ -92,7 +92,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests, IClassFixture<PostgresCont
     [Fact]
     public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         int received = 0;
 
@@ -146,7 +146,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests, IClassFixture<PostgresCont
     [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         int received = 0;
         bool mustCommit = false;
@@ -229,7 +229,7 @@ public class OffsetStorePostgreSqlTests : KafkaTests, IClassFixture<PostgresCont
     [Fact]
     public async Task OffsetStore_ShouldStoreBatchOffsets()
     {
-        string connectionString = _postgresContainerFixture.GetNewConnectionString();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
         int received = 0;
 
