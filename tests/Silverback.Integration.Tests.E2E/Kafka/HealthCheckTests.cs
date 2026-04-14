@@ -26,26 +26,22 @@ public class HealthCheckTests : KafkaTests
     [Fact]
     public async Task ConsumerHealthCheck_ShouldReturnHealthyStatus_WhenAllConsumersConnected()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic2", "topic3")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic4"))))
-                .Services
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic2", "topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic4"))))
+            .Services
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -54,37 +50,40 @@ public class HealthCheckTests : KafkaTests
     [Fact]
     public async Task ConsumerHealthCheck_FailingToAssignPartitions_UnhealthyReturnedAfterGracePeriod()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                        options => options.AddMockedKafka(
-                            mockedKafkaOptions =>
-                                mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromHours(1))))
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
-                                    .Consume(endpoint => endpoint.ConsumeFrom("topic2", "topic3")))
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom("topic4"))))
-                    .Services
-                    .AddHealthChecks()
-                    .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(300)))
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions =>
+                    mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromHours(1))))
+                .AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic2", "topic3")))
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic4"))))
+                .Services
+                .AddHealthChecks()
+                .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(300)))
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        await Task.Delay(500); // Incremented this to 500 because flaky
+        await Task.Delay(300);
 
-        response = await Host.HttpClient.GetAsync("/health");
+        for (int i = 0; i < 20; i++)
+        {
+            response = await Host.HttpClient.GetAsync("/health");
+
+            if (response.StatusCode == HttpStatusCode.OK)
+                break;
+
+            await Task.Delay(50);
+        }
+
         response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
     }
 }
