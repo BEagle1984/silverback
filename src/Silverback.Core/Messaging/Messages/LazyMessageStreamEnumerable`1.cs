@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages;
 internal sealed class LazyMessageStreamEnumerable<TMessage>
     : ILazyMessageStreamEnumerable<TMessage>, ILazyMessageStreamEnumerable, ILazyArgumentValue, IDisposable
 {
-    private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource = new();
+    private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     private MessageStreamEnumerable<TMessage>? _stream;
 
