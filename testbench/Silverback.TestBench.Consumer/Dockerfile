@@ -9,10 +9,19 @@ WORKDIR /src
 COPY . .
 RUN dotnet build "testbench/Silverback.TestBench.Consumer/Silverback.TestBench.Consumer.csproj" -c Release -o /app/build
 
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS tools
+RUN dotnet tool install --global dotnet-stack
+RUN dotnet tool install --global dotnet-dump
+RUN dotnet tool install --global dotnet-trace
+RUN dotnet tool install --global dotnet-gcdump
+RUN dotnet tool install --global dotnet-monitor
+
 FROM build AS publish
 RUN dotnet publish "testbench/Silverback.TestBench.Consumer/Silverback.TestBench.Consumer.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=tools /root/.dotnet/ /root/.dotnet/
+ENV PATH="${PATH}:/root/.dotnet/tools"
 ENTRYPOINT ["dotnet", "Silverback.TestBench.Consumer.dll"]
