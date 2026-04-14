@@ -116,7 +116,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isAborting = true;
 
-            _lazyStreams.ParallelForEach(lazyStream =>
+            _lazyStreams.ForEach(lazyStream =>
             {
                 if (lazyStream.Stream != null)
                     lazyStream.Stream.Abort();

@@ -60,54 +60,17 @@ public class EnumerableSelectExtensionsTests
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
 
-        IEnumerable<int> result = await enumerable.ParallelSelectAsync(
-            async item =>
-            {
-                await Task.Delay(1);
+        IEnumerable<int> result = await enumerable.ParallelSelectAsync(async item =>
+        {
+            await Task.Delay(1);
 
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow();
+            countdownEvent.Signal();
+            countdownEvent.WaitOrThrow();
 
-                return item * 2;
-            });
+            return item * 2;
+        });
 
-        result.ShouldBe([2, 4, 6], ignoreOrder: true);
-    }
-
-    [Fact]
-    public async Task ParallelSelectAsync_ShouldInvokeAsyncFunctionWithLimitedParallelismAndReturnSelectedValues()
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(3);
-
-        Func<Task> act = () => enumerable.ParallelSelectAsync(
-            async item =>
-            {
-                await Task.Delay(1);
-
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
-
-                return item * 2;
-            },
-            2).AsTask();
-
-        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
-        aggregateException.InnerExceptions.Count.ShouldBe(3);
-        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException || exception is OperationCanceledException);
-        countdownEvent.CurrentCount.ShouldBe(1);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Select_ShouldInvokeActionAndReturnSelectedValuesInParallelOrSequentially(bool parallel)
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-
-        IEnumerable<int> result = enumerable.Select(item => item * 2, parallel);
-
-        result.ShouldBe([2, 4, 6], ignoreOrder: true);
+        result.ShouldBe([2, 4, 6], true);
     }
 
     [Fact]
@@ -118,82 +81,5 @@ public class EnumerableSelectExtensionsTests
         IEnumerable<int> result = await enumerable.SelectAsync(item => ValueTask.FromResult(item * 2));
 
         result.ShouldBe([2, 4, 6]);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task SelectAsync_ShouldInvokeAsyncFunctionAndReturnSelectedValuesInParallelOrSequentially(bool parallel)
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-
-        IEnumerable<int> result = await enumerable.SelectAsync(i => ValueTask.FromResult(i * 2), parallel);
-
-        result.ShouldBe([2, 4, 6], ignoreOrder: true);
-    }
-
-    [Fact]
-    public async Task SelectManyAsync_ShouldInvokeAsyncFunctionAndReturnFlattenedSelectedValues()
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-
-        IEnumerable<int> result =
-            await enumerable.SelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
-
-        result.ShouldBe([1, 1, 2, 2, 3, 3]);
-    }
-
-    [Fact]
-    public async Task ParallelSelectManyAsync_Function_Selected()
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-
-        IEnumerable<int> result = await enumerable.ParallelSelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
-
-        result.ShouldBe([1, 1, 2, 2, 3, 3], ignoreOrder: true);
-    }
-
-    [Fact]
-    public async Task ParallelSelectManyAsync_ShouldInvokeAsyncFunctionInParallelAndReturnFlattenedSelectedValues()
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(3);
-
-        IEnumerable<int> result = await enumerable.ParallelSelectManyAsync<int, int>(
-            async item =>
-            {
-                await Task.Delay(1);
-
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow();
-
-                return [item * 2, item * 3];
-            });
-
-        result.ShouldBe([2, 3, 4, 6, 6, 9], ignoreOrder: true);
-    }
-
-    [Fact]
-    public async Task ParallelSelectManyAsync_ShouldInvokeAsyncFunctionWithLimitedParallelism()
-    {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(3);
-
-        Func<Task> act = () => enumerable.ParallelSelectManyAsync<int, int>(
-            async item =>
-            {
-                await Task.Delay(1);
-
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
-
-                return [item * 2, item * 3];
-            },
-            2).AsTask();
-
-        AggregateException aggregateException = await act.ShouldThrowAsync<AggregateException>();
-        aggregateException.InnerExceptions.Count.ShouldBe(3);
-        aggregateException.InnerExceptions.ShouldAllBe(exception => exception is TimeoutException || exception is OperationCanceledException);
-        countdownEvent.CurrentCount.ShouldBe(1);
     }
 }

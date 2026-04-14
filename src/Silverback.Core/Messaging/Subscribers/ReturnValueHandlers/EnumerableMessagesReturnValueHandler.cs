@@ -48,11 +48,11 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public ValueTask HandleAsync(IPublisher publisher, object returnValue)
+    public async ValueTask HandleAsync(IPublisher publisher, object returnValue)
     {
         Check.NotNull(publisher, nameof(publisher));
         Check.NotNull(returnValue, nameof(returnValue));
 
-        return ((IEnumerable<object>)returnValue).ForEachAsync(message => publisher.PublishAsync(message));
+        await ((IEnumerable<object>)returnValue).ForEachAsync(message => publisher.PublishAsync(message)).ConfigureAwait(false);
     }
 }
