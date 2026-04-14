@@ -44,7 +44,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                         .OnError(DefaultErrorPolicy))
                     .Consume<UnboundedMessage>(endpoint => endpoint.ConsumeFrom(TopicNames.Kafka.Unbounded)
                         .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                        .OnError(DefaultErrorPolicy)))
+                        .AllowStreaming()))
                 .AddProducer(producer => producer
                     .Produce<KafkaResponseMessage>(endpoint => endpoint
                         .ProduceTo("testbench-responses"))))
@@ -61,7 +61,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                         .ConsumeFrom($"$share/group/{TopicNames.Mqtt.Unbounded}")
                         .WithAtLeastOnceQoS()
                         .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
-                        .OnError(DefaultErrorPolicy))
+                        .AllowStreaming())
                     .Produce<MqttResponseMessage>(endpoint => endpoint
                         .ProduceTo("testbench/mqtt/responses")
                         .WithAtMostOnceQoS())));
