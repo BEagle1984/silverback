@@ -98,12 +98,9 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         }
 
         await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
         SafelyRelease(_readSemaphore);
-
-        _writeSemaphore.Release();
-
         await _addCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+        _writeSemaphore.Release();
     }
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
