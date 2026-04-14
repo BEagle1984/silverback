@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Messaging.Consuming.KafkaOffsetStore;
 
-public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerTests
+public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresTests
 {
     private readonly PostgreSqlKafkaOffsetStoreSettings _offsetStoreSettings;
 

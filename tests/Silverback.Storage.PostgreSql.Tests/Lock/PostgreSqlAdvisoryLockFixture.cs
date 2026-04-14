@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Lock;
 
-public class PostgreSqlAdvisoryLockFixture : PostgresContainerTests
+public class PostgreSqlAdvisoryLockFixture : PostgresTests
 {
     public PostgreSqlAdvisoryLockFixture(PostgresContainerFixture fixture)
         : base(fixture)

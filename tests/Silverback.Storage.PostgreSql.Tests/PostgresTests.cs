@@ -7,9 +7,10 @@ namespace Silverback.Tests.Storage.PostgreSql;
 
 [Trait("Dependency", "Docker")]
 [Trait("Database", "PostgreSql")]
-public abstract class PostgresContainerTests : IClassFixture<PostgresContainerFixture>
+[Collection(nameof(PostgresCollection))]
+public abstract class PostgresTests
 {
-    protected PostgresContainerTests(PostgresContainerFixture postgresContainerFixture)
+    protected PostgresTests(PostgresContainerFixture postgresContainerFixture)
     {
         ConnectionString = postgresContainerFixture.GetNewConnectionString();
     }

@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Lock;
 
-public class PostgreSqlTableLockFixture : PostgresContainerTests
+public class PostgreSqlTableLockFixture : PostgresTests
 {
     private readonly PostgreSqlTableLockSettings _lockSettings;
 

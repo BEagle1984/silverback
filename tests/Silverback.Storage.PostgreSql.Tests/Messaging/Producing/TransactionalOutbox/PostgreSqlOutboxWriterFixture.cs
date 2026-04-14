@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql.Messaging.Producing.TransactionalOutbox;
 
-public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerTests
+public sealed class PostgreSqlOutboxWriterFixture : PostgresTests
 {
     private readonly PostgreSqlOutboxSettings _outboxSettings;
 
