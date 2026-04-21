@@ -1,0 +1,12 @@
+{
+  "AssembliesPath": "bin/Debug/net10.0",
+  "Assemblies": [
+    "Silverback.Core.dll",
+    "Silverback.Integration.dll",
+    "Silverback.Integration.Kafka.dll",
+    "Silverback.Integration.MQTT.dll",
+    "Silverback.Tests.Concurrency.dll"
+  ],
+  "IsRewritingThreads": true,
+  "IsRewritingConcurrentCollections": true
+}

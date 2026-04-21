@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TestsTargetFrameworks)</TargetFrameworks>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <RootNamespace>Silverback.Tests.Concurrency</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <!--
+      Analyzers produce a lot of noise in Coyote test code (intentional sync-over-async,
+      Task.Run inside test bodies, etc.). Keep them off to mirror how Coyote samples ship.
+    -->
+    <AnalysisMode>None</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1707;CA2007;VSTHRD002;VSTHRD003;VSTHRD200;SA0001;SA1600;SA1633</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Coyote" />
+    <PackageReference Include="Microsoft.Coyote.Test" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="rewrite.coyote.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\xunit.runner.json">
+      <Link>xunit.runner.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!--
+    After build, invoke `coyote rewrite` on the test output directory so that xunit picks up
+    rewritten Silverback.* and test assemblies. DOTNET_ROLL_FORWARD=Major is needed because
+    Microsoft.Coyote.CLI 1.7.11 ships as net8.0 and this solution targets net10.0 only.
+  -->
+  <Target Name="CoyoteRewrite" AfterTargets="Build" Condition="'$(SkipCoyoteRewrite)' != 'true'">
+    <Message Text="Running coyote rewrite against $(OutputPath)" Importance="high" />
+    <Exec Command="coyote rewrite &quot;$(MSBuildProjectDirectory)\rewrite.coyote.json&quot;"
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          EnvironmentVariables="DOTNET_ROLL_FORWARD=Major" />
+  </Target>
+</Project>
