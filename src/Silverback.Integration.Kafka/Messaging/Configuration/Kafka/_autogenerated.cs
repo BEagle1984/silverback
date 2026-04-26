@@ -424,10 +424,15 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
     public string? SaslOauthbearerExtensions { get; init; }
 
     /// <summary>
-    ///     Gets the OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve the token. Only used when <see cref="SaslOauthbearerMethod" /> is set to <see cref="Confluent.Kafka.SaslOauthbearerMethod.Oidc" />.
+    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <c>sasl.oauthbearer.method</c> is set to "oidc".
     /// </summary>
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Generated according to wrapped class.")]
     public string? SaslOauthbearerTokenEndpointUrl { get; init; }
+
+    /// <summary>
+    ///     Gets the claim name to be used as the SASL/OAUTHBEARER authentication identity (username) when communicating with the broker. The default value is <c>"sub"</c>. Only used when <see cref="SaslOauthbearerMethod" /> is set to <see cref="Confluent.Kafka.SaslOauthbearerMethod.Oidc" />.
+    /// </summary>
+    public string? SaslOauthbearerSubClaimName { get; init; }
 
     /// <summary>
     ///     Gets the OAuth grant type to use when communicating with the identity provider.
@@ -621,6 +626,7 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
             SaslOauthbearerScope = SaslOauthbearerScope,
             SaslOauthbearerExtensions = SaslOauthbearerExtensions,
             SaslOauthbearerTokenEndpointUrl = SaslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerSubClaimName = SaslOauthbearerSubClaimName,
             SaslOauthbearerGrantType = SaslOauthbearerGrantType,
             SaslOauthbearerAssertionAlgorithm = SaslOauthbearerAssertionAlgorithm,
             SaslOauthbearerAssertionPrivateKeyFile = SaslOauthbearerAssertionPrivateKeyFile,
@@ -731,6 +737,7 @@ public partial record KafkaClientConfiguration<TConfluentConfig>
             SaslOauthbearerScope = SaslOauthbearerScope,
             SaslOauthbearerExtensions = SaslOauthbearerExtensions,
             SaslOauthbearerTokenEndpointUrl = SaslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerSubClaimName = SaslOauthbearerSubClaimName,
             SaslOauthbearerGrantType = SaslOauthbearerGrantType,
             SaslOauthbearerAssertionAlgorithm = SaslOauthbearerAssertionAlgorithm,
             SaslOauthbearerAssertionPrivateKeyFile = SaslOauthbearerAssertionPrivateKeyFile,
@@ -1280,6 +1287,8 @@ internal interface IKafkaClientConfigurationBuilder
 
     void WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl);
 
+    void WithSaslOauthbearerSubClaimName(string? saslOauthbearerSubClaimName);
+
     void WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType);
 
     void WithSaslOauthbearerAssertionAlgorithm(SaslOauthbearerAssertionAlgorithm? saslOauthbearerAssertionAlgorithm);
@@ -1721,6 +1730,12 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerSubClaimName(string? saslOauthbearerSubClaimName)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerSubClaimName(saslOauthbearerSubClaimName));
+        return this;
+    }
+
     public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType)
     {
         _sharedConfigurationActions.Add(builder => builder.WithSaslOauthbearerGrantType(saslOauthbearerGrantType));
@@ -2042,6 +2057,8 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     private string? _saslOauthbearerExtensions;
 
     private string? _saslOauthbearerTokenEndpointUrl;
+
+    private string? _saslOauthbearerSubClaimName;
 
     private SaslOauthbearerGrantType? _saslOauthbearerGrantType;
 
@@ -2475,6 +2492,12 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
         return This;
     }
 
+    public partial TBuilder WithSaslOauthbearerSubClaimName(string? saslOauthbearerSubClaimName)
+    {
+        _saslOauthbearerSubClaimName = saslOauthbearerSubClaimName;
+        return This;
+    }
+
     public partial TBuilder WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType)
     {
         _saslOauthbearerGrantType = saslOauthbearerGrantType;
@@ -2725,6 +2748,7 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
             SaslOauthbearerScope = _saslOauthbearerScope,
             SaslOauthbearerExtensions = _saslOauthbearerExtensions,
             SaslOauthbearerTokenEndpointUrl = _saslOauthbearerTokenEndpointUrl,
+            SaslOauthbearerSubClaimName = _saslOauthbearerSubClaimName,
             SaslOauthbearerGrantType = _saslOauthbearerGrantType,
             SaslOauthbearerAssertionAlgorithm = _saslOauthbearerAssertionAlgorithm,
             SaslOauthbearerAssertionPrivateKeyFile = _saslOauthbearerAssertionPrivateKeyFile,
@@ -2901,6 +2925,8 @@ public partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerExtensions(string? saslOauthbearerExtensions) => WithSaslOauthbearerExtensions(saslOauthbearerExtensions);
 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl) => WithSaslOauthbearerTokenEndpointUrl(saslOauthbearerTokenEndpointUrl);
+
+    void IKafkaClientConfigurationBuilder.WithSaslOauthbearerSubClaimName(string? saslOauthbearerSubClaimName) => WithSaslOauthbearerSubClaimName(saslOauthbearerSubClaimName);
 
     void IKafkaClientConfigurationBuilder.WithSaslOauthbearerGrantType(SaslOauthbearerGrantType? saslOauthbearerGrantType) => WithSaslOauthbearerGrantType(saslOauthbearerGrantType);
 

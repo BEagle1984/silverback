@@ -1053,6 +1053,19 @@ public partial class KafkaClientsConfigurationBuilder
     public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerTokenEndpointUrl(string? saslOauthbearerTokenEndpointUrl);
 
     /// <summary>
+    ///     Sets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload
+    ///     with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication.
+    /// Only used when <c>sasl.oauthbearer.method</c> is set to "oidc".
+    /// </summary>
+    /// <param name="saslOauthbearerSubClaimName">
+    ///     The JWT claim name to use as the subject (principal) when validating OIDC access tokens.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSaslOauthbearerSubClaimName(string? saslOauthbearerSubClaimName);
+
+    /// <summary>
     ///     Sets the OAuth grant type to use when communicating with the identity provider.
     /// </summary>
     /// <param name="saslOauthbearerGrantType">
