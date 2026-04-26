@@ -24,11 +24,6 @@ public static class DefaultMessageHeaders
     public const string FailedAttempts = "x-failed-attempts";
 
     /// <summary>
-    ///     The message identifier used to uniquely identify the message each chunk belongs to.
-    /// </summary>
-    public const string ChunkMessageId = "x-message-id";
-
-    /// <summary>
     ///     The message chunk index, used when chunking is enabled.
     /// </summary>
     public const string ChunkIndex = "x-chunk-index";

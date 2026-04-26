@@ -69,8 +69,8 @@ public partial class ChunkingTests
             IOutboundEnvelope lastEnvelope = Helper.Spy.RawOutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
             IOutboundEnvelope envelope = Helper.Spy.RawOutboundEnvelopes[i];
 
-            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId).ShouldNotBeNull();
-            envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId).ShouldBe(firstEnvelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId));
+            envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey).ShouldNotBeNull();
+            envelope.Headers.GetValue(KafkaMessageHeaders.MessageKey).ShouldBe(firstEnvelope.Headers.GetValue(KafkaMessageHeaders.MessageKey));
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunkIndex).ShouldBe((i % chunksPerMessage).ToString(CultureInfo.InvariantCulture));
             envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).ShouldBe(chunksPerMessage.ToString(CultureInfo.InvariantCulture));
 

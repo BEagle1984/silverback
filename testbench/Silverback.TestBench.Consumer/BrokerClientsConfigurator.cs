@@ -28,7 +28,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                 .AddConsumer(consumer => consumer
                     .WithGroupId("testbench")
                     .WithClientId(ClientId)
-                    .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
+                    //.WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky)
                     .AutoResetOffsetToEarliest()
                     .Consume<SingleMessage>(endpoint => endpoint
                         .ConsumeFrom(TopicNames.Kafka.Single)

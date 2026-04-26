@@ -28,7 +28,6 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
@@ -52,7 +51,6 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.IsLastChunk, "0" }
             },
@@ -70,36 +68,12 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     }
 
     [Fact]
-    public async Task CanHandle_ShouldReturnFalse_WhenChunkMessageIdMissing()
-    {
-        RawInboundEnvelope envelope = new(
-            BytesUtil.GetRandomBytes(10),
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.ChunkIndex, "0" },
-                { DefaultMessageHeaders.ChunksCount, "4" }
-            },
-            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
-            Substitute.For<IConsumer>(),
-            new TestOffset());
-
-        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
-            envelope,
-            sequenceStore: _sequenceStore);
-
-        bool result = await new ChunkSequenceReader().CanHandleAsync(context);
-
-        result.ShouldBeFalse();
-    }
-
-    [Fact]
     public async Task CanHandle_ShouldReturnFalse_WhenChunkIndexMissing()
     {
         RawInboundEnvelope envelope = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
             new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
@@ -122,7 +96,6 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "1" }
             },
@@ -146,7 +119,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
+                { DefaultMessageHeaders.MessageKey, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
@@ -167,13 +140,38 @@ public sealed class ChunkSequenceReaderTests : IDisposable
     }
 
     [Fact]
-    public async Task GetSequence_ShouldReturnExistingSequence()
+    public async Task GetSequence_ShouldReturnNewSequenceWithDefaultKey_WhenFirstChunkWithoutKey()
+    {
+        RawInboundEnvelope envelope = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.ChunkIndex, "0" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
+
+        sequence.ShouldNotBeNull();
+        sequence.SequenceId.ShouldBe("chunk-[no-key]");
+        sequence.TotalLength.ShouldBe(4);
+        sequence.IsNew.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GetSequence_ShouldReturnExistingSequence_WhenKeyIsNotSet()
     {
         RawInboundEnvelope envelope1 = new(
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
@@ -184,7 +182,56 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
+                { DefaultMessageHeaders.ChunkIndex, "1" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        ChunkSequenceReader reader = new();
+
+        ConsumerPipelineContext context1 = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope1,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence1 = await reader.GetSequenceAsync(context1);
+
+        sequence1.ShouldNotBeNull();
+        sequence1.ShouldBeOfType<ChunkSequence>();
+        sequence1.TotalLength.ShouldBe(4);
+        sequence1.IsNew.ShouldBeTrue();
+
+        ConsumerPipelineContext context2 = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope2,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence2 = await reader.GetSequenceAsync(context2);
+
+        sequence2.ShouldNotBeNull();
+        sequence2.ShouldBeSameAs(sequence1);
+        sequence2.IsNew.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GetSequence_ShouldReturnExistingSequence_WhenKeyIsSet()
+    {
+        RawInboundEnvelope envelope1 = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" },
+                { DefaultMessageHeaders.ChunkIndex, "0" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        RawInboundEnvelope envelope2 = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "1" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
@@ -223,7 +270,6 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             BytesUtil.GetRandomBytes(10),
             new MessageHeaderCollection
             {
-                { DefaultMessageHeaders.ChunkMessageId, "123" },
                 { DefaultMessageHeaders.ChunkIndex, "1" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
@@ -238,6 +284,50 @@ public sealed class ChunkSequenceReaderTests : IDisposable
         ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
         sequence.ShouldBeOfType<IncompleteSequence>();
+    }
+
+    [Fact]
+    public async Task GetSequence_ShouldReturnIncompleteSequence_WhenKeyMismatch()
+    {
+        RawInboundEnvelope envelope1 = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "123" },
+                { DefaultMessageHeaders.ChunkIndex, "0" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+        RawInboundEnvelope envelope2 = new(
+            BytesUtil.GetRandomBytes(10),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageKey, "456" },
+                { DefaultMessageHeaders.ChunkIndex, "1" },
+                { DefaultMessageHeaders.ChunksCount, "4" }
+            },
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
+
+        ChunkSequenceReader reader = new();
+
+        ConsumerPipelineContext context1 = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope1,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence1 = await new ChunkSequenceReader().GetSequenceAsync(context1);
+        sequence1.ShouldBeOfType<ChunkSequence>();
+
+        ConsumerPipelineContext context2 = ConsumerPipelineContextHelper.CreateSubstitute(
+            envelope2,
+            sequenceStore: _sequenceStore);
+
+        ISequence sequence2 = await reader.GetSequenceAsync(context2);
+        sequence2.ShouldBeOfType<IncompleteSequence>();
+        sequence2.ShouldNotBe(sequence1);
     }
 
     public void Dispose() => _sequenceStore.DisposeAsync().SafeWait();

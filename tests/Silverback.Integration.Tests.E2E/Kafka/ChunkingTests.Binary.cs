@@ -385,22 +385,22 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             [.. rawMessage1.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, 3));
+            HeadersHelper.GetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, 3));
+            HeadersHelper.GetChunkHeaders("1", 1, 3));
         await producer.RawProduceAsync(
             [.. rawMessage2.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 0));
+            HeadersHelper.GetChunkHeaders("2", 0));
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 1));
+            HeadersHelper.GetChunkHeaders("2", 1));
         await producer.RawProduceAsync(
             [.. rawMessage3.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 0));
+            HeadersHelper.GetChunkHeaders("3", 0));
         await producer.RawProduceAsync(
             [.. rawMessage3.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 1));
+            HeadersHelper.GetChunkHeaders("3", 1));
 
         await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
 
@@ -409,13 +409,13 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             [.. rawMessage3.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 2, true));
+            HeadersHelper.GetChunkHeaders("3", 2, true));
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 2, true));
+            HeadersHelper.GetChunkHeaders("2", 2, true));
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, 3));
+            HeadersHelper.GetChunkHeaders("1", 2, 3));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

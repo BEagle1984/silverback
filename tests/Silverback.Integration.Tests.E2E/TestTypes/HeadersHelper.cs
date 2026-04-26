@@ -19,15 +19,7 @@ public static class HeadersHelper
         int chunksCount,
         Type? messageType = null,
         string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, null, chunkIndex, chunksCount, null, messageType, contentType)];
-
-    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
-        string chunkMessageId,
-        int chunkIndex,
-        int chunksCount,
-        Type? messageType = null,
-        string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, chunksCount, null, messageType, contentType)];
+        [.. GetChunkHeadersCore(chunkMessageId, chunkIndex, chunksCount, null, messageType, contentType)];
 
     public static MessageHeader[] GetChunkHeaders(
         string chunkMessageId,
@@ -35,29 +27,14 @@ public static class HeadersHelper
         bool isLastChunk,
         Type? messageType = null,
         string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, null, chunkIndex, null, isLastChunk, messageType, contentType)];
-
-    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
-        string chunkMessageId,
-        int chunkIndex,
-        bool isLastChunk,
-        Type? messageType = null,
-        string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, null, isLastChunk, messageType, contentType)];
+        [.. GetChunkHeadersCore(chunkMessageId, chunkIndex, null, isLastChunk, messageType, contentType)];
 
     public static MessageHeader[] GetChunkHeaders(
         string chunkMessageId,
         int chunkIndex,
         Type? messageType = null,
         string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, null, chunkIndex, null, null, messageType, contentType)];
-
-    public static MessageHeader[] GetChunkHeadersWithKafkaKey(
-        string chunkMessageId,
-        int chunkIndex,
-        Type? messageType = null,
-        string? contentType = null) =>
-        [.. GetChunkHeadersCore(chunkMessageId, chunkMessageId, chunkIndex, null, null, messageType, contentType)];
+        [.. GetChunkHeadersCore(chunkMessageId, chunkIndex, null, null, messageType, contentType)];
 
     private static IEnumerable<MessageHeader> GetHeadersCore(string? kafkaKey, Type? messageType, string? contentType)
     {
@@ -72,7 +49,6 @@ public static class HeadersHelper
     }
 
     private static IEnumerable<MessageHeader> GetChunkHeadersCore(
-        string? chunkMessageId,
         string? kafkaKey,
         int chunkIndex,
         int? chunksCount,
@@ -83,7 +59,6 @@ public static class HeadersHelper
         foreach (MessageHeader header in GetHeadersCore(kafkaKey, messageType, contentType))
             yield return header;
 
-        yield return new MessageHeader(DefaultMessageHeaders.ChunkMessageId, chunkMessageId);
         yield return new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex.ToString(CultureInfo.InvariantCulture));
 
         if (chunksCount != null)
