@@ -66,6 +66,39 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
         }
 
         [Fact]
+        public async Task ProcessQueue_MoreMessagesThanBatchSize_AllMessagesProduced()
+        {
+            await WriteTestEvents(1500);
+
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+
+            _broker.ProducedMessages.Should().HaveCount(1500);
+        }
+
+        [Fact]
+        public async Task ProcessQueue_CancellationRequested_StopsLoopingOverBatches()
+        {
+            await WriteTestEvents(1500);
+            using var cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            await _worker.ProcessQueueAsync(cts.Token);
+
+            _broker.ProducedMessages.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task ProcessQueue_FailureInBatch_DoesNotContinueWithNextBatch()
+        {
+            await WriteTestEvents(1500);
+            _broker.FailProduceNumber = new[] { 5 };
+
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+
+            _broker.ProducedMessages.Should().HaveCountLessThan(1000);
+        }
+
+        [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
             await _outboxWriter.WriteAsync(
@@ -218,6 +251,21 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
             _broker.ProducedMessages[2].Endpoint.Name.Should().Be("topic1");
             _broker.ProducedMessages[3].Endpoint.Name.Should().Be("topic1");
+        }
+
+        private async Task WriteTestEvents(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                await _outboxWriter.WriteAsync(
+                    new TestEventOne { Content = $"Test {i}" },
+                    null,
+                    null,
+                    "topic1",
+                    "topic1");
+            }
+
+            await _outboxWriter.CommitAsync();
         }
     }
 }

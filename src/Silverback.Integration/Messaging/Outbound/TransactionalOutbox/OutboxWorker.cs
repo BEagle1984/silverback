@@ -79,14 +79,23 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task ProcessQueueAsync(CancellationToken stoppingToken)
         {
-            try
+            while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueueAsync(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogErrorProcessingOutbox(ex);
+                try
+                {
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    bool continueProcessing = await ProcessBatchAsync(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
+
+                    if (!continueProcessing)
+                    {
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogErrorProcessingOutbox(ex);
+                    return;
+                }
             }
         }
 
@@ -139,7 +148,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 .ConfigureAwait(false);
         }
 
-        private async Task ProcessQueueAsync(
+        private async Task<bool> ProcessBatchAsync(
             IServiceProvider serviceProvider,
             CancellationToken stoppingToken)
         {
@@ -154,7 +163,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             if (outboxMessages.Count == 0)
             {
                 _logger.LogOutboxEmpty();
-                return;
+                return false;
             }
 
             var lastProduced = -1;
@@ -190,6 +199,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 await WaitAllAsync().ConfigureAwait(false);
                 await AcknowledgeAllAsync(outboxReader, outboxMessages.Take(lastProduced + 1), failedMessages).ConfigureAwait(false);
             }
+
+            int successfullyProcessed = outboxMessages.Count - failedMessages.Count;
+
+            // Only continue with next batch if all processed successfully and more in queue
+            bool continueProcessing = successfullyProcessed == _batchSize;
+            return continueProcessing;
         }
 
         private async Task ProcessMessageAsync(
