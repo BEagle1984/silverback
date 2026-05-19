@@ -159,9 +159,8 @@ public class NullMessageHandlingTests : KafkaTests
     }
 
     [Fact]
-    public async Task NullMessage_ShouldConsumeNull()
+    public async Task NullMessage_ShouldNotBeConsumed()
     {
-        TestEventOne? consumedMessage = null;
         bool consumed = false;
 
         await Host.ConfigureServicesAndRunAsync(services => services
@@ -173,14 +172,10 @@ public class NullMessageHandlingTests : KafkaTests
                 .AddConsumer(consumer => consumer
                     .WithGroupId(DefaultGroupId)
                     .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-            .AddDelegateSubscriber<TestEventOne?>(Handle)
+            .AddDelegateSubscriber<TestEventOne>(Handle)
             .AddIntegrationSpy());
 
-        void Handle(TestEventOne? message)
-        {
-            consumedMessage = message;
-            consumed = true;
-        }
+        void Handle(TestEventOne message) => consumed = true;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -193,8 +188,7 @@ public class NullMessageHandlingTests : KafkaTests
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(1);
-        consumed.ShouldBeTrue();
-        consumedMessage.ShouldBeNull();
+        consumed.ShouldBeFalse();
     }
 
     [Fact]

@@ -56,7 +56,7 @@ internal sealed class SubscribedMethodsCache
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IEnvelope envelope && subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType))
+        if (message is IEnvelope { Message: not null } envelope && subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType))
             return true;
 
         if (subscribedMethod.MessageType.IsInstanceOfType(message))
