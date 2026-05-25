@@ -66,15 +66,14 @@ public sealed class DomainEventsPublisherTests
         IPublisher publisher = Substitute.For<IPublisher>();
         publisher
             .When(_ => publisher.Publish(Arg.Any<TestDomainEventOne>()))
-            .Do(
-                _ =>
-                {
-                    aggregateRoot.AddEvent<TestDomainEventTwo>();
+            .Do(_ =>
+            {
+                aggregateRoot.AddEvent<TestDomainEventTwo>();
 
-                    TestAggregateRoot aggregateRoot2 = new();
-                    aggregateRoot2.AddEvent<TestDomainEventTwo>();
-                    entities.Add(aggregateRoot2);
-                });
+                TestAggregateRoot aggregateRoot2 = new();
+                aggregateRoot2.AddEvent<TestDomainEventTwo>();
+                entities.Add(aggregateRoot2);
+            });
         DomainEventsPublisher eventsPublisher = new(() => entities, publisher);
 
         eventsPublisher.PublishDomainEvents();
@@ -95,15 +94,14 @@ public sealed class DomainEventsPublisherTests
         IPublisher publisher = Substitute.For<IPublisher>();
         publisher
             .When(_ => publisher.PublishAsync(Arg.Any<TestDomainEventOne>()))
-            .Do(
-                _ =>
-                {
-                    aggregateRoot.AddEvent<TestDomainEventTwo>();
+            .Do(_ =>
+            {
+                aggregateRoot.AddEvent<TestDomainEventTwo>();
 
-                    TestAggregateRoot aggregateRoot2 = new();
-                    aggregateRoot2.AddEvent<TestDomainEventTwo>();
-                    entities.Add(aggregateRoot2);
-                });
+                TestAggregateRoot aggregateRoot2 = new();
+                aggregateRoot2.AddEvent<TestDomainEventTwo>();
+                entities.Add(aggregateRoot2);
+            });
         DomainEventsPublisher eventsPublisher = new(() => entities, publisher);
 
         await eventsPublisher.PublishDomainEventsAsync();

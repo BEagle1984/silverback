@@ -55,7 +55,7 @@ public class NewtonsoftJsonMessageSerializerBuilder
     }
 
     /// <summary>
-    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType"/>) must be set.
+    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must be set.
     ///     This is necessary when sending multiple message type through the same endpoint, to allow Silverback to automatically figure out
     ///     the correct type to deserialize into.
     /// </summary>
@@ -69,7 +69,7 @@ public class NewtonsoftJsonMessageSerializerBuilder
     }
 
     /// <summary>
-    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType"/>) must not be set.
+    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must not be set.
     /// </summary>
     /// <returns>
     ///     The <see cref="NewtonsoftJsonMessageSerializerBuilder" /> so that additional calls can be chained.

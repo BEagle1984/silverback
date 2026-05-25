@@ -54,6 +54,6 @@ public partial class TypesCacheTests
             {
                 "System.Collections.Generic.List`1[[System.Char, System.Private.CoreLib, Culture=neutral]], System.Private.CoreLib, Version=5.0.0.0, PublicKeyToken=7cec85d7bea7798e",
                 typeof(List<char>)
-            },
+            }
         };
 }

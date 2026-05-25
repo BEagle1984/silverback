@@ -20,11 +20,10 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldApplyMessageFilters()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<TestFilteredSubscriber>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<TestFilteredSubscriber>());
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
         TestFilteredSubscriber filteredSubscriber = serviceProvider.GetRequiredService<TestFilteredSubscriber>();
 
@@ -39,11 +38,10 @@ public partial class PublisherTests
     [Fact]
     public async Task PublishAndPublishAsync_ShouldApplyEnvelopeFilters()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber<TestFilteredSubscriber>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber<TestFilteredSubscriber>());
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
         TestFilteredSubscriber filteredSubscriber = serviceProvider.GetRequiredService<TestFilteredSubscriber>();
 

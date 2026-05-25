@@ -25,14 +25,14 @@ public static class MessageSerializerExtensions
         this IMessageSerializer serializer,
         object message,
         MessageHeaderCollection? headers = null) =>
-        SerializeAsync(serializer, message, headers).SafeWait() ??
+        serializer.SerializeAsync(message, headers).SafeWait() ??
         throw new InvalidOperationException("Serializer returned null");
 
     public static byte[] SerializeToBytes(
         this IMessageSerializer serializer,
         object message,
         MessageHeaderCollection? headers = null) =>
-        Serialize(serializer, message, headers).ReadAll() ?? throw new InvalidOperationException("Serializer returned null");
+        serializer.Serialize(message, headers).ReadAll() ?? throw new InvalidOperationException("Serializer returned null");
 
     private record NullProducerEndpoint : ProducerEndpoint
     {

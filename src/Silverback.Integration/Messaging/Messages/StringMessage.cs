@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Wraps a raw message <see cref="string"/>.
+///     Wraps a raw message <see cref="string" />.
 /// </summary>
 public class StringMessage : IEquatable<StringMessage>
 {

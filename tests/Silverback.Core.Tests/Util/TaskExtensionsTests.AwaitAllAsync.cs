@@ -116,7 +116,7 @@ public partial class TaskExtensionsTests
 
         awaitTask.IsCompleted.ShouldBeTrue();
         awaitTask.IsCompletedSuccessfully.ShouldBeTrue();
-        results.ShouldBe([1, 2, 3], ignoreOrder: true);
+        results.ShouldBe([1, 2, 3], true);
     }
 
     [Fact]

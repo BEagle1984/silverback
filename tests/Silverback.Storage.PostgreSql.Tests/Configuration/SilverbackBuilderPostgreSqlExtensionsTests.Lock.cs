@@ -16,11 +16,10 @@ public class SilverbackBuilderPostgreSqlExtensionsTests
     [Fact]
     public void AddPostgreSqlAdvisoryLock_ShouldConfigureLockFactory()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlAdvisoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlAdvisoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
@@ -33,11 +32,10 @@ public class SilverbackBuilderPostgreSqlExtensionsTests
     [Fact]
     public void AddPostgreSqlTableLock_ShouldConfigureLockFactory()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddPostgreSqlTableLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddPostgreSqlTableLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(

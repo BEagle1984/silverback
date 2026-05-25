@@ -224,16 +224,14 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddKafkaClients(
-                clients => clients
-                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
-                    .AddProducer(
-                        producer => producer
-                            .WithLingerMs(lingerMs)
-                            .WithBatchSize(batchSize)
-                            .WithQueueBufferingMaxMessages(10_000_000)
-                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
-                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                .AddProducer(producer => producer
+                    .WithLingerMs(lingerMs)
+                    .WithBatchSize(batchSize)
+                    .WithQueueBufferingMaxMessages(10_000_000)
+                    .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                    .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
         await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
@@ -282,16 +280,14 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddKafkaClients(
-                clients => clients
-                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
-                    .AddProducer(
-                        producer => producer
-                            .WithLingerMs(lingerMs)
-                            .WithBatchSize(batchSize)
-                            .WithQueueBufferingMaxMessages(10_000_000)
-                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
-                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                .AddProducer(producer => producer
+                    .WithLingerMs(lingerMs)
+                    .WithBatchSize(batchSize)
+                    .WithQueueBufferingMaxMessages(10_000_000)
+                    .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                    .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
         await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
@@ -347,16 +343,14 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddKafkaClients(
-                clients => clients
-                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
-                    .AddProducer(
-                        producer => producer
-                            .WithLingerMs(lingerMs)
-                            .WithBatchSize(batchSize)
-                            .WithQueueBufferingMaxMessages(10_000_000)
-                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
-                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                .AddProducer(producer => producer
+                    .WithLingerMs(lingerMs)
+                    .WithBatchSize(batchSize)
+                    .WithQueueBufferingMaxMessages(10_000_000)
+                    .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                    .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
         await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
@@ -444,12 +438,11 @@ public static class RawProduceComparison
 
         int maxLabelLength = statsList.Max(stats => stats.Label.Length);
 
-        var groupedStats = statsList.GroupBy(
-            stats => new
-            {
-                stats.Count,
-                stats.MessageSize
-            });
+        var groupedStats = statsList.GroupBy(stats => new
+        {
+            stats.Count,
+            stats.MessageSize
+        });
 
         foreach (var statsGroup in groupedStats)
         {

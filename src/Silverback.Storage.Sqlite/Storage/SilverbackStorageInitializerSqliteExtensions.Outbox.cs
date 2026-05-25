@@ -27,9 +27,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreateSqliteOutboxAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        CreateSqliteOutboxAsync(
-            initializer,
-            new SqliteOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
     ///     Creates the SQLite outbox table.
@@ -48,7 +46,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         SqliteOutboxSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreateSqliteOutboxAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
+        return initializer.CreateSqliteOutboxAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     The name of the outbox table.
     /// </param>
     /// <param name="timeout">
-    ///   The table creation timeout.
+    ///     The table creation timeout.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.

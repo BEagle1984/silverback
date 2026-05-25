@@ -78,6 +78,11 @@ public sealed class ConsumerPipelineContext : IDisposable
     public IReadOnlyList<IConsumerBehavior> Pipeline { get; }
 
     /// <summary>
+    ///     Gets the <see cref="ISilverbackContext" />.
+    /// </summary>
+    public ISilverbackContext SilverbackContext => _silverbackContext ??= ServiceProvider.GetRequiredService<ISilverbackContext>();
+
+    /// <summary>
     ///     Gets the <see cref="ISequence" /> that the current message belongs to.
     /// </summary>
     public ISequence? Sequence { get; private set; }
@@ -118,11 +123,6 @@ public sealed class ConsumerPipelineContext : IDisposable
             field = value;
         }
     }
-
-    /// <summary>
-    ///     Gets the <see cref="ISilverbackContext" />.
-    /// </summary>
-    public ISilverbackContext SilverbackContext => _silverbackContext ??= ServiceProvider.GetRequiredService<ISilverbackContext>();
 
     /// <summary>
     ///     Gets or sets the envelopes containing the messages being processed.

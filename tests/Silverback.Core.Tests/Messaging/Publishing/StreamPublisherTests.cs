@@ -30,12 +30,11 @@ public class StreamPublisherTests
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -82,12 +81,11 @@ public class StreamPublisherTests
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IEnumerable<IEvent> enumerable)
         {
@@ -134,12 +132,11 @@ public class StreamPublisherTests
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(Handle2));
 
         async Task Handle1(IAsyncEnumerable<IEvent> enumerable)
         {
@@ -184,12 +181,11 @@ public class StreamPublisherTests
     {
         int receivedEnumeratedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IReadOnlyCollection<IEvent>>(Handle1)
-                .AddDelegateSubscriber<List<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IReadOnlyCollection<IEvent>>(Handle1)
+            .AddDelegateSubscriber<List<TestEventOne>>(Handle2));
 
         void Handle1(IReadOnlyCollection<IEvent> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
         void Handle2(List<TestEventOne> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
@@ -213,12 +209,11 @@ public class StreamPublisherTests
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -253,13 +248,12 @@ public class StreamPublisherTests
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestCommandOne>>(Handle3));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestCommandOne>>(Handle3));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -312,12 +306,11 @@ public class StreamPublisherTests
         int receivedStreams = 0;
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -360,12 +353,11 @@ public class StreamPublisherTests
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -404,12 +396,11 @@ public class StreamPublisherTests
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -455,12 +446,11 @@ public class StreamPublisherTests
         int receivedEnvelopes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEnvelope>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEnvelope>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEnvelope> enumerable)
         {
@@ -503,12 +493,11 @@ public class StreamPublisherTests
         int receivedTestEventOnes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
         {
@@ -553,12 +542,11 @@ public class StreamPublisherTests
         int receivedStreamsOfTwos = 0;
         int receivedTestEventTwos = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventTwo>>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventTwo>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
         {
@@ -612,12 +600,11 @@ public class StreamPublisherTests
         int receivedEvents = 0;
 
         TestBehavior testBehavior = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle)
-                .AddSingletonBehavior(testBehavior));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle)
+            .AddSingletonBehavior(testBehavior));
 
         void Handle(IMessageStreamEnumerable<IEvent> enumerable)
         {

@@ -48,7 +48,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientBrokerBehavior<TBehavior>(this SilverbackBuilder builder)
         where TBehavior : class, IBrokerBehavior =>
-        AddTransientBrokerBehavior(builder, typeof(TBehavior));
+        builder.AddTransientBrokerBehavior(typeof(TBehavior));
 
     /// <summary>
     ///     Adds a transient behavior with a factory specified in <paramref name="implementationFactory" /> to the
@@ -109,7 +109,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonBrokerBehavior<TBehavior>(this SilverbackBuilder builder)
         where TBehavior : class, IBrokerBehavior =>
-        AddSingletonBrokerBehavior(builder, typeof(TBehavior));
+        builder.AddSingletonBrokerBehavior(typeof(TBehavior));
 
     /// <summary>
     ///     Adds a singleton behavior with a factory specified in <paramref name="implementationFactory" /> to the

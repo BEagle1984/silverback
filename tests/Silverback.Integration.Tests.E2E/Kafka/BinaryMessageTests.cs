@@ -44,23 +44,19 @@ public class BinaryMessageTests : KafkaTests
 
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddIntegrationSpy());
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -73,10 +69,10 @@ public class BinaryMessageTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => envelope.Message.ShouldBeOfType<BinaryMessage>().ContentType)
-            .ShouldBe(["application/pdf", "text/plain"], ignoreOrder: true);
+            .ShouldBe(["application/pdf", "text/plain"], true);
 
         receivedFiles.Count.ShouldBe(2);
-        receivedFiles.ShouldBe([message1.Content.ReReadAll(), message2.Content.ReReadAll()], ignoreOrder: true);
+        receivedFiles.ShouldBe([message1.Content.ReReadAll(), message2.Content.ReReadAll()], true);
     }
 
     [Fact]
@@ -94,18 +90,15 @@ public class BinaryMessageTests : KafkaTests
             ContentType = "text/plain"
         };
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
@@ -132,25 +125,21 @@ public class BinaryMessageTests : KafkaTests
         TestingCollection<BinaryMessage> receivedBinaryMessages = [];
         TestingCollection<TestEventOne> receivedJsonMessages = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
-                .AddDelegateSubscriber<TestEventOne>(HandleEventOne)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddDelegateSubscriber<TestEventOne>(HandleEventOne)
+            .AddIntegrationSpy());
 
         void HandleBinaryMessage(BinaryMessage message) => receivedBinaryMessages.Add(message);
         void HandleEventOne(TestEventOne message) => receivedJsonMessages.Add(message);
@@ -187,21 +176,18 @@ public class BinaryMessageTests : KafkaTests
 
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
-                .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
+            .AddIntegrationSpy());
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -225,7 +211,7 @@ public class BinaryMessageTests : KafkaTests
                 message1.Content.ReReadAll(),
                 message2.Content.ReReadAll()
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -247,23 +233,19 @@ public class BinaryMessageTests : KafkaTests
 
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
+            .AddIntegrationSpy());
 
         void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -275,22 +257,20 @@ public class BinaryMessageTests : KafkaTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
         Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.ShouldBeOfType<CustomBinaryMessage>());
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(
-            envelope =>
-                envelope.Headers.Contains(new MessageHeader("x-custom-header", "one")) &&
-                envelope.Message!.CustomHeader == "one" &&
-                envelope.Message.ContentType == "application/pdf");
-        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(
-            envelope =>
-                envelope.Headers.Contains(new MessageHeader("x-custom-header", "two")) &&
-                envelope.Message!.CustomHeader == "two" &&
-                envelope.Message.ContentType == "text/plain");
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(envelope =>
+            envelope.Headers.Contains(new MessageHeader("x-custom-header", "one")) &&
+            envelope.Message!.CustomHeader == "one" &&
+            envelope.Message.ContentType == "application/pdf");
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<CustomBinaryMessage>>().ShouldContain(envelope =>
+            envelope.Headers.Contains(new MessageHeader("x-custom-header", "two")) &&
+            envelope.Message!.CustomHeader == "two" &&
+            envelope.Message.ContentType == "text/plain");
 
         receivedFiles.ShouldBe(
             [
                 message1.Content.ReReadAll(),
                 message2.Content.ReReadAll()
             ],
-            ignoreOrder: true);
+            true);
     }
 }

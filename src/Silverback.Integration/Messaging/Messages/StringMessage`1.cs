@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     Wraps a raw message <see cref="string"/>.
+///     Wraps a raw message <see cref="string" />.
 /// </summary>
 /// <typeparam name="T">
 ///     The type discriminator.

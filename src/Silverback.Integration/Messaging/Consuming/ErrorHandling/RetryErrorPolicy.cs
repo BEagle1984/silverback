@@ -39,7 +39,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
     public double DelayFactor { get; init; } = 1.0;
 
     /// <summary>
-    ///   Gets the maximum delay to be applied.
+    ///     Gets the maximum delay to be applied.
     /// </summary>
     public TimeSpan? MaxDelay { get; init; }
 

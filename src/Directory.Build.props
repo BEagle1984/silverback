@@ -1,5 +1,5 @@
 <Project>
-  <Import Project="../Directory.Build.props" />
+  <Import Project="../Directory.Build.props"/>
   <PropertyGroup Label="Package information">
     <Authors>Sergio Aquilini</Authors>
     <Company>Silverback</Company>
@@ -20,10 +20,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\graphics\icon.png" Pack="true" PackagePath="" />
+    <None Include="..\..\graphics\icon.png" Pack="true" PackagePath=""/>
     <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

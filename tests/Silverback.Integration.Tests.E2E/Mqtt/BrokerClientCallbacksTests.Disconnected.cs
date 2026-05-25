@@ -24,20 +24,17 @@ public partial class BrokerClientCallbacksTests
     {
         TestDisconnectingCallback callback = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
-                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonBrokerClientCallback(callback)
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
+                    .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                    .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(callback)
+            .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         await consumer.Client.DisconnectAsync();
@@ -50,20 +47,17 @@ public partial class BrokerClientCallbacksTests
     [Fact]
     public async Task DisconnectingCallback_ShouldProduceFromWithinTheCallback()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
-                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)) // Produce to same topic to test disconnect deadlocks
-                                .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
-                .AddScopedBrokerClientCallback<SendMessageDisconnectingCallback>()
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
+                    .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)) // Produce to same topic to test disconnect deadlocks
+                    .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
+            .AddScopedBrokerClientCallback<SendMessageDisconnectingCallback>()
+            .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         await consumer.Client.DisconnectAsync();

@@ -102,10 +102,10 @@ public partial class ConsumerEndpointTests : MqttTests
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
         eventTwoEnvelopes.Length.ShouldBe(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
     }
 
     [Fact]
@@ -230,14 +230,26 @@ public partial class ConsumerEndpointTests : MqttTests
         IInboundEnvelope<TestEventOne>[] envelopesOne = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         envelopesOne.Length.ShouldBe(15);
 
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient1 = [.. envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")];
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient2 = [.. envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")];
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient3 = [.. envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")];
-        IInboundEnvelope<TestEventOne>[] envelopesOneClient4 = [.. envelopesOne.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient1 =
+        [
+            .. envelopesOne.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")
+        ];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient2 =
+        [
+            .. envelopesOne.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")
+        ];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient3 =
+        [
+            .. envelopesOne.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")
+        ];
+        IInboundEnvelope<TestEventOne>[] envelopesOneClient4 =
+        [
+            .. envelopesOne.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")
+        ];
 
         envelopesOneClient1.Union(envelopesOneClient2).Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesOneClient3.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"]);
@@ -246,14 +258,26 @@ public partial class ConsumerEndpointTests : MqttTests
         IInboundEnvelope<TestEventTwo>[] envelopesTwo = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>()];
         envelopesTwo.Length.ShouldBe(15);
 
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient1 = [.. envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")];
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient2 = [.. envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")];
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient3 = [.. envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")];
-        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient4 = [.. envelopesTwo.Where(envelope => envelope
-            .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient1 =
+        [
+            .. envelopesTwo.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client1")
+        ];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient2 =
+        [
+            .. envelopesTwo.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client2")
+        ];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient3 =
+        [
+            .. envelopesTwo.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client3")
+        ];
+        IInboundEnvelope<TestEventTwo>[] envelopesTwoClient4 =
+        [
+            .. envelopesTwo.Where(envelope => envelope
+                .Consumer.ShouldBeOfType<MqttConsumer>().Configuration.ClientId == "client4")
+        ];
 
         envelopesTwoClient1.Union(envelopesTwoClient2).Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);
         envelopesTwoClient3.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"]);

@@ -49,7 +49,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientBrokerClientCallback<THandler>(this SilverbackBuilder builder)
         where THandler : class, IBrokerClientCallback =>
-        AddTransientBrokerClientCallback(builder, typeof(THandler));
+        builder.AddTransientBrokerClientCallback(typeof(THandler));
 
     /// <summary>
     ///     Adds a transient callback with a factory specified in <paramref name="implementationFactory" /> to
@@ -113,7 +113,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddScopedBrokerClientCallback<THandler>(this SilverbackBuilder builder)
         where THandler : class, IBrokerClientCallback =>
-        AddScopedBrokerClientCallback(builder, typeof(THandler));
+        builder.AddScopedBrokerClientCallback(typeof(THandler));
 
     /// <summary>
     ///     Adds a scoped callback with a factory specified in <paramref name="implementationFactory" /> to the
@@ -176,7 +176,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonBrokerClientCallback<THandler>(this SilverbackBuilder builder)
         where THandler : class, IBrokerClientCallback =>
-        AddSingletonBrokerClientCallback(builder, typeof(THandler));
+        builder.AddSingletonBrokerClientCallback(typeof(THandler));
 
     /// <summary>
     ///     Adds a singleton callback with a factory specified in <paramref name="implementationFactory" /> to

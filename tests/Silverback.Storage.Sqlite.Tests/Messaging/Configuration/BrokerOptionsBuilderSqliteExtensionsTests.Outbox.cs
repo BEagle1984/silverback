@@ -22,11 +22,10 @@ public partial class BrokerOptionsBuilderSqliteExtensionsTests
     [Fact]
     public void AddSqliteOutbox_ShouldConfigureOutboxFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddSqliteOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddSqliteOutbox()));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
@@ -43,11 +42,10 @@ public partial class BrokerOptionsBuilderSqliteExtensionsTests
     [Fact]
     public void UseSqliteOutbox_ShouldOverrideAllOutboxSettingsTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.UseSqliteOutbox("conn")));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.UseSqliteOutbox("conn")));
 
         OutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<OutboxReaderFactory>();
         OutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<OutboxWriterFactory>();

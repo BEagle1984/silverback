@@ -20,25 +20,22 @@ public partial class ConsumerEndpointTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeStringMessages()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<StringMessage<TestEventOne>>("topic1", endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Consume<StringMessage>("topic2", endpoint => endpoint.ConsumeFrom("topic2"))
-                                .Consume(
-                                    "topic3",
-                                    endpoint => endpoint
-                                        .ConsumeFrom("topic3")
-                                        .ConsumeStrings(deserializer => deserializer.UseDiscriminator<TestEventThree>()))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<StringMessage<TestEventOne>>("topic1", endpoint => endpoint.ConsumeFrom("topic1"))
+                    .Consume<StringMessage>("topic2", endpoint => endpoint.ConsumeFrom("topic2"))
+                    .Consume(
+                        "topic3",
+                        endpoint => endpoint
+                            .ConsumeFrom("topic3")
+                            .ConsumeStrings(deserializer => deserializer.UseDiscriminator<TestEventThree>()))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
         IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
@@ -58,25 +55,22 @@ public partial class ConsumerEndpointTests
                 new StringMessage("Message for topic2"),
                 new StringMessage<TestEventThree>("Message for topic3")
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeStringMessagesWithNullContent()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<StringMessage<TestEventOne>>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<StringMessage<TestEventOne>>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -92,31 +86,28 @@ public partial class ConsumerEndpointTests
                 new StringMessage<TestEventOne>(null),
                 new StringMessage<TestEventOne>(null)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeRawMessages()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<RawMessage<TestEventOne>>("topic1", endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Consume<RawMessage>("topic2", endpoint => endpoint.ConsumeFrom("topic2"))
-                                .Consume(
-                                    "topic3",
-                                    endpoint => endpoint
-                                        .ConsumeFrom("topic3")
-                                        .ConsumeRaw(deserializer => deserializer.UseDiscriminator<TestEventThree>()))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(kafkaClientsConfigurationBuilder => kafkaClientsConfigurationBuilder
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<RawMessage<TestEventOne>>("topic1", endpoint => endpoint.ConsumeFrom("topic1"))
+                    .Consume<RawMessage>("topic2", endpoint => endpoint.ConsumeFrom("topic2"))
+                    .Consume(
+                        "topic3",
+                        endpoint => endpoint
+                            .ConsumeFrom("topic3")
+                            .ConsumeRaw(deserializer => deserializer.UseDiscriminator<TestEventThree>()))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
         IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
@@ -136,7 +127,7 @@ public partial class ConsumerEndpointTests
                 typeof(RawMessage),
                 typeof(RawMessage<TestEventThree>)
             ],
-            ignoreOrder: true);
+            true);
 
         messages.Select(message => message.Content.ReadAll()).ShouldBe(
             [
@@ -144,6 +135,6 @@ public partial class ConsumerEndpointTests
                 [0x04, 0x05, 0x06],
                 [0x07, 0x08, 0x09]
             ],
-            ignoreOrder: true);
+            true);
     }
 }

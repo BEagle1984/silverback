@@ -177,10 +177,9 @@ public class MoveMessageErrorPolicyBuilderTests
     {
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
-        builder.Transform(
-            _ =>
-            {
-            });
+        builder.Transform(_ =>
+        {
+        });
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.TransformMessageAction.ShouldNotBeNull();
@@ -203,10 +202,9 @@ public class MoveMessageErrorPolicyBuilderTests
     {
         MoveMessageErrorPolicyBuilder builder = new("topic1");
 
-        builder.Transform(
-            (_, _) =>
-            {
-            });
+        builder.Transform((_, _) =>
+        {
+        });
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
         policy.TransformMessageAction.ShouldNotBeNull();

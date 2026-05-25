@@ -48,7 +48,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientSequenceWriter<TWriter>(this SilverbackBuilder builder)
         where TWriter : class, ISequenceWriter =>
-        AddTransientSequenceWriter(builder, typeof(TWriter));
+        builder.AddTransientSequenceWriter(typeof(TWriter));
 
     /// <summary>
     ///     Adds a transient sequence writer with a factory specified in <paramref name="implementationFactory" />
@@ -110,7 +110,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonSequenceWriter<TWriter>(this SilverbackBuilder builder)
         where TWriter : class, ISequenceWriter =>
-        AddSingletonSequenceWriter(builder, typeof(TWriter));
+        builder.AddSingletonSequenceWriter(typeof(TWriter));
 
     /// <summary>
     ///     Adds a singleton sequence writer with a factory specified in <paramref name="implementationFactory" /> to the

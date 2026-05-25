@@ -26,22 +26,19 @@ public partial class PublisherTests
     {
         int resolved = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            builder => builder
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber(
-                    _ =>
-                    {
-                        resolved++;
-                        return new TestSubscriber<ICommand>();
-                    })
-                .AddScopedSubscriber(
-                    _ =>
-                    {
-                        resolved++;
-                        return new TestSubscriber<IEvent>();
-                    }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(builder => builder
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber(_ =>
+            {
+                resolved++;
+                return new TestSubscriber<ICommand>();
+            })
+            .AddScopedSubscriber(_ =>
+            {
+                resolved++;
+                return new TestSubscriber<IEvent>();
+            }));
 
         using (IServiceScope scope = serviceProvider.CreateScope())
         {
@@ -87,22 +84,19 @@ public partial class PublisherTests
     {
         int resolved = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            builder => builder
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber(
-                    _ =>
-                    {
-                        resolved++;
-                        return new TestSubscriber<ICommand>();
-                    })
-                .AddScopedSubscriber(
-                    _ =>
-                    {
-                        resolved++;
-                        return new TestSubscriber<IEvent>();
-                    }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(builder => builder
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber(_ =>
+            {
+                resolved++;
+                return new TestSubscriber<ICommand>();
+            })
+            .AddScopedSubscriber(_ =>
+            {
+                resolved++;
+                return new TestSubscriber<IEvent>();
+            }));
 
         await serviceProvider.GetServices<IHostedService>()
             .OfType<SubscribedMethodsLoaderService>()

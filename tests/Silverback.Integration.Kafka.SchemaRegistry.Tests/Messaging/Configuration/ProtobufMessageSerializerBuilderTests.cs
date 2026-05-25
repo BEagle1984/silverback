@@ -42,9 +42,8 @@ public class ProtobufMessageSerializerBuilderTests
             .Build();
 
         _schemaRegistryClientFactory.Received().GetClient(
-            Arg.Is<KafkaSchemaRegistryConfiguration>(
-                schemaRegistryConfiguration =>
-                    schemaRegistryConfiguration.Url == "some-url"));
+            Arg.Is<KafkaSchemaRegistryConfiguration>(schemaRegistryConfiguration =>
+                schemaRegistryConfiguration.Url == "some-url"));
     }
 
     [Fact]

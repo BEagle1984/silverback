@@ -25,33 +25,30 @@ public class BrokerClientsTests : KafkaTests
     [Fact]
     public async Task BrokerClients_ShouldBeAbleToConnectAndDisconnectManually()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
-                        .ManuallyConnect())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            "producer",
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))
-                        .AddConsumer(
-                            "consumer1",
-                            consumer => consumer
-                                .WithGroupId("consume1")
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer(
-                            "consumer2",
-                            consumer => consumer
-                                .WithGroupId("consumer2")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
+                .ManuallyConnect())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(
+                    "producer",
+                    producer => producer
+                        .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                        .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))
+                .AddConsumer(
+                    "consumer1",
+                    consumer => consumer
+                        .WithGroupId("consume1")
+                        .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer(
+                    "consumer2",
+                    consumer => consumer
+                        .WithGroupId("consumer2")
+                        .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IBrokerClientCollection clients = Host.ServiceProvider.GetRequiredService<IBrokerClientCollection>();
         IBrokerClient clientConsumer1 = clients["consumer1"];

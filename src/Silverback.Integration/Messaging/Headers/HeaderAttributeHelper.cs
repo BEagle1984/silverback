@@ -63,9 +63,11 @@ internal static class HeaderAttributeHelper
         PropertiesCache.GetOrAdd(
             type,
             static key =>
-                [.. key.GetProperties()
+            [
+                .. key.GetProperties()
                     .Select(propertyInfo => new DecoratedProperty(propertyInfo, propertyInfo.GetCustomAttribute<HeaderAttribute>(true)!))
-                    .Where(decoratedProperty => decoratedProperty.Attribute != null)]);
+                    .Where(decoratedProperty => decoratedProperty.Attribute != null)
+            ]);
 
     private sealed class DecoratedProperty
     {

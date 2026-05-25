@@ -28,22 +28,17 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldReportCorrectStatus_WhenConsumingAndRebalanceAndDisconnecting()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                        options => options.AddMockedKafka(
-                            mockedKafkaOptions =>
-                                mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddIntegrationSpyAndSubscriber())
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions =>
+                    mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
+                .AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber())
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
@@ -75,34 +70,29 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldReportCorrectStatus_WhenStaticallyAssigningPartitions()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(
-                                            new TopicPartition(DefaultTopicName, 0),
-                                            new TopicPartition(DefaultTopicName, 1),
-                                            new TopicPartition(DefaultTopicName, 2),
-                                            new TopicPartition(DefaultTopicName, 3),
-                                            new TopicPartition(DefaultTopicName, 4)))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(
+                            new TopicPartition(DefaultTopicName, 0),
+                            new TopicPartition(DefaultTopicName, 1),
+                            new TopicPartition(DefaultTopicName, 2),
+                            new TopicPartition(DefaultTopicName, 3),
+                            new TopicPartition(DefaultTopicName, 4)))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
-        IProducer producer = Helper.GetProducer(
-            producer => producer.WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)));
+        IProducer producer = Helper.GetProducer(producer => producer.WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName)));
         await producer.ProduceAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -116,20 +106,17 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldRevertStatus_WhenPollTimeoutWithoutAutoRecovery()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .DisableAutoRecovery()
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableAutoRecovery()
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         KafkaConsumer consumer = (KafkaConsumer)Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
@@ -154,20 +141,17 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldTrackReconnect_WhenPollTimeoutWithAutoRecovery()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .EnableAutoRecovery()
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .EnableAutoRecovery()
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         KafkaConsumer consumer = (KafkaConsumer)Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
 
@@ -196,22 +180,17 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldRecordHistory_WhenConsumingAndDisconnecting()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(
-                        options => options.AddMockedKafka(
-                            mockedKafkaOptions =>
-                                mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddIntegrationSpyAndSubscriber())
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions =>
+                    mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
+                .AddKafkaClients(clients => clients
+                    .WithBootstrapServers("PLAINTEXT://e2e")
+                    .AddConsumer(consumer => consumer
+                        .WithGroupId(DefaultGroupId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber())
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
@@ -244,22 +223,17 @@ public class ConsumerStatusInfoTests : KafkaTests
     [Fact]
     public async Task StatusInfo_ShouldTrackLatestConsumedMessage()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options.AddMockedKafka(
-                        mockedKafkaOptions =>
-                            mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions =>
+                mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());

@@ -5,9 +5,9 @@
     <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.CodeDom" />
+    <PackageReference Include="System.CodeDom"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 </Project>

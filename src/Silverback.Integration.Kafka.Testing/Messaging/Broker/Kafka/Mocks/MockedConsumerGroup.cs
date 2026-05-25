@@ -301,10 +301,12 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
     }
 
     private List<TopicPartition> GetPartitionsToAssign() =>
-        [.. _subscriptions.Select(subscription => subscription.Topic).Distinct()
+    [
+        .. _subscriptions.Select(subscription => subscription.Topic).Distinct()
             .Select(topicName => _topicCollection.Get(topicName, BootstrapServers))
             .SelectMany(topic =>
-                topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))];
+                topic.Partitions.Select(partition => new TopicPartition(topic.Name, partition.Partition)))
+    ];
 
     private void InvokePartitionsRevokedCallbacks(RebalanceResult result)
     {

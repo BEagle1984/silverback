@@ -49,9 +49,8 @@ public class ProxyClassGenerator
     {
         IEnumerable<PropertyInfo> properties =
             ReflectionHelper.GetProperties(ProxiedType, false)
-                .Where(
-                    property => !IgnoredProperties.Contains(property)
-                                && property.Name != "GroupId");
+                .Where(property => !IgnoredProperties.Contains(property)
+                                   && property.Name != "GroupId");
 
         StringBuilder propertiesStringBuilder = new();
         StringBuilder mapMethodStringBuilder = new();

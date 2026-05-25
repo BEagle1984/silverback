@@ -23,8 +23,8 @@ public record OutboxWorkerSettings : IValidatableSettings
     {
         Outbox = Check.NotNull(outboxSettings, nameof(outboxSettings));
         DistributedLock = outboxSettings.GetCompatibleLockSettings() ?? throw new SilverbackConfigurationException(
-                $"The distributed lock settings cannot be inferred from the {outboxSettings.GetType().Name} since no matching " +
-                "distributed lock implementation exists. Please specify the distributed lock implementation or explicitly set it to null.");
+            $"The distributed lock settings cannot be inferred from the {outboxSettings.GetType().Name} since no matching " +
+            "distributed lock implementation exists. Please specify the distributed lock implementation or explicitly set it to null.");
     }
 
     /// <summary>

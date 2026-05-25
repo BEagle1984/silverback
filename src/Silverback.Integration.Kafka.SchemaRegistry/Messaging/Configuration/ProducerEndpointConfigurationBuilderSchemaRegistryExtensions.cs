@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 
 /// <summary>
 ///     Adds the <see cref="SerializeAsAvro{TMessage,TConfiguration,TEndpoint,TBuilder}" />, <see cref="SerializeAsJsonUsingSchemaRegistry{TMessage,TConfiguration,TEndpoint,TBuilder}" />
-///     and <see cref="SerializeAsProtobuf{TMessage,TConfiguration,TEndpoint,TBuilder}"/> methods to the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
+///     and <see cref="SerializeAsProtobuf{TMessage,TConfiguration,TEndpoint,TBuilder}" /> methods to the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
 /// </summary>
 public static class ProducerEndpointConfigurationBuilderSchemaRegistryExtensions
 {

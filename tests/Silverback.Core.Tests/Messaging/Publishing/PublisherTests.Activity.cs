@@ -21,11 +21,10 @@ public partial class PublisherTests
     {
         using TestActivityListener activityListener = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<TestSubscriber>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber<TestSubscriber>());
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestCommandOne());

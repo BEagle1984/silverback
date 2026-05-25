@@ -141,12 +141,10 @@ public partial class ConsumerEndpointConfigurationBuilderTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson(
-                deserializer => deserializer.Configure(
-                    options =>
-                    {
-                        options.MaxDepth = 42;
-                    }))
+        TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson(deserializer => deserializer.Configure(options =>
+            {
+                options.MaxDepth = 42;
+            }))
             .Build();
 
         JsonMessageDeserializer<object> jsonDeserializer = endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();
@@ -159,14 +157,12 @@ public partial class ConsumerEndpointConfigurationBuilderTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
-            .DeserializeJson(
-                deserializer => deserializer
-                    .UseModel<TestEventOne>()
-                    .Configure(
-                        options =>
-                        {
-                            options.MaxDepth = 42;
-                        }))
+            .DeserializeJson(deserializer => deserializer
+                .UseModel<TestEventOne>()
+                .Configure(options =>
+                {
+                    options.MaxDepth = 42;
+                }))
             .Build();
 
         JsonMessageDeserializer<TestEventOne> jsonDeserializer = endpoint.Deserializer.ShouldBeOfType<JsonMessageDeserializer<TestEventOne>>();
@@ -265,10 +261,9 @@ public partial class ConsumerEndpointConfigurationBuilderTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration endpoint = builder.ConsumeStrings(
-            serializer => serializer
-                .UseDiscriminator<TestEventTwo>()
-                .WithEncoding(MessageEncoding.ASCII)).Build();
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeStrings(serializer => serializer
+            .UseDiscriminator<TestEventTwo>()
+            .WithEncoding(MessageEncoding.ASCII)).Build();
 
         StringMessageDeserializer<StringMessage<TestEventTwo>> stringDeserializer =
             endpoint.Deserializer.ShouldBeOfType<StringMessageDeserializer<StringMessage<TestEventTwo>>>();
@@ -300,9 +295,8 @@ public partial class ConsumerEndpointConfigurationBuilderTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration endpoint = builder.ConsumeRaw(
-            serializer => serializer
-                .UseDiscriminator<TestEventTwo>()).Build();
+        TestConsumerEndpointConfiguration endpoint = builder.ConsumeRaw(serializer => serializer
+            .UseDiscriminator<TestEventTwo>()).Build();
 
         endpoint.Deserializer.ShouldBeOfType<RawMessageDeserializer<RawMessage<TestEventTwo>>>();
     }

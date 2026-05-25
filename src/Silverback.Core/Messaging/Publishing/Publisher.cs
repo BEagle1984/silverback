@@ -170,9 +170,12 @@ internal class Publisher : IPublisher
         if (methods.Count == 1)
             return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
 
-        return [.. await methods
+        return
+        [
+            .. await methods
                 .SelectAsync(InvokeAsync)
-                .ConfigureAwait(false)];
+                .ConfigureAwait(false)
+        ];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
             SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);
@@ -191,9 +194,12 @@ internal class Publisher : IPublisher
         if (methods.Count == 1)
             return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
 
-        return [.. await methods
+        return
+        [
+            .. await methods
                 .ParallelSelectAsync(InvokeAsync)
-                .ConfigureAwait(false)];
+                .ConfigureAwait(false)
+        ];
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
             SubscribedMethodInvoker.InvokeAsync(this, method, message, _serviceProvider, executionFlow, cancellationToken);

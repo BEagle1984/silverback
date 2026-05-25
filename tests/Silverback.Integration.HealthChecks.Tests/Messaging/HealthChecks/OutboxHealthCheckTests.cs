@@ -27,17 +27,15 @@ public class OutboxHealthCheckTests
         outboxReader.GetMaxAgeAsync().Returns(Task.FromResult(TimeSpan.Zero));
         outboxReader.GetLengthAsync().Returns(Task.FromResult(0));
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka()
-                        .AddInMemoryOutbox())
-                .Services
-                .AddSingleton(outboxReader)
-                .AddHealthChecks()
-                .AddOutboxCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInMemoryOutbox())
+            .Services
+            .AddSingleton(outboxReader)
+            .AddHealthChecks()
+            .AddOutboxCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -53,17 +51,15 @@ public class OutboxHealthCheckTests
         outboxReader.GetMaxAgeAsync().Returns(Task.FromResult(TimeSpan.FromSeconds(5)));
         outboxReader.GetLengthAsync().Returns(Task.FromResult(42));
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka()
-                        .AddInMemoryOutbox())
-                .Services
-                .AddSingleton(outboxReader)
-                .AddHealthChecks()
-                .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInMemoryOutbox())
+            .Services
+            .AddSingleton(outboxReader)
+            .AddHealthChecks()
+            .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -79,17 +75,15 @@ public class OutboxHealthCheckTests
         outboxReader.GetMaxAgeAsync().Returns(Task.FromResult(TimeSpan.FromSeconds(5)));
         outboxReader.GetLengthAsync().Returns(Task.FromResult(101));
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka()
-                        .AddInMemoryOutbox())
-                .Services
-                .AddSingleton(outboxReader)
-                .AddHealthChecks()
-                .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInMemoryOutbox())
+            .Services
+            .AddSingleton(outboxReader)
+            .AddHealthChecks()
+            .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -105,17 +99,15 @@ public class OutboxHealthCheckTests
         outboxReader.GetMaxAgeAsync().Returns(Task.FromResult(TimeSpan.FromSeconds(31)));
         outboxReader.GetLengthAsync().Returns(Task.FromResult(42));
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka()
-                        .AddInMemoryOutbox())
-                .Services
-                .AddSingleton(outboxReader)
-                .AddHealthChecks()
-                .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInMemoryOutbox())
+            .Services
+            .AddSingleton(outboxReader)
+            .AddHealthChecks()
+            .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -131,17 +123,15 @@ public class OutboxHealthCheckTests
         outboxReader.GetMaxAgeAsync().Returns(Task.FromResult(TimeSpan.FromSeconds(31)));
         outboxReader.GetLengthAsync().ThrowsAsync(new ArithmeticException());
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddKafka()
-                        .AddInMemoryOutbox())
-                .Services
-                .AddSingleton(outboxReader)
-                .AddHealthChecks()
-                .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddInMemoryOutbox())
+            .Services
+            .AddSingleton(outboxReader)
+            .AddHealthChecks()
+            .AddOutboxCheck(TimeSpan.FromSeconds(30), 100));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 

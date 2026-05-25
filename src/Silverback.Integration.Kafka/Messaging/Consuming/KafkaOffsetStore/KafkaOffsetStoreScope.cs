@@ -70,7 +70,6 @@ public sealed class KafkaOffsetStoreScope
     }
 
     private bool AreAllStoredAlready(IReadOnlyCollection<KafkaOffset> offsets) =>
-        offsets.All(
-            offset => _lastStoredOffsets.TryGetValue(offset.TopicPartition, out Offset storedOffset) &&
-                      offset.Offset == storedOffset);
+        offsets.All(offset => _lastStoredOffsets.TryGetValue(offset.TopicPartition, out Offset storedOffset) &&
+                              offset.Offset == storedOffset);
 }

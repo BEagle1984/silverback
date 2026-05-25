@@ -19,9 +19,9 @@
     <Product>Silverback.Integration.Kafka.Testing</Product>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj" />
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf">

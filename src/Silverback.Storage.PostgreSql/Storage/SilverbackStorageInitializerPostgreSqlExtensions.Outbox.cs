@@ -27,9 +27,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlOutboxAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        CreatePostgreSqlOutboxAsync(
-            initializer,
-            new PostgreSqlOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreatePostgreSqlOutboxAsync(new PostgreSqlOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
     ///     Creates the PostgreSql outbox table.
@@ -46,7 +44,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     public static Task CreatePostgreSqlOutboxAsync(this SilverbackStorageInitializer initializer, PostgreSqlOutboxSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreatePostgreSqlOutboxAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
+        return initializer.CreatePostgreSqlOutboxAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -62,7 +60,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     The name of the outbox table.
     /// </param>
     /// <param name="timeout">
-    ///   The table creation timeout.
+    ///     The table creation timeout.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.

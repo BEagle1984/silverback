@@ -41,11 +41,10 @@ public class ActivityProducerBehaviorTests
             (_, _) => default,
             CancellationToken.None);
 
-        envelope.Headers.ShouldContain(
-            header =>
-                header.Name == DefaultMessageHeaders.TraceId &&
-                header.Value != null &&
-                header.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c", StringComparison.Ordinal));
+        envelope.Headers.ShouldContain(header =>
+            header.Name == DefaultMessageHeaders.TraceId &&
+            header.Value != null &&
+            header.Value.StartsWith("00-0af7651916cd43dd8448eb211c80319c", StringComparison.Ordinal));
     }
 
     [Fact]

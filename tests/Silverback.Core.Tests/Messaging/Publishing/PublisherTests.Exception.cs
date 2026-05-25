@@ -20,12 +20,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static void Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -43,12 +42,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static void Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -66,12 +64,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static Task Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -91,12 +88,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static Task Handle2(TestEventOne message) => throw new InvalidOperationException("test");

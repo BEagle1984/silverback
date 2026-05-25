@@ -21,21 +21,17 @@ public partial class ConsumerEndpointTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).ThrowIfUnhandled())))
-                .AddDelegateSubscriber<TestEventOne>(HandleMessage));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).ThrowIfUnhandled())))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage));
 
         void HandleMessage(TestEventOne message) => received++;
 
@@ -48,10 +44,9 @@ public partial class ConsumerEndpointTests
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        await AsyncTestingUtil.WaitAsync(
-            () =>
-                Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped &&
-                Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
+        await AsyncTestingUtil.WaitAsync(() =>
+            Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped &&
+            Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
 
         IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Stopped);
@@ -63,21 +58,17 @@ public partial class ConsumerEndpointTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).IgnoreUnhandledMessages())))
-                .AddDelegateSubscriber<TestEventOne>(HandleMessage));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).IgnoreUnhandledMessages())))
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage));
 
         void HandleMessage(TestEventOne message) => received++;
 
@@ -103,26 +94,21 @@ public partial class ConsumerEndpointTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(3)
-                                        .ThrowIfUnhandled())))
-                .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleEnumerable)
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleAsyncEnumerable));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(3)
+                        .ThrowIfUnhandled())))
+            .AddDelegateSubscriber<IEnumerable<TestEventOne>>(HandleEnumerable)
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleAsyncEnumerable));
 
         void HandleEnumerable(IEnumerable<TestEventOne> messages)
         {

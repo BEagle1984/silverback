@@ -49,11 +49,10 @@ public class JsonMessageDeserializerBuilderTests
         JsonMessageDeserializerBuilder builder = new();
 
         IMessageDeserializer deserializer = builder
-            .Configure(
-                options =>
-                {
-                    options.MaxDepth = 42;
-                })
+            .Configure(options =>
+            {
+                options.MaxDepth = 42;
+            })
             .Build();
 
         JsonMessageDeserializer<object> jsonDeserializer = deserializer.ShouldBeOfType<JsonMessageDeserializer<object>>();

@@ -46,14 +46,13 @@ public class BrokerClientCallbacksInvokerTests
         CallbackOneHandlerTwo callbackOneHandlerTwo = new();
         CallbackTwoHandlerOne callbackTwoHandlerOne = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddSingletonBrokerClientCallback(callbackOneHandlerOne)
-                .AddSingletonBrokerClientCallback(callbackOneHandlerTwo)
-                .AddSingletonBrokerClientCallback(callbackTwoHandlerOne));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddSingletonBrokerClientCallback(callbackOneHandlerOne)
+            .AddSingletonBrokerClientCallback(callbackOneHandlerTwo)
+            .AddSingletonBrokerClientCallback(callbackTwoHandlerOne));
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 
@@ -68,12 +67,11 @@ public class BrokerClientCallbacksInvokerTests
     public void Invoke_ShouldCreateScope()
     {
         CallbackOneHandlerOne callbackOneHandlerOne = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddScopedBrokerClientCallback(_ => callbackOneHandlerOne));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddScopedBrokerClientCallback(_ => callbackOneHandlerOne));
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 
@@ -85,11 +83,10 @@ public class BrokerClientCallbacksInvokerTests
     [Fact]
     public void Invoke_ShouldResolveUsingSpecifiedProvider()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         CallbackOneHandlerOne callbackOneHandlerOne = new();
         IServiceProvider? substituteServiceProvider = Substitute.For<IServiceProvider>();
@@ -107,11 +104,10 @@ public class BrokerClientCallbacksInvokerTests
     [Fact]
     public void Invoke_ShouldResolveOnlyOnce_WhenNoMatchingHandler()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         IServiceProvider? substituteServiceProvider = Substitute.For<IServiceProvider>();
         substituteServiceProvider
@@ -131,12 +127,11 @@ public class BrokerClientCallbacksInvokerTests
     [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped", Justification = "To be reviewed")]
     public void Invoke_ShouldSwallowHandlerExceptions()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddTransientBrokerClientCallback<ThrowingCallbackOneHandler>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddTransientBrokerClientCallback<ThrowingCallbackOneHandler>());
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 
@@ -196,14 +191,13 @@ public class BrokerClientCallbacksInvokerTests
         CallbackOneHandlerTwoAsync callbackOneHandlerTwo = new();
         CallbackTwoHandlerOneAsync callbackTwoHandlerOne = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddSingletonBrokerClientCallback(callbackOneHandlerOne)
-                .AddSingletonBrokerClientCallback(callbackOneHandlerTwo)
-                .AddSingletonBrokerClientCallback(callbackTwoHandlerOne));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddSingletonBrokerClientCallback(callbackOneHandlerOne)
+            .AddSingletonBrokerClientCallback(callbackOneHandlerTwo)
+            .AddSingletonBrokerClientCallback(callbackTwoHandlerOne));
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 
@@ -218,12 +212,11 @@ public class BrokerClientCallbacksInvokerTests
     public async Task InvokeAsync_ShouldCreateScoped()
     {
         CallbackOneHandlerOneAsync callbackOneHandlerOne = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddScopedBrokerClientCallback(_ => callbackOneHandlerOne));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddScopedBrokerClientCallback(_ => callbackOneHandlerOne));
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 
@@ -235,11 +228,10 @@ public class BrokerClientCallbacksInvokerTests
     [Fact]
     public async Task InvokeAsync_ShouldResolvedUsingSpecifiedProvider()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         CallbackOneHandlerOneAsync callbackOneHandlerOne = new();
         IServiceProvider? substituteServiceProvider = Substitute.For<IServiceProvider>();
@@ -259,11 +251,10 @@ public class BrokerClientCallbacksInvokerTests
     [Fact]
     public async Task InvokeAsync_ShouldResolveOnlyOnce_WhenNoMatchingHandler()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
 
         IServiceProvider? substituteServiceProvider = Substitute.For<IServiceProvider>();
         substituteServiceProvider
@@ -289,12 +280,11 @@ public class BrokerClientCallbacksInvokerTests
     [SuppressMessage("Usage", "xUnit1004:Test methods should not be skipped", Justification = "To be reviewed")]
     public async Task InvokeAsync_ShouldSwallowHandlerExceptions()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker()
-                .AddTransientBrokerClientCallback<ThrowingCallbackOneHandlerAsync>());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker()
+            .AddTransientBrokerClientCallback<ThrowingCallbackOneHandlerAsync>());
 
         IBrokerClientCallbacksInvoker invoker = serviceProvider.GetRequiredService<IBrokerClientCallbacksInvoker>();
 

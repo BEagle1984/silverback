@@ -42,9 +42,12 @@ internal sealed class TypeSubscription : ISubscription
 
         TypeSubscriptionOptions methodOptions = new()
         {
-            Filters = [.. Options.Filters
-                .Union(methodInfo.GetCustomAttributes<MessageFilterAttribute>(false))
-                .Distinct()],
+            Filters =
+            [
+                .. Options.Filters
+                    .Union(methodInfo.GetCustomAttributes<MessageFilterAttribute>(false))
+                    .Distinct()
+            ],
             IsExclusive = subscribeAttribute?.Exclusive ?? Options.IsExclusive,
             AutoSubscribeAllPublicMethods = Options.AutoSubscribeAllPublicMethods
         };
@@ -63,10 +66,9 @@ internal sealed class TypeSubscription : ISubscription
     // the ones inherited from the base classes (to avoid calling object.Equals and similar methods).
     private IEnumerable<MethodInfo> GetMethods(Type type) =>
         type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(
-                methodInfo =>
-                    methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                    Options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
-                    !methodInfo.IsSpecialName &&
-                    methodInfo.DeclaringType == type && methodInfo.GetParameters().Length != 0);
+            .Where(methodInfo =>
+                methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
+                Options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
+                !methodInfo.IsSpecialName &&
+                methodInfo.DeclaringType == type && methodInfo.GetParameters().Length != 0);
 }

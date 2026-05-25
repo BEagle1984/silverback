@@ -39,7 +39,7 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 3),
                 new KafkaOffset("topic", 2, 5)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 2),
                 new KafkaOffset("topic", 2, 4)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -93,13 +93,13 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 3),
                 new KafkaOffset("topic", 2, 4)
             ],
-            ignoreOrder: true);
+            true);
         tracker.GetCommitOffsets().ShouldBe(
             [
                 new KafkaOffset("topic", 1, 3),
                 new KafkaOffset("topic", 2, 5)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 3),
                 new KafkaOffset("topic", 2, 6)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 1),
                 new KafkaOffset("topic", 2, 4)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 3),
                 new KafkaOffset("topic", 2, 6)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -179,6 +179,6 @@ public class OffsetsTrackerTests
                 new KafkaOffset("topic", 1, 1),
                 new KafkaOffset("topic", 2, 4)
             ],
-            ignoreOrder: true);
+            true);
     }
 }

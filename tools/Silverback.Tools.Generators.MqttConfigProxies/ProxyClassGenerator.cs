@@ -115,40 +115,36 @@ public class ProxyClassGenerator
 
     private IEnumerable<PropertyInfo> GetProxiedTypeProperties() =>
         ReflectionHelper.GetProperties(_proxiedType, true)
-            .Where(
-                property => property.DeclaringType != typeof(MqttClientOptions) ||
-                            property.Name
-                                is not nameof(MqttClientOptions.UserProperties)
-                                and not nameof(MqttClientOptions.ProtocolVersion)
-                                and not nameof(MqttClientOptions.ClientId)
-                                and not nameof(MqttClientOptions.ChannelOptions)
-                                and not nameof(MqttClientOptions.WillContentType)
-                                and not nameof(MqttClientOptions.WillCorrelationData)
-                                and not nameof(MqttClientOptions.WillMessageExpiryInterval)
-                                and not nameof(MqttClientOptions.WillPayload)
-                                and not nameof(MqttClientOptions.WillPayloadFormatIndicator)
-                                and not nameof(MqttClientOptions.WillQualityOfServiceLevel)
-                                and not nameof(MqttClientOptions.WillResponseTopic)
-                                and not nameof(MqttClientOptions.WillRetain)
-                                and not nameof(MqttClientOptions.WillTopic)
-                                and not nameof(MqttClientOptions.WillUserProperties)
-                                and not nameof(MqttClientOptions.WillDelayInterval))
-            .Where(
-                property => property.DeclaringType != typeof(MqttClientTlsOptions) ||
-                            property.Name
-                                is not nameof(MqttClientTlsOptions.ApplicationProtocols)
-                                and not nameof(MqttClientTlsOptions.CipherSuitesPolicy)
-                                and not nameof(MqttClientTlsOptions.EncryptionPolicy)
-                                and not nameof(MqttClientTlsOptions.AllowRenegotiation)
-                                and not nameof(MqttClientTlsOptions.TrustChain))
-            .Where(
-                property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
-                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
-            .Where(
-                property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
-                            property.Name
-                                is not nameof(MqttClientWebSocketOptions.TlsOptions)
-                                and not nameof(MqttClientWebSocketOptions.ProxyOptions));
+            .Where(property => property.DeclaringType != typeof(MqttClientOptions) ||
+                               property.Name
+                                   is not nameof(MqttClientOptions.UserProperties)
+                                   and not nameof(MqttClientOptions.ProtocolVersion)
+                                   and not nameof(MqttClientOptions.ClientId)
+                                   and not nameof(MqttClientOptions.ChannelOptions)
+                                   and not nameof(MqttClientOptions.WillContentType)
+                                   and not nameof(MqttClientOptions.WillCorrelationData)
+                                   and not nameof(MqttClientOptions.WillMessageExpiryInterval)
+                                   and not nameof(MqttClientOptions.WillPayload)
+                                   and not nameof(MqttClientOptions.WillPayloadFormatIndicator)
+                                   and not nameof(MqttClientOptions.WillQualityOfServiceLevel)
+                                   and not nameof(MqttClientOptions.WillResponseTopic)
+                                   and not nameof(MqttClientOptions.WillRetain)
+                                   and not nameof(MqttClientOptions.WillTopic)
+                                   and not nameof(MqttClientOptions.WillUserProperties)
+                                   and not nameof(MqttClientOptions.WillDelayInterval))
+            .Where(property => property.DeclaringType != typeof(MqttClientTlsOptions) ||
+                               property.Name
+                                   is not nameof(MqttClientTlsOptions.ApplicationProtocols)
+                                   and not nameof(MqttClientTlsOptions.CipherSuitesPolicy)
+                                   and not nameof(MqttClientTlsOptions.EncryptionPolicy)
+                                   and not nameof(MqttClientTlsOptions.AllowRenegotiation)
+                                   and not nameof(MqttClientTlsOptions.TrustChain))
+            .Where(property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
+                               property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
+            .Where(property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
+                               property.Name
+                                   is not nameof(MqttClientWebSocketOptions.TlsOptions)
+                                   and not nameof(MqttClientWebSocketOptions.ProxyOptions));
 
     private void GenerateFooter() => _stringBuilder.AppendLine("}");
 }

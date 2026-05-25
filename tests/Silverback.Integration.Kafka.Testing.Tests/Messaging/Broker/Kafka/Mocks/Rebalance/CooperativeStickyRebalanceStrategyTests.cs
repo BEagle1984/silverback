@@ -173,7 +173,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 3),
                 new TopicPartition("topic1", 4)
             ],
-            ignoreOrder: true);
+            true);
         result.RevokedPartitions[consumer2].ShouldBe(
         [
             new TopicPartition("topic1", 9)
@@ -188,7 +188,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 4),
                 new TopicPartition("topic1", 9)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]

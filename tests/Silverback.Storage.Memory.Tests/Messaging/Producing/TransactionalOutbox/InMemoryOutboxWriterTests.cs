@@ -19,11 +19,10 @@ public class InMemoryOutboxWriterTests
     [Fact]
     public async Task AddAsync_ShouldAddItemToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
@@ -43,11 +42,10 @@ public class InMemoryOutboxWriterTests
     [Fact]
     public async Task AddAsync_ShouldAddItemsToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
@@ -65,11 +63,10 @@ public class InMemoryOutboxWriterTests
     [Fact]
     public async Task AddAsync_ShouldAddAsyncItemsToStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
@@ -87,11 +84,10 @@ public class InMemoryOutboxWriterTests
     [Fact]
     public async Task AddAsync_ShouldAddItemToCorrectStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings1 = new("outbox1");
         InMemoryOutboxSettings outboxSettings2 = new("outbox2");

@@ -38,37 +38,28 @@ public partial class SchemaRegistryTests
             }
             """;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .SerializeAsJsonUsingSchemaRegistry(
-                                            json => json
-                                                .ConnectToSchemaRegistry("http://e2e:4242")
-                                                .Configure(
-                                                    config =>
-                                                    {
-                                                        config.AutoRegisterSchemas = false;
-                                                    }))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .DeserializeJsonUsingSchemaRegistry(
-                                            json => json
-                                                .ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .SerializeAsJsonUsingSchemaRegistry(json => json
+                            .ConnectToSchemaRegistry("http://e2e:4242")
+                            .Configure(config =>
+                            {
+                                config.AutoRegisterSchemas = false;
+                            }))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .DeserializeJsonUsingSchemaRegistry(json => json
+                            .ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory = Host.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>();
         ISchemaRegistryClient schemaRegistryClient = schemaRegistryClientFactory.GetClient(registry => registry.WithUrl("http://e2e:4242"));
@@ -88,7 +79,7 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -112,36 +103,28 @@ public partial class SchemaRegistryTests
             }
             """;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .SerializeAsJsonUsingSchemaRegistry(
-                                            json => json
-                                                .ConnectToSchemaRegistry("http://e2e:4242")
-                                                .Configure(
-                                                    config =>
-                                                    {
-                                                        config.AutoRegisterSchemas = false;
-                                                        config.NormalizeSchemas = true;
-                                                    }))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .SerializeAsJsonUsingSchemaRegistry(json => json
+                            .ConnectToSchemaRegistry("http://e2e:4242")
+                            .Configure(config =>
+                            {
+                                config.AutoRegisterSchemas = false;
+                                config.NormalizeSchemas = true;
+                            }))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory = Host.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>();
         ISchemaRegistryClient schemaRegistryClient = schemaRegistryClientFactory.GetClient(registry => registry.WithUrl("http://e2e:4242"));
@@ -162,34 +145,28 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 
     [Fact]
     public async Task SchemaRegistry_ShouldProduceAndConsumeJson_WhenAutoRegistering()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .SerializeAsJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .SerializeAsJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .DeserializeJsonUsingSchemaRegistry(json => json.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -203,6 +180,6 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 }

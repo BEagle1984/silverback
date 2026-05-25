@@ -51,7 +51,7 @@ public class SchemaRegistryBuilderGenerator : BuilderGenerator
         StringBuilder.Append(fieldsStringBuilder);
         StringBuilder.Append(propertiesStringBuilder);
         StringBuilder.AppendLine($"    private {BuiltTypeName} BuildCore() =>");
-        StringBuilder.AppendLine($"        new()");
+        StringBuilder.AppendLine("        new()");
         StringBuilder.AppendLine("        {");
         StringBuilder.Append(buildMethodStringBuilder);
         StringBuilder.AppendLine("        };");

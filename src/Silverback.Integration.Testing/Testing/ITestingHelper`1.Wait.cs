@@ -54,7 +54,7 @@ public partial interface ITestingHelper
     /// </summary>
     /// <param name="throwTimeoutException">
     ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the connection isn't established before the
-    /// <see cref="CancellationToken" /> is canceled.
+    ///     <see cref="CancellationToken" /> is canceled.
     /// </param>
     /// <param name="cancellationToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
@@ -103,7 +103,7 @@ public partial interface ITestingHelper
     /// </remarks>
     /// <param name="throwTimeoutException">
     ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
-    /// timeout elapses.
+    ///     timeout elapses.
     /// </param>
     /// <param name="endpointNames">
     ///     The names of the endpoints to wait for. If not specified, all endpoints are considered.
@@ -121,7 +121,7 @@ public partial interface ITestingHelper
     /// </remarks>
     /// <param name="throwTimeoutException">
     ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
-    /// timeout elapses.
+    ///     timeout elapses.
     /// </param>
     /// <param name="timeout">
     ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
@@ -139,7 +139,7 @@ public partial interface ITestingHelper
     /// </remarks>
     /// <param name="throwTimeoutException">
     ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages aren't consumed before the
-    /// timeout elapses.
+    ///     timeout elapses.
     /// </param>
     /// <param name="timeout">
     ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.

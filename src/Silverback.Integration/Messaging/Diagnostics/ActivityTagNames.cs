@@ -26,7 +26,7 @@ public static class ActivityTagNames
     public const string MessageDestination = "messaging.destination";
 
     /// <summary>
-    ///     The name of the tag that contains the sequence identifier (e.g. the <see cref="BatchSequence"/> or <see cref="ChunkSequence"/> identifier).
+    ///     The name of the tag that contains the sequence identifier (e.g. the <see cref="BatchSequence" /> or <see cref="ChunkSequence" /> identifier).
     /// </summary>
     public const string SequenceId = "messaging.sequence_id";
 }

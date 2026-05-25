@@ -51,10 +51,9 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(
-                serializer => serializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .SerializeAsAvro(serializer => serializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
@@ -66,10 +65,9 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(
-                serializer => serializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .SerializeAsAvro(serializer => serializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<AvroMessageSerializer<TestEventOne>>();
@@ -104,10 +102,9 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsJsonUsingSchemaRegistry(
-                serializer => serializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .SerializeAsJsonUsingSchemaRegistry(serializer => serializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
@@ -119,10 +116,9 @@ public class ProducerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsJsonUsingSchemaRegistry(
-                serializer => serializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .SerializeAsJsonUsingSchemaRegistry(serializer => serializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.ShouldBeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();

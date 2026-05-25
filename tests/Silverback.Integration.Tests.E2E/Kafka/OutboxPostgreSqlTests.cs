@@ -40,34 +40,28 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     {
         string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddPostgreSqlOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -82,7 +76,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -90,42 +84,34 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     {
         string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(
-                    async storageInitializer =>
-                    {
-                        await storageInitializer.CreatePostgreSqlOutboxAsync(connectionString);
-                        await storageInitializer.CreatePostgreSqlLocksTableAsync(connectionString);
-                    })
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
-                                .WithDistributedLock(
-                                    distributedLock => distributedLock
-                                        .UsePostgreSqlTable("outbox-lock", connectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(async storageInitializer =>
+            {
+                await storageInitializer.CreatePostgreSqlOutboxAsync(connectionString);
+                await storageInitializer.CreatePostgreSqlLocksTableAsync(connectionString);
+            })
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddPostgreSqlOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
+                    .WithDistributedLock(distributedLock => distributedLock
+                        .UsePostgreSqlTable("outbox-lock", connectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -140,7 +126,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -148,34 +134,28 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     {
         string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddPostgreSqlOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -184,7 +164,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
             {
                 new() { ContentEventOne = "1" },
                 new() { ContentEventOne = "2" },
-                new() { ContentEventOne = "3" },
+                new() { ContentEventOne = "3" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -193,7 +173,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -201,34 +181,28 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     {
         string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddPostgreSqlOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UsePostgreSql(connectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -237,7 +211,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
             {
                 new() { ContentEventOne = "1" },
                 new() { ContentEventOne = "2" },
-                new() { ContentEventOne = "3" },
+                new() { ContentEventOne = "3" }
             }.ToAsyncEnumerable());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -246,7 +220,7 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -254,35 +228,29 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
     {
         string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox
-                                    .UsePostgreSql(connectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(connectionString))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddPostgreSqlOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox
+                        .UsePostgreSql(connectionString))
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UsePostgreSql(connectionString))))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         await using NpgsqlConnection connection = new(connectionString);
         await connection.OpenAsync();
@@ -326,6 +294,6 @@ public class OutboxPostgreSqlTests : KafkaTests, IClassFixture<PostgresContainer
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), true);
     }
 }

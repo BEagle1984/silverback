@@ -17,11 +17,10 @@ public partial class BrokerOptionsBuilderEntityFrameworkExtensionsTests
     [Fact]
     public void AddEntityFrameworkKafkaOffsetStore_ShouldConfigureOffsetStoreFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
 

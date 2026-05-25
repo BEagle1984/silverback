@@ -19,10 +19,10 @@
     <Product>Silverback.Core.Rx</Product>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="System.Reactive"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

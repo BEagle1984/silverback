@@ -47,7 +47,7 @@ public partial class ProducerTests
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}"
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]

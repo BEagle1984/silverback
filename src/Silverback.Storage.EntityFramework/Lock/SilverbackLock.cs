@@ -37,7 +37,7 @@ public class SilverbackLock
     public DateTime? LastHeartbeat { get; set; }
 
     /// <summary>
-    ///    Gets or sets the concurrency token.
+    ///     Gets or sets the concurrency token.
     /// </summary>
     [Timestamp]
     [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Required by Entity Framework")]

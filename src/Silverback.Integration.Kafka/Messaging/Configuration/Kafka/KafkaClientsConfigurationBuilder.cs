@@ -1055,7 +1055,7 @@ public partial class KafkaClientsConfigurationBuilder
     /// <summary>
     ///     Sets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload
     ///     with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication.
-    /// Only used when <c>sasl.oauthbearer.method</c> is set to "oidc".
+    ///     Only used when <c>sasl.oauthbearer.method</c> is set to "oidc".
     /// </summary>
     /// <param name="saslOauthbearerSubClaimName">
     ///     The JWT claim name to use as the subject (principal) when validating OIDC access tokens.

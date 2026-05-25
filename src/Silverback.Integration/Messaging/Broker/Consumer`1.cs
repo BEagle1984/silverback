@@ -137,19 +137,18 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
         await StopAsync(false).ConfigureAwait(false);
 
-        Task.Run(
-                async () =>
+        Task.Run(async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                        await Client.ReconnectAsync().ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        _isReconnecting = false;
-                    }
-                })
+                    await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                    await Client.ReconnectAsync().ConfigureAwait(false);
+                }
+                finally
+                {
+                    _isReconnecting = false;
+                }
+            })
             .FireAndForget();
     }
 

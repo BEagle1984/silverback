@@ -50,24 +50,23 @@ public sealed partial class BrokerOptionsBuilder
         Check.NotNull(settings, nameof(settings));
 
         SilverbackBuilder.Services
-            .AddSingleton<IHostedService>(
-                serviceProvider =>
-                {
-                    OutboxWorker outboxWorker = new(
-                        settings,
-                        serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox, serviceProvider),
-                        serviceProvider.GetRequiredService<IProducerCollection>(),
-                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorker>>());
+            .AddSingleton<IHostedService>(serviceProvider =>
+            {
+                OutboxWorker outboxWorker = new(
+                    settings,
+                    serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox, serviceProvider),
+                    serviceProvider.GetRequiredService<IProducerCollection>(),
+                    serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorker>>());
 
-                    IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
-                    IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock, serviceProvider);
+                IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+                IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock, serviceProvider);
 
-                    return new OutboxWorkerService(
-                        settings,
-                        outboxWorker,
-                        distributedLock,
-                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorkerService>>());
-                });
+                return new OutboxWorkerService(
+                    settings,
+                    outboxWorker,
+                    distributedLock,
+                    serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorkerService>>());
+            });
 
         return this;
     }

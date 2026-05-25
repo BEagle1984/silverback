@@ -20,16 +20,15 @@ public class EnumerableSelectExtensionsTests
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
 
-        IEnumerable<int> result = enumerable.ParallelSelect(
-            item =>
-            {
-                countdownEvent.Signal();
-                countdownEvent.WaitOrThrow();
+        IEnumerable<int> result = enumerable.ParallelSelect(item =>
+        {
+            countdownEvent.Signal();
+            countdownEvent.WaitOrThrow();
 
-                return item * 2;
-            });
+            return item * 2;
+        });
 
-        result.ShouldBe([2, 4, 6], ignoreOrder: true);
+        result.ShouldBe([2, 4, 6], true);
     }
 
     [Fact]

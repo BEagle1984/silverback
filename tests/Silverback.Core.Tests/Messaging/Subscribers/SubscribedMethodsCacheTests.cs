@@ -169,6 +169,14 @@ public class SubscribedMethodsCacheTests
         result.ShouldBeFalse();
     }
 
+    private record IEvent;
+
+    private record BaseEventOne : IEvent;
+
+    private record TestEventOne : BaseEventOne;
+
+    private record TestEventTwo : IEvent;
+
     private class Envelope<T> : IEnvelope<T>
         where T : new()
     {
@@ -188,12 +196,4 @@ public class SubscribedMethodsCacheTests
 
         object? IEnvelope.Message => Message;
     }
-
-    private record IEvent;
-
-    private record BaseEventOne : IEvent;
-
-    private record TestEventOne : BaseEventOne;
-
-    private record TestEventTwo : IEvent;
 }

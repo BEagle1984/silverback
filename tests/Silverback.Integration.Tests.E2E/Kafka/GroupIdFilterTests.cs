@@ -31,24 +31,20 @@ public class GroupIdFilterTests : KafkaTests
     [Fact]
     public async Task GroupIdFilterAttribute_ShouldFilterAccordingToGroupId_WhenSubscriberDecorated()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonSubscriber<DecoratedSubscriber>()
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group1")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group2")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonSubscriber<DecoratedSubscriber>()
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -68,31 +64,27 @@ public class GroupIdFilterTests : KafkaTests
     [Fact]
     public async Task GroupIdFilterAttribute_ShouldFilterAccordingToGroupId_WhenAddedViaConfiguration()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonSubscriber<Subscriber>(
-                    new TypeSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new KafkaGroupIdFilterAttribute("group1")
-                        ]
-                    })
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group1")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group2")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonSubscriber<Subscriber>(
+                new TypeSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new KafkaGroupIdFilterAttribute("group1")
+                    ]
+                })
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -114,41 +106,37 @@ public class GroupIdFilterTests : KafkaTests
         int received1 = 0;
         int received2 = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IEvent>(
-                    HandleEventGroup1,
-                    new DelegateSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new KafkaGroupIdFilterAttribute("group1")
-                        ]
-                    })
-                .AddDelegateSubscriber<IEvent>(
-                    HandleEventGroup2,
-                    new DelegateSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new KafkaGroupIdFilterAttribute("group2")
-                        ]
-                    })
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group1")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group2")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<IEvent>(
+                HandleEventGroup1,
+                new DelegateSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new KafkaGroupIdFilterAttribute("group1")
+                    ]
+                })
+            .AddDelegateSubscriber<IEvent>(
+                HandleEventGroup2,
+                new DelegateSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new KafkaGroupIdFilterAttribute("group2")
+                    ]
+                })
+            .AddIntegrationSpy());
 
         void HandleEventGroup1(IEvent message) => Interlocked.Increment(ref received1);
         void HandleEventGroup2(IEvent message) => Interlocked.Increment(ref received2);
@@ -170,26 +158,21 @@ public class GroupIdFilterTests : KafkaTests
     [Fact]
     public async Task GroupIdFilterAttribute_ShouldFilterAccordingToGroupId_WhenBatchSubscribedAsStream()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3))))
-                .AddSingletonSubscriber<StreamSubscriber>()
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group1")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group2")
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(3))))
+            .AddSingletonSubscriber<StreamSubscriber>()
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 

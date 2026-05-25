@@ -62,8 +62,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The correlation data.
     /// </returns>
-    public static string? GetMqttCorrelationDataAsString(this IBrokerEnvelope envelope) =>
-        GetMqttCorrelationData(envelope).ToUtf8String();
+    public static string? GetMqttCorrelationDataAsString(this IBrokerEnvelope envelope) => envelope.GetMqttCorrelationData().ToUtf8String();
 
     /// <summary>
     ///     Sets the correlation data.
@@ -96,8 +95,7 @@ public static class MqttEnvelopeExtensions
     /// <returns>
     ///     The <see cref="IOutboundEnvelope" /> so that additional calls can be chained.
     /// </returns>
-    public static IOutboundEnvelope SetMqttCorrelationData(this IOutboundEnvelope envelope, string? correlationData) =>
-        SetMqttCorrelationData(envelope, correlationData.ToUtf8Bytes());
+    public static IOutboundEnvelope SetMqttCorrelationData(this IOutboundEnvelope envelope, string? correlationData) => envelope.SetMqttCorrelationData(correlationData.ToUtf8Bytes());
 
     /// <summary>
     ///     Gets destination topic.

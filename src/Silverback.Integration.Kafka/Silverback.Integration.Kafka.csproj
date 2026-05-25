@@ -19,10 +19,10 @@
     <Product>Silverback.Integration.Kafka</Product>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="Confluent.Kafka"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

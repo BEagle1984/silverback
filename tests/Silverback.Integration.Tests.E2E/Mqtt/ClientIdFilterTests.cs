@@ -29,18 +29,16 @@ public class ClientIdFilterTests : MqttTests
     [Fact]
     public async Task ClientIdFilterAttribute_ShouldFilterAccordingToClientId_WhenSubscriberDecorated()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonSubscriber<DecoratedSubscriber>()
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonSubscriber<DecoratedSubscriber>()
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -60,25 +58,23 @@ public class ClientIdFilterTests : MqttTests
     [Fact]
     public async Task ClientIdFilterAttribute_ShouldFilterAccordingToClientId_WhenAddedViaConfiguration()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonSubscriber<Subscriber>(
-                    new TypeSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new MqttClientIdFilterAttribute("client1")
-                        ]
-                    })
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonSubscriber<Subscriber>(
+                new TypeSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new MqttClientIdFilterAttribute("client1")
+                    ]
+                })
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -100,35 +96,33 @@ public class ClientIdFilterTests : MqttTests
         int received1 = 0;
         int received2 = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IEvent>(
-                    HandleEventClient1,
-                    new DelegateSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new MqttClientIdFilterAttribute("client1")
-                        ]
-                    })
-                .AddDelegateSubscriber<IEvent>(
-                    HandleEventClient2,
-                    new DelegateSubscriptionOptions
-                    {
-                        Filters =
-                        [
-                            new MqttClientIdFilterAttribute("client2")
-                        ]
-                    })
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client.WithClientId("client1").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddClient(client => client.WithClientId("client2").Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<IEvent>(
+                HandleEventClient1,
+                new DelegateSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new MqttClientIdFilterAttribute("client1")
+                    ]
+                })
+            .AddDelegateSubscriber<IEvent>(
+                HandleEventClient2,
+                new DelegateSubscriptionOptions
+                {
+                    Filters =
+                    [
+                        new MqttClientIdFilterAttribute("client2")
+                    ]
+                })
+            .AddIntegrationSpy());
 
         void HandleEventClient1(IEvent message) => Interlocked.Increment(ref received1);
         void HandleEventClient2(IEvent message) => Interlocked.Increment(ref received2);

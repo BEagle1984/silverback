@@ -57,7 +57,9 @@ public static class HeadersHelper
         string? contentType)
     {
         foreach (MessageHeader header in GetHeadersCore(kafkaKey, messageType, contentType))
+        {
             yield return header;
+        }
 
         yield return new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex.ToString(CultureInfo.InvariantCulture));
 

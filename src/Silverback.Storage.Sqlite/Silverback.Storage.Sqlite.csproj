@@ -19,15 +19,15 @@
     <Product>Silverback.Storage.Sqlite</Product>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
-    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj"/>
+    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" />
-    <PackageReference Include="System.Linq.Async" />
+    <PackageReference Include="Microsoft.Data.Sqlite"/>
+    <PackageReference Include="System.Linq.Async"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

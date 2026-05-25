@@ -15,10 +15,9 @@ internal static class ProtobufMessageTypeValidator
             throw new SilverbackConfigurationException($"{messageType.Name} does not implement IMessage<{messageType.Name}>.");
 
         if (messageType.GetInterfaces()
-            .All(
-                interfaceType => !interfaceType.IsGenericType ||
-                                 interfaceType.GetGenericTypeDefinition() != typeof(IMessage<>) ||
-                                 interfaceType.GetGenericArguments()[0] != messageType))
+            .All(interfaceType => !interfaceType.IsGenericType ||
+                                  interfaceType.GetGenericTypeDefinition() != typeof(IMessage<>) ||
+                                  interfaceType.GetGenericArguments()[0] != messageType))
         {
             throw new SilverbackConfigurationException($"{messageType.Name} does not implement IMessage<{messageType.Name}>.");
         }

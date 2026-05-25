@@ -87,11 +87,11 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     private static MethodInfo GetWrapAndProduceBatchMethodInfo(Type enumerableType, Type messageType) =>
         WrapAndProduceBatchMethods.GetOrAdd(
                 enumerableType,
-                static type => typeof(IMessageWrapper).GetMethods().First(
-                    method => method.Name == nameof(IMessageWrapper.WrapAndProduceBatchAsync) &&
-                              method.GetParameters().Length == 5 &&
-                              method.GetParameters()[0].ParameterType.IsGenericType &&
-                              method.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type))
+                static type => typeof(IMessageWrapper).GetMethods()
+                    .First(method => method.Name == nameof(IMessageWrapper.WrapAndProduceBatchAsync) &&
+                                     method.GetParameters().Length == 5 &&
+                                     method.GetParameters()[0].ParameterType.IsGenericType &&
+                                     method.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type))
             .MakeGenericMethod(messageType);
 
     private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(IPublisher publisher, object message, CancellationToken cancellationToken)
@@ -110,9 +110,9 @@ public class OutboundRouterBehavior : IBehavior, ISorted
             static (_, args) => args.EnumerableType != null
                 ? GetWrapAndProduceBatchMethodInfo(args.EnumerableType, args.ActualMessageType)
                 : (_singleMessageWrapAndProduceMethod ??=
-                    typeof(IMessageWrapper).GetMethods().First(
-                        method => method.Name == nameof(IMessageWrapper.WrapAndProduceAsync) &&
-                                  method.GetParameters().Length == 5)).MakeGenericMethod(args.ActualMessageType),
+                    typeof(IMessageWrapper).GetMethods()
+                        .First(method => method.Name == nameof(IMessageWrapper.WrapAndProduceAsync) &&
+                                         method.GetParameters().Length == 5)).MakeGenericMethod(args.ActualMessageType),
             (EnumerableType: enumerableType, ActualMessageType: actualMessageType));
 
         await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, publisher, producers, null, cancellationToken])!).ConfigureAwait(false);

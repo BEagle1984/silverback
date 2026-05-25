@@ -21,22 +21,18 @@ public partial class ConsumerEndpointTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .DisableOffsetsCommit()
-                                .Consume(DefaultTopicName, endpoint => endpoint.ConsumeFrom(DefaultTopicName, 0, 1, 2))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .DisableOffsetsCommit()
+                    .Consume(DefaultTopicName, endpoint => endpoint.ConsumeFrom(DefaultTopicName, 0, 1, 2))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 

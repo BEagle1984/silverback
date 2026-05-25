@@ -20,11 +20,10 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     [Fact]
     public void AddInMemoryKafkaOffsetStore_ShouldConfigureOffsetStoreFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
 
@@ -36,11 +35,10 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     [Fact]
     public void UseInMemoryKafkaOffsetStore_ShouldOverrideAllOffsetStoreSettingsTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().UseInMemoryKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().UseInMemoryKafkaOffsetStore()));
 
         KafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<KafkaOffsetStoreFactory>();
 

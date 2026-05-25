@@ -18,11 +18,10 @@ public class SilverbackBuilderMemoryExtensionsTests
     [Fact]
     public void AddInMemoryLock_ShouldConfigureLockFactory()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
@@ -35,11 +34,10 @@ public class SilverbackBuilderMemoryExtensionsTests
     [Fact]
     public void UseInMemoryLock_ShouldOverrideAllLockSettingsTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .UseInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .UseInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
         lockFactory.AddFactory<LockSettings1>((_, _) => new DistributedLock1());

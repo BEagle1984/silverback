@@ -83,12 +83,10 @@ public partial class ProducerEndpointConfigurationBuilderTests
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration configuration = builder.SerializeAsJson(
-            serializer => serializer.Configure(
-                options =>
-                {
-                    options.MaxDepth = 42;
-                })).Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJson(serializer => serializer.Configure(options =>
+        {
+            options.MaxDepth = 42;
+        })).Build();
 
         JsonMessageSerializer jsonSerializer = configuration.Serializer.ShouldBeOfType<JsonMessageSerializer>();
         jsonSerializer.Options!.MaxDepth.ShouldBe(42);
@@ -119,9 +117,8 @@ public partial class ProducerEndpointConfigurationBuilderTests
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration configuration = builder.ProduceStrings(
-            serializer => serializer
-                .WithEncoding(MessageEncoding.ASCII)).Build();
+        TestProducerEndpointConfiguration configuration = builder.ProduceStrings(serializer => serializer
+            .WithEncoding(MessageEncoding.ASCII)).Build();
 
         StringMessageSerializer stringSerializer = configuration.Serializer.ShouldBeOfType<StringMessageSerializer>();
         stringSerializer.Encoding.ShouldBe(MessageEncoding.ASCII);

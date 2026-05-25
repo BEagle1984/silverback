@@ -35,18 +35,16 @@ public static partial class BrokerOptionsBuilderEntityFrameworkExtensions
 
         if (!readerFactory.HasFactory<EntityFrameworkOutboxSettings>())
         {
-            readerFactory.AddFactory<EntityFrameworkOutboxSettings>(
-                (settings, serviceProvider) => new EntityFrameworkOutboxReader(
-                    settings,
-                    serviceProvider.GetRequiredService<IServiceScopeFactory>()));
+            readerFactory.AddFactory<EntityFrameworkOutboxSettings>((settings, serviceProvider) => new EntityFrameworkOutboxReader(
+                settings,
+                serviceProvider.GetRequiredService<IServiceScopeFactory>()));
         }
 
         if (!writerFactory.HasFactory<EntityFrameworkOutboxSettings>())
         {
-            writerFactory.AddFactory<EntityFrameworkOutboxSettings>(
-                (settings, serviceProvider) => new EntityFrameworkOutboxWriter(
-                    settings,
-                    serviceProvider.GetRequiredService<IServiceScopeFactory>()));
+            writerFactory.AddFactory<EntityFrameworkOutboxSettings>((settings, serviceProvider) => new EntityFrameworkOutboxWriter(
+                settings,
+                serviceProvider.GetRequiredService<IServiceScopeFactory>()));
         }
 
         builder.SilverbackBuilder.AddEntityFrameworkLock();

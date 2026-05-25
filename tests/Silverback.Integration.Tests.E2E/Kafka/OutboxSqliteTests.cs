@@ -71,7 +71,7 @@ public class OutboxSqliteTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class OutboxSqliteTests : KafkaTests
             {
                 new() { ContentEventOne = "1" },
                 new() { ContentEventOne = "2" },
-                new() { ContentEventOne = "3" },
+                new() { ContentEventOne = "3" }
             });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -118,7 +118,7 @@ public class OutboxSqliteTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -156,7 +156,7 @@ public class OutboxSqliteTests : KafkaTests
             {
                 new() { ContentEventOne = "1" },
                 new() { ContentEventOne = "2" },
-                new() { ContentEventOne = "3" },
+                new() { ContentEventOne = "3" }
             }.ToAsyncEnumerable());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -165,7 +165,7 @@ public class OutboxSqliteTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public class OutboxSqliteTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), true);
     }
 
     [Fact]
@@ -284,6 +284,6 @@ public class OutboxSqliteTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
     }
 }

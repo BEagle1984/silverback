@@ -14,7 +14,7 @@ public interface IBrokerMessageIdentifiersTracker
     ///     Tracks the specified identifier.
     /// </summary>
     /// <param name="identifier">
-    ///    The identifier to be tracked.
+    ///     The identifier to be tracked.
     /// </param>
     void TrackIdentifier(IBrokerMessageIdentifier identifier);
 

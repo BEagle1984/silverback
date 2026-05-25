@@ -21,30 +21,27 @@ public partial class BrokerClientCallbacksTests
     [Fact]
     public async Task PartitionEofCallback_ShouldBeInvokedForAllConsumers()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .AddSingletonBrokerClientCallback<KafkaPartitionEofCallback>()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            "consumer1",
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .EnablePartitionEof()
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer(
-                            "consumer2",
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .EnablePartitionEof()
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic2"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .AddSingletonBrokerClientCallback<KafkaPartitionEofCallback>()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(
+                    "consumer1",
+                    consumer => consumer
+                        .WithGroupId("group1")
+                        .EnablePartitionEof()
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer(
+                    "consumer2",
+                    consumer => consumer
+                        .WithGroupId("group2")
+                        .EnablePartitionEof()
+                        .Consume(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
 
         KafkaPartitionEofCallback callbackKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
             .ServiceProvider

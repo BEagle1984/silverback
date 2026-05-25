@@ -22,11 +22,10 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber(_ => new SimpleSubscriber(messages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber(_ => new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -41,11 +40,10 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddTransientSubscriber(_ => new SimpleSubscriber(messages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientSubscriber(_ => new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -60,12 +58,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
-                .AddTransientSubscriber(_ => new SimpleSubscriber(messages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
+            .AddTransientSubscriber(_ => new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -80,11 +77,10 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleSubscriber(messages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -99,12 +95,11 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
-                .AddSingletonSubscriber(new SimpleSubscriber(messages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddScopedSubscriber<OtherMessageSubscriber>() // This is not invoked, so it should not throw
+            .AddSingletonSubscriber(new SimpleSubscriber(messages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -121,11 +116,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> asyncMessages = [];
         TestingCollection<TestEventOne> asyncValueTaskMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SyncAndAsyncSubscriber(syncMessages, asyncMessages, asyncValueTaskMessages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SyncAndAsyncSubscriber(syncMessages, asyncMessages, asyncValueTaskMessages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -143,12 +137,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleSubscriber(messages1))
-                .AddSingletonSubscriber(new SimpleOtherSubscriber(messages2)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleSubscriber(messages1))
+            .AddSingletonSubscriber(new SimpleOtherSubscriber(messages2)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -167,11 +160,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> privateMessages = [];
         TestingCollection<TestEventOne> privateDecoratedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new VisibilitiesSubscriber(publicMessages, publicDecoratedMessages, privateMessages, privateDecoratedMessages)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new VisibilitiesSubscriber(publicMessages, publicDecoratedMessages, privateMessages, privateDecoratedMessages)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -192,13 +184,12 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> privateMessages = [];
         TestingCollection<TestEventOne> privateDecoratedMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(
-                    new VisibilitiesSubscriber(publicMessages, publicDecoratedMessages, privateMessages, privateDecoratedMessages),
-                    false));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(
+                new VisibilitiesSubscriber(publicMessages, publicDecoratedMessages, privateMessages, privateDecoratedMessages),
+                false));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -217,11 +208,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleExclusiveSubscriber(messages1, messages2)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleExclusiveSubscriber(messages1, messages2)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -237,11 +227,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleExclusiveSubscriber(messages1, messages2)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleExclusiveSubscriber(messages1, messages2)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -257,11 +246,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleNotExclusiveSubscriber(messages1, messages2)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleNotExclusiveSubscriber(messages1, messages2)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -277,11 +265,10 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages1 = [];
         TestingCollection<TestEventOne> messages2 = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber(new SimpleNotExclusiveSubscriber(messages1, messages2)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddSingletonSubscriber(new SimpleNotExclusiveSubscriber(messages1, messages2)));
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 

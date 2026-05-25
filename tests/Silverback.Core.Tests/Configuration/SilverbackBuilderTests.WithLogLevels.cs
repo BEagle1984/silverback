@@ -21,10 +21,9 @@ public partial class SilverbackBuilderTests
         services
             .AddFakeLogger()
             .AddSilverback()
-            .WithLogLevels(
-                configurator => configurator
-                    .SetLogLevel(CoreLogEvents.BackgroundServiceException.EventId, LogLevel.Information)
-                    .SetLogLevel(CoreLogEvents.LockAcquired.EventId, LogLevel.Warning));
+            .WithLogLevels(configurator => configurator
+                .SetLogLevel(CoreLogEvents.BackgroundServiceException.EventId, LogLevel.Information)
+                .SetLogLevel(CoreLogEvents.LockAcquired.EventId, LogLevel.Warning));
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 

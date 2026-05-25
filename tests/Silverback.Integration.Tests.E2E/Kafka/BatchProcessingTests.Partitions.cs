@@ -21,25 +21,20 @@ public partial class BatchProcessingTests
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -52,13 +47,11 @@ public partial class BatchProcessingTests
             }
         }
 
-        IProducer producer = Helper.GetProducer(
-            producer => producer
-                .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+        IProducer producer = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo(DefaultTopicName)
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         for (int i = 1; i <= 10; i++)
         {
@@ -76,26 +69,22 @@ public partial class BatchProcessingTests
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<TestEventOne>(
-                                    "consumer1",
-                                    endpoint => endpoint
-                                        .ConsumeFrom("topic1", "topic2")
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(
+                        "consumer1",
+                        endpoint => endpoint
+                            .ConsumeFrom("topic1", "topic2")
+                            .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -108,20 +97,16 @@ public partial class BatchProcessingTests
             }
         }
 
-        IProducer producer1 = Helper.GetProducer(
-            producer => producer
-                .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo("topic1")
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
-        IProducer producer2 = Helper.GetProducer(
-            producer => producer
-                .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo("topic2")
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+        IProducer producer1 = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo("topic1")
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+        IProducer producer2 = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo("topic2")
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         for (int i = 1; i <= 10; i++)
         {
@@ -140,26 +125,21 @@ public partial class BatchProcessingTests
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .ProcessAllPartitionsTogether()
-                                .Consume<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(HandleBatch));
 
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
@@ -191,26 +171,21 @@ public partial class BatchProcessingTests
         TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .LimitParallelism(2)
-                                .Consume<TestEventWithKafkaKey>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(2))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .LimitParallelism(2)
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(2))))
+            .AddDelegateSubscriber<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventWithKafkaKey> batch)
         {

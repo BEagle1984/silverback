@@ -44,7 +44,7 @@ public static partial class IntegrationPublisherExtensions
         TMessage? message,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishAsync(publisher, message, null, cancellationToken);
+        publisher.WrapAndPublishAsync(message, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
@@ -164,7 +164,7 @@ public static partial class IntegrationPublisherExtensions
         IReadOnlyCollection<TMessage?> messages,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -293,7 +293,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, null, cancellationToken);
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -374,7 +374,7 @@ public static partial class IntegrationPublisherExtensions
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <param name="cancellationToken">
     ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
@@ -433,7 +433,7 @@ public static partial class IntegrationPublisherExtensions
         IEnumerable<TMessage?> messages,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -562,7 +562,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, null, cancellationToken);
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -641,7 +641,7 @@ public static partial class IntegrationPublisherExtensions
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <param name="cancellationToken">
     ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
@@ -700,7 +700,7 @@ public static partial class IntegrationPublisherExtensions
         IAsyncEnumerable<TMessage?> messages,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -829,7 +829,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         CancellationToken cancellationToken = default)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, null, cancellationToken);
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -908,7 +908,7 @@ public static partial class IntegrationPublisherExtensions
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <param name="cancellationToken">
     ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.

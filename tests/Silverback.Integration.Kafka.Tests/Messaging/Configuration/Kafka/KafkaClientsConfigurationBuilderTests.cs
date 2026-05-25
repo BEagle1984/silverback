@@ -23,19 +23,16 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task WithBootstrapServers_ShouldSetBootstrapServersForAllClients()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("consumer1")
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("consumer1")
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -53,16 +50,14 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddProducer_ShouldAddProducers()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddProducer(producer => producer.Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(producer => producer.Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddProducer(producer => producer.Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(producer => producer.Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -81,19 +76,16 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddProducer_ShouldAddTransactionalProducers()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(
-                            producer => producer
-                                .EnableTransactions("whatever")
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(producer => producer
+                    .EnableTransactions("whatever")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -114,25 +106,23 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddProducer_ShouldMergeProducerConfiguration_WhenNameIsTheSame()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddProducer(
-                            "producer1",
-                            producer => producer
-                                .WithBatchSize(42)
-                                .WithLingerMs(1)
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(
-                            "producer1",
-                            producer => producer
-                                .WithLingerMs(42)
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddProducer(
+                    "producer1",
+                    producer => producer
+                        .WithBatchSize(42)
+                        .WithLingerMs(1)
+                        .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(
+                    "producer1",
+                    producer => producer
+                        .WithLingerMs(42)
+                        .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -156,24 +146,22 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddConsumer_ShouldAddConsumers()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddConsumer(
-                            "consumer1",
-                            consumer => consumer
-                                .WithGroupId("consumer1")
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer(
-                            "consumer2",
-                            consumer => consumer
-                                .WithGroupId("consumer2")
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddConsumer(
+                    "consumer1",
+                    consumer => consumer
+                        .WithGroupId("consumer1")
+                        .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer(
+                    "consumer2",
+                    consumer => consumer
+                        .WithGroupId("consumer2")
+                        .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -190,26 +178,24 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddConsumer_ShouldMergeConsumerConfiguration_WhenIdIsTheSame()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddConsumer(
-                            "consumer1",
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .WithFetchMinBytes(1)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer(
-                            "consumer1",
-                            consumer => consumer
-                                .WithEnablePartitionEof(true)
-                                .WithFetchMinBytes(42)
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddConsumer(
+                    "consumer1",
+                    consumer => consumer
+                        .WithGroupId("group1")
+                        .WithFetchMinBytes(1)
+                        .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer(
+                    "consumer1",
+                    consumer => consumer
+                        .WithEnablePartitionEof(true)
+                        .WithFetchMinBytes(42)
+                        .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -228,19 +214,16 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddDefaultProducerConfiguration_ShouldSetDefaultValues()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddDefaultProducerConfiguration(
-                            producer => producer
-                                .WithCompressionType(CompressionType.Snappy))
-                        .AddProducer("producer1", producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer("producer2", producer => producer.Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddDefaultProducerConfiguration(producer => producer
+                    .WithCompressionType(CompressionType.Snappy))
+                .AddProducer("producer1", producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer("producer2", producer => producer.Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
@@ -255,19 +238,16 @@ public class KafkaClientsConfigurationBuilderTests
     [Fact]
     public async Task AddDefaultConsumerConfiguration_ShouldSetDefaultValues()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(broker => broker.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://unittest")
-                        .AddDefaultConsumerConfiguration(
-                            consumer => consumer
-                                .WithGroupId("TestGroup"))
-                        .AddConsumer("consumer1", consumer => consumer.Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer("consumer2", consumer => consumer.Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(broker => broker.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://unittest")
+                .AddDefaultConsumerConfiguration(consumer => consumer
+                    .WithGroupId("TestGroup"))
+                .AddConsumer("consumer1", consumer => consumer.Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer("consumer2", consumer => consumer.Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 

@@ -11,22 +11,22 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Ductus.FluentDocker" />
-    <PackageReference Include="JetBrains.Annotations" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="NSubstitute" />
-    <PackageReference Include="SharpCompress" />
-    <PackageReference Include="Shouldly" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="Ductus.FluentDocker"/>
+    <PackageReference Include="JetBrains.Annotations"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="NSubstitute"/>
+    <PackageReference Include="SharpCompress"/>
+    <PackageReference Include="Shouldly"/>
+    <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Storage.EntityFramework\Silverback.Storage.EntityFramework.csproj" />
-    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Storage.EntityFramework\Silverback.Storage.EntityFramework.csproj"/>
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\xunit.runner.json">

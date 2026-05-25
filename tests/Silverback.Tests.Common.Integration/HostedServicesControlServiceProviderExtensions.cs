@@ -24,8 +24,7 @@ public static class HostedServicesControlServiceProviderExtensions
     private static IEnumerable<RecurringDistributedBackgroundService> GetSilverbackServicesHostedServices(IServiceProvider serviceProvider) =>
         serviceProvider.GetServices<IHostedService>()
             .OfType<RecurringDistributedBackgroundService>()
-            .Where(
-                service =>
-                    service.GetType().Namespace != null &&
-                    service.GetType().Namespace!.StartsWith("Silverback", StringComparison.Ordinal));
+            .Where(service =>
+                service.GetType().Namespace != null &&
+                service.GetType().Namespace!.StartsWith("Silverback", StringComparison.Ordinal));
 }

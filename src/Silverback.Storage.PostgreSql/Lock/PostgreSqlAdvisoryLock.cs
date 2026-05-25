@@ -25,7 +25,7 @@ public sealed class PostgreSqlAdvisoryLock : DistributedLock
     ///     The lock settings.
     /// </param>
     /// <param name="logger">
-    ///    The logger.
+    ///     The logger.
     /// </param>
     public PostgreSqlAdvisoryLock(PostgreSqlAdvisoryLockSettings settings, ISilverbackLogger<PostgreSqlAdvisoryLock> logger)
     {

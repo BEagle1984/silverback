@@ -29,25 +29,21 @@ public class OffsetStoreInMemoryTests : KafkaTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
-                        .AddInMemoryKafkaOffsetStore())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .DisableOffsetsCommit()
-                                .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
+            .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -82,25 +78,21 @@ public class OffsetStoreInMemoryTests : KafkaTests
     {
         int received = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
-                        .AddInMemoryKafkaOffsetStore())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .DisableOffsetsCommit()
-                                .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
-                                .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
+                .AddInMemoryKafkaOffsetStore())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .DisableOffsetsCommit()
+                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory())
+                    .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
+            .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint("topic1[1]");

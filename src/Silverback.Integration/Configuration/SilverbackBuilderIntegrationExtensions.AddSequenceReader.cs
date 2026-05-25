@@ -50,7 +50,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddTransientSequenceReader<TReader>(this SilverbackBuilder builder)
         where TReader : class, ISequenceReader =>
-        AddTransientSequenceReader(builder, typeof(TReader));
+        builder.AddTransientSequenceReader(typeof(TReader));
 
     /// <summary>
     ///     Adds a transient sequence reader with a factory specified in <paramref name="implementationFactory" />
@@ -114,7 +114,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// </returns>
     public static SilverbackBuilder AddSingletonSequenceReader<TReader>(this SilverbackBuilder builder)
         where TReader : class, ISequenceReader =>
-        AddSingletonSequenceReader(builder, typeof(TReader));
+        builder.AddSingletonSequenceReader(typeof(TReader));
 
     /// <summary>
     ///     Adds a singleton sequence reader with a factory specified in <paramref name="implementationFactory" /> to

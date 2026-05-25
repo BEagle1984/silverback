@@ -21,7 +21,7 @@ public partial class SilverbackBuilderTests
         builder.BusOptions.MessageTypes.ShouldBe(
         [
             typeof(IMessage),
-                typeof(UnhandledMessage)
+            typeof(UnhandledMessage)
         ]);
     }
 
@@ -35,7 +35,7 @@ public partial class SilverbackBuilderTests
         builder.BusOptions.MessageTypes.ShouldBe(
         [
             typeof(IMessage),
-                typeof(UnhandledMessage)
+            typeof(UnhandledMessage)
         ]);
     }
 

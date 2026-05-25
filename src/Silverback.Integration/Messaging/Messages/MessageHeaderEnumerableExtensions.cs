@@ -207,7 +207,7 @@ public static class MessageHeaderEnumerableExtensions
     /// </returns>
     public static T GetValueOrDefault<T>(this IEnumerable<MessageHeader> headers, string name)
         where T : struct =>
-        GetValue<T>(headers, name) ?? default;
+        headers.GetValue<T>(name) ?? default;
 
     /// <summary>
     ///     <para>
@@ -234,5 +234,5 @@ public static class MessageHeaderEnumerableExtensions
         this IEnumerable<MessageHeader> headers,
         string name,
         Type targetType) =>
-        GetValue(headers, name, targetType) ?? targetType.GetDefaultValue();
+        headers.GetValue(name, targetType) ?? targetType.GetDefaultValue();
 }

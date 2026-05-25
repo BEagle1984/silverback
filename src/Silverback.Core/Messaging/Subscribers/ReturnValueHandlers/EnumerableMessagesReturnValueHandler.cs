@@ -31,12 +31,10 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
     public bool CanHandle(object returnValue) =>
         returnValue != null &&
-        returnValue.GetType().GetInterfaces().Any(
-            type => type.IsGenericType &&
-                    type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                    _busOptions.MessageTypes.Any(
-                        messageType =>
-                            messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
+        returnValue.GetType().GetInterfaces().Any(type => type.IsGenericType &&
+                                                          type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+                                                          _busOptions.MessageTypes.Any(messageType =>
+                                                              messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(IPublisher publisher, object returnValue)

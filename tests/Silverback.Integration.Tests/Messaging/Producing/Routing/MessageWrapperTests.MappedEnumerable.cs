@@ -27,9 +27,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -58,9 +57,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -89,9 +87,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
         int count = 0;
@@ -134,9 +131,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
         int count = 0;
@@ -179,9 +175,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -228,9 +223,8 @@ public partial class MessageWrapperTests
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -341,8 +335,8 @@ public partial class MessageWrapperTests
 
         Exception exception = await act.ShouldThrowAsync<RoutingException>();
         exception.Message.ShouldBe(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+            "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
+            "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
     }
 
     [Fact]
@@ -364,7 +358,7 @@ public partial class MessageWrapperTests
 
         Exception exception = await act.ShouldThrowAsync<RoutingException>();
         exception.Message.ShouldBe(
-                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
-                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+            "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
+            "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
     }
 }

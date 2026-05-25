@@ -18,17 +18,17 @@ public interface IConsumerTransactionManager
     AsyncEvent<ConsumerPipelineContext> Committing { get; }
 
     /// <summary>
-    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is committed.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is committed.
     /// </summary>
     AsyncEvent<ConsumerPipelineContext> Committed { get; }
 
     /// <summary>
-    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is before the consumer is aborted.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is before the consumer is aborted.
     /// </summary>
     AsyncEvent<ConsumerPipelineContext> Aborting { get; }
 
     /// <summary>
-    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is aborted.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is aborted.
     /// </summary>
     AsyncEvent<ConsumerPipelineContext> Aborted { get; }
 

@@ -180,9 +180,8 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.RawMessage.ReReadAll()!.SequenceEqual(rawContent)));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.RawMessage.ReReadAll()!.SequenceEqual(rawContent)));
     }
 
     [Fact]
@@ -212,10 +211,9 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.Headers.GetValue("key1", true) == "value1" &&
-                    outboundEnvelope.Headers.GetValue("key2", true) == "value2"));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.Headers.GetValue("key1", true) == "value1" &&
+                outboundEnvelope.Headers.GetValue("key2", true) == "value2"));
     }
 
     [Fact]
@@ -247,9 +245,8 @@ public class MoveMessageErrorPolicyTests
             new InvalidOperationException("test"));
 
         await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.Headers.GetValue("error", true) == "InvalidOperationException"));
+            Arg.Is<IOutboundEnvelope>(outboundEnvelope =>
+                outboundEnvelope.Headers.GetValue("error", true) == "InvalidOperationException"));
     }
 
     [Fact]

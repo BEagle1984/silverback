@@ -19,13 +19,13 @@
     <Product>Silverback.Integration.Kafka.SchemaRegistry</Product>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Json" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Protobuf" />
+    <PackageReference Include="Confluent.Kafka"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Json"/>
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Protobuf"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -33,7 +33,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageSerializer`1.cs" />
-    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageDeserializer`1.cs" />
+    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageSerializer`1.cs"/>
+    <Compile Remove="Messaging\Serialization\NewtonsoftJsonSchemaRegistryMessageDeserializer`1.cs"/>
   </ItemGroup>
 </Project>

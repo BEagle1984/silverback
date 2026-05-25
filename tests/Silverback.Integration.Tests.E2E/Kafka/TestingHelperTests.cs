@@ -27,25 +27,21 @@ public class TestingHelperTests : KafkaTests
     [Fact]
     public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitAllTopicsAndPartitions()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<IIntegrationEvent>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<IIntegrationEvent>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -67,7 +63,7 @@ public class TestingHelperTests : KafkaTests
                 new TopicPartitionOffset("topic3", 0, 3),
                 new TopicPartitionOffset("topic3", 1, 2)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -75,27 +71,23 @@ public class TestingHelperTests : KafkaTests
     {
         TaskCompletionSource taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -117,7 +109,7 @@ public class TestingHelperTests : KafkaTests
                     new TopicPartitionOffset("topic2", 0, 5),
                     new TopicPartitionOffset("topic2", 1, 5)
                 ],
-                ignoreOrder: true);
+                true);
         }
         finally
         {
@@ -130,27 +122,23 @@ public class TestingHelperTests : KafkaTests
     {
         TaskCompletionSource taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka(kafka => kafka.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -172,7 +160,7 @@ public class TestingHelperTests : KafkaTests
                     new TopicPartitionOffset("topic2", 0, 5),
                     new TopicPartitionOffset("topic2", 1, 5)
                 ],
-                ignoreOrder: true);
+                true);
         }
         finally
         {

@@ -15,6 +15,7 @@ public abstract partial class TestingHelper : ITestingHelper
     private readonly ILogger _logger;
 
     private readonly IServiceProvider _serviceProvider;
+
     private readonly IConsumerCollection? _consumers;
 
     private readonly IProducerCollection? _producers;

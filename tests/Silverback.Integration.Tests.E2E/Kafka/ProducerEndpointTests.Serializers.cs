@@ -19,16 +19,14 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceStringMessages()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(producer => producer.Produce<StringMessage<TestEventOne>>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(producer => producer.Produce<StringMessage<TestEventTwo>>(endpoint => endpoint.ProduceTo("topic2")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<StringMessage<TestEventOne>>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(producer => producer.Produce<StringMessage<TestEventTwo>>(endpoint => endpoint.ProduceTo("topic2")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync((StringMessage<TestEventOne>)"Message to topic1");
@@ -45,15 +43,13 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceStringMessagesWithNullContent()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(producer => producer.Produce<StringMessage<TestEventOne>>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<StringMessage<TestEventOne>>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(StringMessage<TestEventOne>.FromString(null));
@@ -68,16 +64,14 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceRawMessages()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(producer => producer.Produce<RawMessage<TestEventOne>>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddProducer(producer => producer.Produce<RawMessage<TestEventTwo>>(endpoint => endpoint.ProduceTo("topic2")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<RawMessage<TestEventOne>>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddProducer(producer => producer.Produce<RawMessage<TestEventTwo>>(endpoint => endpoint.ProduceTo("topic2")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync((RawMessage<TestEventOne>)new byte[] { 0x01, 0x02, 0x03 });
