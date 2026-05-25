@@ -123,8 +123,8 @@ function Remove-ProjectReferences([string]$projectFilePath)
 
 function Remove-ProjectReference([string] $projectFilePath, [string]$projectToReplace, [string]$packageName)
 {
-    $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`" />"
-    $replace = "<PackageReference Include=`"$projectToReplace`" />"
+    $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`""
+    $replace = "<PackageReference Include=`"$projectToReplace`""
     ((Get-Content -path $projectFilePath -Raw) -replace $find, $replace) | Set-Content -Path $projectFilePath
 }
 
