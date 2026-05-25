@@ -50,9 +50,9 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
         await _brokerClientsBootstrapper.InitializeAllAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="IBrokerClientsConnector.ConnectAllAsync" />
+    /// <inheritdoc cref="IBrokerClientsConnector.ConnectAsync" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    public async ValueTask ConnectAllAsync(CancellationToken cancellationToken = default)
+    public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
     {
         await InitializeAsync().ConfigureAwait(false);
 
@@ -78,14 +78,11 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
         }
     }
 
-    /// <inheritdoc cref="IBrokerClientsConnector.DisconnectAllAsync" />
-    public async ValueTask DisconnectAllAsync()
-    {
-        await _consumers.StopAllAsync().ConfigureAwait(false);
-        _logger.LogTrace("All consumers stopped.");
-        await _brokerClients.DisconnectAllAsync().ConfigureAwait(false);
-        _logger.LogTrace("All clients disconnected.");
-    }
+    /// <inheritdoc cref="IBrokerClientsConnector.StopConsumersAsync" />
+    public ValueTask StopConsumersAsync() => _consumers.StopAllAsync();
+
+    /// <inheritdoc cref="IBrokerClientsConnector.DisconnectAsync" />
+    public ValueTask DisconnectAsync() => _brokerClients.DisconnectAllAsync();
 
     private async Task DelayRetryAsync(CancellationToken cancellationToken)
     {

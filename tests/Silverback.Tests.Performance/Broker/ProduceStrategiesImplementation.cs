@@ -285,7 +285,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     private async Task ConnectAsync()
     {
         Console.WriteLine("Connecting...");
-        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
 
         Console.WriteLine("Connected. Waiting 5 seconds...");
 
@@ -296,14 +296,12 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
 
     private async Task DisconnectAsync()
     {
+        Console.WriteLine("Stopping consumers...");
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().StopConsumersAsync();
         Console.WriteLine("Disconnecting...");
-        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().DisconnectAllAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().DisconnectAsync();
 
         Console.WriteLine("Disconnected.");
-
-        // Wait and additional 5 seconds to ensure that the producer is
-        // fully connected
-        await Task.Delay(5000);
     }
 
     private IProducer GetProducer(string endpointName) =>

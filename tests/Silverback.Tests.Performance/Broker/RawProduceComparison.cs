@@ -236,7 +236,7 @@ public static class RawProduceComparison
                             .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
         IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
@@ -294,7 +294,7 @@ public static class RawProduceComparison
                             .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
         IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
@@ -359,7 +359,7 @@ public static class RawProduceComparison
                             .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
         IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 

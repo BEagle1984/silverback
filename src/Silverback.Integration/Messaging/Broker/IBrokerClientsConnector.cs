@@ -29,7 +29,15 @@ public interface IBrokerClientsConnector
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask ConnectAllAsync(CancellationToken cancellationToken = default);
+    ValueTask ConnectAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Stops all the consumers to prevent them from consuming any more messages.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    ValueTask StopConsumersAsync();
 
     /// <summary>
     ///     Disconnects all the producers and consumers.
@@ -37,5 +45,5 @@ public interface IBrokerClientsConnector
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask DisconnectAllAsync();
+    ValueTask DisconnectAsync();
 }
