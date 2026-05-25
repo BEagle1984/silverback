@@ -51,30 +51,31 @@ public class ValidatorConsumerBehaviorTests
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not working")]
     public static TheoryData<TestValidationMessage> HandleAsync_ShouldNotLog_WhenModeNone_TestData =>
-    [
         new()
         {
-            Id = "1",
-            String10 = "123456789abc",
-            IntRange = 5,
-            NumbersOnly = "123"
-        },
+            new TestValidationMessage
+            {
+                Id = "1",
+                String10 = "123456789abc",
+                IntRange = 5,
+                NumbersOnly = "123"
+            },
 
-        new()
-        {
-            Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
-        },
+            new TestValidationMessage
+            {
+                Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
+            },
 
-        new()
-        {
-            String10 = "123456", IntRange = 5, NumbersOnly = "123"
-        },
+            new TestValidationMessage
+            {
+                String10 = "123456", IntRange = 5, NumbersOnly = "123"
+            },
 
-        new()
-        {
-            Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
-        }
-    ];
+            new TestValidationMessage
+            {
+                Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
+            }
+        };
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     public static TheoryData<TestValidationMessage, string> HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData =>

@@ -348,7 +348,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                 .Where(topicPartitionOffset => !IsPaused(
                     topicPartitionOffset.Topic,
                     topicPartitionOffset.Partition))
-                .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
+                .OrderBy(topicPartitionOffset => (int)(long)topicPartitionOffset.Offset);
 
         cancellationToken.ThrowIfCancellationRequested();
 
