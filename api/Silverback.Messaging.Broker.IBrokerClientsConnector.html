@@ -89,7 +89,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_IBrokerClientsConnector" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector" class="text-break">
-Interface IBrokerClientsConnector  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/6f7afd046a1b7ac1f691763fcc8862dac0ede5e7/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
+Interface IBrokerClientsConnector  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -121,11 +121,11 @@ Interface IBrokerClientsConnector  <a class="header-action link-secondary" title
 </h2>
 
 
-  <a id="Silverback_Messaging_Broker_IBrokerClientsConnector_ConnectAllAsync_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.ConnectAllAsync*"></a>
+  <a id="Silverback_Messaging_Broker_IBrokerClientsConnector_ConnectAsync_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.ConnectAsync*"></a>
 
-  <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_ConnectAllAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.ConnectAllAsync(System.Threading.CancellationToken)">
-  ConnectAllAsync(CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/6f7afd046a1b7ac1f691763fcc8862dac0ede5e7/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_ConnectAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.ConnectAsync(System.Threading.CancellationToken)">
+  ConnectAsync(CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calls all the IBrokerClientsInitializer and initializes the producers and consumers (if <a class="xref" href="Silverback.Messaging.Broker.IBrokerClientsConnector.html#Silverback_Messaging_Broker_IBrokerClientsConnector_InitializeAsync">InitializeAsync()</a> wasn't
@@ -134,7 +134,7 @@ called yet), then initializes the connection to the message broker(s).</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask ConnectAllAsync(CancellationToken cancellationToken = default)</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask ConnectAsync(CancellationToken cancellationToken = default)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -161,11 +161,11 @@ called yet), then initializes the connection to the message broker(s).</p>
 
 
 
-  <a id="Silverback_Messaging_Broker_IBrokerClientsConnector_DisconnectAllAsync_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.DisconnectAllAsync*"></a>
+  <a id="Silverback_Messaging_Broker_IBrokerClientsConnector_DisconnectAsync_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.DisconnectAsync*"></a>
 
-  <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_DisconnectAllAsync" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.DisconnectAllAsync">
-  DisconnectAllAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/6f7afd046a1b7ac1f691763fcc8862dac0ede5e7/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_DisconnectAsync" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.DisconnectAsync">
+  DisconnectAsync()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Disconnects all the producers and consumers.</p>
@@ -173,7 +173,7 @@ called yet), then initializes the connection to the message broker(s).</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ValueTask DisconnectAllAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">ValueTask DisconnectAsync()</code></pre>
   </div>
 
 
@@ -198,7 +198,7 @@ called yet), then initializes the connection to the message broker(s).</p>
 
   <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_InitializeAsync" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.InitializeAsync">
   InitializeAsync()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/6f7afd046a1b7ac1f691763fcc8862dac0ede5e7/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calls all the IBrokerClientsInitializer and initializes the producers and consumers.</p>
@@ -227,6 +227,39 @@ called yet), then initializes the connection to the message broker(s).</p>
 
 
 
+  <a id="Silverback_Messaging_Broker_IBrokerClientsConnector_StopConsumersAsync_" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.StopConsumersAsync*"></a>
+
+  <h3 id="Silverback_Messaging_Broker_IBrokerClientsConnector_StopConsumersAsync" data-uid="Silverback.Messaging.Broker.IBrokerClientsConnector.StopConsumersAsync">
+  StopConsumersAsync()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Stops all the consumers to prevent them from consuming any more messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ValueTask StopConsumersAsync()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a></dt>
+    <dd><p>A <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask">ValueTask</a> representing the asynchronous operation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
@@ -235,7 +268,7 @@ called yet), then initializes the connection to the message broker(s).</p>
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/6f7afd046a1b7ac1f691763fcc8862dac0ede5e7/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/9ba36c67d95d0b2255af0559b115c98b014c984e/src/Silverback.Integration/Messaging/Broker/IBrokerClientsConnector.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
