@@ -53,7 +53,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     }
 
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
-    private void OnApplicationStopping() => _stoppingTask = Task.Run(() => _connector.StopConsumersAsync().ConfigureAwait(false));
+    private void OnApplicationStopping() => _stoppingTask = Task.Run(async () => await _connector.StopConsumersAsync().ConfigureAwait(false));
 
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
     private void OnApplicationStopped()

@@ -250,7 +250,7 @@ public class BrokerClientsConnectorServiceTests
     }
 
     [Fact]
-    public async Task OnStopping_ShouldDisconnectAllClients()
+    public async Task OnApplicationStopped_ShouldDisconnectAllClients()
     {
         CancellationTokenSource appStoppingTokenSource = new();
         CancellationTokenSource appStoppedTokenSource = new();
@@ -288,6 +288,68 @@ public class BrokerClientsConnectorServiceTests
         appStoppedTokenSource.Cancel();
 
         await consumer.Received(1).StopAsync();
+        await client.Received(1).DisconnectAsync();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task OnApplicationStopped_ShouldRunAfterOnApplicationStoppingAndBlockUntilDisconnected()
+    {
+        bool onStoppingCalled = false;
+        bool onStoppedCalled = false;
+
+        SemaphoreSlim stoppingCompletionSemaphore = new(0);
+        CancellationTokenSource appStoppingTokenSource = new();
+        CancellationTokenSource appStoppedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        clients.Add(client);
+
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        IConsumer consumer = Substitute.For<IConsumer>();
+        consumer.Name.Returns("consumer");
+        consumer.Client.Returns(client);
+        consumer.StopAsync().Returns(_ => new ValueTask(Task.Run(async () =>
+        {
+            await Task.Delay(100);
+            onStoppingCalled = true;
+            await stoppingCompletionSemaphore.WaitAsync();
+        })));
+        consumers.Add(consumer);
+
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        IProducer producer = Substitute.For<IProducer>();
+        producer.Name.Returns("producer");
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
+        producers.Add(producer);
+
+        BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
+
+        appStoppingTokenSource.Cancel();
+        Task onStoppedTask = Task.Run(() =>
+        {
+            onStoppedCalled = true;
+            appStoppedTokenSource.Cancel();
+        });
+
+        await AsyncTestingUtil.WaitAsync(() => onStoppingCalled && onStoppedCalled);
+        await Task.Delay(100);
+        await client.Received(0).DisconnectAsync();
+
+        stoppingCompletionSemaphore.Release();
+        await onStoppedTask;
         await client.Received(1).DisconnectAsync();
     }
 }

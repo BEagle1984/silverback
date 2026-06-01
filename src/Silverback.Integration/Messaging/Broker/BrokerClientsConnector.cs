@@ -79,10 +79,20 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.StopConsumersAsync" />
-    public ValueTask StopConsumersAsync() => _consumers.StopAllAsync();
+    public async ValueTask StopConsumersAsync()
+    {
+        _logger.LogTrace("Stopping all consumers");
+        await _consumers.StopAllAsync().ConfigureAwait(false);
+        _logger.LogTrace("All consumers stopped");
+    }
 
     /// <inheritdoc cref="IBrokerClientsConnector.DisconnectAsync" />
-    public ValueTask DisconnectAsync() => _brokerClients.DisconnectAllAsync();
+    public async ValueTask DisconnectAsync()
+    {
+        _logger.LogTrace("Disconnecting all clients");
+        await _brokerClients.DisconnectAllAsync().ConfigureAwait(false);
+        _logger.LogTrace("All clients disconnected");
+    }
 
     private async Task DelayRetryAsync(CancellationToken cancellationToken)
     {

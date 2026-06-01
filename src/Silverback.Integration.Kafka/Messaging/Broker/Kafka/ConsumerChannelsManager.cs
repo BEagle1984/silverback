@@ -156,8 +156,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         try
         {
-            await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset, channel.SequenceStore)
-                .ConfigureAwait(false);
+            await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset, channel.SequenceStore).ConfigureAwait(false);
         }
         finally
         {
