@@ -285,9 +285,9 @@ public class BrokerClientsConnectorServiceTests
         await service.StartAsync(CancellationToken.None);
 
         appStoppingTokenSource.Cancel();
-        await consumer.Received(1).StopAsync();
-
         appStoppedTokenSource.Cancel();
+
+        await consumer.Received(1).StopAsync();
         await client.Received(1).DisconnectAsync();
     }
 }
