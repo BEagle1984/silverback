@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal sealed class BrokerClientsConnectorService : IHostedService, IDisposable
+internal sealed class BrokerClientsConnectorService : IHostedService
 {
     private readonly BrokerClientConnectionOptions _clientConnectionOptions;
 
@@ -19,9 +18,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService, IDisposabl
 
     private readonly CancellationToken _applicationStoppingToken;
 
-    private readonly SemaphoreSlim _consumersStoppedSemaphore = new(0);
-
-    private readonly SemaphoreSlim _clientsDisconnectedSemaphore = new(0);
+    private Task _stoppingTask = Task.CompletedTask;
 
     public BrokerClientsConnectorService(
         BrokerClientConnectionOptions clientConnectionOptions,
@@ -49,12 +46,6 @@ internal sealed class BrokerClientsConnectorService : IHostedService, IDisposabl
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-    public void Dispose()
-    {
-        _consumersStoppedSemaphore.Dispose();
-        _clientsDisconnectedSemaphore.Dispose();
-    }
-
     private void OnApplicationStarted()
     {
         if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.AfterStartup)
@@ -62,37 +53,12 @@ internal sealed class BrokerClientsConnectorService : IHostedService, IDisposabl
     }
 
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
-    private void OnApplicationStopping() =>
-        Task.Run(async () =>
-            {
-                try
-                {
-                    await _connector.StopConsumersAsync().ConfigureAwait(false);
-                }
-                finally
-                {
-                    _consumersStoppedSemaphore.Release();
-                }
-            })
-            .FireAndForget();
+    private void OnApplicationStopping() => _stoppingTask = Task.Run(() => _connector.StopConsumersAsync().ConfigureAwait(false));
 
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
     private void OnApplicationStopped()
     {
-        Task.Run(async () =>
-            {
-                try
-                {
-                    await _consumersStoppedSemaphore.WaitAsync().ConfigureAwait(false);
-                    await _connector.DisconnectAsync().ConfigureAwait(false);
-                }
-                finally
-                {
-                    _clientsDisconnectedSemaphore.Release();
-                }
-            })
-            .FireAndForget();
-
-        _clientsDisconnectedSemaphore.Wait();
+        _stoppingTask.SafeWait();
+        _connector.DisconnectAsync().SafeWait();
     }
 }

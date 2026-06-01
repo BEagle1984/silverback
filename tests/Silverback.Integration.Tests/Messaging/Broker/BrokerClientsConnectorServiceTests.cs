@@ -14,11 +14,12 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Logging;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker;
 
-public class BrokerConnectorServiceTests
+public class BrokerClientsConnectorServiceTests
 {
     [Fact]
     public async Task StartAsync_ShouldConnectAllClients_WhenModeIsConnectAtStartup()
@@ -246,5 +247,47 @@ public class BrokerConnectorServiceTests
         {
             await client.Received(1).DisconnectAsync();
         }
+    }
+
+    [Fact]
+    public async Task OnStopping_ShouldDisconnectAllClients()
+    {
+        CancellationTokenSource appStoppingTokenSource = new();
+        CancellationTokenSource appStoppedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        clients.Add(client);
+
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        IConsumer consumer = Substitute.For<IConsumer>();
+        consumer.Name.Returns("consumer");
+        consumer.Client.Returns(client);
+        consumers.Add(consumer);
+
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        IProducer producer = Substitute.For<IProducer>();
+        producer.Name.Returns("producer");
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
+        producers.Add(producer);
+
+        BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
+
+        appStoppingTokenSource.Cancel();
+        await consumer.Received(1).StopAsync();
+
+        appStoppedTokenSource.Cancel();
+        await client.Received(1).DisconnectAsync();
     }
 }
