@@ -20,21 +20,16 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task SetKafkaKey_ShouldSetMessageKeyFromMessage()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<TestEventOne>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey(message => message?.ContentEventOne)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .SetKafkaKey(message => message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -51,21 +46,16 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task SetKafkaKey_ShouldSetMessageKeyFromEnvelope()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<TestEventOne>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -82,22 +72,17 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task SetKafkaKey_ShouldSetMessageKeyByMessageType()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey<TestEventOne>(message => message?.ContentEventOne)
-                                    .SetKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .SetKafkaKey<TestEventOne>(message => message?.ContentEventOne)
+                    .SetKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -114,21 +99,16 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task SetKafkaKey_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .SetKafkaKey((TestEventOne? _) => null)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .SetKafkaKey((TestEventOne? _) => null)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });

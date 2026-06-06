@@ -28,34 +28,33 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception rethrown by the Subscribe method")]
     public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
     {
-        Task.Run(
-                async () =>
+        Task.Run(async () =>
+            {
+                try
                 {
-                    try
+                    await _subscribeSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
+
+                    if (_isDisposed)
+                        return;
+
+                    await foreach (TMessage message in messageStreamEnumerable.ConfigureAwait(false))
                     {
-                        await _subscribeSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
-
-                        if (_isDisposed)
-                            return;
-
-                        await foreach (TMessage message in messageStreamEnumerable.ConfigureAwait(false))
-                        {
-                            _subject.OnNext(message);
-                        }
+                        _subject.OnNext(message);
                     }
-                    catch (Exception ex)
-                    {
-                        _exception = ex;
-                    }
-                    finally
-                    {
-                        _subject.OnCompleted();
+                }
+                catch (Exception ex)
+                {
+                    _exception = ex;
+                }
+                finally
+                {
+                    _subject.OnCompleted();
 
-                        _subscription?.Dispose();
+                    _subscription?.Dispose();
 
-                        _completeSemaphore.Release();
-                    }
-                })
+                    _completeSemaphore.Release();
+                }
+            })
             .FireAndForget();
     }
 

@@ -17,11 +17,10 @@ public partial class BrokerOptionsBuilderEntityFrameworkExtensionsTests
     [Fact]
     public void AddEntityFrameworkOutbox_ShouldConfigureOutboxFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();

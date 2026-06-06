@@ -23,25 +23,20 @@ public partial class BatchProcessingTests
         TestingCollection<List<IBinaryMessage>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<BinaryMessage>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IBinaryMessage>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IBinaryMessage>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<IBinaryMessage> batch)
         {
@@ -103,25 +98,20 @@ public partial class BatchProcessingTests
         TestingCollection<List<IBinaryMessage>> receivedBatches = [];
         int completedBatches = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(1)
-                                .Consume<BinaryMessage>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IInboundEnvelope<IBinaryMessage>>>(HandleBatch));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<BinaryMessage>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10))))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<IInboundEnvelope<IBinaryMessage>>>(HandleBatch));
 
         async ValueTask HandleBatch(IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>> eventsStream)
         {

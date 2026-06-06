@@ -62,18 +62,18 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
     public ValueTask DisposeAsync() => _producers.DisposeAllAsync();
 
     private static IProducer[] GetProducersForMessage(ConcurrentBag<ProducerItem> producers, Type messageType) =>
-        [.. producers
-            .Where(
-                item =>
-                    item.IsRouting &&
-                    item.Producer.EndpointConfiguration.MessageType.IsAssignableFrom(GetActualMessageType(messageType)))
-            .Select(item => item.Producer)];
+    [
+        .. producers
+            .Where(item =>
+                item.IsRouting &&
+                item.Producer.EndpointConfiguration.MessageType.IsAssignableFrom(GetActualMessageType(messageType)))
+            .Select(item => item.Producer)
+    ];
 
     private static Type GetActualMessageType(Type messageType) =>
         typeof(ITombstone<object>).IsAssignableFrom(messageType)
-            ? messageType.GetInterfaces().First(
-                    interfaceType => interfaceType.IsGenericType &&
-                                     interfaceType.GetGenericTypeDefinition() == typeof(ITombstone<>))
+            ? messageType.GetInterfaces().First(interfaceType => interfaceType.IsGenericType &&
+                                                                 interfaceType.GetGenericTypeDefinition() == typeof(ITombstone<>))
                 .GenericTypeArguments[0]
             : messageType;
 

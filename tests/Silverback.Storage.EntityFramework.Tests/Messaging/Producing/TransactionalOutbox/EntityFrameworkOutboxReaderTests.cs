@@ -37,12 +37,11 @@ public sealed class EntityFrameworkOutboxReaderTests : IDisposable
             typeof(TestDbContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<TestDbContext>());
 
-        _serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
+        _serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
 
         _outboxWriter = _serviceProvider.GetRequiredService<IOutboxWriterFactory>().GetWriter(_outboxSettings, _serviceProvider);
     }

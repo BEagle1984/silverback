@@ -13,15 +13,13 @@ public static class DatabaseServiceCollectionExtensions
 {
     public static IServiceCollection InitDatabase(this IServiceCollection services, Func<SilverbackStorageInitializer, Task> initFunction) =>
         services
-            .AddHostedService(
-                serviceProvider => new InitDatabaseHostedService(
-                    serviceProvider.GetRequiredService<SilverbackStorageInitializer>(),
-                    initFunction));
+            .AddHostedService(serviceProvider => new InitDatabaseHostedService(
+                serviceProvider.GetRequiredService<SilverbackStorageInitializer>(),
+                initFunction));
 
     public static IServiceCollection InitDbContext<TDbContext>(this IServiceCollection services)
         where TDbContext : DbContext =>
         services
-            .AddHostedService(
-                serviceProvider =>
-                    new InitDbContextHostedService<TDbContext>(serviceProvider.GetRequiredService<IServiceScopeFactory>()));
+            .AddHostedService(serviceProvider =>
+                new InitDbContextHostedService<TDbContext>(serviceProvider.GetRequiredService<IServiceScopeFactory>()));
 }

@@ -355,8 +355,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         try
         {
-            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null)!)
-                .ConfigureAwait(false);
+            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null)!).ConfigureAwait(false);
 
             IEnumerable<TopicPartition> topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
 

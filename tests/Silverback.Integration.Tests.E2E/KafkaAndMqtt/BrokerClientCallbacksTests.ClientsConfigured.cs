@@ -20,30 +20,24 @@ public partial class BrokerClientCallbacksTests
     [Fact]
     public async Task ClientsConfiguredCallback_ShouldBeInvokedOnce()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .AddSingletonBrokerClientCallback<BrokerClientsConfiguredCallback>()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId("e2e-client")
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .AddSingletonBrokerClientCallback<BrokerClientsConfiguredCallback>()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("e2e-client")
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))));
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilConnectedAsync();
@@ -57,30 +51,29 @@ public partial class BrokerClientCallbacksTests
     [Fact]
     public async Task ClientsConfiguredCallback_ShouldInvokeAllRegisteredHandlers()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .AddSingletonBrokerClientCallback<BrokerClientsConfiguredCallback>()
-                .AddSingletonBrokerClientCallback<OtherBrokerClientsConfiguredCallback>()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .AddSingletonBrokerClientCallback<BrokerClientsConfiguredCallback>()
+            .AddSingletonBrokerClientCallback<OtherBrokerClientsConfiguredCallback>()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))));
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-        List<IBrokerClientCallback> callbacks = [.. Host.ServiceProvider
-            .GetServices<IBrokerClientCallback>()
-            .Where(service => service is BrokerClientsConfiguredCallback)];
+        List<IBrokerClientCallback> callbacks =
+        [
+            .. Host.ServiceProvider
+                .GetServices<IBrokerClientCallback>()
+                .Where(service => service is BrokerClientsConfiguredCallback)
+        ];
         callbacks.Count.ShouldBe(2);
         callbacks.Cast<BrokerClientsConfiguredCallback>().ShouldAllBe(callback => callback.CallCount == 1);
     }

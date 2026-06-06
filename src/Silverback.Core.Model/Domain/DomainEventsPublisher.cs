@@ -101,14 +101,15 @@ public class DomainEventsPublisher
     }
 
     private List<object> GetDomainEvents() =>
-        [.. _entitiesProvider.Invoke().SelectMany(
-            entity =>
-            {
-                List<object>? selected = _eventsSelector(entity)?.ToList();
+    [
+        .. _entitiesProvider.Invoke().SelectMany(entity =>
+        {
+            List<object>? selected = _eventsSelector(entity)?.ToList();
 
-                // Clear all events to avoid firing the same event multiple times during the recursion
-                _clearEventsAction(entity);
+            // Clear all events to avoid firing the same event multiple times during the recursion
+            _clearEventsAction(entity);
 
-                return selected ?? Enumerable.Empty<object>();
-            })];
+            return selected ?? Enumerable.Empty<object>();
+        })
+    ];
 }

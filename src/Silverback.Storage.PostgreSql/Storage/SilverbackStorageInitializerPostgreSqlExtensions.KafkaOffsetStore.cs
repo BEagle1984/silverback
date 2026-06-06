@@ -27,9 +27,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlKafkaOffsetStoreAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        CreatePostgreSqlKafkaOffsetStoreAsync(
-            initializer,
-            new PostgreSqlKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreatePostgreSqlKafkaOffsetStoreAsync(new PostgreSqlKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
     ///     Creates the PostgreSql kafka offset store table.
@@ -48,7 +46,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         PostgreSqlKafkaOffsetStoreSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreatePostgreSqlKafkaOffsetStoreAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
+        return initializer.CreatePostgreSqlKafkaOffsetStoreAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     The name of the kafka offset store table.
     /// </param>
     /// <param name="timeout">
-    ///   The table creation timeout.
+    ///     The table creation timeout.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.

@@ -41,13 +41,13 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public string Id { get; }
 
-    public ISequenceStore SequenceStore { get; private set; }
-
     public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
 
     public Task ReadTask => _readTaskCompletionSource.Task;
 
     public bool IsCompleted => _channel.Reader.Completion.IsCompleted;
+
+    public ISequenceStore SequenceStore { get; private set; }
 
     public void Complete() => _channel.Writer.TryComplete();
 
@@ -107,12 +107,12 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         if (!_readCancellationTokenSource.IsCancellationRequested)
             await _readCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
+        await SequenceStore.AwaitAllProcessingAsync().ConfigureAwait(false);
+
         if (Volatile.Read(ref _isReading) == 0)
             _readTaskCompletionSource.TrySetResult(true);
 
         await _readTaskCompletionSource.Task.ConfigureAwait(false);
-
-        await SequenceStore.AwaitAllProcessingAsync().ConfigureAwait(false);
     }
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)

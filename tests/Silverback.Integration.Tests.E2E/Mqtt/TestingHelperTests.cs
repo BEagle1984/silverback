@@ -26,23 +26,20 @@ public class TestingHelperTests : MqttTests
     [Fact]
     public async Task WaitUntilAllMessagesAreConsumedAsync_ShouldWaitAllTopicsAndPartitions()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3"))
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<IIntegrationEvent>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3"))
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<IIntegrationEvent>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -63,26 +60,23 @@ public class TestingHelperTests : MqttTests
     {
         TaskCompletionSource taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .EnableParallelProcessing(30) // needed to avoid deadlocks
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3"))
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .EnableParallelProcessing(30) // needed to avoid deadlocks
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>(endpoint => endpoint.ProduceTo("topic3"))
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -112,26 +106,23 @@ public class TestingHelperTests : MqttTests
     {
         TaskCompletionSource taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .EnableParallelProcessing(30) // needed to avoid deadlocks
-                                .Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2"))
-                                .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3"))
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
-                .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .EnableParallelProcessing(30) // needed to avoid deadlocks
+                    .Produce<TestEventOne>("one", endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>("two", endpoint => endpoint.ProduceTo("topic2"))
+                    .Produce<TestEventThree>("three", endpoint => endpoint.ProduceTo("topic3"))
+                    .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
+            .AddDelegateSubscriber<TestEventOne>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventTwo>(_ => Task.Delay(Random.Shared.Next(5, 50)))
+            .AddDelegateSubscriber<TestEventThree>(_ => taskCompletionSource.Task)
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 

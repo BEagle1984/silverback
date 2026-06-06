@@ -59,7 +59,7 @@ public class KafkaOffsetStoreScopeTests
                 new KafkaOffset("topic1", 3, 42),
                 new KafkaOffset("topic2", 6, 13)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     private class TestOffsetStore : IKafkaOffsetStore

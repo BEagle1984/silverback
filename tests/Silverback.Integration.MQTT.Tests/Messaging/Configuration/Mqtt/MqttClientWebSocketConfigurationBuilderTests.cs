@@ -37,11 +37,13 @@ public class MqttClientWebSocketConfigurationBuilderTests
     {
         MqttClientWebSocketConfigurationBuilder builder = new();
 
-        builder.UseProxy("http://proxy:8080", proxy => proxy
-            .WithCredentials("user", "pass")
-            .WithDomain("domain")
-            .EnableBypassOnLocal()
-            .WithBypassList(["*.local", "localhost"]));
+        builder.UseProxy(
+            "http://proxy:8080",
+            proxy => proxy
+                .WithCredentials("user", "pass")
+                .WithDomain("domain")
+                .EnableBypassOnLocal()
+                .WithBypassList(["*.local", "localhost"]));
 
         MqttClientWebSocketConfiguration configuration = builder.Build();
         configuration.Proxy.ShouldNotBeNull();

@@ -14,21 +14,21 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Logging;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker;
 
-public class BrokerConnectorServiceTests
+public class BrokerClientsConnectorServiceTests
 {
     [Fact]
     public async Task StartAsync_ShouldConnectAllClients_WhenModeIsConnectAtStartup()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.ConnectAtStartup()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.ConnectAtStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
@@ -54,12 +54,11 @@ public class BrokerConnectorServiceTests
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task StartAsync_ShouldRetry_WhenExceptionIsThrownAndRetryIsEnabled()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.ConnectAtStartup().RetryOnConnectionFailure(TimeSpan.FromMilliseconds(100))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.ConnectAtStartup().RetryOnConnectionFailure(TimeSpan.FromMilliseconds(100))));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
@@ -69,12 +68,11 @@ public class BrokerConnectorServiceTests
         clients.Add(client1);
         IBrokerClient client2 = Substitute.For<IBrokerClient>();
         client2.Name.Returns("client2");
-        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
-            _ =>
-            {
-                if (++tries < 3)
-                    throw new InvalidOperationException("retry!");
-            });
+        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(_ =>
+        {
+            if (++tries < 3)
+                throw new InvalidOperationException("retry!");
+        });
         clients.Add(client2);
         IBrokerClient client3 = Substitute.For<IBrokerClient>();
         client3.Name.Returns("client3");
@@ -95,12 +93,11 @@ public class BrokerConnectorServiceTests
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task StartAsync_ShouldNotRetry_WhenExceptionIsThrownAndRetryIsDisabled()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.ConnectAtStartup().DisableRetryOnConnectionFailure()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.ConnectAtStartup().DisableRetryOnConnectionFailure()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
@@ -110,12 +107,11 @@ public class BrokerConnectorServiceTests
         clients.Add(client1);
         IBrokerClient client2 = Substitute.For<IBrokerClient>();
         client2.Name.Returns("client2");
-        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
-            _ =>
-            {
-                if (++tries < 3)
-                    throw new InvalidOperationException("retry!");
-            });
+        client2.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(_ =>
+        {
+            if (++tries < 3)
+                throw new InvalidOperationException("retry!");
+        });
         clients.Add(client2);
         IBrokerClient client3 = Substitute.For<IBrokerClient>();
         client3.Name.Returns("client3");
@@ -139,12 +135,11 @@ public class BrokerConnectorServiceTests
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => lifetimeEvents)
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.ConnectAfterStartup()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.ConnectAfterStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
@@ -180,12 +175,11 @@ public class BrokerConnectorServiceTests
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => lifetimeEvents)
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.ManuallyConnect()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.ManuallyConnect()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
@@ -221,17 +215,15 @@ public class BrokerConnectorServiceTests
         lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
         lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddTransient(_ => lifetimeEvents)
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options.WithConnectionOptions(
-                        new BrokerClientConnectionOptions
-                        {
-                            Mode = mode
-                        })));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.WithConnectionOptions(
+                new BrokerClientConnectionOptions
+                {
+                    Mode = mode
+                })));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
@@ -255,5 +247,109 @@ public class BrokerConnectorServiceTests
         {
             await client.Received(1).DisconnectAsync();
         }
+    }
+
+    [Fact]
+    public async Task OnApplicationStopped_ShouldDisconnectAllClients()
+    {
+        CancellationTokenSource appStoppingTokenSource = new();
+        CancellationTokenSource appStoppedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        clients.Add(client);
+
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        IConsumer consumer = Substitute.For<IConsumer>();
+        consumer.Name.Returns("consumer");
+        consumer.Client.Returns(client);
+        consumers.Add(consumer);
+
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        IProducer producer = Substitute.For<IProducer>();
+        producer.Name.Returns("producer");
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
+        producers.Add(producer);
+
+        BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
+
+        appStoppingTokenSource.Cancel();
+        appStoppedTokenSource.Cancel();
+
+        await consumer.Received(1).StopAsync();
+        await client.Received(1).DisconnectAsync();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task OnApplicationStopped_ShouldRunAfterOnApplicationStoppingAndBlockUntilDisconnected()
+    {
+        bool onStoppingCalled = false;
+        bool onStoppedCalled = false;
+
+        SemaphoreSlim stoppingCompletionSemaphore = new(0);
+        CancellationTokenSource appStoppingTokenSource = new();
+        CancellationTokenSource appStoppedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => lifetimeEvents)
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        clients.Add(client);
+
+        ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
+        IConsumer consumer = Substitute.For<IConsumer>();
+        consumer.Name.Returns("consumer");
+        consumer.Client.Returns(client);
+        consumer.StopAsync().Returns(_ => new ValueTask(Task.Run(async () =>
+        {
+            await Task.Delay(100);
+            onStoppingCalled = true;
+            await stoppingCompletionSemaphore.WaitAsync();
+        })));
+        consumers.Add(consumer);
+
+        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        IProducer producer = Substitute.For<IProducer>();
+        producer.Name.Returns("producer");
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
+        producers.Add(producer);
+
+        BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
+
+        appStoppingTokenSource.Cancel();
+        Task onStoppedTask = Task.Run(() =>
+        {
+            onStoppedCalled = true;
+            appStoppedTokenSource.Cancel();
+        });
+
+        await AsyncTestingUtil.WaitAsync(() => onStoppingCalled && onStoppedCalled);
+        await Task.Delay(100);
+        await client.Received(0).DisconnectAsync();
+
+        stoppingCompletionSemaphore.Release();
+        await onStoppedTask;
+        await client.Received(1).DisconnectAsync();
     }
 }

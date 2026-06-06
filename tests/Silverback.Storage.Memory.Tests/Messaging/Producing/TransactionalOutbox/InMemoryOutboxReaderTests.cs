@@ -21,11 +21,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task AcknowledgeAsync_ShouldRemoveItemsFromStorage()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -54,11 +53,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetAsync_ShouldReturnItemsBatch()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -85,11 +83,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetAsync_ShouldReturnEmptyCollectionIfStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
 
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
@@ -103,11 +100,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetAsync_ShouldReturnTheSameItemsIfNotRemoved()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -130,11 +126,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetAsync_ShouldReturnStoredItemsInChronologicalOrder()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -159,11 +154,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetLengthAsync_ShouldReturnItemsCount()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -183,11 +177,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetLengthAsync_ShouldReturnZero_WhenTheStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
@@ -200,11 +193,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetMaxAgeAsync_ShouldReturnOldestItemAge()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
@@ -225,11 +217,10 @@ public class InMemoryOutboxReaderTests
     [Fact]
     public async Task GetMaxAgeAsync_ShouldReturnZero_WhenTheStorageIsEmpty()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);

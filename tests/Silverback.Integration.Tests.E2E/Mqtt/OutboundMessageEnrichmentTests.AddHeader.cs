@@ -18,7 +18,7 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderFromMessage()
     {
-        await Host.ConfigureServicesAndRunAsync(services => LoggingServiceCollectionExtensions.AddLogging(services)
+        await Host.ConfigureServicesAndRunAsync(services => services.AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
             .AddMqttClients(clients => clients
@@ -30,7 +30,7 @@ public partial class OutboundMessageEnrichmentTests
                         .AddHeader<TestEventOne>("header1", message => message?.ContentEventOne))))
             .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -46,7 +46,7 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderFromEnvelope()
     {
-        await Host.ConfigureServicesAndRunAsync(services => LoggingServiceCollectionExtensions.AddLogging(services)
+        await Host.ConfigureServicesAndRunAsync(services => services.AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
             .AddMqttClients(clients => clients
@@ -58,7 +58,7 @@ public partial class OutboundMessageEnrichmentTests
                         .AddHeader<TestEventOne>("header1", envelope => envelope.Message?.ContentEventOne))))
             .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
@@ -74,7 +74,7 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderByMessageType()
     {
-        await Host.ConfigureServicesAndRunAsync(services => LoggingServiceCollectionExtensions.AddLogging(services)
+        await Host.ConfigureServicesAndRunAsync(services => services.AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
             .AddMqttClients(clients => clients
@@ -87,7 +87,7 @@ public partial class OutboundMessageEnrichmentTests
                         .AddHeader("header2", (TestEventTwo? _) => "two"))))
             .AddIntegrationSpy());
 
-        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ServiceProvider);
+        IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });

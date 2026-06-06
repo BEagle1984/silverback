@@ -6,9 +6,9 @@
     <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MQTTnet" />
+    <PackageReference Include="MQTTnet"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj" />
+    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj"/>
   </ItemGroup>
 </Project>

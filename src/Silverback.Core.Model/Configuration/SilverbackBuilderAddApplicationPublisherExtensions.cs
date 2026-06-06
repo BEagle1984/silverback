@@ -15,7 +15,7 @@ public static class SilverbackBuilderAddApplicationPublisherExtensions
 {
     /// <summary>
     ///     Registers the enhanced <see cref="IApplicationPublisher" /> adding specific methods to publish
-    /// <see cref="ICommand"/>/<see cref="ICommand{TResult}"/>, <see cref="IQuery{TResult}"/>, and <see cref="IEvent"/> messages.
+    ///     <see cref="ICommand" />/<see cref="ICommand{TResult}" />, <see cref="IQuery{TResult}" />, and <see cref="IEvent" /> messages.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.

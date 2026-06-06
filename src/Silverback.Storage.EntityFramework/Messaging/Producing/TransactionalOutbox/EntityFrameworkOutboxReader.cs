@@ -53,12 +53,11 @@ public class EntityFrameworkOutboxReader : IOutboxReader
                 .OrderBy(message => message.Created)
                 .Take(count)
                 .AsAsyncEnumerable()
-                .Select(
-                    message => new DbOutboxMessage(
-                        message.Id,
-                        message.Content,
-                        message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
-                        message.EndpointName));
+                .Select(message => new DbOutboxMessage(
+                    message.Id,
+                    message.Content,
+                    message.Headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers),
+                    message.EndpointName));
 
             return new DbContextAsyncEnumerable<OutboxMessage>(asyncEnumerable, dbContext, scope);
         }

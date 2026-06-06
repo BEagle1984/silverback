@@ -93,8 +93,7 @@ public class SubscribedMethod
     /// </summary>
     public IMessageArgumentResolver MessageArgumentResolver
     {
-        get =>
-            field ?? throw new InvalidOperationException("Not initialized.");
+        get => field ?? throw new InvalidOperationException("Not initialized.");
         private set;
     }
 

@@ -27,28 +27,23 @@ public class MultipleBrokersTests : MqttTests
     [Fact]
     public async Task MultipleBrokers_ShouldCorrectlyProduceAndConsume_WhenTopicNamesAreOverlapping()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker-1")
-                        .AddClient(
-                            client => client
-                                .WithClientId("client1")
-                                .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker-2")
-                        .AddClient(
-                            client => client
-                                .WithClientId("client2")
-                                .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker-1")
+                .AddClient(client => client
+                    .WithClientId("client1")
+                    .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker-2")
+                .AddClient(client => client
+                    .WithClientId("client2")
+                    .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -77,28 +72,23 @@ public class MultipleBrokersTests : MqttTests
     [Fact]
     public async Task MultipleBrokers_ShouldCorrectlyProduceAndConsume_WhenTopicNamesAndClientIdsAreOverlapping()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker-1")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker-2")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker-1")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<Broker1Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker-2")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<Broker2Message>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 

@@ -32,11 +32,10 @@ public static partial class SilverbackBuilderEntityFrameworkExtensions
 
         if (!lockFactory.HasFactory<EntityFrameworkLockSettings>())
         {
-            lockFactory.AddFactory<EntityFrameworkLockSettings>(
-                (settings, serviceProvider) => new EntityFrameworkLock(
-                    settings,
-                    serviceProvider.GetRequiredService<IServiceScopeFactory>(),
-                    serviceProvider.GetRequiredService<ISilverbackLogger<EntityFrameworkLock>>()));
+            lockFactory.AddFactory<EntityFrameworkLockSettings>((settings, serviceProvider) => new EntityFrameworkLock(
+                settings,
+                serviceProvider.GetRequiredService<IServiceScopeFactory>(),
+                serviceProvider.GetRequiredService<ISilverbackLogger<EntityFrameworkLock>>()));
         }
 
         return builder;

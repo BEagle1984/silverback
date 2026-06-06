@@ -187,13 +187,11 @@ public class MqttLastWillMessageConfigurationBuilderTests
 
         configurationBuilder
             .ProduceTo("testaments")
-            .SerializeAsJson(
-                serializerBuilder => serializerBuilder
-                    .Configure(
-                        options =>
-                        {
-                            options.WriteIndented = true;
-                        }))
+            .SerializeAsJson(serializerBuilder => serializerBuilder
+                .Configure(options =>
+                {
+                    options.WriteIndented = true;
+                }))
             .SendMessage(message);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
@@ -218,13 +216,11 @@ public class MqttLastWillMessageConfigurationBuilderTests
 
         configurationBuilder
             .ProduceTo("testaments")
-            .SerializeAsJsonUsingNewtonsoft(
-                serializerBuilder => serializerBuilder
-                    .Configure(
-                        settings =>
-                        {
-                            settings.Formatting = Formatting.Indented;
-                        }))
+            .SerializeAsJsonUsingNewtonsoft(serializerBuilder => serializerBuilder
+                .Configure(settings =>
+                {
+                    settings.Formatting = Formatting.Indented;
+                }))
             .SendMessage(message);
 
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();

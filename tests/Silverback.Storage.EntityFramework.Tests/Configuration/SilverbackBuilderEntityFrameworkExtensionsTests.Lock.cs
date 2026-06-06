@@ -17,11 +17,10 @@ public class SilverbackBuilderEntityFrameworkExtensionsTests
     [Fact]
     public void AddEntityFrameworkLock_ShouldConfigureLockFactory()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddEntityFrameworkLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddEntityFrameworkLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(

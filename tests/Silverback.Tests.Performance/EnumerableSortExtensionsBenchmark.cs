@@ -61,8 +61,11 @@ internal static class EnumerableSortExtensionsCopy
         List<ISorted> sortables = [.. list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex)];
         List<T> notSortables = [.. list.Where(item => item is not ISorted)];
 
-        return [.. sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
-            .Union(notSortables)
-            .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>())];
+        return
+        [
+            .. sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
+                .Union(notSortables)
+                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>())
+        ];
     }
 }

@@ -65,8 +65,7 @@ public class ChunkSequenceWriter : ISequenceWriter
 
         // Ensure that chunk message id and message key (as kafka key) are set to ensure that the chunks can be correlated and will land on
         // the same Kafka partition
-        string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.ChunkMessageId) ?? Guid.NewGuid().ToString("N");
-        envelope.AddHeaderIfNotExists(DefaultMessageHeaders.ChunkMessageId, messageId);
+        string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageKey) ?? Guid.NewGuid().ToString("N");
         envelope.AddHeaderIfNotExists(DefaultMessageHeaders.MessageKey, messageId);
 
         ChunkSettings? settings = envelope.EndpointConfiguration.Chunk;

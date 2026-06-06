@@ -29,9 +29,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(messages);
@@ -56,9 +55,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(messages);
@@ -83,9 +81,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         int count = 0;
 
@@ -121,9 +118,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         int count = 0;
 
@@ -159,9 +155,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(
@@ -197,9 +192,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(
@@ -234,9 +228,8 @@ public partial class IntegrationPublisherTests
         IAsyncEnumerable<TestEventOne?> messages = new[] { new TestEventOne(), new TestEventOne(), null }.ToAsyncEnumerable();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                _ = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(messages);
@@ -255,9 +248,8 @@ public partial class IntegrationPublisherTests
         IAsyncEnumerable<TestEventOne?> messages = new[] { new TestEventOne(), new TestEventOne(), null }.ToAsyncEnumerable();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                _ = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
 
         _publisher.WrapAndPublishBatch(

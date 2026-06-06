@@ -58,11 +58,14 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _logger = Check.NotNull(logger, nameof(logger));
 
-        _subscribedTopicsFilters = [.. Configuration.ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Select(topic =>
+        _subscribedTopicsFilters =
+        [
+            .. Configuration.ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Select(topic =>
                 new MqttTopicFilterBuilder()
                     .WithTopic(topic)
                     .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
-                    .Build()))];
+                    .Build()))
+        ];
 
         _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
     }

@@ -94,23 +94,22 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         {
             int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
 
-            Task.Run(
-                    async () =>
-                    {
-                        await Task.Delay(10).ConfigureAwait(false);
+            Task.Run(async () =>
+                {
+                    await Task.Delay(10).ConfigureAwait(false);
 
-                        deliveryHandler?.Invoke(
-                            new DeliveryReport<byte[]?, byte[]?>
-                            {
-                                Message = message,
-                                Error = new Error(ErrorCode.NoError),
-                                Topic = topicPartition.Topic,
-                                Partition = new Partition(partitionIndex),
-                                Offset = offset,
-                                Timestamp = message.Timestamp,
-                                Status = PersistenceStatus.Persisted
-                            });
-                    })
+                    deliveryHandler?.Invoke(
+                        new DeliveryReport<byte[]?, byte[]?>
+                        {
+                            Message = message,
+                            Error = new Error(ErrorCode.NoError),
+                            Topic = topicPartition.Topic,
+                            Partition = new Partition(partitionIndex),
+                            Offset = offset,
+                            Timestamp = message.Timestamp,
+                            Status = PersistenceStatus.Persisted
+                        });
+                })
                 .FireAndForget();
         }
         catch (Exception ex)

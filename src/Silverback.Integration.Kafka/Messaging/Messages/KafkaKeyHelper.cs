@@ -44,9 +44,12 @@ internal static class KafkaKeyHelper
         }
 
         Type messageType = message.GetType();
-        propertyInfos = [.. messageType
-            .GetProperties()
-            .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))];
+        propertyInfos =
+        [
+            .. messageType
+                .GetProperties()
+                .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
+        ];
 
         // Must not fail if there is already an entry for this type
         _ = TypeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);

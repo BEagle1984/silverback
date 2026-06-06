@@ -27,11 +27,10 @@ public class JsonMessageSerializerBuilderTests
         JsonMessageSerializerBuilder builder = new();
 
         JsonMessageSerializer serializer = (JsonMessageSerializer)builder
-            .Configure(
-                options =>
-                {
-                    options.MaxDepth = 42;
-                })
+            .Configure(options =>
+            {
+                options.MaxDepth = 42;
+            })
             .Build();
 
         serializer.Options.ShouldNotBeNull();

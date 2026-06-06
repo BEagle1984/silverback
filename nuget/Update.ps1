@@ -27,7 +27,7 @@ function Check-Location()
 {
     [string]$currentLocation = Get-Location
 
-    if (-Not(Test-Path "./Update.ps1"))
+    if (-Not (Test-Path "./Update.ps1"))
     {
         Write-Host "This script is supposed to run in the /nuget folder of the main Silverback repository!" -ForegroundColor Red
         Exit
@@ -63,7 +63,7 @@ function Check-Args([string[]]$argsArray)
 function Get-SourceProjectNames()
 {
     $directories =
-        (Get-ChildItem -Path ../src -Directory -Exclude *.Testing, Silverback.Storage.*) +
+    (Get-ChildItem -Path ../src -Directory -Exclude *.Testing, Silverback.Storage.*) +
         (Get-ChildItem -Path ../src -Directory -Filter Silverback.Storage.Relational) +
         (Get-ChildItem -Path ../src -Directory -Filter Silverback.Storage.* | Where-Object { $_.FullName -notlike "*\Silverback.Storage.Relational" }) +
         (Get-ChildItem -Path ../src -Directory -Filter Silverback.Integration.Testing) +
@@ -123,8 +123,8 @@ function Remove-ProjectReferences([string]$projectFilePath)
 
 function Remove-ProjectReference([string] $projectFilePath, [string]$projectToReplace, [string]$packageName)
 {
-    $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`" />"
-    $replace = "<PackageReference Include=`"$projectToReplace`" />"
+    $find = "<ProjectReference Include=`"..\\$projectToReplace\\$projectToReplace.csproj`""
+    $replace = "<PackageReference Include=`"$projectToReplace`""
     ((Get-Content -path $projectFilePath -Raw) -replace $find, $replace) | Set-Content -Path $projectFilePath
 }
 

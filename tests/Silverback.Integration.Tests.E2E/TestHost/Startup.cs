@@ -14,17 +14,20 @@ public class Startup
     public void ConfigureServices(IServiceCollection services) => services.AddRouting().AddHealthChecks();
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Called by IHost")]
-    public void Configure(IApplicationBuilder app) => app.UseRouting().UseEndpoints(
-            endpoints =>
+    public void Configure(IApplicationBuilder app) => app.UseRouting().UseEndpoints(endpoints =>
+    {
+        endpoints.MapHealthChecks("/health");
+        endpoints.MapHealthChecks(
+            "/health1",
+            new HealthCheckOptions
             {
-                endpoints.MapHealthChecks("/health");
-                endpoints.MapHealthChecks(
-                    "/health1",
-                    new HealthCheckOptions
-                    { Predicate = registration => registration.Tags.Contains("1") });
-                endpoints.MapHealthChecks(
-                    "/health2",
-                    new HealthCheckOptions
-                    { Predicate = registration => registration.Tags.Contains("2") });
+                Predicate = registration => registration.Tags.Contains("1")
             });
+        endpoints.MapHealthChecks(
+            "/health2",
+            new HealthCheckOptions
+            {
+                Predicate = registration => registration.Tags.Contains("2")
+            });
+    });
 }

@@ -73,9 +73,8 @@ public class ConfluentConsumerWrapperTests
         await consumer.ConnectAsync();
 
         _confluentConsumer.Received(1).Subscribe(
-            Arg.Is<IEnumerable<string>>(
-                enumerable =>
-                    enumerable.SequenceEqual(new[] { "topic1", "topic2" })));
+            Arg.Is<IEnumerable<string>>(enumerable =>
+                enumerable.SequenceEqual(new[] { "topic1", "topic2" })));
     }
 
     [Fact]
@@ -108,9 +107,8 @@ public class ConfluentConsumerWrapperTests
         await consumer.ConnectAsync();
 
         _confluentConsumer.Received(1).Subscribe(
-            Arg.Is<IEnumerable<string>>(
-                enumerable =>
-                    enumerable.SequenceEqual(new[] { "^test_[0-9]*" })));
+            Arg.Is<IEnumerable<string>>(enumerable =>
+                enumerable.SequenceEqual(new[] { "^test_[0-9]*" })));
     }
 
     [Fact]
@@ -126,7 +124,7 @@ public class ConfluentConsumerWrapperTests
                     {
                         new TopicPartitionOffset("topic1", 1, Offset.Beginning),
                         new TopicPartitionOffset("topic1", 2, 42),
-                        new TopicPartitionOffset("topic2", 3, Offset.Beginning),
+                        new TopicPartitionOffset("topic2", 3, Offset.Beginning)
                     }.AsValueReadOnlyCollection()
                 }
             }.AsValueReadOnlyCollection()
@@ -147,15 +145,14 @@ public class ConfluentConsumerWrapperTests
         await consumer.ConnectAsync();
 
         _confluentConsumer.Received(1).Assign(
-            Arg.Is<IEnumerable<TopicPartitionOffset>>(
-                enumerable =>
-                    enumerable.SequenceEqual(
-                        new[]
-                        {
-                            new TopicPartitionOffset("topic1", 1, Offset.Beginning),
-                            new TopicPartitionOffset("topic1", 2, 42),
-                            new TopicPartitionOffset("topic2", 3, Offset.Beginning)
-                        })));
+            Arg.Is<IEnumerable<TopicPartitionOffset>>(enumerable =>
+                enumerable.SequenceEqual(
+                    new[]
+                    {
+                        new TopicPartitionOffset("topic1", 1, Offset.Beginning),
+                        new TopicPartitionOffset("topic1", 2, 42),
+                        new TopicPartitionOffset("topic2", 3, Offset.Beginning)
+                    })));
     }
 
     private static KafkaConsumer GetKafkaConsumer(IConfluentConsumerWrapper consumerWrapper) => new(

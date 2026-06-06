@@ -11,20 +11,21 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Ductus.FluentDocker" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Npgsql" />
-    <PackageReference Include="NSubstitute" />
-    <PackageReference Include="Shouldly" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="Ductus.FluentDocker"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="Npgsql"/>
+    <PackageReference Include="NSubstitute"/>
+    <PackageReference Include="SharpCompress"/>
+    <PackageReference Include="Shouldly"/>
+    <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Storage.PostgreSql\Silverback.Storage.PostgreSql.csproj" />
-    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Storage.PostgreSql\Silverback.Storage.PostgreSql.csproj"/>
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\xunit.runner.json">

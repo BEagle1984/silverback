@@ -6,17 +6,17 @@
     <LangVersion>$(LangVersion)</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" />
-    <PackageReference Include="Confluent.SchemaRegistry" />
+    <PackageReference Include="Confluent.Kafka"/>
+    <PackageReference Include="Confluent.SchemaRegistry"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj" />
+    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj"/>
   </ItemGroup>
   <!-- Workaround for xml documentation not being copied to output folder -->
   <Target Name="CopyXMLFromPackagesForBuild" AfterTargets="Build">
     <ItemGroup>
-      <PackageReferenceFiles Condition="%(PackageReference.CopyToOutputDirectory) != ''" Include="$(NugetPackageRoot)$([MSBuild]::Escape('%(PackageReference.Identity)').ToLower())/%(PackageReference.Version)/%(PackageReference.CopyToOutputDirectory)" />
+      <PackageReferenceFiles Condition="%(PackageReference.CopyToOutputDirectory) != ''" Include="$(NugetPackageRoot)$([MSBuild]::Escape('%(PackageReference.Identity)').ToLower())/%(PackageReference.Version)/%(PackageReference.CopyToOutputDirectory)"/>
     </ItemGroup>
-    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)"/>
   </Target>
 </Project>

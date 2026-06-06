@@ -27,9 +27,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -56,9 +55,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -85,9 +83,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
         int count = 0;
@@ -128,9 +125,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
         int count = 0;
@@ -171,9 +167,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one");
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = [.. envelopes]),
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = [.. envelopes]),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 
@@ -218,9 +213,8 @@ public partial class IntegrationPublisherTests
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", true);
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes = null;
         await strategy.ProduceAsync(
-            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
-                envelopes =>
-                    capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes =>
+                capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()),
             Arg.Any<CancellationToken>());
         CancellationToken cancellationToken = new(false);
 

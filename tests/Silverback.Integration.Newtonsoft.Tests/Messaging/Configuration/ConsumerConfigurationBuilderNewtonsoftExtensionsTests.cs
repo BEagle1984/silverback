@@ -63,12 +63,10 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-            deserializer => deserializer.Configure(
-                settings =>
-                {
-                    settings.MaxDepth = 42;
-                })).Build();
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(deserializer => deserializer.Configure(settings =>
+        {
+            settings.MaxDepth = 42;
+        })).Build();
 
         configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
         NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
@@ -81,9 +79,8 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-                deserializer => deserializer
-                    .WithEncoding(MessageEncoding.Unicode))
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(deserializer => deserializer
+                .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
         configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
@@ -95,14 +92,12 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-            deserializer => deserializer
-                .UseModel<object>()
-                .Configure(
-                    settings =>
-                    {
-                        settings.MaxDepth = 42;
-                    })).Build();
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(deserializer => deserializer
+            .UseModel<object>()
+            .Configure(settings =>
+            {
+                settings.MaxDepth = 42;
+            })).Build();
 
         configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();
         NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = configuration.Deserializer.ShouldBeOfType<NewtonsoftJsonMessageDeserializer<object>>();

@@ -27,9 +27,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlLocksTableAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        CreatePostgreSqlLocksTableAsync(
-            initializer,
-            new PostgreSqlTableLockSettings("lock", Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreatePostgreSqlLocksTableAsync(new PostgreSqlTableLockSettings("lock", Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
     ///     Creates the PostgreSql locks table.
@@ -46,7 +44,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     public static Task CreatePostgreSqlLocksTableAsync(this SilverbackStorageInitializer initializer, PostgreSqlTableLockSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreatePostgreSqlLocksTableAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
+        return initializer.CreatePostgreSqlLocksTableAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>

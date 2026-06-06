@@ -38,25 +38,20 @@ public partial class ChunkingTests
 
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName).EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -80,22 +75,18 @@ public partial class ChunkingTests
     {
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -131,22 +122,18 @@ public partial class ChunkingTests
     {
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -182,22 +169,18 @@ public partial class ChunkingTests
     {
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -233,22 +216,18 @@ public partial class ChunkingTests
     {
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -286,22 +265,18 @@ public partial class ChunkingTests
         byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
         List<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
@@ -358,22 +333,18 @@ public partial class ChunkingTests
         int receivedFilesCount = 0;
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<BinaryMessage>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpyAndSubscriber());
 
         void HandleMessage(BinaryMessage binaryMessage)
         {
@@ -385,22 +356,22 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             [.. rawMessage1.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 0, 3));
+            HeadersHelper.GetChunkHeaders("1", 0, 3));
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 1, 3));
+            HeadersHelper.GetChunkHeaders("1", 1, 3));
         await producer.RawProduceAsync(
             [.. rawMessage2.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 0));
+            HeadersHelper.GetChunkHeaders("2", 0));
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 1));
+            HeadersHelper.GetChunkHeaders("2", 1));
         await producer.RawProduceAsync(
             [.. rawMessage3.Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 0));
+            HeadersHelper.GetChunkHeaders("3", 0));
         await producer.RawProduceAsync(
             [.. rawMessage3.Skip(10).Take(10)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 1));
+            HeadersHelper.GetChunkHeaders("3", 1));
 
         await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
 
@@ -409,19 +380,19 @@ public partial class ChunkingTests
 
         await producer.RawProduceAsync(
             [.. rawMessage3.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("3", 2, true));
+            HeadersHelper.GetChunkHeaders("3", 2, true));
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("2", 2, true));
+            HeadersHelper.GetChunkHeaders("2", 2, true));
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(20)],
-            HeadersHelper.GetChunkHeadersWithKafkaKey("1", 2, 3));
+            HeadersHelper.GetChunkHeaders("1", 2, 3));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         receivedFilesCount.ShouldBe(3);
         receivedFiles.Count.ShouldBe(3);
-        receivedFiles.ShouldBe([rawMessage1, rawMessage2, rawMessage3], ignoreOrder: true);
+        receivedFiles.ShouldBe([rawMessage1, rawMessage2, rawMessage3], true);
     }
 
     [Fact]
@@ -431,28 +402,22 @@ public partial class ChunkingTests
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "text/plain" };
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<BinaryMessage>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<BinaryMessage>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EnableChunking(10)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpyAndSubscriber());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 

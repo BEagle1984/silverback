@@ -38,8 +38,7 @@ internal static partial class TaskExtensions
             throw new AggregateException(exceptions);
     }
 
-    public static ValueTask<IReadOnlyCollection<TResult>> AwaitAllAsync<TResult>(this IEnumerable<ValueTask<TResult>> tasks) =>
-        AwaitAllAsync(tasks.ToList());
+    public static ValueTask<IReadOnlyCollection<TResult>> AwaitAllAsync<TResult>(this IEnumerable<ValueTask<TResult>> tasks) => tasks.ToList().AwaitAllAsync();
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Rethrown")]
     [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive because in a loop")]

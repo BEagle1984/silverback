@@ -20,11 +20,10 @@ public class InMemoryKafkaOffsetStoreTests
     [Fact]
     public async Task GetStoredOffsets_ShouldReturnStoredOffsetsForGroup()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
 
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new();
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
@@ -50,17 +49,16 @@ public class InMemoryKafkaOffsetStoreTests
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddInMemoryKafkaOffsetStore()));
 
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new();
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();

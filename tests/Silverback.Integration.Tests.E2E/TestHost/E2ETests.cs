@@ -9,14 +9,9 @@ namespace Silverback.Tests.Integration.E2E.TestHost;
 
 public abstract class E2ETests : IDisposable
 {
-    // Use semaphore to prevent parallel execution, instead of relying on the XUnit mechanism
-    private static readonly SemaphoreSlim Semaphore = new(1);
-
     protected E2ETests(ITestOutputHelper testOutputHelper)
     {
         ThreadPool.SetMinThreads(4 * Environment.ProcessorCount, 4 * Environment.ProcessorCount);
-
-        //Semaphore.Wait();
 
         Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
     }
@@ -34,7 +29,6 @@ public abstract class E2ETests : IDisposable
         if (!disposing)
             return;
 
-        Semaphore.Release();
         Host.Dispose();
     }
 }

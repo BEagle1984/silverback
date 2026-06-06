@@ -39,10 +39,9 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
         InMemoryOutboxFactory outboxFactory = GetInMemoryOutboxFactory(builder);
 
         readerFactory.OverrideFactories((settings, _) => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
-        writerFactory.OverrideFactories(
-            (settings, serviceProvider) => new InMemoryOutboxWriter(
-                outboxFactory.GetOutbox(settings),
-                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
+        writerFactory.OverrideFactories((settings, serviceProvider) => new InMemoryOutboxWriter(
+            outboxFactory.GetOutbox(settings),
+            serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
 
         return builder;
     }
@@ -73,10 +72,9 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
 
         if (!writerFactory.HasFactory<InMemoryOutboxSettings>())
         {
-            writerFactory.AddFactory<InMemoryOutboxSettings>(
-                (settings, serviceProvider) => new InMemoryOutboxWriter(
-                    outboxFactory.GetOutbox(settings),
-                    serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
+            writerFactory.AddFactory<InMemoryOutboxSettings>((settings, serviceProvider) => new InMemoryOutboxWriter(
+                outboxFactory.GetOutbox(settings),
+                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
         }
 
         builder.SilverbackBuilder.AddInMemoryLock();

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Sequences;
@@ -51,6 +52,14 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     /// </summary>
     public IDecryptionSettings? Encryption { get; init; }
 
+    /// <summary>
+    ///     Gets a value indicating whether the subscribers can subscribe a stream (<see cref="IAsyncEnumerable{T}" />,
+    ///     <see cref="IEnumerable{T}" />, etc.) pushed with all messages consumed from that endpoint (or partition). This setup can be used
+    ///     for basic stream processing, but it's more fragile and should be used with care. Some features, like error policies, won't work
+    ///     as expected. The default is <c>false</c>.
+    /// </summary>
+    public bool AllowStreaming { get; init; }
+
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {
@@ -67,5 +76,11 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
 
         Batch?.Validate();
         Encryption?.Validate();
+
+        if (AllowStreaming && Batch != null)
+            throw new BrokerConfigurationException("Cannot enable batch processing and streaming at the same time.");
+
+        if (AllowStreaming && ErrorPolicy is not StopConsumerErrorPolicy)
+            throw new BrokerConfigurationException("Cannot use error policies when streaming is enabled.");
     }
 }

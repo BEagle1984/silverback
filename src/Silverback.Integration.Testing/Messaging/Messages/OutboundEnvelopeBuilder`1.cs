@@ -109,13 +109,13 @@ public class OutboundEnvelopeBuilder<TMessage>
     }
 
     /// <summary>
-    ///   Sets the producer to be used to produce the message.
+    ///     Sets the producer to be used to produce the message.
     /// </summary>
     /// <param name="producer">
-    ///  The producer.
+    ///     The producer.
     /// </param>
     /// <returns>
-    ///  The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="OutboundEnvelopeBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public OutboundEnvelopeBuilder<TMessage> WithProducer(IProducer? producer)
     {
@@ -124,10 +124,10 @@ public class OutboundEnvelopeBuilder<TMessage>
     }
 
     /// <summary>
-    ///   Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    ///     Builds the <see cref="IOutboundEnvelope{TMessage}" /> instance.
     /// </summary>
     /// <returns>
-    ///  The <see cref="IOutboundEnvelope{TMessage}" /> instance.
+    ///     The <see cref="IOutboundEnvelope{TMessage}" /> instance.
     /// </returns>
     public IOutboundEnvelope<TMessage> Build() =>
         new OutboundEnvelope<TMessage>(

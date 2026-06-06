@@ -18,7 +18,7 @@ public static class PublisherKafkaTransactionExtensions
     ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="transactionalIdSuffix">
-    ///    The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
+    ///     The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
     /// </param>
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.

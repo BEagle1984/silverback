@@ -36,12 +36,11 @@ public sealed class EntityFrameworkKafkaOffsetStoreTests : IDisposable
     [Fact]
     public async Task GetStoredOffsets_ShouldReturnStoredOffsetsForGroup()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
 
         using IServiceScope scope = serviceProvider.CreateScope();
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
@@ -70,18 +69,17 @@ public sealed class EntityFrameworkKafkaOffsetStoreTests : IDisposable
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddEntityFrameworkKafkaOffsetStore()));
 
         using IServiceScope scope = serviceProvider.CreateScope();
         TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();

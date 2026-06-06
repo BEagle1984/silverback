@@ -56,12 +56,11 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
                 () => [channel.Id]);
 
             // If the cancellation is still pending, await it and restart after successful stop
-            Task.Run(
-                    async () =>
-                    {
-                        await channel.ReadTask.ConfigureAwait(false);
-                        StartReading(channel);
-                    })
+            Task.Run(async () =>
+                {
+                    await channel.ReadTask.ConfigureAwait(false);
+                    StartReading(channel);
+                })
                 .FireAndForget();
 
             return;

@@ -21,11 +21,10 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle));
 
         void Handle(TestEventOne message) => messages.Add(message);
 
@@ -42,11 +41,10 @@ public partial class PublisherTests
     {
         TestingCollection<TestEventOne> messages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle));
 
         void Handle(TestEventOne message) => messages.Add(message);
 
@@ -64,12 +62,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> syncMessages = [];
         TestingCollection<TestEventOne> asyncMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => syncMessages.Add(message);
         ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
@@ -89,12 +86,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> syncMessages = [];
         TestingCollection<TestEventOne> asyncMessages = [];
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1)
-                .AddDelegateSubscriber<TestEventOne>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1)
+            .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => syncMessages.Add(message);
         ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
@@ -115,12 +111,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages2 = [];
         int executingCount = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
-                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+            .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -152,12 +147,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages2 = [];
         int executingCount = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
-                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+            .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -189,12 +183,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages2 = [];
         CountdownEvent countdownEvent = new(2);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
-                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+            .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -222,12 +215,11 @@ public partial class PublisherTests
         TestingCollection<TestEventOne> messages2 = [];
         CountdownEvent countdownEvent = new(2);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
-                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+            .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);

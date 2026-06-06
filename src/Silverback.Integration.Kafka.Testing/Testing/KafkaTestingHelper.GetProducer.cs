@@ -43,21 +43,17 @@ public partial class KafkaTestingHelper
         (KafkaConsumerConfiguration? consumerConfiguration, KafkaConsumerEndpointConfiguration? endpointConfiguration) =
             consumers
                 .OfType<IKafkaConsumer>()
-                .SelectMany(
-                    consumer => consumer.Configuration.Endpoints.Select(
-                        endpoint =>
-                            (ConsumerConfiguration: consumer.Configuration, EndpointConfiguration: endpoint)))
-                .FirstOrDefault(
-                    tuple => tuple.EndpointConfiguration.RawName == endpointName ||
-                             tuple.EndpointConfiguration.FriendlyName == endpointName);
+                .SelectMany(consumer => consumer.Configuration.Endpoints.Select(endpoint =>
+                    (ConsumerConfiguration: consumer.Configuration, EndpointConfiguration: endpoint)))
+                .FirstOrDefault(tuple => tuple.EndpointConfiguration.RawName == endpointName ||
+                                         tuple.EndpointConfiguration.FriendlyName == endpointName);
 
         if (consumerConfiguration == null || endpointConfiguration == null)
             return null;
 
-        return GetProducer(
-            producer => producer
-                .WithBootstrapServers(consumerConfiguration.BootstrapServers)
-                .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration))); // TODO: Map other settings (e.g. encryption)
+        return GetProducer(producer => producer
+            .WithBootstrapServers(consumerConfiguration.BootstrapServers)
+            .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration))); // TODO: Map other settings (e.g. encryption)
     }
 
     // TODO: Test all cases

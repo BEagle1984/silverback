@@ -70,13 +70,15 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         if (_topics == null)
             throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
 
-        List<IInMemoryTopic> topics = [.. _topics.Where(
-                topic =>
-                    topic.Name == name &&
-                    (bootstrapServers == null || string.Equals(
-                        bootstrapServers,
-                        topic.BootstrapServers,
-                        StringComparison.OrdinalIgnoreCase)))];
+        List<IInMemoryTopic> topics =
+        [
+            .. _topics.Where(topic =>
+                topic.Name == name &&
+                (bootstrapServers == null || string.Equals(
+                    bootstrapServers,
+                    topic.BootstrapServers,
+                    StringComparison.OrdinalIgnoreCase)))
+        ];
 
         switch (topics.Count)
         {
@@ -105,10 +107,9 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
             return Task.CompletedTask;
 
         return Task.WhenAll(
-            _groups.Select(
-                group => group.WaitUntilAllMessagesAreConsumedAsync(
-                        [.. endpointNames.Select(GetEndpointRawName)],
-                        cancellationToken)
-                    .AsTask()));
+            _groups.Select(group => group.WaitUntilAllMessagesAreConsumedAsync(
+                    [.. endpointNames.Select(GetEndpointRawName)],
+                    cancellationToken)
+                .AsTask()));
     }
 }

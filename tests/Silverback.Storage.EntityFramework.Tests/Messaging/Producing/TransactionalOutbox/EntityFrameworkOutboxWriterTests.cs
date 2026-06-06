@@ -39,12 +39,11 @@ public sealed class EntityFrameworkOutboxWriterTests : IDisposable
             typeof(TestDbContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<TestDbContext>());
 
-        _serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
+        _serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddEntityFrameworkOutbox()));
 
         _outboxReader = _serviceProvider.GetRequiredService<IOutboxReaderFactory>().GetReader(_outboxSettings, _serviceProvider);
     }
@@ -68,18 +67,15 @@ public sealed class EntityFrameworkOutboxWriterTests : IDisposable
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
@@ -99,18 +95,15 @@ public sealed class EntityFrameworkOutboxWriterTests : IDisposable
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]
@@ -130,18 +123,15 @@ public sealed class EntityFrameworkOutboxWriterTests : IDisposable
 
         List<OutboxMessage> dbOutboxMessages = await (await _outboxReader.GetAsync(10)).ToListAsync();
         dbOutboxMessages.Count.ShouldBe(3);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
-        dbOutboxMessages.ShouldContain(
-            dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
-                               dbOutboxMessage.Headers == null &&
-                               dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage1.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage1.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage2.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage2.EndpointName);
+        dbOutboxMessages.ShouldContain(dbOutboxMessage => dbOutboxMessage.Content!.SequenceEqual(outboxMessage3.Content!) &&
+                                                          dbOutboxMessage.Headers == null &&
+                                                          dbOutboxMessage.EndpointName == outboxMessage3.EndpointName);
     }
 
     [Fact]

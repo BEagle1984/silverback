@@ -121,6 +121,8 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
                throw new InvalidOperationException("The producer has been fenced.");
     }
 
+    private sealed record GroupPendingOffsets(IEnumerable<TopicPartitionOffset> Offsets, MockedConsumerGroupMetadata GroupMetadata);
+
     private sealed class TransactionalProducerInfo
     {
         public TransactionalProducerInfo(string transactionalId)
@@ -130,11 +132,11 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
         public string TransactionalId { get; }
 
+        public List<GroupPendingOffsets> PendingOffsets { get; } = [];
+
         public Guid TransactionalUniqueId { get; private set; } = Guid.NewGuid();
 
         public bool IsTransactionPending { get; set; }
-
-        public List<GroupPendingOffsets> PendingOffsets { get; } = [];
 
         public void Reset()
         {
@@ -143,6 +145,4 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
             TransactionalUniqueId = Guid.NewGuid();
         }
     }
-
-    private sealed record GroupPendingOffsets(IEnumerable<TopicPartitionOffset> Offsets, MockedConsumerGroupMetadata GroupMetadata);
 }

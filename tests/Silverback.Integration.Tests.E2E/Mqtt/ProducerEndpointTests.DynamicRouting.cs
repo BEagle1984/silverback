@@ -20,27 +20,22 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenTopicFunctionIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => "topic1",
-                                                "2" => "topic2",
-                                                "3" => "topic3",
-                                                _ => throw new InvalidOperationException()
-                                            })))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(message => message?.ContentEventOne switch
+                        {
+                            "1" => "topic1",
+                            "2" => "topic2",
+                            "3" => "topic3",
+                            _ => throw new InvalidOperationException()
+                        })))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -63,28 +58,24 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenTopicFormatIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(
-                                            "topic{0}",
-                                            message => message?.ContentEventOne switch
-                                            {
-                                                "1" => ["1"],
-                                                "2" => ["2"],
-                                                "3" => ["3"],
-                                                _ => throw new InvalidOperationException()
-                                            })))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(
+                            "topic{0}",
+                            message => message?.ContentEventOne switch
+                            {
+                                "1" => ["1"],
+                                "2" => ["2"],
+                                "3" => ["3"],
+                                _ => throw new InvalidOperationException()
+                            })))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -107,19 +98,16 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduce_WhenCustomEndpointResolverIsSet()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSingleton<TestEndpointResolver>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSingleton<TestEndpointResolver>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -142,15 +130,13 @@ public partial class ProducerEndpointTests
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceToDynamicEndpointSetViaEnvelopeExtensions()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(client => client.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceToDynamicTopic()))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceToDynamicTopic()))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.WrapAndPublishAsync(

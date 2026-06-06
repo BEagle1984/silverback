@@ -55,10 +55,9 @@ public class OutboxWorkerServiceTests
             new SilverbackLoggerSubstitute<OutboxWorkerService>());
 
         outboxWorker.ProcessOutboxAsync(Arg.Any<CancellationToken>())
-            .Returns(
-                _ => ++calls < 3
-                    ? Task.FromResult(true)
-                    : Task.FromResult(false));
+            .Returns(_ => ++calls < 3
+                ? Task.FromResult(true)
+                : Task.FromResult(false));
 
         await outboxWorkerService.StartAsync(CancellationToken.None);
 
@@ -85,10 +84,9 @@ public class OutboxWorkerServiceTests
             new SilverbackLoggerSubstitute<OutboxWorkerService>());
 
         outboxWorker.ProcessOutboxAsync(Arg.Any<CancellationToken>())
-            .Returns(
-                _ => ++calls < 3
-                    ? Task.FromResult(true)
-                    : Task.FromResult(false));
+            .Returns(_ => ++calls < 3
+                ? Task.FromResult(true)
+                : Task.FromResult(false));
 
         await outboxWorkerService.StartAsync(CancellationToken.None);
 
@@ -176,9 +174,8 @@ public class OutboxWorkerServiceTests
         await outboxWorkerService1.StartAsync(cancellationTokenSource1.Token);
         await outboxWorkerService2.StartAsync(cancellationTokenSource2.Token);
 
-        await AsyncTestingUtil.WaitAsync(
-            () => outboxWorker1.ReceivedCalls().Count() >= 2 ||
-                  outboxWorker2.ReceivedCalls().Count() >= 2);
+        await AsyncTestingUtil.WaitAsync(() => outboxWorker1.ReceivedCalls().Count() >= 2 ||
+                                               outboxWorker2.ReceivedCalls().Count() >= 2);
 
         if (outboxWorker1.ReceivedCalls().Any())
         {
@@ -193,9 +190,8 @@ public class OutboxWorkerServiceTests
             await cancellationTokenSource2.CancelAsync();
         }
 
-        await AsyncTestingUtil.WaitAsync(
-            () => outboxWorker1.ReceivedCalls().Count() >= 2 &&
-                  outboxWorker2.ReceivedCalls().Count() >= 2);
+        await AsyncTestingUtil.WaitAsync(() => outboxWorker1.ReceivedCalls().Count() >= 2 &&
+                                               outboxWorker2.ReceivedCalls().Count() >= 2);
 
         await outboxWorker1.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
         await outboxWorker2.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());

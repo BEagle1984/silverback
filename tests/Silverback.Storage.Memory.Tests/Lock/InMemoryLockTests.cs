@@ -17,11 +17,10 @@ public class InMemoryLockTests
     [Fact]
     public async Task AcquireAsync_ShouldReturnHandle()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"), serviceProvider);
 
@@ -34,11 +33,10 @@ public class InMemoryLockTests
     [Fact]
     public async Task InMemoryLockHandle_Dispose_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"), serviceProvider);
 
@@ -53,11 +51,10 @@ public class InMemoryLockTests
     [Fact]
     public async Task InMemoryLockHandle_DisposeAsync_ShouldNotThrowIfCalledMultipleTimes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(
             new InMemoryLockSettings("Lock"),
@@ -74,11 +71,10 @@ public class InMemoryLockTests
     [Fact]
     public async Task AcquireAsync_ShouldGrantExclusiveLockByName()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         IDistributedLock distributedLockA1 = lockFactory.GetDistributedLock(new InMemoryLockSettings("A"), serviceProvider);

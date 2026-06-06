@@ -25,19 +25,16 @@ public class ConsumerStatusInfoTests : MqttTests
     [Fact]
     public async Task StatusInfo_ShouldReportCorrectStatus_WhenConsumingAndDisconnecting()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttClients(
-                        clients => clients
-                            .ConnectViaTcp("e2e-mqtt-broker")
-                            .AddClient(
-                                consumer => consumer
-                                    .WithClientId(DefaultClientId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddIntegrationSpyAndSubscriber())
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttClients(clients => clients
+                    .ConnectViaTcp("e2e-mqtt-broker")
+                    .AddClient(consumer => consumer
+                        .WithClientId(DefaultClientId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber())
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
@@ -59,19 +56,16 @@ public class ConsumerStatusInfoTests : MqttTests
     [Fact]
     public async Task StatusInfo_ShouldRecordHistory_WhenConsumingAndDisconnecting()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttClients(
-                        clients => clients
-                            .ConnectViaTcp("e2e-mqtt-broker")
-                            .AddClient(
-                                consumer => consumer
-                                    .WithClientId(DefaultClientId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddIntegrationSpyAndSubscriber())
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttClients(clients => clients
+                    .ConnectViaTcp("e2e-mqtt-broker")
+                    .AddClient(consumer => consumer
+                        .WithClientId(DefaultClientId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber())
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
@@ -102,19 +96,16 @@ public class ConsumerStatusInfoTests : MqttTests
     [Fact]
     public async Task StatusInfo_ShouldTrackLatestConsumedMessage()
     {
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttClients(
-                        clients => clients
-                            .ConnectViaTcp("e2e-mqtt-broker")
-                            .AddClient(
-                                consumer => consumer
-                                    .WithClientId(DefaultClientId)
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddIntegrationSpyAndSubscriber())
+        await Host.ConfigureServices(services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttClients(clients => clients
+                    .ConnectViaTcp("e2e-mqtt-broker")
+                    .AddClient(consumer => consumer
+                        .WithClientId(DefaultClientId)
+                        .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber())
             .RunAsync(waitUntilBrokerClientsConnected: false);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

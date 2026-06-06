@@ -28,7 +28,7 @@ public class KafkaConsumerEndpointsCacheTests
                         new TopicPartitionOffset("topic1", Partition.Any, Offset.Beginning)
                     }.AsValueReadOnlyCollection()
                 }
-            }.AsValueReadOnlyCollection(),
+            }.AsValueReadOnlyCollection()
         };
 
         KafkaConsumerEndpointsCache cache = new(configuration);

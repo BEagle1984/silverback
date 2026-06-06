@@ -34,26 +34,21 @@ public class EncryptionTests : MqttTests
         TestEventOne message1 = new() { ContentEventOne = "Message 1" };
         TestEventOne message2 = new() { ContentEventOne = "Message 2" };
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey))
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(AesEncryptionKey))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
@@ -80,35 +75,28 @@ public class EncryptionTests : MqttTests
         const string keyIdentifier1 = "my-encryption-key-1";
         const string keyIdentifier2 = "my-encryption-key-2";
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey, keyIdentifier1))
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey2, keyIdentifier2))
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(
-                                            keyIdentifier => keyIdentifier switch
-                                            {
-                                                keyIdentifier1 => AesEncryptionKey,
-                                                _ => AesEncryptionKey2
-                                            }))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey, keyIdentifier1))
+                    .Produce<TestEventTwo>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey2, keyIdentifier2))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(keyIdentifier => keyIdentifier switch
+                        {
+                            keyIdentifier1 => AesEncryptionKey,
+                            _ => AesEncryptionKey2
+                        }))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
@@ -135,31 +123,25 @@ public class EncryptionTests : MqttTests
         TestEventOne message1 = new() { ContentEventOne = "Message 1" };
         TestEventOne message2 = new() { ContentEventOne = "Message 2" };
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey))
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(
-                                            keyIdentifier => keyIdentifier switch
-                                            {
-                                                "another-encryption-key-id" => AesEncryptionKey2,
-                                                _ => AesEncryptionKey
-                                            }))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(keyIdentifier => keyIdentifier switch
+                        {
+                            "another-encryption-key-id" => AesEncryptionKey2,
+                            _ => AesEncryptionKey
+                        }))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message1);
@@ -197,27 +179,22 @@ public class EncryptionTests : MqttTests
 
         TestingCollection<byte[]?> receivedFiles = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<BinaryMessage>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey))
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey))))
-                .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<BinaryMessage>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .EncryptUsingAes(AesEncryptionKey))
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .DecryptUsingAes(AesEncryptionKey))))
+            .AddDelegateSubscriber<BinaryMessage>(HandleMessage)
+            .AddIntegrationSpy());
 
         void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 

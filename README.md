@@ -4,7 +4,8 @@ Silverback is a message bus and broker integration library for .NET.
 It helps you build event-driven architectures and asynchronous workflows with first-class support for **Apache Kafka** and **MQTT**.
 
 Silverback aims to be both **high-level** (consistent configuration and developer experience) and **broker-aware**.
-Kafka is a first-class citizen: features like partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration, idempotency, and transactions are surfaced where they matter, instead of being abstracted away.
+Kafka is a first-class citizen: features like partition-based parallelism, keys/partitioning, tombstones, Schema Registry integration,
+idempotency, and transactions are surfaced where they matter, instead of being abstracted away.
 
 ## Why Silverback
 
@@ -70,7 +71,8 @@ Optional features:
 
 - **[Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx/)** – Rx.NET integration.
 - **[Silverback.Newtonsoft](https://www.nuget.org/packages/Silverback.Newtonsoft/)** – Newtonsoft.Json serialization.
-- **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Confluent Schema Registry integration.
+- **[Silverback.Kafka.SchemaRegistry](https://www.nuget.org/packages/Silverback.Kafka.SchemaRegistry/)** – Confluent Schema Registry
+  integration.
 
 Storage (for outbox, client-side offsets, distributed locks):
 

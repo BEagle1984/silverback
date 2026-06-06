@@ -20,12 +20,11 @@ public partial class PublisherTests
     public void Publish_ShouldResolveAdditionalArguments()
     {
         Counter counter = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSingleton(counter)
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddTransientSubscriber(_ => new SubscriberWithParameters(CancellationToken.None)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSingleton(counter)
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientSubscriber(_ => new SubscriberWithParameters(CancellationToken.None)));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -38,12 +37,11 @@ public partial class PublisherTests
     {
         Counter counter = new();
         CancellationToken cancellationToken = new(false);
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSingleton(counter)
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddTransientSubscriber(_ => new SubscriberWithParameters(cancellationToken)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSingleton(counter)
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddTransientSubscriber(_ => new SubscriberWithParameters(cancellationToken)));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne(), cancellationToken);
@@ -56,13 +54,12 @@ public partial class PublisherTests
     {
         Counter counter = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSingleton(counter)
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne, Counter>(Handle1)
-                .AddDelegateSubscriber<object, Counter>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSingleton(counter)
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne, Counter>(Handle1)
+            .AddDelegateSubscriber<object, Counter>(Handle2));
 
         static void Handle1(TestEvent message, Counter counter) => counter.Increment();
         static Task Handle2(object message, Counter counterParam) => counterParam.IncrementAsync();
@@ -79,13 +76,12 @@ public partial class PublisherTests
     {
         Counter counter = new();
         CancellationToken cancellationTokenArgument = new(false);
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddSingleton(counter)
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne, Counter>(Handle1)
-                .AddDelegateSubscriber<object, Counter, CancellationToken>(Handle2));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddSingleton(counter)
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestEventOne, Counter>(Handle1)
+            .AddDelegateSubscriber<object, Counter, CancellationToken>(Handle2));
 
         static void Handle1(TestEvent message, Counter counter) => counter.Increment();
 

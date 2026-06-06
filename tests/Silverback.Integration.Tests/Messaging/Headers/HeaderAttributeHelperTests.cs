@@ -35,7 +35,7 @@ public class HeaderAttributeHelperTests
                 new MessageHeader("x-int-default", "2"),
                 new MessageHeader("x-readonly-int", "42")
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]

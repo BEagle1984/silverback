@@ -15,7 +15,6 @@ Header | Name
 :-- | :--
 [MessageType](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageType) | `x-message-type`
 [FailedAttempts](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts) | `x-failed-attempts`
-[ChunkMessageId](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkMessageId) | `x-message-id`
 [ChunkIndex](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunkIndex) | `x-chunk-index`
 [ChunksCount](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_ChunksCount) | `x-chunk-count`
 [IsLastChunk](xref:Silverback.Messaging.Messages.DefaultMessageHeaders#Silverback_Messaging_Messages_DefaultMessageHeaders_IsLastChunk) | `x-chunk-last`

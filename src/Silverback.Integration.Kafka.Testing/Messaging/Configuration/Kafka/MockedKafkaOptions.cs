@@ -8,9 +8,9 @@ namespace Silverback.Messaging.Configuration.Kafka;
 
 internal sealed class MockedKafkaOptions : IMockedKafkaOptions
 {
-    public int DefaultPartitionsCount { get; set; } = 5;
-
     public IDictionary<string, int> TopicPartitionsCount { get; } = new Dictionary<string, int>();
+
+    public int DefaultPartitionsCount { get; set; } = 5;
 
     public int? OverriddenAutoCommitIntervalMs { get; set; } = 50;
 

@@ -23,10 +23,9 @@ public class DistributedBackgroundServiceTests
     {
         bool executed = false;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestDistributedBackgroundService service = new(
@@ -47,11 +46,10 @@ public class DistributedBackgroundServiceTests
     {
         bool executed = false;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .UseInMemoryLock());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .UseInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestDistributedBackgroundService service = new(
@@ -76,11 +74,10 @@ public class DistributedBackgroundServiceTests
         bool executedInParallel = false;
 
         IServiceProvider serviceProvider = ServiceProviderHelper
-            .GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .UseInMemoryLock());
+            .GetServiceProvider(services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .UseInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         string lockName = $"shared-lock-{Guid.NewGuid():N}";

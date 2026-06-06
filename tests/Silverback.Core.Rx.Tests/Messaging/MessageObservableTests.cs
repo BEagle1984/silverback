@@ -108,27 +108,24 @@ public sealed class MessageObservableTests : IDisposable
         CountdownEvent countdownEvent = new(3);
 
         await Task.WhenAll(
-            Task.Run(
-                async () =>
-                {
-                    countdownEvent.Signal();
-                    countdownEvent.WaitOrThrow();
-                    await _streamProvider.PushAsync(1);
-                }),
-            Task.Run(
-                async () =>
-                {
-                    countdownEvent.Signal();
-                    countdownEvent.WaitOrThrow();
-                    await _streamProvider.PushAsync(2);
-                }),
-            Task.Run(
-                async () =>
-                {
-                    countdownEvent.Signal();
-                    countdownEvent.WaitOrThrow();
-                    await _streamProvider.PushAsync(3);
-                }));
+            Task.Run(async () =>
+            {
+                countdownEvent.Signal();
+                countdownEvent.WaitOrThrow();
+                await _streamProvider.PushAsync(1);
+            }),
+            Task.Run(async () =>
+            {
+                countdownEvent.Signal();
+                countdownEvent.WaitOrThrow();
+                await _streamProvider.PushAsync(2);
+            }),
+            Task.Run(async () =>
+            {
+                countdownEvent.Signal();
+                countdownEvent.WaitOrThrow();
+                await _streamProvider.PushAsync(3);
+            }));
 
         count.ShouldBe(3);
     }

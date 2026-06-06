@@ -23,9 +23,8 @@ internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
     {
         foreach (string? friendlyName in consumer.EndpointsConfiguration.Select(configuration => configuration.FriendlyName))
         {
-            if (!string.IsNullOrEmpty(friendlyName) && _consumers.Values.Any(
-                existingConsumer => existingConsumer.EndpointsConfiguration
-                    .Any(configuration => configuration.FriendlyName == friendlyName)))
+            if (!string.IsNullOrEmpty(friendlyName) && _consumers.Values.Any(existingConsumer => existingConsumer.EndpointsConfiguration
+                .Any(configuration => configuration.FriendlyName == friendlyName)))
             {
                 throw new InvalidOperationException($"A consumer endpoint with the name '{friendlyName}' has already been added.");
             }

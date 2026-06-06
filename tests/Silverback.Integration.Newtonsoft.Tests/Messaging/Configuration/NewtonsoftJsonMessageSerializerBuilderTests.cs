@@ -37,11 +37,10 @@ public class NewtonsoftJsonMessageSerializerBuilderTests
         NewtonsoftJsonMessageSerializerBuilder builder = new();
 
         IMessageSerializer serializer = builder
-            .Configure(
-                settings =>
-                {
-                    settings.MaxDepth = 42;
-                })
+            .Configure(settings =>
+            {
+                settings.MaxDepth = 42;
+            })
             .Build();
 
         NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();

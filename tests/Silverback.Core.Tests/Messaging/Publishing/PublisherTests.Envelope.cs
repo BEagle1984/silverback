@@ -20,11 +20,10 @@ public partial class PublisherTests
     public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IEnvelope>(Handle));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<IEnvelope>(Handle));
 
         void Handle(IEnvelope envelope) => messages.Add(envelope);
 
@@ -41,11 +40,10 @@ public partial class PublisherTests
     public async Task PublishAndPublishAsync_ShouldUnwrapEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestCommandOne>(Handle));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<TestCommandOne>(Handle));
 
         void Handle(TestCommandOne message) => messages.Add(message);
 
@@ -63,11 +61,10 @@ public partial class PublisherTests
     public async Task PublishAndPublishAsync_ShouldCastEnvelope()
     {
         List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<ITestRawEnvelope>(Handle));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .AddDelegateSubscriber<ITestRawEnvelope>(Handle));
 
         void Handle(ITestRawEnvelope envelope) => messages.Add(envelope);
 

@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup Label="Package information">
     <BaseVersionSuffix></BaseVersionSuffix>
-    <BaseVersion>5.2.2$(BaseVersionSuffix)</BaseVersion>
+    <BaseVersion>5.3.3$(BaseVersionSuffix)</BaseVersion>
     <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
   <PropertyGroup Label="Build">
@@ -41,6 +41,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json"/>
   </ItemGroup>
 </Project>

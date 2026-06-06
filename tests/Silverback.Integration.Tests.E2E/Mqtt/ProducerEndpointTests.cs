@@ -36,18 +36,15 @@ public partial class ProducerEndpointTests : MqttTests
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(message);
@@ -60,29 +57,22 @@ public partial class ProducerEndpointTests : MqttTests
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenMultipleClientsForDifferentMessagesAreConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId("client1")
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
-                        .AddClient(
-                            client => client
-                                .WithClientId("client2")
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
-                                        serializer => serializer
-                                            .Configure(
-                                                options =>
-                                                {
-                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                                                }))))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("client1")
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
+                .AddClient(client => client
+                    .WithClientId("client2")
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(serializer => serializer
+                        .Configure(options =>
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        }))))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -102,7 +92,7 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
         Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
@@ -111,32 +101,26 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenSingleClientHandlesMultipleTypes()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
-                                        serializer => serializer
-                                            .Configure(
-                                                options =>
-                                                {
-                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                                                }))))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(serializer => serializer
+                        .Configure(options =>
+                        {
+                            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        }))))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -156,7 +140,7 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
         Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"contentEventTwo\":\"1\"}",
@@ -165,29 +149,25 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ProducerEndpoint_ShouldSerializeAndProduce_WhenBroadcastingToMultipleTopics()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1"))
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -204,7 +184,7 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
         Helper.GetMessages("topic2").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
@@ -213,7 +193,7 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
         Helper.GetMessages("topic3").GetContentAsString().ShouldBe(
             [
                 "{\"ContentEventOne\":\"1\"}",
@@ -222,29 +202,25 @@ public partial class ProducerEndpointTests : MqttTests
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ProducerEndpoint_ShouldProduceCustomHeaders()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Produce<IIntegrationEvent>(
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
-                                        .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
-                                        .AddHeader("x-static", 42)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Produce<IIntegrationEvent>(endpoint => endpoint
+                        .ProduceTo(DefaultTopicName)
+                        .AddHeader<TestEventWithHeaders>("x-content", envelope => envelope.Message?.Content)
+                        .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
+                        .AddHeader("x-static", 42)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -270,15 +246,13 @@ public partial class ProducerEndpointTests : MqttTests
     [Fact]
     public async Task ProducerEndpoint_ShouldNotSetupRouteButStillWork_WhenMessageTypeIsNotSpecified()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(client => client.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());

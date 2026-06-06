@@ -28,12 +28,10 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
-            serializer => serializer.Configure(
-                settings =>
-                {
-                    settings.MaxDepth = 42;
-                })).Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(serializer => serializer.Configure(settings =>
+        {
+            settings.MaxDepth = 42;
+        })).Build();
 
         configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
         NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();
@@ -46,9 +44,8 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
-        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
-                serializer => serializer
-                    .WithEncoding(MessageEncoding.Unicode))
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(serializer => serializer
+                .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
         configuration.Serializer.ShouldBeOfType<NewtonsoftJsonMessageSerializer>();

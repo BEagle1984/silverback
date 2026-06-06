@@ -86,7 +86,7 @@ public class ConsumersHealthCheckServiceTests
             TimeSpan.Zero);
 
         result.Count.ShouldBe(2);
-        result.ShouldBe([_stoppedConsumer, _startedConsumer], ignoreOrder: true);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer], true);
     }
 
     [Fact]
@@ -141,6 +141,6 @@ public class ConsumersHealthCheckServiceTests
             TimeSpan.FromMilliseconds(100));
 
         result.Count.ShouldBe(2);
-        result.ShouldBe([_stoppedConsumer, _startedConsumer], ignoreOrder: true);
+        result.ShouldBe([_stoppedConsumer, _startedConsumer], true);
     }
 }

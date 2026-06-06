@@ -27,9 +27,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreateSqliteKafkaOffsetStoreAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
-        CreateSqliteKafkaOffsetStoreAsync(
-            initializer,
-            new SqliteKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
+        initializer.CreateSqliteKafkaOffsetStoreAsync(new SqliteKafkaOffsetStoreSettings(Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
     ///     Creates the SQLite kafka offset store table.
@@ -48,7 +46,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         SqliteKafkaOffsetStoreSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreateSqliteKafkaOffsetStoreAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
+        return initializer.CreateSqliteKafkaOffsetStoreAsync(settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     The name of the kafka offset store table.
     /// </param>
     /// <param name="timeout">
-    ///   The table creation timeout.
+    ///     The table creation timeout.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.

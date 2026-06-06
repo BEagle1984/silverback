@@ -57,18 +57,15 @@ public class ProduceBenchmark
 
     public ProduceBenchmark()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://benchmark")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks"))
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://benchmark")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks"))
+                    .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
 
         BrokerClientsConnectorService clientsConnectorService = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         clientsConnectorService.StartAsync(CancellationToken.None).SafeWait();

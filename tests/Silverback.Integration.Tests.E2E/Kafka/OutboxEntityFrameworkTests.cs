@@ -27,11 +27,14 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-public class OutboxEntityFrameworkTests : KafkaTests
+public class OutboxEntityFrameworkTests : KafkaTests, IClassFixture<PostgresContainerFixture>
 {
-    public OutboxEntityFrameworkTests(ITestOutputHelper testOutputHelper)
+    private readonly PostgresContainerFixture _postgresContainerFixture;
+
+    public OutboxEntityFrameworkTests(ITestOutputHelper testOutputHelper, PostgresContainerFixture postgresContainerFixture)
         : base(testOutputHelper)
     {
+        _postgresContainerFixture = postgresContainerFixture;
     }
 
     [Fact]
@@ -39,35 +42,29 @@ public class OutboxEntityFrameworkTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -82,7 +79,7 @@ public class OutboxEntityFrameworkTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -90,35 +87,29 @@ public class OutboxEntityFrameworkTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -136,7 +127,7 @@ public class OutboxEntityFrameworkTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -144,35 +135,29 @@ public class OutboxEntityFrameworkTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -190,7 +175,7 @@ public class OutboxEntityFrameworkTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 3).Select(i => $"{i}"), true);
     }
 
     [Fact]
@@ -198,35 +183,29 @@ public class OutboxEntityFrameworkTests : KafkaTests
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         using TestDbContext dbContext = Host.ServiceProvider.GetRequiredService<IDbContextFactory<TestDbContext>>().CreateDbContext();
 
@@ -267,7 +246,7 @@ public class OutboxEntityFrameworkTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), true);
     }
 
     [Fact]
@@ -275,37 +254,31 @@ public class OutboxEntityFrameworkTests : KafkaTests
     [Trait("Database", "PostgreSql")]
     public async Task Outbox_ShouldUseTransaction_WhenUsingPostgreSql()
     {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+        string connectionString = await _postgresContainerFixture.GetNewConnectionStringAsync();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(database.ConnectionString))
-                .InitDbContext<TestDbContext>()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddEntityFrameworkOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(connectionString))
+            .InitDbContext<TestDbContext>()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka()
+                .AddEntityFrameworkOutbox()
+                .AddOutboxWorker(worker => worker
+                    .ProcessOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())
+                    .WithInterval(TimeSpan.FromMilliseconds(50))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<IIntegrationEvent>(
+                        "my-endpoint",
+                        endpoint => endpoint
+                            .ProduceTo(DefaultTopicName)
+                            .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         using TestDbContext dbContext = Host.ServiceProvider.GetRequiredService<IDbContextFactory<TestDbContext>>().CreateDbContext();
 
@@ -346,7 +319,7 @@ public class OutboxEntityFrameworkTests : KafkaTests
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(0, 3).Select(i => $"commit {i}"), true);
     }
 
     private class TestDbContext : DbContext

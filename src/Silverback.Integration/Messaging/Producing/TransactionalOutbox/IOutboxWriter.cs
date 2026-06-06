@@ -65,8 +65,8 @@ public interface IOutboxWriter
     ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
     /// <param name="cancellationToken">
-    ///   The cancellation token that can be used to cancel the operation.
-    ///  </param>
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>

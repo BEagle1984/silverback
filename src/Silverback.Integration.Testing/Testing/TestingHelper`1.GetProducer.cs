@@ -16,9 +16,8 @@ public abstract partial class TestingHelper
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
     public IProducer GetProducerForEndpoint(string endpointName)
     {
-        IProducer? producer = _producers?.FirstOrDefault(
-            producer => producer.EndpointConfiguration.RawName == endpointName ||
-                        producer.EndpointConfiguration.FriendlyName == endpointName);
+        IProducer? producer = _producers?.FirstOrDefault(producer => producer.EndpointConfiguration.RawName == endpointName ||
+                                                                     producer.EndpointConfiguration.FriendlyName == endpointName);
 
         if (producer != null)
             return producer;

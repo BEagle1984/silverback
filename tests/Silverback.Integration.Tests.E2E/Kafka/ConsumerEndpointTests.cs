@@ -33,21 +33,17 @@ public partial class ConsumerEndpointTests : KafkaTests
         int[] exitedSubscribers = [0, 0, 0];
         bool areOverlapping = false;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(HandleEnvelope));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(HandleEnvelope));
 
         async ValueTask HandleEnvelope(IInboundEnvelope<TestEventOne> envelope)
         {
@@ -81,23 +77,19 @@ public partial class ConsumerEndpointTests : KafkaTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsume_WhenMultipleConsumersForDifferentTopicsAreConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
         IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
@@ -117,29 +109,26 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         eventOneEnvelopes.Length.ShouldBe(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(["1", "2", "3", "4", "5"], true);
         eventTwoEnvelopes.Length.ShouldBe(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], ignoreOrder: true);
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(["1", "2", "3", "4", "5"], true);
     }
 
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsume_WhenSingleConsumersForMultipleTopicsIsConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1"))
-                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("topic1"))
+                    .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2"))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer1 = Helper.GetProducerForEndpoint("topic1");
         IProducer producer2 = Helper.GetProducerForEndpoint("topic2");
@@ -161,44 +150,37 @@ public partial class ConsumerEndpointTests : KafkaTests
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic1");
         eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5"],
-            ignoreOrder: true);
+            true);
         eventTwoEnvelopes.Length.ShouldBe(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).ShouldAllBe(rawName => rawName == "topic2");
         eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).ShouldBe(
             ["1", "2", "3", "4", "5"],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeOnce_WhenMultipleConsumersForSameTopicAndWithSameConsumerGroupAreConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducer(
-            producer => producer
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
+            .AddKafkaClients(clients => clients
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo(DefaultTopicName)
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         for (int i = 1; i <= 8; i++)
         {
@@ -215,7 +197,7 @@ public partial class ConsumerEndpointTests : KafkaTests
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = [.. Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>()];
         inboundEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            ignoreOrder: true);
+            true);
         IInboundEnvelope<TestEventOne>[] consumer1Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0])];
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = [.. inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1])];
 
@@ -226,25 +208,20 @@ public partial class ConsumerEndpointTests : KafkaTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeTwice_WhenMultipleConsumersForSameTopicAndWithDifferentConsumerGroupAreConfigured()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group1")
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId("group2")
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group1")
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId("group2")
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
@@ -267,10 +244,10 @@ public partial class ConsumerEndpointTests : KafkaTests
 
         consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            ignoreOrder: true);
+            true);
         consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).ShouldBe(
             ["1", "2", "3", "4", "5", "6", "7", "8"],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]
@@ -278,31 +255,25 @@ public partial class ConsumerEndpointTests : KafkaTests
     {
         TestKafkaOffsetCommittedCallback offsetCommittedCallback = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .EnableAutoCommit()
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonBrokerClientCallback(offsetCommittedCallback)
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducer(
-            producer => producer
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .EnableAutoCommit()
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(offsetCommittedCallback)
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo(DefaultTopicName)
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
@@ -327,31 +298,25 @@ public partial class ConsumerEndpointTests : KafkaTests
     {
         TestKafkaOffsetCommittedCallback offsetCommittedCallback = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(3)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonBrokerClientCallback(offsetCommittedCallback)
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducer(
-            producer => producer
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
+            .AddKafkaClients(clients => clients
                 .WithBootstrapServers("PLAINTEXT://e2e")
-                .Produce<TestEventOne>(
-                    endpoint => endpoint
-                        .ProduceTo(DefaultTopicName)
-                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(3)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(offsetCommittedCallback)
+            .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducer(producer => producer
+            .WithBootstrapServers("PLAINTEXT://e2e")
+            .Produce<TestEventOne>(endpoint => endpoint
+                .ProduceTo(DefaultTopicName)
+                .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
@@ -379,21 +344,18 @@ public partial class ConsumerEndpointTests : KafkaTests
         int receivedMessages = 0;
         TestKafkaOffsetCommittedCallback offsetCommittedCallback = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .CommitOffsetEach(10)
-                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonBrokerClientCallback(offsetCommittedCallback)
-                .AddDelegateSubscriber<TestEventOne>(HandleMessage));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(10)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(offsetCommittedCallback)
+            .AddDelegateSubscriber<TestEventOne>(HandleMessage));
 
         void HandleMessage(TestEventOne message) => receivedMessages++;
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -417,21 +379,17 @@ public partial class ConsumerEndpointTests : KafkaTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeAfterStopAndStart()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -460,21 +418,17 @@ public partial class ConsumerEndpointTests : KafkaTests
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeAfterDisconnectAndReconnect()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -507,22 +461,18 @@ public partial class ConsumerEndpointTests : KafkaTests
         List<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))
-                                .LimitParallelism(2)))
-                .AddDelegateSubscriber<TestEventWithKafkaKey>(HandleMessage));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))
+                    .LimitParallelism(2)))
+            .AddDelegateSubscriber<TestEventWithKafkaKey>(HandleMessage));
 
         async Task HandleMessage(TestEventWithKafkaKey message)
         {

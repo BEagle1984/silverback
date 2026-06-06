@@ -31,31 +31,25 @@ public class MqttToKafkaTests : KafkaTests
         int eventOneCount = 0;
         int eventTwoCount = 0;
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt().AddMockedKafka())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId("client1")
-                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("some/topic"))
-                                .Consume(endpoint => endpoint.ConsumeFrom("some/topic"))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("some-topic")))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("some-topic"))))
-                .AddDelegateSubscriber<TestEventOne, TestEventTwo>(HandleEventOne)
-                .AddDelegateSubscriber<TestEventTwo>(HandleEventTwo));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt().AddMockedKafka())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId("client1")
+                    .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("some/topic"))
+                    .Consume(endpoint => endpoint.ConsumeFrom("some/topic"))))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("some-topic")))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume(endpoint => endpoint.ConsumeFrom("some-topic"))))
+            .AddDelegateSubscriber<TestEventOne, TestEventTwo>(HandleEventOne)
+            .AddDelegateSubscriber<TestEventTwo>(HandleEventTwo));
 
         TestEventTwo HandleEventOne(TestEventOne eventOne)
         {

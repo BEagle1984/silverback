@@ -43,10 +43,9 @@ internal sealed class SubscribedMethodsCache
             message.GetType(),
             static (_, args) =>
                 args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
-                    .Any(
-                        method =>
-                            method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver &&
-                            WouldBeCompatibleWithMessageStream(args.Message, method)),
+                    .Any(method =>
+                        method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver &&
+                        WouldBeCompatibleWithMessageStream(args.Message, method)),
             (ServiceProvider: serviceProvider, Message: message, Instance: this));
 
     public void Preload(IServiceProvider serviceProvider) => HasAnyMessageStreamSubscriber(serviceProvider); // Internally calls GetAllSubscribedMethods
@@ -56,7 +55,7 @@ internal sealed class SubscribedMethodsCache
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IEnvelope envelope && subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType))
+        if (message is IEnvelope { Message: not null } envelope && subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType))
             return true;
 
         if (subscribedMethod.MessageType.IsInstanceOfType(message))
@@ -98,10 +97,12 @@ internal sealed class SubscribedMethodsCache
         (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
         .GetOrAdd(
             message.GetType(),
-            static (_, args) => [.. args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
-                .Where(
-                    subscribedMethod => AreCompatible(args.Message, subscribedMethod) &&
-                                        subscribedMethod.Options.IsExclusive == args.Exclusive)],
+            static (_, args) =>
+            [
+                .. args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
+                    .Where(subscribedMethod => AreCompatible(args.Message, subscribedMethod) &&
+                                               subscribedMethod.Options.IsExclusive == args.Exclusive)
+            ],
             (ServiceProvider: serviceProvider, Message: message, Exclusive: exclusive, Instance: this));
 
     private IReadOnlyCollection<SubscribedMethod> GetAllSubscribedMethods(IServiceProvider serviceProvider) =>

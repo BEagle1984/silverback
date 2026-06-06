@@ -121,23 +121,20 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
                 [.. offsets.Select(offset => new TopicPartitionOffsetError(offset, new Error(ErrorCode.NoError)))],
                 new Error(ErrorCode.NoError));
 
-            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                callback =>
-                    callback.OnOffsetsCommitted(committedOffsets, Consumer));
+            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
+                callback.OnOffsetsCommitted(committedOffsets, Consumer));
         }
         catch (TopicPartitionOffsetException ex)
         {
-            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                callback =>
-                    callback.OnOffsetsCommitted(new CommittedOffsets(ex.Results, ex.Error), Consumer));
+            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
+                callback.OnOffsetsCommitted(new CommittedOffsets(ex.Results, ex.Error), Consumer));
 
             throw;
         }
         catch (KafkaException ex)
         {
-            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                callback =>
-                    callback.OnOffsetsCommitted(new CommittedOffsets(null, ex.Error), Consumer));
+            _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
+                callback.OnOffsetsCommitted(new CommittedOffsets(null, ex.Error), Consumer));
         }
     }
 
@@ -263,10 +260,12 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         _adminClient ??= _adminClientFactory.GetClient(Configuration.ToConfluentAdminClientConfig());
 
         List<TopicPartition> availablePartitions =
-            [.. _adminClient
+        [
+            .. _adminClient
                 .GetMetadata(topicPartitionOffset.Topic, Configuration.GetMetadataTimeout)
                 .Topics[0].Partitions
-                .Select(metadata => new TopicPartition(topicPartitionOffset.Topic, metadata.PartitionId))];
+                .Select(metadata => new TopicPartition(topicPartitionOffset.Topic, metadata.PartitionId))
+        ];
 
         return await partitionOffsetsProvider.Invoke(availablePartitions).ConfigureAwait(false);
     }

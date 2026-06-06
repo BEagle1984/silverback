@@ -4,7 +4,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.SchemaRegistry;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Schema = Avro.Schema;
 
 namespace Silverback.Messaging.Serialization;
 
@@ -17,13 +19,13 @@ internal static class SchemaNormalizer
         _ => schema
     };
 
-    public static string NormalizeAvro(string schema) => Avro.Schema.Parse(schema).ToString();
+    public static string NormalizeAvro(string schema) => Schema.Parse(schema).ToString();
 
     public static string NormalizeJson(string schema)
     {
         JObject jObject = JObject.Parse(schema);
         SortProperties(jObject);
-        return jObject.ToString(Newtonsoft.Json.Formatting.None);
+        return jObject.ToString(Formatting.None);
     }
 
     private static void SortProperties(JObject jObject)

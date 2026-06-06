@@ -28,13 +28,12 @@ public class ConsumersHealthCheckTests
         IConsumer? consumer = Substitute.For<IConsumer>();
         consumer.StatusInfo.Returns(statusInfo);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -53,13 +52,12 @@ public class ConsumersHealthCheckTests
         IConsumer? consumer = Substitute.For<IConsumer>();
         consumer.StatusInfo.Returns(statusInfo);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -77,13 +75,12 @@ public class ConsumersHealthCheckTests
         consumer.StatusInfo.Returns(statusInfo);
         consumer.DisplayName.Returns("whatever-the-display-name");
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -103,13 +100,12 @@ public class ConsumersHealthCheckTests
         IConsumer? consumer = Substitute.For<IConsumer>();
         consumer.StatusInfo.Returns(statusInfo);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck(failureStatus: HealthStatus.Degraded));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck(failureStatus: HealthStatus.Degraded));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -132,13 +128,12 @@ public class ConsumersHealthCheckTests
         IConsumer? consumer = Substitute.For<IConsumer>();
         consumer.StatusInfo.Returns(statusInfo);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck(minHealthyStatus: ConsumerStatus.Started));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck(ConsumerStatus.Started));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -161,13 +156,12 @@ public class ConsumersHealthCheckTests
             new ConsumerStatusChange(ConsumerStatus.Started, DateTime.UtcNow.AddSeconds(-25))
         ]);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -190,13 +184,12 @@ public class ConsumersHealthCheckTests
             new ConsumerStatusChange(ConsumerStatus.Started, DateTime.UtcNow.AddSeconds(-35))
         ]);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 
@@ -219,13 +212,12 @@ public class ConsumersHealthCheckTests
             new ConsumerStatusChange(ConsumerStatus.Started, DateTime.UtcNow.AddSeconds(-35))
         ]);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddSilverback()
-                .Services
-                .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
-                .AddHealthChecks()
-                .AddConsumersCheck(gracePeriod: TimeSpan.FromSeconds(40)));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck(gracePeriod: TimeSpan.FromSeconds(40)));
 
         (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
 

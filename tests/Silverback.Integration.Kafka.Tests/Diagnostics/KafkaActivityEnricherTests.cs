@@ -33,15 +33,12 @@ public class KafkaActivityEnricherTests
 
         enricher.EnrichInboundActivity(activity, context);
 
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
-                            keyValuePair.Value == "MessageKey");
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
-                            keyValuePair.Value == "topic[3]");
-        activity.Tags.ShouldContain(
-            keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
-                            keyValuePair.Value == "topic[3]@42");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
+                                                    keyValuePair.Value == "MessageKey");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
+                                                    keyValuePair.Value == "topic[3]");
+        activity.Tags.ShouldContain(keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
+                                                    keyValuePair.Value == "topic[3]@42");
     }
 
     [Fact]

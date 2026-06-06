@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -95,6 +96,7 @@ public class Subscriber
         }
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional swallowing")]
     public async Task OnMessageReceivedAsync(IAsyncEnumerable<IInboundEnvelope<UnboundedMessage>> stream)
     {
         IInboundEnvelope<TestBenchMessage>? firstEnvelope = null;
@@ -106,13 +108,18 @@ public class Subscriber
             try
             {
                 await ProcessEnvelopeAsync(envelope);
-                LogMessageProcessed(envelope);
             }
-            catch
+            catch (Exception ex)
             {
-                firstEnvelope.Headers.Add("X-Failed-Message", envelope.Message?.MessageId);
-                throw;
+                // Swallow because streaming doesn't support error policies
+                _logger.LogInformation(
+                    ex,
+                    "Ignoring error processing message {MessageId} from topic {TopicName}",
+                    envelope.Message?.MessageId,
+                    envelope.Endpoint.RawName);
             }
+
+            LogMessageProcessed(envelope);
         }
     }
 

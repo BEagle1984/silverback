@@ -18,7 +18,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
 
     private readonly CancellationToken _applicationStoppingToken;
 
-    private readonly TaskCompletionSource<bool> _brokerDisconnectedTaskCompletionSource = new();
+    private Task _stoppingTask = Task.CompletedTask;
 
     public BrokerClientsConnectorService(
         BrokerClientConnectionOptions clientConnectionOptions,
@@ -41,7 +41,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
         await _connector.InitializeAsync().ConfigureAwait(false);
 
         if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.Startup)
-            await _connector.ConnectAllAsync(_applicationStoppingToken).ConfigureAwait(false);
+            await _connector.ConnectAsync(_applicationStoppingToken).ConfigureAwait(false);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
@@ -49,24 +49,16 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     private void OnApplicationStarted()
     {
         if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.AfterStartup)
-            _connector.ConnectAllAsync(_applicationStoppingToken).FireAndForget();
+            _connector.ConnectAsync(_applicationStoppingToken).FireAndForget();
     }
 
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
-    private void OnApplicationStopping() =>
-        Task.Run(
-                async () =>
-                {
-                    try
-                    {
-                        await _connector.DisconnectAllAsync().ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        _brokerDisconnectedTaskCompletionSource.SetResult(true);
-                    }
-                })
-            .FireAndForget();
+    private void OnApplicationStopping() => _stoppingTask = Task.Run(async () => await _connector.StopConsumersAsync().ConfigureAwait(false));
 
-    private void OnApplicationStopped() => _brokerDisconnectedTaskCompletionSource.Task.SafeWait();
+    [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
+    private void OnApplicationStopped()
+    {
+        _stoppingTask.SafeWait();
+        _connector.DisconnectAsync().SafeWait();
+    }
 }

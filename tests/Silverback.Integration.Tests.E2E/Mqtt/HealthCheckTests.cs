@@ -25,30 +25,24 @@ public class HealthCheckTests : MqttTests
     [Fact]
     public async Task ConsumerHealthCheck_ShouldReturnHealthyStatus_WhenAllConsumersConnected()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .ConnectViaTcp("e2e-mqtt-broker")
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom("topic1")
-                                        .ConsumeFrom("topic2", "topic3")))
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId)
-                                .Consume(
-                                    endpoint => endpoint
-                                        .ConsumeFrom("topic4"))))
-                .Services
-                .AddHealthChecks()
-                .AddConsumersCheck());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom("topic1")
+                        .ConsumeFrom("topic2", "topic3")))
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId)
+                    .Consume(endpoint => endpoint
+                        .ConsumeFrom("topic4"))))
+            .Services
+            .AddHealthChecks()
+            .AddConsumersCheck());
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

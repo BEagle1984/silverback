@@ -261,9 +261,8 @@ public class KafkaDynamicProducerEndpointResolverTests
     [InlineData("topic", -1)]
     public void GetSerializedEndpoint_ShouldSerializeDestinationTopic(string topic, int partition)
     {
-        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new(
-            (IOutboundEnvelope<TestEventOne> _) =>
-                new TopicPartition(topic, partition));
+        KafkaDynamicProducerEndpointResolver<TestEventOne> endpointResolver = new((IOutboundEnvelope<TestEventOne> _) =>
+            new TopicPartition(topic, partition));
 
         string result = endpointResolver.GetSerializedEndpoint(_envelope);
 

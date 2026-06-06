@@ -31,9 +31,8 @@ public static partial class BrokerOptionsBuilderEntityFrameworkExtensions
 
         if (!factory.HasFactory<EntityFrameworkKafkaOffsetStoreSettings>())
         {
-            factory.AddFactory<EntityFrameworkKafkaOffsetStoreSettings>(
-                (settings, serviceProvider) =>
-                    new EntityFrameworkKafkaOffsetStore(settings, serviceProvider.GetRequiredService<IServiceScopeFactory>()));
+            factory.AddFactory<EntityFrameworkKafkaOffsetStoreSettings>((settings, serviceProvider) =>
+                new EntityFrameworkKafkaOffsetStore(settings, serviceProvider.GetRequiredService<IServiceScopeFactory>()));
         }
 
         return builder;

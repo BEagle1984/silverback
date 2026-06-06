@@ -51,10 +51,9 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(
-                deserializer => deserializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .DeserializeAvro(deserializer => deserializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
@@ -66,10 +65,9 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(
-                deserializer => deserializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .DeserializeAvro(deserializer => deserializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<AvroMessageDeserializer<TestEventOne>>();
@@ -104,10 +102,9 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeJsonUsingSchemaRegistry(
-                deserializer => deserializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .DeserializeJsonUsingSchemaRegistry(deserializer => deserializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
@@ -119,10 +116,9 @@ public class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensionsTests
         TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeJsonUsingSchemaRegistry(
-                deserializer => deserializer
-                    .ConnectToSchemaRegistry("test-url")
-                    .UseModel<TestEventOne>())
+            .DeserializeJsonUsingSchemaRegistry(deserializer => deserializer
+                .ConnectToSchemaRegistry("test-url")
+                .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.ShouldBeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();

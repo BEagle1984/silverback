@@ -25,20 +25,18 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     public ProduceStrategiesImplementation()
     {
         // Produce each SampleMessage to a samples-perf topic
-        _rootServiceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://localhost:9092")
-                        .AddProducer(producer => producer.Produce<SampleMessage1>(endpoint => endpoint.ProduceTo("samples-perf-1")))
-                        .AddProducer(producer => producer.Produce<SampleMessage2>(endpoint => endpoint.ProduceTo("samples-perf-2")))
-                        .AddProducer(producer => producer.Produce<SampleMessage3>(endpoint => endpoint.ProduceTo("samples-perf-3")))
-                        .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-4")))
-                        .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-5")))
-                        .AddProducer(producer => producer.Produce<SampleMessage5>(endpoint => endpoint.ProduceTo("samples-perf-6")))));
+        _rootServiceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                .AddProducer(producer => producer.Produce<SampleMessage1>(endpoint => endpoint.ProduceTo("samples-perf-1")))
+                .AddProducer(producer => producer.Produce<SampleMessage2>(endpoint => endpoint.ProduceTo("samples-perf-2")))
+                .AddProducer(producer => producer.Produce<SampleMessage3>(endpoint => endpoint.ProduceTo("samples-perf-3")))
+                .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-4")))
+                .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-5")))
+                .AddProducer(producer => producer.Produce<SampleMessage5>(endpoint => endpoint.ProduceTo("samples-perf-6")))));
 
         _serviceScope = _rootServiceProvider.CreateScope();
 
@@ -249,26 +247,25 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
         while (number < iterations)
         {
             int nextNumber = ++number;
-            Task.Run(
-                    () =>
-                    {
-                        producer.Produce(
-                            new SampleMessage6
-                            {
-                                Number = nextNumber
-                            },
-                            null,
-                            _ =>
-                            {
-                                stats.IncrementProducedMessages();
-                                Interlocked.Decrement(ref pendingTasks);
-                            },
-                            _ =>
-                            {
-                                stats.IncrementErrors();
-                                Interlocked.Decrement(ref pendingTasks);
-                            });
-                    })
+            Task.Run(() =>
+                {
+                    producer.Produce(
+                        new SampleMessage6
+                        {
+                            Number = nextNumber
+                        },
+                        null,
+                        _ =>
+                        {
+                            stats.IncrementProducedMessages();
+                            Interlocked.Decrement(ref pendingTasks);
+                        },
+                        _ =>
+                        {
+                            stats.IncrementErrors();
+                            Interlocked.Decrement(ref pendingTasks);
+                        });
+                })
                 .FireAndForget();
         }
 
@@ -285,7 +282,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     private async Task ConnectAsync()
     {
         Console.WriteLine("Connecting...");
-        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAsync();
 
         Console.WriteLine("Connected. Waiting 5 seconds...");
 
@@ -296,14 +293,12 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
 
     private async Task DisconnectAsync()
     {
+        Console.WriteLine("Stopping consumers...");
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().StopConsumersAsync();
         Console.WriteLine("Disconnecting...");
-        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().DisconnectAllAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().DisconnectAsync();
 
         Console.WriteLine("Disconnected.");
-
-        // Wait and additional 5 seconds to ensure that the producer is
-        // fully connected
-        await Task.Delay(5000);
     }
 
     private IProducer GetProducer(string endpointName) =>

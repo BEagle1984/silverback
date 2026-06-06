@@ -19,10 +19,8 @@ public abstract partial class TestingHelper
 
     /// <inheritdoc cref="ITestingHelper.GetConsumerForEndpoint" />
     public IConsumer GetConsumerForEndpoint(string endpointName) =>
-        _consumers?.FirstOrDefault(
-            consumer => consumer.EndpointsConfiguration.Any(
-                endpoint =>
-                    endpoint.RawName == endpointName || endpoint.FriendlyName == endpointName)) ??
+        _consumers?.FirstOrDefault(consumer => consumer.EndpointsConfiguration.Any(endpoint =>
+            endpoint.RawName == endpointName || endpoint.FriendlyName == endpointName)) ??
         throw new InvalidOperationException($"No consumer found for endpoint '{endpointName}'.");
 
     /// <summary>

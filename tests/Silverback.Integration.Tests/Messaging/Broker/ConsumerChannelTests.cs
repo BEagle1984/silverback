@@ -65,12 +65,11 @@ public class ConsumerChannelTests
 
         await channel.WriteOverflowAsync(testMessage1);
         await channel.WriteOverflowAsync(testMessage2);
-        Task.Run(
-            async () =>
-            {
-                await channel.WriteAsync(testMessage3, CancellationToken.None);
-                await channel.WriteAsync(testMessage4, CancellationToken.None);
-            }).FireAndForget();
+        Task.Run(async () =>
+        {
+            await channel.WriteAsync(testMessage3, CancellationToken.None);
+            await channel.WriteAsync(testMessage4, CancellationToken.None);
+        }).FireAndForget();
 
         TestMessage readMessage1 = await channel.ReadAsync();
         TestMessage readMessage2 = await channel.ReadAsync();

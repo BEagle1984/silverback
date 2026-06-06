@@ -18,6 +18,8 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
 {
     private readonly Dictionary<string, List<RegisteredSchema>> _schemas = [];
 
+    private readonly List<Association> _associations = [];
+
     public IEnumerable<KeyValuePair<string, string>> Config { get; } = [];
 
     [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty", Justification = "Mock")]
@@ -43,7 +45,103 @@ internal sealed class MockedConfluentSchemaRegistryClient : ISchemaRegistryClien
         return registeredSchema.Id;
     }
 
-    public void ClearCaches() => throw new NotSupportedException();
+    public void ClearCaches()
+    {
+        // Nothing to do
+    }
+
+    public Task<List<Association>> GetAssociationsByResourceNameAsync(
+        string resourceName,
+        string resourceNamespace,
+        string resourceType,
+        List<string> associationTypes,
+        string lifecycle,
+        int offset,
+        int limit)
+    {
+        lock (_associations)
+        {
+            IEnumerable<Association> associations = _associations.Where(association =>
+                association.ResourceName == resourceName &&
+                association.ResourceNamespace == resourceNamespace &&
+                association.ResourceType == resourceType &&
+                association.Lifecycle == lifecycle &&
+                (associationTypes.Count == 0 || associationTypes.Contains(association.AssociationType)));
+
+            if (offset > 0)
+                associations = associations.Skip(offset);
+
+            if (limit > 0)
+                associations = associations.Take(limit);
+
+            List<Association> result = [.. associations];
+            return Task.FromResult(result);
+        }
+    }
+
+    public Task<AssociationResponse> CreateAssociationAsync(AssociationCreateOrUpdateRequest request)
+    {
+        lock (_associations)
+        {
+            foreach (AssociationCreateOrUpdateInfo requestAssociationInfo in request.Associations)
+            {
+                Association association = new(
+                    requestAssociationInfo.Subject,
+                    Guid.NewGuid().ToString(),
+                    request.ResourceName,
+                    request.ResourceNamespace,
+                    request.ResourceId,
+                    request.ResourceType,
+                    requestAssociationInfo.AssociationType,
+                    requestAssociationInfo.Lifecycle,
+                    requestAssociationInfo.Frozen ?? false);
+
+                int existingAssociationIndex = _associations.FindIndex(stored =>
+                    stored.Subject == association.Subject &&
+                    stored.ResourceName == association.ResourceName &&
+                    stored.ResourceNamespace == association.ResourceNamespace &&
+                    stored.ResourceId == association.ResourceId &&
+                    stored.ResourceType == association.ResourceType &&
+                    stored.AssociationType == association.AssociationType &&
+                    stored.Lifecycle == association.Lifecycle &&
+                    stored.Frozen == association.Frozen);
+
+                if (existingAssociationIndex >= 0)
+                    _associations[existingAssociationIndex] = association;
+                else
+                    _associations.Add(association);
+            }
+
+            AssociationResponse response = new()
+            {
+                ResourceName = request.ResourceName,
+                ResourceNamespace = request.ResourceNamespace,
+                ResourceType = request.ResourceType,
+                Associations =
+                [
+                    .. request.Associations.Select(requestAssociationInfo => new AssociationInfo
+                    {
+                        AssociationType = requestAssociationInfo.AssociationType,
+                        Lifecycle = requestAssociationInfo.Lifecycle
+                    })
+                ]
+            };
+            return Task.FromResult(response);
+        }
+    }
+
+    public Task DeleteAssociationsAsync(string resourceId, string resourceType, List<string> associationTypes, bool cascadeLifecycle)
+    {
+        lock (_associations)
+        {
+            _associations.RemoveAll(association =>
+                association.ResourceId == resourceId &&
+                association.ResourceType == resourceType &&
+                (associationTypes.Count == 0 || associationTypes.Contains(association.AssociationType)));
+
+            return Task.CompletedTask;
+        }
+    }
 
     public async Task<int> RegisterSchemaAsync(string subject, string avroSchema, bool normalize = false)
     {

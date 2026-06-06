@@ -317,7 +317,10 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the additional information to be provided to the broker as a comma-separated list of <c>key=value</c> pairs (e.g. <c>supportFeatureX=true,organizationId=sales-emea</c>). Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerTokenEndpointUrl):
-                builder.AppendLine("    ///     Gets the OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve the token. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
+                builder.AppendLine("    ///     Gets the JWT claim name to use as the subject (principal) when validating OIDC access tokens. Must be present in the JWT payload with a non-empty value. Should match the broker's <c>sasl.oauthbearer.sub.claim.name</c> configuration for consistent authentication. Only used when <c>sasl.oauthbearer.method</c> is set to \"oidc\".");
+                break;
+            case nameof(ClientConfig.SaslOauthbearerSubClaimName):
+                builder.AppendLine("    ///     Gets the claim name to be used as the SASL/OAUTHBEARER authentication identity (username) when communicating with the broker. The default value is <c>\"sub\"</c>. Only used when <see cref=\"SaslOauthbearerMethod\" /> is set to <see cref=\"Confluent.Kafka.SaslOauthbearerMethod.Oidc\" />.");
                 break;
             case nameof(ClientConfig.SaslOauthbearerGrantType):
                 builder.AppendLine("    ///     Gets the OAuth grant type to use when communicating with the identity provider.");

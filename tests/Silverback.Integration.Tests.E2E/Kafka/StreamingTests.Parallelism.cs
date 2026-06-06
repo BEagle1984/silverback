@@ -23,21 +23,17 @@ public partial class StreamingTests
         ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
         ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)
         {
@@ -60,7 +56,7 @@ public partial class StreamingTests
         receivedStreams.Count.ShouldBe(3);
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.Content)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
@@ -71,22 +67,18 @@ public partial class StreamingTests
         ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
         ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .ProcessAllPartitionsTogether()
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .ProcessAllPartitionsTogether()
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)
         {
@@ -109,7 +101,7 @@ public partial class StreamingTests
         receivedStreams.Count.ShouldBe(1);
         receivedMessages.Count.ShouldBe(15);
         receivedMessages.Select(message => message.Content)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).ShouldBe(15);
     }
@@ -120,22 +112,18 @@ public partial class StreamingTests
         TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .LimitParallelism(2)
-                                .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .LimitParallelism(2)
+                    .Consume<TestEventWithKafkaKey>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).AllowStreaming())))
+            .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventWithKafkaKey>>(HandleUnboundedStream));
 
         async Task HandleUnboundedStream(IMessageStreamEnumerable<TestEventWithKafkaKey> stream)
         {

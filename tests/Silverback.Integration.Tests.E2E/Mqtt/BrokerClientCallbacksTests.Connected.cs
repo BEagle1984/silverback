@@ -22,20 +22,17 @@ public partial class BrokerClientCallbacksTests
     {
         TestConnectedCallback callback = new();
 
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
-                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
-                .AddSingletonBrokerClientCallback(callback)
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
+                    .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                    .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
+            .AddSingletonBrokerClientCallback(callback)
+            .AddIntegrationSpyAndSubscriber());
 
         await AsyncTestingUtil.WaitAsync(() => callback.CallsCount > 0);
 
@@ -45,20 +42,17 @@ public partial class BrokerClientCallbacksTests
     [Fact]
     public async Task ConnectedCallback_ShouldProduceFromWithinTheCallback()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                .AddMqttClients(
-                    clients => clients
-                        .AddClient(
-                            client => client
-                                .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
-                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
-                .AddScopedBrokerClientCallback<SendMessageConnectedCallback>()
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+            .AddMqttClients(clients => clients
+                .AddClient(client => client
+                    .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
+                    .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                    .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
+            .AddScopedBrokerClientCallback<SendMessageConnectedCallback>()
+            .AddIntegrationSpyAndSubscriber());
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.InboundEnvelopes.Count > 0);
 

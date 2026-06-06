@@ -19,15 +19,15 @@
     <Product>Silverback.Storage.PostgreSql</Product>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DistributedLock.Postgres" />
-    <PackageReference Include="Npgsql" />
-    <PackageReference Include="System.Linq.Async" />
+    <PackageReference Include="DistributedLock.Postgres"/>
+    <PackageReference Include="Npgsql"/>
+    <PackageReference Include="System.Linq.Async"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

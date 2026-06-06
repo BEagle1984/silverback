@@ -20,37 +20,28 @@ public partial class SchemaRegistryTests
     [Fact]
     public async Task SchemaRegistry_ShouldProduceAndConsumeProtobuf()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .SerializeAsProtobuf(
-                                            protobuf => protobuf
-                                                .ConnectToSchemaRegistry("http://e2e:4242")
-                                                .Configure(
-                                                    config =>
-                                                    {
-                                                        config.AutoRegisterSchemas = false;
-                                                    }))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .DeserializeProtobuf(
-                                            protobuf => protobuf
-                                                .ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<ProtobufMessage>(endpoint => endpoint
+                        .SerializeAsProtobuf(protobuf => protobuf
+                            .ConnectToSchemaRegistry("http://e2e:4242")
+                            .Configure(config =>
+                            {
+                                config.AutoRegisterSchemas = false;
+                            }))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<ProtobufMessage>(endpoint => endpoint
+                        .DeserializeProtobuf(protobuf => protobuf
+                            .ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory = Host.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>();
         ISchemaRegistryClient schemaRegistryClient = schemaRegistryClientFactory.GetClient(registry => registry.WithUrl("http://e2e:4242"));
@@ -70,34 +61,28 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((ProtobufMessage)envelope.Message!).Number)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 
     [Fact]
     public async Task SchemaRegistry_ShouldProduceAndConsumeProtobuf_WhenAutoRegistering()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .SerializeAsProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .DeserializeProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<ProtobufMessage>(endpoint => endpoint
+                        .SerializeAsProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<ProtobufMessage>(endpoint => endpoint
+                        .DeserializeProtobuf(protobuf => protobuf.ConnectToSchemaRegistry("http://e2e:4242"))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
 
@@ -111,48 +96,38 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((ProtobufMessage)envelope.Message!).Number)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 
     [Fact]
     public async Task SchemaRegistry_ShouldProduceAndConsumeProtobuf_WhenUsingLatestSchema()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .SerializeAsProtobuf(
-                                            protobuf => protobuf
-                                                .ConnectToSchemaRegistry("http://e2e:4242")
-                                                .Configure(
-                                                    config =>
-                                                    {
-                                                        config.AutoRegisterSchemas = false;
-                                                        config.UseLatestVersion = true;
-                                                    }))
-                                        .ProduceTo(DefaultTopicName)))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume<ProtobufMessage>(
-                                    endpoint => endpoint
-                                        .DeserializeProtobuf(
-                                            protobuf => protobuf
-                                                .ConnectToSchemaRegistry("http://e2e:4242").Configure(
-                                                    config =>
-                                                    {
-                                                        config.UseLatestVersion = true;
-                                                    }))
-                                        .ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka().AddMockedConfluentSchemaRegistry())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer
+                    .Produce<ProtobufMessage>(endpoint => endpoint
+                        .SerializeAsProtobuf(protobuf => protobuf
+                            .ConnectToSchemaRegistry("http://e2e:4242")
+                            .Configure(config =>
+                            {
+                                config.AutoRegisterSchemas = false;
+                                config.UseLatestVersion = true;
+                            }))
+                        .ProduceTo(DefaultTopicName)))
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<ProtobufMessage>(endpoint => endpoint
+                        .DeserializeProtobuf(protobuf => protobuf
+                            .ConnectToSchemaRegistry("http://e2e:4242").Configure(config =>
+                            {
+                                config.UseLatestVersion = true;
+                            }))
+                        .ConsumeFrom(DefaultTopicName))))
+            .AddIntegrationSpyAndSubscriber());
 
         IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory = Host.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>();
         ISchemaRegistryClient schemaRegistryClient = schemaRegistryClientFactory.GetClient(registry => registry.WithUrl("http://e2e:4242"));
@@ -172,6 +147,6 @@ public partial class SchemaRegistryTests
         Helper.Spy.OutboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Count.ShouldBe(15);
         Helper.Spy.InboundEnvelopes.Select(envelope => ((ProtobufMessage)envelope.Message!).Number)
-            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), ignoreOrder: true);
+            .ShouldBe(Enumerable.Range(1, 15).Select(i => $"{i}"), true);
     }
 }

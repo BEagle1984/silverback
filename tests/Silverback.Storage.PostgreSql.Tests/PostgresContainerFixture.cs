@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Data.Common;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 using Ductus.FluentDocker.Builders;
@@ -13,31 +15,44 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql;
 
-[Trait("Dependency", "Docker")]
-[Trait("Database", "PostgreSql")]
-public abstract class PostgresContainerTests : IAsyncLifetime
+public class PostgresContainerFixture : IAsyncLifetime
 {
     private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromMinutes(1);
 
     private readonly IContainerService _postgresContainer;
 
-    protected PostgresContainerTests()
+    private readonly string _connectionString;
+
+    public PostgresContainerFixture()
     {
         _postgresContainer = new Builder().UseContainer()
             .UseImage("postgres")
             .ExposePort(5432)
-            .WithEnvironment("POSTGRES_PASSWORD=silverback", "POSTGRES_DB=silverback-storage-tests")
+            .WithEnvironment("POSTGRES_PASSWORD=silverback", "POSTGRES_DB=default")
             .WaitForPort("5432/tcp", 30_000)
             .Build()
             .Start();
 
         IPEndPoint hostExposedEndpoint = _postgresContainer.ToHostExposedEndpoint("5432/tcp");
-        ConnectionString = $"User ID=postgres;Password=silverback;" +
-                           $"Host={hostExposedEndpoint.Address};Port={hostExposedEndpoint.Port};" +
-                           $"Database=silverback-storage-tests;Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
+        _connectionString = $"User ID=postgres;Password=silverback;" +
+                            $"Host={hostExposedEndpoint.Address};Port={hostExposedEndpoint.Port};" +
+                            "Database={database};Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
     }
 
-    protected string ConnectionString { get; }
+    [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Test code")]
+    public string GetNewConnectionString()
+    {
+        // Create a new database
+        string databaseName = Guid.NewGuid().ToString("N");
+        using NpgsqlConnection connection = new(_connectionString.Replace("{database}", "default", StringComparison.Ordinal));
+        connection.Open();
+        using DbCommand command = connection.CreateCommand();
+        command.CommandText = $"CREATE DATABASE \"{databaseName}\"";
+        command.ExecuteNonQuery();
+        connection.Close();
+
+        return _connectionString.Replace("{database}", databaseName, StringComparison.Ordinal);
+    }
 
     public Task InitializeAsync() => WaitForConnectionAsync();
 
@@ -57,7 +72,7 @@ public abstract class PostgresContainerTests : IAsyncLifetime
         {
             try
             {
-                await using NpgsqlConnection connection = new(ConnectionString);
+                await using NpgsqlConnection connection = new(_connectionString.Replace("{database}", "default", StringComparison.Ordinal));
                 await connection.OpenAsync();
                 connected = true;
             }

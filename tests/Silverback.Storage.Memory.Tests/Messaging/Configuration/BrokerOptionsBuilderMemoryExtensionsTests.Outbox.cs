@@ -22,11 +22,10 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     [Fact]
     public void AddInMemoryOutbox_ShouldConfigureOutboxFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
@@ -41,11 +40,10 @@ public partial class BrokerOptionsBuilderMemoryExtensionsTests
     [Fact]
     public void UseInMemoryOutbox_ShouldOverrideAllOutboxSettingsTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.UseInMemoryOutbox()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.UseInMemoryOutbox()));
 
         OutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<OutboxReaderFactory>();
         OutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<OutboxWriterFactory>();

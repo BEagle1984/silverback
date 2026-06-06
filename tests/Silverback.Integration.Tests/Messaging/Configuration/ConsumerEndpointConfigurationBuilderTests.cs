@@ -181,4 +181,14 @@ public partial class ConsumerEndpointConfigurationBuilderTests
 
         endpoint.MessageValidationMode.ShouldBe(MessageValidationMode.ThrowException);
     }
+
+    [Fact]
+    public void AllowStreaming_ShouldSetAllowStreaming()
+    {
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
+
+        TestConsumerEndpointConfiguration endpoint = builder.AllowStreaming().Build();
+
+        endpoint.AllowStreaming.ShouldBeTrue();
+    }
 }

@@ -20,11 +20,10 @@ public partial class BrokerOptionsBuilderSqliteExtensionsTests
     [Fact]
     public void AddSqliteKafkaOffsetStore_ShouldConfigureOffsetStoreFactories()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().AddSqliteKafkaOffsetStore()));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().AddSqliteKafkaOffsetStore()));
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
 
@@ -36,11 +35,10 @@ public partial class BrokerOptionsBuilderSqliteExtensionsTests
     [Fact]
     public void UseSqliteKafkaOffsetStore_ShouldOverrideAllOffsetStoreSettingsTypes()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka().UseSqliteKafkaOffsetStore("conn")));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka().UseSqliteKafkaOffsetStore("conn")));
 
         KafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<KafkaOffsetStoreFactory>();
 

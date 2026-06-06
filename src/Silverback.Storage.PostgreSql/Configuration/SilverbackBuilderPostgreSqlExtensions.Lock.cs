@@ -32,10 +32,9 @@ public static partial class SilverbackBuilderPostgreSqlExtensions
 
         if (!lockFactory.HasFactory<PostgreSqlAdvisoryLockSettings>())
         {
-            lockFactory.AddFactory<PostgreSqlAdvisoryLockSettings>(
-                (settings, serviceProvider) => new PostgreSqlAdvisoryLock(
-                    settings,
-                    serviceProvider.GetRequiredService<ISilverbackLogger<PostgreSqlAdvisoryLock>>()));
+            lockFactory.AddFactory<PostgreSqlAdvisoryLockSettings>((settings, serviceProvider) => new PostgreSqlAdvisoryLock(
+                settings,
+                serviceProvider.GetRequiredService<ISilverbackLogger<PostgreSqlAdvisoryLock>>()));
         }
 
         return builder;
@@ -59,10 +58,9 @@ public static partial class SilverbackBuilderPostgreSqlExtensions
 
         if (!lockFactory.HasFactory<PostgreSqlTableLockSettings>())
         {
-            lockFactory.AddFactory<PostgreSqlTableLockSettings>(
-                (settings, serviceProvider) => new PostgreSqlTableLock(
-                    settings,
-                    serviceProvider.GetRequiredService<ISilverbackLogger<PostgreSqlTableLock>>()));
+            lockFactory.AddFactory<PostgreSqlTableLockSettings>((settings, serviceProvider) => new PostgreSqlTableLock(
+                settings,
+                serviceProvider.GetRequiredService<ISilverbackLogger<PostgreSqlTableLock>>()));
         }
 
         return builder;

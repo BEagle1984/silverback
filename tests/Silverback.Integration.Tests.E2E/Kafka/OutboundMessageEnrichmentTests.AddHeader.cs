@@ -19,21 +19,17 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddStaticHeader()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader("one", 1)
-                                    .AddHeader("two", 2))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader("one", 1)
+                    .AddHeader("two", 2))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
@@ -46,23 +42,18 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderByMessageType()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader<TestEventOne>("x-something", "one")
-                                    .AddHeader<TestEventTwo>("x-something", "two"))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader<TestEventOne>("x-something", "one")
+                    .AddHeader<TestEventTwo>("x-something", "two"))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne());
@@ -78,22 +69,17 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderWithValueFunctionBasedOnMessage()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader<TestEventOne>("x-something", message => message?.ContentEventOne))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader<TestEventOne>("x-something", message => message?.ContentEventOne))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -111,22 +97,17 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeaderWithValueFunctionBasedOnEnvelope()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader<TestEventOne>("x-something", envelope => envelope.Message?.ContentEventOne))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader<TestEventOne>("x-something", envelope => envelope.Message?.ContentEventOne))))
+            .AddIntegrationSpy());
 
         IPublisher publisher = Host.ServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -144,22 +125,17 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeader_WhenProducingViaProducer()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<TestEventOne>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader("x-something", envelope => envelope.Message?.ContentEventOne))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader("x-something", envelope => envelope.Message?.ContentEventOne))))
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "one" });
@@ -175,20 +151,16 @@ public partial class OutboundMessageEnrichmentTests
     [Fact]
     public async Task AddHeader_ShouldAddHeader_WhenProducingViaProducerWithCallbacks()
     {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer.Produce<TestEventOne>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .AddHeader("x-something", envelope => envelope.Message?.ContentEventOne))))
-                .AddIntegrationSpy());
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint
+                    .ProduceTo(DefaultTopicName)
+                    .AddHeader("x-something", envelope => envelope.Message?.ContentEventOne))))
+            .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         producer.Produce(

@@ -77,9 +77,11 @@ internal sealed class SequenceStore : ISequenceStore
     }
 
     public IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false, bool includeChildren = false) =>
-        [.. _store.Values.Where(sequence => sequence.IsPending &&
-                                        (includeUnbounded || sequence is not UnboundedSequence) &&
-                                        (includeChildren || sequence.ParentSequence == null))];
+    [
+        .. _store.Values.Where(sequence => sequence.IsPending &&
+                                           (includeUnbounded || sequence is not UnboundedSequence) &&
+                                           (includeChildren || sequence.ParentSequence == null))
+    ];
 
     public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
 

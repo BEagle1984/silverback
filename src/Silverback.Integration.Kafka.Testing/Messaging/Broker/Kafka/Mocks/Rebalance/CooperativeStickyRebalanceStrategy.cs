@@ -42,10 +42,12 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions)
     {
-        List<TopicPartition> unassignedPartitions = [.. topicPartitions
-            .Where(
-                topicPartition =>
-                    partitionAssignments.All(assignment => !assignment.Partitions.Contains(topicPartition)))];
+        List<TopicPartition> unassignedPartitions =
+        [
+            .. topicPartitions
+                .Where(topicPartition =>
+                    partitionAssignments.All(assignment => !assignment.Partitions.Contains(topicPartition)))
+        ];
 
         int partitionsPerConsumer = topicPartitions.Count / partitionAssignments.Count;
 

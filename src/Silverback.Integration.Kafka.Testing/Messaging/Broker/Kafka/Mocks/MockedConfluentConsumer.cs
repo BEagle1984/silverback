@@ -307,9 +307,11 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         PartitionsRevokedHandler?.Invoke(
             this,
-            [.. topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
+            [
+                .. topicPartitions.Select(topicPartition => _currentOffsets.GetValueOrDefault(
                     topicPartition,
-                    new TopicPartitionOffset(topicPartition, Offset.Unset)))]);
+                    new TopicPartitionOffset(topicPartition, Offset.Unset)))
+            ]);
 
         if (Config.EnableAutoCommit != false && !string.IsNullOrEmpty(Config.GroupId))
             Commit();
@@ -346,7 +348,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                 .Where(topicPartitionOffset => !IsPaused(
                     topicPartitionOffset.Topic,
                     topicPartitionOffset.Partition))
-                .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
+                .OrderBy(topicPartitionOffset => (int)(long)topicPartitionOffset.Offset);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -384,11 +386,14 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             return false;
 
         if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
-            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait(cancellationToken);
+            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait();
 
-        IReadOnlyCollection<TopicPartition> assignedPartitions = [.. _consumerGroup
-            .GetAssignment(this)
-            .Where(topicPartition => !Assignment.Contains(topicPartition))];
+        IReadOnlyCollection<TopicPartition> assignedPartitions =
+        [
+            .. _consumerGroup
+                .GetAssignment(this)
+                .Where(topicPartition => !Assignment.Contains(topicPartition))
+        ];
 
         List<TopicPartitionOffset> partitionOffsets =
             PartitionsAssignedHandler?.Invoke(this, assignedPartitions.AsList()).ToList() ??
@@ -473,9 +478,12 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
             if (isAutoCommit)
             {
-                List<TopicPartitionOffsetError> topicPartitionOffsetErrors = [.. committedOffsets
-                    .Select(topicPartitionOffset =>
-                        new TopicPartitionOffsetError(topicPartitionOffset, null))];
+                List<TopicPartitionOffsetError> topicPartitionOffsetErrors =
+                [
+                    .. committedOffsets
+                        .Select(topicPartitionOffset =>
+                            new TopicPartitionOffsetError(topicPartitionOffset, null))
+                ];
 
                 OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
             }

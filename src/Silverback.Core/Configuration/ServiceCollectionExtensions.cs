@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> to add the services necessary to enable the Silverback features.
     /// </returns>
-    public static SilverbackBuilder ConfigureSilverback(this IServiceCollection services) => AddSilverback(services);
+    public static SilverbackBuilder ConfigureSilverback(this IServiceCollection services) => services.AddSilverback();
 
     private static IServiceCollection AddLogger(this IServiceCollection services) => services
         .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))

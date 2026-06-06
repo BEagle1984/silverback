@@ -39,7 +39,7 @@ public class ActivityExtensionsTests
                 new KeyValuePair<string, string?>("key2", "value2"),
                 new KeyValuePair<string, string?>("key3", "value3")
             ],
-            ignoreOrder: true);
+            true);
     }
 
     [Fact]

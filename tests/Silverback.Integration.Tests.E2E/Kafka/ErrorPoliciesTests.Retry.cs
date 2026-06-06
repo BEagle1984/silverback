@@ -884,19 +884,17 @@ public partial class ErrorPoliciesTests
                         .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(100))
                         .OnError(policy => policy.Retry(10)))))
             .AddDelegateSubscriber<IEnumerable<IIntegrationEvent>>(HandleBatch)
-
-            // Add extra batch subscribers to verify that the extra streams are correctly canceled
             .AddDelegateSubscriber<IEnumerable<TestEventFour>>(_ =>
             {
-                // Do nothing
+                // Do nothing, just an extra batch subscriber to verify that the extra streams are correctly canceled
             })
             .AddDelegateSubscriber<IEnumerable<TestEventThree>>(_ =>
             {
-                // Do nothing
+                // Do nothing, just an extra batch subscriber to verify that the extra streams are correctly canceled
             })
             .AddDelegateSubscriber<IEnumerable<TestEventTwo>>(_ =>
             {
-                // Do nothing
+                // Do nothing, just an extra batch subscriber to verify that the extra streams are correctly canceled
             })
             .AddIntegrationSpy());
 

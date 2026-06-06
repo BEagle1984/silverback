@@ -181,7 +181,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     void ISequenceImplementation.NotifyProcessingCompleted()
     {
         _processingCompleteTaskCompletionSource.TrySetResult(true);
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
     }
 
     /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
@@ -190,7 +190,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _processingCompleteTaskCompletionSource.TrySetException(exception);
 
         // Don't forward the error, it's enough to handle it once
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+        _sequences?.OfType<ISequenceImplementation>().ToList().ForEach(CompleteLinkedSequence); // Copy the list to avoid concurrent modification exception
         _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
     }
 
@@ -206,13 +206,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (envelope is not TEnvelope typedEnvelope)
             throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-        bool semaphoreAcquired = false;
+        if (!await WaitIfNotDisposedAsync(_addSemaphoreSlim).ConfigureAwait(false))
+            return AddToSequenceResult.AbortedOrFailed(IsAborted, _abortingTaskCompletionSource?.Task);
+
+        bool lockReleased = false;
 
         try
         {
-            await _addSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-            semaphoreAcquired = true;
-
             return await AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled).ConfigureAwait(false);
         }
         catch (OperationCanceledException ex)
@@ -223,7 +223,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 () => [GetType().Name, SequenceId]);
 
             _addSemaphoreSlim.Release(); // Release the semaphore to allow the abort to complete and avoid deadlocks
-            semaphoreAcquired = false;
+            lockReleased = true;
 
             await _processingCompleteTaskCompletionSource.Task.ConfigureAwait(false);
 
@@ -240,7 +240,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         finally
         {
-            if (semaphoreAcquired)
+            if (!lockReleased)
                 _addSemaphoreSlim.Release();
         }
     }
@@ -250,12 +250,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         if (!await WaitIfNotDisposedAsync(_completeSemaphoreSlim).ConfigureAwait(false))
             return;
-
-        if (!IsPending)
-            return;
-
         try
         {
+            if (!IsPending)
+                return;
+
             await AbortCoreAsync(SequenceAbortReason.IncompleteSequence, null).ConfigureAwait(false);
         }
         finally
@@ -363,11 +362,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         int pushedStreamsCount;
         try
         {
+            _addCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
             pushedStreamsCount = await _streamProvider.PushAsync(
                     envelope,
                     throwIfUnhandled,
                     static envelope => ActivitySources.UpdateConsumeActivity((IRawInboundEnvelope)envelope!),
-                    envelope)
+                    envelope,
+                    _addCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
             // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
@@ -396,7 +398,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
                 () => [GetType().Name, SequenceId, TotalLength]);
 
-            await CompleteCoreAsync().ConfigureAwait(false);
+            await _completeSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                await CompleteCoreAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                _completeSemaphoreSlim.Release();
+            }
         }
 
         return AddToSequenceResult.Success(pushedStreamsCount);
@@ -452,22 +463,22 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (!disposing)
             return;
 
+        _isDisposed = true;
+
         _logger.LogTrace("Disposing {sequenceType} '{sequenceId}'...", () => [GetType().Name, SequenceId]);
 
         _abortingTaskCompletionSource?.Task.SafeWait();
-
-        _streamProvider.Dispose();
-        _addCancellationTokenSource.Dispose();
-
-        _sequences?.ForEach(sequence => sequence.Dispose());
+        _addCancellationTokenSource.Cancel();
 
         _logger.LogTrace("Dispose is waiting add semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
         _addSemaphoreSlim.Wait();
         _logger.LogTrace("Dispose is waiting complete semaphore ({sequenceType} '{sequenceId}')...", () => [GetType().Name, SequenceId]);
         _completeSemaphoreSlim.Wait();
-        _isDisposed = true;
 
+        _streamProvider.Dispose();
+        _sequences?.ForEach(sequence => sequence.Dispose());
         _addSemaphoreSlim.Dispose();
+        _addCancellationTokenSource.Dispose();
         _completeSemaphoreSlim.Dispose();
 
         // If necessary, cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
@@ -627,8 +638,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             switch (AbortReason)
             {
                 case SequenceAbortReason.Error:
-                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
-                        .ConfigureAwait(false))
+                    if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!).ConfigureAwait(false))
                     {
                         await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 

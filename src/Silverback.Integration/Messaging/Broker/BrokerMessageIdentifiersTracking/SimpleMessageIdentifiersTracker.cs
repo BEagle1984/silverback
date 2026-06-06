@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 
 /// <summary>
-///    Keeps track of the identifiers (offsets or similar) of the messages being produced or consumed.
+///     Keeps track of the identifiers (offsets or similar) of the messages being produced or consumed.
 /// </summary>
 public sealed class SimpleMessageIdentifiersTracker : IBrokerMessageIdentifiersTracker
 {

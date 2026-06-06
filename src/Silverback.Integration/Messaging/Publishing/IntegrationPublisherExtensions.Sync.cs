@@ -33,7 +33,7 @@ public static partial class IntegrationPublisherExtensions
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishAsync(message, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
@@ -62,7 +62,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishAsync(message, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -84,7 +84,7 @@ public static partial class IntegrationPublisherExtensions
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -113,7 +113,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -142,7 +142,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -178,7 +178,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -200,7 +200,7 @@ public static partial class IntegrationPublisherExtensions
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -229,7 +229,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -258,7 +258,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -294,7 +294,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -316,7 +316,7 @@ public static partial class IntegrationPublisherExtensions
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -345,7 +345,7 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -374,7 +374,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -410,5 +410,5 @@ public static partial class IntegrationPublisherExtensions
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
+        publisher.WrapAndPublishBatchAsync(sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 }

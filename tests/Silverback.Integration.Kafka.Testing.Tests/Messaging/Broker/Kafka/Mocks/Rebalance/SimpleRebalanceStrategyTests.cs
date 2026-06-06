@@ -161,13 +161,13 @@ public class SimpleRebalanceStrategyTests
         result.RevokedPartitions[consumer1].ShouldBe(
         [
             new TopicPartition("topic1", 0),
-                new TopicPartition("topic1", 2),
-                new TopicPartition("topic1", 4)
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 4)
         ]);
         result.RevokedPartitions[consumer2].ShouldBe(
         [
             new TopicPartition("topic1", 1),
-                new TopicPartition("topic1", 3)
+            new TopicPartition("topic1", 3)
         ]);
 
         result.AssignedPartitions.Count.ShouldBe(3);
@@ -232,12 +232,12 @@ public class SimpleRebalanceStrategyTests
         result.RevokedPartitions[consumer1].ShouldBe(
         [
             new TopicPartition("topic1", 0),
-                new TopicPartition("topic1", 3)
+            new TopicPartition("topic1", 3)
         ]);
         result.RevokedPartitions[consumer2].ShouldBe(
         [
             new TopicPartition("topic1", 1),
-                new TopicPartition("topic1", 4)
+            new TopicPartition("topic1", 4)
         ]);
 
         result.AssignedPartitions.Count.ShouldBe(2);

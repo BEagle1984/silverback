@@ -37,13 +37,12 @@ public class KafkaOffsetStoreScopeTests
 
         await offsetStore.Received(1).StoreOffsetsAsync(
             Arg.Any<string>(),
-            Arg.Is<IEnumerable<KafkaOffset>>(
-                enumerable => enumerable.SequenceEqual(
-                    new[]
-                    {
-                        new KafkaOffset("topic1", 2, 3),
-                        new KafkaOffset("topic2", 3, 4)
-                    })),
+            Arg.Is<IEnumerable<KafkaOffset>>(enumerable => enumerable.SequenceEqual(
+                new[]
+                {
+                    new KafkaOffset("topic1", 2, 3),
+                    new KafkaOffset("topic2", 3, 4)
+                })),
             silverbackContext);
     }
 
@@ -52,7 +51,7 @@ public class KafkaOffsetStoreScopeTests
     {
         IKafkaOffsetStore offsetStore = Substitute.For<IKafkaOffsetStore>();
         IRawInboundEnvelope envelope = Substitute.For<IRawInboundEnvelope>();
-        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope: envelope);
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope);
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 
         envelope.BrokerMessageIdentifier.Returns(new KafkaOffset("topic1", 4, 2));
@@ -63,12 +62,11 @@ public class KafkaOffsetStoreScopeTests
 
         await offsetStore.Received(1).StoreOffsetsAsync(
             Arg.Any<string>(),
-            Arg.Is<IEnumerable<KafkaOffset>>(
-                enumerable => enumerable.SequenceEqual(
-                    new[]
-                    {
-                        new KafkaOffset("topic1", 4, 2),
-                    })),
+            Arg.Is<IEnumerable<KafkaOffset>>(enumerable => enumerable.SequenceEqual(
+                new[]
+                {
+                    new KafkaOffset("topic1", 4, 2)
+                })),
             silverbackContext);
     }
 
@@ -84,7 +82,7 @@ public class KafkaOffsetStoreScopeTests
         [
             new KafkaOffset("topic1", 1, 5),
             new KafkaOffset("topic1", 2, 4),
-            new KafkaOffset("topic1", 3, 3),
+            new KafkaOffset("topic1", 3, 3)
         ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
@@ -118,7 +116,7 @@ public class KafkaOffsetStoreScopeTests
         [
             new KafkaOffset("topic1", 1, 5),
             new KafkaOffset("topic1", 2, 4),
-            new KafkaOffset("topic1", 3, 3),
+            new KafkaOffset("topic1", 3, 3)
         ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
@@ -127,20 +125,19 @@ public class KafkaOffsetStoreScopeTests
         offsetStore.ClearReceivedCalls();
 
         sequence.GetCommitIdentifiers().Returns(
-            [
-                new KafkaOffset("topic1", 1, 6)
-            ]);
+        [
+            new KafkaOffset("topic1", 1, 6)
+        ]);
 
         await scope.StoreOffsetsAsync();
 
         await offsetStore.Received(1).StoreOffsetsAsync(
             Arg.Any<string>(),
-            Arg.Is<IEnumerable<KafkaOffset>>(
-                enumerable => enumerable.SequenceEqual(
-                    new[]
-                    {
-                        new KafkaOffset("topic1", 1, 6)
-                    })),
+            Arg.Is<IEnumerable<KafkaOffset>>(enumerable => enumerable.SequenceEqual(
+                new[]
+                {
+                    new KafkaOffset("topic1", 1, 6)
+                })),
             silverbackContext);
     }
 
@@ -156,7 +153,7 @@ public class KafkaOffsetStoreScopeTests
         [
             new KafkaOffset("topic1", 1, 5),
             new KafkaOffset("topic1", 2, 4),
-            new KafkaOffset("topic1", 3, 3),
+            new KafkaOffset("topic1", 3, 3)
         ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
@@ -165,20 +162,19 @@ public class KafkaOffsetStoreScopeTests
         offsetStore.ClearReceivedCalls();
 
         sequence.GetCommitIdentifiers().Returns(
-            [
-                new KafkaOffset("topic1", 1, 2)
-            ]);
+        [
+            new KafkaOffset("topic1", 1, 2)
+        ]);
 
         await scope.StoreOffsetsAsync();
 
         await offsetStore.Received(1).StoreOffsetsAsync(
             Arg.Any<string>(),
-            Arg.Is<IEnumerable<KafkaOffset>>(
-                enumerable => enumerable.SequenceEqual(
-                    new[]
-                    {
-                        new KafkaOffset("topic1", 1, 2)
-                    })),
+            Arg.Is<IEnumerable<KafkaOffset>>(enumerable => enumerable.SequenceEqual(
+                new[]
+                {
+                    new KafkaOffset("topic1", 1, 2)
+                })),
             silverbackContext);
     }
 }

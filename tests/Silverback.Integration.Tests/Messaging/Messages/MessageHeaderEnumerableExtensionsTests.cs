@@ -113,7 +113,7 @@ public class MessageHeaderEnumerableExtensionsTests
             new("header3", "value3")
         ];
 
-        Action act = () => headers.GetValue("header4", throwIfNotFound: true);
+        Action act = () => headers.GetValue("header4", true);
 
         act.ShouldThrow<ArgumentOutOfRangeException>();
     }
