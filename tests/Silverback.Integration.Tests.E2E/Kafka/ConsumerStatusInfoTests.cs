@@ -48,7 +48,7 @@ public class ConsumerStatusInfoTests : KafkaTests
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Connected);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Connected);
 
-        DefaultConsumerGroup.ScheduleRebalance();
+        DefaultConsumerGroup.Rebalance();
 
         await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Started);
         consumer.StatusInfo.Status.ShouldBe(ConsumerStatus.Started);

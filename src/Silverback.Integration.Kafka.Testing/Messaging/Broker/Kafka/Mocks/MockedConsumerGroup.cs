@@ -65,7 +65,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             _subscribedConsumers.Add(new SubscribedConsumer((MockedConfluentConsumer)consumer));
 
-            ScheduleRebalance();
+            Rebalance();
         }
         finally
         {
@@ -81,7 +81,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             UnsubscribeCore(consumer);
 
-            ScheduleRebalance();
+            Rebalance();
         }
         finally
         {
@@ -106,7 +106,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             _manuallyAssignedConsumers.Add(consumer);
 
-            ScheduleRebalance();
+            Rebalance();
         }
         finally
         {
@@ -122,7 +122,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             UnassignCore(consumer);
 
-            ScheduleRebalance();
+            Rebalance();
         }
         finally
         {
@@ -142,7 +142,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             if (_subscribedConsumers.Exists(subscribedConsumer => subscribedConsumer.Consumer == consumer))
                 UnsubscribeCore(consumer);
 
-            ScheduleRebalance();
+            Rebalance();
         }
         finally
         {
@@ -161,7 +161,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         }
     }
 
-    public void ScheduleRebalance()
+    public void Rebalance()
     {
         if (IsRebalanceScheduled)
             return;
@@ -174,54 +174,6 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             await Task.Delay(50).ConfigureAwait(false);
             await RebalanceAsync().ConfigureAwait(false);
         }).FireAndForget();
-    }
-
-    public async Task<RebalanceResult> RebalanceAsync()
-    {
-        try
-        {
-            await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
-
-            IsRebalanceScheduled = false;
-            IsRebalancing = true;
-
-            if (_subscriptions.Count == 0)
-                return RebalanceResult.Empty;
-
-            _subscribedConsumers.ForEach(consumer =>
-            {
-                consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
-                consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
-                consumer.Consumer.OnRebalancing();
-            });
-
-            EnsurePartitionAssignmentsDictionaryIsInitialized();
-            IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
-            List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
-                [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
-            RebalanceResult result = GetAssignmentStrategy() switch
-            {
-                PartitionAssignmentStrategy.CooperativeSticky =>
-                    CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
-
-                // RoundRobin and Range strategies aren't properly implemented, but it shouldn't make any difference for the in-memory tests
-                _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
-            };
-            InvokePartitionsRevokedCallbacks(result);
-
-            // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
-            await Task.Delay(20).ConfigureAwait(false);
-
-            IsRebalancing = false;
-
-            await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
-
-            return result;
-        }
-        finally
-        {
-            _subscriptionsChangeSemaphore.Release();
-        }
     }
 
     public IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer) =>
@@ -252,6 +204,52 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             .PartitionsAssignedTaskCompletionSource.TrySetResult(true);
 
     public void Dispose() => _subscriptionsChangeSemaphore.Dispose();
+
+    private async Task RebalanceAsync()
+    {
+        try
+        {
+            await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
+
+            IsRebalanceScheduled = false;
+            IsRebalancing = true;
+
+            if (_subscriptions.Count == 0)
+                return;
+
+            _subscribedConsumers.ForEach(consumer =>
+            {
+                consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
+                consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
+                consumer.Consumer.OnRebalancing();
+            });
+
+            EnsurePartitionAssignmentsDictionaryIsInitialized();
+            IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
+            List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
+                [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
+            RebalanceResult result = GetAssignmentStrategy() switch
+            {
+                PartitionAssignmentStrategy.CooperativeSticky =>
+                    CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
+
+                // RoundRobin and Range strategies aren't properly implemented, but it shouldn't make any difference for the in-memory tests
+                _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
+            };
+            InvokePartitionsRevokedCallbacks(result);
+
+            // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
+            await Task.Delay(20).ConfigureAwait(false);
+
+            IsRebalancing = false;
+
+            await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _subscriptionsChangeSemaphore.Release();
+        }
+    }
 
     private void UnsubscribeCore(IMockedConfluentConsumer consumer)
     {

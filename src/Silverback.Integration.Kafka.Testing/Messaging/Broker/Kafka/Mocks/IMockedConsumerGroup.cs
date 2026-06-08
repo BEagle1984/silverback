@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
 /// <summary>
 ///     A mocked consumer group. Note that it isn't obviously possible to accurately replicate the message broker
-///     behavior and this implementation is just intended for testing purposes.
+///     behavior, and this implementation is just intended for testing purposes.
 /// </summary>
 public interface IMockedConsumerGroup
 {
@@ -25,16 +25,6 @@ public interface IMockedConsumerGroup
     string BootstrapServers { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether a rebalance is being performed.
-    /// </summary>
-    bool IsRebalancing { get; }
-
-    /// <summary>
-    ///     Gets a value indicating whether a rebalance has been scheduled.
-    /// </summary>
-    bool IsRebalanceScheduled { get; }
-
-    /// <summary>
     ///     Gets the latest committed <see cref="Offset" /> for each topic partition.
     /// </summary>
     /// <returns>
@@ -43,86 +33,9 @@ public interface IMockedConsumerGroup
     IReadOnlyCollection<TopicPartitionOffset> CommittedOffsets { get; }
 
     /// <summary>
-    ///     Subscribes the consumer to the specified topics.
+    ///     Triggers a rebalance that will be asynchronously executed.
     /// </summary>
-    /// <param name="consumer">
-    ///     The <see cref="IMockedConfluentConsumer" /> instance.
-    /// </param>
-    /// <param name="topics">
-    ///     The topics to be subscribed.
-    /// </param>
-    void Subscribe(IMockedConfluentConsumer consumer, IEnumerable<string> topics);
-
-    /// <summary>
-    ///     Unsubscribes the consumer from all topics.
-    /// </summary>
-    /// <param name="consumer">
-    ///     The <see cref="IMockedConfluentConsumer" /> instance.
-    /// </param>
-    void Unsubscribe(IMockedConfluentConsumer consumer);
-
-    /// <summary>
-    ///     Assigns the specified partitions to the consumer.
-    /// </summary>
-    /// <param name="consumer">
-    ///     The <see cref="IMockedConfluentConsumer" /> instance.
-    /// </param>
-    /// <param name="partitions">
-    ///     The partitions.
-    /// </param>
-    void Assign(IMockedConfluentConsumer consumer, IEnumerable<TopicPartition> partitions);
-
-    /// <summary>
-    ///     Removes the partitions assignment for the specified consumer.
-    /// </summary>
-    /// <param name="consumer">
-    ///     The <see cref="IMockedConfluentConsumer" /> instance.
-    /// </param>
-    void Unassign(IMockedConfluentConsumer consumer);
-
-    /// <summary>
-    ///     Removes the consumer from the group.
-    /// </summary>
-    /// <remarks>
-    ///     This method is called when the <see cref="IMockedConfluentConsumer" /> is closed or disposed.
-    /// </remarks>
-    /// <param name="consumer">
-    ///     The <see cref="IMockedConfluentConsumer" /> instance.
-    /// </param>
-    void Remove(IMockedConfluentConsumer consumer);
-
-    /// <summary>
-    ///     Commits the specified offsets.
-    /// </summary>
-    /// <param name="offsets">
-    ///     The offsets to be committed.
-    /// </param>
-    void Commit(IEnumerable<TopicPartitionOffset> offsets);
-
-    /// <summary>
-    ///     Initializes a rebalance and causes all assignments to be revoked and reassigned.
-    /// </summary>
-    void ScheduleRebalance();
-
-    /// <summary>
-    ///     Exectues a rebalance and causes all assignments to be revoked and reassigned.
-    /// </summary>
-    /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-    ///     partitions that have been revoked and assigned.
-    /// </returns>
-    Task<RebalanceResult> RebalanceAsync();
-
-    /// <summary>
-    ///     Gets partition assignment for the specified consumer.
-    /// </summary>
-    /// <param name="consumer">
-    ///     The consumer.
-    /// </param>
-    /// <returns>
-    ///     The partitions currently assigned to the consumer.
-    /// </returns>
-    IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer);
+    void Rebalance();
 
     /// <summary>
     ///     Gets the latest committed <see cref="Offset" /> for the specified topic partition.
