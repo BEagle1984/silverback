@@ -34,7 +34,7 @@ internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
             throw new InvalidOperationException($"A consumer with name '{consumer.Name}' has already been added.");
     }
 
-    public ValueTask StopAllAsync() => _consumers.Values.ForEachAsync(consumer => consumer.StopAsync());
+    public ValueTask StopAllAsync() => _consumers.Values.ParallelForEachAsync(consumer => consumer.StopAsync());
 
     public IEnumerator<IConsumer> GetEnumerator() => _consumers.Values.GetEnumerator();
 
