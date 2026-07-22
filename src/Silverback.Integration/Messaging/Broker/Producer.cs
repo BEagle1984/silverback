@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,6 +86,7 @@ public abstract class Producer : IProducer, IDisposable
         Produce(OutboundEnvelopeFactory.CreateEnvelope(message, headers, EndpointConfiguration, this));
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce is meant to be synchronous")]
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
         Check.NotNull(envelope, nameof(envelope));

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ public class EntityFrameworkLock : TableBasedDistributedLock
     }
 
     /// <inheritdoc cref="TableBasedDistributedLock.TryAcquireLockAsync" />
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "AddAsync on the DbSet doesn't add any value")]
     protected override async Task<bool> TryAcquireLockAsync(string handlerName)
     {
         using IServiceScope scope = _serviceScopeFactory.CreateScope();

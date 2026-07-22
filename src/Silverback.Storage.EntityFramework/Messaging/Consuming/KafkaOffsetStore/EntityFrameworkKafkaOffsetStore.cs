@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,7 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "AddAsync on the DbSet doesn't add any value")]
     public async Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null)
     {
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
