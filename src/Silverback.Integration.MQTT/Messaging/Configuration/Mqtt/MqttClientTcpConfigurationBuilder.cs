@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Sockets;
+using MQTTnet.Channel;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
@@ -182,6 +183,25 @@ public class MqttClientTcpConfigurationBuilder
     {
         DnsEndPoint dnsEndPoint = new(host, port, addressFamily ?? AddressFamily.Unspecified);
         return WithRemoteEndpoint(dnsEndPoint);
+    }
+
+    /// <summary>
+    ///     Sets an optional <see cref="MQTTnet.Channel.IMqttClientStreamProvider" /> used to obtain the
+    ///     transport stream to the broker. When set, the channel will delegate the TCP-level
+    ///     connect (including any proxy negotiation) to the provider and then optionally wrap the
+    ///     returned stream with TLS, using the broker host as SNI. When <c>null</c>, the channel
+    ///     opens a plain TCP socket directly to <see cref="MQTTnet.MqttClientTcpOptions.RemoteEndpoint" />.
+    /// </summary>
+    /// <param name="provider">
+    ///     The optional <see cref="MQTTnet.Channel.IMqttClientStreamProvider" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientTcpConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientTcpConfigurationBuilder WithStreamProvider(IMqttClientStreamProvider? provider)
+    {
+        _tcpConfiguration = _tcpConfiguration with { StreamProvider = provider };
+        return this;
     }
 
     /// <summary>

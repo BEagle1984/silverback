@@ -75,7 +75,8 @@ public class BuilderGenerator
             or "WithProtocolType"
             or "WithTlsOptions"
             or "WithWillMessageExpiryInterval"
-            or "WithAddressFamily";
+            or "WithAddressFamily"
+            or "WithStreamProvider";
 
     private void GenerateHeading()
     {

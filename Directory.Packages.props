@@ -55,6 +55,8 @@
     <PackageVersion Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.15.0" />
     <PackageVersion Include="Confluent.SchemaRegistry.Serdes.Json" Version="2.15.0" />
     <PackageVersion Include="Confluent.SchemaRegistry.Serdes.Protobuf" Version="2.15.0" />
+    <PackageVersion Include="Confluent.Kafka" Version="2.15.0" />
+    <PackageVersion Include="MQTTnet" Version="5.2.0.1603" />
     <!-- Silverback packages, needed when packing nuget packages -->
     <PackageVersion Include="Silverback.Core" Version="$(BaseVersion)"/>
     <PackageVersion Include="Silverback.Core.Model" Version="$(BaseVersion)"/>

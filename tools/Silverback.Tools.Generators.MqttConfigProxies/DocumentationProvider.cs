@@ -152,6 +152,14 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the protocol type, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).");
                 builder.AppendLine("    ///     The default is <see cref=\"ProtocolType.Tcp\" />.");
                 break;
+            case nameof(MqttClientTcpOptions.StreamProvider):
+                builder.AppendLine("    ///     Gets the optional <see cref=\"MQTTnet.Channel.IMqttClientStreamProvider\" /> used to obtain the");
+                builder.AppendLine("    ///     transport stream to the broker. When set, the channel will delegate the TCP-level");
+                builder.AppendLine("    ///     connect (including any proxy negotiation) to the provider and then optionally wrap the");
+                builder.AppendLine("    ///     returned stream with TLS, using the broker host as SNI. When <c>null</c>, the channel");
+                builder.AppendLine("    ///     opens a plain TCP socket directly to <see cref=\"MQTTnet.MqttClientTcpOptions.RemoteEndpoint\" />.");
+
+                break;
         }
     }
 

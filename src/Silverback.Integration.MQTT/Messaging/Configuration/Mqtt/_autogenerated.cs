@@ -10,6 +10,7 @@ using System.Net.WebSockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using MQTTnet;
+using MQTTnet.Channel;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
@@ -201,6 +202,15 @@ public partial record MqttClientTcpConfiguration
     /// </summary>
     public EndPoint? RemoteEndpoint { get; init; }
 
+    /// <summary>
+    ///     Gets the optional <see cref="MQTTnet.Channel.IMqttClientStreamProvider" /> used to obtain the
+    ///     transport stream to the broker. When set, the channel will delegate the TCP-level
+    ///     connect (including any proxy negotiation) to the provider and then optionally wrap the
+    ///     returned stream with TLS, using the broker host as SNI. When <c>null</c>, the channel
+    ///     opens a plain TCP socket directly to <see cref="MQTTnet.MqttClientTcpOptions.RemoteEndpoint" />.
+    /// </summary>
+    public IMqttClientStreamProvider? StreamProvider { get; init; }
+
     private MqttClientTcpOptions MapCore() =>
         new()
         {
@@ -211,7 +221,8 @@ public partial record MqttClientTcpConfiguration
             LocalEndpoint = LocalEndpoint,
             NoDelay = NoDelay,
             ProtocolType = ProtocolType,
-            RemoteEndpoint = RemoteEndpoint
+            RemoteEndpoint = RemoteEndpoint,
+            StreamProvider = StreamProvider
         };
 }
 

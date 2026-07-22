@@ -1,8 +1,13 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+using MQTTnet.Channel;
 using Shouldly;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -149,6 +154,17 @@ public class MqttClientTcpConfigurationBuilderTests
     }
 
     [Fact]
+    public void WithStreamProvider_ShouldSetStreamProvider()
+    {
+        MqttClientTcpConfigurationBuilder builder = new();
+
+        builder.WithStreamProvider(new TestStreamProvider());
+
+        MqttClientTcpConfiguration configuration = builder.Build();
+        configuration.StreamProvider.ShouldBeOfType<TestStreamProvider>();
+    }
+
+    [Fact]
     public void WithRemoteEndpoint_HostPortAndAddressFamily_ShouldSetDnsEndPointWithFamily()
     {
         MqttClientTcpConfigurationBuilder builder = new();
@@ -157,5 +173,10 @@ public class MqttClientTcpConfigurationBuilderTests
 
         MqttClientTcpConfiguration configuration = builder.Build();
         configuration.RemoteEndpoint.ShouldBe(new DnsEndPoint("test-host", 8883, AddressFamily.InterNetworkV6));
+    }
+
+    private class TestStreamProvider : IMqttClientStreamProvider
+    {
+        public Task<Stream> ConnectAsync(EndPoint brokerEndPoint, CancellationToken cancellationToken) => throw new NotSupportedException();
     }
 }
