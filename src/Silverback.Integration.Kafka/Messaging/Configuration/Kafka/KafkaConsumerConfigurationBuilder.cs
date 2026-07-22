@@ -804,6 +804,30 @@ public partial class KafkaConsumerConfigurationBuilder
     public partial KafkaConsumerConfigurationBuilder WithFetchQueueBackoffMs(int? fetchQueueBackoffMs);
 
     /// <summary>
+    ///     Sets the acknowledgement mode for share consumers. <c>implicit</c> means that the messages are implicitly acknowledged when the next poll is called. <c>explicit</c> means that the messages must be explicitly acknowledged
+    ///     using rd_kafka_share_acknowledge*(). This property is only supported for share consumers.
+    /// </summary>
+    /// <param name="maxPollRecords">
+    ///     The maximum number of records returned in a single call to poll(). This is a hint, and the actual number may be lower.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithMaxPollRecords(int? maxPollRecords);
+
+    /// <summary>
+    ///     Sets the acknowledgement mode for share consumers. <c>implicit</c> means that the messages are implicitly acknowledged when the next poll is called. <c>explicit</c> means that the messages must be explicitly acknowledged
+    ///     using rd_kafka_share_acknowledge*(). This property is only supported for share consumers.
+    /// </summary>
+    /// <param name="shareAcknowledgementMode">
+    ///     The acknowledgement mode for share consumers.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithShareAcknowledgementMode(string? shareAcknowledgementMode);
+
+    /// <summary>
     ///     Builds the <see cref="KafkaConsumerConfiguration" /> instance.
     /// </summary>
     /// <returns>

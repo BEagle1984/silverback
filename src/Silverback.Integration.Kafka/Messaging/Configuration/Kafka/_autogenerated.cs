@@ -922,6 +922,19 @@ public partial record KafkaConsumerConfiguration
     public bool? CheckCrcs { get; init; }
 
     /// <summary>
+    ///     Gets the maximum number of records returned in a single call to <see cref="IConsumer{TKey,TValue}.Consume(System.TimeSpan)" />.
+    ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced,
+    ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.
+    /// </summary>
+    public int? MaxPollRecords { get; init; }
+
+    /// <summary>
+    ///     Gets the acknowledgement mode for share consumers. <c>implicit</c> means that the messages are implicitly acknowledged when the next poll is called. <c>explicit</c> means that the messages must be explicitly acknowledged
+    ///     using rd_kafka_share_acknowledge*(). This property is only supported for share consumers.
+    /// </summary>
+    public string? ShareAcknowledgementMode { get; init; }
+
+    /// <summary>
     ///     Maps to the Confluent client configuration.
     /// </summary>
     /// <returns>
@@ -954,6 +967,8 @@ public partial record KafkaConsumerConfiguration
         confluentConfig.IsolationLevel = IsolationLevel;
         confluentConfig.EnablePartitionEof = EnablePartitionEof;
         confluentConfig.CheckCrcs = CheckCrcs;
+        confluentConfig.MaxPollRecords = MaxPollRecords;
+        confluentConfig.ShareAcknowledgementMode = ShareAcknowledgementMode;
 
         return confluentConfig;
     }
@@ -3028,6 +3043,10 @@ public partial class KafkaConsumerConfigurationBuilder
 
     private bool? _checkCrcs;
 
+    private int? _maxPollRecords;
+
+    private string? _shareAcknowledgementMode;
+
     public partial KafkaConsumerConfigurationBuilder WithConsumeResultFields(string? consumeResultFields)
     {
         _consumeResultFields = consumeResultFields;
@@ -3160,6 +3179,18 @@ public partial class KafkaConsumerConfigurationBuilder
         return this;
     }
 
+    public partial KafkaConsumerConfigurationBuilder WithMaxPollRecords(int? maxPollRecords)
+    {
+        _maxPollRecords = maxPollRecords;
+        return this;
+    }
+
+    public partial KafkaConsumerConfigurationBuilder WithShareAcknowledgementMode(string? shareAcknowledgementMode)
+    {
+        _shareAcknowledgementMode = shareAcknowledgementMode;
+        return this;
+    }
+
     internal KafkaConsumerConfigurationBuilder WithEnablePartitionEof(bool? enablePartitionEof)
     {
         _enablePartitionEof = enablePartitionEof;
@@ -3204,7 +3235,9 @@ public partial class KafkaConsumerConfigurationBuilder
             FetchErrorBackoffMs = _fetchErrorBackoffMs,
             IsolationLevel = _isolationLevel,
             EnablePartitionEof = _enablePartitionEof,
-            CheckCrcs = _checkCrcs
+            CheckCrcs = _checkCrcs,
+            MaxPollRecords = _maxPollRecords,
+            ShareAcknowledgementMode = _shareAcknowledgementMode
         };
 }
 

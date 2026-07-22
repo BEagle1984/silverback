@@ -495,6 +495,15 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     or <see cref=\"QueuedMaxMessagesKbytes\" />) have been exceeded. This property may need to be decreased if the queue thresholds are set low and the application is experiencing long (~1s) ");
                 builder.AppendLine("    ///     delays between messages. Low values may increase CPU utilization.");
                 break;
+            case nameof(ConsumerConfig.MaxPollRecords):
+                builder.AppendLine("    ///     Gets the maximum number of records returned in a single call to <see cref=\"IConsumer{TKey,TValue}.Consume(System.TimeSpan)\" />.");
+                builder.AppendLine("    ///     This value is sent to the broker in the ShareFetch request and therefore bounds the number of records the broker acquires and returns per fetch. Note: this limit is currently best-effort and not strictly enforced, ");
+                builder.AppendLine("    ///     so a poll may occasionally return more records than this value. This property is only supported for share consumers.");
+                break;
+            case nameof(ConsumerConfig.ShareAcknowledgementMode):
+                builder.AppendLine("    ///     Gets the acknowledgement mode for share consumers. <c>implicit</c> means that the messages are implicitly acknowledged when the next poll is called. <c>explicit</c> means that the messages must be explicitly acknowledged ");
+                builder.AppendLine("    ///     using rd_kafka_share_acknowledge*(). This property is only supported for share consumers.");
+                break;
         }
     }
 
