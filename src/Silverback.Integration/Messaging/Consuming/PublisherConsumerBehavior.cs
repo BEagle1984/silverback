@@ -162,11 +162,12 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                     // Even though we use the CancelOnExceptionAsync trick, it's not guaranteed that once one of the subscribers
                     // completes, the next ones will not throw.
                     // On the other hand, if the sequence is complete, we let every subscriber naturally complete.
-                    while (!sequence.IsComplete && tasks.Exists(task => !task.IsCompleted))
+                    while (!sequence.IsComplete && tasks.Count > 0)
                     {
-                        await Task.WhenAny(tasks).ConfigureAwait(false);
+                        Task completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+                        tasks.Remove(completedTask);
 
-                        if (!sequence.IsComplete && tasks.Exists(task => task.IsFaulted))
+                        if (!sequence.IsComplete && completedTask.IsFaulted)
                         {
                             // Call AbortIfPending to abort the uncompleted sequence, including the lazy streams
                             // which haven't been created yet. This is necessary for the Task.WhenAll to complete.
