@@ -121,6 +121,161 @@ public class CooperativeStickyRebalanceStrategyTests
     }
 
     [Fact]
+    public void Rebalance_ShouldBalancePartitionsAcrossEligibleConsumers_WhenSubscriptionsAreMixed()
+    {
+        List<TopicPartition> partitions =
+        [
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2),
+            new("topic2", 3),
+            new("topic3", 0),
+            new("topic3", 1),
+            new("topic3", 2),
+            new("topic3", 3)
+        ];
+
+        IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
+        IMockedConfluentConsumer consumer2 = GetMockedConsumer("topic2", "topic3");
+        IMockedConfluentConsumer consumer3 = GetMockedConsumer("topic1", "topic3");
+
+        List<SubscriptionPartitionAssignment> partitionAssignments =
+        [
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
+        ];
+
+        RebalanceResult result = new CooperativeStickyRebalanceStrategy().Rebalance(partitions, partitionAssignments);
+
+        result.RevokedPartitions.ShouldBeEmpty();
+
+        partitionAssignments[0].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic1", 0),
+            new TopicPartition("topic1", 1),
+            new TopicPartition("topic2", 0),
+            new TopicPartition("topic2", 1)
+        ]);
+        partitionAssignments[1].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic2", 2),
+            new TopicPartition("topic2", 3),
+            new TopicPartition("topic3", 0),
+            new TopicPartition("topic3", 1)
+        ]);
+        partitionAssignments[2].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 3),
+            new TopicPartition("topic3", 2),
+            new TopicPartition("topic3", 3)
+        ]);
+    }
+
+    [Fact]
+    public void Rebalance_ShouldMovePartitionsFromEligibleTopics_WhenAddingConsumerWithMixedSubscriptions()
+    {
+        List<TopicPartition> partitions =
+        [
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2),
+            new("topic2", 3),
+            new("topic3", 0),
+            new("topic3", 1),
+            new("topic3", 2),
+            new("topic3", 3)
+        ];
+
+        IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
+        IMockedConfluentConsumer consumer2 = GetMockedConsumer("topic2", "topic3");
+        IMockedConfluentConsumer consumer3 = GetMockedConsumer("topic1", "topic3");
+
+        List<SubscriptionPartitionAssignment> partitionAssignments =
+        [
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
+        ];
+
+        partitionAssignments[0].Partitions.AddRange(
+        [
+            new TopicPartition("topic1", 0),
+            new TopicPartition("topic1", 1),
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 3),
+            new TopicPartition("topic2", 0),
+            new TopicPartition("topic2", 1)
+        ]);
+        partitionAssignments[1].Partitions.AddRange(
+        [
+            new TopicPartition("topic2", 2),
+            new TopicPartition("topic2", 3),
+            new TopicPartition("topic3", 0),
+            new TopicPartition("topic3", 1),
+            new TopicPartition("topic3", 2),
+            new TopicPartition("topic3", 3)
+        ]);
+
+        RebalanceResult result = new CooperativeStickyRebalanceStrategy().Rebalance(partitions, partitionAssignments);
+
+        result.RevokedPartitions[consumer1].ShouldBe(
+        [
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 3)
+        ],
+        true);
+        result.RevokedPartitions[consumer2].ShouldBe(
+        [
+            new TopicPartition("topic3", 2),
+            new TopicPartition("topic3", 3)
+        ],
+        true);
+        result.AssignedPartitions[consumer3].ShouldBe(
+        [
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 3),
+            new TopicPartition("topic3", 2),
+            new TopicPartition("topic3", 3)
+        ],
+        true);
+
+        partitionAssignments[0].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic1", 0),
+            new TopicPartition("topic1", 1),
+            new TopicPartition("topic2", 0),
+            new TopicPartition("topic2", 1)
+        ],
+        true);
+        partitionAssignments[1].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic2", 2),
+            new TopicPartition("topic2", 3),
+            new TopicPartition("topic3", 0),
+            new TopicPartition("topic3", 1)
+        ],
+        true);
+        partitionAssignments[2].Partitions.ShouldBe(
+        [
+            new TopicPartition("topic1", 2),
+            new TopicPartition("topic1", 3),
+            new TopicPartition("topic3", 2),
+            new TopicPartition("topic3", 3)
+        ],
+        true);
+    }
+
+    [Fact]
     public void Rebalance_ShouldReassignPartitions_WhenAddingOneConsumer()
     {
         List<TopicPartition> partitions =

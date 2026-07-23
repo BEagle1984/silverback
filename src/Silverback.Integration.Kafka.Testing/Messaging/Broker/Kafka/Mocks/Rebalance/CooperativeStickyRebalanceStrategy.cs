@@ -42,6 +42,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions)
     {
+        HashSet<TopicPartition> topicPartitionsSet = [.. topicPartitions];
         List<TopicPartition> unassignedPartitions =
         [
             .. topicPartitions
@@ -53,13 +54,21 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
 
         foreach (SubscriptionPartitionAssignment assignment in partitionAssignments)
         {
-            while (assignment.Partitions.Count < partitionsPerConsumer)
+            while (CountAssignedPartitions(assignment, topicPartitionsSet) < partitionsPerConsumer)
             {
                 if (AssignUnassignedPartition(assignment, unassignedPartitions, assignedPartitions))
                     continue;
 
-                if (MoveAssignedPartition(assignment, partitionAssignments, partitionsPerConsumer, assignedPartitions, revokedPartitions))
+                if (MoveAssignedPartition(
+                        assignment,
+                        partitionAssignments,
+                        topicPartitionsSet,
+                        partitionsPerConsumer,
+                        assignedPartitions,
+                        revokedPartitions))
+                {
                     continue;
+                }
 
                 break;
             }
@@ -90,14 +99,17 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
     private static bool MoveAssignedPartition(
         PartitionAssignment assignment,
         IReadOnlyList<PartitionAssignment> partitionAssignments,
+        IReadOnlySet<TopicPartition> topicPartitions,
         int partitionsPerConsumer,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions,
         Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions)
     {
-        PartitionAssignment? revokableAssignment = FindRevokablaAssignment(partitionAssignments, partitionsPerConsumer);
+        PartitionAssignment? revokableAssignment =
+            FindRevokableAssignment(partitionAssignments, topicPartitions, partitionsPerConsumer);
+
         if (revokableAssignment != null)
         {
-            TopicPartition topicPartition = revokableAssignment.Partitions[^1];
+            TopicPartition topicPartition = revokableAssignment.Partitions.Last(topicPartitions.Contains);
 
             assignment.Partitions.Add(topicPartition);
             assignedPartitions.GetOrAddDefault(assignment.Consumer).Add(topicPartition);
@@ -110,10 +122,17 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         return false;
     }
 
-    private static PartitionAssignment? FindRevokablaAssignment(
+    private static PartitionAssignment? FindRevokableAssignment(
         IReadOnlyList<PartitionAssignment> partitionAssignments,
+        IReadOnlySet<TopicPartition> topicPartitions,
         int partitionsPerConsumer) =>
-        partitionAssignments.FirstOrDefault(assignment => assignment.Partitions.Count > partitionsPerConsumer);
+        partitionAssignments.FirstOrDefault(
+            assignment => CountAssignedPartitions(assignment, topicPartitions) > partitionsPerConsumer);
+
+    private static int CountAssignedPartitions(
+        PartitionAssignment assignment,
+        IReadOnlySet<TopicPartition> topicPartitions) =>
+        assignment.Partitions.Count(topicPartitions.Contains);
 
     private static void AssignRemainingPartitions(
         IEnumerable<TopicPartition> topicPartitions,
