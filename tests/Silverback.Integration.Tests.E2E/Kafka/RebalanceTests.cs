@@ -93,6 +93,7 @@ public class RebalanceTests : KafkaTests
         consumers[1].Client.Assignment.Count.ShouldBe(2);
         partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
         partitionCallbacksHandler.CurrentPartitions[consumers[1]].Count.ShouldBe(2);
+        consumers.ShouldAllBe(consumer => consumer.StatusInfo.Status >= ConsumerStatus.Connected);
     }
 
     [Fact]
@@ -158,6 +159,7 @@ public class RebalanceTests : KafkaTests
         consumers[1].Client.Assignment.Count.ShouldBe(2);
         partitionCallbacksHandler.RevokedPartitions.ShouldNotContainKey(consumers[1]);
         partitionCallbacksHandler.CurrentPartitions[consumers[1]].Count.ShouldBe(2);
+        consumers.ShouldAllBe(consumer => consumer.StatusInfo.Status >= ConsumerStatus.Connected);
     }
 
     [Fact]

@@ -13,7 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
-internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
+internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDisposable
 {
     private static readonly SimpleRebalanceStrategy SimpleRebalanceStrategy = new();
 
@@ -219,9 +219,10 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             _subscribedConsumers.ForEach(consumer =>
             {
+                // Invalidate any in-flight assignment before installing the completion source for this generation.
+                consumer.Consumer.OnRebalancing();
                 consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
                 consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
-                consumer.Consumer.OnRebalancing();
             });
 
             EnsurePartitionAssignmentsDictionaryIsInitialized();

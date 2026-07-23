@@ -5,4 +5,4 @@ using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
-internal record MockedConsumerGroupMetadata(MockedConsumerGroup ConsumerGroup) : IConsumerGroupMetadata;
+internal record MockedConsumerGroupMetadata(IInternalMockedConsumerGroup ConsumerGroup) : IConsumerGroupMetadata;
