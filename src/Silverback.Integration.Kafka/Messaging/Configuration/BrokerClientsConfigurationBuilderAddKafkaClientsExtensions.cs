@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the <c>AddKafkaEndpoints</c> method to the <see cref="BrokerClientsConfigurationBuilder" />.
 /// </summary>
-public static class EndpointsConfigurationBuilderAddKafkaClientsExtensions
+public static class BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
 {
     /// <summary>
     ///     Adds the Kafka producers and consumers.
