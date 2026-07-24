@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the <c>AddMqttEndpoints</c> method to the <see cref="BrokerClientsConfigurationBuilder" />.
 /// </summary>
-public static class EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+public static class BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
 {
     /// <summary>
     ///     Adds the MQTT endpoints.
