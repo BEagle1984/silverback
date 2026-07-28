@@ -52,6 +52,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private List<ISequence>? _sequences;
 
+    private bool _isTimeoutTimerInitialized;
+
     private bool _isDisposed;
 
     /// <summary>
@@ -97,8 +99,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _enforceTimeout = enforceTimeout;
 
         _timeout = timeout ?? Context.Envelope.Endpoint.Configuration.Sequence.Timeout;
-        if (_enforceTimeout)
-            InitTimeoutTimer();
 
         _identifiersTracker = trackIdentifiers
             ? context.ServiceProvider.GetRequiredService<IBrokerMessageIdentifiersTrackerFactory>()
@@ -350,6 +350,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 throw new OperationCanceledException("The sequence timed out.");
 
             ResetTimeout();
+            InitTimeoutTimer();
         }
 
         if (sequence != null && sequence != this)
@@ -566,7 +567,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private void InitTimeoutTimer()
     {
-        ResetTimeout();
+        if (_isTimeoutTimerInitialized)
+            return;
+
+        _isTimeoutTimerInitialized = true;
 
         Task.Run(async () =>
             {

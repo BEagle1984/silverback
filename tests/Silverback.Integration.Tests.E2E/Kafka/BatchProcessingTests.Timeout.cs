@@ -20,6 +20,33 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 public partial class BatchProcessingTests
 {
     [Fact]
+    public async Task Batch_ShouldDeliverFirstMessage_WhenScopedSubscriberConstructionExceedsBatchTimeout()
+    {
+        TaskCompletionSource<bool> received = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .CommitOffsetEach(1)
+                    .Consume<TestEventOne>(endpoint => endpoint
+                        .ConsumeFrom(DefaultTopicName)
+                        .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(50)))))
+            .AddScopedSubscriber(_ => new SlowBatchSubscriber(received)));
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne());
+
+        await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
     public async Task Batch_ShouldCompletePendingBatchAfterTimeout()
     {
         TestingCollection<List<TestEventOne>> receivedBatches = [];
@@ -366,5 +393,22 @@ public partial class BatchProcessingTests
         completedBatches.ShouldBeGreaterThan(1);
         exitedSubscribers.ShouldBeGreaterThan(1);
         areOverlapping.ShouldBeFalse();
+    }
+
+    private sealed class SlowBatchSubscriber
+    {
+        private readonly TaskCompletionSource<bool> _received;
+
+        public SlowBatchSubscriber(TaskCompletionSource<bool> received)
+        {
+            _received = received;
+            Thread.Sleep(100);
+        }
+
+        public void Execute(IEnumerable<TestEventOne> messages)
+        {
+            if (messages.Any())
+                _received.TrySetResult(true);
+        }
     }
 }
