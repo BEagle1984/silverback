@@ -2263,7 +2263,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup",
-      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.yml\" sourcestartlinenumber=\"1\">A mocked consumer group. Note that it isn't obviously possible to accurately replicate the message broker\nbehavior and this implementation is just intended for testing purposes.</p>\n"
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.yml\" sourcestartlinenumber=\"1\">A mocked consumer group. Note that it isn't obviously possible to accurately replicate the message broker\nbehavior, and this implementation is just intended for testing purposes.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2768,6 +2768,34 @@
       "IsMRef": true,
       "Title": "Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder",
       "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.yml\" sourcestartlinenumber=\"1\">Configures the producers and consumers.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.yml\" sourcestartlinenumber=\"1\">Adds the <code>AddKafkaEndpoints</code> method to the <xref href=\"Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions",
+      "Summary": "<p sourcefile=\"api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.yml\" sourcestartlinenumber=\"1\">Adds the <code>AddMqttEndpoints</code> method to the <xref href=\"Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",

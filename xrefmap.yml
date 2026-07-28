@@ -12467,21 +12467,6 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup
   nameWithType: IMockedConsumerGroup
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})
-  name: Assign(IMockedConfluentConsumer, IEnumerable<TopicPartition>)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Assign_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition})
-  name.vb: Assign(IMockedConfluentConsumer, IEnumerable(Of TopicPartition))
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>)
-  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition))
-  nameWithType: IMockedConsumerGroup.Assign(IMockedConfluentConsumer, IEnumerable<TopicPartition>)
-  nameWithType.vb: IMockedConsumerGroup.Assign(IMockedConfluentConsumer, IEnumerable(Of TopicPartition))
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign*
-  name: Assign
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Assign_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Assign
-  nameWithType: IMockedConsumerGroup.Assign
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.BootstrapServers
   name: BootstrapServers
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_BootstrapServers
@@ -12494,21 +12479,6 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.BootstrapServers
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.BootstrapServers
   nameWithType: IMockedConsumerGroup.BootstrapServers
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset})
-  name: Commit(IEnumerable<TopicPartitionOffset>)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Commit_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset__
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset})
-  name.vb: Commit(IEnumerable(Of TopicPartitionOffset))
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit(System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>)
-  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit(System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset))
-  nameWithType: IMockedConsumerGroup.Commit(IEnumerable<TopicPartitionOffset>)
-  nameWithType.vb: IMockedConsumerGroup.Commit(IEnumerable(Of TopicPartitionOffset))
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit*
-  name: Commit
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Commit_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Commit
-  nameWithType: IMockedConsumerGroup.Commit
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.CommittedOffsets
   name: CommittedOffsets
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_CommittedOffsets
@@ -12521,18 +12491,6 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.CommittedOffsets
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.CommittedOffsets
   nameWithType: IMockedConsumerGroup.CommittedOffsets
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  name: GetAssignment(IMockedConfluentConsumer)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_GetAssignment_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  nameWithType: IMockedConsumerGroup.GetAssignment(IMockedConfluentConsumer)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment*
-  name: GetAssignment
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_GetAssignment_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetAssignment
-  nameWithType: IMockedConsumerGroup.GetAssignment
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GetCommittedOffset(Confluent.Kafka.TopicPartition)
   name: GetCommittedOffset(TopicPartition)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_GetCommittedOffset_Confluent_Kafka_TopicPartition_
@@ -12572,105 +12530,18 @@ references:
   commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GroupId
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.GroupId
   nameWithType: IMockedConsumerGroup.GroupId
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled
-  name: IsRebalanceScheduled
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_IsRebalanceScheduled
-  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled
-  nameWithType: IMockedConsumerGroup.IsRebalanceScheduled
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled*
-  name: IsRebalanceScheduled
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_IsRebalanceScheduled_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalanceScheduled
-  nameWithType: IMockedConsumerGroup.IsRebalanceScheduled
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing
-  name: IsRebalancing
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_IsRebalancing
-  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing
-  nameWithType: IMockedConsumerGroup.IsRebalancing
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing*
-  name: IsRebalancing
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_IsRebalancing_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.IsRebalancing
-  nameWithType: IMockedConsumerGroup.IsRebalancing
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync
-  name: RebalanceAsync()
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_RebalanceAsync
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync()
-  nameWithType: IMockedConsumerGroup.RebalanceAsync()
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync*
-  name: RebalanceAsync
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_RebalanceAsync_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.RebalanceAsync
-  nameWithType: IMockedConsumerGroup.RebalanceAsync
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  name: Remove(IMockedConfluentConsumer)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Remove_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  nameWithType: IMockedConsumerGroup.Remove(IMockedConfluentConsumer)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove*
-  name: Remove
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Remove_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Remove
-  nameWithType: IMockedConsumerGroup.Remove
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance
-  name: ScheduleRebalance()
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_ScheduleRebalance
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance()
-  nameWithType: IMockedConsumerGroup.ScheduleRebalance()
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance*
-  name: ScheduleRebalance
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_ScheduleRebalance_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.ScheduleRebalance
-  nameWithType: IMockedConsumerGroup.ScheduleRebalance
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Collections.Generic.IEnumerable{System.String})
-  name: Subscribe(IMockedConfluentConsumer, IEnumerable<string>)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Subscribe_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_Collections_Generic_IEnumerable_System_String__
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Collections.Generic.IEnumerable{System.String})
-  name.vb: Subscribe(IMockedConfluentConsumer, IEnumerable(Of String))
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.Collections.Generic.IEnumerable<string>)
-  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.Collections.Generic.IEnumerable(Of String))
-  nameWithType: IMockedConsumerGroup.Subscribe(IMockedConfluentConsumer, IEnumerable<string>)
-  nameWithType.vb: IMockedConsumerGroup.Subscribe(IMockedConfluentConsumer, IEnumerable(Of String))
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe*
-  name: Subscribe
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Subscribe_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Subscribe
-  nameWithType: IMockedConsumerGroup.Subscribe
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  name: Unassign(IMockedConfluentConsumer)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Unassign_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  nameWithType: IMockedConsumerGroup.Unassign(IMockedConfluentConsumer)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign*
-  name: Unassign
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Unassign_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unassign
-  nameWithType: IMockedConsumerGroup.Unassign
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  name: Unsubscribe(IMockedConfluentConsumer)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Unsubscribe_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer)
-  nameWithType: IMockedConsumerGroup.Unsubscribe(IMockedConfluentConsumer)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe*
-  name: Unsubscribe
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Unsubscribe_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Unsubscribe
-  nameWithType: IMockedConsumerGroup.Unsubscribe
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
+  name: Rebalance()
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Rebalance
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance()
+  nameWithType: IMockedConsumerGroup.Rebalance()
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance*
+  name: Rebalance
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_Rebalance_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.Rebalance
+  nameWithType: IMockedConsumerGroup.Rebalance
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Threading.CancellationToken)
   name: WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string>, CancellationToken)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConsumerGroup.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConsumerGroup_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Threading_CancellationToken_
@@ -15509,6 +15380,48 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.ServiceProvider
   fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder.ServiceProvider
   nameWithType: BrokerClientsConfigurationBuilder.ServiceProvider
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
+  name: BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.html
+  commentId: T:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
+  nameWithType: BrokerClientsConfigurationBuilderAddKafkaClientsExtensions
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder})
+  name: AddKafkaClients(BrokerClientsConfigurationBuilder, Action<KafkaClientsConfigurationBuilder>)
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.html#Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilderAddKafkaClientsExtensions_AddKafkaClients_Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientsConfigurationBuilder__
+  commentId: M:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder})
+  name.vb: AddKafkaClients(BrokerClientsConfigurationBuilder, Action(Of KafkaClientsConfigurationBuilder))
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action<Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action(Of Silverback.Messaging.Configuration.Kafka.KafkaClientsConfigurationBuilder))
+  nameWithType: BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(BrokerClientsConfigurationBuilder, Action<KafkaClientsConfigurationBuilder>)
+  nameWithType.vb: BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients(BrokerClientsConfigurationBuilder, Action(Of KafkaClientsConfigurationBuilder))
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients*
+  name: AddKafkaClients
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.html#Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilderAddKafkaClientsExtensions_AddKafkaClients_
+  commentId: Overload:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+  nameWithType: BrokerClientsConfigurationBuilderAddKafkaClientsExtensions.AddKafkaClients
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
+  name: BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.html
+  commentId: T:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
+  nameWithType: BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder})
+  name: AddMqttClients(BrokerClientsConfigurationBuilder, Action<MqttClientsConfigurationBuilder>)
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.html#Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions_AddMqttClients_Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_MqttClientsConfigurationBuilder__
+  commentId: M:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder})
+  name.vb: AddMqttClients(BrokerClientsConfigurationBuilder, Action(Of MqttClientsConfigurationBuilder))
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action<Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilder, System.Action(Of Silverback.Messaging.Configuration.Mqtt.MqttClientsConfigurationBuilder))
+  nameWithType: BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(BrokerClientsConfigurationBuilder, Action<MqttClientsConfigurationBuilder>)
+  nameWithType.vb: BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients(BrokerClientsConfigurationBuilder, Action(Of MqttClientsConfigurationBuilder))
+- uid: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients*
+  name: AddMqttClients
+  href: api/Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.html#Silverback_Messaging_Configuration_BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions_AddMqttClients_
+  commentId: Overload:Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
+  fullName: Silverback.Messaging.Configuration.BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
+  nameWithType: BrokerClientsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttClients
 - uid: Silverback.Messaging.Configuration.BrokerClientsInitializer
   name: BrokerClientsInitializer
   href: api/Silverback.Messaging.Configuration.BrokerClientsInitializer.html
@@ -23859,6 +23772,18 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollIntervalMs
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollIntervalMs
   nameWithType: KafkaConsumerConfiguration.MaxPollIntervalMs
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords
+  name: MaxPollRecords
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollRecords
+  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords
+  nameWithType: KafkaConsumerConfiguration.MaxPollRecords
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords*
+  name: MaxPollRecords
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_MaxPollRecords_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.MaxPollRecords
+  nameWithType: KafkaConsumerConfiguration.MaxPollRecords
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.PartitionAssignmentStrategy
   name: PartitionAssignmentStrategy
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_PartitionAssignmentStrategy
@@ -23955,6 +23880,18 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SessionTimeoutMs
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.SessionTimeoutMs
   nameWithType: KafkaConsumerConfiguration.SessionTimeoutMs
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode
+  name: ShareAcknowledgementMode
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ShareAcknowledgementMode
+  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode
+  nameWithType: KafkaConsumerConfiguration.ShareAcknowledgementMode
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode*
+  name: ShareAcknowledgementMode
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_ShareAcknowledgementMode_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.ShareAcknowledgementMode
+  nameWithType: KafkaConsumerConfiguration.ShareAcknowledgementMode
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.StallDetectionThreshold
   name: StallDetectionThreshold
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfiguration.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfiguration_StallDetectionThreshold
@@ -24684,6 +24621,21 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollIntervalMs
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollIntervalMs
   nameWithType: KafkaConsumerConfigurationBuilder.WithMaxPollIntervalMs
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords(System.Nullable{System.Int32})
+  name: WithMaxPollRecords(int?)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithMaxPollRecords_System_Nullable_System_Int32__
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords(System.Nullable{System.Int32})
+  name.vb: WithMaxPollRecords(Integer?)
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords(int?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords(Integer?)
+  nameWithType: KafkaConsumerConfigurationBuilder.WithMaxPollRecords(int?)
+  nameWithType.vb: KafkaConsumerConfigurationBuilder.WithMaxPollRecords(Integer?)
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords*
+  name: WithMaxPollRecords
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithMaxPollRecords_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithMaxPollRecords
+  nameWithType: KafkaConsumerConfigurationBuilder.WithMaxPollRecords
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithPartitionAssignmentStrategy(System.Nullable{Confluent.Kafka.PartitionAssignmentStrategy})
   name: WithPartitionAssignmentStrategy(PartitionAssignmentStrategy?)
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithPartitionAssignmentStrategy_System_Nullable_Confluent_Kafka_PartitionAssignmentStrategy__
@@ -24777,6 +24729,21 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithSessionTimeoutMs
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithSessionTimeoutMs
   nameWithType: KafkaConsumerConfigurationBuilder.WithSessionTimeoutMs
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(System.String)
+  name: WithShareAcknowledgementMode(string?)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithShareAcknowledgementMode_System_String_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(System.String)
+  name.vb: WithShareAcknowledgementMode(String)
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(string?)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(String)
+  nameWithType: KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(string?)
+  nameWithType.vb: KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode(String)
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode*
+  name: WithShareAcknowledgementMode
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithShareAcknowledgementMode_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode
+  nameWithType: KafkaConsumerConfigurationBuilder.WithShareAcknowledgementMode
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.WithStallDetectionThreshold(System.Nullable{System.TimeSpan})
   name: WithStallDetectionThreshold(TimeSpan?)
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfigurationBuilder_WithStallDetectionThreshold_System_Nullable_System_TimeSpan__
@@ -28725,6 +28692,18 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.RemoteEndpoint
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.RemoteEndpoint
   nameWithType: MqttClientTcpConfiguration.RemoteEndpoint
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider
+  name: StreamProvider
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfiguration_StreamProvider
+  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider
+  nameWithType: MqttClientTcpConfiguration.StreamProvider
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider*
+  name: StreamProvider
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfiguration_StreamProvider_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.StreamProvider
+  nameWithType: MqttClientTcpConfiguration.StreamProvider
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.ToString
   name: ToString()
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfiguration.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfiguration_ToString
@@ -28974,6 +28953,21 @@ references:
   commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithRemoteEndpoint
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithRemoteEndpoint
   nameWithType: MqttClientTcpConfigurationBuilder.WithRemoteEndpoint
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider(MQTTnet.Channel.IMqttClientStreamProvider)
+  name: WithStreamProvider(IMqttClientStreamProvider?)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfigurationBuilder_WithStreamProvider_MQTTnet_Channel_IMqttClientStreamProvider_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider(MQTTnet.Channel.IMqttClientStreamProvider)
+  name.vb: WithStreamProvider(IMqttClientStreamProvider)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider(MQTTnet.Channel.IMqttClientStreamProvider?)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider(MQTTnet.Channel.IMqttClientStreamProvider)
+  nameWithType: MqttClientTcpConfigurationBuilder.WithStreamProvider(IMqttClientStreamProvider?)
+  nameWithType.vb: MqttClientTcpConfigurationBuilder.WithStreamProvider(IMqttClientStreamProvider)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider*
+  name: WithStreamProvider
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientTcpConfigurationBuilder_WithStreamProvider_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientTcpConfigurationBuilder.WithStreamProvider
+  nameWithType: MqttClientTcpConfigurationBuilder.WithStreamProvider
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration
   name: MqttClientTlsConfiguration
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientTlsConfiguration.html
