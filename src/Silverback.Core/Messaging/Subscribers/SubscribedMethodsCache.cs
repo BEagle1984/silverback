@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class SubscribedMethodsCache
 {
-    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _exclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<(Type, bool), IReadOnlyList<SubscribedMethod>> _exclusiveMethodsCache = [];
 
-    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _nonExclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<(Type, bool), IReadOnlyList<SubscribedMethod>> _nonExclusiveMethodsCache = [];
 
     private readonly ConcurrentDictionary<Type, bool> _hasMessageStreamSubscriber = [];
 
@@ -93,10 +93,18 @@ internal sealed class SubscribedMethodsCache
         (subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType) ||
          subscribedMethod.MessageType.IsInstanceOfType(envelope));
 
+    // Tombstone envelopes (Message == null) and regular envelopes share the same CLR type
+    // (e.g. InboundEnvelope<T>), but AreCompatible behaves differently for each because it
+    // branches on envelope.Message != null. A shared cache key would mean whichever arrives
+    // first permanently determines the compatible-method set for the other, causing poisoning.
+    // Including the tombstone flag in the key gives each its own correctly computed entry.
+    private static (Type Type, bool IsTombstone) GetCacheKey(object message) =>
+        (message.GetType(), message is IEnvelope { Message: null });
+
     private IReadOnlyList<SubscribedMethod> GetMethods(object message, bool exclusive, IServiceProvider serviceProvider) =>
         (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
         .GetOrAdd(
-            message.GetType(),
+            GetCacheKey(message),
             static (_, args) =>
             [
                 .. args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
