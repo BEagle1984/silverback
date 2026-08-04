@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class SubscribedMethodsCache
 {
-    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _exclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<(Type RuntimeType, bool HasNullPayload), IReadOnlyList<SubscribedMethod>> _exclusiveMethodsCache = [];
 
-    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _nonExclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<(Type RuntimeType, bool HasNullPayload), IReadOnlyList<SubscribedMethod>> _nonExclusiveMethodsCache = [];
 
     private readonly ConcurrentDictionary<Type, bool> _hasMessageStreamSubscriber = [];
 
@@ -96,7 +96,7 @@ internal sealed class SubscribedMethodsCache
     private IReadOnlyList<SubscribedMethod> GetMethods(object message, bool exclusive, IServiceProvider serviceProvider) =>
         (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
         .GetOrAdd(
-            message.GetType(),
+            (message.GetType(), message is IEnvelope { Message: null }),
             static (_, args) =>
             [
                 .. args.Instance.GetAllSubscribedMethods(args.ServiceProvider)

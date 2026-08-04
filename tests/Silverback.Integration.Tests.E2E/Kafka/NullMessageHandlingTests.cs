@@ -225,4 +225,65 @@ public class NullMessageHandlingTests : KafkaTests
         consumedEnvelope!.GetKafkaKey().ShouldBe("42");
         consumedEnvelope!.Message.ShouldBeNull();
     }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task TombstoneAndRegularMessage_ShouldInvokeCorrectSubscribersRegardlessOfOrder(bool tombstoneFirst)
+    {
+        int received = 0;
+        int nullMessagesReceived = 0;
+        int tombstonesReceived = 0;
+
+        await Host.ConfigureServicesAndRunAsync(services => services
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+            .AddKafkaClients(clients => clients
+                .WithBootstrapServers("PLAINTEXT://e2e")
+                .AddConsumer(consumer => consumer
+                    .WithGroupId(DefaultGroupId)
+                    .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+            .AddDelegateSubscriber<TestEventOne>(message =>
+            {
+                if (message == null)
+                    nullMessagesReceived++;
+                else
+                    received++;
+            })
+            .AddDelegateSubscriber<Tombstone<TestEventOne>>(_ => tombstonesReceived++)
+            .AddIntegrationSpy());
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        if (tombstoneFirst)
+            await ProduceTombstoneAsync();
+        else
+            await ProduceRegularMessageAsync();
+
+        // Ensure the first message has populated the cache before producing the second one.
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        if (tombstoneFirst)
+            await ProduceRegularMessageAsync();
+        else
+            await ProduceTombstoneAsync();
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.ShouldBe(2);
+        received.ShouldBe(1);
+        nullMessagesReceived.ShouldBe(0);
+        tombstonesReceived.ShouldBe(1);
+
+        ValueTask<IBrokerMessageIdentifier?> ProduceTombstoneAsync() =>
+            producer.RawProduceAsync(
+                (byte[]?)null,
+                new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "key-1" } });
+
+        ValueTask<IBrokerMessageIdentifier?> ProduceRegularMessageAsync() =>
+            producer.ProduceAsync(
+                new TestEventOne(),
+                new MessageHeaderCollection { { KafkaMessageHeaders.MessageKey, "key-1" } });
+    }
 }
