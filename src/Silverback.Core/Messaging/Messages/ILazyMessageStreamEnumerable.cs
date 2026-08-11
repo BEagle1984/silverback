@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 
@@ -49,7 +50,18 @@ internal interface ILazyMessageStreamEnumerable
     IMessageStreamEnumerable GetOrCreateStream();
 
     /// <summary>
-    ///     Signals that the stream will not be created anymore.
+    ///     Aborts the stream or cancels its creation.
     /// </summary>
-    void Cancel();
+    void Abort();
+
+    /// <summary>
+    ///     Completes the stream or cancels its creation.
+    /// </summary>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> to monitor for cancellation requests.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task CompleteAsync(CancellationToken cancellationToken = default);
 }

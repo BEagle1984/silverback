@@ -116,13 +116,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isAborting = true;
 
-            _lazyStreams.ForEach(lazyStream =>
-            {
-                if (lazyStream.Stream != null)
-                    lazyStream.Stream.Abort();
-                else
-                    lazyStream.Cancel();
-            });
+            _lazyStreams.ForEach(lazyStream => lazyStream.Abort());
 
             _aborted = true;
         }
@@ -151,13 +145,9 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
             _isCompleting = true;
 
-            await _lazyStreams.ParallelForEachAsync(async lazyStream =>
-            {
-                if (lazyStream.Stream != null)
-                    await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
-                else
-                    lazyStream.Cancel();
-            }).ConfigureAwait(false);
+            await _lazyStreams
+                .ParallelForEachAsync(async lazyStream => await lazyStream.CompleteAsync(cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false);
 
             _completed = true;
         }

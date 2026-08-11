@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 using Xunit;
 
@@ -504,6 +506,54 @@ public class MessageStreamProviderTests
     }
 
     [Fact]
+    public async Task PushAsync_ShouldBeCanceled_WhenProviderAbortedBeforeLazyStreamCreation()
+    {
+        using ManualResetEventSlim filterEntered = new();
+        using ManualResetEventSlim continuePush = new();
+        MessageStreamProvider<IMessage> provider = new();
+        provider.CreateLazyStream<TestEventOne>([new BlockingMessageFilter(filterEntered, continuePush)]);
+
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(new TestEventOne()));
+
+        try
+        {
+            filterEntered.Wait(TimeSpan.FromSeconds(5)).ShouldBeTrue();
+            provider.Abort();
+        }
+        finally
+        {
+            continuePush.Set();
+        }
+
+        Func<Task> act = async () => await pushTask;
+        await act.ShouldThrowAsync<OperationCanceledException>();
+    }
+
+    [Fact]
+    public async Task PushAsync_ShouldBeCanceled_WhenProviderCompletedBeforeLazyStreamCreation()
+    {
+        using ManualResetEventSlim filterEntered = new();
+        using ManualResetEventSlim continuePush = new();
+        MessageStreamProvider<IMessage> provider = new();
+        provider.CreateLazyStream<TestEventOne>([new BlockingMessageFilter(filterEntered, continuePush)]);
+
+        Task<int> pushTask = Task.Run(() => provider.PushAsync(new TestEventOne()));
+
+        try
+        {
+            filterEntered.Wait(TimeSpan.FromSeconds(5)).ShouldBeTrue();
+            await provider.CompleteAsync();
+        }
+        finally
+        {
+            continuePush.Set();
+        }
+
+        Func<Task> act = async () => await pushTask;
+        await act.ShouldThrowAsync<OperationCanceledException>();
+    }
+
+    [Fact]
     public void CreateStream_ShouldReturnNewInstance_WhenCalledTwiceForSameType()
     {
         MessageStreamProvider<IMessage> provider = new();
@@ -531,6 +581,18 @@ public class MessageStreamProviderTests
     private class TestEventTwo : TestEvent;
 
     private class TestCommandOne : IMessage;
+
+    private sealed class BlockingMessageFilter(
+        ManualResetEventSlim entered,
+        ManualResetEventSlim continueProcessing) : IMessageFilter
+    {
+        public bool MustProcess(object message)
+        {
+            entered.Set();
+            continueProcessing.Wait();
+            return true;
+        }
+    }
 
     private class TestEnvelope : IEnvelope
     {
