@@ -31,7 +31,8 @@ public class MessageEncodingExtensionsTests
     {
         Encoding encoding = MessageEncoding.UTF8.ToEncoding();
 
-        encoding.ShouldBe(Encoding.UTF8);
+        encoding.CodePage.ShouldBe(Encoding.UTF8.CodePage);
+        encoding.GetPreamble().ShouldBeEmpty();
     }
 
     [Fact]
@@ -39,7 +40,8 @@ public class MessageEncodingExtensionsTests
     {
         Encoding encoding = MessageEncoding.UTF32.ToEncoding();
 
-        encoding.ShouldBe(Encoding.UTF32);
+        encoding.CodePage.ShouldBe(Encoding.UTF32.CodePage);
+        encoding.GetPreamble().ShouldBeEmpty();
     }
 
     [Fact]
@@ -47,6 +49,7 @@ public class MessageEncodingExtensionsTests
     {
         Encoding encoding = MessageEncoding.Unicode.ToEncoding();
 
-        encoding.ShouldBe(Encoding.Unicode);
+        encoding.CodePage.ShouldBe(Encoding.Unicode.CodePage);
+        encoding.GetPreamble().ShouldBeEmpty();
     }
 }

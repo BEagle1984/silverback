@@ -72,12 +72,19 @@ public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquat
             return ValueTask.FromResult<Stream?>(new MemoryStream(inputBytes));
 
         Type type = message.GetType();
-        string jsonString = JsonConvert.SerializeObject(message, type, Settings);
+        MemoryStream stream = new();
+
+        using (StreamWriter streamWriter = new(stream, _encoding, 1024, true))
+        {
+            using JsonTextWriter jsonWriter = new(streamWriter);
+            JsonSerializer.CreateDefault(Settings).Serialize(jsonWriter, message, type);
+        }
 
         if (MustSetTypeHeader)
             headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-        return ValueTask.FromResult<Stream?>(new MemoryStream(_encoding.GetBytes(jsonString)));
+        stream.Position = 0;
+        return ValueTask.FromResult<Stream?>(stream);
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

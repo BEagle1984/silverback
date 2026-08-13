@@ -30,6 +30,23 @@ public class NewtonsoftJsonMessageSerializerTests
         serialized.ReadAll().ShouldBe(expected);
     }
 
+    [Theory]
+    [InlineData(MessageEncoding.Default)]
+    [InlineData(MessageEncoding.ASCII)]
+    [InlineData(MessageEncoding.UTF8)]
+    [InlineData(MessageEncoding.UTF32)]
+    [InlineData(MessageEncoding.Unicode)]
+    public async Task SerializeAsync_ShouldUseConfiguredEncodingWithoutPreamble(MessageEncoding encoding)
+    {
+        TestEventOne message = new() { Content = "the message" };
+        NewtonsoftJsonMessageSerializer serializer = new(encoding: encoding);
+
+        Stream? serialized = await serializer.SerializeAsync(message, [], TestProducerEndpoint.GetDefault());
+
+        byte[] expected = encoding.ToEncoding().GetBytes("{\"Content\":\"the message\"}");
+        serialized.ReadAll().ShouldBe(expected);
+    }
+
     [Fact]
     public async Task SerializeAsync_ShouldAddTypeHeader()
     {

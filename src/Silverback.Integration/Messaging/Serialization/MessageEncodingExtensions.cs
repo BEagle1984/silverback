@@ -18,16 +18,16 @@ public static class MessageEncodingExtensions
     ///     The <see cref="MessageEncoding" /> value to be converted.
     /// </param>
     /// <returns>
-    ///     The corresponding <see cref="Encoding" /> instance.
+    ///     The corresponding <see cref="Encoding" /> instance configured not to emit a byte order mark.
     /// </returns>
     public static Encoding ToEncoding(this MessageEncoding encoding) =>
         encoding switch
         {
             MessageEncoding.Default => Encoding.Default,
             MessageEncoding.ASCII => Encoding.ASCII,
-            MessageEncoding.UTF8 => Encoding.UTF8,
-            MessageEncoding.UTF32 => Encoding.UTF32,
-            MessageEncoding.Unicode => Encoding.Unicode,
+            MessageEncoding.UTF8 => new UTF8Encoding(false),
+            MessageEncoding.UTF32 => new UTF32Encoding(false, false),
+            MessageEncoding.Unicode => new UnicodeEncoding(false, false),
             _ => throw new ArgumentOutOfRangeException(nameof(encoding), encoding, null)
         };
 }

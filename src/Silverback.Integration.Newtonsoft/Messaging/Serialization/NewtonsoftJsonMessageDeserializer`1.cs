@@ -69,7 +69,7 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeseri
     public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; }
 
     /// <inheritdoc cref="IMessageDeserializer.DeserializeAsync" />
-    public async ValueTask<DeserializedMessage> DeserializeAsync(
+    public ValueTask<DeserializedMessage> DeserializeAsync(
         Stream? messageStream,
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
@@ -80,13 +80,13 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeseri
         Type type = GetBaseType(headers);
 
         if (messageStream == null)
-            return new DeserializedMessage(null, type);
+            return ValueTask.FromResult(new DeserializedMessage(null, type));
 
-        byte[]? buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
-        string jsonString = _encoding.GetString(buffer!);
+        using StreamReader streamReader = new(messageStream, _encoding, false, 1024, true);
+        using JsonTextReader jsonReader = new(streamReader);
 
-        object? deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings);
-        return new DeserializedMessage(deserializedObject, type);
+        object? deserializedObject = JsonSerializer.CreateDefault(Settings).Deserialize(jsonReader, type);
+        return ValueTask.FromResult(new DeserializedMessage(deserializedObject, type));
     }
 
     /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />

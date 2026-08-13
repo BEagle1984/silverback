@@ -30,7 +30,7 @@ public class NewtonsoftJsonMessageDeserializerTests
 
         Stream serialized = (await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault()))!;
 
-        Encoding.UTF8.GetString(serialized.ReadAll()!).ShouldNotContain("TestEventOne");
+        Encoding.UTF8.GetString(serialized.ReadAll()!).ShouldBe("{\"Content\":\"the message\"}");
 
         (object? deserialized, _) = await deserializer.DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
 
