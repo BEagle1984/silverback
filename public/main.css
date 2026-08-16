@@ -27,6 +27,11 @@ a.external::after {
     margin-bottom: 1rem;
 }
 
+/* Keep the changelog page outline focused on release headings. */
+main:has(article[data-uid^="releases-"]) #affix li:has(> a.link-secondary) {
+    display: none;
+}
+
 /* TOC */
 
 .toc-offcanvas {
