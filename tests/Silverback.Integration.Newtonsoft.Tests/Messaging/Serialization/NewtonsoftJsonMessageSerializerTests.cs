@@ -30,6 +30,18 @@ public class NewtonsoftJsonMessageSerializerTests
         serialized.ReadAll().ShouldBe(expected);
     }
 
+    [Fact]
+    public async Task SerializeAsync_ShouldResetStreamPosition()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        NewtonsoftJsonMessageSerializer serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, [], TestProducerEndpoint.GetDefault());
+
+        serialized.ShouldNotBeNull();
+        serialized.Position.ShouldBe(0);
+    }
+
     [Theory]
     [InlineData(MessageEncoding.Default)]
     [InlineData(MessageEncoding.ASCII)]

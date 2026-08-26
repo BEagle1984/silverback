@@ -41,6 +41,17 @@ public class NewtonsoftJsonMessageDeserializerTests
     }
 
     [Fact]
+    public async Task DeserializeAsync_ShouldResetStreamPosition()
+    {
+        MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new();
+
+        await deserializer.DeserializeAsync(rawMessage, [], TestConsumerEndpoint.GetDefault());
+
+        rawMessage.Position.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader()
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());

@@ -82,10 +82,18 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeseri
         if (messageStream == null)
             return ValueTask.FromResult(new DeserializedMessage(null, type));
 
-        using StreamReader streamReader = new(messageStream, _encoding, false, 1024, true);
-        using JsonTextReader jsonReader = new(streamReader);
+        object? deserializedObject;
 
-        object? deserializedObject = JsonSerializer.CreateDefault(Settings).Deserialize(jsonReader, type);
+        using (StreamReader streamReader = new(messageStream, _encoding, false, 1024, true))
+        {
+            using JsonTextReader jsonReader = new(streamReader);
+            deserializedObject = JsonSerializer.CreateDefault(Settings).Deserialize(jsonReader, type);
+        }
+
+        // Reset the stream position for backward compatibility, in case the stream is used again
+        if (messageStream.CanSeek)
+            messageStream.Position = 0;
+
         return ValueTask.FromResult(new DeserializedMessage(deserializedObject, type));
     }
 
