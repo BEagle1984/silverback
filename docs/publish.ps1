@@ -32,12 +32,34 @@ function Invoke-Git {
     }
 }
 
+function Get-GitOriginUrl {
+    param([string] $Path)
+
+    $urls = @(Invoke-Git -C $Path remote get-url origin)
+    if ($urls.Count -ne 1 -or [string]::IsNullOrWhiteSpace($urls[0])) {
+        throw "Could not determine the origin URL of '$Path'."
+    }
+
+    return ([string]$urls[0]).Trim()
+}
+
 $repositoryPath = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
 $repositoryParentPath = Split-Path -Parent $repositoryPath
 $publishRepositoryPath = Join-Path $repositoryParentPath "silverback-ghpages"
 $sitePath = Join-Path $repositoryPath "docs\_site"
 $buildPropsPath = Join-Path $repositoryPath "Directory.Build.props"
 $publishBranch = "gh-pages"
+$originUrl = Get-GitOriginUrl $repositoryPath
+
+Write-Step "Checking the generated site"
+if (-not (Test-Path -LiteralPath $sitePath -PathType Container)) {
+    throw "The generated site was not found at '$sitePath'. Run the documentation build first."
+}
+
+$siteItems = @(Get-ChildItem -LiteralPath $sitePath -Force)
+if ($siteItems.Count -eq 0) {
+    throw "The generated site at '$sitePath' is empty."
+}
 
 Write-Step "Checking the documentation publishing repository"
 if (Test-Path -LiteralPath $publishRepositoryPath) {
@@ -46,19 +68,22 @@ if (Test-Path -LiteralPath $publishRepositoryPath) {
     if (-not (Test-Path -LiteralPath (Join-Path $publishRepositoryPath ".git"))) {
         throw "The existing folder is not a Git clone. Refusing to delete its contents: '$publishRepositoryPath'."
     }
+
+    $publishOriginUrl = Get-GitOriginUrl $publishRepositoryPath
+    if (-not [string]::Equals($publishOriginUrl, $originUrl, [StringComparison]::Ordinal)) {
+        throw "The publishing repository does not use the source repository's origin URL."
+    }
 }
 else {
-    $originUrl = (& git -C $repositoryPath remote get-url origin)
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($originUrl)) {
-        throw "Could not determine the origin URL of '$repositoryPath'."
-    }
-
     Write-Host "Cloning '$originUrl' into '$publishRepositoryPath'."
     Invoke-Git clone $originUrl $publishRepositoryPath
 }
 
 Write-Step "Switching the publishing repository to branch '$publishBranch'"
 Invoke-Git -C $publishRepositoryPath switch $publishBranch
+
+Write-Step "Updating the publishing repository"
+Invoke-Git -C $publishRepositoryPath pull --ff-only origin $publishBranch
 
 Write-Step "Removing the previously published files"
 $itemsToRemove = Get-ChildItem -LiteralPath $publishRepositoryPath -Force |
@@ -75,18 +100,8 @@ else {
 }
 
 Write-Step "Copying the generated site"
-if (-not (Test-Path -LiteralPath $sitePath -PathType Container)) {
-    throw "The generated site was not found at '$sitePath'. Run the documentation build first."
-}
-
-$siteItems = Get-ChildItem -LiteralPath $sitePath -Force
-if ($siteItems) {
-    $siteItems | Copy-Item -Destination $publishRepositoryPath -Recurse -Force
-    Write-Host "Copied the contents of '$sitePath' to '$publishRepositoryPath'."
-}
-else {
-    Write-Host "The generated site is empty; no files were copied."
-}
+$siteItems | Copy-Item -Destination $publishRepositoryPath -Recurse -Force
+Write-Host "Copied the contents of '$sitePath' to '$publishRepositoryPath'."
 
 Write-Step "Reading the Silverback version"
 [xml] $buildProps = Get-Content -LiteralPath $buildPropsPath -Raw
