@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -54,7 +54,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -89,7 +89,7 @@
 
 
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback" class="text-break">
-Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/40249411880dfc4c5af8b0b55a3194f065868e4d/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
+Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/d5e487706968b42f7bbe5c074f2a72701778256e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,7 +125,7 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
 
   <h3 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionsAssignedCallback_OnPartitionsAssigned_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__Silverback_Messaging_Broker_IKafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.OnPartitionsAssigned(System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},Silverback.Messaging.Broker.IKafkaConsumer)">
   OnPartitionsAssigned(IReadOnlyCollection&lt;TopicPartition&gt;, IKafkaConsumer)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/40249411880dfc4c5af8b0b55a3194f065868e4d/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/BEagle1984/silverback/blob/d5e487706968b42f7bbe5c074f2a72701778256e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Called when a new consumer group partition assignment has been received by the consumer.</p>
@@ -150,17 +150,17 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TopicPartitionOffset</span>&gt;</dt>
     <dd><p>
-    Optionally returns the actual partitions to consume from and start offsets are specified by the
-    return value of the this set of partitions is not required to match the assignment provided by the
-    consumer group, but typically will. Partition offsets may be a specific offset, or special value (
-    <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
-    committed offset for each partition, or if there is no committed offset, in accordance with the
-    <code>auto.offset.reset</code> configuration property.
-</p>
+                Optionally returns the actual partitions to consume from and start offsets are specified by the
+                return value of the this set of partitions is not required to match the assignment provided by the
+                consumer group, but typically will. Partition offsets may be a specific offset, or special value (
+                <code>Beginning</code>, <code>End</code> or <code>Unset</code>). If <code>Unset</code>, consumption will resume from the last
+                committed offset for each partition, or if there is no committed offset, in accordance with the
+                <code>auto.offset.reset</code> configuration property.
+            </p>
 <p>
-    When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
-    considered <code>Unset</code>.
-</p>
+                When <code>null</code> the partitions assignment from the broker is taken and all offsets will be
+                considered <code>Unset</code>.
+            </p>
 </dd>
   </dl>
 
@@ -182,7 +182,7 @@ Interface IKafkaPartitionsAssignedCallback  <a class="header-action link-seconda
       
       <div class="affix">
         <div class="contribution d-print-none">
-          <a href="https://github.com/BEagle1984/silverback/blob/40249411880dfc4c5af8b0b55a3194f065868e4d/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/BEagle1984/silverback/blob/d5e487706968b42f7bbe5c074f2a72701778256e/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionsAssignedCallback.cs" class="edit-link">Edit this page</a>
         </div>
 
         <nav id="affix"></nav>
