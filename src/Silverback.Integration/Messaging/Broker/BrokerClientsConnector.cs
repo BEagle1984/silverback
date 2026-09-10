@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal class BrokerClientsConnector : IBrokerClientsConnector, IDisposable
+internal sealed class BrokerClientsConnector : IBrokerClientsConnector, IDisposable
 {
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly BrokerClientCollection _brokerClients;
