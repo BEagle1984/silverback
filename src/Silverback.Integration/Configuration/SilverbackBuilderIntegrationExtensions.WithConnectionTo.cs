@@ -80,7 +80,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddSingleton<ConsumerCollection>()
             .AddSingleton<IConsumerCollection>(serviceProvider => serviceProvider.GetRequiredService<ConsumerCollection>())
             .AddHostedService<BrokerClientsConnectorService>()
-            .AddTransient<IBrokerClientsConnector, BrokerClientsConnector>()
+            .AddSingleton<IBrokerClientsConnector, BrokerClientsConnector>()
             .AddTransient<BrokerClientsBootstrapper>()
             .AddSingleton(new BrokerClientConnectionOptions());
 

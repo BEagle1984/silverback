@@ -22,6 +22,120 @@ namespace Silverback.Tests.Integration.Messaging.Broker;
 public class BrokerClientsConnectorServiceTests
 {
     [Fact]
+    public void BrokerClientsConnector_ShouldBeSingleton()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        IBrokerClientsConnector connector1 = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+        IBrokerClientsConnector connector2 = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+
+        connector1.ShouldBeSameAs(connector2);
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "The ValueTasks are converted to Tasks")]
+    public async Task ConnectAsync_ShouldConnectClientsOnlyOnce_WhenCalledConcurrently()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        TaskCompletionSource connectCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        client.Status.Returns(_ => connectCompletionSource.Task.IsCompletedSuccessfully ? ClientStatus.Initialized : ClientStatus.Disconnected);
+        client.ConnectAsync().Returns(new ValueTask(connectCompletionSource.Task));
+        clients.Add(client);
+
+        IBrokerClientsConnector connector = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+        Task connectTask1 = connector.ConnectAsync().AsTask();
+        Task connectTask2 = connector.ConnectAsync().AsTask();
+        connectCompletionSource.SetResult();
+        await Task.WhenAll(connectTask1, connectTask2);
+        await connector.ConnectAsync();
+
+        await client.Received(1).ConnectAsync();
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldReconnectClient_WhenItIsNoLongerInitialized()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        ClientStatus clientStatus = ClientStatus.Initialized;
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        client.Status.Returns(_ => clientStatus);
+        clients.Add(client);
+
+        IBrokerClientsConnector connector = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+        await connector.ConnectAsync();
+        clientStatus = ClientStatus.Disconnected;
+        await connector.ConnectAsync();
+
+        await client.Received(2).ConnectAsync();
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldNotReconnectClient_WhenItIsAlreadyInitializing()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        ClientStatus clientStatus = ClientStatus.Initialized;
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        client.Status.Returns(_ => clientStatus);
+        clients.Add(client);
+
+        IBrokerClientsConnector connector = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+        await connector.ConnectAsync();
+        clientStatus = ClientStatus.Initializing;
+        await connector.ConnectAsync();
+
+        await client.Received(1).ConnectAsync();
+    }
+
+    [Fact]
+    public async Task ConnectAsync_ShouldConnectClientsAgain_AfterDisconnect()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+            .AddFakeLogger()
+            .AddSilverback()
+            .WithConnectionToMessageBroker());
+
+        BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
+        IBrokerClient client = Substitute.For<IBrokerClient>();
+        client.Name.Returns("client");
+        clients.Add(client);
+
+        IBrokerClientsConnector connector = serviceProvider.GetRequiredService<IBrokerClientsConnector>();
+        await connector.ConnectAsync();
+        await connector.DisconnectAsync();
+        await connector.ConnectAsync();
+
+        await client.Received(2).ConnectAsync();
+        await client.Received(1).DisconnectAsync();
+    }
+
+    [Fact]
     public async Task StartAsync_ShouldConnectAllClients_WhenModeIsConnectAtStartup()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
