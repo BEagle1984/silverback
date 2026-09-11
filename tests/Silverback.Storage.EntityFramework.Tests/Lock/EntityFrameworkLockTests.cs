@@ -2,11 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Shouldly;
 using Silverback.Configuration;
 using Silverback.Lock;
@@ -43,7 +46,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         };
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .AddEntityFrameworkLock());
@@ -67,7 +70,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         string lockNameB = $"test-lock-B-{Guid.NewGuid():N}";
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .AddEntityFrameworkLock());
@@ -126,7 +129,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         };
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .EnableStorage()
@@ -158,7 +161,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         };
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .AddEntityFrameworkLock());
@@ -188,7 +191,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         };
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .AddEntityFrameworkLock());
@@ -219,7 +222,7 @@ public sealed class EntityFrameworkLockTests : IDisposable
         };
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
             .AddSilverback()
             .AddEntityFrameworkLock());
@@ -248,9 +251,13 @@ public sealed class EntityFrameworkLockTests : IDisposable
             LockTimeout = TimeSpan.FromSeconds(100)
         };
 
+        ILogger<EntityFrameworkLock> logger = Substitute.For<ILogger<EntityFrameworkLock>>();
+        logger.IsEnabled(Arg.Any<LogLevel>()).Returns(true);
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(services => services
-            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection))
+            .AddDbContext<TestDbContext>(options => options.UseSqlite(_sqliteConnection.ConnectionString))
             .AddFakeLogger()
+            .AddSingleton(logger)
             .AddSilverback()
             .AddEntityFrameworkLock());
 
@@ -265,9 +272,21 @@ public sealed class EntityFrameworkLockTests : IDisposable
 
         DateTime initialHeartbeat = dbContext.Locks.AsNoTracking().Single().LastHeartbeat ?? DateTime.MinValue;
 
-        await AsyncTestingUtil.WaitAsync(() => dbContext.Locks.AsNoTracking().Single().LastHeartbeat > initialHeartbeat);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        DateTime lastHeartbeat = initialHeartbeat;
 
-        DateTime lastHeartbeat = dbContext.Locks.AsNoTracking().Single().LastHeartbeat ?? DateTime.MinValue;
+        while (lastHeartbeat <= initialHeartbeat)
+        {
+            handle.LockLostToken.IsCancellationRequested.ShouldBeFalse(
+                "Lock lost while waiting for heartbeat. " + string.Join(
+                    Environment.NewLine,
+                    logger.ReceivedCalls().SelectMany(call => call.GetArguments().OfType<Exception>())));
+            stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(20), "Timed out waiting for heartbeat.");
+
+            await Task.Delay(lockSettings.HeartbeatInterval);
+            lastHeartbeat = dbContext.Locks.AsNoTracking().Single().LastHeartbeat ?? DateTime.MinValue;
+        }
+
         lastHeartbeat.ShouldBeGreaterThan(initialHeartbeat);
     }
 

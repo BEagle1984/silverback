@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -27,7 +28,7 @@ public class ActivitySourcesTests
         };
 
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
-        Activity activity = ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
         Activity.Current.ShouldBeSameAs(activity);
@@ -45,7 +46,7 @@ public class ActivitySourcesTests
         };
 
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
-        ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
         Activity.Current.TraceId.ToString().ShouldBe("0af7651916cd43dd8448eb211c80319c");
@@ -57,7 +58,7 @@ public class ActivitySourcesTests
     {
         IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
 
-        ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
         Activity.Current.TraceId.ToString().ShouldNotBeNullOrEmpty();
@@ -75,7 +76,7 @@ public class ActivitySourcesTests
         };
 
         IRawInboundEnvelope envelope = CreateInboundEnvelope(headers);
-        ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
         Activity.Current.Baggage.ShouldContain(new KeyValuePair<string, string?>("key1", "value1"));
@@ -85,7 +86,7 @@ public class ActivitySourcesTests
     public void StartConsumeActivity_ShouldSetMessageDestinationTag()
     {
         IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
-        ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         Activity.Current.ShouldNotBeNull();
         Activity.Current.Tags.ShouldContain(new KeyValuePair<string, string?>(ActivityTagNames.MessageDestination, "Endpoint"));
@@ -97,7 +98,7 @@ public class ActivitySourcesTests
         using TestActivityListener listener = new();
 
         IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
-        Activity activity = ActivitySources.StartConsumeActivity(envelope);
+        using Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         listener.Activities.ShouldContain(activity);
         Activity.Current.ShouldNotBeNull();
@@ -219,20 +220,20 @@ public class ActivitySourcesTests
     {
         private readonly ActivityListener _listener;
 
-        private readonly List<Activity> _activities = [];
+        private readonly ConcurrentQueue<Activity> _activities = new();
 
         public TestActivityListener()
         {
             _listener = new ActivityListener
             {
-                ShouldListenTo = _ => true,
-                ActivityStarted = _activities.Add,
+                ShouldListenTo = source => source.Name == "Silverback.Integration.Consume",
+                ActivityStarted = _activities.Enqueue,
                 Sample = (ref _) => ActivitySamplingResult.AllDataAndRecorded
             };
             ActivitySource.AddActivityListener(_listener);
         }
 
-        public IEnumerable<Activity> Activities => _activities;
+        public IEnumerable<Activity> Activities => [.. _activities];
 
         public void Dispose() => _listener.Dispose();
     }
