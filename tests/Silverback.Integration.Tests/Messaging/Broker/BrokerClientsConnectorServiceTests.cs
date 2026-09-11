@@ -324,10 +324,8 @@ public class BrokerClientsConnectorServiceTests
     public async Task StartAsync_ShouldAlwaysSetupGracefulDisconnectRegardlessOfMode(BrokerClientConnectionMode mode)
     {
         CancellationTokenSource appStoppingTokenSource = new();
-        CancellationTokenSource appStoppedTokenSource = new();
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
-        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
             .AddTransient(_ => lifetimeEvents)
@@ -355,7 +353,7 @@ public class BrokerClientsConnectorServiceTests
         await service.StartAsync(CancellationToken.None);
 
         appStoppingTokenSource.Cancel();
-        appStoppedTokenSource.Cancel();
+        await service.StoppedAsync(CancellationToken.None);
 
         foreach (IBrokerClient client in clients)
         {
@@ -364,13 +362,11 @@ public class BrokerClientsConnectorServiceTests
     }
 
     [Fact]
-    public async Task OnApplicationStopped_ShouldDisconnectAllClients()
+    public async Task StoppedAsync_ShouldDisconnectAllClients()
     {
         CancellationTokenSource appStoppingTokenSource = new();
-        CancellationTokenSource appStoppedTokenSource = new();
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
-        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
             .AddTransient(_ => lifetimeEvents)
@@ -399,7 +395,7 @@ public class BrokerClientsConnectorServiceTests
         await service.StartAsync(CancellationToken.None);
 
         appStoppingTokenSource.Cancel();
-        appStoppedTokenSource.Cancel();
+        await service.StoppedAsync(CancellationToken.None);
 
         await consumer.Received(1).StopAsync();
         await client.Received(1).DisconnectAsync();
@@ -407,17 +403,15 @@ public class BrokerClientsConnectorServiceTests
 
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
-    public async Task OnApplicationStopped_ShouldRunAfterOnApplicationStoppingAndBlockUntilDisconnected()
+    public async Task StoppedAsync_ShouldWaitForConsumersAndDisconnectOnlyOnce_WhenCalledConcurrently()
     {
-        bool onStoppingCalled = false;
-        bool onStoppedCalled = false;
-
-        SemaphoreSlim stoppingCompletionSemaphore = new(0);
+        TaskCompletionSource stoppingStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource stoppingCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource disconnectStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource disconnectCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
         CancellationTokenSource appStoppingTokenSource = new();
-        CancellationTokenSource appStoppedTokenSource = new();
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
-        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
             .AddTransient(_ => lifetimeEvents)
@@ -428,42 +422,79 @@ public class BrokerClientsConnectorServiceTests
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         IBrokerClient client = Substitute.For<IBrokerClient>();
         client.Name.Returns("client");
+        client.DisconnectAsync().Returns(_ =>
+        {
+            disconnectStarted.TrySetResult();
+            return new ValueTask(disconnectCompletion.Task);
+        });
         clients.Add(client);
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         IConsumer consumer = Substitute.For<IConsumer>();
         consumer.Name.Returns("consumer");
         consumer.Client.Returns(client);
-        consumer.StopAsync().Returns(_ => new ValueTask(Task.Run(async () =>
+        consumer.StopAsync().Returns(_ =>
         {
-            await Task.Delay(100);
-            onStoppingCalled = true;
-            await stoppingCompletionSemaphore.WaitAsync();
-        })));
+            stoppingStarted.TrySetResult();
+            return new ValueTask(stoppingCompletion.Task);
+        });
         consumers.Add(consumer);
 
-        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
-        IProducer producer = Substitute.For<IProducer>();
-        producer.Name.Returns("producer");
-        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("test"));
-        producers.Add(producer);
-
-        BrokerClientsConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        IHostedLifecycleService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         await service.StartAsync(CancellationToken.None);
 
         appStoppingTokenSource.Cancel();
-        Task onStoppedTask = Task.Run(() =>
+        try
         {
-            onStoppedCalled = true;
-            appStoppedTokenSource.Cancel();
-        });
+            await stoppingStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Task stoppedTask1 = service.StoppedAsync(CancellationToken.None);
+            Task stoppedTask2 = service.StoppedAsync(new CancellationToken(true));
 
-        await AsyncTestingUtil.WaitAsync(() => onStoppingCalled && onStoppedCalled);
-        await Task.Delay(100);
-        await client.Received(0).DisconnectAsync();
+            stoppedTask1.IsCompleted.ShouldBeFalse();
+            stoppedTask2.ShouldBeSameAs(stoppedTask1);
+            await client.Received(0).DisconnectAsync();
 
-        stoppingCompletionSemaphore.Release();
-        await onStoppedTask;
+            stoppingCompletion.SetResult();
+            await disconnectStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+            stoppedTask1.IsCompleted.ShouldBeFalse();
+            stoppedTask2.IsCompleted.ShouldBeFalse();
+            service.StoppedAsync(CancellationToken.None).ShouldBeSameAs(stoppedTask1);
+
+            disconnectCompletion.SetResult();
+            await Task.WhenAll(stoppedTask1, stoppedTask2).WaitAsync(TimeSpan.FromSeconds(10));
+            await service.StoppedAsync(CancellationToken.None);
+        }
+        finally
+        {
+            stoppingCompletion.TrySetResult();
+            disconnectCompletion.TrySetResult();
+        }
+
+        await consumer.Received(1).StopAsync();
         await client.Received(1).DisconnectAsync();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task StoppedAsync_ShouldPropagateDisconnectFailureToAllCalls()
+    {
+        IBrokerClientsConnector connector = Substitute.For<IBrokerClientsConnector>();
+        TaskCompletionSource disconnectCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        connector.DisconnectAsync().Returns(_ => new ValueTask(disconnectCompletion.Task));
+        BrokerClientsConnectorService service = new(
+            new BrokerClientConnectionOptions(),
+            Substitute.For<IHostApplicationLifetime>(),
+            connector);
+
+        Task stoppedTask1 = service.StoppedAsync(CancellationToken.None);
+        Task stoppedTask2 = service.StoppedAsync(CancellationToken.None);
+        InvalidOperationException exception = new("Disconnect failed");
+        disconnectCompletion.SetException(exception);
+
+        (await Should.ThrowAsync<InvalidOperationException>(stoppedTask1)).ShouldBeSameAs(exception);
+        (await Should.ThrowAsync<InvalidOperationException>(stoppedTask2)).ShouldBeSameAs(exception);
+        (await Should.ThrowAsync<InvalidOperationException>(() => service.StoppedAsync(CancellationToken.None))).ShouldBeSameAs(exception);
+        await connector.Received(1).DisconnectAsync();
     }
 }

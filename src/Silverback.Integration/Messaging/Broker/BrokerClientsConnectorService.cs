@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-internal sealed class BrokerClientsConnectorService : IHostedService
+internal sealed class BrokerClientsConnectorService : IHostedLifecycleService
 {
     private readonly BrokerClientConnectionOptions _clientConnectionOptions;
 
@@ -18,8 +19,11 @@ internal sealed class BrokerClientsConnectorService : IHostedService
 
     private readonly CancellationToken _applicationStoppingToken;
 
+    private readonly Lazy<Task> _shutdownTask;
+
     private Task _stoppingTask = Task.CompletedTask;
 
+    [SuppressMessage("Usage", "VSTHRD011:Use AsyncLazy<T>", Justification = "The host awaits shutdown asynchronously, no synchronous task waits are used")]
     public BrokerClientsConnectorService(
         BrokerClientConnectionOptions clientConnectionOptions,
         IHostApplicationLifetime applicationLifetime,
@@ -27,14 +31,16 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     {
         _connector = Check.NotNull(connector, nameof(connector));
         _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
+        _shutdownTask = new Lazy<Task>(ShutdownAsync);
 
         Check.NotNull(applicationLifetime, nameof(applicationLifetime));
         applicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
         applicationLifetime.ApplicationStopping.Register(OnApplicationStopping);
-        applicationLifetime.ApplicationStopped.Register(OnApplicationStopped);
 
         _applicationStoppingToken = applicationLifetime.ApplicationStopping;
     }
+
+    public Task StartingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -44,7 +50,13 @@ internal sealed class BrokerClientsConnectorService : IHostedService
             await _connector.ConnectAsync(_applicationStoppingToken).ConfigureAwait(false);
     }
 
+    public Task StartedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public Task StoppingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public Task StoppedAsync(CancellationToken cancellationToken) => _shutdownTask.Value;
 
     private void OnApplicationStarted()
     {
@@ -55,10 +67,9 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
     private void OnApplicationStopping() => _stoppingTask = Task.Run(async () => await _connector.StopConsumersAsync().ConfigureAwait(false));
 
-    [SuppressMessage("ReSharper", "MethodSupportsCancellation", Justification = "Not needed")]
-    private void OnApplicationStopped()
+    private async Task ShutdownAsync()
     {
-        _stoppingTask.SafeWait();
-        _connector.DisconnectAsync().SafeWait();
+        await _stoppingTask.ConfigureAwait(false);
+        await _connector.DisconnectAsync().ConfigureAwait(false);
     }
 }
