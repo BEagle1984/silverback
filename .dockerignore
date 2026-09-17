@@ -5,3 +5,6 @@
 **/coverage/
 *.log
 *.tmp
+**/artifacts/
+**/TestResults/
+**/*.dmp

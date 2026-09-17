@@ -1,0 +1,3 @@
+[*.cs]
+# Keep the historical package version readable in its assembly and namespace.
+dotnet_diagnostic.CA1707.severity = none

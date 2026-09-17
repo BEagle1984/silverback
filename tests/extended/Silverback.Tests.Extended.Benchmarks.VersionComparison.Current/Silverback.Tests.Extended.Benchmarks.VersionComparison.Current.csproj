@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Silverback.Tests.Extended.Benchmarks.VersionComparison.Current</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <ProjectReference Include="../../../src/Silverback.Core/Silverback.Core.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Core.Model/Silverback.Core.Model.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Integration.Kafka/Silverback.Integration.Kafka.csproj" />
+  </ItemGroup>
+</Project>

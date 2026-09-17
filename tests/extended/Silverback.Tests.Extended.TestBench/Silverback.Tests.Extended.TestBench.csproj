@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(CurrentLatestFramework)-windows</TargetFramework>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RootNamespace>Silverback.Tests.Extended.TestBench</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\..\..\graphics\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Ductus.FluentDocker" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Activity" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="SharpCompress" />
+    <ProjectReference Include="../../../src/Silverback.Core.Model/Silverback.Core.Model.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Integration.Kafka/Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Integration.MQTT/Silverback.Integration.MQTT.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Storage.PostgreSql/Silverback.Storage.PostgreSql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Tests.Extended.TestBench.Shared\Silverback.Tests.Extended.TestBench.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Windows\InitWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UI\Style\DefaultStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Windows\InitWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\graphics\Icon.png">
+      <Link>Icon.png</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Silverback.Tests.Extended.Shared/Silverback.Tests.Extended.Shared.csproj" />
+  </ItemGroup>
+</Project>

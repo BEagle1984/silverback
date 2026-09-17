@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+# TODO: Mount instead of copying to improve performance
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet build "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" -c Release -o /app/build
+
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS tools
+RUN dotnet tool install --global dotnet-stack
+RUN dotnet tool install --global dotnet-dump
+RUN dotnet tool install --global dotnet-trace
+RUN dotnet tool install --global dotnet-gcdump
+RUN dotnet tool install --global dotnet-monitor
+
+FROM build AS publish
+RUN dotnet publish "tests/extended/Silverback.Tests.Extended.TestBench.Consumer/Silverback.Tests.Extended.TestBench.Consumer.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+COPY --from=tools /root/.dotnet/ /root/.dotnet/
+ENV PATH="${PATH}:/root/.dotnet/tools"
+ENTRYPOINT ["dotnet", "Silverback.Tests.Extended.TestBench.Consumer.dll"]

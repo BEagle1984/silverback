@@ -1,35 +1,64 @@
 name: other-projects.$(date:yyyyMMdd)$(rev:.r)
 
-pool:
-  vmImage: 'windows-latest'
+parameters:
+  - name: runStressTests
+    displayName: Run Docker stress tests
+    type: boolean
+    default: false
 
 variables:
   buildConfiguration: 'Release'
   enableLegacyVersionTests: false
 
-steps:
-  # Install .NET SDK
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '10.0.x'
-    displayName: 'Install SDK 10.0.x'
-  # Build nuget packages
-  - pwsh: |
-      cd nuget
-      ./Update.ps1
-    displayName: 'Build Silverback packages'
-  - pwsh: |
-      dotnet nuget add source "$(pwd)/nuget" --name local
-      echo "$(pwd)/nuget added as package source"
-    displayName: 'Set package source'
-  # Build
-  - script: |
-      dotnet build ./samples/Silverback.Samples.sln --configuration $(buildConfiguration) | tee build.log && grep -q 'Build succeeded' build.log
-    displayName: 'Build Samples ($(buildConfiguration))'
-  - script: |
-      dotnet build ./benchmarks/SilverbackBenchmarks.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
-    displayName: 'Build Benchmarks ($(buildConfiguration))'
-  - script: |
-      dotnet build ./testbench/Silverback.TestBench.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
-    displayName: 'Build Test Bench ($(buildConfiguration))'
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      # Install .NET SDK
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '10.0.x'
+        displayName: 'Install SDK 10.0.x'
+      # Build nuget packages
+      - pwsh: |
+          cd nuget
+          ./Update.ps1
+        displayName: 'Build Silverback packages'
+      - pwsh: |
+          dotnet nuget add source "$(pwd)/nuget" --name local
+          echo "$(pwd)/nuget added as package source"
+        displayName: 'Set package source'
+      # Build
+      - script: |
+          dotnet build ./samples/Silverback.Samples.sln --configuration $(buildConfiguration) | tee build.log && grep -q 'Build succeeded' build.log
+        displayName: 'Build Samples ($(buildConfiguration))'
+      - pwsh: |
+          dotnet build ./tests/extended/Silverback.Tests.Extended.sln --configuration $(buildConfiguration) -warnaserror
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        displayName: 'Build Extended Tests ($(buildConfiguration))'
+
+  - job: StressTests
+    condition: and(succeeded(), ${{ eq(parameters.runStressTests, true) }})
+    dependsOn: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: sdk
+          version: '10.0.x'
+      - script: dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --configuration Release --logger trx --results-directory $(Common.TestResultsDirectory)/stress
+        displayName: Run Kafka stress tests
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: '$(Common.TestResultsDirectory)/stress/*.trx'
+          failTaskOnFailedTests: true
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          targetPath: tests/extended/artifacts
+          artifact: stress-evidence

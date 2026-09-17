@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <RootNamespace>Silverback.Tests.Extended.Shared</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Silverback.Integration.Kafka/Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="../../../src/Silverback.Integration.MQTT/Silverback.Integration.MQTT.csproj" />
+  </ItemGroup>
+</Project>
