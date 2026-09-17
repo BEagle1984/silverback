@@ -67,10 +67,35 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public async ValueTask<T> ReadAsync()
     {
-        if (_overflowChannel.Reader.TryRead(out T? overflowMessage))
-            return overflowMessage;
+        while (true)
+        {
+            ReadCancellationToken.ThrowIfCancellationRequested();
 
-        return await _channel.Reader.ReadAsync(ReadCancellationToken).ConfigureAwait(false);
+            if (_overflowChannel.Reader.TryRead(out T? overflowMessage))
+                return overflowMessage;
+
+            if (_channel.Reader.TryRead(out T? message))
+                return message;
+
+            // Overflow may arrive after the empty check above (e.g. when a Kafka write is canceled during rebalance).
+            // Wait for either queue without consuming from the losing queue, preserving overflow priority.
+            using CancellationTokenSource waitCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ReadCancellationToken);
+
+            try
+            {
+                Task<bool> messageAvailable = _channel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
+                Task<bool> overflowAvailable = _overflowChannel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
+                Task<bool> available = await Task.WhenAny(messageAvailable, overflowAvailable).ConfigureAwait(false);
+
+                if (!await available.ConfigureAwait(false))
+                    throw new ChannelClosedException();
+            }
+            finally
+            {
+                // Do not accumulate pending waits on the queue that didn't receive a message.
+                await waitCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            }
+        }
     }
 
     public void Reset()
