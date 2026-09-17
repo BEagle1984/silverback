@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RootNamespace>Silverback.Tests.Extended.TestBench.Shared</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Activity" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <ProjectReference Include="../../../src/Silverback.Integration/Silverback.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Silverback.Tests.Extended.Shared/Silverback.Tests.Extended.Shared.csproj" />
+  </ItemGroup>
+</Project>

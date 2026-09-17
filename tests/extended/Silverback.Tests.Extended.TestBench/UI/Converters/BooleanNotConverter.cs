@@ -1,0 +1,17 @@
+// Copyright (c) 2026 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Globalization;
+using System.Windows.Data;
+
+namespace Silverback.Tests.Extended.TestBench.UI.Converters;
+
+public class BooleanNotConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool boolValue ? !boolValue : value;
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool boolValue ? !boolValue : value;
+}

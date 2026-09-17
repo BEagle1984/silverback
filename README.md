@@ -109,6 +109,44 @@ See the docs site for guides, API reference, and runnable examples:
 
 - https://silverback-messaging.net
 
+## Repository Solutions and Tools
+
+### Solutions
+
+| Solution | Contents |
+| --- | --- |
+| [Silverback.sln](Silverback.sln) | Library source projects, unit and E2E tests, and code/documentation generators |
+| [Silverback.Samples.sln](samples/Silverback.Samples.sln) | Runnable usage examples; see the [samples guide](samples/README.md) |
+| [Silverback.Tests.Extended.sln](tests/extended/Silverback.Tests.Extended.sln) | Interactive testbench, Docker stress tests, general benchmarks and version comparisons, with references to the library sources |
+
+### Testing and Development Tools
+
+| Tool | Purpose |
+| --- | --- |
+| [Interactive testbench](tests/extended/README.md#interactive-testbench) | Windows WPF application for producing messages and managing Docker consumers |
+| [Docker stress tests](tests/extended/README.md#docker-stress-tests) | xUnit workloads, rebalance reconciliation and diagnostic capture against real Kafka |
+| [Benchmarks](tests/extended/README.md#benchmarks) | General performance benchmarks and current-versus-historical Silverback comparisons |
+| [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1) | Scaffold another historical benchmark project |
+| [coverage.ps1](coverage.ps1) | Build and test the main solution with coverage, then generate and open an HTML report |
+| [docker-compose.yaml](docker-compose.yaml) | Local Kafka, Schema Registry, MQTT and PostgreSQL infrastructure, with administration UIs |
+| [nuget/Update.ps1](nuget/Update.ps1) | Build local Silverback packages for package-based development and samples |
+| [.NET tool manifest](.config/dotnet-tools.json) | Repository-local ReportGenerator installation used by the coverage script |
+
+### Code and Documentation Generators
+
+The four generator applications are included in the main solution and write generated content to standard output. Shared generator support lives in [Silverback.Tools.Generators.Common](tools/Silverback.Tools.Generators.Common).
+
+| Tool | Purpose |
+| --- | --- |
+| [KafkaConfigProxies](tools/Silverback.Tools.Generators.KafkaConfigProxies) | Generate Kafka configuration wrappers and builders; also supports Schema Registry configuration |
+| [MqttConfigProxies](tools/Silverback.Tools.Generators.MqttConfigProxies) | Generate MQTT configuration wrappers and builders |
+| [Docs.Headers](tools/Silverback.Tools.Generators.Docs.Headers) | Generate message-header reference tables |
+| [Docs.LogEvents](tools/Silverback.Tools.Generators.Docs.LogEvents) | Generate log-event reference tables |
+| [docs/build.ps1](docs/build.ps1) | Build and serve the DocFX documentation locally; run from the docs directory |
+| [docs/publish.ps1](docs/publish.ps1) | Publish the generated site through a separate gh-pages checkout; supports -NoPush |
+
+Build automation is defined in [the main pipeline](azure-pipelines.yml), [the Sonar pipeline](azure-pipelines.sonar.yml), and [the samples/extended-tests pipeline](azure-pipelines.other-projects.yml).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -1,0 +1,70 @@
+[*]
+
+# Microsoft.CodeAnalysis.NetAnalyzers   
+# CA1030: Use events where appropriate
+dotnet_diagnostic.CA1030.severity = none
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+# CA1040: Avoid empty interfaces
+dotnet_diagnostic.CA1040.severity = none
+# CA1054: URI-like parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+# CA1506: Avoid excessive class coupling
+dotnet_diagnostic.CA1506.severity = none
+# CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = none
+# CA1812: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = none
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none
+# CA1849: Call async methods when in an async method"
+dotnet_diagnostic.CA1849.severity = none
+# CA1859: Use concrete types when possible for improved performance
+dotnet_diagnostic.CA1859.severity = none
+# CA1861: Avoid constant arrays as arguments
+dotnet_diagnostic.CA1861.severity = none
+# CA2000: Dispose objects before losing scope
+dotnet_diagnostic.CA2000.severity = none
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+# CA2025: Do not pass 'IDisposable' instances into unawaited tasks
+dotnet_diagnostic.CA2025.severity = none
+# CA2213: Disposable fields should be disposed
+dotnet_diagnostic.CA2213.severity = none
+# CA2234: Pass System.Uri objects instead of strings
+dotnet_diagnostic.CA2234.severity = none
+# CA5358: Review cipher mode usage with cryptography experts
+dotnet_diagnostic.CA5358.severity = none
+# CA5394: Do not use insecure randomness
+dotnet_diagnostic.CA5394.severity = none
+# CA5398: Avoid hardcoded SslProtocols values
+dotnet_diagnostic.CA5398.severity = none
+# IDE0370: Suppression is unnecessary
+dotnet_diagnostic.IDE0370.severity = none
+
+# StyleCop.Analyzers
+# SA1600: A C# code element is missing a documentation header
+dotnet_diagnostic.SA1600.severity = none
+# SA1601: A C# partial element is missing a documentation header.
+dotnet_diagnostic.SA1601.severity = none
+# SA1602: Enumeration items should be documented
+dotnet_diagnostic.SA1602.severity = none
+
+# Microsoft.VisualStudio.Threading.Analyzers
+# VSTHRD103: Call async methods when in an async method
+dotnet_diagnostic.VSTHRD103.severity = none
+# VSTHRD111: Use .ConfigureAwait(bool)
+dotnet_diagnostic.VSTHRD111.severity = none
+# VSTHRD200: Naming styles (Async suffix)
+dotnet_diagnostic.VSTHRD200.severity = none
+
+# Resharper
+resharper_method_supports_cancellation_highlighting = none

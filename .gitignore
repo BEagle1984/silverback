@@ -372,3 +372,6 @@ samples/temp/
 
 # Testbench dockerfile which is copied to the root folder when building the image
 /Dockerfile
+
+# Temporary investigation notes, reports and scratch files
+/temp/

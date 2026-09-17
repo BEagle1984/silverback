@@ -1,6 +1,7 @@
-﻿// Copyright (c) 2026 Sergio Aquilini
+// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -129,6 +130,124 @@ public class ConsumerChannelTests
         await channel.WriteAsync(secondMessage, CancellationToken.None);
         TestMessage readMessage = await channel.ReadAsync();
         readMessage.ShouldBeSameAs(secondMessage);
+    }
+
+    [Fact]
+    public async Task ReadAsync_ShouldWakeUp_WhenOverflowMessageArrivesAfterReadStarted()
+    {
+        using ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage overflowMessage = new();
+        TestMessage nextMessage = new();
+
+        Task<TestMessage> pendingRead = channel.ReadAsync().AsTask();
+        pendingRead.IsCompleted.ShouldBeFalse();
+
+        // Reproduce a canceled Kafka write being redirected to overflow after the reader is already waiting.
+        await channel.WriteOverflowAsync(overflowMessage);
+
+        try
+        {
+            TestMessage readMessage = await pendingRead.WaitAsync(TimeSpan.FromSeconds(2));
+            readMessage.ShouldBeSameAs(overflowMessage);
+
+            using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(2));
+            await channel.WriteAsync(nextMessage, timeout.Token);
+            (await channel.ReadAsync()).ShouldBeSameAs(nextMessage);
+        }
+        finally
+        {
+            await channel.StopReadingAsync();
+        }
+    }
+
+    [Fact]
+    public async Task ReadAsync_ShouldWakeUp_WhenMainMessageArrivesAfterReadStarted()
+    {
+        using ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage message = new();
+        Task<TestMessage> pendingRead = channel.ReadAsync().AsTask();
+
+        await channel.WriteAsync(message, CancellationToken.None);
+
+        try
+        {
+            (await pendingRead.WaitAsync(TimeSpan.FromSeconds(2))).ShouldBeSameAs(message);
+        }
+        finally
+        {
+            await channel.StopReadingAsync();
+        }
+    }
+
+    [Fact]
+    public async Task ReadAsync_ShouldCancel_WhenStoppedWhileBothQueuesAreEmpty()
+    {
+        using ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        Task<TestMessage> pendingRead = channel.ReadAsync().AsTask();
+
+        await channel.StopReadingAsync();
+
+        await Should.ThrowAsync<OperationCanceledException>(async () =>
+            await pendingRead.WaitAsync(TimeSpan.FromSeconds(2)));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_ShouldThrow_WhenChannelClosedWhileWaiting(bool reset)
+    {
+        using ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        Task<TestMessage> pendingRead = channel.ReadAsync().AsTask();
+
+        if (reset)
+            channel.Reset();
+        else
+            channel.Complete();
+
+        try
+        {
+            await Should.ThrowAsync<System.Threading.Channels.ChannelClosedException>(async () =>
+                await pendingRead.WaitAsync(TimeSpan.FromSeconds(2)));
+        }
+        finally
+        {
+            await channel.StopReadingAsync();
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_ShouldCancelAndAllowReplay_WhenMainBufferAndOverflowAreOccupied(bool overflow)
+    {
+        using ConsumerChannel<TestMessage> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
+        TestMessage buffered = new();
+        TestMessage waiting = new();
+        await channel.WriteAsync(buffered, CancellationToken.None);
+        if (overflow)
+            await channel.WriteOverflowAsync(new TestMessage());
+        using CancellationTokenSource cancellation = new();
+        Task writer = channel.WriteAsync(waiting, cancellation.Token).AsTask();
+        writer.IsCompleted.ShouldBeFalse();
+
+        await cancellation.CancelAsync();
+        await Should.ThrowAsync<OperationCanceledException>(async () => await writer.WaitAsync(TimeSpan.FromSeconds(2)));
+        await channel.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(2));
+        channel.Reset();
+        channel.StartReading().ShouldBeTrue();
+        try
+        {
+            // A reset discards both queues; Kafka must redeliver every uncommitted record.
+            await channel.WriteAsync(buffered, CancellationToken.None);
+            (await channel.ReadAsync()).ShouldBeSameAs(buffered);
+            await channel.WriteAsync(waiting, CancellationToken.None);
+            (await channel.ReadAsync()).ShouldBeSameAs(waiting);
+        }
+        finally
+        {
+            await channel.NotifyReadingStoppedAsync(false);
+            await channel.StopReadingAsync();
+        }
     }
 
     private record TestMessage;
