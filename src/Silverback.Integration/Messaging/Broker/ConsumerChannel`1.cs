@@ -41,6 +41,11 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public string Id { get; }
 
+    /// <summary>
+    ///     Gets the identity of the current channel buffers and processing state. Resetting the channel replaces this identity.
+    /// </summary>
+    public Guid InstanceId { get; private set; } = Guid.NewGuid();
+
     public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
 
     public Task ReadTask => _readTaskCompletionSource.Task;
@@ -106,6 +111,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         _overflowChannel = Channel.CreateUnbounded<T>();
         SequenceStore.Dispose();
         SequenceStore = new SequenceStore(_logger);
+        InstanceId = Guid.NewGuid();
     }
 
     public bool StartReading()

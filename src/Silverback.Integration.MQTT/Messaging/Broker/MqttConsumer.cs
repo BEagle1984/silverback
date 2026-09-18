@@ -138,7 +138,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
+    /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync()" />
     protected override ValueTask StopCoreAsync()
     {
         _channelsManager.StopReadingAsync().FireAndForget();

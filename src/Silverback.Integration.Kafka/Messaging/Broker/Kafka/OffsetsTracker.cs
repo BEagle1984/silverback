@@ -75,7 +75,7 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
             offset.TopicPartition,
             static (_, newOffset) => newOffset,
             static (_, existingOffset, newOffset) => newOffset > existingOffset ? newOffset : existingOffset,
-            new KafkaOffset(offset.TopicPartition, offset.Offset + 1)); // Commit next offset (+1)
+            offset.GetNextOffset()); // Commit next offset (+1)
     }
 
     /// <summary>

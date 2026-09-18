@@ -1,16 +1,99 @@
 ﻿// Copyright (c) 2026 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Shouldly;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Kafka;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 
 public class KafkaOffsetTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Equality_ShouldIgnoreSourceChannel(bool bound)
+    {
+        KafkaOffset first = new(new TopicPartitionOffset("topic", 0, 42), Guid.NewGuid());
+        KafkaOffset second = bound
+            ? new KafkaOffset(new TopicPartitionOffset("topic", 0, 42), Guid.NewGuid())
+            : new KafkaOffset("topic", 0, 42);
+
+        first.Equals(second).ShouldBeTrue();
+        first.Equals((IBrokerMessageIdentifier)second).ShouldBeTrue();
+        first.Equals((object)second).ShouldBeTrue();
+        (first == second).ShouldBeTrue();
+        (first != second).ShouldBeFalse();
+        first.GetHashCode().ShouldBe(second.GetHashCode());
+        first.CompareTo(second).ShouldBe(0);
+        HashSet<KafkaOffset> offsets = [first, second];
+        offsets.ShouldHaveSingleItem();
+        Dictionary<IBrokerMessageIdentifier, int> attempts = new() { [first] = 1 };
+        attempts[second].ShouldBe(1);
+    }
+
+    [Fact]
+    public void BelongsToChannel_ShouldMatchOnlySourceChannel()
+    {
+        Guid sourceChannelInstanceId = Guid.NewGuid();
+        KafkaOffset offset = new(new TopicPartitionOffset("topic", 0, 42), sourceChannelInstanceId);
+
+        offset.HasSourceChannel.ShouldBeTrue();
+        offset.BelongsToChannel(sourceChannelInstanceId).ShouldBeTrue();
+        offset.BelongsToChannel(Guid.NewGuid()).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void BelongsToChannel_ShouldReturnFalse_WhenOffsetConstructedWithoutSourceChannel()
+    {
+        KafkaOffset offset = new("topic", 0, 42);
+
+        offset.HasSourceChannel.ShouldBeFalse();
+        offset.BelongsToChannel(Guid.NewGuid()).ShouldBeFalse();
+        offset.BelongsToChannel(Guid.Empty).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Copy_ShouldPreserveSourceChannel()
+    {
+        Guid sourceChannelInstanceId = Guid.NewGuid();
+        KafkaOffset offset = new(new TopicPartitionOffset("topic", 0, 42), sourceChannelInstanceId);
+
+        KafkaOffset copy = offset with { };
+
+        copy.ShouldNotBeSameAs(offset);
+        copy.ShouldBe(offset);
+        copy.BelongsToChannel(sourceChannelInstanceId).ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Tracker_ShouldPreserveSourceChannel(bool bound)
+    {
+        Guid sourceChannelInstanceId = Guid.NewGuid();
+        KafkaOffset offset = bound
+            ? new KafkaOffset(new TopicPartitionOffset("topic", 0, 42), sourceChannelInstanceId)
+            : new KafkaOffset("topic", 0, 42);
+        OffsetsTracker tracker = new();
+        tracker.TrackOffset(offset);
+        tracker.GetCommitOffsets().ShouldHaveSingleItem().ShouldBeSameAs(offset);
+        tracker.GetRollbackOffSets().ShouldHaveSingleItem().ShouldBeSameAs(offset);
+
+        tracker.Commit(offset);
+        KafkaOffset rollback = tracker.GetRollbackOffSets().ShouldHaveSingleItem();
+        rollback.Offset.Value.ShouldBe(43);
+        rollback.TopicPartition.ShouldBe(offset.TopicPartition);
+        rollback.HasSourceChannel.ShouldBe(bound);
+        rollback.BelongsToChannel(sourceChannelInstanceId).ShouldBe(bound);
+        offset.Offset.Value.ShouldBe(42);
+    }
+
     [Fact]
     public void Constructor_ShouldInitWithTopicPartitionOffset()
     {

@@ -11,8 +11,13 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     Represents the position of the message in a partition.
 /// </summary>
+/// <remarks>
+///     Equality and hashing depend only on the topic, partition and offset. The channel that delivered the message is ignored.
+/// </remarks>
 public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOffset>, IComparable
 {
+    private readonly Guid? _sourceChannelInstanceId;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
     /// </summary>
@@ -58,6 +63,18 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
         Offset = Check.NotNull(offset, nameof(offset));
     }
 
+    internal KafkaOffset(TopicPartitionOffset topicPartitionOffset, Guid sourceChannelInstanceId)
+        : this(topicPartitionOffset)
+    {
+        _sourceChannelInstanceId = sourceChannelInstanceId;
+    }
+
+    private KafkaOffset(TopicPartition topicPartition, Offset offset, Guid? sourceChannelInstanceId)
+        : this(topicPartition, offset)
+    {
+        _sourceChannelInstanceId = sourceChannelInstanceId;
+    }
+
     /// <summary>
     ///     Gets the topic and partition.
     /// </summary>
@@ -73,6 +90,11 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     ///     <see cref="Offset.Beginning" />, <see cref="Offset.End" />).
     /// </summary>
     public bool IsSpecial => Offset.IsSpecial;
+
+    /// <summary>
+    ///     Gets a value indicating whether the offset has a source channel.
+    /// </summary>
+    internal bool HasSourceChannel => _sourceChannelInstanceId.HasValue;
 
     /// <summary>
     ///     Less than operator.
@@ -145,6 +167,20 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
     public bool Equals(IBrokerMessageIdentifier? other) => other is KafkaOffset kafkaOffset && Equals(kafkaOffset);
+
+    /// <inheritdoc />
+    public bool Equals(KafkaOffset? other) => other != null && TopicPartition.Equals(other.TopicPartition) && Offset.Equals(other.Offset);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(TopicPartition, Offset);
+
+    /// <summary>
+    ///     Determines whether this offset originated from the specified channel instance, independently of position equality.
+    /// </summary>
+    internal bool BelongsToChannel(Guid channelInstanceId) => _sourceChannelInstanceId == channelInstanceId;
+
+    // Keep the originating channel when a tracker advances the position after committing a message.
+    internal KafkaOffset GetNextOffset() => new(TopicPartition, Offset + 1, _sourceChannelInstanceId);
 
     internal TopicPartitionOffset AsTopicPartitionOffset() => new(TopicPartition, Offset);
 }

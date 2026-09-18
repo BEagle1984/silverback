@@ -52,7 +52,7 @@ public interface IConsumer
     ValueTask TriggerReconnectAsync();
 
     /// <summary>
-    ///     Starts consuming. Used after <see cref="StopAsync" /> has been called to resume consuming.
+    ///     Starts consuming. Used after <see cref="StopAsync(bool)" /> has been called to resume consuming.
     /// </summary>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -66,10 +66,31 @@ public interface IConsumer
     ///     A value indicating whether the method should wait until the consumer has been effectively stopped.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
-    ///     soon as the stopping signal has been sent.
+    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> completes when the stop request has
+    ///     been handled, or when processing has stopped.
     /// </returns>
     ValueTask StopAsync(bool waitUntilStopped = true);
+
+    /// <summary>
+    ///     Requests that the consumer stop because processing the specified message failed.
+    /// </summary>
+    /// <remarks>
+    ///     The original message identifier allows the broker implementation to ignore obsolete stop requests.
+    ///     For example, delayed error handling for a Kafka message from an earlier partition assignment must not
+    ///     stop consumption after reassignment. Use <see cref="StopAsync(bool)" /> to stop unconditionally.
+    /// </remarks>
+    /// <param name="brokerMessageIdentifier">
+    ///     The original identifier from the received message that caused the stop request.
+    /// </param>
+    /// <param name="waitUntilStopped">
+    ///     Whether to wait for message processing to finish. Pass <c>false</c> when calling from message processing
+    ///     to avoid waiting for the calling operation itself.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> completes when the stop request has
+    ///     been handled, or when processing has stopped.
+    /// </returns>
+    ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true);
 
     /// <summary>
     ///     <param>

@@ -84,7 +84,7 @@ public partial class ChunkingTests
     [Fact]
     public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
-        byte[] rawMessage = BytesUtil.GetRandomBytes();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(30);
         List<byte[]?> receivedFiles = [];
         bool aborted = false;
 

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -28,8 +27,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private readonly ISilverbackLogger<KafkaConsumer> _logger;
 
-    private readonly System.Threading.Lock _messagesSinceCommitLock = new();
-
     private readonly ConsumerChannelsManager _channelsManager;
 
     private readonly ConsumeLoopHandler _consumeLoopHandler;
@@ -38,11 +35,15 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     private readonly OffsetsTracker? _offsets; // tracked only when processing partitions together
 
-    private readonly ConcurrentDictionary<TopicPartition, byte> _revokedPartitions = new();
+    private readonly System.Threading.Lock _assignmentLock = new(); // serializes partition state transitions and updates to the commit counter
 
-    private readonly System.Threading.Lock _assignmentLock = new();
+    private readonly HashSet<TopicPartition> _revokedPartitions = [];
 
-    private readonly ConcurrentDictionary<TopicPartition, long> _assignmentVersions = new();
+    private readonly Dictionary<TopicPartition, long> _assignmentVersions = [];
+
+    private readonly HashSet<TopicPartition> _rollingBackPartitions = [];
+
+    private Task _channelsStopping = Task.CompletedTask;
 
     private int _messagesSinceCommit;
 
@@ -143,10 +144,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         lock (_assignmentLock)
         {
+            if (!IsStartedAndNotStopping())
+                return [];
+
             foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
             {
-                _assignmentVersions.AddOrUpdate(topicPartitionOffset.TopicPartition, 1, static (_, version) => version + 1);
-                _revokedPartitions.TryRemove(topicPartitionOffset.TopicPartition, out _);
+                _rollingBackPartitions.Remove(topicPartitionOffset.TopicPartition);
+                IncrementAssignmentVersion(topicPartitionOffset.TopicPartition);
+                _revokedPartitions.Remove(topicPartitionOffset.TopicPartition);
                 _offsets?.TrackOffset(topicPartitionOffset);
                 _channelsManager.StartReading(topicPartitionOffset.TopicPartition);
             }
@@ -159,28 +164,62 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
     internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
     {
-        // Track the removed partitions to avoid pausing and seeking in the rollback or committing (necessary for cooperative rebalances)
+        PartitionChannel[] channels;
+        List<RollbackPartition> retained = [];
+
         lock (_assignmentLock)
         {
-            foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
+            HashSet<TopicPartition> revoked = [.. topicPartitionOffsets.Select(offset => offset.TopicPartition)];
+            channels = [.. topicPartitionOffsets.Select(offset => _channelsManager.GetChannel(offset.TopicPartition))
+                .OfType<PartitionChannel>().Distinct()];
+
+            foreach (TopicPartition partition in revoked)
             {
-                _revokedPartitions.TryAdd(topicPartitionOffset.TopicPartition, 0);
-                _assignmentVersions.AddOrUpdate(topicPartitionOffset.TopicPartition, 1, static (_, version) => version + 1);
+                _revokedPartitions.Add(partition);
+                _rollingBackPartitions.Remove(partition);
+                IncrementAssignmentVersion(partition);
+            }
+
+            // A shared channel also contains records from retained partitions. Rebuild it once and replay those records.
+            if (_offsets != null && topicPartitionOffsets.Count > 0)
+            {
+                foreach (KafkaOffset offset in _offsets.GetRollbackOffSets().Where(offset => !revoked.Contains(offset.TopicPartition) &&
+                                                                                           IsNotRevoked(offset.TopicPartition)))
+                {
+                    long version = IncrementAssignmentVersion(offset.TopicPartition);
+                    _rollingBackPartitions.Add(offset.TopicPartition);
+                    retained.Add(new RollbackPartition(offset.AsTopicPartitionOffset(), version));
+                }
+
+                if (retained.Count > 0 && IsStartedAndNotStopping())
+                    Client.Pause(retained.Select(partition => partition.Offset.TopicPartition));
             }
         }
 
         RevertConnectedStatus();
 
-        // Rebalance callbacks run inside Consume, so the polling thread cannot enqueue records until this callback returns.
-        // Stop and remove the revoked channels to discard their buffered records, but keep the polling loop's token valid
-        // for any record returned by the same Consume call after reassignment.
-        Task.WhenAll(topicPartitionOffsets.Select(offset => _channelsManager.StopReadingAsync(offset.TopicPartition))).SafeWait();
+        // Callbacks execute inside Consume, so polling cannot enqueue records until this callback returns.
+        // Never hold the assignment lock while draining a handler or aborting a sequence.
+        Task.WhenAll(channels.Select(_channelsManager.StopChannelAsync)).SafeWait();
 
-        if (!Configuration.EnableAutoCommit)
-            Client.Commit();
+        lock (_assignmentLock)
+        {
+            if (!Configuration.EnableAutoCommit)
+                Client.Commit();
 
-        if (_offsets != null)
-            topicPartitionOffsets.ForEach(topicPartitionOffset => _offsets.UntrackPartition(topicPartitionOffset.TopicPartition));
+            foreach (TopicPartitionOffset offset in topicPartitionOffsets)
+                _offsets?.UntrackPartition(offset.TopicPartition);
+
+            foreach (RollbackPartition partition in retained.Where(IsCurrentRollback))
+            {
+                if (partition.Offset.Offset != Offset.Unset)
+                    Client.Seek(partition.Offset);
+
+                _channelsManager.StartReading(partition.Offset.TopicPartition);
+                Client.Resume([partition.Offset.TopicPartition]);
+                _rollingBackPartitions.Remove(partition.Offset.TopicPartition);
+            }
+        }
     }
 
     internal bool OnPollTimeout(LogMessage logMessage)
@@ -202,7 +241,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     internal async Task HandleMessageAsync(
         Message<byte[]?, byte[]?> message,
         TopicPartitionOffset topicPartitionOffset,
-        ISequenceStore sequenceStore)
+        ISequenceStore sequenceStore,
+        Guid sourceChannelInstanceId)
     {
         MessageHeaderCollection headers = [.. message.Headers.ToSilverbackHeaders()];
 
@@ -217,7 +257,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 message.Value,
                 headers,
                 endpoint,
-                new KafkaOffset(topicPartitionOffset),
+                new KafkaOffset(topicPartitionOffset, sourceChannelInstanceId),
                 sequenceStore)
             .ConfigureAwait(false);
     }
@@ -225,33 +265,51 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
     protected override ValueTask StartCoreAsync()
     {
-        // Start reading from the channels right away in case of static partitions assignment, or if the consumer is restarting and the
-        // partition assignment is set already
-        if (Configuration.IsStaticAssignment || Client.Assignment.Count > 0)
+        lock (_assignmentLock)
         {
-            foreach (TopicPartition topicPartition in Client.Assignment)
+            foreach (TopicPartition partition in Client.Assignment)
             {
-                _assignmentVersions.AddOrUpdate(topicPartition, 1, static (_, version) => version + 1);
-                _offsets?.TrackOffset(new KafkaOffset(topicPartition, Offset.Unset));
-                _channelsManager.StartReading(topicPartition);
+                IncrementAssignmentVersion(partition);
+                _revokedPartitions.Remove(partition);
+                _rollingBackPartitions.Remove(partition);
+                _offsets?.UntrackPartition(partition);
+                _offsets?.TrackOffset(new KafkaOffset(partition, Offset.Unset));
+                _channelsManager.StartReading(partition);
             }
 
-            SetConnectedStatus();
+            if (Client.Assignment.Count > 0)
+                SetConnectedStatus();
         }
 
-        // The consume loop must start immediately because the partitions assignment is received only after Consume is called once
+        // Assignment callbacks are delivered by Consume, so polling must start before assignment.
         StartConsumeLoopHandler();
-
         return default;
     }
 
-    /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
+    /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync()" />
     protected override ValueTask StopCoreAsync()
     {
-        _consumeLoopHandler.StopAsync().FireAndForget();
-        _channelsManager.StopReadingAsync().FireAndForget();
+        lock (_assignmentLock)
+        {
+            foreach (TopicPartition partition in _assignmentVersions.Keys)
+                _assignmentVersions[partition]++;
+        }
 
+        _consumeLoopHandler.StopAsync().FireAndForget();
+        _channelsStopping = _channelsManager.StopReadingAsync();
         return default;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryBeginStop(KafkaOffset? brokerMessageIdentifier)
+    {
+        lock (_assignmentLock)
+        {
+            if (brokerMessageIdentifier != null && !IsCurrentOffset(brokerMessageIdentifier))
+                return false;
+
+            return base.TryBeginStop(brokerMessageIdentifier);
+        }
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
@@ -263,28 +321,21 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        // Discard the partitions that have been revoked (during the cooperative rebalance, the partitions are handled slightly differently,
-        // and they are reassigned before the commit is over)
-        IEnumerable<KafkaOffset> topicPartitionOffsets = brokerMessageIdentifiers
-            .Where(kafkaOffset => IsNotRevoked(kafkaOffset.TopicPartition));
-
-        foreach (KafkaOffset offset in topicPartitionOffsets)
+        lock (_assignmentLock)
         {
-            if (IsNotRevoked(offset.TopicPartition))
+            // A non-blocking stop marks the consumer stopped before its completed batches finish committing.
+            // Channel ownership remains valid until draining removes the channel.
+            bool stored = false;
+            foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
             {
                 _offsets?.Commit(offset);
-                StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1)); // Commit next offset (+1)
+                StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1));
+                stored = true;
             }
-            else
-            {
-                _logger.LogConsumerTrace(
-                    this,
-                    "Skipping commit of revoked partition {Topic}[{Partition}]@{Offset}",
-                    () => [offset.TopicPartition.Topic, offset.TopicPartition.Partition.Value, offset.Offset.Value]);
-            }
-        }
 
-        CommitOffsetsIfNeeded();
+            if (stored)
+                CommitOffsetsIfNeeded();
+        }
 
         return default;
     }
@@ -294,53 +345,73 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        // If the consumer is disconnecting, the rollback is not needed
-        if (Client.Status is ClientStatus.Disconnecting or ClientStatus.Disconnected)
-            return ValueTask.CompletedTask;
-
-        if (IsStopping)
-            return ValueTask.CompletedTask;
-
-        // If the partitions are being processed together, we must roll back them all
-        if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
-            brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
-
-        // Discard the partitions that:
-        // - aren't being processed anymore (during a rebalance the rollback might be triggered aborting the pending sequences, but we don't
-        //   want to pause/resume the partitions we aren't processing)
-        // - have been revoked (during the cooperative rebalance, the partitions are handled slightly differently, and they are reassigned
-        //   before the rollback is over)
-        IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
-            .Select(offset => offset.AsTopicPartitionOffset())
-            .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition) &&
-                                           IsNotRevoked(topicPartitionOffset.TopicPartition))
-            .AsReadOnlyCollection();
-
-        Dictionary<TopicPartition, long> assignmentVersions = topicPartitionOffsets
-            .Select(offset => offset.TopicPartition).Distinct()
-            .ToDictionary(partition => partition, partition => _assignmentVersions.GetValueOrDefault(partition));
-
-        if (IsStarted)
+        Dictionary<TopicPartition, long> versions;
+        lock (_assignmentLock)
         {
-            Client.Pause(topicPartitionOffsets.Select(offset => offset.TopicPartition));
-            topicPartitionOffsets.ForEach(topicPartitionOffset => _logger.LogPartitionPaused(topicPartitionOffset, this));
+            if (!IsStartedAndNotStopping())
+                return ValueTask.CompletedTask;
+
+            // Capture before enumerating offsets: enumeration itself may overlap a rebalance.
+            versions = new Dictionary<TopicPartition, long>(_assignmentVersions);
         }
 
-        List<Task?> channelsManagerStoppingTasks = new(brokerMessageIdentifiers.Count);
-
-        foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
+        KafkaOffset[] requestedOffsets = [.. brokerMessageIdentifiers];
+        List<RollbackPartition> partitions = [];
+        HashSet<PartitionChannel> channels = [];
+        lock (_assignmentLock)
         {
-            channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
+            KafkaOffset[] currentOffsets = [.. requestedOffsets.Where(offset =>
+                IsCurrentOffset(offset) && versions.TryGetValue(offset.TopicPartition, out long version) &&
+                _assignmentVersions.GetValueOrDefault(offset.TopicPartition) == version)];
 
-            if (topicPartitionOffset.Offset == Offset.Unset)
-                continue;
+            // An old shared sequence must never expand its rollback to a replacement channel's offsets.
+            if (currentOffsets.Length == 0 || _offsets != null && currentOffsets.Length != requestedOffsets.Length)
+            {
+                _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
+                return ValueTask.CompletedTask;
+            }
 
-            Client.Seek(topicPartitionOffset);
-            _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
+            IEnumerable<KafkaOffset> offsets = _offsets?.GetRollbackOffSets() ?? currentOffsets;
+            foreach (KafkaOffset offset in offsets)
+            {
+                // Shared rollback offsets may have been tracked by a previous channel in the same assignment.
+                // The requesting transaction was validated above; validate these positions by assignment instead.
+                if (!IsStartedAndNotStopping() || !IsNotRevoked(offset.TopicPartition) ||
+                    _rollingBackPartitions.Contains(offset.TopicPartition) ||
+                    !versions.TryGetValue(offset.TopicPartition, out long version) ||
+                    _assignmentVersions.GetValueOrDefault(offset.TopicPartition) != version ||
+                    _channelsManager.GetChannel(offset.TopicPartition) is not { } channel)
+                {
+                    continue;
+                }
+
+                _rollingBackPartitions.Add(offset.TopicPartition);
+                channels.Add(channel);
+                partitions.Add(new RollbackPartition(offset.AsTopicPartitionOffset(), version));
+            }
+
+            if (partitions.Count == 0)
+                return ValueTask.CompletedTask;
+
+            Client.Pause(partitions.Select(partition => partition.Offset.TopicPartition));
         }
 
-        Task.Run(() => RestartConsumeLoopAfterRollbackAsync(channelsManagerStoppingTasks, topicPartitionOffsets, assignmentVersions)).FireAndForget();
+        // Stop the captured instances, never whichever channel now happens to occupy their partition keys
+        Task stopping = Task.WhenAll(channels.Select(_channelsManager.StopChannelAsync));
 
+        lock (_assignmentLock)
+        {
+            foreach (RollbackPartition partition in partitions.Where(IsCurrentRollback))
+            {
+                if (partition.Offset.Offset != Offset.Unset)
+                {
+                    Client.Seek(partition.Offset);
+                    _logger.LogPartitionOffsetReset(partition.Offset, this);
+                }
+            }
+        }
+
+        Task.Run(() => RestartChannelsAfterRollbackAsync(stopping, partitions)).FireAndForget();
         return ValueTask.CompletedTask;
     }
 
@@ -363,56 +434,57 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     private ValueTask OnClientConnectedAsync(BrokerClient client) => StartAsync();
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
-    [SuppressMessage("ReSharper", "RedundantSuppressNullableWarningExpression", Justification = "Needed to avoid other false positives")]
-    private async Task RestartConsumeLoopAfterRollbackAsync(
-        IEnumerable<Task?> channelsManagerStoppingTasks,
-        IReadOnlyCollection<TopicPartitionOffset> latestTopicPartitionOffsets,
-        Dictionary<TopicPartition, long> assignmentVersions)
+    private async Task RestartChannelsAfterRollbackAsync(Task stopping, IReadOnlyCollection<RollbackPartition> partitions)
     {
         try
         {
-            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null)!).ConfigureAwait(false);
+            await stopping.ConfigureAwait(false);
 
-            // Assignment callbacks and the delayed continuation must not replace each other's channels.
-            // Never hold this lock while awaiting channel shutdown: the active handler may itself request rollback.
             lock (_assignmentLock)
             {
-                TopicPartition[] topicPartitions = [.. latestTopicPartitionOffsets.Select(offset => offset.TopicPartition).Distinct()];
-                TopicPartition[] currentPartitions = [.. topicPartitions.Where(partition =>
-                    IsStarted && !IsStopping && IsNotRevoked(partition) &&
-                    _assignmentVersions.GetValueOrDefault(partition) == assignmentVersions[partition])];
-
-                if (currentPartitions.Length != topicPartitions.Length)
+                RollbackPartition[] current = [.. partitions.Where(IsCurrentRollback)];
+                if (current.Length != partitions.Count)
                 {
                     _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
-
-                    // A shared channel cannot be reset independently of a partition with a newer assignment.
                     if (!Configuration.ProcessPartitionsIndependently)
                         return;
                 }
 
-                if (!Configuration.ProcessPartitionsIndependently)
-                    _channelsManager.ResetAll();
-
-                foreach (TopicPartition topicPartition in currentPartitions)
+                foreach (RollbackPartition partition in current)
                 {
-                    if (Configuration.ProcessPartitionsIndependently)
-                        _channelsManager.Reset(topicPartition);
-
-                    _channelsManager.StartReading(topicPartition);
-                    Client.Resume([topicPartition]);
-                    _logger.LogPartitionResumed(topicPartition, this);
+                    // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock.
+                    _channelsManager.StartReading(partition.Offset.TopicPartition);
+                    Client.Resume([partition.Offset.TopicPartition]);
+                    _rollingBackPartitions.Remove(partition.Offset.TopicPartition);
+                    _logger.LogPartitionResumed(partition.Offset.TopicPartition, this);
                 }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogConsumerStartError(this, ex);
+            lock (_assignmentLock)
+            {
+                if (!partitions.Any(IsCurrentRollback))
+                    return;
+            }
 
-            // Try to recover from the error
+            _logger.LogConsumerStartError(this, ex);
             await TriggerReconnectAsync().ConfigureAwait(false);
         }
     }
+
+    private bool IsCurrentRollback(RollbackPartition partition) =>
+        IsStartedAndNotStopping() && IsNotRevoked(partition.Offset.TopicPartition) &&
+        _rollingBackPartitions.Contains(partition.Offset.TopicPartition) &&
+        _assignmentVersions.GetValueOrDefault(partition.Offset.TopicPartition) == partition.Version;
+
+    private bool IsCurrentOffset(KafkaOffset offset) =>
+        IsStartedAndNotStopping() && IsOwnedOffset(offset);
+
+    private bool IsOwnedOffset(KafkaOffset offset) =>
+        IsNotRevoked(offset.TopicPartition) && !_rollingBackPartitions.Contains(offset.TopicPartition) &&
+        _channelsManager.GetChannel(offset.TopicPartition) is { } channel &&
+        (!offset.HasSourceChannel || offset.BelongsToChannel(channel.InstanceId));
 
     private void StartConsumeLoopHandler()
     {
@@ -447,7 +519,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         _logger.LogConsumerTrace(this, "Waiting ChannelsManager stop");
 
-        await _channelsManager.Stopping.ConfigureAwait(false);
+        await _channelsStopping.ConfigureAwait(false);
 
         _logger.LogConsumerTrace(this, "ChannelsManager stopped");
     }
@@ -467,16 +539,22 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         if (Configuration.EnableAutoCommit)
             return;
 
-        lock (_messagesSinceCommitLock)
-        {
-            if (++_messagesSinceCommit < Configuration.CommitOffsetEach)
-                return;
+        if (++_messagesSinceCommit < Configuration.CommitOffsetEach)
+            return;
 
-            _messagesSinceCommit = 0;
+        _messagesSinceCommit = 0;
 
-            Client.Commit();
-        }
+        Client.Commit();
     }
 
-    private bool IsNotRevoked(TopicPartition topicPartition) => !_revokedPartitions.ContainsKey(topicPartition);
+    private long IncrementAssignmentVersion(TopicPartition topicPartition)
+    {
+        long version = _assignmentVersions.GetValueOrDefault(topicPartition) + 1;
+        _assignmentVersions[topicPartition] = version;
+        return version;
+    }
+
+    private bool IsNotRevoked(TopicPartition topicPartition) => !_revokedPartitions.Contains(topicPartition);
+
+    private sealed record RollbackPartition(TopicPartitionOffset Offset, long Version);
 }

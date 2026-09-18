@@ -171,7 +171,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         }
         catch (ChannelClosedException ex)
         {
-            // Ignore the ChannelClosedException as it might be thrown in case of retry (see ConsumerChannelsManager.Reset method)
+            // The channel can be closed while a concurrent rollback or rebalance retires it
             _logger.LogConsumingCanceled(_consumer, ex);
         }
         catch (Exception ex)

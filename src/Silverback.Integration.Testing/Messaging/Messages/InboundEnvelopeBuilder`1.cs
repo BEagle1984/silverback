@@ -250,6 +250,8 @@ public class InboundEnvelopeBuilder<TMessage>
 
         public ValueTask StopAsync(bool waitUntilStopped = true) => throw new NotSupportedException();
 
+        public ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true) => throw new NotSupportedException();
+
         public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
 
         public ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();

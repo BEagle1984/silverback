@@ -58,25 +58,13 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         return StopReadingAsync(channel);
     }
 
-    public void Reset(TopicPartition topicPartition)
-    {
-        Check.ThrowObjectDisposedIf(_isDisposed, this);
-
-        GetChannel(topicPartition)?.Reset();
-    }
-
-    public void ResetAll()
-    {
-        Check.ThrowObjectDisposedIf(_isDisposed, this);
-
-        _channels.Values.ForEach(channel => channel.Reset());
-    }
-
     public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
     {
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
-        PartitionChannel channel = GetOrCreateChannel(consumeResult.TopicPartition);
+        PartitionChannel? channel = GetChannel(consumeResult.TopicPartition);
+        if (channel == null)
+            return; // A stopped partition is replayed when rollback or reassignment starts a new reader
 
         _logger.LogConsumerTrace(
             _consumer,
@@ -106,11 +94,12 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
     }
 
     public bool IsReading(TopicPartition topicPartition) =>
-        GetChannel(topicPartition)?.ReadCancellationToken.IsCancellationRequested != true;
+        GetChannel(topicPartition)?.ReadCancellationToken.IsCancellationRequested == false;
 
-    protected override IEnumerable<PartitionChannel> GetChannels() => _channels.Values;
+    internal PartitionChannel? GetChannel(TopicPartition topicPartition) =>
+        _channels.GetValueOrDefault(GetTopicPartitionForChannelKey(topicPartition));
 
-    protected override async Task StopReadingAsync(PartitionChannel channel)
+    internal async Task StopChannelAsync(PartitionChannel channel)
     {
         await base.StopReadingAsync(channel).ConfigureAwait(false);
 
@@ -119,6 +108,10 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         // A late stop must not remove a replacement registered under the same partition key.
         _channels.TryRemove(new KeyValuePair<TopicPartition, PartitionChannel>(channel.TopicPartition, channel));
     }
+
+    protected override IEnumerable<PartitionChannel> GetChannels() => _channels.Values;
+
+    protected override Task StopReadingAsync(PartitionChannel channel) => StopChannelAsync(channel);
 
     protected override void Dispose(bool disposing)
     {
@@ -158,7 +151,12 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         try
         {
-            await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset, channel.SequenceStore).ConfigureAwait(false);
+            await _consumer.HandleMessageAsync(
+                    consumeResult.Message,
+                    consumeResult.TopicPartitionOffset,
+                    channel.SequenceStore,
+                    channel.InstanceId)
+                .ConfigureAwait(false);
         }
         finally
         {
@@ -173,9 +171,6 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             static (keyTopicPartition, args) =>
                 new PartitionChannel(args.BackpressureLimit, keyTopicPartition, args.Logger),
             (_consumer.Configuration.BackpressureLimit, Logger: _logger));
-
-    private PartitionChannel? GetChannel(TopicPartition topicPartition) =>
-        _channels.GetValueOrDefault(GetTopicPartitionForChannelKey(topicPartition));
 
     private TopicPartition GetTopicPartitionForChannelKey(TopicPartition topicPartition) =>
         _consumer.Configuration.ProcessPartitionsIndependently ? topicPartition : AnyTopicPartition;
