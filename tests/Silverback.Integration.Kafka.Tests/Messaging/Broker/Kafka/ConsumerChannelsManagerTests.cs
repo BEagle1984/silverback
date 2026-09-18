@@ -93,7 +93,7 @@ public class ConsumerChannelsManagerTests
                 [
                     new KafkaConsumerEndpointConfiguration
                     {
-                        TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>([new("topic", Partition.Any, Offset.Unset)])
+                        TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>([new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)])
                     }
                 ])
             },
