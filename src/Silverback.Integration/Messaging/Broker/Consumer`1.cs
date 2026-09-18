@@ -199,43 +199,15 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IConsumer.StopAsync" />
-    public async ValueTask StopAsync(bool waitUntilStopped = true)
+    /// <inheritdoc cref="IConsumer.StopAsync(bool)" />
+    public ValueTask StopAsync(bool waitUntilStopped = true) => StopCoreAsync(null, waitUntilStopped);
+
+    /// <inheritdoc cref="IConsumer.StopAsync(IBrokerMessageIdentifier, bool)" />
+    public ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true)
     {
-        await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        if (!IsStarted)
-        {
-            _startStopSemaphore.Release();
-            return;
-        }
-
-        IsStopping = true;
-
-        _logger.LogConsumerTrace(this, "Stopping consumer...");
-
-        try
-        {
-            await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-            await StopCoreAsync().ConfigureAwait(false);
-
-            if (waitUntilStopped)
-                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-
-            IsStarted = false;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogConsumerStopError(this, ex);
-            throw;
-        }
-        finally
-        {
-            IsStopping = false;
-            _startStopSemaphore.Release();
-        }
-
-        _logger.LogConsumerTrace(this, "Consumer stopped.");
+        return StopCoreAsync((TIdentifier)brokerMessageIdentifier, waitUntilStopped);
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
@@ -313,12 +285,32 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     }
 
     /// <summary>
-    ///     Starts consuming. Called to resume consuming after <see cref="StopAsync" /> has been called.
+    ///     Starts consuming. Called to resume consuming after <see cref="StopAsync(bool)" /> has been called.
     /// </summary>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     protected abstract ValueTask StartCoreAsync();
+
+    /// <summary>
+    ///     Checks whether consuming should stop and marks the consumer as stopping.
+    /// </summary>
+    /// <remarks>
+    ///     Called after acquiring the start/stop semaphore, before canceling processing. Overrides must keep any
+    ///     broker-specific validation atomic with the call to the base implementation that marks the consumer as stopping.
+    /// </remarks>
+    /// <param name="brokerMessageIdentifier">
+    ///     The original identifier from the message that caused the stop request, or <c>null</c> for an unconditional stop.
+    /// </param>
+    /// <returns>A value indicating whether the stop request was accepted.</returns>
+    protected virtual bool TryBeginStop(TIdentifier? brokerMessageIdentifier)
+    {
+        if (!IsStarted)
+            return false;
+
+        IsStopping = true;
+        return true;
+    }
 
     /// <summary>
     ///     Stops consuming while staying connected to the message broker.
@@ -455,6 +447,38 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
                 return ExecutePipelineAsync(nextContext, nextCancellationToken);
             },
             cancellationToken);
+    }
+
+    private async ValueTask StopCoreAsync(TIdentifier? brokerMessageIdentifier, bool waitUntilStopped)
+    {
+        await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+
+        try
+        {
+            if (!TryBeginStop(brokerMessageIdentifier))
+                return;
+
+            _logger.LogConsumerTrace(this, "Stopping consumer...");
+            await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            await StopCoreAsync().ConfigureAwait(false);
+
+            if (waitUntilStopped)
+                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+
+            IsStarted = false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerStopError(this, ex);
+            throw;
+        }
+        finally
+        {
+            IsStopping = false;
+            _startStopSemaphore.Release();
+        }
+
+        _logger.LogConsumerTrace(this, "Consumer stopped.");
     }
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)

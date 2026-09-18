@@ -38,7 +38,9 @@ public class ConsumerChannelsManagerTests
 
         try
         {
+            manager.IsReading(partition).ShouldBeFalse();
             manager.StartReading(partition);
+            manager.IsReading(partition).ShouldBeTrue();
             manager.Write(CreateRecord(partition, 0), pollingCancellation.Token);
             await behavior.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -53,6 +55,7 @@ public class ConsumerChannelsManagerTests
 
             behavior.ReleaseFirst.TrySetResult(true);
             await stopping.WaitAsync(TimeSpan.FromSeconds(5));
+            manager.IsReading(partition).ShouldBeFalse();
             behavior.Offsets.ShouldBe([0L]);
             pollingCancellation.IsCancellationRequested.ShouldBeFalse();
 

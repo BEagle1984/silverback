@@ -17,6 +17,46 @@ namespace Silverback.Tests.Integration.Messaging.Broker;
 public class ConsumerChannelTests
 {
     [Fact]
+    public void InstanceId_ShouldDistinguishChannelsWithSameId()
+    {
+        using ConsumerChannel<TestMessage> first = new(10, "test", Substitute.For<ISilverbackLogger>());
+        using ConsumerChannel<TestMessage> second = new(10, "test", Substitute.For<ISilverbackLogger>());
+
+        first.InstanceId.ShouldNotBe(Guid.Empty);
+        second.InstanceId.ShouldNotBe(first.InstanceId);
+        second.Id.ShouldBe(first.Id);
+    }
+
+    [Fact]
+    public async Task InstanceId_ShouldRemainUnchanged_WhenReadingRestartsWithoutReset()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        Guid instanceId = channel.InstanceId;
+        channel.StartReading().ShouldBeTrue();
+
+        Task stop = channel.StopReadingAsync();
+        await channel.NotifyReadingStoppedAsync(false);
+        await stop;
+        channel.StartReading().ShouldBeTrue();
+
+        channel.InstanceId.ShouldBe(instanceId);
+        await channel.NotifyReadingStoppedAsync(false);
+    }
+
+    [Fact]
+    public void Reset_ShouldReplaceInstanceId()
+    {
+        using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
+        Guid instanceId = channel.InstanceId;
+
+        channel.Reset();
+
+        channel.InstanceId.ShouldNotBe(instanceId);
+        channel.InstanceId.ShouldNotBe(Guid.Empty);
+        channel.Id.ShouldBe("test");
+    }
+
+    [Fact]
     public void SequenceStore_ShouldReturnNewSequenceStore()
     {
         ConsumerChannel<TestMessage> channel1 = new(10, "test", Substitute.For<ISilverbackLogger>());
