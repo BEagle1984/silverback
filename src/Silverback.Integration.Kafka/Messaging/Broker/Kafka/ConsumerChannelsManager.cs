@@ -115,7 +115,9 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         await base.StopReadingAsync(channel).ConfigureAwait(false);
 
         channel.Complete();
-        _channels.TryRemove(channel.TopicPartition, out _);
+
+        // A late stop must not remove a replacement registered under the same partition key.
+        _channels.TryRemove(new KeyValuePair<TopicPartition, PartitionChannel>(channel.TopicPartition, channel));
     }
 
     protected override void Dispose(bool disposing)

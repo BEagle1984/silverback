@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -48,6 +49,7 @@ public class KafkaRebalanceLifecycleTests
     [InlineData(true, false)]
     [InlineData(false, false)]
     [InlineData(true, true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Rebalance_ShouldDiscardOldBuffersAndPreserveOrder_WhenSamePollReturnsReassignedRecord(
         bool independent, bool cooperative)
     {
@@ -78,6 +80,7 @@ public class KafkaRebalanceLifecycleTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task CooperativeRebalance_ShouldPreserveRetainedPartitionBufferAndOrdering()
     {
         await using PollHarness harness = new(true, true);
@@ -120,6 +123,7 @@ public class KafkaRebalanceLifecycleTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Shutdown_ShouldRejectAssignmentAndLeaveUnfinishedRecordsReplayable(bool cooperative)
     {
         await using PollHarness harness = new(true, cooperative);
@@ -156,6 +160,7 @@ public class KafkaRebalanceLifecycleTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Rollback_ShouldNotSeekOrResumePartitionAlreadyBeingRevoked()
     {
         await using PollHarness harness = new();
@@ -194,6 +199,7 @@ public class KafkaRebalanceLifecycleTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(true, true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Rollback_ShouldNotRestartObsoleteAssignment_WhenRebalanceOvertakesPendingRollback(bool independent, bool reassign)
     {
         await using PollHarness harness = new(independent);
@@ -288,9 +294,12 @@ public class KafkaRebalanceLifecycleTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task StopReading_ShouldNotRemoveReplacement_WhenAnOlderStopCompletesLate(bool independent)
+    [InlineData(true, 1)]
+    [InlineData(false, 1)]
+    [InlineData(true, 2)]
+    [InlineData(false, 2)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The harness is disposed after the test completes.")]
+    public async Task StopReading_ShouldNotRemoveReplacement_WhenAnOlderStopCompletesLate(bool independent, int reassignments)
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
@@ -307,22 +316,30 @@ public class KafkaRebalanceLifecycleTests
             oldStopEntered.TrySetResult(true);
             releaseOldStop.Task.Wait(Timeout).ShouldBeTrue();
         };
+        PartitionChannel original = harness.GetChannel(0).ShouldNotBeNull();
+        List<PartitionChannel> channels = [original];
         Task oldStop = Task.Run(() => harness.Channels.StopReadingAsync(new TopicPartition("topic", 0)));
-        PartitionChannel? replacement = null;
         try
         {
             await oldStopEntered.Task.WaitAsync(Timeout);
-            Task rebalance = harness.PollAsync(() =>
+            for (int assignment = 0; assignment < reassignments; assignment++)
             {
-                harness.Revoke(0);
-                harness.Assign(0);
-                return null;
-            });
-            await PollHarness.WaitUntilAsync(() => Volatile.Read(ref stopCount) >= 2);
-            active.Release.TrySetResult(true);
-            await rebalance;
-            replacement = harness.GetChannel(0);
-            replacement.ShouldNotBeNull();
+                Task rebalance = harness.PollAsync(() =>
+                {
+                    harness.Revoke(0);
+                    harness.Assign(0);
+                    return null;
+                });
+                await PollHarness.WaitUntilAsync(() => Volatile.Read(ref stopCount) >= 2);
+                active.Release.TrySetResult(true);
+                await rebalance;
+
+                PartitionChannel assigned = harness.GetChannel(0).ShouldNotBeNull();
+                assigned.ShouldNotBeSameAs(channels[^1]);
+                channels.Add(assigned);
+            }
+
+            PartitionChannel replacement = channels[^1];
             releaseOldStop.TrySetResult(true);
             await oldStop.WaitAsync(Timeout);
 
@@ -331,14 +348,20 @@ public class KafkaRebalanceLifecycleTests
             await harness.DeliverAsync((0, 0), (0, 1));
             await harness.WaitForCommitAsync(0, 2);
             harness.UnsafeCommits.ShouldBeEmpty();
+
+            // Normal shutdown still removes the registered channel and stops every reader.
+            await harness.Channels.StopReadingAsync().WaitAsync(Timeout);
+            harness.GetChannel(0).ShouldBeNull();
+            channels.ShouldAllBe(channel => channel.ReadTask.IsCompletedSuccessfully);
+            harness.Errors.ShouldBeEmpty();
         }
         finally
         {
             releaseOldStop.TrySetResult(true);
             active.Release.TrySetResult(true);
             await oldStop.WaitAsync(Timeout);
-            if (replacement != null)
-                await replacement.StopReadingAsync().WaitAsync(Timeout);
+            foreach (PartitionChannel channel in channels)
+                await channel.StopReadingAsync().WaitAsync(Timeout);
         }
     }
 
@@ -351,6 +374,7 @@ public class KafkaRebalanceLifecycleTests
     [InlineData("pause", true)]
     [InlineData("seek", false)]
     [InlineData("seek", true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Rollback_ShouldNotMutateNewOwnership_WhenRebalanceCrossesBoundary(string boundary, bool reassign)
     {
         await using PollHarness harness = new();
@@ -416,6 +440,7 @@ public class KafkaRebalanceLifecycleTests
     [InlineData(false, true)]
     [InlineData(true, false)]
     [InlineData(true, true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task Shutdown_ShouldDefeatPendingRollbackRestart(bool reconnect, bool independent)
     {
         await using PollHarness harness = new(independent);
@@ -517,6 +542,7 @@ public class KafkaRebalanceLifecycleTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
     public async Task CooperativeRebalance_ShouldPreserveOrReplayRetainedRecords_WhenSharingOneChannel()
     {
         await using PollHarness harness = new(false, true);
@@ -552,6 +578,7 @@ public class KafkaRebalanceLifecycleTests
     [InlineData(true, "reconnect", false)]
     [InlineData(false, "rebalance", true)]
     [InlineData(false, "reconnect", true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The stream reader is awaited before sequence disposal.")]
     public async Task SequenceCleanup_ShouldNotAffectReplacement_WhenOldPartialSequenceFinishesLate(
         bool unbounded, string transition, bool commit)
     {
@@ -690,6 +717,7 @@ public class KafkaRebalanceLifecycleTests
         public ValueTask RollbackCoreForTestAsync(IReadOnlyCollection<KafkaOffset> offsets) => RollbackCoreAsync(offsets);
     }
 
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Epoch is used by record equality in assignment assertions.")]
     private sealed record Delivery(int Partition, long Offset, int Epoch);
 
     private sealed class ProcessingGate
@@ -780,9 +808,16 @@ public class KafkaRebalanceLifecycleTests
                     GroupId = "tests", EnableAutoRecovery = false, EnableAutoCommit = false, CommitOffsetEach = 1,
                     ProcessPartitionsIndependently = independent, BackpressureLimit = backpressure, MaxDegreeOfParallelism = independent ? parallelism : 1,
                     PollingTimeout = TimeSpan.FromMilliseconds(10),
-                    PartitionAssignmentStrategy = cooperative ? Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky : null,
+                    PartitionAssignmentStrategy = cooperative ? PartitionAssignmentStrategy.CooperativeSticky : null,
                     Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
-                    [new() { Batch = new BatchSettings { Size = 10 }, TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>([new("topic", Partition.Any, Offset.Unset)]) }])
+                    [
+                        new KafkaConsumerEndpointConfiguration
+                        {
+                            Batch = new BatchSettings { Size = 10 },
+                            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                                [new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)])
+                        }
+                    ])
                 },
                 behaviors,
                 this);
