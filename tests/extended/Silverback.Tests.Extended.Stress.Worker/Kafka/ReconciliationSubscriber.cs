@@ -30,7 +30,11 @@ internal sealed class ReconciliationSubscriber : IKafkaPartitionsAssignedCallbac
         _member = member;
         _receipts = new ProducerBuilder<Null, byte[]>(new ProducerConfig
         {
-            BootstrapServers = bootstrap, Acks = Acks.All, EnableIdempotence = true, LingerMs = 0, MessageTimeoutMs = 10000
+            BootstrapServers = bootstrap,
+            Acks = Acks.All,
+            EnableIdempotence = true,
+            LingerMs = 0,
+            MessageTimeoutMs = 10000
         }).Build();
     }
 
@@ -40,8 +44,11 @@ internal sealed class ReconciliationSubscriber : IKafkaPartitionsAssignedCallbac
     public async Task OnBatchReceivedAsync(IAsyncEnumerable<IInboundEnvelope<ReconciliationMessage>> batch)
     {
         Dictionary<int, int> epochs = new(_epochs);
+
         await foreach (IInboundEnvelope<ReconciliationMessage> envelope in batch)
+        {
             await ProcessAsync(envelope, epochs[envelope.GetKafkaOffset().TopicPartition.Partition.Value]);
+        }
     }
 
     public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> partitions, IKafkaConsumer consumer)
@@ -53,6 +60,7 @@ internal sealed class ReconciliationSubscriber : IKafkaPartitionsAssignedCallbac
         }
 
         Console.WriteLine($"ASSIGNED {string.Join(", ", partitions)}");
+
         return null;
     }
 
@@ -62,6 +70,7 @@ internal sealed class ReconciliationSubscriber : IKafkaPartitionsAssignedCallbac
         {
             WriteAsync(new ProcessingReceipt("revoked", _member, _epochs[partition.Partition.Value], partition.Partition.Value, -1, -1)).GetAwaiter().GetResult();
         }
+
         Console.WriteLine($"REVOKED {string.Join(", ", partitions)}");
     }
 
@@ -71,10 +80,13 @@ internal sealed class ReconciliationSubscriber : IKafkaPartitionsAssignedCallbac
     {
         KafkaOffset offset = envelope.GetKafkaOffset();
         int partition = offset.TopicPartition.Partition.Value;
+
         if (envelope.Message!.Partition != partition)
             throw new InvalidOperationException("Message payload does not match its partition.");
+
         await Task.Delay(25);
         await WriteAsync(new ProcessingReceipt("processed", _member, epoch, partition, envelope.Message.Sequence, offset.Offset.Value));
+
         if (envelope.Message.Sequence % 25 == 0)
             Console.WriteLine($"PROCESSED {partition}@{offset.Offset}");
     }

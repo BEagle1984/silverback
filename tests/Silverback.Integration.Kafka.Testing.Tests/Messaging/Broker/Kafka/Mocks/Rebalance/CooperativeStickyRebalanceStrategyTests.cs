@@ -54,6 +54,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic2", 0),
                 new TopicPartition("topic2", 2)
             });
+
         partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
@@ -106,6 +107,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic2", 0),
                 new TopicPartition("topic2", 2)
             });
+
         partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {
@@ -113,6 +115,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 4),
                 new TopicPartition("topic2", 1)
             });
+
         partitionAssignments[2].Partitions.ShouldBe(
             new[]
             {
@@ -234,12 +237,14 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 3)
             ],
             true);
+
         result.RevokedPartitions[consumer2].ShouldBe(
             [
                 new TopicPartition("topic3", 2),
                 new TopicPartition("topic3", 3)
             ],
             true);
+
         result.AssignedPartitions[consumer3].ShouldBe(
             [
                 new TopicPartition("topic1", 2),
@@ -257,6 +262,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic2", 1)
             ],
             true);
+
         partitionAssignments[1].Partitions.ShouldBe(
             [
                 new TopicPartition("topic2", 2),
@@ -265,6 +271,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic3", 1)
             ],
             true);
+
         partitionAssignments[2].Partitions.ShouldBe(
             [
                 new TopicPartition("topic1", 2),
@@ -329,6 +336,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 4)
             ],
             true);
+
         result.RevokedPartitions[consumer2].ShouldBe(
         [
             new TopicPartition("topic1", 9)
@@ -395,6 +403,7 @@ public class CooperativeStickyRebalanceStrategyTests
                 new TopicPartition("topic1", 1),
                 new TopicPartition("topic1", 4)
             });
+
         partitionAssignments[1].Partitions.ShouldBe(
             new[]
             {

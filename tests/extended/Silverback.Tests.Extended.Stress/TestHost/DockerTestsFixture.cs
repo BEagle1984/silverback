@@ -29,13 +29,17 @@ public abstract class DockerTestsFixture : IAsyncLifetime
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
         foreach (string argument in arguments)
+        {
             startInfo.ArgumentList.Add(argument);
+        }
 
         using Process process = Process.Start(startInfo) ?? throw new InvalidOperationException("Could not start Docker.");
         Task<string> output = process.StandardOutput.ReadToEndAsync();
         Task<string> error = process.StandardError.ReadToEndAsync();
         using CancellationTokenSource cancellation = new(timeout);
+
         try
         {
             await process.WaitForExitAsync(cancellation.Token);
@@ -43,13 +47,16 @@ public abstract class DockerTestsFixture : IAsyncLifetime
         catch (OperationCanceledException)
         {
             process.Kill(true);
+
             throw new TimeoutException($"Docker command timed out: {string.Join(' ', arguments)}");
         }
 
         string result = await output;
         string diagnostics = await error;
+
         if (process.ExitCode != 0)
             throw new InvalidOperationException($"Docker exited with {process.ExitCode}: {diagnostics}\n{result}");
+
         return result;
     }
 
@@ -60,16 +67,28 @@ public abstract class DockerTestsFixture : IAsyncLifetime
         // Reuse developer infrastructure. Do not tear down its containers, network, or volumes on disposal.
         await RunDockerAsync(
             TimeSpan.FromMinutes(3),
-            ["compose", "--project-name", "silverback", "--file", Path.Combine(RepositoryRoot, "docker-compose.yaml"),
-                "up", "--detach", "--no-recreate", .. InfrastructureServices]);
+            [
+                "compose",
+                "--project-name", "silverback",
+                "--file", Path.Combine(RepositoryRoot, "docker-compose.yaml"),
+                "up",
+                "--detach",
+                "--no-recreate",
+                .. InfrastructureServices
+            ]);
+
         await WaitForInfrastructureAsync();
 
         string dockerfile = Path.Combine(RepositoryRoot, "tests/extended/Silverback.Tests.Extended.Stress.Worker/Dockerfile");
         await RunDockerAsync(
             TimeSpan.FromMinutes(5),
-            ["build", "--build-arg",
-            $"SDK_IMAGE={Environment.GetEnvironmentVariable("STRESS_SDK_IMAGE") ?? "mcr.microsoft.com/dotnet/sdk:10.0"}",
-            "--tag", WorkerImage, "--file", dockerfile, RepositoryRoot]);
+            [
+                "build",
+                "--build-arg", $"SDK_IMAGE={Environment.GetEnvironmentVariable("STRESS_SDK_IMAGE") ?? "mcr.microsoft.com/dotnet/sdk:10.0"}",
+                "--tag", WorkerImage,
+                "--file", dockerfile,
+                RepositoryRoot
+            ]);
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
@@ -79,10 +98,12 @@ public abstract class DockerTestsFixture : IAsyncLifetime
     private static string FindRepositoryRoot()
     {
         DirectoryInfo? directory = new(AppContext.BaseDirectory);
+
         while (directory != null)
         {
             if (File.Exists(Path.Combine(directory.FullName, "Silverback.sln")))
                 return directory.FullName;
+
             directory = directory.Parent;
         }
 

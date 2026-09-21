@@ -63,6 +63,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         PartitionChannel? channel = GetChannel(consumeResult.TopicPartition);
+
         if (channel == null)
             return; // A stopped partition is replayed when rollback or reassignment starts a new reader
 
@@ -139,6 +140,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             _callbacksInvoker.Invoke<IKafkaPartitionEofCallback>(handler => handler.OnEndOfTopicPartitionReached(
                 consumeResult.TopicPartition,
                 _consumer));
+
             return;
         }
 

@@ -58,15 +58,19 @@ public partial class ChunkingTests
         await producer.RawProduceAsync(
             [.. rawMessage1.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, 3));
+
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("6", 0));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("6", 1));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("6", 2, true));
@@ -85,6 +89,7 @@ public partial class ChunkingTests
     public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes(30);
+
         List<byte[]?> receivedFiles = [];
         bool aborted = false;
 
@@ -138,9 +143,11 @@ public partial class ChunkingTests
         await producer.RawProduceAsync(
             [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0));
+
         await producer.RawProduceAsync(
             [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("2", 1));
+
         await producer.RawProduceAsync(
             [.. rawMessage.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true));
@@ -181,15 +188,19 @@ public partial class ChunkingTests
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, typeof(BinaryMessage)));
+
         await producer.RawProduceAsync(
             [.. rawMessage1.Skip(20)],
             HeadersHelper.GetChunkHeaders("1", 2, true, typeof(BinaryMessage)));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Take(10)],
             HeadersHelper.GetChunkHeaders("2", 0, typeof(BinaryMessage)));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("2", 1, typeof(BinaryMessage)));
+
         await producer.RawProduceAsync(
             [.. rawMessage2.Skip(20)],
             HeadersHelper.GetChunkHeaders("2", 2, true, typeof(BinaryMessage)));
@@ -239,6 +250,7 @@ public partial class ChunkingTests
         await producer.RawProduceAsync(
             [.. rawMessage.Take(10)],
             HeadersHelper.GetChunkHeaders("1", 0, 3));
+
         await producer.RawProduceAsync(
             [.. rawMessage.Skip(10).Take(10)],
             HeadersHelper.GetChunkHeaders("1", 1, 3));

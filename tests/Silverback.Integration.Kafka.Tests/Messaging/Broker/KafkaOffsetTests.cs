@@ -31,9 +31,13 @@ public class KafkaOffsetTests
         (first != second).ShouldBeFalse();
         first.GetHashCode().ShouldBe(second.GetHashCode());
         first.CompareTo(second).ShouldBe(0);
+
         HashSet<KafkaOffset> offsets = [first, second];
+
         offsets.ShouldHaveSingleItem();
+
         Dictionary<IBrokerMessageIdentifier, int> attempts = new() { [first] = 1 };
+
         attempts[second].ShouldBe(1);
     }
 
@@ -80,12 +84,15 @@ public class KafkaOffsetTests
         KafkaOffset offset = bound
             ? new KafkaOffset(new TopicPartitionOffset("topic", 0, 42), sourceChannelInstanceId)
             : new KafkaOffset("topic", 0, 42);
+
         OffsetsTracker tracker = new();
         tracker.TrackOffset(offset);
+
         tracker.GetCommitOffsets().ShouldHaveSingleItem().ShouldBeSameAs(offset);
         tracker.GetRollbackOffSets().ShouldHaveSingleItem().ShouldBeSameAs(offset);
 
         tracker.Commit(offset);
+
         KafkaOffset rollback = tracker.GetRollbackOffSets().ShouldHaveSingleItem();
         rollback.Offset.Value.ShouldBe(43);
         rollback.TopicPartition.ShouldBe(offset.TopicPartition);

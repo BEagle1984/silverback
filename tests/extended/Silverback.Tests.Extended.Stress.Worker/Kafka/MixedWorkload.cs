@@ -55,9 +55,10 @@ internal static class MixedWorkload
 
             Random random = new(seed);
             long sent = 0;
+
             while (true)
             {
-                // Produce to every partition, including sparse batches completed only by their timeout.
+                // Produce to every partition, including sparse batches completed only by their timeout
                 for (int partition = 0; partition < partitions; partition++)
                 {
                     foreach (string topic in scenario is "single" or "control" ? topics.Take(1) : topics)
@@ -71,6 +72,7 @@ internal static class MixedWorkload
                                 scenario == "control" && index == 0 ? 90000 : random.Next(0, 8)),
                             SimulatedFailuresCount = scenario != "control" && random.Next(100) < 8 ? random.Next(1, 4) : 0
                         };
+
                         await producer.ProduceAsync(new TopicPartition(topic, partition), new Message<Null, byte[]>
                         {
                             Value = JsonSerializer.SerializeToUtf8Bytes(message)
@@ -87,15 +89,21 @@ internal static class MixedWorkload
 
         using ProgressProbe probe = new(member, ReadInt("STALL_SECONDS", 20));
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Logging.ClearProviders().SetMinimumLevel(LogLevel.Trace).AddProvider(probe);
-        builder.Services.AddSilverback()
+        builder.Logging
+            .ClearProviders()
+            .SetMinimumLevel(LogLevel.Trace)
+            .AddProvider(probe);
+
+        builder.Services
+            .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
             .AddSingletonSubscriber<Subscriber>()
             .AddKafkaClients(clients => clients
                 .WithBootstrapServers(bootstrap)
                 .AddConsumer(consumer =>
                 {
-                    consumer.WithGroupId(prefix + "-group")
+                    consumer
+                        .WithGroupId(prefix + "-group")
                         .WithClientId(member)
                         .WithMaxPollIntervalMs(ReadInt("MAX_POLL_MS", 300000))
                         .WithSessionTimeoutMs(6000)
@@ -106,31 +114,38 @@ internal static class MixedWorkload
                         .AutoResetOffsetToEarliest();
 
                     string? assignor = Environment.GetEnvironmentVariable("ASSIGNOR");
+
                     if (!string.IsNullOrEmpty(assignor))
                         consumer.WithPartitionAssignmentStrategy(Enum.Parse<PartitionAssignmentStrategy>(assignor, true));
 
                     if (Environment.GetEnvironmentVariable("AUTO_RECOVERY") != "true")
                         consumer.DisableAutoRecovery();
+
                     if (Environment.GetEnvironmentVariable("MANUAL_COMMIT") == "true")
                         consumer.CommitOffsetEach(1);
 
-                    consumer.Consume<SingleMessage>(endpoint => endpoint.ConsumeFrom(topics[0])
+                    consumer.Consume<SingleMessage>(endpoint => endpoint
+                        .ConsumeFrom(topics[0])
                         .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
                         .OnError(policy => policy.Retry(5).ThenSkip()));
 
                     if (scenario is "single" or "control")
                         return;
 
-                    consumer.Consume<BatchMessage>(endpoint => endpoint.ConsumeFrom(topics[1])
+                    consumer.Consume<BatchMessage>(endpoint => endpoint
+                            .ConsumeFrom(topics[1])
                             .EnableBatchProcessing(100, TimeSpan.FromMilliseconds(ReadInt("BATCH_TIMEOUT_MS", 100)))
                             .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
                             .OnError(policy => policy.Retry(5).ThenSkip()))
-                        .Consume<BatchMessage2>(endpoint => endpoint.ConsumeFrom(topics[2])
+                        .Consume<BatchMessage2>(endpoint => endpoint
+                            .ConsumeFrom(topics[2])
                             .EnableBatchProcessing(50, TimeSpan.FromMilliseconds(ReadInt("BATCH_TIMEOUT_MS", 100)))
                             .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
                             .OnError(policy => policy.Retry(5).ThenSkip()))
-                        .Consume<UnboundedMessage>(endpoint => endpoint.ConsumeFrom(topics[3])
-                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()).AllowStreaming());
+                        .Consume<UnboundedMessage>(endpoint => endpoint
+                            .ConsumeFrom(topics[3])
+                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                            .AllowStreaming());
                 })
                 .AddProducer(producer => producer.Produce<KafkaResponseMessage>(endpoint => endpoint.ProduceTo(prefix + "-responses"))));
 
