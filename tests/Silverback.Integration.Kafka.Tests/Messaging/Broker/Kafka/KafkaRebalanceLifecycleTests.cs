@@ -691,6 +691,82 @@ public class KafkaRebalanceLifecycleTests
     }
 
     [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Callbacks are awaited before the harness is disposed.")]
+    public async Task Shutdown_ShouldNotCommitPastBufferedRecords_WhenCanceledPollWriteOverflows(bool independent, bool autoCommit)
+    {
+        await using PollHarness harness = new(independent, backpressure: 2, autoCommit: autoCommit);
+        await harness.StartAsync(0);
+        ProcessingGate active = harness.Block(0, 0);
+        active.IgnoreCancellation = true; // Subscribers may complete successfully after shutdown is requested
+        await harness.DeliverAsync((0, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+        await harness.DeliverAsync((0, 1), (0, 2));
+        await harness.PollAsync(() => harness.Record(0, 3));
+        PartitionChannel channel = harness.GetChannel(0)!;
+
+        TaskCompletionSource<bool> stoppingReader = NewSignal();
+        TaskCompletionSource<bool> allowReaderStop = NewSignal();
+        TaskCompletionSource<bool> nextCommitted = NewSignal();
+        TaskCompletionSource<bool> finishHandler = NewSignal();
+        harness.BeforeChannelStop = () =>
+        {
+            stoppingReader.TrySetResult(true);
+            allowReaderStop.Task.WaitAsync(Timeout).GetAwaiter().GetResult();
+        };
+        harness.AfterCommit = async delivery =>
+        {
+            if (delivery.Offset == 0)
+                return;
+            nextCommitted.TrySetResult(true);
+            await finishHandler.Task.WaitAsync(Timeout);
+        };
+
+        Task stop = Task.Run(async () => await harness.Consumer.StopAsync());
+        long storedBeforeStop;
+        try
+        {
+            await stoppingReader.Task.WaitAsync(Timeout);
+
+            // The actual polling loop must finish its canceled write and enqueue the overflow record
+            await harness.PollingStopped.WaitAsync(Timeout);
+            active.Release.TrySetResult(true);
+            await nextCommitted.Task.WaitAsync(Timeout);
+            storedBeforeStop = harness.StoredOffset(0);
+            allowReaderStop.TrySetResult(true);
+            await PollHarness.WaitUntilAsync(() => channel.ReadCancellationToken.IsCancellationRequested);
+        }
+        finally
+        {
+            allowReaderStop.TrySetResult(true);
+            active.Release.TrySetResult(true);
+            finishHandler.TrySetResult(true);
+            await stop.WaitAsync(Timeout);
+            harness.BeforeChannelStop = null;
+            harness.AfterCommit = null;
+        }
+
+        // Simulate the automatic commit timer as well as manual commits before the next assignment
+        harness.Client.Commit();
+        long replayFrom = harness.CommittedOffset(0);
+        await harness.StartAsync(0);
+        for (long offset = replayFrom; offset < 4; offset++)
+            await harness.DeliverAsync((0, offset));
+        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(0) == 4);
+        harness.Client.Commit();
+
+        storedBeforeStop.ShouldBe(2);
+        replayFrom.ShouldBe(2);
+        harness.Completed.Select(delivery => delivery.Offset).ShouldBe([0L, 1L, 2L, 3L]);
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task FullBuffers_ShouldStopAndReplayWithoutSkippingUnfinishedRecords(bool rollback)
@@ -1056,6 +1132,8 @@ public class KafkaRebalanceLifecycleTests
 
         public bool SkipCommit { get; set; }
 
+        public bool IgnoreCancellation { get; set; }
+
         public Action? OnReaderStopped { get; set; }
 
         public TaskCompletionSource<bool> ReaderStopped { get; } = NewSignal();
@@ -1077,7 +1155,7 @@ public class KafkaRebalanceLifecycleTests
         private readonly bool _cooperative;
         private IReadOnlyList<TopicPartition> _assignment = [];
 
-        public PollHarness(bool independent = true, bool cooperative = false, int backpressure = 8, int parallelism = 100)
+        public PollHarness(bool independent = true, bool cooperative = false, int backpressure = 8, int parallelism = 100, bool autoCommit = false)
         {
             _cooperative = cooperative;
             Client = Substitute.For<IConfluentConsumerWrapper>();
@@ -1091,6 +1169,11 @@ public class KafkaRebalanceLifecycleTests
             {
                 TopicPartitionOffset offset = call.Arg<TopicPartitionOffset>();
                 _stored[offset.Partition.Value] = offset.Offset.Value;
+                for (long earlier = 0; earlier < offset.Offset.Value; earlier++)
+                {
+                    if (!_completed.ContainsKey((offset.Partition.Value, earlier)))
+                        UnsafeStores.Enqueue(offset);
+                }
             });
             Client.When(client => client.Commit()).Do(_ =>
             {
@@ -1132,7 +1215,7 @@ public class KafkaRebalanceLifecycleTests
                 Client,
                 new KafkaConsumerConfiguration
                 {
-                    GroupId = "tests", EnableAutoRecovery = false, EnableAutoCommit = false, CommitOffsetEach = 1,
+                    GroupId = "tests", EnableAutoRecovery = false, EnableAutoCommit = autoCommit, CommitOffsetEach = 1,
                     ProcessPartitionsIndependently = independent, BackpressureLimit = backpressure, MaxDegreeOfParallelism = independent ? parallelism : 1,
                     PollingTimeout = TimeSpan.FromMilliseconds(10),
                     PartitionAssignmentStrategy = cooperative ? PartitionAssignmentStrategy.CooperativeSticky : null,
@@ -1155,6 +1238,13 @@ public class KafkaRebalanceLifecycleTests
         public ConsumerChannelsManager Channels =>
             (ConsumerChannelsManager)typeof(KafkaConsumer).GetField("_channelsManager", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(Consumer)!;
 
+        public Task PollingStopped =>
+            ((ConsumeLoopHandler)typeof(KafkaConsumer).GetField("_consumeLoopHandler", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(Consumer)!).Stopping;
+
+        public Action? BeforeChannelStop { get; set; }
+
+        public Func<Delivery, Task>? AfterCommit { get; set; }
+
         public Action? BeforePause { get; set; }
 
         public Action? BeforeSeek { get; set; }
@@ -1168,6 +1258,8 @@ public class KafkaRebalanceLifecycleTests
         public ConcurrentQueue<Delivery> Completed { get; } = new();
 
         public ConcurrentQueue<TopicPartitionOffset> UnsafeCommits { get; } = new();
+
+        public ConcurrentQueue<TopicPartitionOffset> UnsafeStores { get; } = new();
 
         public ConcurrentQueue<TopicPartitionOffset> Seeks { get; } = new();
 
@@ -1274,6 +1366,8 @@ public class KafkaRebalanceLifecycleTests
             }
         };
 
+        public long StoredOffset(int partition) => _stored.GetValueOrDefault(partition);
+
         public long CommittedOffset(int partition) => _committed.GetValueOrDefault(partition);
 
         public async Task WaitForCommitAsync(int partition, long offset)
@@ -1305,7 +1399,7 @@ public class KafkaRebalanceLifecycleTests
                     await context.SequenceStore.AddAsync(observer);
                     gate.Context = context;
                     gate.Started.TrySetResult(true);
-                    await gate.Release.Task.WaitAsync(Timeout, cancellationToken);
+                    await gate.Release.Task.WaitAsync(Timeout, gate.IgnoreCancellation ? CancellationToken.None : cancellationToken);
                     if (gate.SkipCommit)
                         return;
                 }
@@ -1313,6 +1407,8 @@ public class KafkaRebalanceLifecycleTests
                 Completed.Enqueue(delivery);
                 _completed[(delivery.Partition, delivery.Offset)] = 0;
                 await Consumer.CommitAsync(offset);
+                if (AfterCommit != null)
+                    await AfterCommit(delivery);
             }
         }
 
@@ -1337,6 +1433,8 @@ public class KafkaRebalanceLifecycleTests
         {
             string text = formatter(state, exception);
             Logs.Enqueue(text);
+            if (text.StartsWith("Stopping processing loop of channel", StringComparison.Ordinal))
+                BeforeChannelStop?.Invoke();
             if (text.StartsWith("Skipping rollback restart", StringComparison.Ordinal))
                 RollbackRestartObserved.TrySetResult(true);
             if (logLevel >= LogLevel.Error)

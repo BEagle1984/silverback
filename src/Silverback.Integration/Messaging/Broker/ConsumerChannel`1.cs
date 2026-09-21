@@ -16,6 +16,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private readonly ISilverbackLogger _logger;
 
+    private readonly System.Threading.Lock _channelLock = new();
+
     private Channel<T> _channel;
 
     private Channel<T> _overflowChannel; // Used to store messages when the main channel is full, to ensure nothing is lost
@@ -54,42 +56,67 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public ISequenceStore SequenceStore { get; private set; }
 
-    public void Complete() => _channel.Writer.TryComplete();
+    public void Complete()
+    {
+        lock (_channelLock)
+            _channel.Writer.TryComplete();
+    }
 
     public async ValueTask WriteAsync(T message, CancellationToken cancellationToken)
     {
-        // Don't allow writing new messages until the overflow messages are processed
-        while (_overflowChannel.Reader.Count > 0)
+        (Channel<T> channel, Channel<T> overflowChannel) = GetChannels();
+        while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
-        }
+            bool overflowPending;
+            lock (_channelLock)
+            {
+                // Older main-channel records precede overflow, which in turn precedes new writes
+                overflowPending = overflowChannel.Reader.Count > 0;
+                if (!overflowPending && channel.Writer.TryWrite(message))
+                    return;
+            }
 
-        await _channel.Writer.WriteAsync(message, cancellationToken).ConfigureAwait(false);
+            // Wait outside the lock and retry admission rather than enqueueing a pending write
+            if (!await channel.Writer.WaitToWriteAsync(cancellationToken).ConfigureAwait(false))
+                throw new ChannelClosedException();
+
+            if (overflowPending)
+                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
+        }
     }
 
-    public ValueTask WriteOverflowAsync(T message) => _overflowChannel.Writer.WriteAsync(message, CancellationToken.None);
+    public ValueTask WriteOverflowAsync(T message)
+    {
+        lock (_channelLock)
+            return _overflowChannel.Writer.WriteAsync(message, CancellationToken.None);
+    }
 
     public async ValueTask<T> ReadAsync()
     {
+        (Channel<T> channel, Channel<T> overflowChannel) = GetChannels();
         while (true)
         {
             ReadCancellationToken.ThrowIfCancellationRequested();
 
-            if (_overflowChannel.Reader.TryRead(out T? overflowMessage))
-                return overflowMessage;
+            lock (_channelLock)
+            {
+                // A canceled write enters overflow after records already buffered in the main channel
+                if (channel.Reader.TryRead(out T? message))
+                    return message;
 
-            if (_channel.Reader.TryRead(out T? message))
-                return message;
+                if (overflowChannel.Reader.TryRead(out T? overflowMessage))
+                    return overflowMessage;
+            }
 
-            // Overflow may arrive after the empty check above (e.g. when a Kafka write is canceled during rebalance).
-            // Wait for either queue without consuming from the losing queue, preserving overflow priority.
+            // Either queue can receive a message after the empty checks
+            // Wait without consuming so the next iteration can select the oldest record under the lock
             using CancellationTokenSource waitCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ReadCancellationToken);
 
             try
             {
-                Task<bool> messageAvailable = _channel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
-                Task<bool> overflowAvailable = _overflowChannel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
+                Task<bool> messageAvailable = channel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
+                Task<bool> overflowAvailable = overflowChannel.Reader.WaitToReadAsync(waitCancellationTokenSource.Token).AsTask();
                 Task<bool> available = await Task.WhenAny(messageAvailable, overflowAvailable).ConfigureAwait(false);
 
                 if (!await available.ConfigureAwait(false))
@@ -105,10 +132,13 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     public void Reset()
     {
-        _channel.Writer.TryComplete();
-        _overflowChannel.Writer.TryComplete();
-        _channel = Channel.CreateBounded<T>(_capacity);
-        _overflowChannel = Channel.CreateUnbounded<T>();
+        lock (_channelLock)
+        {
+            _channel.Writer.TryComplete();
+            _overflowChannel.Writer.TryComplete();
+            _channel = Channel.CreateBounded<T>(_capacity);
+            _overflowChannel = Channel.CreateUnbounded<T>();
+        }
         SequenceStore.Dispose();
         SequenceStore = new SequenceStore(_logger);
         InstanceId = Guid.NewGuid();
@@ -171,5 +201,11 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         SequenceStore.Dispose();
 
         _isDisposed = true;
+    }
+
+    private (Channel<T> Channel, Channel<T> OverflowChannel) GetChannels()
+    {
+        lock (_channelLock)
+            return (_channel, _overflowChannel);
     }
 }

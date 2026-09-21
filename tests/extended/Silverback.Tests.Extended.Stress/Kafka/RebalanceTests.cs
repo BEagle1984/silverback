@@ -31,6 +31,7 @@ public class RebalanceTests
     [InlineData("CooperativeSticky", false, false, "single")]
     [InlineData("", true, false, "single")]
     [InlineData("", false, true, "single")]
+    [InlineData("", true, true, "single")]
     [InlineData("", false, false, "batch")]
     [InlineData("CooperativeSticky", false, false, "batch")]
     [InlineData("CooperativeSticky", true, false, "single")]
