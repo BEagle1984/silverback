@@ -33,14 +33,18 @@ public class ConsumerChannelsManagerTests
             consumer,
             Substitute.For<IBrokerClientCallbacksInvoker>(),
             Substitute.For<ISilverbackLogger>());
+
         TopicPartition partition = new("topic", 0);
         using CancellationTokenSource pollingCancellation = new();
 
         try
         {
             manager.IsReading(partition).ShouldBeFalse();
+
             manager.StartReading(partition);
+
             manager.IsReading(partition).ShouldBeTrue();
+
             manager.Write(CreateRecord(partition, 0), pollingCancellation.Token);
             await behavior.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -49,12 +53,14 @@ public class ConsumerChannelsManagerTests
             manager.Write(CreateRecord(partition, 2), pollingCancellation.Token);
 
             Task stopping = manager.StopReadingAsync(partition);
+
             stopping.IsCompleted.ShouldBeFalse();
             manager.IsReading(partition).ShouldBeFalse();
             behavior.Offsets.ShouldBe([0L]);
 
             behavior.ReleaseFirst.TrySetResult(true);
             await stopping.WaitAsync(TimeSpan.FromSeconds(5));
+
             manager.IsReading(partition).ShouldBeFalse();
             behavior.Offsets.ShouldBe([0L]);
             pollingCancellation.IsCancellationRequested.ShouldBeFalse();
@@ -82,6 +88,7 @@ public class ConsumerChannelsManagerTests
         IConfluentConsumerWrapper client = Substitute.For<IConfluentConsumerWrapper>();
         client.Initialized.Returns(new AsyncEvent<BrokerClient>());
         client.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
         behaviors.GetBehaviorsList().Returns([behavior]);
 

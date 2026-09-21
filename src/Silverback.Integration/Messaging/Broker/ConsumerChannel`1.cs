@@ -65,14 +65,18 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     public async ValueTask WriteAsync(T message, CancellationToken cancellationToken)
     {
         (Channel<T> channel, Channel<T> overflowChannel) = GetChannels();
+
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             bool overflowPending;
+
             lock (_channelLock)
             {
                 // Older main-channel records precede overflow, which in turn precedes new writes
                 overflowPending = overflowChannel.Reader.Count > 0;
+
                 if (!overflowPending && channel.Writer.TryWrite(message))
                     return;
             }
@@ -95,6 +99,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     public async ValueTask<T> ReadAsync()
     {
         (Channel<T> channel, Channel<T> overflowChannel) = GetChannels();
+
         while (true)
         {
             ReadCancellationToken.ThrowIfCancellationRequested();

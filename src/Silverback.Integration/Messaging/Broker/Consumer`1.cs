@@ -309,6 +309,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             return false;
 
         IsStopping = true;
+
         return true;
     }
 
@@ -470,6 +471,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         catch (Exception ex)
         {
             _logger.LogConsumerStopError(this, ex);
+
             throw;
         }
         finally

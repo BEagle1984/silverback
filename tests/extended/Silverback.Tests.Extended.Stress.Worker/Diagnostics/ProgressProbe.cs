@@ -14,23 +14,37 @@ using Silverback.Tests.Extended.Shared;
 
 namespace Silverback.Tests.Extended.Stress.Worker.Diagnostics;
 
-// A diagnostic observer only: it neither calls Kafka APIs nor reconnects the consumer.
+// A diagnostic observer only: it neither calls Kafka APIs nor reconnects the consumer
 internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerProvider
 {
     private readonly ConcurrentQueue<string> _recent = new();
+
     private readonly ConcurrentDictionary<string, string> _channelStates = new();
+
     private readonly CancellationTokenSource _stopping = new();
+
     private readonly long _started = Stopwatch.GetTimestamp();
+
     private long _lastStatistics = Stopwatch.GetTimestamp();
+
     private long _lastConsumed = Stopwatch.GetTimestamp();
+
     private long _lastProcessed = Stopwatch.GetTimestamp();
+
     private long _consumed;
+
     private long _processed;
+
     private long _errors;
+
     private long _assignments;
+
     private long _revocations;
+
     private int _captured;
+
     private int _disposed;
+
     private Thread? _thread;
 
     public ILogger CreateLogger(string categoryName) => new ProbeLogger(this, categoryName);
@@ -62,9 +76,11 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
         Func<TState, Exception?, string> formatter)
     {
         long now = Stopwatch.GetTimestamp();
+
         if (eventId.Id == 2041)
         {
             Volatile.Write(ref _lastStatistics, now);
+
             return;
         }
 
@@ -76,10 +92,12 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
 
         if (eventId.Id == 2032)
             Interlocked.Increment(ref _assignments);
+
         if (eventId.Id == 2034)
             Interlocked.Increment(ref _revocations);
 
         string text = formatter(state, exception);
+
         if (category == typeof(Subscriber).FullName && text.StartsWith("Successfully processed", StringComparison.Ordinal))
         {
             Interlocked.Increment(ref _processed);
@@ -87,16 +105,21 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
         }
 
         string entry = $"{DateTime.UtcNow:O} [{level}] {category} {eventId.Id} {text}";
+
         if (exception != null)
             entry += $" {exception}";
 
         _recent.Enqueue(entry);
+
         while (_recent.Count > 1000)
+        {
             _recent.TryDequeue(out _);
+        }
 
         if (eventId.Id == 1999 && state is IEnumerable<KeyValuePair<string, object?>> properties)
         {
             object? channel = properties.FirstOrDefault(property => property.Key == "Channel").Value;
+
             if (channel != null)
                 _channelStates[channel.ToString()!] = entry;
         }
@@ -132,6 +155,7 @@ internal sealed class ProgressProbe(string member, int stallSeconds) : ILoggerPr
                 threadPoolQueue = ThreadPool.PendingWorkItemCount,
                 channelStates = _channelStates
             });
+
             Console.WriteLine($"PROGRESS {snapshot}");
 
             // This is a candidate, not proof of a deadlock. Empty/paused workloads and rebalances must be checked separately.

@@ -27,6 +27,7 @@ public class ConsumerTests
         TestOffset originalIdentifier = consumer.CurrentIdentifier;
         TaskCompletionSource<bool> releaseStart = new(TaskCreationOptions.RunContinuationsAsynchronously);
         consumer.StartGate = releaseStart.Task;
+
         Task starting = consumer.StartAsync().AsTask();
         Task stopping = consumer.StopAsync(originalIdentifier, false).AsTask();
 
@@ -50,6 +51,7 @@ public class ConsumerTests
             {
                 // A rejected obsolete request must release the semaphore and allow the current request to stop.
                 await consumer.StopAsync(consumer.CurrentIdentifier, false).AsTask().WaitAsync(Timeout);
+
                 consumer.Started.ShouldBeFalse();
                 consumer.StopCalls.ShouldBe(1);
             }
@@ -72,6 +74,7 @@ public class ConsumerTests
         TaskCompletionSource<bool> releaseDrain = new(TaskCreationOptions.RunContinuationsAsynchronously);
         consumer.DrainGate = releaseDrain.Task;
         await consumer.StartAsync();
+
         Task stopping = identified
             ? consumer.StopAsync(consumer.CurrentIdentifier, waitUntilStopped).AsTask()
             : consumer.StopAsync(waitUntilStopped).AsTask();
@@ -85,6 +88,7 @@ public class ConsumerTests
 
             releaseDrain.TrySetResult(true);
             await stopping.WaitAsync(Timeout);
+
             consumer.Started.ShouldBeFalse();
             consumer.Stopping.ShouldBeFalse();
         }
@@ -101,8 +105,10 @@ public class ConsumerTests
         client.Initialized.Returns(new AsyncEvent<BrokerClient>());
         client.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
         client.Status.Returns(ClientStatus.Initialized);
+
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
         behaviors.GetBehaviorsList().Returns([]);
+
         return new TestConsumer(client, behaviors);
     }
 
@@ -132,6 +138,7 @@ public class ConsumerTests
         protected override bool TryBeginStop(TestOffset? brokerMessageIdentifier)
         {
             StopRequests.Add(brokerMessageIdentifier);
+
             return (brokerMessageIdentifier == null || ReferenceEquals(brokerMessageIdentifier, CurrentIdentifier)) &&
                    base.TryBeginStop(brokerMessageIdentifier);
         }
@@ -139,7 +146,9 @@ public class ConsumerTests
         protected override ValueTask StopCoreAsync()
         {
             IsStopping.ShouldBeTrue();
+
             StopCalls++;
+
             return ValueTask.CompletedTask;
         }
 

@@ -26,6 +26,7 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.DeliverAsync([.. Enumerable.Range(0, 10).Select(offset => (0, (long)offset))]);
         await PollHarness.WaitUntilAsync(() => harness.StoredOffset(0) == 10);
         harness.Client.Commit();
+
         harness.CompletedBatchSizes.ShouldBe([10]);
 
         // Leave a real batch pending, with 17/18 buffered and the native poll blocked writing 19
@@ -35,6 +36,7 @@ public partial class KafkaRebalanceLifecycleTests
         await active.Started.Task.WaitAsync(Timeout);
         await harness.DeliverAsync((0, 17), (0, 18));
         await harness.PollAsync(() => harness.Record(0, 19));
+
         PartitionChannel channel = harness.GetChannel(0)!;
         TaskCompletionSource<bool> stoppingReader = NewSignal();
         TaskCompletionSource<bool> allowReaderStop = NewSignal();
@@ -45,16 +47,19 @@ public partial class KafkaRebalanceLifecycleTests
             stoppingReader.TrySetResult(true);
             allowReaderStop.Task.WaitAsync(Timeout).GetAwaiter().GetResult();
         };
+
         harness.AfterBatchRecord = async delivery =>
         {
             if (delivery.Offset < 17)
                 return;
+
             nextProcessed.TrySetResult(true);
             await finishPipeline.Task.WaitAsync(Timeout);
         };
 
         Task stop = Task.Run(async () => await harness.Consumer.StopAsync());
         long[] departingProcessed;
+
         try
         {
             await stoppingReader.Task.WaitAsync(Timeout);
@@ -63,7 +68,9 @@ public partial class KafkaRebalanceLifecycleTests
             await nextProcessed.Task.WaitAsync(Timeout);
             await PollHarness.WaitUntilAsync(() => harness.Completed.Count == 18);
             departingProcessed = [.. harness.Completed.Select(delivery => delivery.Offset)];
+
             harness.StoredOffset(0).ShouldBe(10, "An unfinished batch must not advance the stored offset");
+
             allowReaderStop.TrySetResult(true);
             await PollHarness.WaitUntilAsync(() => channel.ReadCancellationToken.IsCancellationRequested);
         }
@@ -72,6 +79,7 @@ public partial class KafkaRebalanceLifecycleTests
             _output.WriteLine($"Batch shutdown failed: {exception}");
             _output.WriteLine($"Subscriber order: {string.Join(", ", harness.Completed.Select(delivery => delivery.Offset))}");
             _output.WriteLine(string.Join(Environment.NewLine, harness.Logs.TakeLast(30)));
+
             throw;
         }
         finally
@@ -86,12 +94,17 @@ public partial class KafkaRebalanceLifecycleTests
 
         long[] expected = [.. Enumerable.Range(0, 20).Select(offset => (long)offset)];
         _output.WriteLine($"Departing subscriber order: {string.Join(", ", departingProcessed)}");
+
         departingProcessed.ShouldBe(expected.Take(18));
+
         harness.Client.Commit();
         long replayFrom = harness.CommittedOffset(0);
+
         replayFrom.ShouldBe(10);
         harness.CompletedBatchSizes.ShouldBe([10]);
+
         await harness.StartAsync(0);
+
         for (long offset = replayFrom; offset < 20; offset++)
         {
             await harness.DeliverAsync((0, offset));
@@ -102,6 +115,7 @@ public partial class KafkaRebalanceLifecycleTests
 
         long[] processed = [.. harness.Completed.Select(delivery => delivery.Offset)];
         _output.WriteLine($"Subscriber order: {string.Join(", ", processed)}; replay starts at {replayFrom}");
+
         processed.Distinct().ShouldBe(expected, "First processing must remain ordered even across partial-batch replay");
         harness.Completed.Where(delivery => delivery.Epoch == 1).Select(delivery => delivery.Offset).ShouldBe(expected.Take(18));
         harness.Completed.Where(delivery => delivery.Epoch == 2).Select(delivery => delivery.Offset).ShouldBe(expected.Skip(10));

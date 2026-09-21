@@ -288,6 +288,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         // Assignment callbacks are delivered by Consume, so polling must start before assignment.
         StartConsumeLoopHandler();
+
         return default;
     }
 
@@ -304,6 +305,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
         _consumeLoopHandler.StopAsync().FireAndForget();
         _channelsStopping = _channelsManager.StopReadingAsync();
+
         return default;
     }
 
@@ -333,6 +335,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             // A non-blocking stop marks the consumer stopped before its completed batches finish committing.
             // Channel ownership remains valid until draining removes the channel.
             bool stored = false;
+
             foreach (KafkaOffset offset in brokerMessageIdentifiers.Where(IsOwnedOffset))
             {
                 _offsets?.Commit(offset);
@@ -353,6 +356,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
         Dictionary<TopicPartition, long> versions;
+
         lock (_assignmentLock)
         {
             if (!IsStartedAndNotStopping())
@@ -365,6 +369,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         KafkaOffset[] requestedOffsets = [.. brokerMessageIdentifiers];
         List<RollbackPartition> partitions = [];
         HashSet<PartitionChannel> channels = [];
+
         lock (_assignmentLock)
         {
             KafkaOffset[] currentOffsets =
@@ -378,10 +383,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (currentOffsets.Length == 0 || _offsets != null && currentOffsets.Length != requestedOffsets.Length)
             {
                 _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
+
                 return ValueTask.CompletedTask;
             }
 
             IEnumerable<KafkaOffset> offsets = _offsets?.GetRollbackOffSets() ?? currentOffsets;
+
             foreach (KafkaOffset offset in offsets)
             {
                 // Shared rollback offsets may have been tracked by a previous channel in the same assignment.
@@ -422,6 +429,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         }
 
         Task.Run(() => RestartChannelsAfterRollbackAsync(stopping, partitions)).FireAndForget();
+
         return ValueTask.CompletedTask;
     }
 
@@ -453,9 +461,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             lock (_assignmentLock)
             {
                 RollbackPartition[] current = [.. partitions.Where(IsCurrentRollback)];
+
                 if (current.Length != partitions.Count)
                 {
                     _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
+
                     if (!Configuration.ProcessPartitionsIndependently)
                         return;
                 }
@@ -561,6 +571,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     {
         long version = _assignmentVersions.GetValueOrDefault(topicPartition) + 1;
         _assignmentVersions[topicPartition] = version;
+
         return version;
     }
 

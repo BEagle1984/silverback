@@ -58,6 +58,7 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent, cooperative);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await active.Started.Task.WaitAsync(Timeout);
@@ -66,11 +67,15 @@ public partial class KafkaRebalanceLifecycleTests
         {
             harness.Revoke(0);
             harness.Assign(0);
+
             return harness.Record(0, 0);
         });
+
         await active.ReaderStopped.Task.WaitAsync(Timeout);
+
         harness.CommittedOffset(0).ShouldBe(0);
         harness.Starts.Select(item => item.Offset).ShouldBe([0L]);
+
         active.Release.TrySetResult(true);
         await rebalance.WaitAsync(Timeout);
         await harness.DeliverAsync((0, 1), (0, 2));
@@ -88,6 +93,7 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(true, true);
         await harness.StartAsync(0, 1);
+
         ProcessingGate revoked = harness.Block(0, 0);
         ProcessingGate retained = harness.Block(1, 0);
         await harness.DeliverAsync((0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2));
@@ -96,10 +102,14 @@ public partial class KafkaRebalanceLifecycleTests
         Task rebalance = harness.PollAsync(() =>
         {
             harness.Revoke(0);
+
             return harness.Record(1, 3);
         });
+
         await revoked.ReaderStopped.Task.WaitAsync(Timeout);
+
         retained.ReaderStopped.Task.IsCompleted.ShouldBeFalse();
+
         revoked.Release.TrySetResult(true);
         await rebalance.WaitAsync(Timeout);
         retained.Release.TrySetResult(true);
@@ -112,10 +122,13 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.PollAsync(() =>
         {
             harness.Assign(0);
+
             return harness.Record(0, 0);
         });
+
         await harness.DeliverAsync((0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
+
         harness.Starts.Where(item => item.Partition == 0).ShouldBe([new Delivery(0, 0, 1), new Delivery(0, 0, 2), new Delivery(0, 1, 2), new Delivery(0, 2, 2)]);
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
@@ -129,16 +142,20 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(true, cooperative);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await active.Started.Task.WaitAsync(Timeout);
+
         int assignedDuringStop = -1;
         Task rebalance = harness.PollAsync(() =>
         {
             harness.Revoke(0);
             assignedDuringStop = harness.Assign(0);
+
             return null;
         });
+
         await active.ReaderStopped.Task.WaitAsync(Timeout);
         await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
         await rebalance.WaitAsync(Timeout);
@@ -151,10 +168,13 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.PollAsync(() =>
         {
             harness.Assign(0);
+
             return harness.Record(0, 0);
         });
+
         await harness.DeliverAsync((0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
+
         harness.Completed.Select(item => item.Offset).ShouldBe([0L, 1L, 2L]);
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
@@ -166,19 +186,24 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await active.Started.Task.WaitAsync(Timeout);
+
         Task revoke = harness.PollAsync(() =>
         {
             harness.Revoke(0);
+
             return null;
         });
+
         await active.ReaderStopped.Task.WaitAsync(Timeout);
 
         await harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0));
         active.Release.TrySetResult(true);
         await revoke.WaitAsync(Timeout);
+
         harness.Seeks.ShouldBeEmpty();
         harness.Resumes.ShouldBeEmpty();
         harness.CommittedOffset(0).ShouldBe(0);
@@ -186,10 +211,13 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.PollAsync(() =>
         {
             harness.Assign(0);
+
             return harness.Record(0, 0);
         });
+
         await harness.DeliverAsync((0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
+
         harness.Starts.ShouldBe([new Delivery(0, 0, 1), new Delivery(0, 0, 2), new Delivery(0, 1, 2), new Delivery(0, 2, 2)]);
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
@@ -205,9 +233,11 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> stopEntered = NewSignal();
         TaskCompletionSource<bool> releaseStop = NewSignal();
         int stoppingCount = 0;
@@ -215,32 +245,41 @@ public partial class KafkaRebalanceLifecycleTests
         {
             if (Interlocked.Increment(ref stoppingCount) != 1)
                 return;
+
             stopEntered.TrySetResult(true);
+
             releaseStop.Task.Wait(Timeout).ShouldBeTrue();
         };
 
         Task rollback = Task.Run(async () => await harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0)));
+
         try
         {
             await stopEntered.Task.WaitAsync(Timeout);
+
             Task rebalance = harness.PollAsync(() =>
             {
                 harness.Revoke(0);
+
                 return null;
             });
+
             await PollHarness.WaitUntilAsync(() => harness.Logs.Count(text => text.StartsWith("Stopping processing loop", StringComparison.Ordinal)) >= 2);
             active.Release.TrySetResult(true);
             await rebalance.WaitAsync(Timeout);
 
             ProcessingGate? reassigned = null;
+
             if (reassign)
             {
                 reassigned = harness.Block(0, 0);
                 await harness.PollAsync(() =>
                 {
                     harness.Assign(0);
+
                     return harness.Record(0, 0);
                 });
+
                 await harness.DeliverAsync((0, 1), (0, 2));
                 await reassigned.Started.Task.WaitAsync(Timeout);
             }
@@ -248,11 +287,14 @@ public partial class KafkaRebalanceLifecycleTests
             releaseStop.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
             await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
             harness.Resumes.ShouldBeEmpty();
+
             if (reassigned != null)
             {
                 reassigned.Release.TrySetResult(true);
                 await harness.WaitForCommitAsync(0, 3);
+
                 harness.Starts.ShouldBe([new Delivery(0, 0, 1), new Delivery(0, 0, 2), new Delivery(0, 1, 2), new Delivery(0, 2, 2)]);
             }
             else
@@ -279,6 +321,7 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await active.Started.Task.WaitAsync(Timeout);
@@ -287,8 +330,10 @@ public partial class KafkaRebalanceLifecycleTests
         await active.ReaderStopped.Task.WaitAsync(Timeout);
         active.Release.TrySetResult(true);
         await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
         harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
         harness.Resumes.ShouldBe([new TopicPartition("topic", 0)]);
+
         await harness.DeliverAsync((0, 0), (0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
 
@@ -304,24 +349,31 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         PartitionChannel originalChannel = harness.GetChannel(0).ShouldNotBeNull();
+
         ProcessingGate original = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await original.Started.Task.WaitAsync(Timeout);
+
         KafkaOffset originalOffset = original.Context!.Envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>();
+
         originalOffset.BelongsToChannel(originalChannel.InstanceId).ShouldBeTrue();
 
         await harness.Consumer.RollbackAsync(originalOffset);
         await original.ReaderStopped.Task.WaitAsync(Timeout);
         original.Release.TrySetResult(true);
         await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
         PartitionChannel replacementChannel = harness.GetChannel(0).ShouldNotBeNull();
         replacementChannel.InstanceId.ShouldNotBe(originalChannel.InstanceId);
 
         ProcessingGate replay = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await replay.Started.Task.WaitAsync(Timeout);
+
         KafkaOffset replayOffset = replay.Context!.Envelope.BrokerMessageIdentifier.ShouldBeOfType<KafkaOffset>();
+
         replayOffset.ShouldBe(originalOffset);
         replayOffset.BelongsToChannel(replacementChannel.InstanceId).ShouldBeTrue();
         replayOffset.BelongsToChannel(originalChannel.InstanceId).ShouldBeFalse();
@@ -331,11 +383,14 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.Consumer.CommitAsync(originalOffset);
         await harness.Consumer.RollbackAsync(originalOffset);
         await harness.Consumer.StopAsync(originalOffset, false);
+
         replacementChannel.ReadCancellationToken.IsCancellationRequested.ShouldBeFalse();
         harness.CommittedOffset(0).ShouldBe(0);
         harness.Seeks.ShouldBe([new TopicPartitionOffset("topic", 0, 0)]);
+
         replay.Release.TrySetResult(true);
         await harness.WaitForCommitAsync(0, 1);
+
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
     }
@@ -353,6 +408,7 @@ public partial class KafkaRebalanceLifecycleTests
             ProcessingGate active = harness.Block(0, 1);
             await harness.DeliverAsync((0, 1));
             await active.Started.Task.WaitAsync(Timeout);
+
             PartitionChannel? previous = harness.GetChannel(0);
             await harness.Consumer.RollbackAsync(active.Context!.Envelope.BrokerMessageIdentifier);
             await active.ReaderStopped.Task.WaitAsync(Timeout);
@@ -363,8 +419,10 @@ public partial class KafkaRebalanceLifecycleTests
         }
 
         harness.Seeks.Select(offset => offset.Offset.Value).ShouldBe([1L, 1L]);
+
         await harness.DeliverAsync((0, 1), (0, 2));
         await harness.WaitForCommitAsync(0, 3);
+
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
     }
@@ -376,15 +434,19 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> reconnect = NewSignal();
         harness.Client.When(client => client.Resume(Arg.Any<IEnumerable<TopicPartition>>()))
             .Do(_ => throw new InvalidOperationException("Resume failed"));
+
         harness.Client.ReconnectAsync().Returns(_ =>
         {
             reconnect.TrySetResult(true);
+
             return ValueTask.CompletedTask;
         });
 
@@ -392,6 +454,7 @@ public partial class KafkaRebalanceLifecycleTests
         await active.ReaderStopped.Task.WaitAsync(Timeout);
         active.Release.TrySetResult(true);
         await reconnect.Task.WaitAsync(Timeout);
+
         harness.GetChannel(0).ShouldBeNull();
         harness.UnsafeCommits.ShouldBeEmpty();
     }
@@ -406,9 +469,11 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> oldStopEntered = NewSignal();
         TaskCompletionSource<bool> releaseOldStop = NewSignal();
         int stopCount = 0;
@@ -416,29 +481,38 @@ public partial class KafkaRebalanceLifecycleTests
         {
             if (Interlocked.Increment(ref stopCount) != 1)
                 return;
+
             oldStopEntered.TrySetResult(true);
+
             releaseOldStop.Task.Wait(Timeout).ShouldBeTrue();
         };
+
         PartitionChannel original = harness.GetChannel(0).ShouldNotBeNull();
+
         List<PartitionChannel> channels = [original];
         Task oldStop = Task.Run(() => harness.Channels.StopReadingAsync(new TopicPartition("topic", 0)));
+
         try
         {
             await oldStopEntered.Task.WaitAsync(Timeout);
+
             for (int assignment = 0; assignment < reassignments; assignment++)
             {
                 Task rebalance = harness.PollAsync(() =>
                 {
                     harness.Revoke(0);
                     harness.Assign(0);
+
                     return null;
                 });
+
                 await PollHarness.WaitUntilAsync(() => Volatile.Read(ref stopCount) >= 2);
                 active.Release.TrySetResult(true);
                 await rebalance;
 
                 PartitionChannel assigned = harness.GetChannel(0).ShouldNotBeNull();
                 assigned.ShouldNotBeSameAs(channels[^1]);
+
                 channels.Add(assigned);
             }
 
@@ -448,12 +522,15 @@ public partial class KafkaRebalanceLifecycleTests
 
             // Inspect identity as well as progress: removal by key can leave an orphan reader alive.
             harness.GetChannel(0).ShouldBeSameAs(replacement);
+
             await harness.DeliverAsync((0, 0), (0, 1));
             await harness.WaitForCommitAsync(0, 2);
+
             harness.UnsafeCommits.ShouldBeEmpty();
 
             // Normal shutdown still removes the registered channel and stops every reader.
             await harness.Channels.StopReadingAsync().WaitAsync(Timeout);
+
             harness.GetChannel(0).ShouldBeNull();
             channels.ShouldAllBe(channel => channel.ReadTask.IsCompletedSuccessfully);
             harness.Errors.ShouldBeEmpty();
@@ -463,6 +540,7 @@ public partial class KafkaRebalanceLifecycleTests
             releaseOldStop.TrySetResult(true);
             active.Release.TrySetResult(true);
             await oldStop.WaitAsync(Timeout);
+
             foreach (PartitionChannel channel in channels)
             {
                 await channel.StopReadingAsync().WaitAsync(Timeout);
@@ -480,15 +558,18 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> entered = NewSignal();
         TaskCompletionSource<bool> release = NewSignal();
 
         void Hold()
         {
             entered.TrySetResult(true);
+
             release.Task.Wait(Timeout).ShouldBeTrue();
         }
 
@@ -496,25 +577,34 @@ public partial class KafkaRebalanceLifecycleTests
 
         // Expose the protected entry point only to gate materialization; the rollback implementation is unchanged.
         Task rollback = Task.Run(async () => await harness.Consumer.RollbackCoreForTestAsync(offsets));
+
         try
         {
             await entered.Task.WaitAsync(Timeout);
+
             Task rebalance = harness.PollAsync(() =>
             {
                 harness.Revoke(0);
+
                 if (reassign)
                     harness.Assign(0);
+
                 return null;
             });
+
             await active.ReaderStopped.Task.WaitAsync(Timeout);
             active.Release.TrySetResult(true);
             await rebalance;
+
             int mutationsBeforeRelease = harness.NativeMutations.Count;
             release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
+
             if (boundary != "filter" || reassign)
                 await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
             harness.NativeMutations.Skip(mutationsBeforeRelease).ShouldBeEmpty($"Old rollback crossed the {boundary} boundary after ownership changed");
+
             if (reassign)
             {
                 await harness.DeliverAsync((0, 0), (0, 1));
@@ -541,9 +631,11 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> entered = NewSignal();
         TaskCompletionSource<bool> release = NewSignal();
         TaskCompletionSource<bool> revoking = NewSignal();
@@ -551,6 +643,7 @@ public partial class KafkaRebalanceLifecycleTests
         void Hold()
         {
             entered.TrySetResult(true);
+
             release.Task.Wait(Timeout).ShouldBeTrue();
         }
 
@@ -561,6 +654,7 @@ public partial class KafkaRebalanceLifecycleTests
 
         Task rollback = Task.Run(async () => await harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0)));
         Task? rebalance = null;
+
         try
         {
             await entered.Task.WaitAsync(Timeout);
@@ -568,20 +662,26 @@ public partial class KafkaRebalanceLifecycleTests
             {
                 revoking.TrySetResult(true);
                 harness.Revoke(0);
+
                 if (reassign)
                     harness.Assign(0);
+
                 return null;
             });
+
             await revoking.Task.WaitAsync(Timeout);
 
             // The callback cannot change ownership while Pause/Seek is executing under the assignment lock.
             rebalance.IsCompleted.ShouldBeFalse();
+
             release.TrySetResult(true);
             active.Release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
             await rebalance;
+
             int mutations = harness.NativeMutations.Count;
             await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
             harness.NativeMutations.Count.ShouldBe(mutations);
 
             if (reassign)
@@ -598,6 +698,7 @@ public partial class KafkaRebalanceLifecycleTests
             release.TrySetResult(true);
             active.Release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
+
             if (rebalance != null)
                 await rebalance.WaitAsync(Timeout);
         }
@@ -610,14 +711,18 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         KafkaOffset offset = ownedOffset
             ? (KafkaOffset)active.Context!.Envelope.BrokerMessageIdentifier
             : new KafkaOffset("topic", 0, 0);
+
         await harness.Consumer.StopAsync();
         await harness.Consumer.RollbackAsync(offset);
+
         harness.NativeMutations.ShouldBeEmpty();
         harness.GetChannel(0).ShouldBeNull();
         harness.CommittedOffset(0).ShouldBe(0);
@@ -633,9 +738,11 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (0, 1));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> entered = NewSignal();
         TaskCompletionSource<bool> release = NewSignal();
         int stoppingCount = 0;
@@ -643,14 +750,19 @@ public partial class KafkaRebalanceLifecycleTests
         {
             if (Interlocked.Increment(ref stoppingCount) != 1)
                 return;
+
             entered.TrySetResult(true);
+
             release.Task.Wait(Timeout).ShouldBeTrue();
         };
+
         Task rollback = Task.Run(async () => await harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0)));
+
         try
         {
             await entered.Task.WaitAsync(Timeout);
             await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
             if (reconnect)
             {
                 await harness.StartAsync(0);
@@ -662,6 +774,7 @@ public partial class KafkaRebalanceLifecycleTests
                     {
                         harness.Revoke(0);
                         harness.Assign(0);
+
                         return null;
                     });
                 }
@@ -670,7 +783,9 @@ public partial class KafkaRebalanceLifecycleTests
             release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
             await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
             harness.Resumes.ShouldBeEmpty();
+
             if (reconnect)
             {
                 await harness.DeliverAsync((0, 0), (0, 1));
@@ -703,12 +818,14 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent, backpressure: 2, autoCommit: autoCommit);
         await harness.StartAsync(0);
+
         ProcessingGate active = harness.Block(0, 0);
         active.IgnoreCancellation = true; // Subscribers may complete successfully after shutdown is requested
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
         await harness.DeliverAsync((0, 1), (0, 2));
         await harness.PollAsync(() => harness.Record(0, 3));
+
         PartitionChannel channel = harness.GetChannel(0)!;
 
         TaskCompletionSource<bool> stoppingReader = NewSignal();
@@ -720,16 +837,19 @@ public partial class KafkaRebalanceLifecycleTests
             stoppingReader.TrySetResult(true);
             allowReaderStop.Task.WaitAsync(Timeout).GetAwaiter().GetResult();
         };
+
         harness.AfterCommit = async delivery =>
         {
             if (delivery.Offset == 0)
                 return;
+
             nextCommitted.TrySetResult(true);
             await finishHandler.Task.WaitAsync(Timeout);
         };
 
         Task stop = Task.Run(async () => await harness.Consumer.StopAsync());
         long storedBeforeStop;
+
         try
         {
             await stoppingReader.Task.WaitAsync(Timeout);
@@ -754,8 +874,10 @@ public partial class KafkaRebalanceLifecycleTests
 
         // Simulate the automatic commit timer as well as manual commits before the next assignment
         harness.Client.Commit();
+
         long replayFrom = harness.CommittedOffset(0);
         await harness.StartAsync(0);
+
         for (long offset = replayFrom; offset < 4; offset++)
         {
             await harness.DeliverAsync((0, offset));
@@ -779,6 +901,7 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(backpressure: 1, parallelism: 1);
         await harness.StartAsync(0, 1, 2);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
@@ -786,8 +909,11 @@ public partial class KafkaRebalanceLifecycleTests
         // Two other readers now wait for the only processing slot.
         await harness.DeliverAsync((1, 0), (2, 0), (0, 1));
         await harness.PollAsync(() => harness.Record(0, 2));
+
         Task barrier = harness.PollAsync(() => null);
+
         barrier.IsCompleted.ShouldBeFalse();
+
         if (rollback)
         {
             await harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0));
@@ -798,7 +924,9 @@ public partial class KafkaRebalanceLifecycleTests
         else
         {
             await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
             harness.CommittedOffset(0).ShouldBe(0);
+
             await harness.StartAsync(0, 1, 2);
         }
 
@@ -807,6 +935,7 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.WaitForCommitAsync(0, 3);
         await harness.WaitForCommitAsync(1, 1);
         await harness.WaitForCommitAsync(2, 1);
+
         harness.UnsafeCommits.ShouldBeEmpty();
         harness.Errors.ShouldBeEmpty();
     }
@@ -817,14 +946,18 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(false, true);
         await harness.StartAsync(0, 1);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (1, 0), (1, 1), (1, 2));
         await active.Started.Task.WaitAsync(Timeout);
+
         Task rebalance = harness.PollAsync(() =>
         {
             harness.Revoke(0);
+
             return null;
         });
+
         await active.ReaderStopped.Task.WaitAsync(Timeout);
         active.Release.TrySetResult(true);
         await rebalance;
@@ -834,7 +967,9 @@ public partial class KafkaRebalanceLifecycleTests
             await harness.DeliverAsync((1, 0), (1, 1), (1, 2), (1, 3));
         else
             await harness.DeliverAsync((1, 3));
+
         await harness.WaitForCommitAsync(1, 4);
+
         harness.Completed.Where(item => item.Partition == 1).Select(item => item.Offset).ShouldBe([0L, 1L, 2L, 3L]);
         harness.UnsafeCommits.ShouldBeEmpty();
     }
@@ -845,9 +980,11 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(false, true);
         await harness.StartAsync(0, 1);
+
         ProcessingGate active = harness.Block(0, 0);
         await harness.DeliverAsync((0, 0), (1, 0));
         await active.Started.Task.WaitAsync(Timeout);
+
         TaskCompletionSource<bool> stopEntered = NewSignal();
         using ManualResetEventSlim releaseStop = new(false);
         int stopCount = 0;
@@ -855,11 +992,14 @@ public partial class KafkaRebalanceLifecycleTests
         {
             if (Interlocked.Increment(ref stopCount) != 1)
                 return;
+
             stopEntered.TrySetResult(true);
+
             releaseStop.Wait(Timeout).ShouldBeTrue();
         };
 
         Task rollback = Task.Run(() => harness.Consumer.RollbackAsync(new KafkaOffset("topic", 0, 0)).AsTask());
+
         try
         {
             await stopEntered.Task.WaitAsync(Timeout);
@@ -867,22 +1007,30 @@ public partial class KafkaRebalanceLifecycleTests
 
             // A second stop finishes and removes A while the original rollback stop is still pending.
             await harness.Channels.StopReadingAsync(new TopicPartition("topic", 0)).WaitAsync(Timeout);
+
             harness.GetChannel(1).ShouldBeNull();
+
             await harness.PollAsync(() =>
             {
                 harness.Revoke(0);
+
                 return null;
             });
 
             PartitionChannel? replacement = harness.GetChannel(1);
+
             replacement.ShouldNotBeNull();
+
             releaseStop.Set();
             await rollback.WaitAsync(Timeout);
             await harness.RollbackRestartObserved.Task.WaitAsync(Timeout);
+
             harness.GetChannel(1).ShouldBeSameAs(replacement);
             harness.Seeks.ShouldContain(new TopicPartitionOffset("topic", 1, 0));
+
             await harness.DeliverAsync((1, 0), (1, 1));
             await harness.WaitForCommitAsync(1, 2);
+
             harness.UnsafeCommits.ShouldBeEmpty();
             harness.Errors.ShouldBeEmpty();
         }
@@ -916,20 +1064,24 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new(independent);
         await harness.StartAsync(0);
+
         ProcessingGate first = harness.Block(0, 0);
         first.SkipCommit = true;
         await harness.DeliverAsync((0, 0));
         await first.Started.Task.WaitAsync(Timeout);
         _output.WriteLine("Original record is blocked; constructing the partial sequence.");
+
         ConsumerPipelineContext original = first.Context!;
         InboundEnvelope envelope = new(original.Envelope, new object());
         using ConsumerPipelineContext services = ConsumerPipelineContextHelper.CreateSubstitute();
         using ConsumerPipelineContext context = new(envelope, harness.Consumer, original.SequenceStore, [], services.ServiceProvider);
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
         context.TransactionManager = transaction;
+
         using Sequence sequence = unbounded ? new UnboundedSequence("partial", context) : new BatchSequence("partial", context);
         context.SetSequence(sequence, true);
         await context.SequenceStore.AddAsync(sequence);
+
         TaskCompletionSource<bool> received = NewSignal();
         IMessageStreamEnumerable<IInboundEnvelope> stream = sequence.CreateStream<IInboundEnvelope>();
         Task reading = Task.Run(async () =>
@@ -939,6 +1091,7 @@ public partial class KafkaRebalanceLifecycleTests
                 await foreach (IInboundEnvelope item in stream)
                 {
                     item.BrokerMessageIdentifier.ShouldBe(envelope.BrokerMessageIdentifier);
+
                     received.TrySetResult(true);
                 }
             }
@@ -947,17 +1100,22 @@ public partial class KafkaRebalanceLifecycleTests
                 // Aborting the real sequence ends the pending stream enumeration.
             }
         });
+
         context.ProcessingTask = reading;
+
         TaskCompletionSource<bool> cleanupEntered = NewSignal();
         TaskCompletionSource<bool> releaseCleanup = NewSignal();
         Task? cleanup = null;
         Exception? failure = null;
+
         try
         {
             await sequence.AddAsync(envelope, null, true).WaitAsync(Timeout);
             await received.Task.WaitAsync(Timeout);
+
             sequence.Length.ShouldBe(1);
             sequence.IsPending.ShouldBeTrue();
+
             first.Release.TrySetResult(true);
             transaction.Aborting.AddHandler(async _ =>
             {
@@ -968,6 +1126,7 @@ public partial class KafkaRebalanceLifecycleTests
             cleanup = sequence.AbortAsync(commit ? SequenceAbortReason.IncompleteSequence : SequenceAbortReason.ConsumerAborted);
             await cleanupEntered.Task.WaitAsync(Timeout);
             _output.WriteLine("Sequence abort reached the transaction gate.");
+
             if (transition == "rebalance")
             {
                 for (int index = 0; index < 2; index++)
@@ -976,6 +1135,7 @@ public partial class KafkaRebalanceLifecycleTests
                     {
                         harness.Revoke(0);
                         harness.Assign(0);
+
                         return null;
                     });
                 }
@@ -983,11 +1143,13 @@ public partial class KafkaRebalanceLifecycleTests
             else
             {
                 await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+
                 if (transition == "reconnect")
                     await harness.StartAsync(0);
             }
 
             _output.WriteLine("Ownership transition completed.");
+
             PartitionChannel? replacement = harness.GetChannel(0);
             releaseCleanup.TrySetResult(true);
             await cleanup.WaitAsync(Timeout);
@@ -996,10 +1158,12 @@ public partial class KafkaRebalanceLifecycleTests
                 $"Cleanup evidence: transition={transition}, unbounded={unbounded}, commit={commit}, " +
                 $"committed={harness.CommittedOffset(0)}, seeks={string.Join(", ", harness.Seeks)}, " +
                 $"resumes={string.Join(", ", harness.Resumes)}, replacement={replacement?.Id}, current={harness.GetChannel(0)?.Id}");
+
             harness.Seeks.ShouldBeEmpty("Old sequence cleanup must not seek the replacement assignment");
             harness.Resumes.ShouldBeEmpty();
             harness.CommittedOffset(0).ShouldBe(0, "The partial old batch was never successfully handled");
             harness.GetChannel(0).ShouldBeSameAs(replacement);
+
             if (transition != "shutdown")
             {
                 await harness.DeliverAsync((0, 0), (0, 1));
@@ -1013,12 +1177,14 @@ public partial class KafkaRebalanceLifecycleTests
             failure = exception;
             _output.WriteLine($"Sequence test failure before fixture disposal: {exception}");
             _output.WriteLine($"Broker state: committed={harness.CommittedOffset(0)}, seeks={string.Join(", ", harness.Seeks)}");
+
             throw;
         }
         finally
         {
             first.Release.TrySetResult(true);
             releaseCleanup.TrySetResult(true);
+
             try
             {
                 await (cleanup ?? sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)).WaitAsync(Timeout);
@@ -1040,10 +1206,12 @@ public partial class KafkaRebalanceLifecycleTests
     {
         await using PollHarness harness = new();
         await harness.StartAsync(0);
+
         ProcessingGate first = harness.Block(0, 0);
         first.SkipCommit = true;
         await harness.DeliverAsync((0, 0));
         await first.Started.Task.WaitAsync(Timeout);
+
         using ConsumerPipelineContext context = first.Context!.Clone();
         ConsumerTransactionManager transaction = new(context, Substitute.For<ISilverbackLogger<ConsumerTransactionManager>>());
         TaskCompletionSource<bool> entered = NewSignal();
@@ -1053,17 +1221,21 @@ public partial class KafkaRebalanceLifecycleTests
             entered.TrySetResult(true);
             await release.Task.WaitAsync(Timeout);
         });
+
         Task rollback = transaction.RollbackAsync(null);
+
         try
         {
             await entered.Task.WaitAsync(Timeout);
             first.Release.TrySetResult(true);
+
             if (transition == "rebalance")
             {
                 await harness.PollAsync(() =>
                 {
                     harness.Revoke(0);
                     harness.Assign(0);
+
                     return null;
                 });
             }
@@ -1075,9 +1247,11 @@ public partial class KafkaRebalanceLifecycleTests
 
             release.TrySetResult(true);
             await rollback.WaitAsync(Timeout);
+
             if (transition == "current")
             {
                 await PollHarness.WaitUntilAsync(() => harness.GetChannel(0) == null);
+
                 harness.GetChannel(0).ShouldBeNull();
             }
             else
@@ -1177,9 +1351,16 @@ public partial class KafkaRebalanceLifecycleTests
 
         private IReadOnlyList<TopicPartition> _assignment = [];
 
-        public PollHarness(bool independent = true, bool cooperative = false, int backpressure = 8, int parallelism = 100, bool autoCommit = false, bool batchPipeline = false)
+        public PollHarness(
+            bool independent = true,
+            bool cooperative = false,
+            int backpressure = 8,
+            int parallelism = 100,
+            bool autoCommit = false,
+            bool batchPipeline = false)
         {
             _cooperative = cooperative;
+
             Client = Substitute.For<IConfluentConsumerWrapper>();
             Client.Initialized.Returns(new AsyncEvent<BrokerClient>());
             Client.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
@@ -1187,16 +1368,19 @@ public partial class KafkaRebalanceLifecycleTests
             Client.Assignment.Returns(_ => _assignment);
             Client.Consume(Arg.Any<TimeSpan>()).Returns(call =>
                 _polls.TryTake(out Func<ConsumeResult<byte[]?, byte[]?>?>? poll, call.Arg<TimeSpan>()) ? poll() : null);
+
             Client.When(client => client.StoreOffset(Arg.Any<TopicPartitionOffset>())).Do(call =>
             {
                 TopicPartitionOffset offset = call.Arg<TopicPartitionOffset>();
                 _stored[offset.Partition.Value] = offset.Offset.Value;
+
                 for (long earlier = 0; earlier < offset.Offset.Value; earlier++)
                 {
                     if (!_completed.ContainsKey((offset.Partition.Value, earlier)))
                         UnsafeStores.Enqueue(offset);
                 }
             });
+
             Client.When(client => client.Commit()).Do(_ =>
             {
                 foreach ((int partition, long offset) in _stored)
@@ -1210,18 +1394,22 @@ public partial class KafkaRebalanceLifecycleTests
                     _committed[partition] = offset;
                 }
             });
+
             Client.When(client => client.Seek(Arg.Any<TopicPartitionOffset>())).Do(call =>
             {
                 BeforeSeek?.Invoke();
                 Seeks.Enqueue(call.Arg<TopicPartitionOffset>());
                 NativeMutations.Enqueue("seek");
             });
+
             Client.When(client => client.Pause(Arg.Any<IEnumerable<TopicPartition>>())).Do(call =>
             {
                 BeforePause?.Invoke();
+
                 if (call.Arg<IEnumerable<TopicPartition>>().Any())
                     NativeMutations.Enqueue("pause");
             });
+
             Client.When(client => client.Resume(Arg.Any<IEnumerable<TopicPartition>>())).Do(call =>
             {
                 foreach (TopicPartition partition in call.Arg<IEnumerable<TopicPartition>>())
@@ -1232,14 +1420,19 @@ public partial class KafkaRebalanceLifecycleTests
 
                 RollbackRestartObserved.TrySetResult(true);
             });
+
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
             behaviors.GetBehaviorsList().Returns([this]);
+
             if (batchPipeline)
             {
                 ServiceCollection services = new();
-                services.AddLogging().AddSilverback()
+                services
+                    .AddLogging()
+                    .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddKafka())
                     .AddDelegateSubscriber<IAsyncEnumerable<IInboundEnvelope<string>>>(HandleBatchAsync);
+
                 services.AddSingleton<IBrokerBehavior>(this);
                 _serviceProvider = services.BuildServiceProvider();
                 behaviors = _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>();
@@ -1249,8 +1442,13 @@ public partial class KafkaRebalanceLifecycleTests
                 Client,
                 new KafkaConsumerConfiguration
                 {
-                    GroupId = "tests", EnableAutoRecovery = false, EnableAutoCommit = autoCommit, CommitOffsetEach = 1,
-                    ProcessPartitionsIndependently = independent, BackpressureLimit = backpressure, MaxDegreeOfParallelism = independent ? parallelism : 1,
+                    GroupId = "tests",
+                    EnableAutoRecovery = false,
+                    EnableAutoCommit = autoCommit,
+                    CommitOffsetEach = 1,
+                    ProcessPartitionsIndependently = independent,
+                    BackpressureLimit = backpressure,
+                    MaxDegreeOfParallelism = independent ? parallelism : 1,
                     PollingTimeout = TimeSpan.FromMilliseconds(10),
                     PartitionAssignmentStrategy = cooperative ? PartitionAssignmentStrategy.CooperativeSticky : null,
                     Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
@@ -1317,6 +1515,7 @@ public partial class KafkaRebalanceLifecycleTests
         public static async Task WaitUntilAsync(Func<bool> condition)
         {
             using CancellationTokenSource timeout = new(Timeout);
+
             while (!condition())
             {
                 await Task.Delay(1, timeout.Token);
@@ -1328,6 +1527,7 @@ public partial class KafkaRebalanceLifecycleTests
             ConcurrentDictionary<TopicPartition, PartitionChannel> channels =
                 (ConcurrentDictionary<TopicPartition, PartitionChannel>)typeof(ConsumerChannelsManager)
                     .GetField("_channels", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(Channels)!;
+
             return channels.GetValueOrDefault(
                 Consumer.Configuration.ProcessPartitionsIndependently
                     ? new TopicPartition("topic", partition)
@@ -1340,6 +1540,7 @@ public partial class KafkaRebalanceLifecycleTests
             await PollAsync(() =>
             {
                 Assign(partitions);
+
                 return null;
             });
         }
@@ -1349,6 +1550,7 @@ public partial class KafkaRebalanceLifecycleTests
             ProcessingGate gate = new();
             _blocked[(partition, offset)] = gate;
             _gates.Add(gate);
+
             return gate;
         }
 
@@ -1361,14 +1563,17 @@ public partial class KafkaRebalanceLifecycleTests
                 {
                     ConsumeResult<byte[]?, byte[]?>? record = poll();
                     done.TrySetResult(true);
+
                     return record;
                 }
                 catch (Exception ex)
                 {
                     done.TrySetException(ex);
+
                     throw;
                 }
             });
+
             return done.Task.WaitAsync(Timeout);
         }
 
@@ -1386,6 +1591,7 @@ public partial class KafkaRebalanceLifecycleTests
         public int Assign(params int[] partitions)
         {
             IReadOnlyCollection<TopicPartitionOffset> accepted = Consumer.OnPartitionsAssigned([.. partitions.Select(partition => new TopicPartitionOffset("topic", partition, CommittedOffset(partition)))]);
+
             foreach (TopicPartitionOffset offset in accepted)
             {
                 _epochs.AddOrUpdate(offset.Partition.Value, 1, (_, epoch) => epoch + 1);
@@ -1394,6 +1600,7 @@ public partial class KafkaRebalanceLifecycleTests
             _assignment = _cooperative
                 ? [.. _assignment.Concat(accepted.Select(offset => offset.TopicPartition)).Distinct()]
                 : [.. accepted.Select(offset => offset.TopicPartition)];
+
             return accepted.Count;
         }
 
@@ -1420,6 +1627,7 @@ public partial class KafkaRebalanceLifecycleTests
         public async Task WaitForCommitAsync(int partition, long offset)
         {
             using CancellationTokenSource timeout = new(Timeout);
+
             while (CommittedOffset(partition) < offset)
             {
                 await Task.Delay(1, timeout.Token);
@@ -1431,6 +1639,7 @@ public partial class KafkaRebalanceLifecycleTests
             if (_serviceProvider != null)
             {
                 await HandleBatchRecordAsync(context, next, cancellationToken);
+
                 return;
             }
 
@@ -1439,6 +1648,7 @@ public partial class KafkaRebalanceLifecycleTests
                 KafkaOffset offset = (KafkaOffset)context.Envelope.BrokerMessageIdentifier;
                 Delivery delivery = new(offset.TopicPartition.Partition.Value, offset.Offset, context.Envelope.Headers.GetValueOrDefault<int>("test-epoch"));
                 Starts.Enqueue(delivery);
+
                 if (_blocked.TryRemove((delivery.Partition, delivery.Offset), out ProcessingGate? gate))
                 {
                     // StopReading cancels the channel token before awaiting sequences. Observe that point without sleeps
@@ -1449,12 +1659,15 @@ public partial class KafkaRebalanceLifecycleTests
                     {
                         gate.ReaderStopped.TrySetResult(true);
                         gate.OnReaderStopped?.Invoke();
+
                         return context;
                     });
+
                     await context.SequenceStore.AddAsync(observer);
                     gate.Context = context;
                     gate.Started.TrySetResult(true);
                     await gate.Release.Task.WaitAsync(Timeout, gate.IgnoreCancellation ? CancellationToken.None : cancellationToken);
+
                     if (gate.SkipCommit)
                         return;
                 }
@@ -1462,6 +1675,7 @@ public partial class KafkaRebalanceLifecycleTests
                 Completed.Enqueue(delivery);
                 _completed[(delivery.Partition, delivery.Offset)] = 0;
                 await Consumer.CommitAsync(offset);
+
                 if (AfterCommit != null)
                     await AfterCommit(delivery);
             }
@@ -1477,6 +1691,7 @@ public partial class KafkaRebalanceLifecycleTests
             await Consumer.StopAsync().AsTask().WaitAsync(Timeout);
             await Task.Run(Consumer.Dispose).WaitAsync(Timeout);
             _polls.Dispose();
+
             if (_serviceProvider != null)
                 await _serviceProvider.DisposeAsync();
         }
@@ -1493,10 +1708,13 @@ public partial class KafkaRebalanceLifecycleTests
         {
             string text = formatter(state, exception);
             Logs.Enqueue(text);
+
             if (text.StartsWith("Stopping processing loop of channel", StringComparison.Ordinal))
                 BeforeChannelStop?.Invoke();
+
             if (text.StartsWith("Skipping rollback restart", StringComparison.Ordinal))
                 RollbackRestartObserved.TrySetResult(true);
+
             if (logLevel >= LogLevel.Error)
                 Errors.Enqueue(formatter(state, exception));
         }
@@ -1505,6 +1723,7 @@ public partial class KafkaRebalanceLifecycleTests
         {
             KafkaOffset offset = (KafkaOffset)context.Envelope.BrokerMessageIdentifier;
             Delivery delivery = new(offset.TopicPartition.Partition.Value, offset.Offset, context.Envelope.Headers.GetValueOrDefault<int>("test-epoch"));
+
             if (_blocked.TryRemove((delivery.Partition, delivery.Offset), out ProcessingGate? gate))
             {
                 gate.Context = context;
@@ -1513,6 +1732,7 @@ public partial class KafkaRebalanceLifecycleTests
             }
 
             await next(context, cancellationToken);
+
             if (AfterBatchRecord != null)
                 await AfterBatchRecord(delivery);
         }
@@ -1520,6 +1740,7 @@ public partial class KafkaRebalanceLifecycleTests
         private async Task HandleBatchAsync(IAsyncEnumerable<IInboundEnvelope<string>> batch)
         {
             int count = 0;
+
             await foreach (IInboundEnvelope<string> envelope in batch)
             {
                 KafkaOffset offset = (KafkaOffset)envelope.BrokerMessageIdentifier;

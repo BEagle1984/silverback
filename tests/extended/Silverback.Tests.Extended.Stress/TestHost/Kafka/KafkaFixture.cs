@@ -21,6 +21,7 @@ public sealed class KafkaFixture : DockerTestsFixture
     {
         using IAdminClient admin = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = BootstrapServers }).Build();
         Stopwatch stopwatch = Stopwatch.StartNew();
+
         while (stopwatch.Elapsed < TimeSpan.FromMinutes(2))
         {
             try

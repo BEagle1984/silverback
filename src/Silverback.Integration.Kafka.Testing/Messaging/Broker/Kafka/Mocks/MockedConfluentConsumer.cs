@@ -543,6 +543,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                 .. Assignment,
                 .. partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition)
             ];
+
             bool assignmentMatches = resultingAssignment.SetEquals(groupAssignment);
 
             assignmentCommitted =

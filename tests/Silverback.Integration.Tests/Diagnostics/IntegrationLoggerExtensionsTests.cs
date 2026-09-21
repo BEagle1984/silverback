@@ -483,6 +483,7 @@ public class IntegrationLoggerExtensionsTests
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "42"));
+
         TestProducerEndpointConfiguration destinationEndpointConfiguration = new("dest");
 
         _silverbackLogger.LogMessageMoved(envelope, destinationEndpointConfiguration);

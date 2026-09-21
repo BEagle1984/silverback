@@ -36,19 +36,27 @@ public class RebalanceTests
     [InlineData("CooperativeSticky", false, false, "batch")]
     [InlineData("CooperativeSticky", true, false, "single")]
     public async Task Rebalance_ShouldReconcileEveryRecord_WhenConsumersJoinAndLeave(
-        string assignor, bool sharedChannel, bool autoCommit, string workload)
+        string assignor,
+        bool sharedChannel,
+        bool autoCommit,
+        string workload)
     {
         await using ContainerTestRun run = new(_output);
         KafkaReconciliation reconciliation = new(run);
         await reconciliation.ProduceAsync(6, 120);
         string[] settings =
         [
-            "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers, "SCENARIO=reconciliation", "ASSIGNOR=" + assignor,
+            "BOOTSTRAP=" + KafkaFixture.ContainerBootstrapServers,
+            "SCENARIO=reconciliation",
+            "ASSIGNOR=" + assignor,
             "SHARED_CHANNEL=" + (sharedChannel ? "true" : "false"),
-            "AUTO_COMMIT=" + (autoCommit ? "true" : "false"), "WORKLOAD=" + workload
+            "AUTO_COMMIT=" + (autoCommit ? "true" : "false"),
+            "WORKLOAD=" + workload
         ];
+
         IContainerService primary = await run.StartAsync("primary", settings);
         await run.WaitForLogAsync(primary, "PROCESSED", TimeSpan.FromSeconds(30));
+
         for (int index = 0; index < 2; index++)
         {
             IContainerService joining = await run.StartAsync("joining-" + index, settings);
@@ -59,8 +67,10 @@ public class RebalanceTests
 
         await reconciliation.WaitForCommitAsync(TimeSpan.FromSeconds(60));
         await run.StopAsync(primary);
+
         ReconciliationReport report = await reconciliation.VerifyAsync();
         _output.WriteLine($"Processed {report.Processed}/{report.Produced}; replays={report.Duplicates}; assignments={report.Assignments}");
+
         report.Violations.ShouldBeEmpty();
         report.Processed.ShouldBe(report.Produced);
     }

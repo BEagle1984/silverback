@@ -52,6 +52,7 @@ public class MockedConsumerGroupTests
         {
             PartitionsAssignmentDelay = TimeSpan.Zero
         };
+
         options.TopicPartitionsCount.Add("topic1", 4);
         options.TopicPartitionsCount.Add("topic2", 4);
         options.TopicPartitionsCount.Add("topic3", 4);
@@ -69,6 +70,7 @@ public class MockedConsumerGroupTests
             assignedCallbacks.Enqueue([.. partitions]);
             return partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset));
         };
+
         unaffectedConsumer.PartitionsRevokedHandler = (_, partitions) =>
         {
             revokedCallbacks.Enqueue([.. partitions.Select(partition => partition.TopicPartition)]);
@@ -93,6 +95,7 @@ public class MockedConsumerGroupTests
 
             MockedConfluentConsumer joiningConsumer =
                 GetConsumer(consumerGroup, topics, options, assignmentStrategy);
+
             joiningConsumer.Subscribe(["topic1", "topic2"]);
             consumerTasks.Add(StartConsumer(joiningConsumer, consumerCancellationTokenSource.Token));
 

@@ -40,7 +40,8 @@ public sealed class ContainerTestRun : IAsyncDisposable
     public async Task<IContainerService> StartAsync(string member, params string[] environment)
     {
         string name = $"{Prefix}-{member}";
-        IContainerService container = new Builder().UseContainer()
+        IContainerService container = new Builder()
+            .UseContainer()
             .UseImage(DockerTestsFixture.WorkerImage)
             .WithName(name)
             .UseNetwork("silverback_default")
@@ -48,29 +49,36 @@ public sealed class ContainerTestRun : IAsyncDisposable
             .UseCapability("SYS_PTRACE")
             .WithEnvironment(["PREFIX=" + Prefix, "MEMBER=" + member, .. environment])
             .Build();
+
         _containers.Add(container);
         await File.WriteAllTextAsync(Path.Combine(Artifacts, $"{member}-settings.json"), JsonSerializer.Serialize(environment));
         await Task.Run(() => container.Start());
         _output.WriteLine($"Started {name}");
+
         return container;
     }
 
     public async Task StopAsync(IContainerService container, bool requireSuccess = true)
     {
         await Task.Run(container.Stop).WaitAsync(TimeSpan.FromSeconds(40));
+
         if (requireSuccess)
             container.GetConfiguration(true).State.ExitCode.ShouldBe(0, $"{container.Name} should shut down gracefully");
+
         _output.WriteLine($"Stopped {container.Name}");
     }
 
     public async Task WaitForLogAsync(IContainerService container, string marker, TimeSpan timeout)
     {
         DateTime deadline = DateTime.UtcNow + timeout;
+
         while (DateTime.UtcNow < deadline)
         {
             container.GetConfiguration(true).State.Running.ShouldBeTrue($"{container.Name} exited before '{marker}'");
+
             if ((await LogsAsync(container)).Contains(marker, StringComparison.Ordinal))
                 return;
+
             await Task.Delay(200);
         }
 
@@ -81,15 +89,22 @@ public sealed class ContainerTestRun : IAsyncDisposable
     {
         if (!container.GetConfiguration(true).State.Running)
             return;
+
         try
         {
             string stacks = await DockerTestsFixture.RunDockerAsync(
                 TimeSpan.FromSeconds(20), "exec", container.Name, "/tools/dotnet-stack", "report", "--process-id", "1");
+
             await File.WriteAllTextAsync(Path.Combine(Artifacts, container.Name + "-stacks.txt"), stacks);
             await DockerTestsFixture.RunDockerAsync(
                 TimeSpan.FromSeconds(40),
-                ["exec", container.Name, "/tools/dotnet-dump", "collect", "--process-id", "1",
-                    "--type", "Mini", "--output", "/evidence/" + container.Name + ".dmp"]);
+                [
+                    "exec", container.Name,
+                    "/tools/dotnet-dump", "collect",
+                    "--process-id", "1",
+                    "--type", "Mini",
+                    "--output", "/evidence/" + container.Name + ".dmp"
+                ]);
         }
         catch (Exception exception)
         {
@@ -101,16 +116,18 @@ public sealed class ContainerTestRun : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         List<Exception> errors = [];
+
         foreach (IContainerService container in _containers.AsEnumerable().Reverse())
         {
             try
             {
                 if (container.GetConfiguration(true).State.Running)
                 {
-                    // A container still running during disposal usually means the assertion failed before normal shutdown.
+                    // A container still running during disposal usually means the assertion failed before normal shutdown
                     await CaptureDiagnosticsAsync(container);
                     await StopAsync(container, false);
                 }
+
                 await File.WriteAllTextAsync(Path.Combine(Artifacts, $"{container.Name}.log"), await LogsAsync(container));
                 await File.WriteAllTextAsync(
                     Path.Combine(Artifacts, $"{container.Name}-inspect.json"),

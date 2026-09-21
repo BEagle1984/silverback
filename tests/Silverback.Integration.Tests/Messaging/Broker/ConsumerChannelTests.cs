@@ -34,14 +34,17 @@ public class ConsumerChannelTests
     {
         using ConsumerChannel<TestMessage> channel = new(10, "test", Substitute.For<ISilverbackLogger>());
         Guid instanceId = channel.InstanceId;
+
         channel.StartReading().ShouldBeTrue();
 
         Task stop = channel.StopReadingAsync();
         await channel.NotifyReadingStoppedAsync(false);
         await stop;
+
         channel.StartReading().ShouldBeTrue();
 
         channel.InstanceId.ShouldBe(instanceId);
+
         await channel.NotifyReadingStoppedAsync(false);
     }
 
@@ -133,6 +136,7 @@ public class ConsumerChannelTests
     {
         using ConsumerChannel<int> channel = new(capacity, "test", Substitute.For<ISilverbackLogger>());
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(10));
+
         for (int value = 0; value < capacity; value++)
         {
             await channel.WriteAsync(value, timeout.Token);
@@ -142,15 +146,20 @@ public class ConsumerChannelTests
         {
             using CancellationTokenSource cancellation = new();
             Task write = channel.WriteAsync(value, cancellation.Token).AsTask();
+
             write.IsCompleted.ShouldBeFalse();
+
             await cancellation.CancelAsync();
             await Should.ThrowAsync<OperationCanceledException>(async () => await write.WaitAsync(timeout.Token));
             await channel.WriteOverflowAsync(value);
         }
 
         Task nextWrite = channel.WriteAsync(capacity + overflowCount, timeout.Token).AsTask();
+
         nextWrite.IsCompleted.ShouldBeFalse();
+
         int[] actual = new int[capacity + overflowCount + 1];
+
         for (int index = 0; index < actual.Length; index++)
         {
             actual[index] = await channel.ReadAsync().AsTask().WaitAsync(timeout.Token);
@@ -190,12 +199,14 @@ public class ConsumerChannelTests
         try
         {
             int[] actual = new int[120];
+
             for (int index = 0; index < actual.Length; index++)
             {
                 actual[index] = await channel.ReadAsync().AsTask().WaitAsync(timeout.Token);
             }
 
             await writer.WaitAsync(timeout.Token);
+
             for (int index = 0; index < actual.Length; index++)
             {
                 actual[index].ShouldBe(index);
@@ -204,6 +215,7 @@ public class ConsumerChannelTests
         finally
         {
             await timeout.CancelAsync();
+
             try
             {
                 await writer;
@@ -221,13 +233,16 @@ public class ConsumerChannelTests
         using ConsumerChannel<int> channel = new(1, "test", Substitute.For<ISilverbackLogger>());
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(10));
         await channel.WriteOverflowAsync(1);
+
         Task pendingWrite = channel.WriteAsync(2, timeout.Token).AsTask();
+
         pendingWrite.IsCompleted.ShouldBeFalse();
 
         channel.Reset();
 
         await Should.ThrowAsync<ChannelClosedException>(async () => await pendingWrite.WaitAsync(timeout.Token));
         await channel.WriteAsync(3, timeout.Token);
+
         (await channel.ReadAsync()).ShouldBe(3);
     }
 
@@ -289,6 +304,7 @@ public class ConsumerChannelTests
         TestMessage nextMessage = new();
 
         Task<TestMessage> pendingRead = channel.ReadAsync().AsTask();
+
         pendingRead.IsCompleted.ShouldBeFalse();
 
         // Reproduce a canceled Kafka write being redirected to overflow after the reader is already waiting.
@@ -297,10 +313,12 @@ public class ConsumerChannelTests
         try
         {
             TestMessage readMessage = await pendingRead.WaitAsync(TimeSpan.FromSeconds(2));
+
             readMessage.ShouldBeSameAs(overflowMessage);
 
             using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(2));
             await channel.WriteAsync(nextMessage, timeout.Token);
+
             (await channel.ReadAsync()).ShouldBeSameAs(nextMessage);
         }
         finally
@@ -373,23 +391,31 @@ public class ConsumerChannelTests
         TestMessage buffered = new();
         TestMessage waiting = new();
         await channel.WriteAsync(buffered, CancellationToken.None);
+
         if (overflow)
             await channel.WriteOverflowAsync(new TestMessage());
+
         using CancellationTokenSource cancellation = new();
         Task writer = channel.WriteAsync(waiting, cancellation.Token).AsTask();
+
         writer.IsCompleted.ShouldBeFalse();
 
         await cancellation.CancelAsync();
         await Should.ThrowAsync<OperationCanceledException>(async () => await writer.WaitAsync(TimeSpan.FromSeconds(2)));
         await channel.StopReadingAsync().WaitAsync(TimeSpan.FromSeconds(2));
         channel.Reset();
+
         channel.StartReading().ShouldBeTrue();
+
         try
         {
             // A reset discards both queues; Kafka must redeliver every uncommitted record.
             await channel.WriteAsync(buffered, CancellationToken.None);
+
             (await channel.ReadAsync()).ShouldBeSameAs(buffered);
+
             await channel.WriteAsync(waiting, CancellationToken.None);
+
             (await channel.ReadAsync()).ShouldBeSameAs(waiting);
         }
         finally
