@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using NSubstitute;
 using Shouldly;
@@ -133,7 +134,9 @@ public class ConsumerChannelTests
         using ConsumerChannel<int> channel = new(capacity, "test", Substitute.For<ISilverbackLogger>());
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(10));
         for (int value = 0; value < capacity; value++)
+        {
             await channel.WriteAsync(value, timeout.Token);
+        }
 
         for (int value = capacity; value < capacity + overflowCount; value++)
         {
@@ -149,11 +152,16 @@ public class ConsumerChannelTests
         nextWrite.IsCompleted.ShouldBeFalse();
         int[] actual = new int[capacity + overflowCount + 1];
         for (int index = 0; index < actual.Length; index++)
+        {
             actual[index] = await channel.ReadAsync().AsTask().WaitAsync(timeout.Token);
+        }
+
         await nextWrite.WaitAsync(timeout.Token);
 
         for (int index = 0; index < actual.Length; index++)
+        {
             actual[index].ShouldBe(index);
+        }
     }
 
     [Theory]
@@ -183,10 +191,15 @@ public class ConsumerChannelTests
         {
             int[] actual = new int[120];
             for (int index = 0; index < actual.Length; index++)
+            {
                 actual[index] = await channel.ReadAsync().AsTask().WaitAsync(timeout.Token);
+            }
+
             await writer.WaitAsync(timeout.Token);
             for (int index = 0; index < actual.Length; index++)
+            {
                 actual[index].ShouldBe(index);
+            }
         }
         finally
         {
@@ -213,7 +226,7 @@ public class ConsumerChannelTests
 
         channel.Reset();
 
-        await Should.ThrowAsync<System.Threading.Channels.ChannelClosedException>(async () => await pendingWrite.WaitAsync(timeout.Token));
+        await Should.ThrowAsync<ChannelClosedException>(async () => await pendingWrite.WaitAsync(timeout.Token));
         await channel.WriteAsync(3, timeout.Token);
         (await channel.ReadAsync()).ShouldBe(3);
     }
@@ -342,7 +355,7 @@ public class ConsumerChannelTests
 
         try
         {
-            await Should.ThrowAsync<System.Threading.Channels.ChannelClosedException>(async () =>
+            await Should.ThrowAsync<ChannelClosedException>(async () =>
                 await pendingRead.WaitAsync(TimeSpan.FromSeconds(2)));
         }
         finally

@@ -601,7 +601,7 @@ internal static class IntegrationLoggerExtensions
 
         object?[] args =
         [
-            ..argumentsProvider?.Invoke() ?? [],
+            .. argumentsProvider?.Invoke() ?? [],
             consumer?.DisplayName ?? string.Empty
         ];
 
@@ -626,7 +626,7 @@ internal static class IntegrationLoggerExtensions
 
         object?[] args =
         [
-            ..argumentsProvider?.Invoke() ?? [],
+            .. argumentsProvider?.Invoke() ?? [],
             envelope.Endpoint.DisplayName,
             envelope.BrokerMessageIdentifier.ToLogString()
         ];
@@ -653,7 +653,7 @@ internal static class IntegrationLoggerExtensions
 
         object?[] args =
         [
-            ..argumentsProvider?.Invoke() ?? [],
+            .. argumentsProvider?.Invoke() ?? [],
             envelope.Endpoint.DisplayName,
             envelope.BrokerMessageIdentifier.ToLogString()
         ];

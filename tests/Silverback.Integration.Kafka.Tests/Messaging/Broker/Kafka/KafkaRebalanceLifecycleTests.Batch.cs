@@ -93,7 +93,10 @@ public partial class KafkaRebalanceLifecycleTests
         harness.CompletedBatchSizes.ShouldBe([10]);
         await harness.StartAsync(0);
         for (long offset = replayFrom; offset < 20; offset++)
+        {
             await harness.DeliverAsync((0, offset));
+        }
+
         await PollHarness.WaitUntilAsync(() => harness.StoredOffset(0) == 20);
         harness.Client.Commit();
 

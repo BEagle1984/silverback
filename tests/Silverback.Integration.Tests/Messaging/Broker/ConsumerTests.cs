@@ -111,21 +111,21 @@ public class ConsumerTests
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviors)
         : Consumer<TestOffset>("test", client, [], behaviors, Substitute.For<IServiceProvider>(), Substitute.For<ISilverbackLogger<IConsumer>>())
     {
+        public List<TestOffset?> StopRequests { get; } = [];
+
+        public bool Started => IsStarted;
+
+        public bool Stopping => IsStopping;
+
         public TestOffset CurrentIdentifier { get; set; } = new();
 
         public Task StartGate { get; set; } = Task.CompletedTask;
 
         public Task DrainGate { get; set; } = Task.CompletedTask;
 
-        public List<TestOffset?> StopRequests { get; } = [];
-
         public int StopCalls { get; private set; }
 
         public int DrainCalls { get; private set; }
-
-        public bool Started => IsStarted;
-
-        public bool Stopping => IsStopping;
 
         protected override async ValueTask StartCoreAsync() => await StartGate;
 

@@ -229,50 +229,50 @@ public class CooperativeStickyRebalanceStrategyTests
         RebalanceResult result = new CooperativeStickyRebalanceStrategy().Rebalance(partitions, partitionAssignments);
 
         result.RevokedPartitions[consumer1].ShouldBe(
-        [
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3)
-        ],
-        true);
+            [
+                new TopicPartition("topic1", 2),
+                new TopicPartition("topic1", 3)
+            ],
+            true);
         result.RevokedPartitions[consumer2].ShouldBe(
-        [
-            new TopicPartition("topic3", 2),
-            new TopicPartition("topic3", 3)
-        ],
-        true);
+            [
+                new TopicPartition("topic3", 2),
+                new TopicPartition("topic3", 3)
+            ],
+            true);
         result.AssignedPartitions[consumer3].ShouldBe(
-        [
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic3", 2),
-            new TopicPartition("topic3", 3)
-        ],
-        true);
+            [
+                new TopicPartition("topic1", 2),
+                new TopicPartition("topic1", 3),
+                new TopicPartition("topic3", 2),
+                new TopicPartition("topic3", 3)
+            ],
+            true);
 
         partitionAssignments[0].Partitions.ShouldBe(
-        [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic2", 0),
-            new TopicPartition("topic2", 1)
-        ],
-        true);
+            [
+                new TopicPartition("topic1", 0),
+                new TopicPartition("topic1", 1),
+                new TopicPartition("topic2", 0),
+                new TopicPartition("topic2", 1)
+            ],
+            true);
         partitionAssignments[1].Partitions.ShouldBe(
-        [
-            new TopicPartition("topic2", 2),
-            new TopicPartition("topic2", 3),
-            new TopicPartition("topic3", 0),
-            new TopicPartition("topic3", 1)
-        ],
-        true);
+            [
+                new TopicPartition("topic2", 2),
+                new TopicPartition("topic2", 3),
+                new TopicPartition("topic3", 0),
+                new TopicPartition("topic3", 1)
+            ],
+            true);
         partitionAssignments[2].Partitions.ShouldBe(
-        [
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic3", 2),
-            new TopicPartition("topic3", 3)
-        ],
-        true);
+            [
+                new TopicPartition("topic1", 2),
+                new TopicPartition("topic1", 3),
+                new TopicPartition("topic3", 2),
+                new TopicPartition("topic3", 3)
+            ],
+            true);
     }
 
     [Fact]
