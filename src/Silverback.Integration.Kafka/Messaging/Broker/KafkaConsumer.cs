@@ -170,8 +170,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         lock (_assignmentLock)
         {
             HashSet<TopicPartition> revoked = [.. topicPartitionOffsets.Select(offset => offset.TopicPartition)];
-            channels = [.. topicPartitionOffsets.Select(offset => _channelsManager.GetChannel(offset.TopicPartition))
-                .OfType<PartitionChannel>().Distinct()];
+            channels =
+            [
+                .. topicPartitionOffsets.Select(offset => _channelsManager.GetChannel(offset.TopicPartition))
+                    .OfType<PartitionChannel>().Distinct()
+            ];
 
             foreach (TopicPartition partition in revoked)
             {
@@ -184,7 +187,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (_offsets != null && topicPartitionOffsets.Count > 0)
             {
                 foreach (KafkaOffset offset in _offsets.GetRollbackOffSets().Where(offset => !revoked.Contains(offset.TopicPartition) &&
-                                                                                           IsNotRevoked(offset.TopicPartition)))
+                                                                                             IsNotRevoked(offset.TopicPartition)))
                 {
                     long version = IncrementAssignmentVersion(offset.TopicPartition);
                     _rollingBackPartitions.Add(offset.TopicPartition);
@@ -208,7 +211,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 Client.Commit();
 
             foreach (TopicPartitionOffset offset in topicPartitionOffsets)
+            {
                 _offsets?.UntrackPartition(offset.TopicPartition);
+            }
 
             foreach (RollbackPartition partition in retained.Where(IsCurrentRollback))
             {
@@ -292,7 +297,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         lock (_assignmentLock)
         {
             foreach (TopicPartition partition in _assignmentVersions.Keys)
+            {
                 _assignmentVersions[partition]++;
+            }
         }
 
         _consumeLoopHandler.StopAsync().FireAndForget();
@@ -360,9 +367,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         HashSet<PartitionChannel> channels = [];
         lock (_assignmentLock)
         {
-            KafkaOffset[] currentOffsets = [.. requestedOffsets.Where(offset =>
-                IsCurrentOffset(offset) && versions.TryGetValue(offset.TopicPartition, out long version) &&
-                _assignmentVersions.GetValueOrDefault(offset.TopicPartition) == version)];
+            KafkaOffset[] currentOffsets =
+            [
+                .. requestedOffsets.Where(offset =>
+                    IsCurrentOffset(offset) && versions.TryGetValue(offset.TopicPartition, out long version) &&
+                    _assignmentVersions.GetValueOrDefault(offset.TopicPartition) == version)
+            ];
 
             // An old shared sequence must never expand its rollback to a replacement channel's offsets.
             if (currentOffsets.Length == 0 || _offsets != null && currentOffsets.Length != requestedOffsets.Length)

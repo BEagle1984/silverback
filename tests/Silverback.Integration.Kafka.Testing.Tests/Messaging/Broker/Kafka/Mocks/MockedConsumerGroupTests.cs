@@ -46,8 +46,7 @@ public class MockedConsumerGroupTests
         observation.FinalAssignment.ShouldBe(observation.InitialAssignment, true);
     }
 
-    private static async Task<RebalanceObservation> ObserveDisjointConsumerDuringJoinAsync(
-        PartitionAssignmentStrategy assignmentStrategy)
+    private static async Task<RebalanceObservation> ObserveDisjointConsumerDuringJoinAsync(PartitionAssignmentStrategy assignmentStrategy)
     {
         MockedKafkaOptions options = new()
         {

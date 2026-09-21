@@ -60,12 +60,12 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
                     continue;
 
                 if (MoveAssignedPartition(
-                        assignment,
-                        partitionAssignments,
-                        topicPartitionsSet,
-                        partitionsPerConsumer,
-                        assignedPartitions,
-                        revokedPartitions))
+                    assignment,
+                    partitionAssignments,
+                    topicPartitionsSet,
+                    partitionsPerConsumer,
+                    assignedPartitions,
+                    revokedPartitions))
                 {
                     continue;
                 }
@@ -126,8 +126,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         IReadOnlyList<PartitionAssignment> partitionAssignments,
         IReadOnlySet<TopicPartition> topicPartitions,
         int partitionsPerConsumer) =>
-        partitionAssignments.FirstOrDefault(
-            assignment => CountAssignedPartitions(assignment, topicPartitions) > partitionsPerConsumer);
+        partitionAssignments.FirstOrDefault(assignment => CountAssignedPartitions(assignment, topicPartitions) > partitionsPerConsumer);
 
     private static int CountAssignedPartitions(
         PartitionAssignment assignment,

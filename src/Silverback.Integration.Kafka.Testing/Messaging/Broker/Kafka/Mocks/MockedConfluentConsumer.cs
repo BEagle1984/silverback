@@ -436,6 +436,21 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
+    [SuppressMessage("Style", "SA1204:Static members should appear before non-static members", Justification = "Used by the delegating constructor.")]
+    private static IInternalMockedConsumerGroup GetConsumerGroup(
+        ConsumerConfig config,
+        IMockedConsumerGroupsCollection consumerGroups)
+    {
+        Check.NotNull(config, nameof(config));
+        Check.NotNull(consumerGroups, nameof(consumerGroups));
+
+        IMockedConsumerGroup consumerGroup = !string.IsNullOrEmpty(config.GroupId)
+            ? consumerGroups.Get(config)
+            : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers);
+
+        return (IInternalMockedConsumerGroup)consumerGroup;
+    }
+
     private void RevokePartitions(IReadOnlyCollection<TopicPartition> topicPartitions)
     {
         PartitionsRevokedHandler?.Invoke(
@@ -767,20 +782,5 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         if (string.IsNullOrEmpty(Config.GroupId))
             throw new ArgumentException("'group.id' configuration parameter is required and was not specified.");
-    }
-
-    [SuppressMessage("Style", "SA1204:Static members should appear before non-static members", Justification = "Used by the delegating constructor.")]
-    private static IInternalMockedConsumerGroup GetConsumerGroup(
-        ConsumerConfig config,
-        IMockedConsumerGroupsCollection consumerGroups)
-    {
-        Check.NotNull(config, nameof(config));
-        Check.NotNull(consumerGroups, nameof(consumerGroups));
-
-        IMockedConsumerGroup consumerGroup = !string.IsNullOrEmpty(config.GroupId)
-            ? consumerGroups.Get(config)
-            : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers);
-
-        return (IInternalMockedConsumerGroup)consumerGroup;
     }
 }
