@@ -13,15 +13,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Collections;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Consuming.Transaction;
@@ -29,12 +32,13 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Unbounded;
+using Silverback.Messaging.Serialization;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
 
-public class KafkaRebalanceLifecycleTests
+public partial class KafkaRebalanceLifecycleTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
@@ -1113,10 +1117,11 @@ public class KafkaRebalanceLifecycleTests
         IConfluentConsumerWrapper client,
         KafkaConsumerConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviors,
-        ISilverbackLogger<KafkaConsumer> logger)
+        ISilverbackLogger<KafkaConsumer> logger,
+        IServiceProvider? serviceProvider = null)
         : KafkaConsumer("consumer", client, configuration, behaviors,
             Substitute.For<IBrokerClientCallbacksInvoker>(), Substitute.For<IKafkaOffsetStoreFactory>(),
-            Substitute.For<IServiceProvider>(), logger)
+            serviceProvider ?? Substitute.For<IServiceProvider>(), logger)
     {
         public ValueTask RollbackCoreForTestAsync(IReadOnlyCollection<KafkaOffset> offsets) => RollbackCoreAsync(offsets);
     }
@@ -1153,9 +1158,10 @@ public class KafkaRebalanceLifecycleTests
         private readonly ConcurrentDictionary<int, long> _committed = new();
         private readonly ConcurrentDictionary<(int Partition, long Offset), byte> _completed = new();
         private readonly bool _cooperative;
+        private readonly ServiceProvider? _serviceProvider;
         private IReadOnlyList<TopicPartition> _assignment = [];
 
-        public PollHarness(bool independent = true, bool cooperative = false, int backpressure = 8, int parallelism = 100, bool autoCommit = false)
+        public PollHarness(bool independent = true, bool cooperative = false, int backpressure = 8, int parallelism = 100, bool autoCommit = false, bool batchPipeline = false)
         {
             _cooperative = cooperative;
             Client = Substitute.For<IConfluentConsumerWrapper>();
@@ -1211,6 +1217,16 @@ public class KafkaRebalanceLifecycleTests
             });
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
             behaviors.GetBehaviorsList().Returns([this]);
+            if (batchPipeline)
+            {
+                ServiceCollection services = new();
+                services.AddLogging().AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddKafka())
+                    .AddDelegateSubscriber<IAsyncEnumerable<IInboundEnvelope<string>>>(HandleBatchAsync);
+                services.AddSingleton<IBrokerBehavior>(this);
+                _serviceProvider = services.BuildServiceProvider();
+                behaviors = _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>();
+            }
             Consumer = new HarnessConsumer(
                 Client,
                 new KafkaConsumerConfiguration
@@ -1224,13 +1240,15 @@ public class KafkaRebalanceLifecycleTests
                         new KafkaConsumerEndpointConfiguration
                         {
                             Batch = new BatchSettings { Size = 10 },
+                            Deserializer = new JsonMessageDeserializer<string>(),
                             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
                                 [new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)])
                         }
                     ])
                 },
                 behaviors,
-                this);
+                this,
+                _serviceProvider);
         }
 
         public HarnessConsumer Consumer { get; }
@@ -1244,6 +1262,10 @@ public class KafkaRebalanceLifecycleTests
         public Action? BeforeChannelStop { get; set; }
 
         public Func<Delivery, Task>? AfterCommit { get; set; }
+
+        public Func<Delivery, Task>? AfterBatchRecord { get; set; }
+
+        public ConcurrentQueue<int> CompletedBatchSizes { get; } = new();
 
         public Action? BeforePause { get; set; }
 
@@ -1361,7 +1383,7 @@ public class KafkaRebalanceLifecycleTests
             TopicPartitionOffset = new TopicPartitionOffset("topic", partition, offset),
             Message = new Message<byte[]?, byte[]?>
             {
-                Value = [1],
+                Value = _serviceProvider == null ? [1] : Encoding.UTF8.GetBytes("\"message\""),
                 Headers = [new Header("test-epoch", Encoding.UTF8.GetBytes(_epochs[partition].ToString(CultureInfo.InvariantCulture)))]
             }
         };
@@ -1379,6 +1401,12 @@ public class KafkaRebalanceLifecycleTests
 
         public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
         {
+            if (_serviceProvider != null)
+            {
+                await HandleBatchRecordAsync(context, next, cancellationToken);
+                return;
+            }
+
             using (context)
             {
                 KafkaOffset offset = (KafkaOffset)context.Envelope.BrokerMessageIdentifier;
@@ -1419,6 +1447,8 @@ public class KafkaRebalanceLifecycleTests
             await Consumer.StopAsync().AsTask().WaitAsync(Timeout);
             await Task.Run(Consumer.Dispose).WaitAsync(Timeout);
             _polls.Dispose();
+            if (_serviceProvider != null)
+                await _serviceProvider.DisposeAsync();
         }
 
         public bool IsEnabled(LogEvent logEvent) => true;
@@ -1439,6 +1469,38 @@ public class KafkaRebalanceLifecycleTests
                 RollbackRestartObserved.TrySetResult(true);
             if (logLevel >= LogLevel.Error)
                 Errors.Enqueue(formatter(state, exception));
+        }
+
+        private async ValueTask HandleBatchRecordAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            KafkaOffset offset = (KafkaOffset)context.Envelope.BrokerMessageIdentifier;
+            Delivery delivery = new(offset.TopicPartition.Partition.Value, offset.Offset, context.Envelope.Headers.GetValueOrDefault<int>("test-epoch"));
+            if (_blocked.TryRemove((delivery.Partition, delivery.Offset), out ProcessingGate? gate))
+            {
+                gate.Context = context;
+                gate.Started.TrySetResult(true);
+                await gate.Release.Task.WaitAsync(Timeout, gate.IgnoreCancellation ? CancellationToken.None : cancellationToken);
+            }
+
+            await next(context, cancellationToken);
+            if (AfterBatchRecord != null)
+                await AfterBatchRecord(delivery);
+        }
+
+        private async Task HandleBatchAsync(IAsyncEnumerable<IInboundEnvelope<string>> batch)
+        {
+            int count = 0;
+            await foreach (IInboundEnvelope<string> envelope in batch)
+            {
+                KafkaOffset offset = (KafkaOffset)envelope.BrokerMessageIdentifier;
+                Delivery delivery = new(offset.TopicPartition.Partition.Value, offset.Offset, envelope.Headers.GetValueOrDefault<int>("test-epoch"));
+                Starts.Enqueue(delivery);
+                Completed.Enqueue(delivery);
+                _completed[(delivery.Partition, delivery.Offset)] = 0;
+                count++;
+            }
+
+            CompletedBatchSizes.Enqueue(count);
         }
     }
 }
