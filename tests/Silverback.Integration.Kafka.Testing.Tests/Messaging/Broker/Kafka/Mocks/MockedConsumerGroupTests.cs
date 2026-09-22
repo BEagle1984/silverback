@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Testing.Messaging.Broker.Kafka.Mocks;
 
-public class MockedConsumerGroupTests
+public partial class MockedConsumerGroupTests
 {
     private const string BootstrapServers = "PLAINTEXT://mock";
 
