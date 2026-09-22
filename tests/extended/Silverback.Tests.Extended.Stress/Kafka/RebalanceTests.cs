@@ -35,6 +35,9 @@ public class RebalanceTests
     [InlineData("", false, false, "batch")]
     [InlineData("CooperativeSticky", false, false, "batch")]
     [InlineData("CooperativeSticky", true, false, "single")]
+    [InlineData("CooperativeSticky", true, true, "single")]
+    [InlineData("CooperativeSticky", true, false, "batch")]
+    [InlineData("CooperativeSticky", true, true, "batch")]
     public async Task Rebalance_ShouldReconcileEveryRecord_WhenConsumersJoinAndLeave(
         string assignor,
         bool sharedChannel,
@@ -69,9 +72,13 @@ public class RebalanceTests
         await run.StopAsync(primary);
 
         ReconciliationReport report = await reconciliation.VerifyAsync();
-        _output.WriteLine($"Processed {report.Processed}/{report.Produced}; replays={report.Duplicates}; assignments={report.Assignments}");
+        _output.WriteLine(
+            $"Processed {report.Processed}/{report.Produced}; replays={report.Duplicates}; assignments={report.Assignments}; " +
+            $"channels={report.ProcessingChannels}; same-assignment replays={report.SameAssignmentReplays}; commits={report.CommitObservations}");
 
         report.Violations.ShouldBeEmpty();
         report.Processed.ShouldBe(report.Produced);
+        report.ProcessingChannels.ShouldBeGreaterThan(0);
+        report.CommitObservations.ShouldBeGreaterThan(0);
     }
 }

@@ -5,4 +5,13 @@ using System.Collections.Generic;
 
 namespace Silverback.Tests.Extended.Stress.TestHost.Kafka;
 
-public sealed record ReconciliationReport(int Produced, int Processed, int Duplicates, int Assignments, int Revocations, IReadOnlyList<string> Violations);
+public sealed record ReconciliationReport(
+    int Produced,
+    int Processed,
+    int Duplicates,
+    int Assignments,
+    int Revocations,
+    int ProcessingChannels,
+    int SameAssignmentReplays,
+    int CommitObservations,
+    IReadOnlyList<string> Violations);

@@ -3,4 +3,4 @@
 
 namespace Silverback.Tests.Extended.Shared.Kafka;
 
-public sealed record ProcessingReceipt(string Kind, string Member, int Epoch, int Partition, int Sequence, long Offset);
+public sealed record ProcessingReceipt(string Kind, string Member, int Epoch, int Partition, int Sequence, long Offset, long ChannelId = 0);
