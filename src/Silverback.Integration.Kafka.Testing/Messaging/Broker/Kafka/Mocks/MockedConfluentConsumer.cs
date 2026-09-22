@@ -356,6 +356,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         IsDisposed = true;
     }
 
+    internal bool TryGetAssignment(out IReadOnlyCollection<TopicPartition> assignment)
+    {
+        lock (_assignmentStateLock)
+        {
+            assignment = _partitionsAssigned ? [.. Assignment] : [];
+
+            return _partitionsAssigned;
+        }
+    }
+
     internal void OnRebalancing()
     {
         lock (_assignmentStateLock)

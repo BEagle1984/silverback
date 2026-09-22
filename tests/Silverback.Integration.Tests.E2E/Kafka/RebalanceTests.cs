@@ -33,6 +33,7 @@ public class RebalanceTests : KafkaTests
     }
 
     [Theory]
+    [InlineData(0)]
     [InlineData(10)]
     [InlineData(25)]
     public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingDefaultAssignmentStrategy(int assignmentDelayMilliseconds)
@@ -82,6 +83,7 @@ public class RebalanceTests : KafkaTests
         await consumers[1].Client.ConnectAsync();
 
         // Connecting schedules the rebalance; publish the next wave only after assignment completes
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
 
         consumers[0].Client.Assignment.Count.ShouldBe(3);
@@ -107,6 +109,7 @@ public class RebalanceTests : KafkaTests
     }
 
     [Theory]
+    [InlineData(0)]
     [InlineData(10)]
     [InlineData(25)]
     public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingCooperativeAssignmentStrategy(int assignmentDelayMilliseconds)
@@ -158,6 +161,7 @@ public class RebalanceTests : KafkaTests
         await consumers[1].Client.ConnectAsync();
 
         // Connecting schedules the rebalance; publish the next wave only after assignment completes
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
 
         consumers[0].Client.Assignment.Count.ShouldBe(3);

@@ -19,6 +19,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     private static readonly CooperativeStickyRebalanceStrategy CooperativeStickyRebalanceStrategy = new();
 
+    // Assignment reads must remain possible while a rebalance holds the subscriptions semaphore
+    private readonly System.Threading.Lock _stateLock = new();
+
     private readonly Dictionary<IMockedConfluentConsumer, PartitionAssignment> _partitionAssignments = [];
 
     private readonly List<ConsumerSubscription> _subscriptions = [];
@@ -33,6 +36,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     private readonly SemaphoreSlim _subscriptionsChangeSemaphore = new(1, 1);
 
+    private volatile bool _isRebalancing = true;
+
+    private volatile bool _isRebalanceScheduled;
+
+    // Invalidate drain checks that inspected an older group snapshot
+    private long _stateVersion;
+
     public MockedConsumerGroup(string groupId, string bootstrapServers, IInMemoryTopicCollection topicCollection)
     {
         GroupId = Check.NotNull(groupId, nameof(groupId));
@@ -46,9 +56,9 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     public IReadOnlyCollection<TopicPartitionOffset> CommittedOffsets => _committedOffsets.Values.AsReadOnlyCollection();
 
-    public bool IsRebalancing { get; private set; } = true;
+    public bool IsRebalancing => _isRebalancing;
 
-    public bool IsRebalanceScheduled { get; private set; }
+    public bool IsRebalanceScheduled => _isRebalanceScheduled;
 
     public void Subscribe(IMockedConfluentConsumer consumer, IEnumerable<string> topics)
     {
@@ -56,16 +66,20 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             _subscriptionsChangeSemaphore.Wait();
 
-            UnsubscribeCore(consumer);
-
-            foreach (string topic in topics)
+            lock (_stateLock)
             {
-                _subscriptions.Add(new ConsumerSubscription((MockedConfluentConsumer)consumer, topic));
+                UnsubscribeCore(consumer);
+
+                foreach (string topic in topics)
+                {
+                    _subscriptions.Add(new ConsumerSubscription((MockedConfluentConsumer)consumer, topic));
+                }
+
+                _subscribedConsumers.Add(new SubscribedConsumer((MockedConfluentConsumer)consumer));
+
+                _stateVersion++;
+                Rebalance();
             }
-
-            _subscribedConsumers.Add(new SubscribedConsumer((MockedConfluentConsumer)consumer));
-
-            Rebalance();
         }
         finally
         {
@@ -79,9 +93,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             _subscriptionsChangeSemaphore.Wait();
 
-            UnsubscribeCore(consumer);
+            lock (_stateLock)
+            {
+                UnsubscribeCore(consumer);
 
-            Rebalance();
+                _stateVersion++;
+                Rebalance();
+            }
         }
         finally
         {
@@ -95,18 +113,22 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             _subscriptionsChangeSemaphore.Wait();
 
-            UnassignCore(consumer);
-
-            _partitionAssignments[consumer] = new ManualPartitionAssignment((MockedConfluentConsumer)consumer);
-
-            foreach (TopicPartition topicPartition in partitions)
+            lock (_stateLock)
             {
-                _partitionAssignments[consumer].Partitions.Add(topicPartition);
+                UnassignCore(consumer);
+
+                _partitionAssignments[consumer] = new ManualPartitionAssignment((MockedConfluentConsumer)consumer);
+
+                foreach (TopicPartition topicPartition in partitions)
+                {
+                    _partitionAssignments[consumer].Partitions.Add(topicPartition);
+                }
+
+                _manuallyAssignedConsumers.Add(consumer);
+
+                _stateVersion++;
+                Rebalance();
             }
-
-            _manuallyAssignedConsumers.Add(consumer);
-
-            Rebalance();
         }
         finally
         {
@@ -120,9 +142,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             _subscriptionsChangeSemaphore.Wait();
 
-            UnassignCore(consumer);
+            lock (_stateLock)
+            {
+                UnassignCore(consumer);
 
-            Rebalance();
+                _stateVersion++;
+                Rebalance();
+            }
         }
         finally
         {
@@ -136,13 +162,17 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             _subscriptionsChangeSemaphore.Wait();
 
-            if (_manuallyAssignedConsumers.Contains(consumer))
-                UnassignCore(consumer);
+            lock (_stateLock)
+            {
+                if (_manuallyAssignedConsumers.Contains(consumer))
+                    UnassignCore(consumer);
 
-            if (_subscribedConsumers.Exists(subscribedConsumer => subscribedConsumer.Consumer == consumer))
-                UnsubscribeCore(consumer);
+                if (_subscribedConsumers.Exists(subscribedConsumer => subscribedConsumer.Consumer == consumer))
+                    UnsubscribeCore(consumer);
 
-            Rebalance();
+                _stateVersion++;
+                Rebalance();
+            }
         }
         finally
         {
@@ -163,10 +193,13 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
     public void Rebalance()
     {
-        if (IsRebalanceScheduled)
-            return;
+        lock (_stateLock)
+        {
+            if (_isRebalanceScheduled)
+                return;
 
-        IsRebalanceScheduled = true;
+            _isRebalanceScheduled = true;
+        }
 
         // Rebalance asynchronously to mimic the real Kafka
         Task.Run(async () =>
@@ -176,8 +209,15 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         }).FireAndForget();
     }
 
-    public IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer) =>
-        _partitionAssignments[consumer].Partitions;
+    public IReadOnlyCollection<TopicPartition> GetAssignment(IMockedConfluentConsumer consumer)
+    {
+        lock (_stateLock)
+        {
+            return _partitionAssignments.TryGetValue(consumer, out PartitionAssignment? assignment)
+                ? [.. assignment.Partitions]
+                : [];
+        }
+    }
 
     public TopicPartitionOffset? GetCommittedOffset(TopicPartition topicPartition) =>
         _committedOffsets.GetValueOrDefault(topicPartition);
@@ -189,19 +229,47 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_subscribedConsumers.All(consumer => HasFinishedConsuming(consumer.Consumer, topicNames)) &&
-                _manuallyAssignedConsumers.TrueForAll(consumer => HasFinishedConsuming(consumer, topicNames)))
+            MockedConfluentConsumer[] consumers;
+            long stateVersion;
+
+            lock (_stateLock)
             {
-                return;
+                consumers =
+                [
+                    .. _subscribedConsumers.Select(consumer => consumer.Consumer),
+                    .. _manuallyAssignedConsumers.Cast<MockedConfluentConsumer>()
+                ];
+                stateVersion = _stateVersion;
+            }
+
+            if (consumers.All(consumer => HasFinishedConsuming(consumer, topicNames)))
+            {
+                lock (_stateLock)
+                {
+                    if (stateVersion == _stateVersion &&
+                        (consumers.Length == 0 || !_isRebalancing && !_isRebalanceScheduled))
+                    {
+                        return;
+                    }
+                }
             }
 
             await Task.Delay(10, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    public void NotifyAssignmentComplete(MockedConfluentConsumer consumer) =>
-        _subscribedConsumers.SingleOrDefault(subscribedConsumer => subscribedConsumer.Consumer == consumer)?
-            .PartitionsAssignedTaskCompletionSource.TrySetResult(true);
+    public void NotifyAssignmentComplete(MockedConfluentConsumer consumer)
+    {
+        TaskCompletionSource<bool>? completion;
+
+        lock (_stateLock)
+        {
+            completion = _subscribedConsumers.SingleOrDefault(subscribedConsumer => subscribedConsumer.Consumer == consumer)?
+                .PartitionsAssignedTaskCompletionSource;
+        }
+
+        completion?.TrySetResult(true);
+    }
 
     public void Dispose() => _subscriptionsChangeSemaphore.Dispose();
 
@@ -211,38 +279,62 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
         {
             await _subscriptionsChangeSemaphore.WaitAsync().ConfigureAwait(false);
 
-            IsRebalanceScheduled = false;
-            IsRebalancing = true;
+            SubscribedConsumer[] consumers;
 
-            if (_subscriptions.Count == 0)
-                return;
-
-            _subscribedConsumers.ForEach(consumer =>
+            lock (_stateLock)
             {
-                // Invalidate any in-flight assignment before installing the completion source for this generation.
+                _isRebalanceScheduled = false;
+                _isRebalancing = true;
+                _stateVersion++;
+
+                if (_subscriptions.Count == 0)
+                {
+                    _isRebalancing = false;
+                    return;
+                }
+
+                consumers = [.. _subscribedConsumers];
+            }
+
+            foreach (SubscribedConsumer consumer in consumers)
+            {
+                // Invalidate in-flight assignment without holding the group-state lock
                 consumer.Consumer.OnRebalancing();
-                consumer.PartitionsAssignedTaskCompletionSource.TrySetCanceled();
-                consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>();
-            });
+                TaskCompletionSource<bool> previousCompletion;
 
-            EnsurePartitionAssignmentsDictionaryIsInitialized();
+                lock (_stateLock)
+                {
+                    previousCompletion = consumer.PartitionsAssignedTaskCompletionSource;
+                    consumer.PartitionsAssignedTaskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                }
+
+                previousCompletion.TrySetCanceled();
+            }
+
             IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
-            List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
-                [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
-            RebalanceResult result = GetAssignmentStrategy() switch
-            {
-                PartitionAssignmentStrategy.CooperativeSticky =>
-                    CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
+            RebalanceResult result;
 
-                // RoundRobin and Range strategies aren't properly implemented, but it shouldn't make any difference for the in-memory tests
-                _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
-            };
+            lock (_stateLock)
+            {
+                EnsurePartitionAssignmentsDictionaryIsInitialized();
+                List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
+                    [.. _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>()];
+                result = GetAssignmentStrategy() switch
+                {
+                    PartitionAssignmentStrategy.CooperativeSticky =>
+                        CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
+
+                    // RoundRobin and Range aren't fully implemented, but both use eager revocation in the mock
+                    _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
+                };
+            }
+
             InvokePartitionsRevokedCallbacks(result);
 
             // Give the MockedConfluentConsumers time to realize the partitions have been revoked and return from the Consume
             await Task.Delay(20).ConfigureAwait(false);
 
-            IsRebalancing = false;
+            _isRebalancing = false;
 
             await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
         }
@@ -326,15 +418,15 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
             _subscribedConsumers.Select(consumer =>
                 Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(100))));
 
-    private bool HasFinishedConsuming(IMockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames)
+    private bool HasFinishedConsuming(MockedConfluentConsumer consumer, IReadOnlyCollection<string> topicNames)
     {
         if (consumer.IsDisposed)
             return true;
 
-        if (!consumer.PartitionsAssigned)
+        if (!consumer.TryGetAssignment(out IReadOnlyCollection<TopicPartition> assignment))
             return false;
 
-        return consumer.Assignment
+        return assignment
             .Where(partition => topicNames.Count == 0 || topicNames.Contains(partition.Topic, StringComparer.Ordinal))
             .All(topicPartition =>
             {
@@ -361,7 +453,7 @@ internal sealed class MockedConsumerGroup : IInternalMockedConsumerGroup, IDispo
 
         public MockedConfluentConsumer Consumer { get; }
 
-        public TaskCompletionSource<bool> PartitionsAssignedTaskCompletionSource { get; set; } = new();
+        public TaskCompletionSource<bool> PartitionsAssignedTaskCompletionSource { get; set; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
     private sealed class ConsumerSubscription
