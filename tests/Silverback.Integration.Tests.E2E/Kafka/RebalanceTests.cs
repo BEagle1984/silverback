@@ -32,8 +32,10 @@ public class RebalanceTests : KafkaTests
     {
     }
 
-    [Fact]
-    public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingDefaultAssignmentStrategy()
+    [Theory]
+    [InlineData(10)]
+    [InlineData(25)]
+    public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingDefaultAssignmentStrategy(int assignmentDelayMilliseconds)
     {
         PartitionCallbacksHandler partitionCallbacksHandler = new();
 
@@ -41,7 +43,9 @@ public class RebalanceTests : KafkaTests
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
+                .AddMockedKafka(mockOptions => mockOptions
+                    .WithDefaultPartitionsCount(5)
+                    .DelayPartitionsAssignment(TimeSpan.FromMilliseconds(assignmentDelayMilliseconds)))
                 .ManuallyConnect())
             .AddKafkaClients(clients => clients
                 .WithBootstrapServers("PLAINTEXT://e2e")
@@ -76,6 +80,12 @@ public class RebalanceTests : KafkaTests
         partitionCallbacksHandler.CurrentPartitions.ShouldNotContainKey(consumers[1]);
 
         await consumers[1].Client.ConnectAsync();
+
+        // Connecting schedules the rebalance; publish the next wave only after assignment completes
+        await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
+
+        consumers[0].Client.Assignment.Count.ShouldBe(3);
+        consumers[1].Client.Assignment.Count.ShouldBe(2);
 
         for (int i = 1; i <= 5; i++)
         {
@@ -96,8 +106,10 @@ public class RebalanceTests : KafkaTests
         consumers.ShouldAllBe(consumer => consumer.StatusInfo.Status >= ConsumerStatus.Connected);
     }
 
-    [Fact]
-    public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingCooperativeAssignmentStrategy()
+    [Theory]
+    [InlineData(10)]
+    [InlineData(25)]
+    public async Task Rebalance_ShouldConsumeAgainAfterRebalance_WhenUsingCooperativeAssignmentStrategy(int assignmentDelayMilliseconds)
     {
         PartitionCallbacksHandler partitionCallbacksHandler = new();
 
@@ -105,7 +117,9 @@ public class RebalanceTests : KafkaTests
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
-                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
+                .AddMockedKafka(mockOptions => mockOptions
+                    .WithDefaultPartitionsCount(5)
+                    .DelayPartitionsAssignment(TimeSpan.FromMilliseconds(assignmentDelayMilliseconds)))
                 .ManuallyConnect())
             .AddKafkaClients(clients => clients
                 .WithBootstrapServers("PLAINTEXT://e2e")
@@ -142,6 +156,12 @@ public class RebalanceTests : KafkaTests
         partitionCallbacksHandler.CurrentPartitions.ShouldNotContainKey(consumers[1]);
 
         await consumers[1].Client.ConnectAsync();
+
+        // Connecting schedules the rebalance; publish the next wave only after assignment completes
+        await AsyncTestingUtil.WaitAsync(() => consumers[0].Client.Assignment.Count == 3 && consumers[1].Client.Assignment.Count == 2);
+
+        consumers[0].Client.Assignment.Count.ShouldBe(3);
+        consumers[1].Client.Assignment.Count.ShouldBe(2);
 
         for (int i = 1; i <= 5; i++)
         {
