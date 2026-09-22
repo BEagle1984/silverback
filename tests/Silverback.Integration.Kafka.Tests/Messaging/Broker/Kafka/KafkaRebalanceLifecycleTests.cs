@@ -1554,6 +1554,11 @@ public partial class KafkaRebalanceLifecycleTests
             return gate;
         }
 
+        public Task StopPollingAsync() =>
+            ((ConsumeLoopHandler)typeof(KafkaConsumer)
+                .GetField("_consumeLoopHandler", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(Consumer)!).StopAsync();
+
         public Task PollAsync(Func<ConsumeResult<byte[]?, byte[]?>?> poll)
         {
             TaskCompletionSource<bool> done = NewSignal();

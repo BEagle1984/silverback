@@ -18,6 +18,59 @@ public partial class KafkaRebalanceLifecycleTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The callback and polling stop are awaited before the harness is disposed")]
+    public async Task CooperativeRebalance_ShouldPreserveRetainedBufferOrder_WhenCanceledPollReturnsAnotherRecord(bool autoCommit)
+    {
+        await using PollHarness harness = new(true, true, backpressure: 2, autoCommit: autoCommit);
+        await harness.StartAsync(0, 1);
+
+        PartitionChannel retained = harness.GetChannel(1)!;
+        ProcessingGate active = harness.Block(1, 0);
+        await harness.DeliverAsync((1, 0));
+        await active.Started.Task.WaitAsync(Timeout);
+        await harness.DeliverAsync((1, 1), (1, 2));
+
+        Task pollingStopped = Task.CompletedTask;
+        await harness.PollAsync(() =>
+        {
+            // Force the canceled-poll boundary that the old cooperative rebalance path reached
+            pollingStopped = harness.StopPollingAsync();
+            harness.Revoke(0);
+
+            return harness.Record(1, 3);
+        });
+
+        // The returned record must reach overflow before the retained reader is released
+        await pollingStopped.WaitAsync(Timeout);
+
+        harness.GetChannel(1).ShouldBeSameAs(retained);
+        harness.GetChannel(0).ShouldBeNull();
+        harness.Client.Assignment.ShouldBe([new TopicPartition("topic", 1)]);
+        retained.ReadCancellationToken.IsCancellationRequested.ShouldBeFalse();
+        active.ReaderStopped.Task.IsCompleted.ShouldBeFalse();
+        harness.Completed.ShouldBeEmpty();
+        harness.CommittedOffset(1).ShouldBe(0);
+
+        active.Release.TrySetResult(true);
+        await PollHarness.WaitUntilAsync(() => harness.Completed.Count == 4);
+
+        _output.WriteLine($"Retained partition order: {string.Join(", ", harness.Completed.Select(delivery => delivery.Offset))}");
+
+        harness.Completed.ShouldBe([new Delivery(1, 0, 1), new Delivery(1, 1, 1), new Delivery(1, 2, 1), new Delivery(1, 3, 1)]);
+
+        await PollHarness.WaitUntilAsync(() => harness.StoredOffset(1) == 4);
+        harness.Client.Commit();
+
+        harness.CommittedOffset(1).ShouldBe(4);
+        harness.Seeks.ShouldBeEmpty();
+        harness.UnsafeStores.ShouldBeEmpty();
+        harness.UnsafeCommits.ShouldBeEmpty();
+        harness.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The rebalance callback is awaited before the harness is disposed")]
     public async Task CooperativeRebalance_ShouldDrainRetainedHandlerBeforeReplay_WhenSharingOneChannel(bool autoCommit)
     {
