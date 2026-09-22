@@ -48,7 +48,7 @@ Docker with Linux containers and the .NET 10 SDK are required. Ports 19092 and 2
 dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --logger trx --results-directory tests/extended/TestResults
 ```
 
-Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control.
+Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
 
 The xUnit project follows the E2E layout: broker-specific cases in `Kafka/`, reusable container support in `TestHost/`, and Kafka infrastructure in `TestHost/Kafka/`. Future MQTT cases and fixtures can follow the same structure.
 
@@ -58,9 +58,11 @@ Each case uses a unique `stress-<timestamp>-<guid>` prefix for topics, group IDs
 
 ### Coverage
 
-Reconciliation cases produce a finite manifest and repeatedly join and remove consumers. Durable processing receipts are written to partition-aligned Kafka journals before acknowledging input. The verifier checks all produced records, committed end offsets, increasing offsets within an assignment, first-processing order, and assignment/revocation boundaries. Replays across assignments are allowed; exactly-once processing is not assumed.
+Reconciliation cases produce a finite manifest and repeatedly join and remove consumers. Durable processing receipts are written to partition-aligned Kafka journals before acknowledging input. The verifier checks all produced records, committed end offsets, strictly increasing offsets within each processing channel, first-processing order across channel replacements, and assignment/revocation boundaries. It also rejects processing from a retired channel and successful commit observations that cross records not yet present in the receipt journal. Commit callbacks are observations, not a continuous audit of the broker: deterministic main-suite tests separately check every store/commit boundary in forced interleavings.
 
-The matrix covers default eager and cooperative-sticky assignment, independent and shared channels, manual and automatic commits, and partial batches. Batches capture assignment identity when their subscriber starts.
+A test-only pipeline behavior stamps each envelope with its assignment epoch and a processing-channel ID derived from sequence-store object identity. Sequence stores are replaced with their channel buffers, so an ID changes at a real processing-lifetime boundary, not merely because an offset repeats. A shared channel can be replaced during cooperative partial revocation without another Kafka assignment callback for retained partitions. Replay across that boundary is allowed; duplicate or backward offsets within the same channel still fail. The receipt journal records each channel's first observed offset and the report counts same-assignment replays.
+
+The matrix covers default eager and cooperative-sticky assignment, independent and shared channels, manual and automatic commits, and partial batches. Cooperative/shared cases exercise both single messages and batches with both commit modes. Assignment/channel identity is captured before batching and remains attached to each envelope during delayed processing.
 
 Continuous cases reuse the testbench subscriber and simulated failures across singles, batches and streams, with six partitions, two processing slots and capacity-one buffers. The slow-handler control verifies that the diagnostic detector fires before `max.poll.interval.ms` and captures a stack. A stall candidate alone does not prove a deadlock.
 

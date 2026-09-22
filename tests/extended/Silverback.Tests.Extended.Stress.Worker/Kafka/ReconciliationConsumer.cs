@@ -28,6 +28,7 @@ internal static class ReconciliationConsumer
         SilverbackBuilder silverback = builder.Services
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddSingletonBrokerBehavior(subscriber)
             .AddSingletonBrokerClientCallback(subscriber);
 
         // Register exactly one method for the selected workload

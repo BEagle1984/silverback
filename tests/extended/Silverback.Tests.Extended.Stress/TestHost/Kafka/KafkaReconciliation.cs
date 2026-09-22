@@ -101,14 +101,8 @@ public sealed class KafkaReconciliation
         reader.Assign(ends.Keys.Select(partition => new TopicPartitionOffset(_run.Prefix + "-receipts", partition, Offset.Beginning)));
 
         HashSet<int> finished = [.. ends.Where(pair => pair.Value == 0).Select(pair => pair.Key)];
-        HashSet<(int Partition, long Offset)> seen = [];
-        Dictionary<int, long> firstSeen = [];
-        Dictionary<(string Member, int Epoch, int Partition), long> lastInAssignment = [];
-        HashSet<(string Member, int Epoch, int Partition)> assigned = [];
-        HashSet<(string Member, int Epoch, int Partition)> revoked = [];
-        List<string> violations = [];
+        KafkaReconciliationVerifier verifier = new(_produced);
         List<ProcessingReceipt> journal = [];
-        int receipts = 0;
         DateTime deadline = DateTime.UtcNow.AddSeconds(30);
 
         while (finished.Count < ends.Count)
@@ -123,57 +117,13 @@ public sealed class KafkaReconciliation
 
             ProcessingReceipt receipt = JsonSerializer.Deserialize<ProcessingReceipt>(result.Message.Value)!;
             journal.Add(receipt);
-            (string Member, int Epoch, int Partition) assignment = (receipt.Member, receipt.Epoch, receipt.Partition);
-
-            if (receipt.Partition != result.Partition.Value)
-                violations.Add($"Receipt on wrong partition: {receipt}");
-
-            if (receipt.Kind == "assigned")
-            {
-                assigned.Add(assignment);
-            }
-            else if (receipt.Kind == "revoked")
-            {
-                revoked.Add(assignment);
-            }
-            else
-            {
-                receipts++;
-                (int Partition, long Offset) key = (receipt.Partition, receipt.Offset);
-
-                if (!assigned.Contains(assignment) || revoked.Contains(assignment))
-                    violations.Add($"Processing outside assignment: {receipt}");
-
-                if (!_produced.TryGetValue(key, out ReconciliationMessage? expected) || expected.Sequence != receipt.Sequence)
-                    violations.Add($"Unknown or mismatched record: {receipt}");
-
-                if (lastInAssignment.TryGetValue(assignment, out long previous) && receipt.Offset <= previous)
-                    violations.Add($"Non-increasing offset within assignment: {receipt}; previous={previous}");
-
-                lastInAssignment[assignment] = receipt.Offset;
-
-                if (seen.Add(key))
-                {
-                    if (firstSeen.TryGetValue(receipt.Partition, out long first) && receipt.Offset <= first)
-                        violations.Add($"Out-of-order first processing: {receipt}; previous={first}");
-
-                    firstSeen[receipt.Partition] = receipt.Offset;
-                }
-            }
+            verifier.Observe(receipt, result.Partition.Value);
 
             if (result.Offset.Value + 1 >= ends[result.Partition.Value])
                 finished.Add(result.Partition.Value);
         }
 
-        foreach ((int partition, long offset) in _produced.Keys.Where(key => !seen.Contains(key)))
-        {
-            violations.Add($"Missing record: {partition}@{offset}");
-        }
-
-        if (assigned.Count <= ends.Count)
-            violations.Add("The test did not observe reassignment.");
-
-        ReconciliationReport report = new(_produced.Count, seen.Count, receipts - seen.Count, assigned.Count, revoked.Count, violations);
+        ReconciliationReport report = verifier.GetReport();
         await File.WriteAllTextAsync(Path.Combine(_run.Artifacts, "receipts.json"), JsonSerializer.Serialize(journal));
         await File.WriteAllTextAsync(
             Path.Combine(_run.Artifacts, "reconciliation.json"),
