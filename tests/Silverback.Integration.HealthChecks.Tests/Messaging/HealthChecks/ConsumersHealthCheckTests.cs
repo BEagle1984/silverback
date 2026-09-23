@@ -226,6 +226,33 @@ public class ConsumersHealthCheckTests
         result.Status.ShouldBe(HealthStatus.Healthy);
     }
 
+    [Theory]
+    [InlineData(0, HealthStatus.Healthy)]
+    [InlineData(35, HealthStatus.Unhealthy)]
+    public async Task CheckHealthAsync_ShouldRespectGracePeriod_WhenConsumerNeverConnected(int elapsedSeconds, HealthStatus expectedStatus)
+    {
+        IConsumerStatusInfo statusInfo = Substitute.For<IConsumerStatusInfo>();
+        statusInfo.Status.Returns(ConsumerStatus.Started);
+        IConsumer consumer = Substitute.For<IConsumer>();
+        consumer.StatusInfo.Returns(statusInfo);
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
+            .AddSilverback()
+            .Services
+            .AddSingleton<IConsumerCollection>(new ConsumerCollection { consumer })
+            .AddHealthChecks()
+            .AddConsumersCheck());
+
+        (IHealthCheck healthCheck, HealthCheckContext context) = GetHealthCheck(serviceProvider);
+
+        // Set the status age after setup so startup and HTTP scheduling cannot consume the grace period
+        statusInfo.History.Returns([new ConsumerStatusChange(ConsumerStatus.Started, DateTime.UtcNow.AddSeconds(-elapsedSeconds))]);
+
+        HealthCheckResult result = await healthCheck.CheckHealthAsync(context);
+
+        result.Status.ShouldBe(expectedStatus);
+    }
+
     private static (IHealthCheck HealthCheck, HealthCheckContext Context) GetHealthCheck(IServiceProvider serviceProvider)
     {
         IOptions<HealthCheckServiceOptions> healthCheckOptions = serviceProvider.GetRequiredService<IOptions<HealthCheckServiceOptions>>();
