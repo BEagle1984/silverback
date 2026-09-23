@@ -49,7 +49,7 @@ public class ConsumerTests
 
             if (replaceIdentifier)
             {
-                // A rejected obsolete request must release the semaphore and allow the current request to stop.
+                // A rejected obsolete request must release the semaphore and allow the current request to stop
                 await consumer.StopAsync(consumer.CurrentIdentifier, false).AsTask().WaitAsync(Timeout);
 
                 consumer.Started.ShouldBeFalse();

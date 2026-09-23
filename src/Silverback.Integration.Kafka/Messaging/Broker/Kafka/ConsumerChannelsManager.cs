@@ -106,7 +106,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
         channel.Complete();
 
-        // A late stop must not remove a replacement registered under the same partition key.
+        // A late stop must not remove a replacement registered under the same partition key
         _channels.TryRemove(new KeyValuePair<TopicPartition, PartitionChannel>(channel.TopicPartition, channel));
     }
 
@@ -145,6 +145,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         }
 
         bool semaphoreWaited = false;
+
         if (_channels.Count > _consumer.Configuration.MaxDegreeOfParallelism)
         {
             await _messagesLimiterSemaphoreSlim.WaitAsync(channel.ReadCancellationToken).ConfigureAwait(false);

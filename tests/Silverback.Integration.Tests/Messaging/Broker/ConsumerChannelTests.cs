@@ -307,7 +307,7 @@ public class ConsumerChannelTests
 
         pendingRead.IsCompleted.ShouldBeFalse();
 
-        // Reproduce a canceled Kafka write being redirected to overflow after the reader is already waiting.
+        // Reproduce a canceled Kafka write being redirected to overflow after the reader is already waiting
         await channel.WriteOverflowAsync(overflowMessage);
 
         try
@@ -409,7 +409,7 @@ public class ConsumerChannelTests
 
         try
         {
-            // A reset discards both queues; Kafka must redeliver every uncommitted record.
+            // A reset discards both queues; Kafka must redeliver every uncommitted record
             await channel.WriteAsync(buffered, CancellationToken.None);
 
             (await channel.ReadAsync()).ShouldBeSameAs(buffered);

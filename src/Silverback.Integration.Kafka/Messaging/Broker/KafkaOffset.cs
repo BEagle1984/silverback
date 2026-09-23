@@ -179,7 +179,7 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     /// </summary>
     internal bool BelongsToChannel(Guid channelInstanceId) => _sourceChannelInstanceId == channelInstanceId;
 
-    // Keep the originating channel when a tracker advances the position after committing a message.
+    // Keep the originating channel when a tracker advances the position after committing a message
     internal KafkaOffset GetNextOffset() => new(TopicPartition, Offset + 1, _sourceChannelInstanceId);
 
     internal TopicPartitionOffset AsTopicPartitionOffset() => new(TopicPartition, Offset);

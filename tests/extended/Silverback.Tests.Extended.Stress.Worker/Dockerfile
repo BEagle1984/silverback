@@ -14,4 +14,3 @@ COPY --from=build /app .
 COPY --from=tools /tools /tools
 ENV PATH="${PATH}:/tools"
 ENTRYPOINT ["dotnet", "Silverback.Tests.Extended.Stress.Worker.dll"]
-

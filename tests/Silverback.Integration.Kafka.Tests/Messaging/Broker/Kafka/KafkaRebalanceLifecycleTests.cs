@@ -520,7 +520,7 @@ public partial class KafkaRebalanceLifecycleTests
             releaseOldStop.TrySetResult(true);
             await oldStop.WaitAsync(Timeout);
 
-            // Inspect identity as well as progress: removal by key can leave an orphan reader alive.
+            // Inspect identity as well as progress: removal by key can leave an orphan reader alive
             harness.GetChannel(0).ShouldBeSameAs(replacement);
 
             await harness.DeliverAsync((0, 0), (0, 1));
@@ -528,7 +528,7 @@ public partial class KafkaRebalanceLifecycleTests
 
             harness.UnsafeCommits.ShouldBeEmpty();
 
-            // Normal shutdown still removes the registered channel and stops every reader.
+            // Normal shutdown still removes the registered channel and stops every reader
             await harness.Channels.StopReadingAsync().WaitAsync(Timeout);
 
             harness.GetChannel(0).ShouldBeNull();
@@ -575,7 +575,7 @@ public partial class KafkaRebalanceLifecycleTests
 
         IReadOnlyCollection<KafkaOffset> offsets = new BoundaryOffsets(new KafkaOffset("topic", 0, 0), boundary == "filter" ? Hold : null, boundary == "versions" ? Hold : null);
 
-        // Expose the protected entry point only to gate materialization; the rollback implementation is unchanged.
+        // Expose the protected entry point only to gate materialization; the rollback implementation is unchanged
         Task rollback = Task.Run(async () => await harness.Consumer.RollbackCoreForTestAsync(offsets));
 
         try
@@ -678,7 +678,7 @@ public partial class KafkaRebalanceLifecycleTests
 
             await revoking.Task.WaitAsync(Timeout);
 
-            // The callback cannot change ownership while Pause/Seek is executing under the assignment lock.
+            // The callback cannot change ownership while Pause/Seek is executing under the assignment lock
             rebalance.IsCompleted.ShouldBeFalse();
 
             release.TrySetResult(true);
@@ -774,7 +774,7 @@ public partial class KafkaRebalanceLifecycleTests
             {
                 await harness.StartAsync(0);
 
-                // Two successive transitions must also invalidate the previous lifecycle's continuation.
+                // Two successive transitions must also invalidate the previous lifecycle's continuation
                 for (int index = 0; index < 2; index++)
                 {
                     await harness.PollAsync(() =>
@@ -913,7 +913,7 @@ public partial class KafkaRebalanceLifecycleTests
         await harness.DeliverAsync((0, 0));
         await active.Started.Task.WaitAsync(Timeout);
 
-        // Two other readers now wait for the only processing slot.
+        // Two other readers now wait for the only processing slot
         await harness.DeliverAsync((1, 0), (2, 0), (0, 1));
         await harness.PollAsync(() => harness.Record(0, 2));
 
@@ -1012,7 +1012,7 @@ public partial class KafkaRebalanceLifecycleTests
             await stopEntered.Task.WaitAsync(Timeout);
             active.Release.TrySetResult(true);
 
-            // A second stop finishes and removes A while the original rollback stop is still pending.
+            // A second stop finishes and removes A while the original rollback stop is still pending
             await harness.Channels.StopReadingAsync(new TopicPartition("topic", 0)).WaitAsync(Timeout);
 
             harness.GetChannel(1).ShouldBeNull();
@@ -1104,7 +1104,7 @@ public partial class KafkaRebalanceLifecycleTests
             }
             catch (OperationCanceledException)
             {
-                // Aborting the real sequence ends the pending stream enumeration.
+                // Aborting the real sequence ends the pending stream enumeration
             }
         });
 
@@ -1598,7 +1598,7 @@ public partial class KafkaRebalanceLifecycleTests
                 await PollAsync(() => Record(partition, offset));
             }
 
-            // The next native Consume cannot execute until the previous returned record has been enqueued.
+            // The next native Consume cannot execute until the previous returned record has been enqueued
             await PollAsync(() => null);
         }
 

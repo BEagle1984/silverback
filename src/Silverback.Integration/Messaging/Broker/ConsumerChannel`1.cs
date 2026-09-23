@@ -129,7 +129,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
             }
             finally
             {
-                // Do not accumulate pending waits on the queue that didn't receive a message.
+                // Do not accumulate pending waits on the queue that didn't receive a message
                 await waitCancellationTokenSource.CancelAsync().ConfigureAwait(false);
             }
         }

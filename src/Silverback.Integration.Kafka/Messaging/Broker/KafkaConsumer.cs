@@ -286,7 +286,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 SetConnectedStatus();
         }
 
-        // Assignment callbacks are delivered by Consume, so polling must start before assignment.
+        // Assignment callbacks are delivered by Consume, so polling must start before assignment
         StartConsumeLoopHandler();
 
         return default;
@@ -362,7 +362,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
             if (!IsStartedAndNotStopping())
                 return ValueTask.CompletedTask;
 
-            // Capture before enumerating offsets: enumeration itself may overlap a rebalance.
+            // Capture before enumerating offsets: enumeration itself may overlap a rebalance
             versions = new Dictionary<TopicPartition, long>(_assignmentVersions);
         }
 
@@ -380,7 +380,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                     _assignmentVersions.GetValueOrDefault(offset.TopicPartition) == version)
             ];
 
-            // An old shared sequence must never expand its rollback to a replacement channel's offsets.
+            // An old shared sequence must never expand its rollback to a replacement channel's offsets
             if (currentOffsets.Length == 0 || _offsets != null && currentOffsets.Length != requestedOffsets.Length)
             {
                 _logger.LogConsumerTrace(this, "Skipping rollback restart for obsolete partition assignments");
@@ -478,7 +478,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                         _logger.LogPartitionOffsetReset(offset, this);
                     }
 
-                    // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock.
+                    // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock
                     _channelsManager.StartReading(partition.Offset.TopicPartition);
                     Client.Resume([partition.Offset.TopicPartition]);
                     _rollingBackPartitions.Remove(partition.Offset.TopicPartition);

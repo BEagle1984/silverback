@@ -72,7 +72,7 @@ Run the xUnit tests to manage the worker. Its `Kafka/ReconciliationConsumer` rec
 
 Evidence is written under `tests/extended/artifacts/<stress-prefix>/`: settings, logs, container inspection, manifests, receipts, committed offsets and reconciliation reports. Failure cleanup attempts bounded stack and mini-dump capture before stopping live workers. TRX output includes the evidence directory.
 
-Ad hoc investigation summaries are kept in the repository's ignored `temp/` directory. The [earlier overflow investigation](Silverback.Tests.Extended.Stress.Worker/INVESTIGATION.md) is historical; its original evidence remains in the worker's ignored `artifacts/` directory.
+Ad hoc investigation summaries are kept in the repository's ignored `temp/` directory. Keep one current summary per investigation and reference its retained evidence under `tests/extended/artifacts/` and `tests/extended/TestResults/`.
 
 ## Benchmarks
 

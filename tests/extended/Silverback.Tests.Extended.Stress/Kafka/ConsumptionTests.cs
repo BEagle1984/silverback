@@ -65,7 +65,7 @@ public class ConsumptionTests(KafkaFixture fixture, ITestOutputHelper output)
 
         await run.StopAsync(primary);
 
-        // The producer deliberately has no host lifecycle; SIGTERM ends its infinite publishing loop.
+        // The producer deliberately has no host lifecycle; SIGTERM ends its infinite publishing loop
         await run.StopAsync(producer, false);
     }
 
