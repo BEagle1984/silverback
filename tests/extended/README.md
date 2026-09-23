@@ -42,19 +42,19 @@ Options:
 
 ## Docker stress tests
 
-Docker with Linux containers and the .NET 10 SDK are required. Ports 19092 and 29092 must be available for the root Kafka services.
+Docker with Linux containers and the .NET 10 SDK are required. Ports 19092 and 29092 must be available for the root Kafka services; MQTT tests use port 1883.
 
 ```shell
 dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --logger trx --results-directory tests/extended/TestResults
 ```
 
-Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
+Filter `Broker=Mqtt` for native MQTT reconnect cases or `Broker=Kafka` for the Kafka Docker workloads. Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
 
-The xUnit project follows the E2E layout: broker-specific cases in `Kafka/`, reusable container support in `TestHost/`, and Kafka infrastructure in `TestHost/Kafka/`. Future MQTT cases and fixtures can follow the same structure.
+The xUnit project follows the E2E layout: broker-specific cases in `Kafka/` and `Mqtt/`, reusable container support in `TestHost/`, and infrastructure in `TestHost/Kafka/` and `TestHost/Mqtt/`.
 
-`DockerTestsFixture` starts the required Kafka services from the root `docker-compose.yaml` using the `silverback` Compose project and `silverback_default` network. It leaves this shared infrastructure running. `ContainerTestRun` uses FluentDocker to manage worker containers. Compose startup and image builds use bounded Docker CLI calls from C#.
+`DockerTestsFixture` starts the required broker services from the root `docker-compose.yaml` using the `silverback` Compose project and `silverback_default` network. It leaves this shared infrastructure running. `ContainerTestRun` uses FluentDocker to manage worker containers. Compose startup and image builds use bounded Docker CLI calls from C#.
 
-Each case uses a unique `stress-<timestamp>-<guid>` prefix for topics, group IDs and containers. Kafka topics are retained for investigation; worker containers are removed after evidence capture. The fixture builds the worker from the current checkout. `STRESS_SDK_IMAGE` overrides the default `mcr.microsoft.com/dotnet/sdk:10.0` build image.
+Each case uses a unique `stress-` prefix for topics, client/group IDs and containers. Kafka topics are retained for investigation; worker containers are removed after evidence capture. The Kafka fixture builds the worker from the current checkout. `STRESS_SDK_IMAGE` overrides the default `mcr.microsoft.com/dotnet/sdk:10.0` build image.
 
 ### Coverage
 
@@ -65,6 +65,8 @@ A test-only pipeline behavior stamps each envelope with its assignment epoch and
 The matrix covers default eager and cooperative-sticky assignment, independent and shared channels, manual and automatic commits, and partial batches. Cooperative/shared cases exercise both single messages and batches with both commit modes. Assignment/channel identity is captured before batching and remains attached to each envelope during delayed processing.
 
 Continuous cases reuse the testbench subscriber and simulated failures across singles, batches and streams, with six partitions, two processing slots and capacity-one buffers. The slow-handler control verifies that the diagnostic detector fires before `max.poll.interval.ms` and captures a stack. A stall candidate alone does not prove a deadlock.
+
+MQTT reconnect cases use the real MQTTnet client and root EMQX cluster through HAProxy. They block a subscriber while another delivery is buffered, disconnect and reconnect, then verify fresh-message progress and ordered replay for persistent QoS 1/2 sessions. QoS 0 and clean sessions explicitly expect unread deliveries to be discarded. A full-buffer case also holds a native receive callback waiting for space and verifies bounded disconnect and broker replay. The MQTT application runs in the test process; it does not use the Kafka worker image.
 
 ### Worker and evidence
 

@@ -79,21 +79,14 @@ public abstract class DockerTestsFixture : IAsyncLifetime
 
         await WaitForInfrastructureAsync();
 
-        string dockerfile = Path.Combine(RepositoryRoot, "tests/extended/Silverback.Tests.Extended.Stress.Worker/Dockerfile");
-        await RunDockerAsync(
-            TimeSpan.FromMinutes(5),
-            [
-                "build",
-                "--build-arg", $"SDK_IMAGE={Environment.GetEnvironmentVariable("STRESS_SDK_IMAGE") ?? "mcr.microsoft.com/dotnet/sdk:10.0"}",
-                "--tag", WorkerImage,
-                "--file", dockerfile,
-                RepositoryRoot
-            ]);
+        await InitializeCoreAsync();
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
 
     protected abstract Task WaitForInfrastructureAsync();
+
+    protected virtual Task InitializeCoreAsync() => Task.CompletedTask;
 
     private static string FindRepositoryRoot()
     {

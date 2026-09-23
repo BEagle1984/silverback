@@ -79,6 +79,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         Client.Connected.AddHandler(OnClientConnectedAsync);
         Client.Subscribed.AddHandler(OnClientSubscribedAsync);
+        Client.Disconnecting.AddHandler(OnClientDisconnectingAsync);
         Client.Disconnected.AddHandler(OnClientDisconnectedAsync);
     }
 
@@ -186,6 +187,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         Client.Connected.RemoveHandler(OnClientConnectedAsync);
         Client.Subscribed.RemoveHandler(OnClientSubscribedAsync);
+        Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
         Client.Disconnected.RemoveHandler(OnClientDisconnectedAsync);
 
         _pendingMessagesCountdown.Dispose();
@@ -203,10 +205,20 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         return ValueTask.CompletedTask;
     }
 
+    private ValueTask OnClientDisconnectingAsync(BrokerClient client)
+    {
+        // Release pending writes before MQTTnet waits for its message-received callback to finish
+        _channelsManager.CompleteAll();
+
+        return ValueTask.CompletedTask;
+    }
+
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
-        _channelsManager.CompleteAll();
+
+        // Old deliveries belong to the disconnected session and must be replayed by the broker
+        _channelsManager.ResetAll();
         RevertConnectedStatus();
     }
 

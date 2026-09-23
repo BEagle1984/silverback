@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using Silverback.Diagnostics;
@@ -39,14 +40,13 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
     {
         foreach (ConsumerChannel channel in _channels)
         {
-            if (channel.IsCompleted)
-                channel.Reset();
-
             StartReading(channel);
         }
     }
 
     public void CompleteAll() => _channels.ForEach(channel => channel.Complete());
+
+    public void ResetAll() => _channels.ForEach(channel => channel.Reset());
 
     protected override IEnumerable<ConsumerChannel> GetChannels() => _channels;
 
@@ -81,14 +81,17 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         _logger.LogConsuming(receivedMessage, _consumer);
 
         eventArgs.AutoAcknowledge = false;
-        ConsumerChannel channel = _channels[_nextChannelIndex++];
-
-        // We might receive a message before the channels reader is restarted (e.g. after a reconnection to a persistent session)
-        if (channel.IsCompleted)
-            channel.Reset();
-
-        await channel.WriteAsync(receivedMessage, CancellationToken.None).ConfigureAwait(false);
-
+        ConsumerChannel channel = _channels[_nextChannelIndex];
         _nextChannelIndex = (_nextChannelIndex + 1) % _channels.Length;
+
+        try
+        {
+            await channel.WriteAsync(receivedMessage, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (ChannelClosedException)
+        {
+            // Disconnecting closes the buffer to release the native receive callback without acknowledging the delivery
+            eventArgs.ProcessingFailed = true;
+        }
     }
 }
