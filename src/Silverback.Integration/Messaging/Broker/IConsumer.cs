@@ -45,7 +45,7 @@ public interface IConsumer
     ///     This is used to recover when the consumer is stuck in state where it's not able to rollback or commit anymore.
     /// </remarks>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. This <see cref="ValueTask" /> will complete as
     ///     soon as the stopping signal has been sent, while the process will be completed in another asynchronous
     ///     <see cref="Task" />.
     /// </returns>
@@ -55,7 +55,7 @@ public interface IConsumer
     ///     Starts consuming. Used after <see cref="StopAsync(bool)" /> has been called to resume consuming.
     /// </summary>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask StartAsync();
 
@@ -66,8 +66,8 @@ public interface IConsumer
     ///     A value indicating whether the method should wait until the consumer has been effectively stopped.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> completes when the stop request has
-    ///     been handled, or when processing has stopped.
+    ///     A <see cref="ValueTask" /> representing the stop request. If <paramref name="waitUntilStopped" /> is <c>true</c>,
+    ///     accepted stop requests also wait for message processing to finish.
     /// </returns>
     ValueTask StopAsync(bool waitUntilStopped = true);
 
@@ -87,8 +87,8 @@ public interface IConsumer
     ///     to avoid waiting for the calling operation itself.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> completes when the stop request has
-    ///     been handled, or when processing has stopped.
+    ///     A <see cref="ValueTask" /> representing the stop request. If <paramref name="waitUntilStopped" /> is <c>true</c>,
+    ///     accepted stop requests also wait for message processing to finish.
     /// </returns>
     ValueTask StopAsync(IBrokerMessageIdentifier brokerMessageIdentifier, bool waitUntilStopped = true);
 
@@ -105,7 +105,7 @@ public interface IConsumer
     ///     The identifier of the message to be committed.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
 
@@ -122,7 +122,7 @@ public interface IConsumer
     ///     The identifiers of to message be committed.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
@@ -139,7 +139,7 @@ public interface IConsumer
     ///     The identifier of the message to be rolled back.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
 
@@ -156,7 +156,7 @@ public interface IConsumer
     ///     The identifiers of to messages be rolled back.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 

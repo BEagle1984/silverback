@@ -31,7 +31,7 @@ public sealed class KafkaFixture : DockerTestsFixture
             }
             catch (KafkaException)
             {
-                // Both KRaft nodes must be ready before creating topics.
+                // Both KRaft nodes must be ready before creating topics
             }
 
             await Task.Delay(250);

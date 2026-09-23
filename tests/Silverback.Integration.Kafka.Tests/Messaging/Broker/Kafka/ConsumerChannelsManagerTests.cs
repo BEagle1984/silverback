@@ -48,7 +48,7 @@ public class ConsumerChannelsManagerTests
             manager.Write(CreateRecord(partition, 0), pollingCancellation.Token);
             await behavior.FirstStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-            // The first handler is blocked, so these records must remain buffered.
+            // The first handler is blocked, so these records must remain buffered
             manager.Write(CreateRecord(partition, 1), pollingCancellation.Token);
             manager.Write(CreateRecord(partition, 2), pollingCancellation.Token);
 
