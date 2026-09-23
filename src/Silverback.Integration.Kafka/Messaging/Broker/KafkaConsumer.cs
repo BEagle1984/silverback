@@ -369,6 +369,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
         KafkaOffset[] requestedOffsets = [.. brokerMessageIdentifiers];
         List<RollbackPartition> partitions = [];
         HashSet<PartitionChannel> channels = [];
+        Task pollCompleted;
 
         lock (_assignmentLock)
         {
@@ -411,22 +412,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
                 return ValueTask.CompletedTask;
 
             Client.Pause(partitions.Select(partition => partition.Offset.TopicPartition));
+            pollCompleted = _consumeLoopHandler.WaitUntilCurrentPollCompletesAsync();
         }
 
         // Stop the captured instances, never whichever channel now happens to occupy their partition keys
-        Task stopping = Task.WhenAll(channels.Select(_channelsManager.StopChannelAsync));
-
-        lock (_assignmentLock)
-        {
-            foreach (RollbackPartition partition in partitions.Where(IsCurrentRollback))
-            {
-                if (partition.Offset.Offset != Offset.Unset)
-                {
-                    Client.Seek(partition.Offset);
-                    _logger.LogPartitionOffsetReset(partition.Offset, this);
-                }
-            }
-        }
+        Task stopping = Task.WhenAll(channels.Select(_channelsManager.StopChannelAsync).Append(pollCompleted));
 
         Task.Run(() => RestartChannelsAfterRollbackAsync(stopping, partitions)).FireAndForget();
 
@@ -472,6 +462,22 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
 
                 foreach (RollbackPartition partition in current)
                 {
+                    TopicPartitionOffset offset = partition.Offset;
+
+                    // The pending poll may have discovered this shared partition's first record after rollback began
+                    if (offset.Offset == Offset.Unset &&
+                        _offsets?.GetRollbackOffSets().FirstOrDefault(candidate => candidate.TopicPartition == offset.TopicPartition) is { } trackedOffset)
+                    {
+                        offset = trackedOffset.AsTopicPartitionOffset();
+                    }
+
+                    // A record fetched before Pause must finish dispatching before Seek and channel replacement
+                    if (offset.Offset != Offset.Unset)
+                    {
+                        Client.Seek(offset);
+                        _logger.LogPartitionOffsetReset(offset, this);
+                    }
+
                     // The old channel was removed by StopChannelAsync; no sequence disposal is performed under this lock.
                     _channelsManager.StartReading(partition.Offset.TopicPartition);
                     Client.Resume([partition.Offset.TopicPartition]);

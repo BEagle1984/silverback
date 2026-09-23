@@ -29,6 +29,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
 
+    private TaskCompletionSource<bool>? _pendingPollTaskCompletionSource;
+
     private DateTime _lastSuccessfulConsume = DateTime.UtcNow;
 
     private bool _isDisposed;
@@ -101,6 +103,25 @@ internal sealed class ConsumeLoopHandler : IDisposable
         await Stopping.ConfigureAwait(false);
     }
 
+    public Task WaitUntilCurrentPollCompletesAsync()
+    {
+        Task stopping = Stopping;
+
+        if (stopping.IsCompleted)
+            return Task.CompletedTask;
+
+        TaskCompletionSource<bool>? completion = Volatile.Read(ref _pendingPollTaskCompletionSource);
+
+        if (completion == null)
+        {
+            TaskCompletionSource<bool> newCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            completion = Interlocked.CompareExchange(ref _pendingPollTaskCompletionSource, newCompletion, null) ?? newCompletion;
+        }
+
+        // Stopping also completes the wait if the last poll finished before this request was registered
+        return Task.WhenAny(completion.Task, stopping);
+    }
+
     public void Dispose()
     {
         if (_isDisposed)
@@ -130,7 +151,10 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (!ConsumeOnce(cancellationToken))
+            bool continueConsuming = ConsumeOnce(cancellationToken);
+            NotifyPollCompleted();
+
+            if (!continueConsuming)
                 break;
         }
 
@@ -140,6 +164,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             () => [Id, taskCompletionSource.Task.Id]);
 
         taskCompletionSource.TrySetResult(true);
+        NotifyPollCompleted();
 
         // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
         // synchronously to stay within a single long-running thread with the Consume loop.
@@ -181,6 +206,12 @@ internal sealed class ConsumeLoopHandler : IDisposable
         }
 
         return true;
+    }
+
+    private void NotifyPollCompleted()
+    {
+        if (Volatile.Read(ref _pendingPollTaskCompletionSource) != null)
+            Interlocked.Exchange(ref _pendingPollTaskCompletionSource, null)?.TrySetResult(true);
     }
 
     [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Temporary tracing")]
