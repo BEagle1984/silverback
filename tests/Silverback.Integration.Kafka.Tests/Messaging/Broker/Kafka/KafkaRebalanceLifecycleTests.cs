@@ -657,6 +657,13 @@ public partial class KafkaRebalanceLifecycleTests
 
         try
         {
+            if (boundary == "seek")
+            {
+                // Seek now follows reader shutdown and dispatch of the already-polled record
+                await active.ReaderStopped.Task.WaitAsync(Timeout);
+                active.Release.TrySetResult(true);
+            }
+
             await entered.Task.WaitAsync(Timeout);
             rebalance = harness.PollAsync(() =>
             {
@@ -1504,6 +1511,8 @@ public partial class KafkaRebalanceLifecycleTests
 
         public Action? BeforeChannelStop { get; set; }
 
+        public Action? AfterConsume { get; set; }
+
         public Func<Delivery, Task>? AfterCommit { get; set; }
 
         public Func<Delivery, Task>? AfterBatchRecord { get; set; }
@@ -1593,9 +1602,12 @@ public partial class KafkaRebalanceLifecycleTests
             await PollAsync(() => null);
         }
 
-        public int Assign(params int[] partitions)
+        public int Assign(params int[] partitions) =>
+            AssignOffsets([.. partitions.Select(partition => new TopicPartitionOffset("topic", partition, CommittedOffset(partition)))]);
+
+        public int AssignOffsets(IReadOnlyCollection<TopicPartitionOffset> offsets)
         {
-            IReadOnlyCollection<TopicPartitionOffset> accepted = Consumer.OnPartitionsAssigned([.. partitions.Select(partition => new TopicPartitionOffset("topic", partition, CommittedOffset(partition)))]);
+            IReadOnlyCollection<TopicPartitionOffset> accepted = Consumer.OnPartitionsAssigned(offsets);
 
             foreach (TopicPartitionOffset offset in accepted)
             {
@@ -1713,6 +1725,9 @@ public partial class KafkaRebalanceLifecycleTests
         {
             string text = formatter(state, exception);
             Logs.Enqueue(text);
+
+            if (text.StartsWith("Consuming message ", StringComparison.Ordinal))
+                AfterConsume?.Invoke();
 
             if (text.StartsWith("Stopping processing loop of channel", StringComparison.Ordinal))
                 BeforeChannelStop?.Invoke();
