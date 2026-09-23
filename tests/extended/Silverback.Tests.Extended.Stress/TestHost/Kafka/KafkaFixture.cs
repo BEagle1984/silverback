@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 
@@ -38,5 +39,19 @@ public sealed class KafkaFixture : DockerTestsFixture
         }
 
         throw new TimeoutException("The root compose Kafka cluster did not become ready.");
+    }
+
+    protected override async Task InitializeCoreAsync()
+    {
+        string dockerfile = Path.Combine(RepositoryRoot, "tests/extended/Silverback.Tests.Extended.Stress.Worker/Dockerfile");
+        await RunDockerAsync(
+            TimeSpan.FromMinutes(5),
+            [
+                "build",
+                "--build-arg", $"SDK_IMAGE={Environment.GetEnvironmentVariable("STRESS_SDK_IMAGE") ?? "mcr.microsoft.com/dotnet/sdk:10.0"}",
+                "--tag", WorkerImage,
+                "--file", dockerfile,
+                RepositoryRoot
+            ]);
     }
 }
