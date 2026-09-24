@@ -22,9 +22,11 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker;
 
-public class MqttConsumerReconnectTests
+public class MqttConsumerTests
 {
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan ReconnectTimeout = TimeSpan.FromSeconds(10);
+
+    private static readonly TimeSpan BackpressureTimeout = TimeSpan.FromSeconds(5);
 
     [Theory]
     [InlineData(MqttQualityOfServiceLevel.AtMostOnce, false)]
@@ -37,17 +39,17 @@ public class MqttConsumerReconnectTests
         MqttQualityOfServiceLevel qualityOfServiceLevel,
         bool receiveBeforeConnected)
     {
-        await using ConsumerHarness harness = new(qualityOfServiceLevel);
+        await using ReconnectConsumerHarness harness = new(qualityOfServiceLevel);
         await harness.ConnectAsync();
         await harness.DeliverAsync(0);
-        await harness.Behavior.FirstStarted.Task.WaitAsync(Timeout);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(1);
 
         Task disconnecting = harness.Client.DisconnectAsync().AsTask();
 
-        await harness.Behavior.Stopping.Task.WaitAsync(Timeout);
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
         harness.Behavior.ReleaseFirst.TrySetResult(true);
-        await disconnecting.WaitAsync(Timeout);
+        await disconnecting.WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0]);
         harness.Acknowledged.Select(acknowledgement => acknowledgement.Message).ShouldBe([0]);
@@ -60,8 +62,8 @@ public class MqttConsumerReconnectTests
         if (!receiveBeforeConnected)
             await harness.DeliverAsync(2);
 
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0, 2]);
         harness.Acknowledged.ShouldAllBe(acknowledgement => acknowledgement.ReceivedConnection == acknowledgement.AcknowledgedConnection);
@@ -75,10 +77,10 @@ public class MqttConsumerReconnectTests
     [Fact]
     public async Task DisconnectAsync_ShouldReleaseBlockedDelivery_BeforeDisconnectingNativeClient()
     {
-        await using ConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
         await harness.ConnectAsync();
         await harness.DeliverAsync(0);
-        await harness.Behavior.FirstStarted.Task.WaitAsync(Timeout);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(1);
 
         Task delivering = harness.DeliverAsync(2);
@@ -87,9 +89,9 @@ public class MqttConsumerReconnectTests
 
         Task disconnecting = harness.Client.DisconnectAsync().AsTask();
 
-        await harness.Behavior.Stopping.Task.WaitAsync(Timeout);
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
         harness.Behavior.ReleaseFirst.TrySetResult(true);
-        await disconnecting.WaitAsync(Timeout);
+        await disconnecting.WaitAsync(ReconnectTimeout);
         await delivering;
         harness.Received.Last().ProcessingFailed.ShouldBeTrue();
         harness.Received.Last().AutoAcknowledge.ShouldBeFalse();
@@ -99,8 +101,8 @@ public class MqttConsumerReconnectTests
 
         await harness.ConnectAsync();
         await harness.DeliverAsync(2);
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0, 2]);
         harness.Acknowledged.ShouldAllBe(acknowledgement => acknowledgement.ReceivedConnection == acknowledgement.AcknowledgedConnection);
@@ -118,7 +120,7 @@ public class MqttConsumerReconnectTests
     [InlineData(4)]
     public async Task Consume_ShouldUseEveryChannel(int degreeOfParallelism)
     {
-        await using ConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce, degreeOfParallelism);
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce, degreeOfParallelism);
         TaskCompletionSource<bool> allStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<bool> release = new(TaskCreationOptions.RunContinuationsAsynchronously);
         int started = 0;
@@ -129,7 +131,7 @@ public class MqttConsumerReconnectTests
             if (Interlocked.Increment(ref started) == degreeOfParallelism)
                 allStarted.TrySetResult(true);
 
-            await release.Task.WaitAsync(Timeout);
+            await release.Task.WaitAsync(ReconnectTimeout);
         };
 
         try
@@ -141,11 +143,11 @@ public class MqttConsumerReconnectTests
                 await harness.DeliverAsync(number);
             }
 
-            await allStarted.Task.WaitAsync(Timeout);
+            await allStarted.Task.WaitAsync(ReconnectTimeout);
             harness.Behavior.Processed.ShouldBeEmpty();
             release.TrySetResult(true);
-            await harness.Behavior.AllProcessed.Task.WaitAsync(Timeout);
-            await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+            await harness.Behavior.AllProcessed.Task.WaitAsync(ReconnectTimeout);
+            await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
             harness.Behavior.Processed.Order().ShouldBe(Enumerable.Range(0, degreeOfParallelism));
         }
@@ -158,25 +160,25 @@ public class MqttConsumerReconnectTests
     [Fact]
     public async Task StartAsync_ShouldPreserveBufferedDeliveries_WhenConnectionWasNotClosed()
     {
-        await using ConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
         await harness.ConnectAsync();
         await harness.DeliverAsync(0);
-        await harness.Behavior.FirstStarted.Task.WaitAsync(Timeout);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(1);
 
         Task stopping = harness.Consumer.StopAsync().AsTask();
 
-        await harness.Behavior.Stopping.Task.WaitAsync(Timeout);
+        await harness.Behavior.Stopping.Task.WaitAsync(ReconnectTimeout);
         harness.Behavior.ReleaseFirst.TrySetResult(true);
-        await stopping.WaitAsync(Timeout);
+        await stopping.WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0]);
 
         await harness.Consumer.StartAsync();
-        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(Timeout);
+        await harness.Behavior.BufferedMessageProcessed.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(2);
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0, 1, 2]);
         harness.Acknowledged.ShouldBe(
@@ -198,31 +200,31 @@ public class MqttConsumerReconnectTests
         MqttQualityOfServiceLevel qualityOfServiceLevel,
         bool blockWriter)
     {
-        await using ConsumerHarness harness = new(qualityOfServiceLevel);
+        await using ReconnectConsumerHarness harness = new(qualityOfServiceLevel);
         await harness.ConnectAsync();
         await harness.DeliverAsync(0);
-        await harness.Behavior.FirstStarted.Task.WaitAsync(Timeout);
+        await harness.Behavior.FirstStarted.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(1);
 
         Task delivering = blockWriter ? harness.DeliverAsync(2) : Task.CompletedTask;
         harness.PendingReceive = delivering;
         harness.LoseConnection();
 
-        await Task.WhenAny(harness.Behavior.Stopping.Task, harness.Reconnecting.Task).WaitAsync(Timeout);
+        await Task.WhenAny(harness.Behavior.Stopping.Task, harness.Reconnecting.Task).WaitAsync(ReconnectTimeout);
         harness.Behavior.Stopping.Task.IsCompleted.ShouldBeTrue();
         harness.Reconnecting.Task.IsCompleted.ShouldBeFalse();
 
         if (blockWriter)
         {
-            await delivering.WaitAsync(Timeout);
+            await delivering.WaitAsync(ReconnectTimeout);
             harness.Received.Last().ProcessingFailed.ShouldBeTrue();
         }
 
         harness.Behavior.ReleaseFirst.TrySetResult(true);
-        await harness.Reconnected.Task.WaitAsync(Timeout);
+        await harness.Reconnected.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(2);
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0, 2]);
         harness.Acknowledged.ShouldAllBe(acknowledgement => acknowledgement.ReceivedConnection == acknowledgement.AcknowledgedConnection);
@@ -233,14 +235,14 @@ public class MqttConsumerReconnectTests
     [Fact]
     public async Task ConnectionLost_ShouldDiscardEarlyDelivery_WhenConnectionDropsBeforeConnectedNotification()
     {
-        await using ConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.AtLeastOnce);
         harness.ReceiveBeforeConnected(1, true);
 
         await harness.ConnectAsync();
-        await harness.Reconnected.Task.WaitAsync(Timeout);
+        await harness.Reconnected.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(2);
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([2]);
         harness.Acknowledged.ShouldBe([new Acknowledgement(2, 2, 2)]);
@@ -252,16 +254,16 @@ public class MqttConsumerReconnectTests
     [InlineData(MqttQualityOfServiceLevel.ExactlyOnce)]
     public async Task CommitAsync_ShouldAllowRecovery_WhenConnectionIsLostDuringAcknowledgement(MqttQualityOfServiceLevel qualityOfServiceLevel)
     {
-        await using ConsumerHarness harness = new(qualityOfServiceLevel);
+        await using ReconnectConsumerHarness harness = new(qualityOfServiceLevel);
         harness.Behavior.ReleaseFirst.TrySetResult(true);
         harness.LoseConnectionDuringAcknowledgement();
         await harness.ConnectAsync();
 
         await harness.DeliverAsync(0);
-        await harness.Reconnected.Task.WaitAsync(Timeout);
+        await harness.Reconnected.Task.WaitAsync(ReconnectTimeout);
         await harness.DeliverAsync(2);
-        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(Timeout);
-        await harness.Consumer.StopAsync().AsTask().WaitAsync(Timeout);
+        await harness.Behavior.FreshMessageProcessed.Task.WaitAsync(ReconnectTimeout);
+        await harness.Consumer.StopAsync().AsTask().WaitAsync(ReconnectTimeout);
 
         harness.Behavior.Processed.ShouldBe([0, 2]);
         harness.Acknowledged.ShouldBe([new Acknowledgement(2, 2, 2)]);
@@ -271,20 +273,293 @@ public class MqttConsumerReconnectTests
     [Fact]
     public async Task CommitAsync_ShouldPreserveQoS2AcknowledgementFailure_WhenTransportIsStillConnected()
     {
-        await using ConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce);
+        await using ReconnectConsumerHarness harness = new(MqttQualityOfServiceLevel.ExactlyOnce);
         harness.Behavior.ReleaseFirst.TrySetResult(true);
         InvalidOperationException failure = new("Acknowledgement failed while still connected.");
         harness.BeforeAcknowledge = () => throw failure;
         await harness.ConnectAsync();
 
         await harness.DeliverAsync(0);
-        Exception actualFailure = await harness.Behavior.CommitFailure.Task.WaitAsync(Timeout);
+        Exception actualFailure = await harness.Behavior.CommitFailure.Task.WaitAsync(ReconnectTimeout);
 
         actualFailure.ShouldBeSameAs(failure);
         harness.Acknowledged.ShouldBeEmpty();
     }
 
-    private sealed class ConsumerHarness : IAsyncDisposable
+    [Theory]
+    [InlineData(1, null, 2)]
+    [InlineData(3, null, 2)]
+    [InlineData(1, 1, 1)]
+    [InlineData(1, 4, 4)]
+    [InlineData(4, 1, 1)]
+    [InlineData(4, 4, 4)]
+    [InlineData(4, 7, 7)]
+    public async Task Consume_ShouldApplyBackpressurePerChannel_BeforeAndAfterReconnect(
+        int degreeOfParallelism,
+        int? configuredLimit,
+        int expectedCapacity)
+    {
+        await using BackpressureConsumerHarness harness = new(degreeOfParallelism, configuredLimit);
+
+        for (int connection = 0; connection < 2; connection++)
+        {
+            int messageCount = (degreeOfParallelism * (expectedCapacity + 1)) + 1;
+            harness.Behavior.Reset(messageCount);
+            harness.Acknowledged.Clear();
+            await harness.ConnectAsync();
+            await FillBuffersAsync(harness, degreeOfParallelism, expectedCapacity);
+
+            Task writing = harness.DeliverAsync(messageCount - 1);
+
+            writing.IsCompleted.ShouldBeFalse();
+            harness.Acknowledged.ShouldBeEmpty();
+            harness.Behavior.Processed.ShouldBeEmpty();
+
+            // Releasing only the target channel must be enough to admit its pending write
+            harness.Behavior.Release(0);
+            await writing.WaitAsync(BackpressureTimeout);
+            harness.Behavior.ReleaseAll();
+            await harness.Behavior.AllProcessed.Task.WaitAsync(BackpressureTimeout);
+            await harness.Client.DisconnectAsync().AsTask().WaitAsync(BackpressureTimeout);
+
+            harness.Behavior.Processed.Order().ShouldBe(Enumerable.Range(0, messageCount));
+            harness.Acknowledged.Order().ShouldBe(Enumerable.Range(0, messageCount));
+
+            for (int channel = 0; channel < degreeOfParallelism; channel++)
+            {
+                int channelIndex = channel;
+                harness.Behavior.Processed.Where(number => number % degreeOfParallelism == channelIndex)
+                    .ShouldBe(Enumerable.Range(0, messageCount).Where(number => number % degreeOfParallelism == channelIndex));
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(1, 3)]
+    [InlineData(3, 1)]
+    [InlineData(3, 4)]
+    public async Task DisconnectAsync_ShouldReleaseWriterAndDiscardBufferedDeliveries_WhenConfiguredBuffersAreFull(
+        int degreeOfParallelism,
+        int backpressureLimit)
+    {
+        await using BackpressureConsumerHarness harness = new(degreeOfParallelism, backpressureLimit);
+        harness.Behavior.Reset(degreeOfParallelism);
+        await harness.ConnectAsync();
+        await FillBuffersAsync(harness, degreeOfParallelism, backpressureLimit);
+
+        Task writing = harness.DeliverAsync(degreeOfParallelism * (backpressureLimit + 1));
+        writing.IsCompleted.ShouldBeFalse();
+        harness.PendingReceive = writing;
+
+        Task disconnecting = harness.Client.DisconnectAsync().AsTask();
+        await writing.WaitAsync(BackpressureTimeout);
+
+        disconnecting.IsCompleted.ShouldBeFalse();
+        harness.Received.Last().ProcessingFailed.ShouldBeTrue();
+        harness.Received.Last().AutoAcknowledge.ShouldBeFalse();
+        harness.Acknowledged.ShouldBeEmpty();
+
+        harness.Behavior.ReleaseAll();
+        await disconnecting.WaitAsync(BackpressureTimeout);
+
+        harness.Behavior.Processed.Order().ShouldBe(Enumerable.Range(0, degreeOfParallelism));
+        harness.Acknowledged.Order().ShouldBe(Enumerable.Range(0, degreeOfParallelism));
+    }
+
+    private static async Task FillBuffersAsync(BackpressureConsumerHarness harness, int degreeOfParallelism, int capacity)
+    {
+        for (int number = 0; number < degreeOfParallelism; number++)
+        {
+            await harness.DeliverAsync(number).WaitAsync(BackpressureTimeout);
+        }
+
+        await harness.Behavior.AllStarted.Task.WaitAsync(BackpressureTimeout);
+
+        for (int number = degreeOfParallelism; number < degreeOfParallelism * (capacity + 1); number++)
+        {
+            await harness.DeliverAsync(number).WaitAsync(BackpressureTimeout);
+        }
+    }
+
+    private sealed class BackpressureConsumerHarness : IAsyncDisposable
+    {
+        private readonly IMqttClient _nativeClient = Substitute.For<IMqttClient>();
+
+        private readonly MqttConsumer _consumer;
+
+        private Func<MqttApplicationMessageReceivedEventArgs, Task> _messageReceived = null!;
+
+        private TaskCompletionSource<bool> _subscribed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private bool _isConnected;
+
+        public BackpressureConsumerHarness(int degreeOfParallelism, int? backpressureLimit)
+        {
+            Behavior = new BackpressureBlockingBehavior(degreeOfParallelism);
+            _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
+
+            _nativeClient.When(client => client.ApplicationMessageReceivedAsync += Arg.Any<Func<MqttApplicationMessageReceivedEventArgs, Task>>())
+                .Do(call => _messageReceived = call.Arg<Func<MqttApplicationMessageReceivedEventArgs, Task>>());
+
+            _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
+            {
+                Volatile.Write(ref _isConnected, true);
+
+                return new MqttClientConnectResult();
+            });
+
+            _nativeClient.DisconnectAsync(Arg.Any<MqttClientDisconnectOptions>(), Arg.Any<CancellationToken>()).Returns(async _ =>
+            {
+                await PendingReceive;
+                Volatile.Write(ref _isConnected, false);
+            });
+
+            MqttClientConfigurationBuilder builder = new MqttClientConfigurationBuilder(Substitute.For<IServiceProvider>())
+                .ConnectViaTcp("backpressure-test-broker")
+                .EnableParallelProcessing(degreeOfParallelism)
+                .Consume(endpoint => endpoint.ConsumeFrom("topic"));
+
+            if (backpressureLimit.HasValue)
+                builder.LimitBackpressure(backpressureLimit.Value);
+
+            MqttClientConfiguration configuration = builder.Build();
+            Client = new MqttClientWrapper(
+                "backpressure-test",
+                _nativeClient,
+                configuration,
+                Substitute.For<IBrokerClientCallbacksInvoker>(),
+                Substitute.For<ISilverbackLogger>());
+            Client.Subscribed.AddHandler(_ =>
+            {
+                _subscribed.TrySetResult(true);
+
+                return ValueTask.CompletedTask;
+            });
+
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviors = Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>();
+            behaviors.GetBehaviorsList().Returns([Behavior]);
+            _consumer = new MqttConsumer(
+                "backpressure-test",
+                Client,
+                configuration,
+                behaviors,
+                Substitute.For<IServiceProvider>(),
+                Substitute.For<ISilverbackLogger<MqttConsumer>>());
+        }
+
+        public MqttClientWrapper Client { get; }
+
+        public BackpressureBlockingBehavior Behavior { get; }
+
+        public ConcurrentQueue<int> Acknowledged { get; } = new();
+
+        public ConcurrentQueue<MqttApplicationMessageReceivedEventArgs> Received { get; } = new();
+
+        public Task PendingReceive { get; set; } = Task.CompletedTask;
+
+        public async Task ConnectAsync()
+        {
+            _subscribed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            await Client.ConnectAsync().AsTask().WaitAsync(BackpressureTimeout);
+            await _subscribed.Task.WaitAsync(BackpressureTimeout);
+        }
+
+        public Task DeliverAsync(int number)
+        {
+            MqttApplicationMessageReceivedEventArgs eventArgs = new(
+                "backpressure-test",
+                new MqttApplicationMessage
+                {
+                    Topic = "topic",
+                    Payload = new ReadOnlySequence<byte>([checked((byte)number)]),
+                    QualityOfServiceLevel = MqttQualityOfServiceLevel.AtLeastOnce
+                },
+                new MqttPublishPacket { QualityOfServiceLevel = MqttQualityOfServiceLevel.AtLeastOnce },
+                (_, _) =>
+                {
+                    Acknowledged.Enqueue(number);
+
+                    return Task.CompletedTask;
+                });
+            Received.Enqueue(eventArgs);
+
+            return _messageReceived(eventArgs);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            Behavior.ReleaseAll();
+            await Client.DisconnectAsync().AsTask().WaitAsync(BackpressureTimeout);
+            _consumer.Dispose();
+            await Client.DisposeAsync();
+            _nativeClient.Dispose();
+        }
+    }
+
+    private sealed class BackpressureBlockingBehavior(int degreeOfParallelism) : IConsumerBehavior
+    {
+        private TaskCompletionSource<bool>[] _release = [];
+
+        private int _started;
+
+        private int _expectedMessages;
+
+        public int SortIndex => 0;
+
+        public ConcurrentQueue<int> Processed { get; } = new();
+
+        public TaskCompletionSource<bool> AllStarted { get; private set; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> AllProcessed { get; private set; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public void Reset(int expectedMessages)
+        {
+            _release =
+            [
+                .. Enumerable.Range(0, degreeOfParallelism)
+                    .Select(_ => new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
+            ];
+            _started = 0;
+            _expectedMessages = expectedMessages;
+            Processed.Clear();
+            AllStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            AllProcessed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        }
+
+        public void Release(int channel) => _release[channel].TrySetResult(true);
+
+        public void ReleaseAll()
+        {
+            foreach (TaskCompletionSource<bool> release in _release)
+            {
+                release.TrySetResult(true);
+            }
+        }
+
+        public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
+        {
+            using (context)
+            {
+                int number = context.Envelope.RawMessage!.ReadByte();
+
+                if (number < degreeOfParallelism)
+                {
+                    if (Interlocked.Increment(ref _started) == degreeOfParallelism)
+                        AllStarted.TrySetResult(true);
+
+                    await _release[number].Task.WaitAsync(TimeSpan.FromSeconds(30), CancellationToken.None);
+                }
+
+                await context.Consumer.CommitAsync(context.Envelope.BrokerMessageIdentifier);
+                Processed.Enqueue(number);
+
+                if (Processed.Count == _expectedMessages)
+                    AllProcessed.TrySetResult(true);
+            }
+        }
+    }
+
+    private sealed class ReconnectConsumerHarness : IAsyncDisposable
     {
         private readonly IMqttClient _nativeClient = Substitute.For<IMqttClient>();
 
@@ -298,7 +573,7 @@ public class MqttConsumerReconnectTests
 
         private bool _isConnected;
 
-        public ConsumerHarness(MqttQualityOfServiceLevel qualityOfServiceLevel, int degreeOfParallelism = 1)
+        public ReconnectConsumerHarness(MqttQualityOfServiceLevel qualityOfServiceLevel, int degreeOfParallelism = 1)
         {
             _qualityOfServiceLevel = qualityOfServiceLevel;
             _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
@@ -372,7 +647,7 @@ public class MqttConsumerReconnectTests
 
         public MqttConsumer Consumer { get; }
 
-        public BlockingBehavior Behavior { get; } = new();
+        public ReconnectBlockingBehavior Behavior { get; } = new();
 
         public ConcurrentQueue<Acknowledgement> Acknowledged { get; } = new();
 
@@ -411,8 +686,8 @@ public class MqttConsumerReconnectTests
         public async Task ConnectAsync()
         {
             _subscribed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await Client.ConnectAsync().AsTask().WaitAsync(Timeout);
-            await _subscribed.Task.WaitAsync(Timeout);
+            await Client.ConnectAsync().AsTask().WaitAsync(ReconnectTimeout);
+            await _subscribed.Task.WaitAsync(ReconnectTimeout);
         }
 
         public Task DeliverAsync(byte number)
@@ -440,7 +715,7 @@ public class MqttConsumerReconnectTests
 
             Received.Enqueue(eventArgs);
 
-            return _messageReceived(eventArgs).WaitAsync(Timeout);
+            return _messageReceived(eventArgs).WaitAsync(ReconnectTimeout);
         }
 
         public async ValueTask DisposeAsync()
@@ -448,14 +723,14 @@ public class MqttConsumerReconnectTests
             Behavior.ReleaseFirst.TrySetResult(true);
             BeforeConnected = null;
             PendingReceive = Task.CompletedTask;
-            await Client.DisconnectAsync().AsTask().WaitAsync(Timeout);
+            await Client.DisconnectAsync().AsTask().WaitAsync(ReconnectTimeout);
             Consumer.Dispose();
             await Client.DisposeAsync();
             _nativeClient.Dispose();
         }
     }
 
-    private sealed class BlockingBehavior : IConsumerBehavior
+    private sealed class ReconnectBlockingBehavior : IConsumerBehavior
     {
         public int SortIndex => 0;
 
@@ -492,7 +767,7 @@ public class MqttConsumerReconnectTests
                 {
                     using CancellationTokenRegistration registration = cancellationToken.Register(() => Stopping.TrySetResult(true));
                     FirstStarted.TrySetResult(true);
-                    await ReleaseFirst.Task.WaitAsync(Timeout, CancellationToken.None);
+                    await ReleaseFirst.Task.WaitAsync(ReconnectTimeout, CancellationToken.None);
                 }
 
                 try

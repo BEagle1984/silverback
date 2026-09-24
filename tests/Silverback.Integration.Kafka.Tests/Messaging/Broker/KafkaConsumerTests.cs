@@ -36,15 +36,15 @@ using Silverback.Messaging.Serialization;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
+namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 
-public partial class KafkaRebalanceLifecycleTests
+public partial class KafkaConsumerTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
     private readonly ITestOutputHelper _output;
 
-    public KafkaRebalanceLifecycleTests(ITestOutputHelper output)
+    public KafkaConsumerTests(ITestOutputHelper output)
     {
         _output = output;
     }
