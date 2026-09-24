@@ -18,3 +18,9 @@
 - Keep formatting and readability changes behavior-preserving; do not combine them with unrelated refactoring or bug fixes.
 - Do not add a trailing period to simple, single-sentence code comments.
 - Name internal implementation methods with the `Core` suffix, before `Async` when applicable: `Stop` -> `StopCore`, `StopAsync` -> `StopCoreAsync`.
+
+## Test organization
+
+- Unit tests have one test class per production type, named `<ProductionType>Tests`, in the corresponding unit test project. Mirror the production type's relative folder and namespace beneath the test project's root namespace. Omit generic arity from the test class name, following the existing convention.
+- Add coverage to the existing test class instead of introducing a separate feature- or scenario-named class. Only split unusually large classes into partial files when needed; retain the same class and namespace, using filenames such as `<ProductionType>Tests.Feature.cs`.
+- E2E and extended stress tests may be organized by feature or use case. This exception does not apply to unit test projects, including unit tests that exercise several collaborating components.

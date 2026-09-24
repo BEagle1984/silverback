@@ -36,6 +36,8 @@ public partial class MqttClientConfigurationBuilder
 
     private TimeSpan? _acknowledgmentTimeout;
 
+    private uint? _sessionExpiryInterval;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
     /// </summary>
@@ -274,8 +276,7 @@ public partial class MqttClientConfigurationBuilder
     ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
     /// </summary>
     /// <remarks>
-    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
-    ///     <see cref="RequestCleanStart" /> are the same.
+    ///     Discards any existing session and clears the session expiry interval. In MQTT 5.0, this sets clean start and an expiry of 0.
     /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -283,27 +284,37 @@ public partial class MqttClientConfigurationBuilder
     public MqttClientConfigurationBuilder RequestCleanSession()
     {
         _configuration = _configuration with { CleanSession = true };
+        _sessionExpiryInterval = null;
         return this;
     }
 
     /// <summary>
-    ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
-    ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
+    ///     Specifies that a new session has to be created, discarding any existing session for this client.
     /// </summary>
     /// <remarks>
-    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
-    ///     <see cref="RequestCleanStart" /> are the same.
+    ///     In MQTT 5.0, the configured session expiry interval is preserved, allowing the new session to persist after disconnect.
+    ///     In earlier protocol versions, this requests a clean non-persistent session.
     /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder RequestCleanStart() => RequestCleanSession();
+    public MqttClientConfigurationBuilder RequestCleanStart()
+    {
+        _configuration = _configuration with { CleanSession = true };
+        return this;
+    }
 
     /// <summary>
-    ///     Specifies that a persistent session has to be created for this client.
+    ///     Requests a persistent session that can be resumed after reconnecting with the same client identifier.
     /// </summary>
+    /// <remarks>
+    ///     In MQTT 5.0, the session does not expire unless an expiry interval is explicitly configured. Any previously configured
+    ///     expiry is preserved, including 0, which ends the session on disconnect. The broker can override the requested expiry.
+    ///     Earlier protocol versions use a persistent session without a client-configured expiry interval.
+    /// </remarks>
     /// <param name="sessionExpiryInterval">
-    ///     The <see cref="TimeSpan" /> representing the session expiry interval.
+    ///     The MQTT 5.0 session expiry interval. When omitted or 0, preserves an existing expiry or requests no expiry if none was set.
+    ///     <see cref="TimeSpan.MaxValue" /> explicitly requests no expiry. Use <see cref="WithSessionExpiration" /> to explicitly set 0.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -314,6 +325,8 @@ public partial class MqttClientConfigurationBuilder
 
         if (sessionExpiryInterval != TimeSpan.Zero)
             WithSessionExpiration(sessionExpiryInterval);
+        else
+            _sessionExpiryInterval ??= uint.MaxValue;
 
         return this;
     }
@@ -518,20 +531,30 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the session expiry interval. When set to 0 the session will expire when the connection is closed,
-    ///     while <see cref="TimeSpan.MaxValue" /> indicates that the session will never expire. The default is 0.
+    ///     Sets how long the MQTT 5.0 session is retained after disconnect. Zero ends the session on disconnect;
+    ///     <see cref="TimeSpan.MaxValue" /> requests no expiry. This setting has no effect with earlier protocol versions.
     /// </summary>
+    /// <remarks>
+    ///     The default is 0, unless <see cref="RequestPersistentSession" /> is used, which requests no expiry by default.
+    ///     Fractional seconds are rounded up. The broker can override the requested expiry.
+    /// </remarks>
     /// <param name="sessionExpiryInterval">
-    ///     The <see cref="TimeSpan" /> representing the session expiry interval.
+    ///     A nonnegative duration of at most 4,294,967,294 seconds, or <see cref="TimeSpan.MaxValue" /> for no expiry.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public MqttClientConfigurationBuilder WithSessionExpiration(TimeSpan sessionExpiryInterval)
     {
-        Check.Range(sessionExpiryInterval, nameof(sessionExpiryInterval), TimeSpan.Zero, TimeSpan.MaxValue);
+        if (sessionExpiryInterval == TimeSpan.MaxValue)
+        {
+            _sessionExpiryInterval = uint.MaxValue;
+            return this;
+        }
 
-        _configuration = _configuration with { SessionExpiryInterval = (uint)sessionExpiryInterval.TotalSeconds };
+        Check.Range(sessionExpiryInterval, nameof(sessionExpiryInterval), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue - 1));
+
+        _sessionExpiryInterval = (uint)Math.Ceiling(sessionExpiryInterval.TotalSeconds);
         return this;
     }
 
@@ -1021,7 +1044,8 @@ public partial class MqttClientConfigurationBuilder
         {
             MaxDegreeOfParallelism = _maxDegreeOfParallelism ?? _configuration.MaxDegreeOfParallelism,
             BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit,
-            AcknowledgmentTimeout = _acknowledgmentTimeout ?? _configuration.AcknowledgmentTimeout
+            AcknowledgmentTimeout = _acknowledgmentTimeout ?? _configuration.AcknowledgmentTimeout,
+            SessionExpiryInterval = _configuration.ProtocolVersion >= MqttProtocolVersion.V500 ? _sessionExpiryInterval ?? 0 : 0
         };
 
         _configuration.Validate();

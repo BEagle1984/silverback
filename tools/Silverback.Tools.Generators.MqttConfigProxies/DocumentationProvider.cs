@@ -46,7 +46,9 @@ public static class DocumentationProvider
                 builder.AppendLine("    /// Gets the client identifier. The default is <c>Guid.NewGuid().ToString()</c>.");
                 break;
             case nameof(MqttClientOptions.CleanSession):
-                builder.AppendLine("    /// Gets a value indicating whether a clean non-persistent session has to be created for this client. The default is <c>true</c>.");
+                builder.AppendLine("    ///     Gets a value indicating whether an existing session is discarded when connecting. The default is <c>true</c>.");
+                builder.AppendLine("    ///     In MQTT 5.0, this is the clean start flag; <see cref=\"SessionExpiryInterval\" /> separately controls persistence after disconnect.");
+                builder.AppendLine("    ///     In earlier protocol versions, <c>true</c> also prevents the session from persisting after disconnect.");
                 break;
             case nameof(MqttClientOptions.Credentials):
                 builder.AppendLine("    ///     Gets the credentials to be used to authenticate with the message broker.");
@@ -82,8 +84,9 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     usually <c>false</c>.");
                 break;
             case nameof(MqttClientOptions.SessionExpiryInterval):
-                builder.AppendLine("    ///     Gets the session expiry interval in seconds. When set to 0 the session will expire when the connection is closed, while");
-                builder.AppendLine("    ///     <see cref=\"uint.MaxValue\" /> indicates that the session will never expire. The default is 0.");
+                builder.AppendLine("    ///     Gets the MQTT 5.0 session expiry interval in seconds. Zero ends the session on disconnect; <see cref=\"uint.MaxValue\" /> requests");
+                builder.AppendLine("    ///     no expiry. The default is 0. <see cref=\"MqttClientConfigurationBuilder.RequestPersistentSession\" /> requests no expiry unless");
+                builder.AppendLine("    ///     an expiry is explicitly configured. The broker can override the requested expiry. Earlier protocol versions do not use this value.");
                 break;
             case nameof(MqttClientOptions.TopicAliasMaximum):
                 builder.AppendLine("    ///     Gets the maximum number of topic aliases the server can send in the <i>PUBLISH</i> packet. The default is 0, meaning that no");

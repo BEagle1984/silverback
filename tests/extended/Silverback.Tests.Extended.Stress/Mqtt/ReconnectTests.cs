@@ -98,7 +98,12 @@ public class ReconnectTests(MqttFixture fixture, ITestOutputHelper output)
                             .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()));
 
                     if (persistentSession)
-                        client.RequestPersistentSession(TimeSpan.FromMinutes(5));
+                    {
+                        if (blockWriter)
+                            client.RequestPersistentSession(TimeSpan.FromMinutes(5));
+                        else
+                            client.RequestPersistentSession();
+                    }
                 }))
             .AddDelegateSubscriber<ReconnectMessage>(async ValueTask (message) =>
             {
@@ -222,6 +227,19 @@ public class ReconnectTests(MqttFixture fixture, ITestOutputHelper output)
 
             if (producer.IsConnected)
                 await producer.DisconnectAsync();
+
+            if (persistentSession)
+            {
+                // Delete the test session, including those now configured without an expiry
+                using IMqttClient cleanupClient = new MqttClientFactory().CreateMqttClient();
+                await cleanupClient.ConnectAsync(new MqttClientOptionsBuilder()
+                    .WithTcpServer(MqttFixture.BrokerHost)
+                    .WithClientId(prefix)
+                    .WithCleanSession()
+                    .WithSessionExpiryInterval(0)
+                    .Build()).WaitAsync(Timeout);
+                await cleanupClient.DisconnectAsync().WaitAsync(Timeout);
+            }
         }
 
         Task PublishAsync(int number) => producer.PublishAsync(new MqttApplicationMessageBuilder()

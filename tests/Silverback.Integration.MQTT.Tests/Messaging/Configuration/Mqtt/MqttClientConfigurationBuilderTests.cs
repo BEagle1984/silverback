@@ -60,6 +60,16 @@ public class MqttClientConfigurationBuilderTests
         configuration2.ClientId.ShouldBe("two");
     }
 
+    [Fact]
+    public void Build_ShouldUseFinalProtocol_WithoutLosingRequestedExpiration()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint().RequestPersistentSession();
+
+        builder.Build().SessionExpiryInterval.ShouldBe(uint.MaxValue);
+        builder.UseProtocolVersion(MqttProtocolVersion.V311).Build().SessionExpiryInterval.ShouldBe(0U);
+        builder.UseProtocolVersion(MqttProtocolVersion.V500).Build().SessionExpiryInterval.ShouldBe(uint.MaxValue);
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -311,6 +321,29 @@ public class MqttClientConfigurationBuilderTests
         configuration.CleanSession.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RequestCleanSession_ShouldClearExpiration_AndAllowRequestingPersistenceAgain(bool requestPersistenceAgain)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint()
+            .RequestPersistentSession(TimeSpan.FromMinutes(5))
+            .RequestCleanSession();
+
+        MqttClientConfiguration cleanConfiguration = builder.Build();
+
+        cleanConfiguration.CleanSession.ShouldBeTrue();
+        cleanConfiguration.SessionExpiryInterval.ShouldBe(0U);
+
+        if (!requestPersistenceAgain)
+            return;
+
+        MqttClientConfiguration persistentConfiguration = builder.RequestPersistentSession().Build();
+
+        persistentConfiguration.CleanSession.ShouldBeFalse();
+        persistentConfiguration.SessionExpiryInterval.ShouldBe(uint.MaxValue);
+    }
+
     [Fact]
     public void RequestPersistentSession_ShouldSetCleanSession()
     {
@@ -332,6 +365,76 @@ public class MqttClientConfigurationBuilderTests
         MqttClientConfiguration configuration = builder.Build();
         configuration.CleanSession.ShouldBeFalse();
         configuration.SessionExpiryInterval.ShouldBe(600U);
+    }
+
+    [Theory]
+    [InlineData(MqttProtocolVersion.V500, false)]
+    [InlineData(MqttProtocolVersion.V500, true)]
+    [InlineData(MqttProtocolVersion.V311, false)]
+    [InlineData(MqttProtocolVersion.V311, true)]
+    public void RequestPersistentSession_ShouldUseProtocolDefaults_RegardlessOfConfigurationOrder(
+        MqttProtocolVersion protocolVersion,
+        bool protocolConfiguredFirst)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        if (protocolConfiguredFirst)
+            builder.UseProtocolVersion(protocolVersion);
+
+        builder.RequestPersistentSession();
+
+        if (!protocolConfiguredFirst)
+            builder.UseProtocolVersion(protocolVersion);
+
+        MqttClientConfiguration configuration = builder.Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(protocolVersion == MqttProtocolVersion.V500 ? uint.MaxValue : 0U);
+        configuration.GetMqttClientOptions().SessionExpiryInterval.ShouldBe(configuration.SessionExpiryInterval);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RequestPersistentSession_ShouldPreserveExplicitExpiration_RegardlessOfConfigurationOrder(bool expirationConfiguredFirst)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        if (expirationConfiguredFirst)
+            builder.WithSessionExpiration(TimeSpan.FromMinutes(5));
+
+        builder.RequestPersistentSession();
+
+        if (!expirationConfiguredFirst)
+            builder.WithSessionExpiration(TimeSpan.FromMinutes(5));
+
+        MqttClientConfiguration configuration = builder.Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(300U);
+    }
+
+    [Fact]
+    public void RequestPersistentSession_ShouldPreserveExplicitZeroExpiration()
+    {
+        MqttClientConfiguration configuration = GetBuilderWithValidConfigurationAndEndpoint()
+            .WithSessionExpiration(TimeSpan.Zero)
+            .RequestPersistentSession()
+            .Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(0U);
+    }
+
+    [Fact]
+    public void RequestPersistentSession_ShouldUseSpecifiedExpiration()
+    {
+        MqttClientConfiguration configuration = GetBuilderWithValidConfigurationAndEndpoint()
+            .RequestPersistentSession(TimeSpan.FromMinutes(5))
+            .Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(300U);
     }
 
     [Fact]
@@ -545,6 +648,31 @@ public class MqttClientConfigurationBuilderTests
 
         MqttClientConfiguration configuration = builder.Build();
         configuration.SessionExpiryInterval.ShouldBe(42U);
+    }
+
+    [Theory]
+    [InlineData(0L, 0U)]
+    [InlineData(1L, 1U)]
+    [InlineData(15000000L, 2U)]
+    [InlineData(42949672940000000L, uint.MaxValue - 1)]
+    [InlineData(long.MaxValue, uint.MaxValue)]
+    public void WithSessionExpiration_ShouldConvertToSecondsWithoutShorteningDuration(long ticks, uint expectedSeconds)
+    {
+        MqttClientConfiguration configuration = GetBuilderWithValidConfigurationAndEndpoint()
+            .WithSessionExpiration(TimeSpan.FromTicks(ticks))
+            .Build();
+
+        configuration.SessionExpiryInterval.ShouldBe(expectedSeconds);
+    }
+
+    [Theory]
+    [InlineData(-1L)]
+    [InlineData(42949672940000001L)]
+    public void WithSessionExpiration_ShouldRejectUnsupportedDurations(long ticks)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        Should.Throw<ArgumentOutOfRangeException>(() => builder.WithSessionExpiration(TimeSpan.FromTicks(ticks)));
     }
 
     [Fact]
@@ -998,6 +1126,18 @@ public class MqttClientConfigurationBuilderTests
 
         MqttClientConfiguration configuration = builder.Build();
         configuration.CleanSession.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void RequestCleanStart_ShouldPreserveExpiration()
+    {
+        MqttClientConfiguration configuration = GetBuilderWithValidConfigurationAndEndpoint()
+            .RequestPersistentSession(TimeSpan.FromMinutes(5))
+            .RequestCleanStart()
+            .Build();
+
+        configuration.CleanSession.ShouldBeTrue();
+        configuration.SessionExpiryInterval.ShouldBe(300U);
     }
 
     [Fact]

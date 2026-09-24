@@ -118,8 +118,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
     /// </summary>
     /// <remarks>
-    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
-    ///     <see cref="RequestCleanStart" /> are the same.
+    ///     Discards any existing session and clears the session expiry interval. In MQTT 5.0, this sets clean start and an expiry of 0.
     /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -131,12 +130,11 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
-    ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
+    ///     Specifies that a new session has to be created, discarding any existing session for this client.
     /// </summary>
     /// <remarks>
-    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
-    ///     <see cref="RequestCleanStart" /> are the same.
+    ///     In MQTT 5.0, the configured session expiry interval is preserved, allowing the new session to persist after disconnect.
+    ///     In earlier protocol versions, this requests a clean non-persistent session.
     /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -148,8 +146,13 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Specifies that a persistent session has to be created for this client.
+    ///     Requests a persistent session that can be resumed after reconnecting with the same client identifier.
     /// </summary>
+    /// <remarks>
+    ///     In MQTT 5.0, the session does not expire unless an expiry interval is explicitly configured. Any previously configured
+    ///     expiry is preserved, including 0, which ends the session on disconnect. The broker can override the requested expiry.
+    ///     Earlier protocol versions use a persistent session without a client-configured expiry interval.
+    /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
@@ -333,11 +336,15 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the session expiry interval. When set to 0 the session will expire when the connection is closed,
-    ///     while <see cref="TimeSpan.MaxValue" /> indicates that the session will never expire. The default is 0.
+    ///     Sets how long the MQTT 5.0 session is retained after disconnect. Zero ends the session on disconnect;
+    ///     <see cref="TimeSpan.MaxValue" /> requests no expiry. This setting has no effect with earlier protocol versions.
     /// </summary>
+    /// <remarks>
+    ///     The default is 0, unless <see cref="RequestPersistentSession" /> is used, which requests no expiry by default.
+    ///     Fractional seconds are rounded up. The broker can override the requested expiry.
+    /// </remarks>
     /// <param name="sessionExpiryInterval">
-    ///     The <see cref="TimeSpan" /> representing the session expiry interval.
+    ///     A nonnegative duration of at most 4,294,967,294 seconds, or <see cref="TimeSpan.MaxValue" /> for no expiry.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -748,9 +755,10 @@ public sealed partial class MqttClientsConfigurationBuilder
 
     internal MergeableActionCollection<MqttClientConfigurationBuilder> GetConfigurationActions()
     {
-        foreach (Action<MqttClientConfigurationBuilder> sharedAction in _sharedConfigurationActions)
+        // Prepending in reverse preserves the order in which shared settings were configured
+        for (int index = _sharedConfigurationActions.Count - 1; index >= 0; index--)
         {
-            _configurationActions.PrependToAll(sharedAction.Invoke);
+            _configurationActions.PrependToAll(_sharedConfigurationActions[index].Invoke);
         }
 
         return _configurationActions;
