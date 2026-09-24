@@ -93,6 +93,7 @@ public class ConnectionLossTests(MqttFixture fixture, ITestOutputHelper output)
                 {
                     client.WithClientId(prefix)
                         .DisableParallelProcessing()
+                        .LimitBackpressure(1)
                         .Consume<ReconnectMessage>(endpoint => endpoint
                             .ConsumeFrom(prefix)
                             .WithQualityOfServiceLevel(qualityOfServiceLevel)

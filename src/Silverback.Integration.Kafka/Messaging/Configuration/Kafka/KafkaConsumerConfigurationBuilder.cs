@@ -380,7 +380,7 @@ public partial class KafkaConsumerConfigurationBuilder
     /// <summary>
     ///     Sets the maximum number of messages to be consumed and enqueued waiting to be processed.
     ///     The limit will be applied per partition when processing the partitions independently (default).
-    ///     The default limit is 2.
+    ///     The default limit is 50.
     /// </summary>
     /// <param name="backpressureLimit">
     ///     The maximum number of messages to be enqueued.

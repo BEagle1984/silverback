@@ -179,6 +179,8 @@ public class MqttClientWrapperTests
 
         await cleanedUp.Task.WaitAsync(Timeout);
 
+        // Wait until the wrapper has returned from the cleanup callback before publishing again
+        await WaitUntilAsync(() => harness.ConnectionAttempts >= 2);
         harness.RestoreConnection();
         harness.ReleasePublish.TrySetResult(true);
         await harness.ProduceAsync(2).WaitAsync(Timeout);
@@ -235,6 +237,8 @@ public class MqttClientWrapperTests
         await cleanedUp.Task.WaitAsync(Timeout);
         notifications.ShouldBe(2);
 
+        // Wait until the wrapper has returned from the cleanup callback before publishing again
+        await WaitUntilAsync(() => harness.ConnectionAttempts >= 2);
         harness.RestoreConnection();
         harness.ReleasePublish.TrySetResult(true);
         await harness.ProduceAsync(1).WaitAsync(Timeout);

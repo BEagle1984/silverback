@@ -108,6 +108,8 @@ Process all partitions in a single stream (disables partition-based parallelism)
         .ConsumeFrom("my-topic-2")))
 ```
 
+Use `LimitBackpressure(n)` to set the buffer capacity per partition when processing partitions independently. With `ProcessAllPartitionsTogether()`, it sets the capacity of the shared buffer for all partitions. The default limit is 50.
+
 ### MQTT
 
 Enable parallel processing and set the maximum degree of parallelism:
@@ -121,6 +123,10 @@ Enable parallel processing and set the maximum degree of parallelism:
         .ConsumeFrom("messages/topic2")
         .WithAtLeastOnceQoS()));
 ```
+
+Use `LimitBackpressure(n)` to limit how many incoming MQTT messages Silverback buffers per parallel execution. The number of parallel executions is controlled by `MaxDegreeOfParallelism`, configured with `EnableParallelProcessing(...)`. The total buffer capacity per client is `n × MaxDegreeOfParallelism`, excluding messages already being processed. The default backpressure limit is 2.
+
+For example, `EnableParallelProcessing(4)` with `LimitBackpressure(7)` allows up to 28 buffered messages, plus four being processed. This setting controls Silverback's processing buffers, not buffers in MQTTnet or the broker.
 
 ## Error Handling
 

@@ -331,6 +331,7 @@ public class MqttConsumerReconnectTests
                 .ConnectViaTcp("reconnect-test-broker")
                 .WithClientId("reconnect-test")
                 .EnableParallelProcessing(degreeOfParallelism)
+                .LimitBackpressure(1)
                 .Consume(endpoint => endpoint.ConsumeFrom("topic"))
                 .Build();
             Client = new MqttClientWrapper(

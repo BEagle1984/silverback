@@ -95,6 +95,7 @@ public class ShutdownTests(MqttFixture fixture)
                     .WithClientId(prefix)
                     .SendKeepAlive(TimeSpan.FromSeconds(4))
                     .DisableParallelProcessing()
+                    .LimitBackpressure(1)
                     .Consume<ShutdownRequest>(endpoint => endpoint
                         .ConsumeFrom(prefix + "-input")
                         .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
