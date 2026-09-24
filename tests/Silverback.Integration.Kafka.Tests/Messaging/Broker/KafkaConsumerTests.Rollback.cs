@@ -8,9 +8,9 @@ using Confluent.Kafka;
 using Shouldly;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
+namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 
-public partial class KafkaRebalanceLifecycleTests
+public partial class KafkaConsumerTests
 {
     [Theory]
     [InlineData(true, false, false)]
