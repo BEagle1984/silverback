@@ -215,7 +215,13 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
-        await StopAsync().ConfigureAwait(false);
+        // Connection loss does not raise Disconnecting, so release pending native receive callbacks here too
+        _channelsManager.CompleteAll();
+
+        // Stop readers before notifying subscribers, which may finish as soon as their token is canceled
+        await StopCoreAsync().ConfigureAwait(false);
+        await StopAsync(false).ConfigureAwait(false);
+        await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
 
         // Old deliveries belong to the disconnected session and must be replayed by the broker
         _channelsManager.ResetAll();
@@ -233,6 +239,10 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private async Task AcknowledgeAsync(ConsumedApplicationMessage consumedMessage)
     {
+        // Recovery waits for this delivery before reconnecting; leave it unacknowledged for broker replay
+        if (!Client.IsConnected)
+            return;
+
         try
         {
             using CancellationTokenSource cancellationTokenSource = new(Configuration.AcknowledgmentTimeout);
@@ -240,8 +250,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
         }
         catch (Exception ex)
         {
-            // Rethrow if the QoS level is exactly once, the consumer will be stopped
-            if (consumedMessage.ApplicationMessage.QualityOfServiceLevel == MqttQualityOfServiceLevel.ExactlyOnce)
+            // Preserve fatal QoS 2 acknowledgement errors unless the transport was lost in the meantime
+            if (consumedMessage.ApplicationMessage.QualityOfServiceLevel == MqttQualityOfServiceLevel.ExactlyOnce && Client.IsConnected)
                 throw;
 
             _logger.LogAcknowledgeFailed(consumedMessage, this, ex);

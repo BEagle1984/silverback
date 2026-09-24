@@ -144,6 +144,8 @@ services:
     depends_on:
       - emqx1
       - emqx2
+      - kafka-1
+      - kafka-2
 
   # PostgreSQL
   postgresql:

@@ -38,11 +38,15 @@ public interface IBrokerClient : IDisposable, IAsyncDisposable
     ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="DisconnectAsync" /> method is called
     ///     and the client is disconnecting.
     /// </summary>
+    /// <remarks>
+    ///     This event is raised before a requested disconnect, including a reconnect initiated via <see cref="ReconnectAsync" />.
+    ///     It is not raised when the underlying connection is unexpectedly lost. Consequently, <see cref="Disconnected" />
+    ///     can be raised without a preceding <see cref="Disconnecting" /> event.
+    /// </remarks>
     AsyncEvent<BrokerClient> Disconnecting { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="DisconnectAsync" /> method has been called
-    ///     and the client is disconnected.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the client is disconnected.
     /// </summary>
     AsyncEvent<BrokerClient> Disconnected { get; }
 

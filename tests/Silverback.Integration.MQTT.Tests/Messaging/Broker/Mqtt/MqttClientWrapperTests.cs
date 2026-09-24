@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -155,6 +156,128 @@ public class MqttClientWrapperTests
         harness.Published.ToArray().ShouldBe(publishFails ? [2] : [1, 2]);
     }
 
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The callback completes before the harness is disposed")]
+    public async Task ConnectionLost_ShouldFailPendingPublish_WhenDisconnectionCleanupAwaitsIt()
+    {
+        await using ProducerHarness harness = new();
+        TaskCompletionSource<bool> cleanedUp = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<Task> publishing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        harness.Client.Disconnected.AddHandler(async _ =>
+        {
+            if (cleanedUp.Task.IsCompleted)
+                return;
+
+            Task pendingPublish = await publishing.Task.WaitAsync(Timeout);
+            await Should.ThrowAsync<ProduceException>(() => pendingPublish.WaitAsync(Timeout));
+            harness.ConnectionAttempts.ShouldBe(1);
+            cleanedUp.TrySetResult(true);
+        });
+        await harness.ConnectAsync();
+        harness.LoseConnection();
+        publishing.SetResult(harness.ProduceAsync(1));
+
+        await cleanedUp.Task.WaitAsync(Timeout);
+
+        harness.RestoreConnection();
+        harness.ReleasePublish.TrySetResult(true);
+        await harness.ProduceAsync(2).WaitAsync(Timeout);
+        harness.Published.ToArray().ShouldBe([2]);
+    }
+
+    [Fact]
+    public async Task ConnectionLost_ShouldNotifyOncePerConnection_DespiteFailedReconnectAttempts()
+    {
+        await using ProducerHarness harness = new();
+        int notifications = 0;
+        harness.Client.Disconnected.AddHandler(_ =>
+        {
+            Interlocked.Increment(ref notifications);
+
+            return ValueTask.CompletedTask;
+        });
+        harness.ReleasePublish.TrySetResult(true);
+        await harness.ConnectAsync();
+
+        for (int loss = 1; loss <= 2; loss++)
+        {
+            int previousAttempts = harness.ConnectionAttempts;
+            harness.LoseConnection();
+            await WaitUntilAsync(() => harness.ConnectionAttempts >= previousAttempts + 2);
+            notifications.ShouldBe(loss);
+
+            harness.RestoreConnection();
+            await harness.ProduceAsync((byte)loss).WaitAsync(Timeout);
+            notifications.ShouldBe(loss);
+        }
+
+        harness.Published.ToArray().ShouldBe([1, 2]);
+    }
+
+    [Fact]
+    public async Task ConnectionLost_ShouldRetryCleanup_WhenDisconnectedHandlerFails()
+    {
+        await using ProducerHarness harness = new();
+        int notifications = 0;
+        TaskCompletionSource<bool> cleanedUp = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        harness.Client.Disconnected.AddHandler(_ =>
+        {
+            if (Interlocked.Increment(ref notifications) == 1)
+                throw new InvalidOperationException("Cleanup failed.");
+
+            cleanedUp.TrySetResult(true);
+
+            return ValueTask.CompletedTask;
+        });
+        await harness.ConnectAsync();
+        harness.LoseConnection();
+
+        await cleanedUp.Task.WaitAsync(Timeout);
+        notifications.ShouldBe(2);
+
+        harness.RestoreConnection();
+        harness.ReleasePublish.TrySetResult(true);
+        await harness.ProduceAsync(1).WaitAsync(Timeout);
+        notifications.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task ConnectionLost_ShouldNotReconnect_WhenDisconnectedHandlerStopsClient()
+    {
+        await using ProducerHarness harness = new();
+        TaskCompletionSource<bool> stopped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        harness.Client.Disconnected.AddHandler(async client =>
+        {
+            if (client.Status != ClientStatus.Initialized)
+                return;
+
+            await client.DisconnectAsync();
+            stopped.TrySetResult(true);
+        });
+        await harness.ConnectAsync();
+        harness.LoseConnection();
+
+        await stopped.Task.WaitAsync(Timeout);
+        await Task.Delay(TimeSpan.FromSeconds(1));
+
+        harness.ConnectionAttempts.ShouldBe(1);
+        harness.Client.Status.ShouldBe(ClientStatus.Disconnected);
+
+        harness.RestoreConnection();
+        await harness.ConnectAsync();
+        harness.ConnectionAttempts.ShouldBe(2);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using CancellationTokenSource cancellation = new(Timeout);
+
+        while (!condition())
+        {
+            await Task.Delay(10, cancellation.Token);
+        }
+    }
+
     private sealed class ProducerHarness : IAsyncDisposable
     {
         private readonly IMqttClient _nativeClient = Substitute.For<IMqttClient>();
@@ -169,12 +292,16 @@ public class MqttClientWrapperTests
 
         private bool _connectionUnavailable;
 
+        private int _connectionAttempts;
+
         public ProducerHarness(TimeSpan? timeout = null)
         {
             _nativeClient.IsConnected.Returns(_ => Volatile.Read(ref _isConnected));
 
             _nativeClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>()).Returns(_ =>
             {
+                Interlocked.Increment(ref _connectionAttempts);
+
                 if (Volatile.Read(ref _connectionUnavailable))
                     throw new InvalidOperationException("The broker is unavailable.");
 
@@ -254,6 +381,8 @@ public class MqttClientWrapperTests
 
         public bool FailFirstPublish { get; set; }
 
+        public int ConnectionAttempts => Volatile.Read(ref _connectionAttempts);
+
         public async Task ConnectAsync()
         {
             _subscribed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -266,6 +395,8 @@ public class MqttClientWrapperTests
             Volatile.Write(ref _connectionUnavailable, true);
             Volatile.Write(ref _isConnected, false);
         }
+
+        public void RestoreConnection() => Volatile.Write(ref _connectionUnavailable, false);
 
         public Task ProduceAsync(byte number)
         {

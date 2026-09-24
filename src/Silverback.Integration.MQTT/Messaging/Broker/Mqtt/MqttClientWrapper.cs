@@ -47,6 +47,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     private bool _pendingReconnect;
 
+    private volatile bool _isHandlingConnectionLoss;
+
     public MqttClientWrapper(
         string name,
         IMqttClient mqttClient,
@@ -180,15 +182,35 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         if (_mqttClientWasConnected)
         {
             _pendingReconnect = true;
-            _mqttClientWasConnected = false;
-
             _logger.LogConnectionLost(this);
+            _isHandlingConnectionLoss = true;
 
-            await Disconnected.InvokeAsync(this).ConfigureAwait(false);
+            try
+            {
+                await Disconnected.InvokeAsync(this).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConnectError(this, ex);
+                return false;
+            }
+            finally
+            {
+                _isHandlingConnectionLoss = false;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+                return false;
+
+            _mqttClientWasConnected = false;
         }
 
-        if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
+        if (cancellationToken.IsCancellationRequested ||
+            !await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false) ||
+            cancellationToken.IsCancellationRequested)
+        {
             return false;
+        }
 
         if (_pendingReconnect)
         {
@@ -199,7 +221,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         try
         {
             await Connected.InvokeAsync(this).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             await SubscribeAsync().ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             await Subscribed.InvokeAsync(this).ConfigureAwait(false);
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }
@@ -218,6 +242,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         try
         {
             await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken).ConfigureAwait(false);
+            _mqttClientWasConnected = true;
 
             // The client might briefly connect and then disconnect immediately (e.g., when connecting with
             // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real
@@ -293,6 +318,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         {
             // Shutdown has stopped reconnecting, so waiting for a connection can no longer succeed
             connectionCancellationToken.ThrowIfCancellationRequested();
+
+            // A disconnected subscriber may be waiting for this publish before it can finish stopping
+            if (_isHandlingConnectionLoss)
+                throw new ProduceException("Cannot publish while the lost MQTT connection is being cleaned up.");
+
             await Task.Delay(1, publishCancellationToken).ConfigureAwait(false);
         }
 
