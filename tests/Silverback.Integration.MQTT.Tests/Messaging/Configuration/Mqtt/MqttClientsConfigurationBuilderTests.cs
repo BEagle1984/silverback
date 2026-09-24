@@ -69,6 +69,21 @@ public class MqttClientsConfigurationBuilderTests
     }
 
     [Fact]
+    public void RequestCleanSession_ShouldOverrideEarlierPersistence()
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder()
+            .RequestPersistentSession()
+            .RequestCleanSession();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        configuration.CleanSession.ShouldBeTrue();
+        configuration.SessionExpiryInterval.ShouldBe(0U);
+    }
+
+    [Fact]
     public void RequestPersistentSession_ShouldSetCleanSession()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
@@ -80,6 +95,46 @@ public class MqttClientsConfigurationBuilderTests
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
 
         configuration.CleanSession.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(MqttProtocolVersion.V500)]
+    [InlineData(MqttProtocolVersion.V311)]
+    public void RequestPersistentSession_ShouldApplyProtocolDefaults(MqttProtocolVersion protocolVersion)
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder()
+            .UseProtocolVersion(protocolVersion)
+            .RequestPersistentSession();
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(protocolVersion == MqttProtocolVersion.V500 ? uint.MaxValue : 0U);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RequestPersistentSession_ShouldPreserveExplicitExpiration_RegardlessOfConfigurationOrder(bool expirationConfiguredFirst)
+    {
+        MqttClientsConfigurationBuilder builder = GetBuilder();
+
+        if (expirationConfiguredFirst)
+            builder.WithSessionExpiration(TimeSpan.FromMinutes(5));
+
+        builder.RequestPersistentSession();
+
+        if (!expirationConfiguredFirst)
+            builder.WithSessionExpiration(TimeSpan.FromMinutes(5));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        configuration.CleanSession.ShouldBeFalse();
+        configuration.SessionExpiryInterval.ShouldBe(300U);
     }
 
     [Fact]
@@ -317,6 +372,22 @@ public class MqttClientsConfigurationBuilderTests
         builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
         MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
 
+        configuration.SessionExpiryInterval.ShouldBe(42U);
+    }
+
+    [Fact]
+    public void WithSessionExpiration_ShouldAllowClientOverride()
+    {
+        MqttClientsConfigurationBuilder builder = new MqttClientsConfigurationBuilder()
+            .RequestPersistentSession()
+            .WithSessionExpiration(TimeSpan.FromMinutes(5))
+            .AddClient("client", client => client.WithSessionExpiration(TimeSpan.FromSeconds(42)));
+
+        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
+        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
+        MqttClientConfiguration configuration = clientConfigurationBuilder.Build();
+
+        configuration.CleanSession.ShouldBeFalse();
         configuration.SessionExpiryInterval.ShouldBe(42U);
     }
 

@@ -42,7 +42,9 @@ public partial record MqttClientConfiguration
     public string? AuthenticationMethod { get; init; }
 
     /// <summary>
-    ///     Gets a value indicating whether a clean non-persistent session has to be created for this client. The default is <c>true</c>.
+    ///     Gets a value indicating whether an existing session is discarded when connecting. The default is <c>true</c>.
+    ///     In MQTT 5.0, this is the clean start flag; <see cref="SessionExpiryInterval" /> separately controls persistence after disconnect.
+    ///     In earlier protocol versions, <c>true</c> also prevents the session from persisting after disconnect.
     /// </summary>
     public bool CleanSession { get; init; } = DefaultInstance.CleanSession;
 
@@ -85,8 +87,9 @@ public partial record MqttClientConfiguration
     public bool RequestResponseInformation { get; init; } = DefaultInstance.RequestResponseInformation;
 
     /// <summary>
-    ///     Gets the session expiry interval in seconds. When set to 0 the session will expire when the connection is closed, while
-    ///     <see cref="uint.MaxValue" /> indicates that the session will never expire. The default is 0.
+    ///     Gets the MQTT 5.0 session expiry interval in seconds. Zero ends the session on disconnect; <see cref="uint.MaxValue" /> requests
+    ///     no expiry. The default is 0. <see cref="MqttClientConfigurationBuilder.RequestPersistentSession" /> requests no expiry unless
+    ///     an expiry is explicitly configured. The broker can override the requested expiry. Earlier protocol versions do not use this value.
     /// </summary>
     public uint SessionExpiryInterval { get; init; } = DefaultInstance.SessionExpiryInterval;
 

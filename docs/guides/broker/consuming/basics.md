@@ -128,6 +128,16 @@ Use `LimitBackpressure(n)` to limit how many incoming MQTT messages Silverback b
 
 For example, `EnableParallelProcessing(4)` with `LimitBackpressure(7)` allows up to 28 buffered messages, plus four being processed. This setting controls Silverback's processing buffers, not buffers in MQTTnet or the broker.
 
+## MQTT sessions
+
+Use `RequestPersistentSession()` to resume the broker session after reconnecting. Configure a stable client identifier with `WithClientId(...)`; reconnecting with a different identifier creates a different session. With MQTT 5, persistence requests no expiration by default, unless an expiration was explicitly configured. For a finite retention period, use `RequestPersistentSession(TimeSpan.FromHours(1))` or `WithSessionExpiration(TimeSpan.FromHours(1))`. Shared client settings also support `RequestPersistentSession()` and `WithSessionExpiration(...)`.
+
+`WithSessionExpiration(TimeSpan.Zero)` explicitly ends the session on disconnect, even when used with `RequestPersistentSession()`. `TimeSpan.MaxValue` requests no expiration. Finite durations are rounded up to whole seconds, up to 4,294,967,294 seconds. The broker can override the requested expiration. MQTT 3.1.1 uses its persistent-session flag and does not support a client-configured expiration.
+
+`RequestCleanSession()` discards any existing session and requests a nonpersistent session. In MQTT 5, `RequestCleanStart()` discards the existing session but preserves the configured expiration, so the new session can persist after disconnect.
+
+Unread messages buffered locally are discarded on disconnect. Broker replay requires a persistent session and QoS 1 or 2; QoS 0 does not provide replay guarantees. Subscribers must still tolerate repeated processing when an unfinished message is redelivered.
+
 ## Error Handling
 
 If a subscriber throws, Silverback applies the endpoint error policy. The default policy stops the consumer.
