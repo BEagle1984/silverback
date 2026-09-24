@@ -107,8 +107,8 @@ public sealed class MqttProducer : Producer
             await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
             envelope.Headers,
             (MqttProducerEndpoint)envelope.GetEndpoint(),
-            taskCompletionSource.SetResult,
-            taskCompletionSource.SetException);
+            identifier => taskCompletionSource.TrySetResult(identifier),
+            exception => taskCompletionSource.TrySetException(exception));
 
         return await taskCompletionSource.Task.ConfigureAwait(false);
     }

@@ -41,6 +41,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     private CancellationTokenSource? _publishCancellationTokenSource;
 
+    private Task _publishTask = Task.CompletedTask;
+
     private bool _mqttClientWasConnected;
 
     private bool _pendingReconnect;
@@ -87,8 +89,11 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        _publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
+        Action<Exception> onError)
+    {
+        if (!_publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError)))
+            onError.Invoke(new ProduceException("Cannot produce because the MQTT client is disconnecting or disconnected."));
+    }
 
     public Task SubscribeAsync() =>
         _subscribedTopicsFilters.Length >= 1
@@ -116,8 +121,12 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         if (_publishQueueChannel.Reader.Completion.IsCompleted)
             _publishQueueChannel = Channel.CreateUnbounded<QueuedMessage>();
 
-        Task.Run(() => ConnectAndKeepConnectionAliveAsync(_connectCancellationTokenSource.Token)).FireAndForget();
-        Task.Run(() => ProcessPublishQueueAsync(_publishCancellationTokenSource.Token)).FireAndForget();
+        CancellationToken connectionCancellationToken = _connectCancellationTokenSource.Token;
+        CancellationToken publishCancellationToken = _publishCancellationTokenSource.Token;
+        ChannelReader<QueuedMessage> reader = _publishQueueChannel.Reader;
+
+        Task.Run(() => ConnectAndKeepConnectionAliveAsync(connectionCancellationToken), CancellationToken.None).FireAndForget();
+        _publishTask = Task.Run(() => ProcessPublishQueueAsync(reader, connectionCancellationToken, publishCancellationToken), CancellationToken.None);
 
         return default;
     }
@@ -130,10 +139,10 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         if (_connectCancellationTokenSource != null)
             await _connectCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
-        if (_publishCancellationTokenSource != null)
-            await _publishCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-
-        WaitFlushingCompletes();
+        // Stop accepting messages and allow pending publishes to finish before disconnecting the transport
+        _publishQueueChannel.Writer.TryComplete();
+        _publishCancellationTokenSource?.CancelAfter(Configuration.Timeout);
+        await _publishTask.ConfigureAwait(false);
 
         _connectCancellationTokenSource?.Dispose();
         _connectCancellationTokenSource = null;
@@ -232,37 +241,36 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         }
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged/forwarded")]
-    private async Task ProcessPublishQueueAsync(CancellationToken cancellationToken)
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]
+    private async Task ProcessPublishQueueAsync(
+        ChannelReader<QueuedMessage> reader,
+        CancellationToken connectionCancellationToken,
+        CancellationToken publishCancellationToken)
     {
-        try
+        // Drain even after the flush timeout so every accepted message gets a result
+        await foreach (QueuedMessage queuedMessage in reader.ReadAllAsync(CancellationToken.None).ConfigureAwait(false))
         {
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                QueuedMessage queuedMessage = await _publishQueueChannel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+                publishCancellationToken.ThrowIfCancellationRequested();
+                await PublishToTopicAsync(queuedMessage, connectionCancellationToken, publishCancellationToken).ConfigureAwait(false);
 
-                try
-                {
-                    await PublishToTopicAsync(queuedMessage, cancellationToken).ConfigureAwait(false);
-
-                    queuedMessage.OnSuccess.Invoke(null);
-                }
-                catch (Exception ex)
-                {
-                    ProduceException produceException =
-                        new("Error occurred producing the message. See inner exception for details.", ex);
-
-                    queuedMessage.OnError.Invoke(produceException);
-                }
+                queuedMessage.OnSuccess.Invoke(null);
             }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogProducerQueueProcessingCanceled(this);
+            catch (Exception ex)
+            {
+                ProduceException produceException =
+                    new("Error occurred producing the message. See inner exception for details.", ex);
+
+                queuedMessage.OnError.Invoke(produceException);
+            }
         }
     }
 
-    private async Task PublishToTopicAsync(QueuedMessage queuedMessage, CancellationToken cancellationToken)
+    private async Task PublishToTopicAsync(
+        QueuedMessage queuedMessage,
+        CancellationToken connectionCancellationToken,
+        CancellationToken publishCancellationToken)
     {
         MqttApplicationMessage mqttApplicationMessage = new()
         {
@@ -283,10 +291,12 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
         while (!_mqttClient.IsConnected)
         {
-            await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+            // Shutdown has stopped reconnecting, so waiting for a connection can no longer succeed
+            connectionCancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(1, publishCancellationToken).ConfigureAwait(false);
         }
 
-        MqttClientPublishResult? result = await _mqttClient.PublishAsync(mqttApplicationMessage, cancellationToken).ConfigureAwait(false);
+        MqttClientPublishResult? result = await _mqttClient.PublishAsync(mqttApplicationMessage, publishCancellationToken).ConfigureAwait(false);
 
         if (result.ReasonCode == MqttClientPublishReasonCode.Success)
             return;
@@ -314,16 +324,6 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     private Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs messageReceivedEventArgs) =>
         MessageReceived.InvokeAsync(messageReceivedEventArgs).AsTask();
-
-    private void WaitFlushingCompletes()
-    {
-        if (_publishQueueChannel.Reader.Completion.IsCompleted)
-            return;
-
-        _publishQueueChannel.Writer.Complete();
-
-        _publishQueueChannel.Reader.Completion.SafeWait();
-    }
 
     private sealed record QueuedMessage(
         byte[]? Content,

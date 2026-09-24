@@ -48,7 +48,7 @@ Docker with Linux containers and the .NET 10 SDK are required. Ports 19092 and 2
 dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --logger trx --results-directory tests/extended/TestResults
 ```
 
-Filter `Broker=Mqtt` for native MQTT reconnect cases or `Broker=Kafka` for the Kafka Docker workloads. Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
+Filter `Broker=Mqtt` for native MQTT reconnect and shutdown cases or `Broker=Kafka` for the Kafka Docker workloads. Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
 
 The xUnit project follows the E2E layout: broker-specific cases in `Kafka/` and `Mqtt/`, reusable container support in `TestHost/`, and infrastructure in `TestHost/Kafka/` and `TestHost/Mqtt/`.
 
@@ -67,6 +67,8 @@ The matrix covers default eager and cooperative-sticky assignment, independent a
 Continuous cases reuse the testbench subscriber and simulated failures across singles, batches and streams, with six partitions, two processing slots and capacity-one buffers. The slow-handler control verifies that the diagnostic detector fires before `max.poll.interval.ms` and captures a stack. A stall candidate alone does not prove a deadlock.
 
 MQTT reconnect cases use the real MQTTnet client and root EMQX cluster through HAProxy. They block a subscriber while another delivery is buffered, disconnect and reconnect, then verify fresh-message progress and ordered replay for persistent QoS 1/2 sessions. QoS 0 and clean sessions explicitly expect unread deliveries to be discarded. A full-buffer case also holds a native receive callback waiting for space and verifies bounded disconnect and broker replay. The MQTT application runs in the test process; it does not use the Kafka worker image.
+
+MQTT shutdown cases exercise actual hosted shutdown while an in-flight subscriber publishes through the same native MQTT client. An independent client observes the reply. The cases cover QoS 1/2 replies, with and without full input buffers, and hold shutdown open across two observed keep-alive responses before publishing. The main E2E suite also checks single-message and batch subscribers publishing between all Kafka/MQTT source and destination combinations, including separate MQTT clients.
 
 ### Worker and evidence
 
