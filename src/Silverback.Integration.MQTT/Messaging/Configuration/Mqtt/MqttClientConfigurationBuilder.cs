@@ -942,12 +942,16 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the maximum number of messages to be consumed and enqueued waiting to be processed.
-    ///     The limit will be applied per partition when processing the partitions independently (default).
-    ///     The default limit is 2.
+    ///     Sets the maximum number of messages buffered per parallel execution, as controlled by
+    ///     <see cref="MqttClientConfiguration.MaxDegreeOfParallelism" />.
+    ///     Messages being processed are not included. The default limit is 2.
     /// </summary>
+    /// <remarks>
+    ///     The total buffer capacity per client is <paramref name="backpressureLimit" /> multiplied by
+    ///     <see cref="MqttClientConfiguration.MaxDegreeOfParallelism" />.
+    /// </remarks>
     /// <param name="backpressureLimit">
-    ///     The maximum number of messages to be enqueued.
+    ///     The maximum number of messages to buffer per parallel execution.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.

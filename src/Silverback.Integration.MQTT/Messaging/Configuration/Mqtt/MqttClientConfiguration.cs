@@ -62,9 +62,12 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public int MaxDegreeOfParallelism { get; init; } = 1;
 
     /// <summary>
-    ///     Gets the maximum number of messages to be consumed and enqueued waiting to be processed.
-    ///     The default is 2.
+    ///     Gets the maximum number of messages buffered per parallel execution, as controlled by <see cref="MaxDegreeOfParallelism" />.
+    ///     Messages being processed are not included. The default is 2.
     /// </summary>
+    /// <remarks>
+    ///     The total buffer capacity per client is <see cref="BackpressureLimit" /> multiplied by <see cref="MaxDegreeOfParallelism" />.
+    /// </remarks>
     public int BackpressureLimit { get; init; } = 2;
 
     /// <summary>
