@@ -68,6 +68,8 @@ Continuous cases reuse the testbench subscriber and simulated failures across si
 
 MQTT reconnect cases use the real MQTTnet client and root EMQX cluster through HAProxy. They block a subscriber while another delivery is buffered, disconnect and reconnect, then verify fresh-message progress and ordered replay for persistent QoS 1/2 sessions. QoS 0 and clean sessions explicitly expect unread deliveries to be discarded. A full-buffer case also holds a native receive callback waiting for space and verifies bounded disconnect and broker replay. The MQTT application runs in the test process; it does not use the Kafka worker image.
 
+MQTT connection-loss cases cut the client's TCP connection through a test proxy while input buffers are full. They verify cleanup before reconnecting, ordered persistent-session replay at QoS 1/2, and continued consumption. Shared-client variants also publish from the interrupted subscriber and verify that the retry policy and broker replay recover without a circular wait.
+
 MQTT shutdown cases exercise actual hosted shutdown while an in-flight subscriber publishes through the same native MQTT client. An independent client observes the reply. The cases cover QoS 1/2 replies, with and without full input buffers, and hold shutdown open across two observed keep-alive responses before publishing. The main E2E suite also checks single-message and batch subscribers publishing between all Kafka/MQTT source and destination combinations, including separate MQTT clients.
 
 ### Worker and evidence
