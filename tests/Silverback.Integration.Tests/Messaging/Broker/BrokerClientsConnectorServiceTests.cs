@@ -65,6 +65,7 @@ public class BrokerClientsConnectorServiceTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Substitute setup")]
     public async Task ConnectAsync_ShouldReconnectClient_WhenItIsNoLongerInitialized()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services
@@ -89,6 +90,7 @@ public class BrokerClientsConnectorServiceTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Substitute setup")]
     public async Task ConnectAsync_ShouldNotReconnectClient_WhenItIsAlreadyInitializing()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(services => services

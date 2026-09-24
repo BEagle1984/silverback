@@ -405,6 +405,7 @@ public partial class BatchProcessingTests
             Thread.Sleep(100);
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Used by Silverback")]
         public void Execute(IEnumerable<TestEventOne> messages)
         {
             if (messages.Any())

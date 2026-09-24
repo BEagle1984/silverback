@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Diagnostics;
 
 [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "The template is defined in the LogEvent and it is static")]
+[SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "The template is defined in the LogEvent and it is static")]
 internal static class SilverbackLoggerMessage
 {
     public static Action<ILogger, Exception?> Define(LogEvent logEvent) =>
