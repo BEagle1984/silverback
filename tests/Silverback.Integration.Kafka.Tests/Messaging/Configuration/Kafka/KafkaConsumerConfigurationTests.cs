@@ -371,6 +371,7 @@ public class KafkaConsumerConfigurationTests
     [InlineData(true, false, 0, false)]
     [InlineData(true, false, -1, false)]
     [InlineData(false, false, 42, false)]
+    [InlineData(false, false, null, true)]
     public void Validate_ShouldValidateCommitSettings(bool commitOffsets, bool enableAutoCommit, int? commitOffsetEach, bool isValid)
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
