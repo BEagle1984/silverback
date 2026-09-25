@@ -10,11 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
@@ -34,13 +34,15 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
 
     [Theory]
-    [InlineData("automatic", false)]
-    [InlineData("per-message", false)]
-    [InlineData("disabled", false)]
-    [InlineData("automatic", true)]
-    [InlineData("per-message", true)]
-    [InlineData("disabled", true)]
-    public async Task Commit_ShouldRespectGroupMembership_WithStaticAssignment(string commitMode, bool shareActiveGroup)
+    [InlineData("automatic", false, false)]
+    [InlineData("per-message", false, false)]
+    [InlineData("disabled", false, false)]
+    [InlineData("automatic", true, false)]
+    [InlineData("per-message", true, false)]
+    [InlineData("disabled", true, false)]
+    [InlineData("automatic", true, true)]
+    [InlineData("per-message", true, true)]
+    public async Task Commit_ShouldRespectGroupMembership_WithStaticAssignment(string commitMode, bool shareActiveGroup, bool retryOnError)
     {
         _ = fixture;
 
@@ -50,6 +52,7 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
         string peerTopic = prefix + "-peer";
         TaskCompletionSource<ReconciliationMessage> processed = new(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskCompletionSource<ReconciliationMessage> processedAfterFailure = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        ConcurrentQueue<ReconciliationMessage> received = new();
         CommitObserver commits = new(partition);
         using CommitLoggerProvider logs = new();
 
@@ -110,6 +113,8 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
             .AddSingletonBrokerClientCallback(commits)
             .AddDelegateSubscriber<ReconciliationMessage>(message =>
             {
+                received.Enqueue(message);
+
                 if (message.Sequence == 1)
                     processed.TrySetResult(message);
                 else
@@ -124,9 +129,15 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                         .WithClientId(prefix + "-static")
                         .WithAutoCommitIntervalMs(250)
                         .DisableAutoRecovery()
-                        .Consume<ReconciliationMessage>(endpoint => endpoint
-                            .ConsumeFrom(new TopicPartitionOffset(partition, Offset.Beginning))
-                            .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()));
+                        .Consume<ReconciliationMessage>(endpoint =>
+                        {
+                            endpoint
+                                .ConsumeFrom(new TopicPartitionOffset(partition, Offset.Beginning))
+                                .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader());
+
+                            if (retryOnError)
+                                endpoint.OnError(policy => policy.Retry(3));
+                        });
 
                     switch (commitMode)
                     {
@@ -225,31 +236,14 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
                     ReadCommittedOffset().ShouldBe(Offset.Unset);
                     await AssertGroupIsStableAsync();
 
-                    if (commitMode == "automatic")
-                    {
-                        logs.CommitErrors.ShouldNotBeEmpty();
+                    logs.CommitErrors.ShouldNotBeEmpty();
 
-                        await producer.ProduceAsync(
-                            partition,
-                            new Message<Null, byte[]> { Value = JsonSerializer.SerializeToUtf8Bytes(new ReconciliationMessage(0, 2)) });
+                    await producer.ProduceAsync(
+                        partition,
+                        new Message<Null, byte[]> { Value = JsonSerializer.SerializeToUtf8Bytes(new ReconciliationMessage(0, 2)) });
 
-                        (await processedAfterFailure.Task.WaitAsync(Timeout)).ShouldBe(new ReconciliationMessage(0, 2));
-                        output.WriteLine("Automatic commit: the subscriber continued after the failed commit");
-                    }
-                    else
-                    {
-                        KafkaConsumer consumer = host.Services.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
-                        Stopwatch stopping = Stopwatch.StartNew();
-
-                        while (consumer.StatusInfo.Status != ConsumerStatus.Stopped)
-                        {
-                            stopping.Elapsed.ShouldBeLessThan(Timeout);
-                            await Task.Delay(50);
-                        }
-
-                        logs.Errors.ShouldContain(error => error.Contains("1033:", StringComparison.Ordinal));
-                        output.WriteLine("Manual commit: the failure was logged and the consumer stopped");
-                    }
+                    (await processedAfterFailure.Task.WaitAsync(Timeout)).ShouldBe(new ReconciliationMessage(0, 2));
+                    output.WriteLine($"{commitMode}: the subscriber continued after the failed commit; retry policy enabled={retryOnError}");
                 }
                 else
                 {
@@ -262,6 +256,12 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
 
             Offset expected = commitMode == "disabled" || shareActiveGroup ? Offset.Unset : delivery.Offset + 1;
             ReadCommittedOffset().ShouldBe(expected);
+            logs.ProcessingErrors.ShouldBeEmpty();
+
+            ReconciliationMessage[] expectedMessages = shareActiveGroup && commitMode != "disabled"
+                ? [new ReconciliationMessage(0, 1), new ReconciliationMessage(0, 2)]
+                : [new ReconciliationMessage(0, 1)];
+            received.ShouldBe(expectedMessages);
         }
         finally
         {
@@ -327,6 +327,8 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
 
         public ConcurrentQueue<string> Errors { get; } = new();
 
+        public ConcurrentQueue<string> ProcessingErrors { get; } = new();
+
         public ILogger CreateLogger(string categoryName) => this;
 
         public IDisposable? BeginScope<TState>(TState state)
@@ -341,8 +343,11 @@ public class StaticAssignmentTests(KafkaFixture fixture, ITestOutputHelper outpu
             Exception? exception,
             Func<TState, Exception?, string> formatter)
         {
-            if (eventId.Id == 2038)
+            if (eventId == KafkaLogEvents.OffsetCommitError.EventId || eventId == IntegrationLogEvents.ConsumerCommitError.EventId)
                 CommitErrors.Enqueue(formatter(state, exception));
+
+            if (eventId == IntegrationLogEvents.ProcessingConsumedMessageError.EventId)
+                ProcessingErrors.Enqueue(formatter(state, exception));
 
             if (logLevel >= LogLevel.Error)
                 Errors.Enqueue($"{eventId.Id}: {formatter(state, exception)}");

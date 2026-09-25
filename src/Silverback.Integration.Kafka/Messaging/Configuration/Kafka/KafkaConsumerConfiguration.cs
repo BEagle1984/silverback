@@ -62,6 +62,10 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     Gets the number of messages to be processed before committing the offset to the server. The most
     ///     reliable level is 1, but it reduces throughput.
     /// </summary>
+    /// <remarks>
+    ///     As with automatic commits, Kafka commit failures are logged without interrupting consumption or invoking message error policies.
+    ///     Uncommitted messages may be processed again after a restart or rebalance.
+    /// </remarks>
     public int? CommitOffsetEach { get; init; }
 
     /// <summary>
