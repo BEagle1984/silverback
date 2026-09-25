@@ -59,7 +59,7 @@ public interface IConfluentConsumerWrapper : IBrokerClient
     void StoreOffset(TopicPartitionOffset topicPartitionOffset);
 
     /// <summary>
-    ///     Commits all stored offsets.
+    ///     Commits all stored offsets. Kafka commit failures are logged and reported to the offset-committed callbacks without being rethrown.
     /// </summary>
     void Commit();
 

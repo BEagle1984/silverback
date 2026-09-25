@@ -126,18 +126,21 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         }
         catch (TopicPartitionOffsetException ex)
         {
+            foreach (TopicPartitionOffsetError result in ex.Results.Where(result => result.Error.IsError))
+            {
+                _logger.LogOffsetCommitError(result, Consumer);
+            }
+
             _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
                 callback.OnOffsetsCommitted(new CommittedOffsets(ex.Results, ex.Error), Consumer));
-
-            throw;
         }
         catch (KafkaException ex)
         {
+            if (ex.Error.Code != ErrorCode.Local_NoOffset)
+                _logger.LogConsumerCommitError(Consumer, [], ex);
+
             _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
                 callback.OnOffsetsCommitted(new CommittedOffsets(null, ex.Error), Consumer));
-
-            if (ex.Error.Code != ErrorCode.Local_NoOffset)
-                throw;
         }
     }
 

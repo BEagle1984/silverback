@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Silverback.Collections;
@@ -17,6 +18,7 @@ using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;
@@ -37,8 +39,13 @@ public class ConfluentConsumerWrapperTests
 
     private readonly ISilverbackLogger _logger = Substitute.For<ISilverbackLogger>();
 
+    private readonly LoggerSubstitute<ConfluentConsumerWrapperTests> _loggerSubstitute = new(LogLevel.Trace);
+
     public ConfluentConsumerWrapperTests()
     {
+        _logger.InnerLogger.Returns(_loggerSubstitute);
+        _logger.IsEnabled(Arg.Any<LogEvent>()).Returns(true);
+
         _consumerBuilder.SetConfig(Arg.Any<ConsumerConfig>()).Returns(_consumerBuilder);
         _consumerBuilder.SetErrorHandler(Arg.Any<Action<IConsumer<byte[]?, byte[]?>, Error>>()).Returns(_consumerBuilder);
         _consumerBuilder.Build().Returns(_confluentConsumer);
@@ -161,26 +168,34 @@ public class ConfluentConsumerWrapperTests
     [InlineData(ErrorCode.UnknownMemberId)]
     [InlineData(ErrorCode.Local_TimedOut)]
     [InlineData(ErrorCode.GroupAuthorizationFailed)]
-    public async Task Commit_ShouldNotifyCallbackAndRethrow_WhenKafkaExceptionIsThrown(ErrorCode errorCode)
+    public async Task Commit_ShouldLogAndNotifyCallback_WhenKafkaExceptionIsThrown(ErrorCode errorCode)
     {
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
         KafkaException exception = new(new Error(errorCode));
+        TopicPartitionOffset offset = new("topic", 0, 2);
         IKafkaOffsetCommittedCallback callback = Substitute.For<IKafkaOffsetCommittedCallback>();
-        _confluentConsumer.Commit().Returns(_ => throw exception);
+        _confluentConsumer.Commit().Returns(_ => throw exception, _ => [offset]);
 
         _callbacksInvoker.When(invoker => invoker.Invoke(Arg.Any<Action<IKafkaOffsetCommittedCallback>>()))
             .Do(call => call.Arg<Action<IKafkaOffsetCommittedCallback>>()(callback));
 
         Action act = consumer.Commit;
 
-        act.ShouldThrow<KafkaException>().ShouldBeSameAs(exception);
+        act.ShouldNotThrow();
+        _loggerSubstitute.Received(LogLevel.Error, typeof(KafkaException), eventId: 1033, exceptionMessage: exception.Message);
         callback.Received(1).OnOffsetsCommitted(
             Arg.Is<CommittedOffsets>(offsets => offsets.Error.Code == errorCode),
+            consumer.Consumer);
+
+        consumer.Commit();
+
+        callback.Received(1).OnOffsetsCommitted(
+            Arg.Is<CommittedOffsets>(offsets => !offsets.Error.IsError && offsets.Offsets.Single().TopicPartitionOffset == offset),
             consumer.Consumer);
     }
 
     [Fact]
-    public async Task Commit_ShouldNotifyCallbackAndRethrow_WhenPartitionCommitFails()
+    public async Task Commit_ShouldLogAndNotifyCallback_WhenPartitionCommitFails()
     {
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync();
         TopicPartitionOffsetException exception = new(
@@ -195,7 +210,12 @@ public class ConfluentConsumerWrapperTests
 
         Action act = consumer.Commit;
 
-        act.ShouldThrow<TopicPartitionOffsetException>().ShouldBeSameAs(exception);
+        act.ShouldNotThrow();
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Error occurred committing offset topic[0]@1: 'Broker: Unknown member' (25) | ConsumerName: test",
+            2038);
         callback.Received(1).OnOffsetsCommitted(
             Arg.Is<CommittedOffsets>(offsets => offsets.Offsets.Single().Error.Code == ErrorCode.UnknownMemberId),
             consumer.Consumer);
@@ -210,12 +230,12 @@ public class ConfluentConsumerWrapperTests
         Action act = consumer.Commit;
 
         act.ShouldNotThrow();
+        _loggerSubstitute.DidNotReceive(LogLevel.Error, typeof(KafkaException));
     }
 
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The assertion delegate is awaited before the consumer is disposed")]
     public async Task DisconnectAsync_ShouldCloseAndDisposeClient_WhenFinalCommitFails(bool partitionError)
     {
         await using ConfluentConsumerWrapper consumer = await GetConnectedConsumerAsync(false);
@@ -227,9 +247,9 @@ public class ConfluentConsumerWrapperTests
             : new KafkaException(new Error(ErrorCode.UnknownMemberId));
         _confluentConsumer.Commit().Returns(_ => throw exception);
 
-        Func<Task> act = () => consumer.DisconnectAsync().AsTask();
+        await consumer.DisconnectAsync();
 
-        (await act.ShouldThrowAsync<KafkaException>()).ShouldBeSameAs(exception);
+        consumer.Status.ShouldBe(ClientStatus.Disconnected);
         _confluentConsumer.Received(1).Close();
         _confluentConsumer.Received(1).Dispose();
 
