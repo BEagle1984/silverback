@@ -1,6 +1,6 @@
 # Extended tests
 
-Open **Silverback.Tests.Extended.sln** on Windows to build the interactive testbench, benchmarks and Docker stress tests together. Project directories sit directly beside the solution, matching its flat structure. The solution includes all source projects from the main solution under **Src**. **Solution Items** exposes shared configuration, documentation and scripts directly in the IDE.
+Open **Silverback.Tests.Extended.sln** on Windows to build the interactive testbench, benchmarks and real-broker integration tests together. Project directories sit directly beside the solution, matching its flat structure. The solution includes all source projects from the main solution under **Src**. **Solution Items** exposes shared configuration, documentation and scripts directly in the IDE.
 
 ## Projects
 
@@ -9,9 +9,9 @@ Open **Silverback.Tests.Extended.sln** on Windows to build the interactive testb
 | Silverback.Tests.Extended.TestBench | Interactive WPF testbench |
 | Silverback.Tests.Extended.TestBench.Consumer | Containerized testbench consumer |
 | Silverback.Tests.Extended.TestBench.Shared | Testbench topic definitions and logging configuration |
-| Silverback.Tests.Extended.Stress | xUnit tests against real brokers |
-| Silverback.Tests.Extended.Stress.Worker | Containerized application managed by the stress tests |
-| Silverback.Tests.Extended.Shared | Messages and subscriber workloads shared by the testbench and stress worker |
+| Silverback.Tests.Extended.Integration | xUnit tests against real brokers |
+| Silverback.Tests.Extended.Integration.Worker | Containerized application managed by the integration tests |
+| Silverback.Tests.Extended.Shared | Messages and subscriber workloads shared by the testbench and integration worker |
 | Silverback.Tests.Extended.Benchmarks | General implementation and pipeline benchmarks |
 | Silverback.Tests.Extended.Benchmarks.VersionComparison.Current | Benchmarks against the current repository sources |
 | Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2 | Benchmarks against Silverback 4.6.2 |
@@ -26,7 +26,7 @@ Run commands from the repository root:
 dotnet build tests/extended/Silverback.Tests.Extended.sln -c Release
 ```
 
-The WPF application requires Windows. The stress runner and worker also run on Linux. The other-projects Azure pipeline builds the extended solution; its optional `runStressTests` parameter runs Docker tests on a Linux agent and publishes TRX results and evidence.
+The WPF application requires Windows. The integration runner and worker also run on Linux. The other-projects Azure pipeline builds the extended solution; its optional `runIntegrationTests` parameter runs the integration project tests on a Linux agent and publishes TRX results and evidence.
 
 The deterministic Kafka ownership tests remain in the main solution and do not require Docker. Extended tests are separate from the default main-suite run.
 
@@ -40,21 +40,34 @@ Options:
 - `--build`, `-b`: rebuild the consumer image.
 - `--topics`, `-t`: delete and recreate the testbench topics.
 
-## Docker stress tests
+## Integration tests
 
 Docker with Linux containers and the .NET 10 SDK are required. Ports 19092 and 29092 must be available for the root Kafka services; MQTT tests use port 1883.
 
 ```shell
-dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --logger trx --results-directory tests/extended/TestResults
+dotnet test tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj --logger trx --results-directory tests/extended/TestResults
 ```
 
-Filter `Broker=Mqtt` for native MQTT reconnect and shutdown cases or `Broker=Kafka` for the Kafka Docker workloads. Filter `FullyQualifiedName~StaticAssignmentTests` for explicit partition assignment and offset-commit diagnostics. Filter `FullyQualifiedName~RebalanceTests` for finite reconciliation cases, or `FullyQualifiedName~ConsumptionTests` for continuous workloads and the diagnostic control. Use `FullyQualifiedName~KafkaReconciliationVerifierTests` to exercise the receipt verifier without starting Docker.
+Traits describe the dependency, broker and purpose independently:
+
+| Trait | Coverage |
+| --- | --- |
+| `Type=Integration` | All real-broker cases, including stress workloads and diagnostic controls |
+| `Type=Unit` | Receipt-verifier tests that run without Docker |
+| `Category=Stress` | Continuous consumption under repeated rebalances and finite reconciliation workloads |
+| `Category=Diagnostics` | Deliberately blocked polling used to verify stall detection and diagnostic capture |
+| `Dependency=Docker` | Tests requiring the root Compose infrastructure |
+| `Broker=Kafka` / `Broker=MQTT` | Broker-specific tests; Kafka also includes the local receipt-verifier tests |
+
+Use `--filter "Type=Integration&Category!=Stress&Category!=Diagnostics"` for the functional broker cases, `--filter "Category=Stress"` for load/rebalance workloads, or `--filter "Type=Unit"` for the local verifier. Combine traits, for example `--filter "Type=Integration&Broker=MQTT"`. Omitting the filter runs every case, including the diagnostic control.
+
+Filter `FullyQualifiedName~StaticAssignmentTests` for explicit partition assignment and offset-commit diagnostics or `FullyQualifiedName~RebalanceTests` for finite reconciliation cases. The CI `runIntegrationTests` option runs the complete project, including its local verifier tests.
 
 The xUnit project follows the E2E layout: broker-specific cases in `Kafka/` and `Mqtt/`, reusable container support in `TestHost/`, and infrastructure in `TestHost/Kafka/` and `TestHost/Mqtt/`.
 
 `DockerTestsFixture` starts the required broker services from the root `docker-compose.yaml` using the `silverback` Compose project and `silverback_default` network. It leaves this shared infrastructure running. `ContainerTestRun` uses FluentDocker to manage worker containers. Compose startup and image builds use bounded Docker CLI calls from C#.
 
-Each case uses a unique `stress-` prefix for topics, client/group IDs and containers. Kafka topics are retained for investigation; worker containers are removed after evidence capture. The Kafka fixture builds the worker from the current checkout. `STRESS_SDK_IMAGE` overrides the default `mcr.microsoft.com/dotnet/sdk:10.0` build image.
+Each case uses a unique `stress-` prefix for topics, client/group IDs and containers. Kafka topics are retained for investigation; worker containers are removed after evidence capture. The Kafka fixture builds the worker from the current checkout. `INTEGRATION_SDK_IMAGE` overrides the default `mcr.microsoft.com/dotnet/sdk:10.0` build image.
 
 ### Coverage
 

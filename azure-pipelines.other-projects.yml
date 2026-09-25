@@ -1,8 +1,8 @@
 name: other-projects.$(date:yyyyMMdd)$(rev:.r)
 
 parameters:
-  - name: runStressTests
-    displayName: Run Docker stress tests
+  - name: runIntegrationTests
+    displayName: Run extended integration tests
     type: boolean
     default: false
 
@@ -39,8 +39,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         displayName: 'Build Extended Tests ($(buildConfiguration))'
 
-  - job: StressTests
-    condition: and(succeeded(), ${{ eq(parameters.runStressTests, true) }})
+  - job: IntegrationTests
+    condition: and(succeeded(), ${{ eq(parameters.runIntegrationTests, true) }})
     dependsOn: Build
     pool:
       vmImage: 'ubuntu-latest'
@@ -49,16 +49,16 @@ jobs:
         inputs:
           packageType: sdk
           version: '10.0.x'
-      - script: dotnet test tests/extended/Silverback.Tests.Extended.Stress/Silverback.Tests.Extended.Stress.csproj --configuration Release --logger trx --results-directory $(Common.TestResultsDirectory)/stress
-        displayName: Run Kafka stress tests
+      - script: dotnet test tests/extended/Silverback.Tests.Extended.Integration/Silverback.Tests.Extended.Integration.csproj --configuration Release --logger trx --results-directory $(Common.TestResultsDirectory)/integration
+        displayName: Run extended integration tests
       - task: PublishTestResults@2
         condition: always()
         inputs:
           testResultsFormat: VSTest
-          testResultsFiles: '$(Common.TestResultsDirectory)/stress/*.trx'
+          testResultsFiles: '$(Common.TestResultsDirectory)/integration/*.trx'
           failTaskOnFailedTests: true
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
           targetPath: tests/extended/artifacts
-          artifact: stress-evidence
+          artifact: integration-evidence
