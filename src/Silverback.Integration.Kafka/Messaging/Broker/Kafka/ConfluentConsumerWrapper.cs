@@ -135,6 +135,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         {
             _brokerClientCallbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback =>
                 callback.OnOffsetsCommitted(new CommittedOffsets(null, ex.Error), Consumer));
+
+            if (ex.Error.Code != ErrorCode.Local_NoOffset)
+                throw;
         }
     }
 
@@ -192,15 +195,28 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
             Subscribe();
     }
 
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected override ValueTask DisconnectCoreAsync()
     {
-        if (!Configuration.EnableAutoCommit)
-            Commit();
+        if (_confluentConsumer == null)
+            return default;
 
-        _confluentConsumer?.Close();
-        _confluentConsumer?.Dispose();
-        _confluentConsumer = null;
+        try
+        {
+            if (!Configuration.EnableAutoCommit)
+                Commit();
+        }
+        finally
+        {
+            try
+            {
+                _confluentConsumer.Close();
+            }
+            finally
+            {
+                _confluentConsumer.Dispose();
+                _confluentConsumer = null;
+            }
+        }
 
         return default;
     }
