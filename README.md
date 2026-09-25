@@ -117,14 +117,14 @@ See the docs site for guides, API reference, and runnable examples:
 | --- | --- |
 | [Silverback.sln](Silverback.sln) | Library source projects, unit and E2E tests, and code/documentation generators |
 | [Silverback.Samples.sln](samples/Silverback.Samples.sln) | Runnable usage examples; see the [samples guide](samples/README.md) |
-| [Silverback.Tests.Extended.sln](tests/extended/Silverback.Tests.Extended.sln) | Interactive testbench, Docker stress tests, general benchmarks and version comparisons, with references to the library sources |
+| [Silverback.Tests.Extended.sln](tests/extended/Silverback.Tests.Extended.sln) | Interactive testbench, real-broker integration and stress tests, general benchmarks and version comparisons, with references to the library sources |
 
 ### Testing and Development Tools
 
 | Tool | Purpose |
 | --- | --- |
 | [Interactive testbench](tests/extended/README.md#interactive-testbench) | Windows WPF application for producing messages and managing Docker consumers |
-| [Docker stress tests](tests/extended/README.md#docker-stress-tests) | xUnit workloads, rebalance reconciliation and diagnostic capture against real Kafka |
+| [Integration tests](tests/extended/README.md#integration-tests) | xUnit tests against real Kafka and MQTT brokers, including stress workloads and diagnostic controls |
 | [Benchmarks](tests/extended/README.md#benchmarks) | General performance benchmarks and current-versus-historical Silverback comparisons |
 | [UpdateOlderVersions.ps1](tests/extended/UpdateOlderVersions.ps1) | Scaffold another historical benchmark project |
 | [coverage.ps1](coverage.ps1) | Build and test the main solution with coverage, then generate and open an HTML report |

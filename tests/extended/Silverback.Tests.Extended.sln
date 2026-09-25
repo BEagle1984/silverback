@@ -49,9 +49,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2", "Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2\Silverback.Tests.Extended.Benchmarks.VersionComparison.V4_6_2.csproj", "{5DCDE935-7080-595B-9205-49F510BB8787}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.Stress", "Silverback.Tests.Extended.Stress\Silverback.Tests.Extended.Stress.csproj", "{29386F69-A760-51A2-B569-E0C1AC28DA86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.Integration", "Silverback.Tests.Extended.Integration\Silverback.Tests.Extended.Integration.csproj", "{29386F69-A760-51A2-B569-E0C1AC28DA86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.Stress.Worker", "Silverback.Tests.Extended.Stress.Worker\Silverback.Tests.Extended.Stress.Worker.csproj", "{A085BF10-2EA8-5147-8E6B-DBAC1B3CDAFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.Integration.Worker", "Silverback.Tests.Extended.Integration.Worker\Silverback.Tests.Extended.Integration.Worker.csproj", "{A085BF10-2EA8-5147-8E6B-DBAC1B3CDAFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tests.Extended.TestBench", "Silverback.Tests.Extended.TestBench\Silverback.Tests.Extended.TestBench.csproj", "{D2D4B7DA-7157-5A7A-BC98-5FA16990F88A}"
 EndProject
